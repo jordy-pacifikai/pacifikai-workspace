@@ -1,0 +1,109 @@
+name: Deploy Dashboard
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate assets manifest
+        run: |
+          echo "Generating assets manifest..."
+
+          # Create manifest JSON
+          cat > dashboard/assets-manifest.json << 'MANIFEST_START'
+          {
+            "generated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "prospects": {
+          MANIFEST_START
+
+          first=true
+          for dir in */; do
+            dirname="${dir%/}"
+
+            # Skip non-prospect directories
+            case "$dirname" in
+              _templates|_archive|scripts|dashboard|.github|clients|solutions|marketing|n8n-builder|n8n-framework|landing-page|business|.claude|.claude-plugin)
+                continue
+                ;;
+            esac
+
+            # Skip if no relevant files
+            file_count=$(find "$dir" -maxdepth 3 -type f \( -name "*.html" -o -name "*.md" -o -name "*.pdf" \) 2>/dev/null | wc -l)
+            [ "$file_count" -eq 0 ] && continue
+
+            if [ "$first" = false ]; then
+              echo "," >> dashboard/assets-manifest.json
+            fi
+            first=false
+
+            echo "    \"$dirname\": {" >> dashboard/assets-manifest.json
+            echo "      \"folder\": \"$dirname\"," >> dashboard/assets-manifest.json
+            echo "      \"files\": [" >> dashboard/assets-manifest.json
+
+            first_file=true
+            while IFS= read -r -d '' file; do
+              filename=$(basename "$file")
+              relpath="${file#$dir}"
+
+              # Determine type
+              filetype="doc"
+              case "$relpath" in
+                demo/index.html|*landing*) filetype="site" ;;
+                *dashboard*|demo/dashboard*) filetype="dash" ;;
+                *n8n*|workflows/*|*.json) filetype="wf" ;;
+                *FICHE_RECHERCHE*) filetype="fiche" ;;
+              esac
+
+              desc=$(echo "$filename" | sed 's/[-_]/ /g' | sed 's/\.[^.]*$//')
+
+              if [ "$first_file" = false ]; then
+                echo "," >> dashboard/assets-manifest.json
+              fi
+              first_file=false
+
+              echo -n "        {\"name\": \"$filename\", \"file\": \"$relpath\", \"type\": \"$filetype\", \"desc\": \"$desc\"}" >> dashboard/assets-manifest.json
+
+            done < <(find "$dir" -maxdepth 3 -type f \( -name "*.html" -o -name "*.md" -o -name "*.pdf" \) -print0 2>/dev/null | sort -z)
+
+            echo "" >> dashboard/assets-manifest.json
+            echo "      ]" >> dashboard/assets-manifest.json
+            echo -n "    }" >> dashboard/assets-manifest.json
+
+          done
+
+          echo "" >> dashboard/assets-manifest.json
+          echo "  }" >> dashboard/assets-manifest.json
+          echo "}" >> dashboard/assets-manifest.json
+
+          echo "Manifest generated!"
+          cat dashboard/assets-manifest.json | head -50
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

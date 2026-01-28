@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n Workflow Visualizer - Air Tahiti | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #1D3557;
+            --bg-canvas: #0d1b2a;
+            --bg-node: #2a3f5f;
+            --bg-node-hover: #3a5070;
+            --border-node: #4a6080;
+            --text-primary: #ffffff;
+            --text-secondary: #a0b0c0;
+            --text-muted: #6a7a8a;
+
+            /* Node type colors */
+            --trigger-color: #E63946;
+            --trigger-bg: rgba(230, 57, 70, 0.15);
+            --code-color: #F4A261;
+            --code-bg: rgba(244, 162, 97, 0.15);
+            --ai-color: #2A9D8F;
+            --ai-bg: rgba(42, 157, 143, 0.15);
+            --data-color: #4d96ff;
+            --data-bg: rgba(77, 150, 255, 0.15);
+            --output-color: #E76F51;
+            --output-bg: rgba(231, 111, 81, 0.15);
+            --http-color: #8B5CF6;
+            --http-bg: rgba(139, 92, 246, 0.15);
+            --wait-color: #f97316;
+            --wait-bg: rgba(249, 115, 22, 0.15);
+
+            /* Build colors */
+            --build1: #2A9D8F;
+            --build2: #8B5CF6;
+            --build3: #F4A261;
+            --build4: #E63946;
+
+            /* Execution states */
+            --executing: #fbbf24;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-canvas) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--build1) 0%, #1a7a70 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--build4);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(230, 57, 70, 0.2);
+            border: 1px solid rgba(230, 57, 70, 0.3);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--build4);
+        }
+
+        /* Build Selector */
+        .build-selector {
+            display: flex;
+            gap: 12px;
+            padding: 24px 40px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .build-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .build-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .build-btn.active {
+            border-color: var(--build1);
+            background: rgba(42, 157, 143, 0.15);
+            color: white;
+        }
+
+        .build-btn[data-build="1"].active { border-color: var(--build1); background: rgba(42, 157, 143, 0.15); }
+        .build-btn[data-build="2"].active { border-color: var(--build2); background: rgba(139, 92, 246, 0.15); }
+        .build-btn[data-build="3"].active { border-color: var(--build3); background: rgba(244, 162, 97, 0.15); }
+        .build-btn[data-build="4"].active { border-color: var(--build4); background: rgba(230, 57, 70, 0.15); }
+
+        .build-btn .icon {
+            font-size: 20px;
+        }
+
+        .build-btn .nodes {
+            font-size: 11px;
+            opacity: 0.6;
+        }
+
+        /* Canvas */
+        .canvas-container {
+            padding: 40px;
+            min-height: calc(100vh - 200px);
+        }
+
+        .workflow-canvas {
+            background: var(--bg-canvas);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: auto;
+            min-height: 500px;
+        }
+
+        /* Workflow Description */
+        .workflow-description {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .workflow-description h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .workflow-description p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .workflow-meta {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .workflow-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .workflow-meta-item strong {
+            color: var(--text-primary);
+        }
+
+        /* Nodes Grid */
+        .nodes-flow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .node {
+            background: var(--bg-node);
+            border: 2px solid var(--border-node);
+            border-radius: 16px;
+            padding: 20px;
+            min-width: 200px;
+            max-width: 250px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .node:hover {
+            background: var(--bg-node-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .node::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .node.trigger::before { background: var(--trigger-color); }
+        .node.code::before { background: var(--code-color); }
+        .node.ai::before { background: var(--ai-color); }
+        .node.data::before { background: var(--data-color); }
+        .node.output::before { background: var(--output-color); }
+        .node.http::before { background: var(--http-color); }
+
+        .node-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .node.trigger .node-icon { background: var(--trigger-bg); }
+        .node.code .node-icon { background: var(--code-bg); }
+        .node.ai .node-icon { background: var(--ai-bg); }
+        .node.data .node-icon { background: var(--data-bg); }
+        .node.output .node-icon { background: var(--output-bg); }
+        .node.http .node-icon { background: var(--http-bg); }
+
+        .node-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .node-type {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .node-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+            line-height: 1.5;
+        }
+
+        /* Arrow between nodes */
+        .arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 24px;
+            padding: 0 8px;
+        }
+
+        /* Conclusion Section */
+        .conclusion-section {
+            padding: 60px 40px;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-canvas) 100%);
+        }
+
+        .conclusion-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .conclusion-header h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--build4) 0%, #fff 50%, var(--success) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .conclusion-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .conclusion-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto 48px;
+        }
+
+        .conclusion-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .conclusion-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .conclusion-card.build-1::before { background: var(--build1); }
+        .conclusion-card.build-2::before { background: var(--build2); }
+        .conclusion-card.build-3::before { background: var(--build3); }
+        .conclusion-card.build-4::before { background: var(--build4); }
+
+        .conclusion-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .conclusion-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+        }
+
+        .conclusion-card.build-1 .conclusion-icon { background: rgba(42, 157, 143, 0.15); }
+        .conclusion-card.build-2 .conclusion-icon { background: rgba(139, 92, 246, 0.15); }
+        .conclusion-card.build-3 .conclusion-icon { background: rgba(244, 162, 97, 0.15); }
+        .conclusion-card.build-4 .conclusion-icon { background: rgba(230, 57, 70, 0.15); }
+
+        .conclusion-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .conclusion-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .conclusion-card.build-1 .conclusion-value { color: var(--build1); }
+        .conclusion-card.build-2 .conclusion-value { color: var(--build2); }
+        .conclusion-card.build-3 .conclusion-value { color: var(--build3); }
+        .conclusion-card.build-4 .conclusion-value { color: var(--build4); }
+
+        .conclusion-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Total Stats */
+        .total-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            padding: 32px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .total-stat {
+            text-align: center;
+        }
+
+        .total-stat .value {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--build4) 0%, var(--build3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .total-stat .label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-canvas);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .footer-logo span {
+            color: var(--build4);
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .conclusion-grid { grid-template-columns: repeat(2, 1fr); }
+            .build-selector { flex-wrap: wrap; }
+        }
+
+        @media (max-width: 768px) {
+            .header { padding: 16px 20px; flex-direction: column; gap: 16px; }
+            .build-selector { padding: 16px 20px; }
+            .canvas-container { padding: 20px; }
+            .conclusion-grid { grid-template-columns: 1fr; }
+            .total-stats { flex-direction: column; gap: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">n8n</div>
+            <div class="logo-text">PACIFIK'<span>AI</span> × Air Tahiti</div>
+        </div>
+        <div class="header-badge">
+            <span>🏝️</span>
+            <span>48 Destinations • 4 Workflows</span>
+        </div>
+    </header>
+
+    <!-- Build Selector -->
+    <div class="build-selector">
+        <button class="build-btn active" data-build="1" onclick="showBuild(1)">
+            <span class="icon">🌺</span>
+            <div>
+                <div>Concierge Teva</div>
+                <div class="nodes">6 nodes</div>
+            </div>
+        </button>
+        <button class="build-btn" data-build="2" onclick="showBuild(2)">
+            <span class="icon">✉️</span>
+            <div>
+                <div>Newsletter IA</div>
+                <div class="nodes">8 nodes</div>
+            </div>
+        </button>
+        <button class="build-btn" data-build="3" onclick="showBuild(3)">
+            <span class="icon">📝</span>
+            <div>
+                <div>SEO 48 Îles</div>
+                <div class="nodes">7 nodes</div>
+            </div>
+        </button>
+        <button class="build-btn" data-build="4" onclick="showBuild(4)">
+            <span class="icon">📊</span>
+            <div>
+                <div>Analyste ROI</div>
+                <div class="nodes">5 nodes</div>
+            </div>
+        </button>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-container">
+        <div class="workflow-canvas">
+            <!-- Build 1 -->
+            <div id="build-1" class="workflow-content">
+                <div class="workflow-description">
+                    <h3>🌺 Build 1 - Concierge Teva</h3>
+                    <p>Chatbot RAG spécialisé sur les 48 destinations d'Air Tahiti. Répond aux questions sur les bagages plongée, l'Air Pass, les horaires inter-îles, et le service Signature 2026. Alimenté par 22 FAQ embeddings couvrant les 5 archipels.</p>
+                    <div class="workflow-meta">
+                        <div class="workflow-meta-item">📊 <strong>22</strong> FAQ embeddings</div>
+                        <div class="workflow-meta-item">🏝️ <strong>48</strong> destinations</div>
+                        <div class="workflow-meta-item">🌐 <strong>5</strong> langues supportées</div>
+                        <div class="workflow-meta-item">⚡ <strong>&lt;3s</strong> temps de réponse</div>
+                    </div>
+                </div>
+                <div class="nodes-flow">
+                    <div class="node trigger">
+                        <div class="node-icon">💬</div>
+                        <div class="node-title">Chat Trigger</div>
+                        <div class="node-type">Webhook</div>
+                        <div class="node-description">Reçoit les messages depuis le widget chat</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node ai">
+                        <div class="node-icon">🔍</div>
+                        <div class="node-title">Vector Store Query</div>
+                        <div class="node-type">Supabase pgvector</div>
+                        <div class="node-description">Recherche sémantique dans at_faq_embeddings</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node ai">
+                        <div class="node-icon">🤖</div>
+                        <div class="node-title">Claude Sonnet</div>
+                        <div class="node-type">Anthropic API</div>
+                        <div class="node-description">Génère la réponse contextuelle Air Tahiti</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node data">
+                        <div class="node-icon">💾</div>
+                        <div class="node-title">Save Memory</div>
+                        <div class="node-type">Supabase</div>
+                        <div class="node-description">Stocke l'historique conversation</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node output">
+                        <div class="node-icon">📤</div>
+                        <div class="node-title">Respond to Chat</div>
+                        <div class="node-type">Webhook Response</div>
+                        <div class="node-description">Renvoie la réponse au widget</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Build 2 -->
+            <div id="build-2" class="workflow-content" style="display: none;">
+                <div class="workflow-description">
+                    <h3>✉️ Build 2 - Newsletter IA 7 Segments</h3>
+                    <p>Génère des newsletters personnalisées pour les 7 segments clients d'Air Tahiti : Plongeurs, Lune de miel, Familles, Résidents, Aventure, Luxe, et General. Contenu adapté aux destinations pertinentes pour chaque profil.</p>
+                    <div class="workflow-meta">
+                        <div class="workflow-meta-item">👥 <strong>7</strong> segments clients</div>
+                        <div class="workflow-meta-item">📧 <strong>~500</strong> emails/batch</div>
+                        <div class="workflow-meta-item">🎯 <strong>+35%</strong> taux d'ouverture</div>
+                        <div class="workflow-meta-item">🔄 <strong>Hebdo</strong> automatique</div>
+                    </div>
+                </div>
+                <div class="nodes-flow">
+                    <div class="node trigger">
+                        <div class="node-icon">📅</div>
+                        <div class="node-title">Schedule Trigger</div>
+                        <div class="node-type">Cron</div>
+                        <div class="node-description">Lundi 8h heure Tahiti</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node data">
+                        <div class="node-icon">📋</div>
+                        <div class="node-title">Get Segments</div>
+                        <div class="node-type">Airtable</div>
+                        <div class="node-description">Récupère les 7 segments et leurs préférences</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node code">
+                        <div class="node-icon">⚙️</div>
+                        <div class="node-title">Split By Segment</div>
+                        <div class="node-type">Code</div>
+                        <div class="node-description">Prépare le contexte par segment</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node ai">
+                        <div class="node-icon">🤖</div>
+                        <div class="node-title">Claude - Newsletter</div>
+                        <div class="node-type">Anthropic API</div>
+                        <div class="node-description">Génère contenu personnalisé par segment</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node output">
+                        <div class="node-icon">📨</div>
+                        <div class="node-title">Send Email</div>
+                        <div class="node-type">SMTP / Brevo</div>
+                        <div class="node-description">Envoie les newsletters</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node data">
+                        <div class="node-icon">📊</div>
+                        <div class="node-title">Log to Airtable</div>
+                        <div class="node-type">Airtable</div>
+                        <div class="node-description">Trace les envois dans Newsletter_Logs</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Build 3 -->
+            <div id="build-3" class="workflow-content" style="display: none;">
+                <div class="workflow-description">
+                    <h3>📝 Build 3 - SEO Factory 48 Îles</h3>
+                    <p>Génère des articles SEO + GEO optimisés pour chaque destination d'Air Tahiti. Contenu unique par île avec optimisation pour les moteurs IA (ChatGPT, Perplexity). Score GEO cible : 80/100.</p>
+                    <div class="workflow-meta">
+                        <div class="workflow-meta-item">🏝️ <strong>48</strong> articles uniques</div>
+                        <div class="workflow-meta-item">📈 <strong>80/100</strong> GEO Score</div>
+                        <div class="workflow-meta-item">🗂️ <strong>5</strong> archipels</div>
+                        <div class="workflow-meta-item">🔄 <strong>Mensuel</strong> refresh</div>
+                    </div>
+                </div>
+                <div class="nodes-flow">
+                    <div class="node trigger">
+                        <div class="node-icon">🎯</div>
+                        <div class="node-title">Webhook Trigger</div>
+                        <div class="node-type">Manual / API</div>
+                        <div class="node-description">Déclenche génération par île</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node data">
+                        <div class="node-icon">🏝️</div>
+                        <div class="node-title">Get Destination</div>
+                        <div class="node-type">Airtable</div>
+                        <div class="node-description">Récupère infos île + archipel</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node ai">
+                        <div class="node-icon">🤖</div>
+                        <div class="node-title">Claude - SEO Writer</div>
+                        <div class="node-type">Anthropic API</div>
+                        <div class="node-description">Génère article optimisé SEO+GEO</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node code">
+                        <div class="node-icon">📊</div>
+                        <div class="node-title">Calculate GEO Score</div>
+                        <div class="node-type">Code</div>
+                        <div class="node-description">Calcule le score GEO de l'article</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node data">
+                        <div class="node-icon">💾</div>
+                        <div class="node-title">Save to Airtable</div>
+                        <div class="node-type">Airtable</div>
+                        <div class="node-description">Stocke dans SEO_Content</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Build 4 -->
+            <div id="build-4" class="workflow-content" style="display: none;">
+                <div class="workflow-description">
+                    <h3>📊 Build 4 - Analyste ROI + Veille Air Moana</h3>
+                    <p>Détection d'anomalies sur les 48 routes avec alertes Z-Score. Surveillance automatique d'Air Moana : nouveaux prix, nouvelles routes. Génère des recommandations IA pour chaque alerte.</p>
+                    <div class="workflow-meta">
+                        <div class="workflow-meta-item">📈 <strong>48</strong> routes surveillées</div>
+                        <div class="workflow-meta-item">⚠️ <strong>Z-Score</strong> alertes</div>
+                        <div class="workflow-meta-item">✈️ <strong>Air Moana</strong> tracking</div>
+                        <div class="workflow-meta-item">🔄 <strong>Quotidien</strong> analyse</div>
+                    </div>
+                </div>
+                <div class="nodes-flow">
+                    <div class="node trigger">
+                        <div class="node-icon">📅</div>
+                        <div class="node-title">Daily Schedule</div>
+                        <div class="node-type">Cron</div>
+                        <div class="node-description">Tous les jours à 6h Tahiti</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node http">
+                        <div class="node-icon">🌐</div>
+                        <div class="node-title">Fetch Routes Data</div>
+                        <div class="node-type">HTTP Request</div>
+                        <div class="node-description">Récupère données ventes 48 routes</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node code">
+                        <div class="node-icon">📊</div>
+                        <div class="node-title">Z-Score Analysis</div>
+                        <div class="node-type">Code</div>
+                        <div class="node-description">Calcule anomalies statistiques</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node ai">
+                        <div class="node-icon">🤖</div>
+                        <div class="node-title">Claude - Analyst</div>
+                        <div class="node-type">Anthropic API</div>
+                        <div class="node-description">Génère recommandations par alerte</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="node data">
+                        <div class="node-icon">💾</div>
+                        <div class="node-title">Save Alerts</div>
+                        <div class="node-type">Airtable</div>
+                        <div class="node-description">Stocke dans ROI_Alerts + Dashboard</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conclusion Section -->
+    <section class="conclusion-section">
+        <div class="conclusion-header">
+            <h2>Récapitulatif des 4 Builds</h2>
+            <p>Architecture complète pour Air Tahiti</p>
+        </div>
+
+        <div class="conclusion-grid">
+            <div class="conclusion-card build-1">
+                <div class="conclusion-icon">🌺</div>
+                <div class="conclusion-title">Build 1</div>
+                <div class="conclusion-value">6</div>
+                <div class="conclusion-desc">nodes • Concierge Teva</div>
+            </div>
+            <div class="conclusion-card build-2">
+                <div class="conclusion-icon">✉️</div>
+                <div class="conclusion-title">Build 2</div>
+                <div class="conclusion-value">8</div>
+                <div class="conclusion-desc">nodes • Newsletter IA</div>
+            </div>
+            <div class="conclusion-card build-3">
+                <div class="conclusion-icon">📝</div>
+                <div class="conclusion-title">Build 3</div>
+                <div class="conclusion-value">7</div>
+                <div class="conclusion-desc">nodes • SEO 48 Îles</div>
+            </div>
+            <div class="conclusion-card build-4">
+                <div class="conclusion-icon">📊</div>
+                <div class="conclusion-title">Build 4</div>
+                <div class="conclusion-value">5</div>
+                <div class="conclusion-desc">nodes • Analyste ROI</div>
+            </div>
+        </div>
+
+        <div class="total-stats">
+            <div class="total-stat">
+                <div class="value">26</div>
+                <div class="label">Nodes Total</div>
+            </div>
+            <div class="total-stat">
+                <div class="value">4</div>
+                <div class="label">Workflows</div>
+            </div>
+            <div class="total-stat">
+                <div class="value">48</div>
+                <div class="label">Destinations</div>
+            </div>
+            <div class="total-stat">
+                <div class="value">7</div>
+                <div class="label">Segments</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">PACIFIK'<span>AI</span></div>
+        <p>n8n Workflow Visualizer • Air Tahiti</p>
+        <p style="margin-top: 8px; opacity: 0.5;">48 destinations • 5 archipels • Janvier 2026</p>
+    </footer>
+
+    <script>
+        function showBuild(buildNumber) {
+            // Hide all builds
+            document.querySelectorAll('.workflow-content').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            // Show selected build
+            document.getElementById(`build-${buildNumber}`).style.display = 'block';
+
+            // Update active button
+            document.querySelectorAll('.build-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-build="${buildNumber}"]`).classList.add('active');
+        }
+    </script>
+</body>
+</html>

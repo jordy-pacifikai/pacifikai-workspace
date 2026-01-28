@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PACIFIK'AI × Air Tahiti - Démo Interactive</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #E63946;
+            --primary-dark: #c12836;
+            --secondary: #1D3557;
+            --gold: #F4A261;
+            --purple: #8B5CF6;
+            --orange: #E76F51;
+            --success: #10B981;
+            --teal: #2A9D8F;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--secondary) 0%, #0d1b2a 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--orange) 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header .subtitle {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        /* Demo Cards */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .demo-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .demo-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+
+        .demo-card .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .demo-card:nth-child(1) .icon { background: linear-gradient(135deg, var(--teal) 0%, #48cdb8 100%); }
+        .demo-card:nth-child(2) .icon { background: linear-gradient(135deg, var(--purple) 0%, #A78BFA 100%); }
+        .demo-card:nth-child(3) .icon { background: linear-gradient(135deg, var(--gold) 0%, #f4c794 100%); }
+        .demo-card:nth-child(4) .icon { background: linear-gradient(135deg, var(--primary) 0%, var(--orange) 100%); }
+
+        .demo-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .demo-card p {
+            font-size: 14px;
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        .demo-card .badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .cta-section p {
+            opacity: 0.7;
+            margin-bottom: 24px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .footer-logo span {
+            color: var(--primary);
+        }
+
+        .footer p {
+            font-size: 13px;
+            opacity: 0.5;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <span class="header-badge">Démo Interactive</span>
+            <h1>PACIFIK'AI × <span>Air Tahiti</span></h1>
+            <p>4 solutions d'automatisation IA construites pour Air Tahiti, la compagnie inter-îles de Polynésie française.</p>
+            <div class="subtitle">🏝️ 48 destinations • 5 archipels • 7 segments clients</div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-value">48</div>
+                <div class="stat-label">Destinations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Archipels</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">7</div>
+                <div class="stat-label">Segments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">22</div>
+                <div class="stat-label">FAQ Embeddings</div>
+            </div>
+        </div>
+
+        <!-- Demo Cards -->
+        <div class="demo-grid">
+            <a href="index.html" class="demo-card">
+                <div class="icon">🌺</div>
+                <h3>Build 1: Concierge Teva</h3>
+                <p>Chatbot RAG spécialisé sur les 48 destinations de Polynésie. Bagages plongée, Air Pass, horaires inter-îles, service Signature 2026.</p>
+                <span class="badge">Testez le chatbot</span>
+            </a>
+
+            <a href="dashboard.html" class="demo-card">
+                <div class="icon">📊</div>
+                <h3>Build 4: Analyste ROI</h3>
+                <p>Détection d'anomalies sur les 48 routes. Alertes Z-Score, analyse vs Air Moana, opportunités saisonnières (baleines, plongée).</p>
+                <span class="badge">Appuyez sur D pour la démo</span>
+            </a>
+
+            <a href="blog.html" class="demo-card">
+                <div class="icon">📝</div>
+                <h3>Build 3: SEO 48 Îles</h3>
+                <p>Articles SEO + GEO optimisés pour chaque destination. Marquises, Tuamotu, Australes, Gambier, Société - contenu unique par île.</p>
+                <span class="badge">GEO Score: 80/100</span>
+            </a>
+
+            <a href="builds-presentation.html" class="demo-card">
+                <div class="icon">📄</div>
+                <h3>Présentation Commerciale</h3>
+                <p>Document complet avec ROI détaillé, 7 segments clients, stratégie vs Air Moana, et pricing adapté au marché local.</p>
+                <span class="badge">100% personnalisé AT</span>
+            </a>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2>Solutions prêtes à déployer</h2>
+            <p>Ces outils sont fonctionnels et adaptés aux spécificités d'Air Tahiti : réseau inter-îles, concurrence Air Moana, service Signature 2026.</p>
+            <a href="mailto:jordy@pacifikai.com?subject=Air%20Tahiti%20-%20Int%C3%A9ress%C3%A9%20par%20les%20solutions%20IA" class="cta-button">
+                Contacter PACIFIK'AI →
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-logo">PACIFIK'<span>AI</span></div>
+            <p>Automatisation IA pour les entreprises polynésiennes</p>
+            <p style="margin-top: 12px;"><a href="mailto:jordy@pacifikai.com">jordy@pacifikai.com</a> • Papeete, Polynésie française</p>
+            <p style="margin-top: 20px; opacity: 0.3;">© 2026 PACIFIK'AI • Démo créée pour Air Tahiti</p>
+        </footer>
+    </div>
+</body>
+</html>

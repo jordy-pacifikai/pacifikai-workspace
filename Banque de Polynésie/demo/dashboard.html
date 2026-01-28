@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Bancaire - Banque de Polynesie</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --sg-red: #E60028;
+            --sg-red-dark: #B8001F;
+            --sg-black: #1A1A1A;
+            --sg-gray: #4A4A4A;
+            --sg-light: #F5F5F5;
+            --white: #FFFFFF;
+            --success: #27AE60;
+            --warning: #F39C12;
+            --info: #3498DB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: var(--sg-light);
+            color: var(--sg-black);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--sg-black);
+            padding: 2rem 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--sg-red);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .sidebar-logo-text {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 1.5rem;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(230, 0, 40, 0.2);
+            color: white;
+            border-left-color: var(--sg-red);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 1.2rem;
+        }
+
+        .sidebar-section {
+            padding: 1rem 1.5rem 0.5rem;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: var(--sg-black);
+        }
+
+        .header-date {
+            color: var(--sg-gray);
+            font-size: 0.95rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-export {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            color: var(--sg-gray);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .btn-export:hover {
+            border-color: var(--sg-red);
+            color: var(--sg-red);
+        }
+
+        .btn-refresh {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .btn-refresh:hover {
+            background: var(--sg-red-dark);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .kpi-icon.red { background: rgba(230, 0, 40, 0.1); }
+        .kpi-icon.green { background: rgba(39, 174, 96, 0.1); }
+        .kpi-icon.blue { background: rgba(52, 152, 219, 0.1); }
+        .kpi-icon.orange { background: rgba(243, 156, 18, 0.1); }
+
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .kpi-trend.up { color: var(--success); }
+        .kpi-trend.down { color: var(--sg-red); }
+
+        .kpi-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--sg-black);
+            margin-bottom: 0.25rem;
+        }
+
+        .kpi-label {
+            color: var(--sg-gray);
+            font-size: 0.95rem;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-header h3 {
+            font-size: 1.1rem;
+            color: var(--sg-black);
+        }
+
+        .chart-period {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-period button {
+            padding: 6px 14px;
+            border: 1px solid #E0E0E0;
+            background: white;
+            border-radius: 6px;
+            color: var(--sg-gray);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .chart-period button.active, .chart-period button:hover {
+            background: var(--sg-red);
+            color: white;
+            border-color: var(--sg-red);
+        }
+
+        .chart-container {
+            height: 280px;
+        }
+
+        /* Segment Distribution */
+        .segment-list {
+            margin-top: 1rem;
+        }
+
+        .segment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .segment-item:last-child {
+            border-bottom: none;
+        }
+
+        .segment-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .segment-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .segment-name {
+            font-weight: 500;
+        }
+
+        .segment-value {
+            font-weight: 700;
+            color: var(--sg-black);
+        }
+
+        .segment-percent {
+            color: var(--sg-gray);
+            font-size: 0.9rem;
+            margin-left: 8px;
+        }
+
+        /* Performance Table */
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-header h3 {
+            font-size: 1.1rem;
+        }
+
+        .performance-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .performance-table th, .performance-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .performance-table th {
+            color: var(--sg-gray);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .performance-table tr:hover {
+            background: var(--sg-light);
+        }
+
+        .agency-name {
+            font-weight: 600;
+            color: var(--sg-black);
+        }
+
+        .agency-location {
+            font-size: 0.85rem;
+            color: var(--sg-gray);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.excellent { background: rgba(39, 174, 96, 0.1); color: var(--success); }
+        .status-badge.good { background: rgba(52, 152, 219, 0.1); color: var(--info); }
+        .status-badge.average { background: rgba(243, 156, 18, 0.1); color: var(--warning); }
+
+        .progress-bar {
+            width: 100px;
+            height: 8px;
+            background: #E0E0E0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--sg-red);
+            border-radius: 4px;
+        }
+
+        /* Bottom Grid */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .insight-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--sg-black);
+        }
+
+        .insight-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .insight-item:last-child {
+            border-bottom: none;
+        }
+
+        .insight-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .insight-content {
+            flex: 1;
+        }
+
+        .insight-title {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .insight-value {
+            color: var(--sg-gray);
+            font-size: 0.85rem;
+        }
+
+        /* Demo Nav */
+        .demo-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .demo-nav-toggle {
+            width: 60px;
+            height: 60px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(230, 0, 40, 0.4);
+        }
+
+        .demo-nav-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 1rem;
+            min-width: 250px;
+            display: none;
+        }
+
+        .demo-nav-menu.active {
+            display: block;
+        }
+
+        .demo-nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--sg-black);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .demo-nav-menu a:hover {
+            background: var(--sg-light);
+            color: var(--sg-red);
+        }
+
+        .demo-nav-menu a.active {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">BP</div>
+            <div class="sidebar-logo-text">Banque de Polynesie</div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active"><span class="icon">&#128202;</span> Dashboard</a></li>
+            <li><a href="#"><span class="icon">&#128172;</span> Chatbot Analytics</a></li>
+            <li><a href="#"><span class="icon">&#128231;</span> Newsletters</a></li>
+            <li><a href="#"><span class="icon">&#128269;</span> SEO Performance</a></li>
+        </ul>
+
+        <div class="sidebar-section">Gestion</div>
+        <ul class="sidebar-menu">
+            <li><a href="#"><span class="icon">&#127970;</span> Agences</a></li>
+            <li><a href="#"><span class="icon">&#128101;</span> Segments</a></li>
+            <li><a href="#"><span class="icon">&#128176;</span> Produits</a></li>
+        </ul>
+
+        <div class="sidebar-section">Configuration</div>
+        <ul class="sidebar-menu">
+            <li><a href="n8n-visualizer.html"><span class="icon">&#9881;</span> Workflows n8n</a></li>
+            <li><a href="delivery-architecture.html"><span class="icon">&#128274;</span> Securite</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>Dashboard Marketing</h1>
+                <span class="header-date">Janvier 2024 - Donnees en temps reel</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn-export">&#128229; Exporter</button>
+                <button class="btn-refresh">&#8635; Actualiser</button>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon red">&#128100;</div>
+                    <span class="kpi-trend up">&#8593; +12%</span>
+                </div>
+                <div class="kpi-value">847</div>
+                <div class="kpi-label">Nouveaux clients ce mois</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon green">&#128176;</div>
+                    <span class="kpi-trend up">&#8593; +8%</span>
+                </div>
+                <div class="kpi-value">42.3 Mds</div>
+                <div class="kpi-label">Encours credits (XPF)</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon blue">&#128736;</div>
+                    <span class="kpi-trend up">&#8593; +23%</span>
+                </div>
+                <div class="kpi-value">34.7%</div>
+                <div class="kpi-label">Taux conversion digital</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon orange">&#128172;</div>
+                    <span class="kpi-trend down">&#8595; -41%</span>
+                </div>
+                <div class="kpi-value">2,340</div>
+                <div class="kpi-label">Appels call center</div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Evolution des conversions</h3>
+                    <div class="chart-period">
+                        <button>7j</button>
+                        <button class="active">30j</button>
+                        <button>90j</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="conversionsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Repartition par segment</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="segmentChart"></canvas>
+                </div>
+                <div class="segment-list">
+                    <div class="segment-item">
+                        <div class="segment-info">
+                            <div class="segment-color" style="background: #E60028;"></div>
+                            <span class="segment-name">Particuliers</span>
+                        </div>
+                        <div>
+                            <span class="segment-value">18,420</span>
+                            <span class="segment-percent">58%</span>
+                        </div>
+                    </div>
+                    <div class="segment-item">
+                        <div class="segment-info">
+                            <div class="segment-color" style="background: #3498DB;"></div>
+                            <span class="segment-name">Professionnels</span>
+                        </div>
+                        <div>
+                            <span class="segment-value">7,860</span>
+                            <span class="segment-percent">25%</span>
+                        </div>
+                    </div>
+                    <div class="segment-item">
+                        <div class="segment-info">
+                            <div class="segment-color" style="background: #27AE60;"></div>
+                            <span class="segment-name">Entreprises</span>
+                        </div>
+                        <div>
+                            <span class="segment-value">5,420</span>
+                            <span class="segment-percent">17%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3>Performance des agences</h3>
+            </div>
+            <table class="performance-table">
+                <thead>
+                    <tr>
+                        <th>Agence</th>
+                        <th>Nouveaux clients</th>
+                        <th>Taux conversion</th>
+                        <th>Objectif</th>
+                        <th>Performance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="agency-name">Papeete Centre</div>
+                            <div class="agency-location">Tahiti</div>
+                        </td>
+                        <td>156</td>
+                        <td>42.3%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 118%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge excellent">+18%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="agency-name">Punaauia</div>
+                            <div class="agency-location">Tahiti</div>
+                        </td>
+                        <td>124</td>
+                        <td>38.7%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 105%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge good">+5%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="agency-name">Fare Tony</div>
+                            <div class="agency-location">Tahiti</div>
+                        </td>
+                        <td>98</td>
+                        <td>35.2%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 92%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge average">-8%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="agency-name">Raiatea</div>
+                            <div class="agency-location">Iles Sous-le-Vent</div>
+                        </td>
+                        <td>67</td>
+                        <td>41.8%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 112%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge excellent">+12%</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="agency-name">Bora Bora</div>
+                            <div class="agency-location">Iles Sous-le-Vent</div>
+                        </td>
+                        <td>45</td>
+                        <td>44.1%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 108%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="status-badge good">+8%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Bottom Grid -->
+        <div class="bottom-grid">
+            <div class="insight-card">
+                <h3>Top produits demandes (Chatbot)</h3>
+                <div class="insight-item">
+                    <div class="insight-icon" style="background: rgba(230, 0, 40, 0.1);">&#127968;</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Credit immobilier</div>
+                        <div class="insight-value">847 demandes</div>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon" style="background: rgba(52, 152, 219, 0.1);">&#128663;</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Credit auto</div>
+                        <div class="insight-value">523 demandes</div>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon" style="background: rgba(39, 174, 96, 0.1);">&#128179;</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Compte courant</div>
+                        <div class="insight-value">412 demandes</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-card">
+                <h3>Chatbot - Metriques</h3>
+                <div class="insight-item">
+                    <div class="insight-icon" style="background: rgba(230, 0, 40, 0.1);">&#128172;</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Conversations/jour</div>
+                        <div class="insight-value">324 en moyenne</div>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon" style="background: rgba(52, 152, 219, 0.1);">&#128337;</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Temps reponse</div>
+                        <div class="insight-value">2.8 secondes</div>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon" style="background: rgba(39, 174, 96, 0.1);">&#128077;</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Satisfaction</div>
+                        <div class="insight-value">4.6/5 (89%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-card">
+                <h3>Newsletter - Performance</h3>
+                <div class="insight-item">
+                    <div class="insight-icon" style="background: rgba(230, 0, 40, 0.1);">&#128231;</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Taux ouverture</div>
+                        <div class="insight-value">47.2% (+8% vs mois dernier)</div>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon" style="background: rgba(52, 152, 219, 0.1);">&#128279;</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Taux clics</div>
+                        <div class="insight-value">12.4%</div>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon" style="background: rgba(39, 174, 96, 0.1);">&#128176;</div>
+                    <div class="insight-content">
+                        <div class="insight-title">Conversions</div>
+                        <div class="insight-value">89 ce mois</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Demo Nav -->
+    <div class="demo-nav">
+        <button class="demo-nav-toggle" onclick="toggleDemoNav()">&#9776;</button>
+        <div class="demo-nav-menu" id="demoNavMenu">
+            <a href="index.html">Chatbot Landing</a>
+            <a href="builds-presentation.html">4 Builds IA</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="blog.html">Blog Conseil</a>
+            <a href="pricing-strategy.html">Offre & Pricing</a>
+            <a href="n8n-visualizer.html">Workflows n8n</a>
+            <a href="delivery-architecture.html">Architecture</a>
+            <a href="video-script.html">Script Video</a>
+            <a href="demo-hub.html">Hub Demo</a>
+        </div>
+    </div>
+
+    <script>
+        // Conversions Chart
+        const ctx1 = document.getElementById('conversionsChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['1 Jan', '5 Jan', '10 Jan', '15 Jan', '20 Jan', '25 Jan', '30 Jan'],
+                datasets: [
+                    {
+                        label: 'Chatbot',
+                        data: [45, 52, 48, 61, 55, 67, 72],
+                        borderColor: '#E60028',
+                        backgroundColor: 'rgba(230, 0, 40, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Site web',
+                        data: [32, 38, 35, 42, 39, 45, 51],
+                        borderColor: '#3498DB',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Newsletter',
+                        data: [12, 15, 18, 14, 22, 19, 25],
+                        borderColor: '#27AE60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#F0F0F0'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Segment Chart
+        const ctx2 = document.getElementById('segmentChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Particuliers', 'Professionnels', 'Entreprises'],
+                datasets: [{
+                    data: [58, 25, 17],
+                    backgroundColor: ['#E60028', '#3498DB', '#27AE60'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        function toggleDemoNav() {
+            document.getElementById('demoNavMenu').classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('demoNavMenu');
+            const toggle = document.querySelector('.demo-nav-toggle');
+            if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

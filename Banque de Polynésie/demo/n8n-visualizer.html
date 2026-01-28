@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflows n8n - Banque de Polynesie x PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sg-red: #E60028;
+            --sg-red-dark: #B8001F;
+            --sg-black: #1A1A1A;
+            --sg-gray: #4A4A4A;
+            --sg-light: #F5F5F5;
+            --white: #FFFFFF;
+            --n8n-green: #00C853;
+            --n8n-orange: #FF9800;
+            --n8n-purple: #9C27B0;
+            --n8n-blue: #2196F3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: #0D1117;
+            color: white;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(13, 17, 23, 0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--sg-red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--sg-red);
+        }
+
+        .nav-badge {
+            background: var(--n8n-orange);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 4rem 5%;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(230, 0, 40, 0.1) 0%, transparent 100%);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 span {
+            color: var(--n8n-orange);
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.7);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem 5%;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: var(--sg-red);
+            border-color: var(--sg-red);
+            color: white;
+        }
+
+        /* Workflow Container */
+        .workflow-container {
+            padding: 2rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .workflow-panel {
+            display: none;
+        }
+
+        .workflow-panel.active {
+            display: block;
+        }
+
+        /* Workflow Header */
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .workflow-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .workflow-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--sg-red);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .workflow-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .workflow-info p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+        }
+
+        .workflow-meta {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .meta-item {
+            text-align: right;
+        }
+
+        .meta-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Workflow Canvas */
+        .workflow-canvas {
+            background: #161B22;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow-x: auto;
+        }
+
+        .nodes-flow {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: max-content;
+            padding: 1rem 0;
+        }
+
+        .node {
+            background: #21262D;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            min-width: 180px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .node:hover {
+            transform: translateY(-5px);
+            border-color: var(--sg-red);
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+        }
+
+        .node-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .node-icon.webhook { background: var(--n8n-green); }
+        .node-icon.ai { background: var(--n8n-purple); }
+        .node-icon.http { background: var(--n8n-blue); }
+        .node-icon.condition { background: var(--n8n-orange); }
+        .node-icon.email { background: #E91E63; }
+        .node-icon.database { background: #00BCD4; }
+        .node-icon.schedule { background: #795548; }
+        .node-icon.transform { background: #607D8B; }
+
+        .node-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .node-type {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .node-description {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+        }
+
+        .connector {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--sg-red), var(--n8n-orange));
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .connector::after {
+            content: "&#8594;";
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--n8n-orange);
+            font-size: 1.2rem;
+        }
+
+        /* Branch Flow */
+        .branch-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .branch-flow::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .branch-label {
+            font-size: 0.8rem;
+            color: var(--n8n-orange);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Workflow Description */
+        .workflow-description {
+            background: #161B22;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .workflow-description h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .steps-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--sg-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Use Cases */
+        .use-cases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .use-case-card {
+            background: #161B22;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .use-case-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--n8n-orange);
+        }
+
+        .use-case-card p {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Demo Nav */
+        .demo-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .demo-nav-toggle {
+            width: 60px;
+            height: 60px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(230, 0, 40, 0.4);
+        }
+
+        .demo-nav-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: #21262D;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            padding: 1rem;
+            min-width: 250px;
+            display: none;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .demo-nav-menu.active {
+            display: block;
+        }
+
+        .demo-nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .demo-nav-menu a:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .demo-nav-menu a.active {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .workflow-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .workflow-meta {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">BP</div>
+            <div class="logo-text">Banque de <span>Polynesie</span></div>
+        </div>
+        <span class="nav-badge">Workflows n8n</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1>Automatisations <span>n8n</span></h1>
+        <p>Decouvrez les workflows qui alimentent les 4 builds. Chaque automatisation est hebergee sur votre infrastructure pour une securite maximale.</p>
+    </section>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showWorkflow('chatbot')">Chatbot</button>
+        <button class="tab-btn" onclick="showWorkflow('newsletter')">Newsletter</button>
+        <button class="tab-btn" onclick="showWorkflow('seo')">SEO Content</button>
+        <button class="tab-btn" onclick="showWorkflow('analytics')">Analytics</button>
+    </div>
+
+    <!-- Workflow Container -->
+    <div class="workflow-container">
+        <!-- Chatbot Workflow -->
+        <div class="workflow-panel active" id="chatbot">
+            <div class="workflow-header">
+                <div class="workflow-title">
+                    <div class="workflow-icon">&#128172;</div>
+                    <div class="workflow-info">
+                        <h2>Chatbot Bancaire avec Simulation Credit</h2>
+                        <p>Assistant IA 24/7 avec integration simulation et prise RDV</p>
+                    </div>
+                </div>
+                <div class="workflow-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Nodes</div>
+                        <div class="meta-value">12</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Triggers</div>
+                        <div class="meta-value">Webhook</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-canvas">
+                <div class="nodes-flow">
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon webhook">&#128268;</div>
+                            <div>
+                                <div class="node-name">Webhook</div>
+                                <div class="node-type">Trigger</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Reception message client depuis le widget chat</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon ai">&#129302;</div>
+                            <div>
+                                <div class="node-name">Claude AI</div>
+                                <div class="node-type">LLM</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Analyse intention : FAQ, simulation, RDV, agence</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon condition">&#128256;</div>
+                            <div>
+                                <div class="node-name">Router</div>
+                                <div class="node-type">Switch</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Oriente vers le bon traitement</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="branch-flow">
+                        <div>
+                            <div class="branch-label">Simulation Credit</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon http">&#128178;</div>
+                                    <div>
+                                        <div class="node-name">Calcul</div>
+                                        <div class="node-type">Function</div>
+                                    </div>
+                                </div>
+                                <div class="node-description">Calcul mensualites</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="branch-label">Prise RDV</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon database">&#128197;</div>
+                                    <div>
+                                        <div class="node-name">Calendar</div>
+                                        <div class="node-type">API</div>
+                                    </div>
+                                </div>
+                                <div class="node-description">Creneaux agence</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="branch-label">FAQ</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon ai">&#128218;</div>
+                                    <div>
+                                        <div class="node-name">RAG</div>
+                                        <div class="node-type">Vector DB</div>
+                                    </div>
+                                </div>
+                                <div class="node-description">Base FAQ produits</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon ai">&#129302;</div>
+                            <div>
+                                <div class="node-name">Formateur</div>
+                                <div class="node-type">LLM</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Formate la reponse finale</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon webhook">&#128228;</div>
+                            <div>
+                                <div class="node-name">Respond</div>
+                                <div class="node-type">Webhook</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Renvoie au widget chat</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-description">
+                <h3>&#9881; Fonctionnement</h3>
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Reception message</h4>
+                            <p>Le webhook recoit la question du client depuis le widget integre au site</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Analyse intention</h4>
+                            <p>Claude identifie le type de demande : FAQ, simulation, RDV ou localisation</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Traitement specifique</h4>
+                            <p>Selon l'intention, appel au module adapte (calcul, calendrier, base FAQ)</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Reponse formatee</h4>
+                            <p>La reponse est formatee de maniere naturelle et renvoyee au client</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="use-cases">
+                <div class="use-case-card">
+                    <h4>Simulation instantanee</h4>
+                    <p>"Combien je paierais pour 30M sur 20 ans ?" - Reponse en 3 secondes avec taux personnalise</p>
+                </div>
+                <div class="use-case-card">
+                    <h4>Prise de RDV automatique</h4>
+                    <p>"Je veux un RDV pour un credit" - Proposition de creneaux et confirmation immediate</p>
+                </div>
+                <div class="use-case-card">
+                    <h4>FAQ produits</h4>
+                    <p>"Quels documents pour ouvrir un compte ?" - Reponse precise depuis la base de connaissances</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Newsletter Workflow -->
+        <div class="workflow-panel" id="newsletter">
+            <div class="workflow-header">
+                <div class="workflow-title">
+                    <div class="workflow-icon">&#128231;</div>
+                    <div class="workflow-info">
+                        <h2>Newsletter Lifecycle Client</h2>
+                        <p>Emails automatises selon le parcours client</p>
+                    </div>
+                </div>
+                <div class="workflow-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Nodes</div>
+                        <div class="meta-value">15</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Triggers</div>
+                        <div class="meta-value">Schedule + Events</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-canvas">
+                <div class="nodes-flow">
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon schedule">&#128337;</div>
+                            <div>
+                                <div class="node-name">Scheduler</div>
+                                <div class="node-type">Cron</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Declenchement quotidien 8h</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon database">&#128451;</div>
+                            <div>
+                                <div class="node-name">CRM Query</div>
+                                <div class="node-type">Database</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Recupere clients eligibles</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon condition">&#128256;</div>
+                            <div>
+                                <div class="node-name">Segmentation</div>
+                                <div class="node-type">Switch</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Jeunes / Familles / Seniors / Pro</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="branch-flow">
+                        <div>
+                            <div class="branch-label">Bienvenue J+1</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon ai">&#129302;</div>
+                                    <div>
+                                        <div class="node-name">Template</div>
+                                        <div class="node-type">LLM</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="branch-label">Anniversaire</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon ai">&#127874;</div>
+                                    <div>
+                                        <div class="node-name">Template</div>
+                                        <div class="node-type">LLM</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="branch-label">Cross-sell</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon ai">&#128176;</div>
+                                    <div>
+                                        <div class="node-name">Template</div>
+                                        <div class="node-type">LLM</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon email">&#128233;</div>
+                            <div>
+                                <div class="node-name">SendGrid</div>
+                                <div class="node-type">Email</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Envoi email personnalise</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon database">&#128202;</div>
+                            <div>
+                                <div class="node-name">Analytics</div>
+                                <div class="node-type">Log</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Tracking ouvertures/clics</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-description">
+                <h3>&#128231; Types d'emails automatises</h3>
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Email de bienvenue</h4>
+                            <p>J+1 apres ouverture de compte - Presentation des services digitaux</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Anniversaire client</h4>
+                            <p>Offre speciale pour l'anniversaire du client ou de la relation</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Cross-selling intelligent</h4>
+                            <p>Proposition de produits complementaires selon le profil</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Newsletter mensuelle</h4>
+                            <p>Contenu adapte au segment (jeunes, familles, pro...)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO Workflow -->
+        <div class="workflow-panel" id="seo">
+            <div class="workflow-header">
+                <div class="workflow-title">
+                    <div class="workflow-icon">&#128269;</div>
+                    <div class="workflow-info">
+                        <h2>SEO Content Factory</h2>
+                        <p>Generation automatique d'articles optimises pour les recherches locales</p>
+                    </div>
+                </div>
+                <div class="workflow-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Nodes</div>
+                        <div class="meta-value">10</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Output</div>
+                        <div class="meta-value">20+ articles/mois</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-canvas">
+                <div class="nodes-flow">
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon schedule">&#128337;</div>
+                            <div>
+                                <div class="node-name">Scheduler</div>
+                                <div class="node-type">Weekly</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Lancement hebdomadaire</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon http">&#127760;</div>
+                            <div>
+                                <div class="node-name">SEO API</div>
+                                <div class="node-type">HTTP</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Analyse requetes tendance Polynesie</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon ai">&#129302;</div>
+                            <div>
+                                <div class="node-name">Research</div>
+                                <div class="node-type">LLM</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Recherche et structure le contenu</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon ai">&#9997;</div>
+                            <div>
+                                <div class="node-name">Writer</div>
+                                <div class="node-type">LLM</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Redige l'article optimise SEO</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon transform">&#128247;</div>
+                            <div>
+                                <div class="node-name">Media</div>
+                                <div class="node-type">API</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Generation images illustratives</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon http">&#128196;</div>
+                            <div>
+                                <div class="node-name">WordPress</div>
+                                <div class="node-type">CMS</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Publication automatique</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="use-cases">
+                <div class="use-case-card">
+                    <h4>Requetes ciblees</h4>
+                    <p>"Meilleur taux credit immobilier Polynesie 2024" - Articles optimises pour ces recherches</p>
+                </div>
+                <div class="use-case-card">
+                    <h4>Contenu local</h4>
+                    <p>Integration des specificites polynnesiennes : aides, defiscalisation, marche local</p>
+                </div>
+                <div class="use-case-card">
+                    <h4>Publication automatique</h4>
+                    <p>Articles publies directement sur le blog avec images et meta-donnees SEO</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Workflow -->
+        <div class="workflow-panel" id="analytics">
+            <div class="workflow-header">
+                <div class="workflow-title">
+                    <div class="workflow-icon">&#128202;</div>
+                    <div class="workflow-info">
+                        <h2>Analytics & ROI Dashboard</h2>
+                        <p>Collecte et analyse des donnees marketing en temps reel</p>
+                    </div>
+                </div>
+                <div class="workflow-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Nodes</div>
+                        <div class="meta-value">8</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Refresh</div>
+                        <div class="meta-value">15 min</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-canvas">
+                <div class="nodes-flow">
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon schedule">&#128337;</div>
+                            <div>
+                                <div class="node-name">Interval</div>
+                                <div class="node-type">15 min</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Actualisation reguliere</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="branch-flow">
+                        <div>
+                            <div class="branch-label">Chatbot Metrics</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon database">&#128172;</div>
+                                    <div>
+                                        <div class="node-name">Logs</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="branch-label">Email Analytics</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon http">&#128231;</div>
+                                    <div>
+                                        <div class="node-name">SendGrid</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="branch-label">SEO Performance</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon http">&#127760;</div>
+                                    <div>
+                                        <div class="node-name">GSC API</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="branch-label">Website Traffic</div>
+                            <div class="node" style="min-width: 150px;">
+                                <div class="node-header">
+                                    <div class="node-icon http">&#128200;</div>
+                                    <div>
+                                        <div class="node-name">GA4 API</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon transform">&#128736;</div>
+                            <div>
+                                <div class="node-name">Aggregator</div>
+                                <div class="node-type">Transform</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Consolidation des donnees</div>
+                    </div>
+
+                    <div class="connector"></div>
+
+                    <div class="node">
+                        <div class="node-header">
+                            <div class="node-icon database">&#128451;</div>
+                            <div>
+                                <div class="node-name">Dashboard DB</div>
+                                <div class="node-type">PostgreSQL</div>
+                            </div>
+                        </div>
+                        <div class="node-description">Stockage pour visualisation</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="use-cases">
+                <div class="use-case-card">
+                    <h4>KPIs temps reel</h4>
+                    <p>Conversations chatbot, taux conversion, performance agences - actualises toutes les 15 min</p>
+                </div>
+                <div class="use-case-card">
+                    <h4>Alertes automatiques</h4>
+                    <p>Notification si baisse anormale des performances ou pic de demandes</p>
+                </div>
+                <div class="use-case-card">
+                    <h4>Rapports hebdomadaires</h4>
+                    <p>Email automatique avec resume des performances et recommandations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Nav -->
+    <div class="demo-nav">
+        <button class="demo-nav-toggle" onclick="toggleDemoNav()">&#9776;</button>
+        <div class="demo-nav-menu" id="demoNavMenu">
+            <a href="index.html">Chatbot Landing</a>
+            <a href="builds-presentation.html">4 Builds IA</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="blog.html">Blog Conseil</a>
+            <a href="pricing-strategy.html">Offre & Pricing</a>
+            <a href="n8n-visualizer.html" class="active">Workflows n8n</a>
+            <a href="delivery-architecture.html">Architecture</a>
+            <a href="video-script.html">Script Video</a>
+            <a href="demo-hub.html">Hub Demo</a>
+        </div>
+    </div>
+
+    <script>
+        function showWorkflow(id) {
+            // Hide all panels
+            document.querySelectorAll('.workflow-panel').forEach(p => p.classList.remove('active'));
+            // Show selected panel
+            document.getElementById(id).classList.add('active');
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function toggleDemoNav() {
+            document.getElementById('demoNavMenu').classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('demoNavMenu');
+            const toggle = document.querySelector('.demo-nav-toggle');
+            if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub Démo | Tahiti Tourisme x PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --turquoise: #00B5AD;
+            --turquoise-dark: #009690;
+            --turquoise-light: #E6F7F6;
+            --orange: #FF6B35;
+            --orange-dark: #E55A2B;
+            --white: #FFFFFF;
+            --sand: #F5F0E8;
+            --dark: #1A2A3A;
+            --gray: #6B7280;
+            --green: #10B981;
+            --purple: #8B5CF6;
+            --pink: #EC4899;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--turquoise);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .client-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .demo-badge {
+            background: var(--orange);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--white), var(--turquoise));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Stats Banner */
+        .stats-banner {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 900px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--turquoise);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+        }
+
+        /* Main Grid */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title p {
+            opacity: 0.7;
+        }
+
+        /* Demo Cards Grid */
+        .demos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .demo-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--turquoise);
+            box-shadow: 0 20px 40px rgba(0,181,173,0.2);
+        }
+
+        .demo-card.featured {
+            grid-column: span 2;
+        }
+
+        .card-image {
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .demo-card:hover .card-image img {
+            transform: scale(1.1);
+        }
+
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--turquoise);
+            color: var(--white);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .card-badge.orange { background: var(--orange); }
+        .card-badge.purple { background: var(--purple); }
+        .card-badge.green { background: var(--green); }
+        .card-badge.pink { background: var(--pink); }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(0,181,173,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--turquoise);
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .card-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-tag {
+            background: rgba(255,255,255,0.1);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .card-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--turquoise);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--turquoise-dark);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .card-status {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        /* Quick Access */
+        .quick-access {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .quick-item {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.3s;
+        }
+
+        .quick-item:hover {
+            background: rgba(0,181,173,0.2);
+            transform: translateY(-3px);
+        }
+
+        .quick-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--turquoise);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.2rem;
+        }
+
+        .quick-item h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .quick-item span {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-logo i {
+            color: var(--turquoise);
+            font-size: 1.2rem;
+        }
+
+        .footer-logo span {
+            font-weight: 600;
+        }
+
+        .footer p {
+            opacity: 0.5;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .demos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .demo-card.featured {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .demos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-banner {
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-water"></i>
+            </div>
+            <div class="logo-text">
+                <h1>PACIFIK'AI</h1>
+                <span>Solutions IA pour le Pacifique</span>
+            </div>
+        </div>
+        <div class="header-badge">
+            <span class="client-badge">Client : Tahiti Tourisme</span>
+            <span class="demo-badge">Hub Demo</span>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h2>Démo Tahiti Tourisme</h2>
+        <p>Explorez les solutions d'automatisation IA conçues pour la promotion de la destination Polynésie française</p>
+    </section>
+
+    <!-- Stats Banner -->
+    <div class="stats-banner">
+        <div class="stat-item">
+            <div class="stat-value">9</div>
+            <div class="stat-label">Démos disponibles</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">4</div>
+            <div class="stat-label">Builds IA</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">5</div>
+            <div class="stat-label">Langues</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">118</div>
+            <div class="stat-label">Îles couvertes</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="section-title">
+            <h3>Solutions & Démos</h3>
+            <p>Cliquez sur une carte pour explorer la démo</p>
+        </div>
+
+        <!-- Demos Grid -->
+        <div class="demos-grid">
+            <!-- Chatbot - Featured -->
+            <div class="demo-card featured">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1589197331516-4d84b72ebde3?w=800" alt="Bora Bora">
+                    <div class="card-overlay"></div>
+                    <span class="card-badge">Build 1</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon"><i class="fas fa-comments"></i></div>
+                    <h3 class="card-title">Chatbot Guide Polynésie</h3>
+                    <p class="card-description">Assistant virtuel multilingue (FR/EN/JP/ES/DE) avec base de connaissances complète sur les 118 îles. Disponible 24/7 pour répondre aux voyageurs.</p>
+                    <div class="card-features">
+                        <span class="feature-tag">5 langues</span>
+                        <span class="feature-tag">118 îles</span>
+                        <span class="feature-tag">24/7</span>
+                        <span class="feature-tag">IA Claude</span>
+                    </div>
+                    <div class="card-action">
+                        <a href="index.html" class="btn btn-primary">
+                            <i class="fas fa-play"></i> Tester le chatbot
+                        </a>
+                        <span class="card-status">
+                            <span class="status-dot"></span>
+                            Démo interactive
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Builds Presentation -->
+            <div class="demo-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1516815231560-8f41ec531527?w=800" alt="Polynésie">
+                    <div class="card-overlay"></div>
+                    <span class="card-badge orange">4 Builds</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon" style="background: rgba(255,107,53,0.2); color: var(--orange);"><i class="fas fa-layer-group"></i></div>
+                    <h3 class="card-title">Présentation Solutions</h3>
+                    <p class="card-description">Vue d'ensemble des 4 builds IA : Chatbot, Newsletter, Content Factory, Analytics.</p>
+                    <div class="card-features">
+                        <span class="feature-tag">4 solutions</span>
+                        <span class="feature-tag">ROI détaillé</span>
+                    </div>
+                    <div class="card-action">
+                        <a href="builds-presentation.html" class="btn btn-primary">
+                            <i class="fas fa-eye"></i> Explorer
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div class="demo-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800" alt="Dashboard">
+                    <div class="card-overlay"></div>
+                    <span class="card-badge green">Build 4</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon" style="background: rgba(16,185,129,0.2); color: var(--green);"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="card-title">Dashboard Destination</h3>
+                    <p class="card-description">KPIs tourisme temps réel : arrivées, marchés sources, saisonnalité, satisfaction.</p>
+                    <div class="card-features">
+                        <span class="feature-tag">Temps réel</span>
+                        <span class="feature-tag">5 marchés</span>
+                    </div>
+                    <div class="card-action">
+                        <a href="dashboard.html" class="btn btn-primary">
+                            <i class="fas fa-chart-pie"></i> Voir
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog / Content -->
+            <div class="demo-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800" alt="Content">
+                    <div class="card-overlay"></div>
+                    <span class="card-badge purple">Build 3</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon" style="background: rgba(139,92,246,0.2); color: var(--purple);"><i class="fas fa-pen-fancy"></i></div>
+                    <h3 class="card-title">Content Factory</h3>
+                    <p class="card-description">Production automatisée de contenu SEO/GEO : articles, guides, fiches îles.</p>
+                    <div class="card-features">
+                        <span class="feature-tag">500+ articles/an</span>
+                        <span class="feature-tag">SEO</span>
+                    </div>
+                    <div class="card-action">
+                        <a href="blog.html" class="btn btn-primary">
+                            <i class="fas fa-newspaper"></i> Voir
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div class="demo-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800" alt="Pricing">
+                    <div class="card-overlay"></div>
+                    <span class="card-badge pink">Proposition</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon" style="background: rgba(236,72,153,0.2); color: var(--pink);"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <h3 class="card-title">Proposition Commerciale</h3>
+                    <p class="card-description">Pack institutionnel : pricing, ROI attendu, livrables, planning de déploiement.</p>
+                    <div class="card-features">
+                        <span class="feature-tag">8M XPF/an</span>
+                        <span class="feature-tag">ROI +15%</span>
+                    </div>
+                    <div class="card-action">
+                        <a href="pricing-strategy.html" class="btn btn-primary">
+                            <i class="fas fa-euro-sign"></i> Voir
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- n8n Visualizer -->
+            <div class="demo-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800" alt="Workflows">
+                    <div class="card-overlay"></div>
+                    <span class="card-badge">Technique</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon"><i class="fas fa-project-diagram"></i></div>
+                    <h3 class="card-title">Workflows n8n</h3>
+                    <p class="card-description">Visualisation des automatisations : chatbot, newsletter, content, analytics.</p>
+                    <div class="card-features">
+                        <span class="feature-tag">4 workflows</span>
+                        <span class="feature-tag">n8n</span>
+                    </div>
+                    <div class="card-action">
+                        <a href="n8n-visualizer.html" class="btn btn-primary">
+                            <i class="fas fa-cogs"></i> Voir
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture -->
+            <div class="demo-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800" alt="Architecture">
+                    <div class="card-overlay"></div>
+                    <span class="card-badge">Technique</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon"><i class="fas fa-server"></i></div>
+                    <h3 class="card-title">Architecture Technique</h3>
+                    <p class="card-description">Infrastructure cloud, intégrations, sécurité, stack technique complet.</p>
+                    <div class="card-features">
+                        <span class="feature-tag">Cloud</span>
+                        <span class="feature-tag">RGPD</span>
+                    </div>
+                    <div class="card-action">
+                        <a href="delivery-architecture.html" class="btn btn-primary">
+                            <i class="fas fa-layer-group"></i> Voir
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Script -->
+            <div class="demo-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800" alt="Video">
+                    <div class="card-overlay"></div>
+                    <span class="card-badge orange">Script</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon" style="background: rgba(255,107,53,0.2); color: var(--orange);"><i class="fas fa-video"></i></div>
+                    <h3 class="card-title">Script Vidéo</h3>
+                    <p class="card-description">Script de présentation institutionnel pour vidéo de prospection (3-4 min).</p>
+                    <div class="card-features">
+                        <span class="feature-tag">3-4 min</span>
+                        <span class="feature-tag">4 sections</span>
+                    </div>
+                    <div class="card-action">
+                        <a href="video-script.html" class="btn btn-primary">
+                            <i class="fas fa-file-alt"></i> Lire
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div class="quick-access">
+            <div class="section-title">
+                <h3>Accès Rapide</h3>
+                <p>Liens directs vers les fonctionnalités clés</p>
+            </div>
+
+            <div class="quick-grid">
+                <a href="index.html" class="quick-item">
+                    <div class="quick-icon"><i class="fas fa-comment-dots"></i></div>
+                    <h4>Tester le Chatbot</h4>
+                    <span>Poser une question</span>
+                </a>
+                <a href="dashboard.html" class="quick-item">
+                    <div class="quick-icon" style="background: var(--green);"><i class="fas fa-chart-bar"></i></div>
+                    <h4>Voir les KPIs</h4>
+                    <span>Dashboard temps réel</span>
+                </a>
+                <a href="pricing-strategy.html" class="quick-item">
+                    <div class="quick-icon" style="background: var(--orange);"><i class="fas fa-file-invoice"></i></div>
+                    <h4>Proposition</h4>
+                    <span>8M XPF/an</span>
+                </a>
+                <a href="mailto:contact@pacifikai.pf?subject=Demo%20Tahiti%20Tourisme" class="quick-item">
+                    <div class="quick-icon" style="background: var(--purple);"><i class="fas fa-envelope"></i></div>
+                    <h4>Contact</h4>
+                    <span>Planifier un RDV</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">
+            <i class="fas fa-robot"></i>
+            <span>PACIFIK'AI</span>
+        </div>
+        <p>Solutions d'automatisation IA pour le Pacifique - Demo Tahiti Tourisme</p>
+    </footer>
+</body>
+</html>

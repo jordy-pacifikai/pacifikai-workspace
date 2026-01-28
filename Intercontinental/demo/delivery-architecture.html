@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Technique | InterContinental - PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #B8860B;
+            --gold-light: #D4A73A;
+            --bordeaux: #722F37;
+            --bordeaux-dark: #5A252C;
+            --white: #FFFFFF;
+            --cream: #FAF8F5;
+            --charcoal: #2D2D2D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--cream);
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .demo-badge {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--gold);
+            color: var(--white);
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 60px;
+            background: var(--white);
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: var(--charcoal);
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+
+        .nav-links a {
+            color: var(--charcoal);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--gold);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--charcoal), #1A1A2E);
+            color: var(--white);
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--white);
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            opacity: 0.7;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Architecture Section */
+        .architecture-section {
+            padding: 80px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            color: var(--gold);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--charcoal);
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            margin-bottom: 60px;
+        }
+
+        .diagram-title {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 40px;
+            color: var(--charcoal);
+        }
+
+        /* Layers */
+        .architecture-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .layer {
+            display: flex;
+            align-items: stretch;
+            gap: 20px;
+        }
+
+        .layer-label {
+            width: 150px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bordeaux);
+            color: var(--white);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .layer-content {
+            flex: 1;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .component {
+            flex: 1;
+            min-width: 200px;
+            background: var(--cream);
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .component:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .component-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 28px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .component-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--charcoal);
+        }
+
+        .component-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .component-tech {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 4px 10px;
+            background: var(--gold);
+            color: var(--white);
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Connector Lines */
+        .connector {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .connector-line {
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--gold), var(--bordeaux));
+            position: relative;
+        }
+
+        .connector-line:after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: -6px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 10px solid var(--bordeaux);
+        }
+
+        /* Integration Details */
+        .integrations-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .integration-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .integration-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .integration-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--gold), var(--bordeaux));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .integration-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--charcoal);
+        }
+
+        .integration-list {
+            list-style: none;
+        }
+
+        .integration-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .integration-list li:last-child {
+            border-bottom: none;
+        }
+
+        .integration-check {
+            width: 18px;
+            height: 18px;
+            background: #27AE60;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 10px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Data Flow */
+        .data-flow-section {
+            background: var(--charcoal);
+            color: var(--white);
+            padding: 80px 60px;
+        }
+
+        .data-flow-section .section-badge {
+            color: var(--gold);
+        }
+
+        .data-flow-section .section-title {
+            color: var(--white);
+        }
+
+        .data-flow-section .section-subtitle {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .flow-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .flow-step {
+            text-align: center;
+        }
+
+        .flow-box {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .flow-box:hover {
+            border-color: var(--gold);
+            background: rgba(184, 134, 11, 0.1);
+        }
+
+        .flow-box-icon {
+            font-size: 36px;
+        }
+
+        .flow-box-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .flow-step-label {
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        .flow-arrow {
+            font-size: 24px;
+            color: var(--gold);
+        }
+
+        /* Security Section */
+        .security-section {
+            padding: 80px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .security-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .security-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(184, 134, 11, 0.1), rgba(114, 47, 55, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+
+        .security-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--charcoal);
+        }
+
+        .security-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Tech Stack */
+        .tech-stack-section {
+            background: var(--cream);
+            padding: 80px 60px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .tech-item {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 25px 15px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .tech-item-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .tech-item-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--charcoal);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--charcoal);
+            color: var(--white);
+            padding: 40px 60px;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+        }
+
+        @media (max-width: 1024px) {
+            .integrations-grid {
+                grid-template-columns: 1fr;
+            }
+            .security-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .tech-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .layer {
+                flex-direction: column;
+            }
+            .layer-label {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .security-grid, .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .flow-diagram {
+                flex-direction: column;
+            }
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">IC</div>
+            <span class="logo-text">InterContinental</span>
+        </div>
+        <nav class="nav-links">
+            <a href="demo-hub.html">Hub</a>
+            <a href="builds-presentation.html">Builds IA</a>
+            <a href="n8n-visualizer.html">Workflows</a>
+            <a href="delivery-architecture.html" class="active">Architecture</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-badge">Documentation Technique</span>
+        <h1 class="hero-title">Architecture de Delivery</h1>
+        <p class="hero-subtitle">Infrastructure cloud-native, securisee et scalable pour vos 3 resorts en Polynesie.</p>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="architecture-section">
+        <div class="section-header">
+            <span class="section-badge">Vue d'ensemble</span>
+            <h2 class="section-title">Architecture Multi-couches</h2>
+            <p class="section-subtitle">Une stack moderne et robuste pour garantir performance et fiabilite.</p>
+        </div>
+
+        <div class="architecture-diagram">
+            <h3 class="diagram-title">Diagramme d'Architecture</h3>
+
+            <div class="architecture-layers">
+                <!-- Frontend Layer -->
+                <div class="layer">
+                    <div class="layer-label">Frontend<br>Clients</div>
+                    <div class="layer-content">
+                        <div class="component">
+                            <div class="component-icon">&#127760;</div>
+                            <div class="component-name">Site Web IC</div>
+                            <div class="component-desc">Widget chatbot embarque</div>
+                            <span class="component-tech">JavaScript SDK</span>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128241;</div>
+                            <div class="component-name">App Mobile</div>
+                            <div class="component-desc">Integration native</div>
+                            <span class="component-tech">React Native</span>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128172;</div>
+                            <div class="component-name">WhatsApp</div>
+                            <div class="component-desc">Canal messaging</div>
+                            <span class="component-tech">Meta Business API</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connector"><div class="connector-line"></div></div>
+
+                <!-- API Gateway Layer -->
+                <div class="layer">
+                    <div class="layer-label">API<br>Gateway</div>
+                    <div class="layer-content">
+                        <div class="component">
+                            <div class="component-icon">&#128274;</div>
+                            <div class="component-name">Kong Gateway</div>
+                            <div class="component-desc">Rate limiting, auth, routing</div>
+                            <span class="component-tech">Hostinger VPS</span>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128736;</div>
+                            <div class="component-name">Webhook Manager</div>
+                            <div class="component-desc">Gestion des endpoints</div>
+                            <span class="component-tech">n8n Webhooks</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connector"><div class="connector-line"></div></div>
+
+                <!-- Automation Layer -->
+                <div class="layer">
+                    <div class="layer-label">Automation<br>Engine</div>
+                    <div class="layer-content">
+                        <div class="component">
+                            <div class="component-icon">&#9881;</div>
+                            <div class="component-name">n8n Self-hosted</div>
+                            <div class="component-desc">Orchestration workflows</div>
+                            <span class="component-tech">Docker + PostgreSQL</span>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#129302;</div>
+                            <div class="component-name">Claude AI</div>
+                            <div class="component-desc">NLU & Generation</div>
+                            <span class="component-tech">Anthropic API</span>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128202;</div>
+                            <div class="component-name">Analytics Engine</div>
+                            <div class="component-desc">KPIs calculation</div>
+                            <span class="component-tech">Custom Node</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connector"><div class="connector-line"></div></div>
+
+                <!-- Data Layer -->
+                <div class="layer">
+                    <div class="layer-label">Data<br>Layer</div>
+                    <div class="layer-content">
+                        <div class="component">
+                            <div class="component-icon">&#128451;</div>
+                            <div class="component-name">Supabase</div>
+                            <div class="component-desc">FAQ, embeddings, logs</div>
+                            <span class="component-tech">PostgreSQL + pgvector</span>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128203;</div>
+                            <div class="component-name">Airtable CRM</div>
+                            <div class="component-desc">Guests, reservations</div>
+                            <span class="component-tech">REST API</span>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#127970;</div>
+                            <div class="component-name">PMS Opera</div>
+                            <div class="component-desc">Donnees hotel</div>
+                            <span class="component-tech">Oracle Cloud API</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integrations -->
+    <section class="architecture-section" style="padding-top: 0;">
+        <div class="section-header">
+            <span class="section-badge">Integrations</span>
+            <h2 class="section-title">Connexions Systemes</h2>
+        </div>
+
+        <div class="integrations-grid">
+            <div class="integration-card">
+                <div class="integration-header">
+                    <div class="integration-icon">&#127970;</div>
+                    <h3 class="integration-title">PMS Opera</h3>
+                </div>
+                <ul class="integration-list">
+                    <li><span class="integration-check">&#10003;</span> Synchronisation reservations temps reel</li>
+                    <li><span class="integration-check">&#10003;</span> Profils guests et preferences</li>
+                    <li><span class="integration-check">&#10003;</span> Disponibilites chambres</li>
+                    <li><span class="integration-check">&#10003;</span> Tarifs et packages</li>
+                    <li><span class="integration-check">&#10003;</span> Check-in / Check-out status</li>
+                </ul>
+            </div>
+
+            <div class="integration-card">
+                <div class="integration-header">
+                    <div class="integration-icon">&#128451;</div>
+                    <h3 class="integration-title">Supabase</h3>
+                </div>
+                <ul class="integration-list">
+                    <li><span class="integration-check">&#10003;</span> Base FAQ multilingue (5 langues)</li>
+                    <li><span class="integration-check">&#10003;</span> Vector store pour RAG</li>
+                    <li><span class="integration-check">&#10003;</span> Logs conversations chatbot</li>
+                    <li><span class="integration-check">&#10003;</span> Historique KPIs</li>
+                    <li><span class="integration-check">&#10003;</span> Backup automatique quotidien</li>
+                </ul>
+            </div>
+
+            <div class="integration-card">
+                <div class="integration-header">
+                    <div class="integration-icon">&#128203;</div>
+                    <h3 class="integration-title">Airtable CRM</h3>
+                </div>
+                <ul class="integration-list">
+                    <li><span class="integration-check">&#10003;</span> Segmentation clients automatique</li>
+                    <li><span class="integration-check">&#10003;</span> Historique interactions</li>
+                    <li><span class="integration-check">&#10003;</span> Preferences & tags</li>
+                    <li><span class="integration-check">&#10003;</span> Pipeline upselling</li>
+                    <li><span class="integration-check">&#10003;</span> Rapports marketing</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Flow -->
+    <section class="data-flow-section">
+        <div class="section-header">
+            <span class="section-badge">Flux de Donnees</span>
+            <h2 class="section-title">Parcours d'une Requete Chatbot</h2>
+            <p class="section-subtitle">De la question client a la reponse personnalisee en moins de 2 secondes.</p>
+        </div>
+
+        <div class="flow-diagram">
+            <div class="flow-step">
+                <div class="flow-box">
+                    <span class="flow-box-icon">&#128172;</span>
+                    <span class="flow-box-label">Message</span>
+                </div>
+                <span class="flow-step-label">Client envoie</span>
+            </div>
+
+            <span class="flow-arrow">&#10140;</span>
+
+            <div class="flow-step">
+                <div class="flow-box">
+                    <span class="flow-box-icon">&#127760;</span>
+                    <span class="flow-box-label">Detect Lang</span>
+                </div>
+                <span class="flow-step-label">Identification</span>
+            </div>
+
+            <span class="flow-arrow">&#10140;</span>
+
+            <div class="flow-step">
+                <div class="flow-box">
+                    <span class="flow-box-icon">&#128269;</span>
+                    <span class="flow-box-label">RAG Search</span>
+                </div>
+                <span class="flow-step-label">Contexte FAQ</span>
+            </div>
+
+            <span class="flow-arrow">&#10140;</span>
+
+            <div class="flow-step">
+                <div class="flow-box">
+                    <span class="flow-box-icon">&#129302;</span>
+                    <span class="flow-box-label">Claude AI</span>
+                </div>
+                <span class="flow-step-label">Generation</span>
+            </div>
+
+            <span class="flow-arrow">&#10140;</span>
+
+            <div class="flow-step">
+                <div class="flow-box">
+                    <span class="flow-box-icon">&#128232;</span>
+                    <span class="flow-box-label">Response</span>
+                </div>
+                <span class="flow-step-label">Envoi client</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security -->
+    <section class="security-section">
+        <div class="section-header">
+            <span class="section-badge">Securite</span>
+            <h2 class="section-title">Conformite & Protection</h2>
+        </div>
+
+        <div class="security-grid">
+            <div class="security-card">
+                <div class="security-icon">&#128274;</div>
+                <h4 class="security-title">Chiffrement</h4>
+                <p class="security-desc">TLS 1.3 en transit, AES-256 au repos pour toutes les donnees.</p>
+            </div>
+            <div class="security-card">
+                <div class="security-icon">&#128100;</div>
+                <h4 class="security-title">RGPD Compliant</h4>
+                <p class="security-desc">Consentement, droit a l'oubli, portabilite des donnees.</p>
+            </div>
+            <div class="security-card">
+                <div class="security-icon">&#128170;</div>
+                <h4 class="security-title">SLA 99.9%</h4>
+                <p class="security-desc">Infrastructure redondante avec failover automatique.</p>
+            </div>
+            <div class="security-card">
+                <div class="security-icon">&#128221;</div>
+                <h4 class="security-title">Audit Logs</h4>
+                <p class="security-desc">Tracabilite complete de toutes les actions systeme.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="tech-stack-section">
+        <div class="section-header">
+            <span class="section-badge">Technologies</span>
+            <h2 class="section-title">Stack Technique</h2>
+        </div>
+
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-item-icon">&#9881;</div>
+                <div class="tech-item-name">n8n</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#129302;</div>
+                <div class="tech-item-name">Claude API</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#128451;</div>
+                <div class="tech-item-name">Supabase</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#128203;</div>
+                <div class="tech-item-name">Airtable</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#128231;</div>
+                <div class="tech-item-name">Brevo</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#127760;</div>
+                <div class="tech-item-name">WordPress</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#128172;</div>
+                <div class="tech-item-name">WhatsApp</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#128225;</div>
+                <div class="tech-item-name">Slack</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#127970;</div>
+                <div class="tech-item-name">Opera PMS</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#128187;</div>
+                <div class="tech-item-name">Hostinger VPS</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#128051;</div>
+                <div class="tech-item-name">Docker</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-icon">&#128202;</div>
+                <div class="tech-item-name">PostgreSQL</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">Demo PACIFIK'AI - Architecture technique pour InterContinental Tahiti & Bora Bora</p>
+    </footer>
+</body>
+</html>

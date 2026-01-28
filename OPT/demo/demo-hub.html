@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub Demo - OPT Polynésie | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --opt-blue: #0066B3;
+            --opt-blue-dark: #004d87;
+            --opt-blue-light: #e0f2fe;
+            --opt-orange: #FF6600;
+            --opt-orange-dark: #cc5200;
+            --opt-orange-light: #fff7ed;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --green: #22c55e;
+            --green-light: #f0fdf4;
+            --purple: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-900);
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-orange));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 0.85rem;
+        }
+
+        .nav-badge {
+            background: var(--opt-orange);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--gray-900) 0%, rgba(0,102,179,0.15) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="40" fill="rgba(0,102,179,0.1)"/><circle cx="90" cy="90" r="50" fill="rgba(255,102,0,0.08)"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,102,0,0.2);
+            border: 1px solid var(--opt-orange);
+            color: var(--opt-orange);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--white), var(--gray-300));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray-300);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--opt-orange);
+        }
+
+        .hero-stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-400);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title p {
+            color: var(--gray-400);
+        }
+
+        /* Demo Grid */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .demo-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--opt-blue);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .demo-card.featured {
+            border-color: var(--opt-orange);
+            background: rgba(255,102,0,0.05);
+        }
+
+        .demo-card.featured:hover {
+            border-color: var(--opt-orange);
+            background: rgba(255,102,0,0.1);
+        }
+
+        .demo-card-image {
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .demo-card-image.blue {
+            background: linear-gradient(135deg, rgba(0,102,179,0.2), rgba(0,102,179,0.1));
+        }
+
+        .demo-card-image.orange {
+            background: linear-gradient(135deg, rgba(255,102,0,0.2), rgba(255,102,0,0.1));
+        }
+
+        .demo-card-image.green {
+            background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.1));
+        }
+
+        .demo-card-image.purple {
+            background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.1));
+        }
+
+        .demo-card-image.dark {
+            background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--opt-orange);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .demo-card-content {
+            padding: 1.5rem;
+        }
+
+        .demo-card-tag {
+            display: inline-block;
+            background: rgba(0,102,179,0.2);
+            color: var(--opt-blue);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .demo-card-tag.orange {
+            background: rgba(255,102,0,0.2);
+            color: var(--opt-orange);
+        }
+
+        .demo-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-card p {
+            font-size: 0.9rem;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .demo-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .demo-card-meta {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .demo-card-link {
+            color: var(--opt-orange);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Quick Links */
+        .quick-links {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .quick-links h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .quick-link {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--gray-300);
+            transition: all 0.3s;
+        }
+
+        .quick-link:hover {
+            background: var(--opt-blue);
+            color: white;
+        }
+
+        .quick-link-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-link-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(0,102,179,0.15), rgba(255,102,0,0.1));
+            border: 1px solid rgba(0,102,179,0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .info-box-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--opt-orange);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            flex-shrink: 0;
+        }
+
+        .info-box-content h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-box-content p {
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+
+        .info-box-cta {
+            display: inline-block;
+            background: var(--opt-orange);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .info-box-cta:hover {
+            background: var(--opt-orange-dark);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--gray-400);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--opt-orange);
+            text-decoration: none;
+        }
+
+        @media (max-width: 1024px) {
+            .demo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-links-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-stats {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-links-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .info-box {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">
+            <div class="logo-icon">OPT</div>
+            <span>Demo OPT</span>
+        </a>
+        <span class="nav-badge">PACIFIK'AI DEMO</span>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">DEMONSTRATION COMPLETE</span>
+            <h1>Hub Demo OPT Polynésie</h1>
+            <p>Explorez toutes les démonstrations préparées pour OPT : chatbot IA, dashboard télécom, workflows n8n, architecture technique et proposition commerciale.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">9</div>
+                    <div class="hero-stat-label">Pages de démo</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">4</div>
+                    <div class="hero-stat-label">Builds IA</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">5M</div>
+                    <div class="hero-stat-label">XPF pack complet</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <div class="section-title">
+            <h2>Toutes les démonstrations</h2>
+            <p>Cliquez sur une carte pour explorer chaque partie de la proposition</p>
+        </div>
+
+        <div class="demo-grid">
+            <!-- Landing Page -->
+            <a href="index.html" class="demo-card featured">
+                <div class="demo-card-image blue">
+                    <span class="featured-badge">POINT D'ENTREE</span>
+                    💬
+                </div>
+                <div class="demo-card-content">
+                    <span class="demo-card-tag">LANDING PAGE</span>
+                    <h3>Site OPT + Chatbot IA</h3>
+                    <p>Landing page avec assistant IA intégré. Démonstration interactive du chatbot SAV.</p>
+                    <div class="demo-card-footer">
+                        <span class="demo-card-meta">Page principale</span>
+                        <span class="demo-card-link">Voir →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Builds Presentation -->
+            <a href="builds-presentation.html" class="demo-card">
+                <div class="demo-card-image orange">
+                    🚀
+                </div>
+                <div class="demo-card-content">
+                    <span class="demo-card-tag orange">4 BUILDS</span>
+                    <h3>Présentation des 4 Builds</h3>
+                    <p>Chatbot SAV, Newsletter Lifecycle, SEO Content Factory, ROI Analyst - détails et métriques.</p>
+                    <div class="demo-card-footer">
+                        <span class="demo-card-meta">Solutions IA</span>
+                        <span class="demo-card-link">Voir →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Dashboard -->
+            <a href="dashboard.html" class="demo-card">
+                <div class="demo-card-image green">
+                    📊
+                </div>
+                <div class="demo-card-content">
+                    <span class="demo-card-tag">ANALYTICS</span>
+                    <h3>Dashboard Télécom</h3>
+                    <p>KPIs temps réel : abonnés, churn, ARPU, NPS. Couverture par archipel et alertes.</p>
+                    <div class="demo-card-footer">
+                        <span class="demo-card-meta">Visualisation</span>
+                        <span class="demo-card-link">Voir →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Blog -->
+            <a href="blog.html" class="demo-card">
+                <div class="demo-card-image blue">
+                    📝
+                </div>
+                <div class="demo-card-content">
+                    <span class="demo-card-tag">CONTENT</span>
+                    <h3>Blog Tech & Digital</h3>
+                    <p>Articles SEO générés automatiquement : fibre, forfaits, couverture îles éloignées.</p>
+                    <div class="demo-card-footer">
+                        <span class="demo-card-meta">SEO Factory</span>
+                        <span class="demo-card-link">Voir →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- n8n Visualizer -->
+            <a href="n8n-visualizer.html" class="demo-card">
+                <div class="demo-card-image dark">
+                    ⚙️
+                </div>
+                <div class="demo-card-content">
+                    <span class="demo-card-tag">WORKFLOWS</span>
+                    <h3>Workflows n8n</h3>
+                    <p>Visualisation des automatisations : chatbot, newsletter, churn prediction, alertes réseau.</p>
+                    <div class="demo-card-footer">
+                        <span class="demo-card-meta">Technique</span>
+                        <span class="demo-card-link">Voir →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Architecture -->
+            <a href="delivery-architecture.html" class="demo-card">
+                <div class="demo-card-image purple">
+                    🏗️
+                </div>
+                <div class="demo-card-content">
+                    <span class="demo-card-tag">TECHNIQUE</span>
+                    <h3>Architecture Système</h3>
+                    <p>Stack technique complète : n8n, Supabase, Claude API. Intégration BSS/OSS possible.</p>
+                    <div class="demo-card-footer">
+                        <span class="demo-card-meta">Infrastructure</span>
+                        <span class="demo-card-link">Voir →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Pricing -->
+            <a href="pricing-strategy.html" class="demo-card featured">
+                <div class="demo-card-image orange">
+                    <span class="featured-badge">PROPOSITION</span>
+                    💰
+                </div>
+                <div class="demo-card-content">
+                    <span class="demo-card-tag orange">COMMERCIAL</span>
+                    <h3>Proposition & Tarifs</h3>
+                    <p>Pack Business 5M XPF : ROI, timeline déploiement, ce qui est inclus, projections.</p>
+                    <div class="demo-card-footer">
+                        <span class="demo-card-meta">Offre commerciale</span>
+                        <span class="demo-card-link">Voir →</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Video Script -->
+            <a href="video-script.html" class="demo-card">
+                <div class="demo-card-image green">
+                    🎬
+                </div>
+                <div class="demo-card-content">
+                    <span class="demo-card-tag">PROSPECTION</span>
+                    <h3>Script Vidéo</h3>
+                    <p>Script 2min30 personnalisé pour OPT. Points clés, structure, notes de production.</p>
+                    <div class="demo-card-footer">
+                        <span class="demo-card-meta">Outreach</span>
+                        <span class="demo-card-link">Voir →</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="quick-links">
+            <h3>🔗 Accès rapide</h3>
+            <div class="quick-links-grid">
+                <a href="index.html" class="quick-link">
+                    <div class="quick-link-icon">💬</div>
+                    <div class="quick-link-text">Tester le Chatbot</div>
+                </a>
+                <a href="builds-presentation.html" class="quick-link">
+                    <div class="quick-link-icon">📋</div>
+                    <div class="quick-link-text">Voir les 4 Builds</div>
+                </a>
+                <a href="pricing-strategy.html" class="quick-link">
+                    <div class="quick-link-icon">💰</div>
+                    <div class="quick-link-text">Voir les Tarifs</div>
+                </a>
+                <a href="dashboard.html" class="quick-link">
+                    <div class="quick-link-icon">📊</div>
+                    <div class="quick-link-text">Voir le Dashboard</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <div class="info-box-icon">🎯</div>
+            <div class="info-box-content">
+                <h3>Cette démo est personnalisée pour OPT Polynésie</h3>
+                <p>Chaque page a été conçue en tenant compte des spécificités d'OPT : 118 îles à connecter, concurrence Vodafone, services mobile Vini, internet Mana et postal. Planifions un call pour discuter de comment adapter ces solutions à vos besoins précis.</p>
+                <a href="#" class="info-box-cta">Planifier un appel</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Demo créée par <a href="#">PACIFIK'AI</a> - Agence d'automatisation IA en Polynésie française<br>
+        Spécialiste marketing automation pour entreprises locales et régionales</p>
+    </footer>
+</body>
+</html>

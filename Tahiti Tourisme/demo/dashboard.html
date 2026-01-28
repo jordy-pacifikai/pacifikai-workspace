@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Destination | Tahiti Tourisme Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --turquoise: #00B5AD;
+            --turquoise-dark: #009690;
+            --turquoise-light: #E6F7F6;
+            --orange: #FF6B35;
+            --white: #FFFFFF;
+            --sand: #F5F0E8;
+            --dark: #1A2A3A;
+            --gray: #6B7280;
+            --green: #10B981;
+            --red: #EF4444;
+            --purple: #8B5CF6;
+            --yellow: #F59E0B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #F0F4F8;
+            color: var(--dark);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--turquoise) 0%, var(--turquoise-dark) 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--white);
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon i {
+            color: var(--turquoise);
+            font-size: 1.3rem;
+        }
+
+        .logo h1 {
+            font-size: 1.3rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .date-range {
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+        }
+
+        .demo-badge {
+            background: var(--orange);
+            color: var(--white);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--white);
+            padding: 1.5rem;
+            border-right: 1px solid #E5E7EB;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--turquoise-light);
+            color: var(--turquoise);
+        }
+
+        .sidebar-menu a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title h2 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .page-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn {
+            background: var(--turquoise);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: var(--turquoise-dark);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .kpi-icon.blue { background: var(--turquoise-light); color: var(--turquoise); }
+        .kpi-icon.green { background: #D1FAE5; color: var(--green); }
+        .kpi-icon.orange { background: #FEF3C7; color: var(--yellow); }
+        .kpi-icon.purple { background: #EDE9FE; color: var(--purple); }
+
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .kpi-trend.up { color: var(--green); }
+        .kpi-trend.down { color: var(--red); }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1;
+        }
+
+        .kpi-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-header h3 {
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-tab {
+            background: var(--sand);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chart-tab.active {
+            background: var(--turquoise);
+            color: var(--white);
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Markets Table */
+        .markets-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .markets-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .markets-table th,
+        .markets-table td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .markets-table th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .market-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .market-flag {
+            font-size: 1.5rem;
+        }
+
+        .market-name {
+            font-weight: 500;
+        }
+
+        .market-share {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .progress-bar {
+            width: 150px;
+            height: 8px;
+            background: var(--sand);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .trend-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .trend-badge.up {
+            background: #D1FAE5;
+            color: var(--green);
+        }
+
+        .trend-badge.down {
+            background: #FEE2E2;
+            color: var(--red);
+        }
+
+        /* Season Grid */
+        .season-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .season-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .season-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .season-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .season-icon.high {
+            background: #FEF3C7;
+        }
+
+        .season-icon.low {
+            background: #DBEAFE;
+        }
+
+        .season-info h4 {
+            font-size: 1rem;
+            color: var(--dark);
+        }
+
+        .season-info span {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .season-months {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .month-tag {
+            background: var(--sand);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--dark);
+        }
+
+        .month-tag.active {
+            background: var(--turquoise);
+            color: var(--white);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .season-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-water"></i>
+            </div>
+            <h1>Tahiti Tourisme</h1>
+        </div>
+        <div class="header-actions">
+            <select class="date-range">
+                <option>Janvier 2026</option>
+                <option>Décembre 2025</option>
+                <option>Novembre 2025</option>
+                <option>Année 2025</option>
+            </select>
+            <span class="demo-badge">Demo PACIFIK'AI</span>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Navigation</div>
+                <ul class="sidebar-menu">
+                    <li><a href="demo-hub.html"><i class="fas fa-home"></i> Hub Demo</a></li>
+                    <li><a href="dashboard.html" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                    <li><a href="index.html"><i class="fas fa-comments"></i> Chatbot</a></li>
+                    <li><a href="blog.html"><i class="fas fa-newspaper"></i> Contenu</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Analytics</div>
+                <ul class="sidebar-menu">
+                    <li><a href="#"><i class="fas fa-users"></i> Visiteurs</a></li>
+                    <li><a href="#"><i class="fas fa-globe"></i> Marchés</a></li>
+                    <li><a href="#"><i class="fas fa-hotel"></i> Hébergements</a></li>
+                    <li><a href="#"><i class="fas fa-plane"></i> Transport</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Configuration</div>
+                <ul class="sidebar-menu">
+                    <li><a href="n8n-visualizer.html"><i class="fas fa-cogs"></i> Workflows</a></li>
+                    <li><a href="pricing-strategy.html"><i class="fas fa-file-invoice"></i> Proposition</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Dashboard Destination</h2>
+                    <p>Indicateurs clés du tourisme en Polynésie française</p>
+                </div>
+                <button class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    Actualiser
+                </button>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon blue">
+                            <i class="fas fa-plane-arrival"></i>
+                        </div>
+                        <span class="kpi-trend up">
+                            <i class="fas fa-arrow-up"></i> +12%
+                        </span>
+                    </div>
+                    <div class="kpi-value">287,450</div>
+                    <div class="kpi-label">Visiteurs 2025</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon green">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <span class="kpi-trend up">
+                            <i class="fas fa-arrow-up"></i> +0.5j
+                        </span>
+                    </div>
+                    <div class="kpi-value">11.2</div>
+                    <div class="kpi-label">Durée moyenne (jours)</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon orange">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <span class="kpi-trend up">
+                            <i class="fas fa-arrow-up"></i> +8%
+                        </span>
+                    </div>
+                    <div class="kpi-value">485K</div>
+                    <div class="kpi-label">Dépense moy. (XPF)</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <div class="kpi-icon purple">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <span class="kpi-trend up">
+                            <i class="fas fa-arrow-up"></i> +3pts
+                        </span>
+                    </div>
+                    <div class="kpi-value">72</div>
+                    <div class="kpi-label">NPS (Net Promoter Score)</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Évolution des arrivées</h3>
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">12 mois</button>
+                            <button class="chart-tab">3 ans</button>
+                            <button class="chart-tab">5 ans</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="arrivalsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Répartition par archipel</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="archipelChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Markets Table -->
+            <div class="markets-section">
+                <div class="chart-header">
+                    <h3>Performance par marché source</h3>
+                </div>
+                <table class="markets-table">
+                    <thead>
+                        <tr>
+                            <th>Marché</th>
+                            <th>Visiteurs</th>
+                            <th>Part de marché</th>
+                            <th>Durée moy.</th>
+                            <th>Tendance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="market-info">
+                                    <span class="market-flag">🇺🇸</span>
+                                    <div>
+                                        <div class="market-name">États-Unis</div>
+                                        <div class="market-share">Californie, NY, Texas</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>89,420</strong></td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 31%; background: var(--turquoise);"></div>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--gray);">31%</span>
+                            </td>
+                            <td>12.5 jours</td>
+                            <td><span class="trend-badge up"><i class="fas fa-arrow-up"></i> +15%</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="market-info">
+                                    <span class="market-flag">🇫🇷</span>
+                                    <div>
+                                        <div class="market-name">France</div>
+                                        <div class="market-share">Métropole</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>74,850</strong></td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 26%; background: var(--orange);"></div>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--gray);">26%</span>
+                            </td>
+                            <td>14.2 jours</td>
+                            <td><span class="trend-badge up"><i class="fas fa-arrow-up"></i> +8%</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="market-info">
+                                    <span class="market-flag">🇯🇵</span>
+                                    <div>
+                                        <div class="market-name">Japon</div>
+                                        <div class="market-share">Tokyo, Osaka</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>43,120</strong></td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 15%; background: var(--purple);"></div>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--gray);">15%</span>
+                            </td>
+                            <td>8.5 jours</td>
+                            <td><span class="trend-badge up"><i class="fas fa-arrow-up"></i> +22%</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="market-info">
+                                    <span class="market-flag">🇦🇺</span>
+                                    <div>
+                                        <div class="market-name">Australie</div>
+                                        <div class="market-share">Sydney, Melbourne</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>37,280</strong></td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 13%; background: var(--green);"></div>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--gray);">13%</span>
+                            </td>
+                            <td>10.8 jours</td>
+                            <td><span class="trend-badge up"><i class="fas fa-arrow-up"></i> +11%</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="market-info">
+                                    <span class="market-flag">🇳🇿</span>
+                                    <div>
+                                        <div class="market-name">Nouvelle-Zélande</div>
+                                        <div class="market-share">Auckland, Wellington</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>22,890</strong></td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 8%; background: var(--yellow);"></div>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--gray);">8%</span>
+                            </td>
+                            <td>9.5 jours</td>
+                            <td><span class="trend-badge down"><i class="fas fa-arrow-down"></i> -3%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Seasonality -->
+            <div class="season-grid">
+                <div class="season-card">
+                    <div class="season-header">
+                        <div class="season-icon high">☀️</div>
+                        <div class="season-info">
+                            <h4>Haute Saison</h4>
+                            <span>Pic de fréquentation</span>
+                        </div>
+                    </div>
+                    <div class="season-months">
+                        <span class="month-tag">Mai</span>
+                        <span class="month-tag active">Juin</span>
+                        <span class="month-tag active">Juillet</span>
+                        <span class="month-tag active">Août</span>
+                        <span class="month-tag">Sept</span>
+                        <span class="month-tag">Oct</span>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray);">
+                        <strong>65%</strong> des arrivées annuelles - Focus USA & France
+                    </p>
+                </div>
+
+                <div class="season-card">
+                    <div class="season-header">
+                        <div class="season-icon low">🌧️</div>
+                        <div class="season-info">
+                            <h4>Basse Saison</h4>
+                            <span>Opportunité pricing</span>
+                        </div>
+                    </div>
+                    <div class="season-months">
+                        <span class="month-tag active">Nov</span>
+                        <span class="month-tag active">Déc</span>
+                        <span class="month-tag active">Jan</span>
+                        <span class="month-tag active">Fév</span>
+                        <span class="month-tag">Mars</span>
+                        <span class="month-tag">Avril</span>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray);">
+                        <strong>35%</strong> des arrivées - Potentiel Japon & Australie
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Arrivals Chart
+        const arrivalsCtx = document.getElementById('arrivalsChart').getContext('2d');
+        new Chart(arrivalsCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
+                datasets: [{
+                    label: '2025',
+                    data: [18500, 17200, 19800, 22400, 28500, 32100, 35800, 34200, 29500, 26800, 21200, 20450],
+                    borderColor: '#00B5AD',
+                    backgroundColor: 'rgba(0, 181, 173, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: '2024',
+                    data: [16200, 15800, 17500, 20100, 25200, 28500, 31200, 30100, 26200, 24500, 19800, 18900],
+                    borderColor: '#FF6B35',
+                    borderDash: [5, 5],
+                    fill: false,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 10000,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Archipel Chart
+        const archipelCtx = document.getElementById('archipelChart').getContext('2d');
+        new Chart(archipelCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Îles de la Société', 'Tuamotu', 'Marquises', 'Australes', 'Gambier'],
+                datasets: [{
+                    data: [72, 15, 8, 3, 2],
+                    backgroundColor: [
+                        '#00B5AD',
+                        '#FF6B35',
+                        '#8B5CF6',
+                        '#10B981',
+                        '#F59E0B'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    </script>
+</body>
+</html>

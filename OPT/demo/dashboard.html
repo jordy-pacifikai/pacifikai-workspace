@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Télécom - OPT Polynésie | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --opt-blue: #0066B3;
+            --opt-blue-dark: #004d87;
+            --opt-blue-light: #e0f2fe;
+            --opt-orange: #FF6600;
+            --opt-orange-dark: #cc5200;
+            --opt-orange-light: #fff7ed;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --green: #22c55e;
+            --green-light: #f0fdf4;
+            --red: #ef4444;
+            --red-light: #fef2f2;
+            --yellow: #f59e0b;
+            --purple: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
+            background: var(--gray-900);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-orange));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-logo span {
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-section-title {
+            color: var(--gray-400);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            color: var(--gray-300);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .sidebar-nav a.active {
+            background: var(--opt-blue);
+            color: white;
+        }
+
+        .sidebar-nav-icon {
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .dashboard-title p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .refresh-btn {
+            padding: 0.5rem 1rem;
+            background: var(--opt-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: var(--opt-blue-dark);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .kpi-icon.blue {
+            background: var(--opt-blue-light);
+        }
+
+        .kpi-icon.orange {
+            background: var(--opt-orange-light);
+        }
+
+        .kpi-icon.green {
+            background: var(--green-light);
+        }
+
+        .kpi-icon.purple {
+            background: #f3e8ff;
+        }
+
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .kpi-trend.up {
+            color: var(--green);
+        }
+
+        .kpi-trend.down {
+            color: var(--red);
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .card-action {
+            font-size: 0.85rem;
+            color: var(--opt-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .card-action:hover {
+            text-decoration: underline;
+        }
+
+        /* Chart Placeholder */
+        .chart-placeholder {
+            height: 280px;
+            background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.75rem;
+            height: 180px;
+        }
+
+        .chart-bar {
+            width: 40px;
+            background: linear-gradient(to top, var(--opt-blue), var(--opt-blue-dark));
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s;
+        }
+
+        .chart-bar.orange {
+            background: linear-gradient(to top, var(--opt-orange), var(--opt-orange-dark));
+        }
+
+        .chart-labels {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .chart-label {
+            width: 40px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--gray-600);
+        }
+
+        /* Distribution Donut */
+        .donut-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--opt-blue) 0% 52%,
+                var(--opt-orange) 52% 78%,
+                var(--green) 78% 92%,
+                var(--purple) 92% 100%
+            );
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .donut-hole {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .donut-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .donut-label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.blue { background: var(--opt-blue); }
+        .legend-dot.orange { background: var(--opt-orange); }
+        .legend-dot.green { background: var(--green); }
+        .legend-dot.purple { background: var(--purple); }
+
+        /* Island Coverage Table */
+        .coverage-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .coverage-table th,
+        .coverage-table td {
+            padding: 0.875rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .coverage-table th {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+        }
+
+        .coverage-table td {
+            font-size: 0.9rem;
+        }
+
+        .coverage-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .island-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .island-flag {
+            font-size: 1.25rem;
+        }
+
+        .coverage-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .coverage-badge.excellent {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .coverage-badge.good {
+            background: var(--opt-blue-light);
+            color: var(--opt-blue);
+        }
+
+        .coverage-badge.partial {
+            background: var(--opt-orange-light);
+            color: var(--opt-orange);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .progress-fill.blue { background: var(--opt-blue); }
+        .progress-fill.green { background: var(--green); }
+        .progress-fill.orange { background: var(--opt-orange); }
+
+        /* Alerts Section */
+        .alerts-list {
+            list-style: none;
+        }
+
+        .alert-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .alert-item:last-child {
+            border-bottom: none;
+        }
+
+        .alert-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .alert-icon.critical {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+        .alert-icon.warning {
+            background: var(--opt-orange-light);
+            color: var(--opt-orange);
+        }
+
+        .alert-icon.info {
+            background: var(--opt-blue-light);
+            color: var(--opt-blue);
+        }
+
+        .alert-content h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-content p {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .alert-time {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            margin-left: auto;
+        }
+
+        /* Full Width Row */
+        .full-width-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* NPS Gauge */
+        .nps-gauge {
+            text-align: center;
+        }
+
+        .gauge-container {
+            width: 180px;
+            height: 90px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gauge-bg {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--red) 0% 33%,
+                var(--yellow) 33% 66%,
+                var(--green) 66% 100%
+            );
+        }
+
+        .gauge-mask {
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            width: 160px;
+            height: 80px;
+            background: var(--white);
+            border-radius: 0 0 80px 80px;
+        }
+
+        .gauge-value {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .gauge-label {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .nps-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .nps-item {
+            text-align: center;
+        }
+
+        .nps-item-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .nps-item-value.promoters { color: var(--green); }
+        .nps-item-value.passives { color: var(--yellow); }
+        .nps-item-value.detractors { color: var(--red); }
+
+        .nps-item-label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        /* Demo Banner */
+        .demo-banner {
+            background: var(--opt-orange);
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            position: fixed;
+            top: 0;
+            left: 260px;
+            right: 0;
+            z-index: 100;
+        }
+
+        .main-content {
+            padding-top: 3.5rem;
+        }
+
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .demo-banner {
+                left: 0;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">OPT</div>
+            <span>OPT Analytics</span>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Tableaux de bord</div>
+            <ul class="sidebar-nav">
+                <li><a href="#" class="active"><span class="sidebar-nav-icon">📊</span> Vue d'ensemble</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">📱</span> Mobile Vini</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">🌐</span> Internet Mana</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">📦</span> La Poste</a></li>
+            </ul>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Analyse</div>
+            <ul class="sidebar-nav">
+                <li><a href="#"><span class="sidebar-nav-icon">👥</span> Churn Analysis</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">💰</span> ARPU Tracking</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">🗺️</span> Couverture îles</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">📈</span> Tendances</a></li>
+            </ul>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Automatisation</div>
+            <ul class="sidebar-nav">
+                <li><a href="n8n-visualizer.html"><span class="sidebar-nav-icon">⚙️</span> Workflows n8n</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">💬</span> Chatbot Stats</a></li>
+                <li><a href="#"><span class="sidebar-nav-icon">📧</span> Campagnes email</a></li>
+            </ul>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Navigation</div>
+            <ul class="sidebar-nav">
+                <li><a href="index.html"><span class="sidebar-nav-icon">🏠</span> Site OPT</a></li>
+                <li><a href="demo-hub.html"><span class="sidebar-nav-icon">🎯</span> Hub Demo</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <div class="demo-banner">
+        DEMO PACIFIK'AI - Dashboard Analytics simulé pour OPT Polynésie
+    </div>
+
+    <main class="main-content">
+        <div class="dashboard-header">
+            <div class="dashboard-title">
+                <h1>Dashboard Télécom OPT</h1>
+                <p>Vue d'ensemble - Janvier 2026</p>
+            </div>
+            <div class="header-actions">
+                <div class="date-selector">
+                    📅 30 derniers jours
+                </div>
+                <button class="refresh-btn">↻ Actualiser</button>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon blue">📱</div>
+                    <span class="kpi-trend up">↑ 2.3%</span>
+                </div>
+                <div class="kpi-value">127,450</div>
+                <div class="kpi-label">Abonnés actifs total</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon orange">📉</div>
+                    <span class="kpi-trend down">↓ 1.2%</span>
+                </div>
+                <div class="kpi-value">3.8%</div>
+                <div class="kpi-label">Churn rate mensuel</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon green">💰</div>
+                    <span class="kpi-trend up">↑ 5.7%</span>
+                </div>
+                <div class="kpi-value">8,420 F</div>
+                <div class="kpi-label">ARPU moyen (XPF)</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon purple">⭐</div>
+                    <span class="kpi-trend up">↑ 4pts</span>
+                </div>
+                <div class="kpi-value">+42</div>
+                <div class="kpi-label">Score NPS</div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Evolution abonnés (12 mois)</h3>
+                    <a href="#" class="card-action">Détails →</a>
+                </div>
+                <div class="chart-placeholder">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 120px;"></div>
+                        <div class="chart-bar" style="height: 135px;"></div>
+                        <div class="chart-bar" style="height: 128px;"></div>
+                        <div class="chart-bar orange" style="height: 142px;"></div>
+                        <div class="chart-bar" style="height: 150px;"></div>
+                        <div class="chart-bar" style="height: 145px;"></div>
+                        <div class="chart-bar orange" style="height: 155px;"></div>
+                        <div class="chart-bar" style="height: 162px;"></div>
+                        <div class="chart-bar" style="height: 158px;"></div>
+                        <div class="chart-bar orange" style="height: 170px;"></div>
+                        <div class="chart-bar" style="height: 175px;"></div>
+                        <div class="chart-bar" style="height: 180px;"></div>
+                    </div>
+                    <div class="chart-labels">
+                        <span class="chart-label">Fév</span>
+                        <span class="chart-label">Mar</span>
+                        <span class="chart-label">Avr</span>
+                        <span class="chart-label">Mai</span>
+                        <span class="chart-label">Juin</span>
+                        <span class="chart-label">Juil</span>
+                        <span class="chart-label">Août</span>
+                        <span class="chart-label">Sep</span>
+                        <span class="chart-label">Oct</span>
+                        <span class="chart-label">Nov</span>
+                        <span class="chart-label">Déc</span>
+                        <span class="chart-label">Jan</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Répartition services</h3>
+                    <a href="#" class="card-action">Détails →</a>
+                </div>
+                <div class="donut-chart">
+                    <div class="donut-hole">
+                        <div class="donut-value">127K</div>
+                        <div class="donut-label">Total</div>
+                    </div>
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="legend-dot blue"></span>
+                        Mobile Vini (52%)
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot orange"></span>
+                        Internet Mana (26%)
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot green"></span>
+                        Fixe (14%)
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot purple"></span>
+                        Postal (8%)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts and Coverage -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Couverture par archipel</h3>
+                    <a href="#" class="card-action">Carte complète →</a>
+                </div>
+                <table class="coverage-table">
+                    <thead>
+                        <tr>
+                            <th>Archipel</th>
+                            <th>Îles couvertes</th>
+                            <th>4G</th>
+                            <th>Fibre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="island-name">
+                                    <span class="island-flag">🏝️</span>
+                                    Îles du Vent
+                                </div>
+                            </td>
+                            <td>5/5 (100%)</td>
+                            <td><span class="coverage-badge excellent">100%</span></td>
+                            <td><span class="coverage-badge excellent">85%</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="island-name">
+                                    <span class="island-flag">🌴</span>
+                                    Îles Sous-le-Vent
+                                </div>
+                            </td>
+                            <td>7/9 (78%)</td>
+                            <td><span class="coverage-badge good">92%</span></td>
+                            <td><span class="coverage-badge partial">45%</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="island-name">
+                                    <span class="island-flag">🐚</span>
+                                    Tuamotu
+                                </div>
+                            </td>
+                            <td>23/78 (29%)</td>
+                            <td><span class="coverage-badge partial">65%</span></td>
+                            <td><span class="coverage-badge partial">12%</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="island-name">
+                                    <span class="island-flag">⛰️</span>
+                                    Marquises
+                                </div>
+                            </td>
+                            <td>6/12 (50%)</td>
+                            <td><span class="coverage-badge good">78%</span></td>
+                            <td><span class="coverage-badge partial">25%</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="island-name">
+                                    <span class="island-flag">🌊</span>
+                                    Australes
+                                </div>
+                            </td>
+                            <td>4/7 (57%)</td>
+                            <td><span class="coverage-badge partial">68%</span></td>
+                            <td><span class="coverage-badge partial">15%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Alertes temps réel</h3>
+                    <a href="#" class="card-action">Voir tout →</a>
+                </div>
+                <ul class="alerts-list">
+                    <li class="alert-item">
+                        <div class="alert-icon critical">⚠️</div>
+                        <div class="alert-content">
+                            <h4>Incident réseau Rangiroa</h4>
+                            <p>Antenne 4G hors service - technicien en route</p>
+                        </div>
+                        <span class="alert-time">Il y a 15min</span>
+                    </li>
+                    <li class="alert-item">
+                        <div class="alert-icon warning">📈</div>
+                        <div class="alert-content">
+                            <h4>Pic de churn détecté</h4>
+                            <p>+23 résiliations segment Pro cette semaine</p>
+                        </div>
+                        <span class="alert-time">Il y a 2h</span>
+                    </li>
+                    <li class="alert-item">
+                        <div class="alert-icon info">🎯</div>
+                        <div class="alert-content">
+                            <h4>Campagne win-back lancée</h4>
+                            <p>847 ex-clients ciblés, 12% déjà ouverts</p>
+                        </div>
+                        <span class="alert-time">Il y a 4h</span>
+                    </li>
+                    <li class="alert-item">
+                        <div class="alert-icon info">📊</div>
+                        <div class="alert-content">
+                            <h4>Rapport hebdo généré</h4>
+                            <p>KPIs semaine 4 envoyés à la direction</p>
+                        </div>
+                        <span class="alert-time">Hier</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bottom Row -->
+        <div class="full-width-row">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Score NPS</h3>
+                </div>
+                <div class="nps-gauge">
+                    <div class="gauge-container">
+                        <div class="gauge-bg"></div>
+                        <div class="gauge-mask"></div>
+                        <div class="gauge-value">+42</div>
+                    </div>
+                    <div class="gauge-label">Net Promoter Score</div>
+                    <div class="nps-breakdown">
+                        <div class="nps-item">
+                            <div class="nps-item-value promoters">58%</div>
+                            <div class="nps-item-label">Promoteurs</div>
+                        </div>
+                        <div class="nps-item">
+                            <div class="nps-item-value passives">26%</div>
+                            <div class="nps-item-label">Passifs</div>
+                        </div>
+                        <div class="nps-item">
+                            <div class="nps-item-value detractors">16%</div>
+                            <div class="nps-item-label">Détracteurs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Chatbot Performance</h3>
+                </div>
+                <div style="padding: 1rem 0;">
+                    <div style="margin-bottom: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.85rem; color: var(--gray-600);">Résolution auto</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">85%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill green" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.85rem; color: var(--gray-600);">Satisfaction</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">92%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill blue" style="width: 92%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.85rem; color: var(--gray-600);">Escalade humain</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">15%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill orange" style="width: 15%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-200); text-align: center;">
+                    <span style="font-size: 2rem; font-weight: 700; color: var(--opt-blue);">3,247</span>
+                    <div style="font-size: 0.85rem; color: var(--gray-600);">Conversations ce mois</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">vs Vodafone</h3>
+                </div>
+                <div style="padding: 1rem 0;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--opt-blue);">OPT</span>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--red);">Vodafone</span>
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <div style="flex: 68; height: 24px; background: var(--opt-blue); border-radius: 4px 0 0 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: 600;">68%</div>
+                            <div style="flex: 32; height: 24px; background: var(--red); border-radius: 0 4px 4px 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: 600;">32%</div>
+                        </div>
+                        <div style="text-align: center; margin-top: 0.25rem; font-size: 0.75rem; color: var(--gray-600);">Part de marché mobile</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: center;">
+                        <div>
+                            <div style="font-size: 1.25rem; font-weight: 700; color: var(--green);">+2.1%</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Gain ce trimestre</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.25rem; font-weight: 700; color: var(--opt-orange);">847</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Portabilités entrantes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Vidéo - OPT Polynésie | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --opt-blue: #0066B3;
+            --opt-blue-dark: #004d87;
+            --opt-blue-light: #e0f2fe;
+            --opt-orange: #FF6600;
+            --opt-orange-dark: #cc5200;
+            --opt-orange-light: #fff7ed;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --green: #22c55e;
+            --green-light: #f0fdf4;
+            --purple: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.7;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--opt-blue);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-orange));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--opt-blue);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-blue-dark));
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Video Preview */
+        .video-preview {
+            background: var(--gray-900);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .video-player {
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(135deg, var(--gray-900), #1a365d);
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: var(--opt-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+        }
+
+        .play-button::after {
+            content: '';
+            border-style: solid;
+            border-width: 15px 0 15px 25px;
+            border-color: transparent transparent transparent white;
+            margin-left: 5px;
+        }
+
+        .video-overlay {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            right: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .video-title {
+            color: white;
+        }
+
+        .video-title h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .video-title p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .video-duration {
+            background: rgba(0,0,0,0.6);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Script Section */
+        .script-section {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .script-header {
+            background: linear-gradient(135deg, var(--opt-orange-light), #fed7aa);
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--opt-orange);
+        }
+
+        .script-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .script-content {
+            padding: 2rem;
+        }
+
+        /* Scene Card */
+        .scene {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .scene:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .scene-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .scene-number {
+            width: 40px;
+            height: 40px;
+            background: var(--opt-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .scene-meta {
+            flex: 1;
+        }
+
+        .scene-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .scene-timing {
+            font-size: 0.8rem;
+            color: var(--opt-orange);
+            font-weight: 500;
+        }
+
+        .scene-visual {
+            background: var(--gray-100);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .scene-visual strong {
+            color: var(--opt-blue);
+        }
+
+        .scene-script {
+            background: var(--gray-50);
+            border-left: 3px solid var(--opt-orange);
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: var(--gray-700);
+        }
+
+        .scene-script::before {
+            content: '"';
+            font-size: 2rem;
+            color: var(--opt-orange);
+            line-height: 0;
+            vertical-align: -0.5rem;
+            margin-right: 0.25rem;
+        }
+
+        .scene-script::after {
+            content: '"';
+            font-size: 2rem;
+            color: var(--opt-orange);
+            line-height: 0;
+            vertical-align: -0.5rem;
+            margin-left: 0.25rem;
+        }
+
+        /* Key Points */
+        .key-points {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .key-points h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .points-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .point-card {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .point-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--green-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .point-text {
+            font-size: 0.9rem;
+            color: var(--gray-700);
+        }
+
+        /* Call to Action */
+        .cta-section {
+            background: linear-gradient(135deg, var(--gray-900), #1a365d);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .cta-btn {
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .cta-btn.primary {
+            background: var(--opt-orange);
+            color: white;
+        }
+
+        .cta-btn.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* Production Notes */
+        .production-notes {
+            background: var(--opt-blue-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .production-notes h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--opt-blue-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .production-notes ul {
+            list-style: none;
+        }
+
+        .production-notes li {
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            padding: 0.4rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .production-notes li::before {
+            content: '•';
+            color: var(--opt-blue);
+            font-weight: bold;
+        }
+
+        /* Demo Banner */
+        .demo-banner {
+            background: var(--opt-orange);
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            color: rgba(255,255,255,0.6);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--opt-orange);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .points-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .video-overlay {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-banner">
+        DEMO PACIFIK'AI - Script vidéo de prospection pour OPT Polynésie
+    </div>
+
+    <nav>
+        <a href="index.html" class="logo">
+            <div class="logo-icon">OPT</div>
+            <span>Script Vidéo</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="builds-presentation.html">4 Builds</a></li>
+            <li><a href="pricing-strategy.html">Tarifs</a></li>
+            <li><a href="demo-hub.html">Hub Demo</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1>Script Vidéo Personnalisé</h1>
+        <p>Message de prospection vidéo pour présenter les solutions d'automatisation IA à OPT Polynésie</p>
+    </section>
+
+    <main class="main-content">
+        <!-- Video Preview -->
+        <div class="video-preview">
+            <div class="video-player">
+                <div class="play-button"></div>
+                <div class="video-overlay">
+                    <div class="video-title">
+                        <h3>Automatisation IA pour OPT Polynésie</h3>
+                        <p>PACIFIK'AI - Expert télécom Polynésie</p>
+                    </div>
+                    <div class="video-duration">02:30</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script -->
+        <div class="script-section">
+            <div class="script-header">
+                <h2>📝 Script complet - Durée: 2min30</h2>
+            </div>
+            <div class="script-content">
+                <!-- Scene 1 -->
+                <div class="scene">
+                    <div class="scene-header">
+                        <div class="scene-number">1</div>
+                        <div class="scene-meta">
+                            <div class="scene-title">Hook - Accroche directe</div>
+                            <div class="scene-timing">0:00 - 0:15</div>
+                        </div>
+                    </div>
+                    <div class="scene-visual">
+                        <strong>Visuel:</strong> Face caméra, fond neutre professionnel. Logo PACIFIK'AI en coin.
+                    </div>
+                    <div class="scene-script">
+                        Ia ora na, je suis expert en automatisation marketing pour les opérateurs télécom en Polynésie. J'ai vu ce qu'OPT fait pour connecter 118 îles - c'est un défi logistique unique au monde. Mais il y a un domaine où l'IA peut vous faire gagner un avantage décisif face à Vodafone.
+                    </div>
+                </div>
+
+                <!-- Scene 2 -->
+                <div class="scene">
+                    <div class="scene-header">
+                        <div class="scene-number">2</div>
+                        <div class="scene-meta">
+                            <div class="scene-title">Problème identifié</div>
+                            <div class="scene-timing">0:15 - 0:45</div>
+                        </div>
+                    </div>
+                    <div class="scene-visual">
+                        <strong>Visuel:</strong> Screen capture du site OPT + statistiques call center (fictives mais réalistes)
+                    </div>
+                    <div class="scene-script">
+                        J'ai analysé votre marché. Vos équipes SAV gèrent probablement des milliers d'appels par mois - des questions sur les forfaits, les factures, la couverture sur telle ou telle île. Des demandes répétitives qui mobilisent des ressources précieuses. Et quand un client vous appelle à 22h depuis Rangiroa avec un problème de connexion... il tombe sur un répondeur.
+                    </div>
+                </div>
+
+                <!-- Scene 3 -->
+                <div class="scene">
+                    <div class="scene-header">
+                        <div class="scene-number">3</div>
+                        <div class="scene-meta">
+                            <div class="scene-title">Solution - Les 4 Builds</div>
+                            <div class="scene-timing">0:45 - 1:30</div>
+                        </div>
+                    </div>
+                    <div class="scene-visual">
+                        <strong>Visuel:</strong> Animation des 4 icônes builds + démonstration chatbot en action
+                    </div>
+                    <div class="scene-script">
+                        J'ai préparé 4 automatisations spécifiquement pour OPT. Premièrement, un chatbot IA disponible 24h/24 qui répond aux questions courantes, diagnostique les pannes, et escalade vers vos équipes uniquement quand c'est nécessaire. On parle de 70% d'appels en moins au call center.<br><br>
+                        Deuxièmement, des newsletters automatisées - pas du spam, mais des emails personnalisés : bienvenue pour les nouveaux clients, proposition fibre quand ils deviennent éligibles, offres de fidélité avant qu'ils ne partent chez le concurrent.<br><br>
+                        Troisièmement, du contenu SEO généré automatiquement pour dominer Google sur "meilleur opérateur Polynésie". Et quatrièmement, un système qui prédit quels clients risquent de partir chez Vodafone - et les rattrape avant.
+                    </div>
+                </div>
+
+                <!-- Scene 4 -->
+                <div class="scene">
+                    <div class="scene-header">
+                        <div class="scene-number">4</div>
+                        <div class="scene-meta">
+                            <div class="scene-title">Résultats attendus</div>
+                            <div class="scene-timing">1:30 - 2:00</div>
+                        </div>
+                    </div>
+                    <div class="scene-visual">
+                        <strong>Visuel:</strong> Graphiques ROI animés + métriques clés en grand
+                    </div>
+                    <div class="scene-script">
+                        Les opérateurs télécom qui utilisent ces systèmes voient leur churn rate baisser de 15%, leur ARPU augmenter de 8%, et leurs coûts SAV fondre. Pour OPT, ça représente plusieurs millions de francs économisés par an - et surtout, des clients qui restent fidèles parce qu'ils ont un service premium que Vodafone ne peut pas offrir.
+                    </div>
+                </div>
+
+                <!-- Scene 5 -->
+                <div class="scene">
+                    <div class="scene-header">
+                        <div class="scene-number">5</div>
+                        <div class="scene-meta">
+                            <div class="scene-title">CTA - Prochaine étape</div>
+                            <div class="scene-timing">2:00 - 2:30</div>
+                        </div>
+                    </div>
+                    <div class="scene-visual">
+                        <strong>Visuel:</strong> Face caméra + lien vers démo en overlay
+                    </div>
+                    <div class="scene-script">
+                        Ces 4 builds, c'est juste un aperçu. On peut aller beaucoup plus loin : activation automatique des SIM, relances impayés intelligentes, maintenance prédictive du réseau...<br><br>
+                        J'ai préparé une démo complète sur mesure pour OPT. Cliquez sur le lien ci-dessous pour la voir, et si ça vous parle, on peut planifier un call de 30 minutes pour en discuter. Mauruuru.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Points -->
+        <div class="key-points">
+            <h3>💡 Points clés du message</h3>
+            <div class="points-grid">
+                <div class="point-card">
+                    <div class="point-icon">🎯</div>
+                    <div class="point-text"><strong>Spécifique OPT</strong> - Mention des 118 îles, Vodafone, contexte polynésien</div>
+                </div>
+                <div class="point-card">
+                    <div class="point-icon">💰</div>
+                    <div class="point-text"><strong>ROI clair</strong> - Chiffres concrets : -70% appels, -15% churn, +8% ARPU</div>
+                </div>
+                <div class="point-card">
+                    <div class="point-icon">🏆</div>
+                    <div class="point-text"><strong>Avantage concurrentiel</strong> - Positionnement vs Vodafone clair</div>
+                </div>
+                <div class="point-card">
+                    <div class="point-icon">📈</div>
+                    <div class="point-text"><strong>Scalable</strong> - "4 builds = aperçu" montre le potentiel futur</div>
+                </div>
+                <div class="point-card">
+                    <div class="point-icon">🌴</div>
+                    <div class="point-text"><strong>Ton local</strong> - "Ia ora na", "Mauruuru", références culturelles</div>
+                </div>
+                <div class="point-card">
+                    <div class="point-icon">🤝</div>
+                    <div class="point-text"><strong>CTA soft</strong> - Invitation à voir la démo, pas de vente agressive</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Production Notes -->
+        <div class="production-notes">
+            <h4>Notes de production</h4>
+            <ul>
+                <li>Durée cible: 2min30 max (attention span B2B)</li>
+                <li>Format: 16:9 horizontal (LinkedIn, email)</li>
+                <li>Qualité: 1080p minimum, bon éclairage face</li>
+                <li>Sous-titres: Obligatoires (80% des vidéos vues sans son)</li>
+                <li>Thumbnail: Visage + texte "OPT + IA"</li>
+                <li>Envoi: LinkedIn DM + Email personnalisé</li>
+            </ul>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h3>Vidéo prête à être enregistrée</h3>
+            <p>Ce script peut être adapté selon le destinataire (DG, Directeur Marketing, DSI...)</p>
+            <div class="cta-buttons">
+                <a href="pricing-strategy.html" class="cta-btn primary">Voir la proposition</a>
+                <a href="demo-hub.html" class="cta-btn secondary">Hub démo complet</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>DEMO PACIFIK'AI - Script vidéo personnalisé pour OPT Polynésie<br>
+        <a href="demo-hub.html">Retour au Hub Demo</a></p>
+    </footer>
+</body>
+</html>

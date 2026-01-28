@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub Demo - Banque de Polynesie x PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sg-red: #E60028;
+            --sg-red-dark: #B8001F;
+            --sg-black: #1A1A1A;
+            --sg-gray: #4A4A4A;
+            --sg-light: #F5F5F5;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: linear-gradient(135deg, #0D1117 0%, #161B22 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 4rem 5% 3rem;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--sg-red);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--sg-red);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Demo Grid */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding: 2rem 5% 5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s;
+            text-decoration: none;
+            color: white;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--sg-red);
+            box-shadow: 0 20px 60px rgba(230, 0, 40, 0.2);
+        }
+
+        .demo-card-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-card-image::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
+        }
+
+        .demo-icon {
+            position: relative;
+            z-index: 1;
+            width: 70px;
+            height: 70px;
+            background: var(--sg-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(230, 0, 40, 0.4);
+        }
+
+        .demo-card-content {
+            padding: 1.5rem;
+        }
+
+        .demo-card-badge {
+            display: inline-block;
+            background: rgba(230, 0, 40, 0.2);
+            color: var(--sg-red);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .demo-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-card p {
+            font-size: 0.95rem;
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        .demo-card-arrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+            color: var(--sg-red);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .demo-card:hover .demo-card-arrow {
+            gap: 12px;
+        }
+
+        /* Featured Card */
+        .demo-card.featured {
+            grid-column: span 2;
+        }
+
+        .demo-card.featured .demo-card-image {
+            height: 220px;
+        }
+
+        /* Quick Access */
+        .quick-access {
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem 5%;
+        }
+
+        .quick-access-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .quick-access h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+        }
+
+        .quick-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .quick-link:hover {
+            background: var(--sg-red);
+            border-color: var(--sg-red);
+            transform: translateY(-3px);
+        }
+
+        .quick-link-icon {
+            font-size: 1.3rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 5%;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-logo span {
+            color: var(--sg-red);
+        }
+
+        .footer p {
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--sg-red);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .demo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .demo-card.featured {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .demo-card.featured {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-logo">
+            <div class="logo-icon">BP</div>
+            <div class="logo-text">Banque de <span>Polynesie</span></div>
+        </div>
+        <h1>Hub de Demo</h1>
+        <p>Explorez toutes les pages de la demo preparee specialement pour Banque de Polynesie par PACIFIK'AI</p>
+    </header>
+
+    <!-- Demo Grid -->
+    <div class="demo-grid">
+        <!-- Featured: Chatbot -->
+        <a href="index.html" class="demo-card featured">
+            <div class="demo-card-image" style="background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);">
+                <div class="demo-icon">&#128172;</div>
+            </div>
+            <div class="demo-card-content">
+                <span class="demo-card-badge">Build Principal</span>
+                <h3>Chatbot Bancaire 24/7</h3>
+                <p>Landing page avec demonstration interactive du chatbot IA. Testez la simulation de credit, la prise de rendez-vous et les reponses FAQ en temps reel.</p>
+                <div class="demo-card-arrow">Explorer le chatbot &#8594;</div>
+            </div>
+        </a>
+
+        <!-- 4 Builds -->
+        <a href="builds-presentation.html" class="demo-card">
+            <div class="demo-card-image" style="background: linear-gradient(135deg, #1A1A1A 0%, #333 100%);">
+                <div class="demo-icon">&#127919;</div>
+            </div>
+            <div class="demo-card-content">
+                <span class="demo-card-badge">Solutions</span>
+                <h3>Les 4 Builds IA</h3>
+                <p>Presentation detaillee des 4 automatisations : Chatbot, Newsletter, SEO et Analytics.</p>
+                <div class="demo-card-arrow">Voir les builds &#8594;</div>
+            </div>
+        </a>
+
+        <!-- Dashboard -->
+        <a href="dashboard.html" class="demo-card">
+            <div class="demo-card-image" style="background: linear-gradient(135deg, #2C3E50 0%, #1A1A1A 100%);">
+                <div class="demo-icon">&#128202;</div>
+            </div>
+            <div class="demo-card-content">
+                <span class="demo-card-badge">Analytics</span>
+                <h3>Dashboard Bancaire</h3>
+                <p>Tableau de bord temps reel avec KPIs, performance agences et metriques marketing.</p>
+                <div class="demo-card-arrow">Voir le dashboard &#8594;</div>
+            </div>
+        </a>
+
+        <!-- Blog -->
+        <a href="blog.html" class="demo-card">
+            <div class="demo-card-image" style="background: linear-gradient(135deg, #34495E 0%, #2C3E50 100%);">
+                <div class="demo-icon">&#128218;</div>
+            </div>
+            <div class="demo-card-content">
+                <span class="demo-card-badge">Content</span>
+                <h3>Blog Conseil Financier</h3>
+                <p>Exemples d'articles SEO optimises pour le marche polynesien.</p>
+                <div class="demo-card-arrow">Lire les articles &#8594;</div>
+            </div>
+        </a>
+
+        <!-- Pricing -->
+        <a href="pricing-strategy.html" class="demo-card">
+            <div class="demo-card-image" style="background: linear-gradient(135deg, var(--sg-red-dark) 0%, #8B0000 100%);">
+                <div class="demo-icon">&#128176;</div>
+            </div>
+            <div class="demo-card-content">
+                <span class="demo-card-badge">Commercial</span>
+                <h3>Offre & Tarifs</h3>
+                <p>Proposition commerciale complete avec ROI estime et FAQ.</p>
+                <div class="demo-card-arrow">Voir l'offre &#8594;</div>
+            </div>
+        </a>
+
+        <!-- n8n Workflows -->
+        <a href="n8n-visualizer.html" class="demo-card">
+            <div class="demo-card-image" style="background: linear-gradient(135deg, #0D1117 0%, #21262D 100%);">
+                <div class="demo-icon">&#9881;</div>
+            </div>
+            <div class="demo-card-content">
+                <span class="demo-card-badge">Technique</span>
+                <h3>Workflows n8n</h3>
+                <p>Visualisation des automatisations : chatbot, newsletter, SEO, analytics.</p>
+                <div class="demo-card-arrow">Explorer les workflows &#8594;</div>
+            </div>
+        </a>
+
+        <!-- Architecture -->
+        <a href="delivery-architecture.html" class="demo-card">
+            <div class="demo-card-image" style="background: linear-gradient(135deg, #27AE60 0%, #1E8449 100%);">
+                <div class="demo-icon">&#128274;</div>
+            </div>
+            <div class="demo-card-content">
+                <span class="demo-card-badge">Securite</span>
+                <h3>Architecture Securisee</h3>
+                <p>Details techniques, conformite RGPD et garanties de securite bancaire.</p>
+                <div class="demo-card-arrow">Voir l'architecture &#8594;</div>
+            </div>
+        </a>
+
+        <!-- Video Script -->
+        <a href="video-script.html" class="demo-card">
+            <div class="demo-card-image" style="background: linear-gradient(135deg, #8E44AD 0%, #6C3483 100%);">
+                <div class="demo-icon">&#127909;</div>
+            </div>
+            <div class="demo-card-content">
+                <span class="demo-card-badge">Prospection</span>
+                <h3>Script Video</h3>
+                <p>Script complet pour video de prospection avec teleprompter integre.</p>
+                <div class="demo-card-arrow">Lire le script &#8594;</div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Quick Access -->
+    <section class="quick-access">
+        <div class="quick-access-content">
+            <h2>Acces rapide</h2>
+            <div class="quick-links">
+                <a href="index.html" class="quick-link">
+                    <span class="quick-link-icon">&#128172;</span>
+                    <span>Tester le chatbot</span>
+                </a>
+                <a href="dashboard.html" class="quick-link">
+                    <span class="quick-link-icon">&#128202;</span>
+                    <span>Voir le dashboard</span>
+                </a>
+                <a href="pricing-strategy.html" class="quick-link">
+                    <span class="quick-link-icon">&#128176;</span>
+                    <span>Voir l'offre</span>
+                </a>
+                <a href="delivery-architecture.html" class="quick-link">
+                    <span class="quick-link-icon">&#128274;</span>
+                    <span>Securite</span>
+                </a>
+                <a href="video-script.html" class="quick-link">
+                    <span class="quick-link-icon">&#127909;</span>
+                    <span>Script video</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">Banque de <span>Polynesie</span> x PACIFIK'AI</div>
+        <p>Demo realisee par PACIFIK'AI - Agence d'automatisation IA en Polynesie francaise</p>
+        <div class="footer-links">
+            <a href="index.html">Chatbot</a>
+            <a href="builds-presentation.html">4 Builds</a>
+            <a href="pricing-strategy.html">Offre</a>
+            <a href="delivery-architecture.html">Securite</a>
+        </div>
+    </footer>
+</body>
+</html>

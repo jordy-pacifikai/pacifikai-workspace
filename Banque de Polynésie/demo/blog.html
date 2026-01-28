@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Conseil Financier - Banque de Polynesie</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sg-red: #E60028;
+            --sg-red-dark: #B8001F;
+            --sg-black: #1A1A1A;
+            --sg-gray: #4A4A4A;
+            --sg-light: #F5F5F5;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: var(--sg-light);
+            color: var(--sg-black);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--sg-red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--sg-red);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--sg-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--sg-red);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--sg-black) 0%, #2A2A2A 100%);
+            color: white;
+            padding: 5rem 5%;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--sg-red);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-box {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 24px;
+            padding-right: 60px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-box button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        /* Categories */
+        .categories {
+            padding: 2rem 5%;
+            background: white;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .categories-list {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 10px 24px;
+            background: var(--sg-light);
+            border: none;
+            border-radius: 25px;
+            color: var(--sg-gray);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        /* Blog Content */
+        .blog-content {
+            padding: 4rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Featured Article */
+        .featured-article {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .featured-image {
+            background: linear-gradient(135deg, rgba(230, 0, 40, 0.9) 0%, rgba(184, 0, 31, 0.9) 100%),
+                        url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800') center/cover;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.5rem;
+            color: white;
+        }
+
+        .featured-badge {
+            display: inline-block;
+            background: white;
+            color: var(--sg-red);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            align-self: flex-start;
+        }
+
+        .featured-image h2 {
+            font-size: 2rem;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+        }
+
+        .featured-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .featured-content {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .featured-content h3 {
+            color: var(--sg-gray);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .featured-excerpt {
+            color: var(--sg-gray);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .featured-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .topic-tag {
+            background: var(--sg-light);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--sg-gray);
+        }
+
+        .btn-read {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--sg-red);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            align-self: flex-start;
+        }
+
+        .btn-read:hover {
+            background: var(--sg-red-dark);
+            transform: translateX(5px);
+        }
+
+        /* Section Title */
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            color: var(--sg-black);
+        }
+
+        .view-all {
+            color: var(--sg-red);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Articles Grid */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+
+        .article-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .article-category {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--sg-red);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .article-content {
+            padding: 1.5rem;
+        }
+
+        .article-content h3 {
+            font-size: 1.2rem;
+            color: var(--sg-black);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .article-content h3 a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .article-content h3 a:hover {
+            color: var(--sg-red);
+        }
+
+        .article-excerpt {
+            color: var(--sg-gray);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--sg-gray);
+            font-size: 0.85rem;
+        }
+
+        .article-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .author-avatar {
+            width: 28px;
+            height: 28px;
+            background: var(--sg-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* Newsletter Section */
+        .newsletter-section {
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            border-radius: 20px;
+            padding: 4rem;
+            text-align: center;
+            color: white;
+            margin-bottom: 4rem;
+        }
+
+        .newsletter-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .newsletter-form button {
+            padding: 16px 32px;
+            background: var(--sg-black);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .newsletter-form button:hover {
+            background: #333;
+        }
+
+        /* Sidebar Articles */
+        .articles-with-sidebar {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .sidebar-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--sg-light);
+        }
+
+        .popular-article {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .popular-article:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .popular-number {
+            width: 32px;
+            height: 32px;
+            background: var(--sg-red);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .popular-content h4 {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 0.25rem;
+        }
+
+        .popular-content h4 a {
+            color: var(--sg-black);
+            text-decoration: none;
+        }
+
+        .popular-content h4 a:hover {
+            color: var(--sg-red);
+        }
+
+        .popular-content span {
+            font-size: 0.8rem;
+            color: var(--sg-gray);
+        }
+
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            background: var(--sg-light);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--sg-gray);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .tag:hover {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        /* Demo Nav */
+        .demo-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .demo-nav-toggle {
+            width: 60px;
+            height: 60px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(230, 0, 40, 0.4);
+        }
+
+        .demo-nav-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 1rem;
+            min-width: 250px;
+            display: none;
+        }
+
+        .demo-nav-menu.active {
+            display: block;
+        }
+
+        .demo-nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--sg-black);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .demo-nav-menu a:hover {
+            background: var(--sg-light);
+            color: var(--sg-red);
+        }
+
+        .demo-nav-menu a.active {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .featured-article {
+                grid-template-columns: 1fr;
+            }
+
+            .articles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .articles-with-sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">BP</div>
+            <div class="logo-text">Banque de <span>Polynesie</span></div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="blog.html" class="active">Blog</a></li>
+            <li><a href="builds-presentation.html">Solutions</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="demo-hub.html">Demo</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-badge">Conseils & Expertise</span>
+        <h1>Blog Conseil Financier</h1>
+        <p>Guides pratiques, conseils d'experts et actualites pour gerer vos finances en Polynesie francaise</p>
+        <div class="search-box">
+            <input type="text" placeholder="Rechercher un article...">
+            <button>&#128269;</button>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories">
+        <div class="categories-list">
+            <button class="category-btn active">Tous</button>
+            <button class="category-btn">Credit immobilier</button>
+            <button class="category-btn">Epargne</button>
+            <button class="category-btn">Professionnels</button>
+            <button class="category-btn">Jeunes</button>
+            <button class="category-btn">Fiscalite</button>
+        </div>
+    </section>
+
+    <!-- Blog Content -->
+    <div class="blog-content">
+        <!-- Featured Article -->
+        <article class="featured-article">
+            <div class="featured-image">
+                <span class="featured-badge">A la une</span>
+                <h2>Acheter en Polynesie : le guide complet du credit immobilier</h2>
+                <div class="featured-meta">
+                    <span>&#128197; 15 janvier 2024</span>
+                    <span>&#128337; 12 min de lecture</span>
+                </div>
+            </div>
+            <div class="featured-content">
+                <h3>Guide pratique</h3>
+                <p class="featured-excerpt">
+                    Devenir proprietaire en Polynesie francaise est un reve pour beaucoup. Ce guide complet vous accompagne dans toutes les etapes : de la definition de votre budget a la signature chez le notaire, en passant par les specificites du marche local et les aides disponibles.
+                </p>
+                <div class="featured-topics">
+                    <span class="topic-tag">Credit immobilier</span>
+                    <span class="topic-tag">Tahiti</span>
+                    <span class="topic-tag">Achat maison</span>
+                    <span class="topic-tag">Taux 2024</span>
+                </div>
+                <a href="#" class="btn-read">Lire l'article &#8594;</a>
+            </div>
+        </article>
+
+        <!-- Recent Articles -->
+        <div class="section-title">
+            <h2>Articles recents</h2>
+            <a href="#" class="view-all">Voir tous &#8594;</a>
+        </div>
+
+        <div class="articles-grid">
+            <article class="article-card">
+                <div class="article-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600');">
+                    <span class="article-category">Epargne</span>
+                </div>
+                <div class="article-content">
+                    <h3><a href="#">Epargner pour les etudes des enfants : quelle strategie adopter ?</a></h3>
+                    <p class="article-excerpt">Les etudes superieures representent un investissement important. Decouvrez les solutions pour preparer l'avenir de vos enfants sereinement.</p>
+                    <div class="article-meta">
+                        <div class="article-author">
+                            <div class="author-avatar">MR</div>
+                            <span>Marie Raapoto</span>
+                        </div>
+                        <span>8 min</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="article-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=600');">
+                    <span class="article-category">Entrepreneurs</span>
+                </div>
+                <div class="article-content">
+                    <h3><a href="#">Creer son entreprise en Polynesie : toutes les aides disponibles</a></h3>
+                    <p class="article-excerpt">Defiscalisation, aides de la CCISM, prets a taux zero... Tour d'horizon des dispositifs pour lancer votre activite.</p>
+                    <div class="article-meta">
+                        <div class="article-author">
+                            <div class="author-avatar">TM</div>
+                            <span>Teiki Mahuta</span>
+                        </div>
+                        <span>10 min</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="article-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600');">
+                    <span class="article-category">Retraite</span>
+                </div>
+                <div class="article-content">
+                    <h3><a href="#">Preparer sa retraite en Polynesie : les 5 erreurs a eviter</a></h3>
+                    <p class="article-excerpt">Commencer trop tard, sous-estimer ses besoins... Nous vous aidons a anticiper pour profiter pleinement de votre retraite.</p>
+                    <div class="article-meta">
+                        <div class="article-author">
+                            <div class="author-avatar">HT</div>
+                            <span>Hina Teriitau</span>
+                        </div>
+                        <span>6 min</span>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="newsletter-section">
+            <h2>Recevez nos conseils chaque semaine</h2>
+            <p>Inscrivez-vous a notre newsletter pour recevoir des conseils personnalises selon votre profil.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Votre adresse email">
+                <button type="submit">S'inscrire</button>
+            </form>
+        </div>
+
+        <!-- Articles with Sidebar -->
+        <div class="articles-with-sidebar">
+            <div class="main-articles">
+                <div class="section-title">
+                    <h2>Credit & Immobilier</h2>
+                </div>
+
+                <div class="articles-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <article class="article-card">
+                        <div class="article-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?w=600');">
+                            <span class="article-category">Credit</span>
+                        </div>
+                        <div class="article-content">
+                            <h3><a href="#">Taux credit immobilier 2024 : les tendances en Polynesie</a></h3>
+                            <p class="article-excerpt">Analyse des taux actuels et previsions pour les mois a venir.</p>
+                            <div class="article-meta">
+                                <span>12 janvier 2024</span>
+                                <span>5 min</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="article-card">
+                        <div class="article-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600');">
+                            <span class="article-category">Immobilier</span>
+                        </div>
+                        <div class="article-content">
+                            <h3><a href="#">Acheter vs Louer : que choisir a Tahiti ?</a></h3>
+                            <p class="article-excerpt">Simulation comparative pour vous aider a prendre la bonne decision.</p>
+                            <div class="article-meta">
+                                <span>10 janvier 2024</span>
+                                <span>7 min</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="article-card">
+                        <div class="article-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600');">
+                            <span class="article-category">Conseils</span>
+                        </div>
+                        <div class="article-content">
+                            <h3><a href="#">Les frais de notaire en Polynesie : tout comprendre</a></h3>
+                            <p class="article-excerpt">Detail des frais a prevoir lors de l'achat d'un bien immobilier.</p>
+                            <div class="article-meta">
+                                <span>8 janvier 2024</span>
+                                <span>4 min</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="article-card">
+                        <div class="article-image" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600');">
+                            <span class="article-category">Budget</span>
+                        </div>
+                        <div class="article-content">
+                            <h3><a href="#">Comment calculer sa capacite d'emprunt ?</a></h3>
+                            <p class="article-excerpt">Guide pratique pour definir votre budget d'achat immobilier.</p>
+                            <div class="article-meta">
+                                <span>5 janvier 2024</span>
+                                <span>6 min</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="sidebar-card">
+                    <h3>Articles populaires</h3>
+                    <div class="popular-article">
+                        <div class="popular-number">1</div>
+                        <div class="popular-content">
+                            <h4><a href="#">Le guide du premier achat immobilier</a></h4>
+                            <span>3 245 lectures</span>
+                        </div>
+                    </div>
+                    <div class="popular-article">
+                        <div class="popular-number">2</div>
+                        <div class="popular-content">
+                            <h4><a href="#">Ouvrir un compte bancaire : les documents necessaires</a></h4>
+                            <span>2 891 lectures</span>
+                        </div>
+                    </div>
+                    <div class="popular-article">
+                        <div class="popular-number">3</div>
+                        <div class="popular-content">
+                            <h4><a href="#">Credit auto : ce qu'il faut savoir</a></h4>
+                            <span>2 456 lectures</span>
+                        </div>
+                    </div>
+                    <div class="popular-article">
+                        <div class="popular-number">4</div>
+                        <div class="popular-content">
+                            <h4><a href="#">Les meilleurs placements en 2024</a></h4>
+                            <span>2 123 lectures</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3>Tags populaires</h3>
+                    <div class="tags-list">
+                        <a href="#" class="tag">Credit immobilier</a>
+                        <a href="#" class="tag">Epargne</a>
+                        <a href="#" class="tag">Tahiti</a>
+                        <a href="#" class="tag">Taux</a>
+                        <a href="#" class="tag">Assurance</a>
+                        <a href="#" class="tag">Retraite</a>
+                        <a href="#" class="tag">Jeunes</a>
+                        <a href="#" class="tag">Entreprise</a>
+                    </div>
+                </div>
+
+                <div class="sidebar-card" style="background: var(--sg-red); color: white;">
+                    <h3 style="color: white; border-bottom-color: rgba(255,255,255,0.3);">Besoin d'un conseil ?</h3>
+                    <p style="margin-bottom: 1.5rem; opacity: 0.9;">Notre chatbot peut repondre a vos questions 24h/24.</p>
+                    <a href="index.html" class="btn-read" style="background: white; color: var(--sg-red);">Poser une question</a>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Demo Nav -->
+    <div class="demo-nav">
+        <button class="demo-nav-toggle" onclick="toggleDemoNav()">&#9776;</button>
+        <div class="demo-nav-menu" id="demoNavMenu">
+            <a href="index.html">Chatbot Landing</a>
+            <a href="builds-presentation.html">4 Builds IA</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="blog.html" class="active">Blog Conseil</a>
+            <a href="pricing-strategy.html">Offre & Pricing</a>
+            <a href="n8n-visualizer.html">Workflows n8n</a>
+            <a href="delivery-architecture.html">Architecture</a>
+            <a href="video-script.html">Script Video</a>
+            <a href="demo-hub.html">Hub Demo</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleDemoNav() {
+            document.getElementById('demoNavMenu').classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('demoNavMenu');
+            const toggle = document.querySelector('.demo-nav-toggle');
+            if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Category buttons
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Technique - OPT Polynésie | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --opt-blue: #0066B3;
+            --opt-blue-dark: #004d87;
+            --opt-blue-light: #e0f2fe;
+            --opt-orange: #FF6600;
+            --opt-orange-dark: #cc5200;
+            --opt-orange-light: #fff7ed;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --green: #22c55e;
+            --green-light: #f0fdf4;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --yellow: #f59e0b;
+            --cyan: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--opt-blue);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-orange));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--opt-blue);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--gray-900), #1a365d);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+        }
+
+        .section-header p {
+            color: var(--gray-600);
+            font-size: 1.1rem;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+            margin-bottom: 4rem;
+        }
+
+        .diagram-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .diagram-title h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .diagram-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .layer {
+            padding: 1.5rem;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .layer-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .layer-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .layer.clients {
+            background: linear-gradient(135deg, var(--opt-blue-light), #dbeafe);
+            border: 2px solid var(--opt-blue);
+        }
+
+        .layer.clients .layer-badge {
+            background: var(--opt-blue);
+            color: white;
+        }
+
+        .layer.automation {
+            background: linear-gradient(135deg, var(--opt-orange-light), #fed7aa);
+            border: 2px solid var(--opt-orange);
+        }
+
+        .layer.automation .layer-badge {
+            background: var(--opt-orange);
+            color: white;
+        }
+
+        .layer.data {
+            background: linear-gradient(135deg, var(--green-light), #bbf7d0);
+            border: 2px solid var(--green);
+        }
+
+        .layer.data .layer-badge {
+            background: var(--green);
+            color: white;
+        }
+
+        .layer.integration {
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            border: 2px solid var(--purple);
+        }
+
+        .layer.integration .layer-badge {
+            background: var(--purple);
+            color: white;
+        }
+
+        .components-grid {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .component {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            min-width: 140px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .component-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 0.5rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .component-icon.blue { background: var(--opt-blue); }
+        .component-icon.orange { background: var(--opt-orange); }
+        .component-icon.green { background: var(--green); }
+        .component-icon.purple { background: var(--purple); }
+        .component-icon.cyan { background: var(--cyan); }
+        .component-icon.pink { background: var(--pink); }
+
+        .component-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--gray-900);
+        }
+
+        .component-desc {
+            font-size: 0.7rem;
+            color: var(--gray-600);
+            margin-top: 0.25rem;
+        }
+
+        /* Arrows between layers */
+        .layer-connector {
+            display: flex;
+            justify-content: center;
+            margin: -0.5rem 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .connector-arrow {
+            width: 40px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            font-size: 1.5rem;
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .tech-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--opt-blue);
+        }
+
+        .tech-card:nth-child(2) {
+            border-top-color: var(--opt-orange);
+        }
+
+        .tech-card:nth-child(3) {
+            border-top-color: var(--green);
+        }
+
+        .tech-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .tech-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .tech-list {
+            list-style: none;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .tech-item:last-child {
+            border-bottom: none;
+        }
+
+        .tech-item-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--gray-100);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .tech-item-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .tech-item-role {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-left: auto;
+        }
+
+        /* Security Section */
+        .security-section {
+            background: linear-gradient(135deg, var(--gray-900), #1a365d);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 4rem;
+            color: white;
+        }
+
+        .security-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .security-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .security-header p {
+            opacity: 0.8;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .security-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .security-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--opt-orange);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .security-card h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .security-card p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Integration Points */
+        .integration-section {
+            margin-bottom: 4rem;
+        }
+
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .integration-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+        }
+
+        .integration-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--opt-blue-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .integration-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .integration-content p {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-bottom: 0.75rem;
+        }
+
+        .integration-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .integration-tag {
+            padding: 0.25rem 0.5rem;
+            background: var(--gray-100);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--gray-600);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Data Flow */
+        .data-flow {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+        }
+
+        .flow-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .flow-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .flow-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .flow-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--opt-blue), var(--opt-orange), var(--green));
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .flow-step {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            min-width: 160px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .flow-step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        .flow-step:nth-child(1) .flow-step-icon {
+            background: var(--opt-blue);
+        }
+
+        .flow-step:nth-child(2) .flow-step-icon {
+            background: var(--purple);
+        }
+
+        .flow-step:nth-child(3) .flow-step-icon {
+            background: var(--opt-orange);
+        }
+
+        .flow-step:nth-child(4) .flow-step-icon {
+            background: var(--green);
+        }
+
+        .flow-step h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .flow-step p {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        /* Demo Banner */
+        .demo-banner {
+            background: var(--opt-orange);
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            color: rgba(255,255,255,0.6);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--opt-orange);
+            text-decoration: none;
+        }
+
+        @media (max-width: 1024px) {
+            .tech-stack {
+                grid-template-columns: 1fr;
+            }
+
+            .security-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .integration-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-steps {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .flow-steps::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .components-grid {
+                justify-content: center;
+            }
+
+            .security-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-banner">
+        DEMO PACIFIK'AI - Architecture technique pour OPT Polynésie
+    </div>
+
+    <nav>
+        <a href="index.html" class="logo">
+            <div class="logo-icon">OPT</div>
+            <span>Architecture OPT</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="builds-presentation.html">4 Builds</a></li>
+            <li><a href="n8n-visualizer.html">Workflows</a></li>
+            <li><a href="pricing-strategy.html">Tarifs</a></li>
+            <li><a href="demo-hub.html">Hub Demo</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1>Architecture Technique</h1>
+        <p>Infrastructure sécurisée et scalable pour l'automatisation des services OPT Polynésie. Intégration possible avec les systèmes BSS/OSS existants.</p>
+    </section>
+
+    <main class="main-content">
+        <!-- Architecture Diagram -->
+        <div class="architecture-diagram">
+            <div class="diagram-title">
+                <h3>Vue d'ensemble de l'architecture</h3>
+            </div>
+
+            <div class="diagram-layers">
+                <!-- Client Layer -->
+                <div class="layer clients">
+                    <div class="layer-title">
+                        <span class="layer-badge">COUCHE CLIENTS</span>
+                        Points d'entrée utilisateurs
+                    </div>
+                    <div class="components-grid">
+                        <div class="component">
+                            <div class="component-icon blue">💬</div>
+                            <div class="component-name">Chat Widget</div>
+                            <div class="component-desc">Site opt.pf</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon green">📱</div>
+                            <div class="component-name">WhatsApp</div>
+                            <div class="component-desc">Business API</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon orange">📲</div>
+                            <div class="component-name">SMS Gateway</div>
+                            <div class="component-desc">Twilio</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon purple">📧</div>
+                            <div class="component-name">Email</div>
+                            <div class="component-desc">Brevo SMTP</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon cyan">🌐</div>
+                            <div class="component-name">API REST</div>
+                            <div class="component-desc">Intégrations</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layer-connector">
+                    <div class="connector-arrow">↓</div>
+                </div>
+
+                <!-- Automation Layer -->
+                <div class="layer automation">
+                    <div class="layer-title">
+                        <span class="layer-badge">COUCHE AUTOMATISATION</span>
+                        Orchestration n8n + IA
+                    </div>
+                    <div class="components-grid">
+                        <div class="component">
+                            <div class="component-icon orange">⚙️</div>
+                            <div class="component-name">n8n Self-hosted</div>
+                            <div class="component-desc">Workflows</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon purple">🧠</div>
+                            <div class="component-name">Claude Sonnet</div>
+                            <div class="component-desc">Génération IA</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon purple">⚡</div>
+                            <div class="component-name">Claude Haiku</div>
+                            <div class="component-desc">Classification rapide</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon pink">🔀</div>
+                            <div class="component-name">Router</div>
+                            <div class="component-desc">Aiguillage intents</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon green">📊</div>
+                            <div class="component-name">Analytics</div>
+                            <div class="component-desc">Métriques temps réel</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layer-connector">
+                    <div class="connector-arrow">↓</div>
+                </div>
+
+                <!-- Data Layer -->
+                <div class="layer data">
+                    <div class="layer-title">
+                        <span class="layer-badge">COUCHE DONNÉES</span>
+                        Stockage et Vector Store
+                    </div>
+                    <div class="components-grid">
+                        <div class="component">
+                            <div class="component-icon green">🗄️</div>
+                            <div class="component-name">Supabase</div>
+                            <div class="component-desc">PostgreSQL</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon green">🔍</div>
+                            <div class="component-name">Vector Store</div>
+                            <div class="component-desc">pgvector RAG</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon cyan">📋</div>
+                            <div class="component-name">Airtable</div>
+                            <div class="component-desc">Logs & CRM</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon orange">📁</div>
+                            <div class="component-name">Storage</div>
+                            <div class="component-desc">Fichiers & médias</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layer-connector">
+                    <div class="connector-arrow">↓</div>
+                </div>
+
+                <!-- Integration Layer -->
+                <div class="layer integration">
+                    <div class="layer-title">
+                        <span class="layer-badge">COUCHE INTÉGRATION</span>
+                        Systèmes OPT existants (optionnel)
+                    </div>
+                    <div class="components-grid">
+                        <div class="component">
+                            <div class="component-icon purple">📊</div>
+                            <div class="component-name">BSS</div>
+                            <div class="component-desc">Billing System</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon purple">🔧</div>
+                            <div class="component-name">OSS</div>
+                            <div class="component-desc">Operations Support</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon purple">👥</div>
+                            <div class="component-name">CRM</div>
+                            <div class="component-desc">Salesforce/Autre</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon purple">📶</div>
+                            <div class="component-name">NMS</div>
+                            <div class="component-desc">Network Monitor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="section-header">
+            <h2>Stack Technique Détaillée</h2>
+            <p>Technologies sélectionnées pour performance, sécurité et maintenabilité</p>
+        </div>
+
+        <div class="tech-stack">
+            <div class="tech-card">
+                <h3>
+                    <div class="tech-icon" style="background: var(--opt-blue-light);">⚙️</div>
+                    Automatisation
+                </h3>
+                <ul class="tech-list">
+                    <li class="tech-item">
+                        <div class="tech-item-icon">🔄</div>
+                        <span class="tech-item-name">n8n Self-hosted</span>
+                        <span class="tech-item-role">Orchestration</span>
+                    </li>
+                    <li class="tech-item">
+                        <div class="tech-item-icon">🐳</div>
+                        <span class="tech-item-name">Docker</span>
+                        <span class="tech-item-role">Conteneurs</span>
+                    </li>
+                    <li class="tech-item">
+                        <div class="tech-item-icon">🖥️</div>
+                        <span class="tech-item-name">Hostinger VPS</span>
+                        <span class="tech-item-role">Hébergement</span>
+                    </li>
+                    <li class="tech-item">
+                        <div class="tech-item-icon">🔒</div>
+                        <span class="tech-item-name">Nginx + SSL</span>
+                        <span class="tech-item-role">Reverse proxy</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h3>
+                    <div class="tech-icon" style="background: var(--opt-orange-light);">🧠</div>
+                    Intelligence Artificielle
+                </h3>
+                <ul class="tech-list">
+                    <li class="tech-item">
+                        <div class="tech-item-icon">✨</div>
+                        <span class="tech-item-name">Claude Sonnet</span>
+                        <span class="tech-item-role">Génération</span>
+                    </li>
+                    <li class="tech-item">
+                        <div class="tech-item-icon">⚡</div>
+                        <span class="tech-item-name">Claude Haiku</span>
+                        <span class="tech-item-role">Classification</span>
+                    </li>
+                    <li class="tech-item">
+                        <div class="tech-item-icon">📚</div>
+                        <span class="tech-item-name">RAG Pipeline</span>
+                        <span class="tech-item-role">Contexte FAQ</span>
+                    </li>
+                    <li class="tech-item">
+                        <div class="tech-item-icon">🎯</div>
+                        <span class="tech-item-name">Embeddings</span>
+                        <span class="tech-item-role">text-embedding-3</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h3>
+                    <div class="tech-icon" style="background: var(--green-light);">🗄️</div>
+                    Données & Stockage
+                </h3>
+                <ul class="tech-list">
+                    <li class="tech-item">
+                        <div class="tech-item-icon">🐘</div>
+                        <span class="tech-item-name">Supabase</span>
+                        <span class="tech-item-role">PostgreSQL</span>
+                    </li>
+                    <li class="tech-item">
+                        <div class="tech-item-icon">🔍</div>
+                        <span class="tech-item-name">pgvector</span>
+                        <span class="tech-item-role">Vector search</span>
+                    </li>
+                    <li class="tech-item">
+                        <div class="tech-item-icon">📋</div>
+                        <span class="tech-item-name">Airtable</span>
+                        <span class="tech-item-role">Logs visibles</span>
+                    </li>
+                    <li class="tech-item">
+                        <div class="tech-item-icon">💾</div>
+                        <span class="tech-item-name">Supabase Storage</span>
+                        <span class="tech-item-role">Fichiers</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Security -->
+        <section class="security-section">
+            <div class="security-header">
+                <h2>Sécurité & Conformité</h2>
+                <p>Infrastructure conforme aux exigences d'un opérateur télécom</p>
+            </div>
+
+            <div class="security-grid">
+                <div class="security-card">
+                    <div class="security-icon">🔐</div>
+                    <h4>Données en Polynésie</h4>
+                    <p>n8n self-hosted sur serveur dédié, pas de données hors territoire</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">🔒</div>
+                    <h4>Chiffrement</h4>
+                    <p>TLS 1.3 en transit, AES-256 au repos, clés gérées par Vault</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">🛡️</div>
+                    <h4>Authentification</h4>
+                    <p>OAuth2 + JWT, 2FA pour accès admin, audit logs complets</p>
+                </div>
+                <div class="security-card">
+                    <div class="security-icon">📜</div>
+                    <h4>Conformité RGPD</h4>
+                    <p>Anonymisation données clients, droit à l'oubli automatisable</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integration Points -->
+        <section class="integration-section">
+            <div class="section-header">
+                <h2>Points d'intégration OPT</h2>
+                <p>Connexion possible avec les systèmes existants d'OPT Polynésie</p>
+            </div>
+
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="integration-icon">💰</div>
+                    <div class="integration-content">
+                        <h4>BSS - Billing Support System</h4>
+                        <p>Lecture factures, historique paiements, solde compte client. Écriture optionnelle pour changements forfaits automatisés.</p>
+                        <div class="integration-tags">
+                            <span class="integration-tag">REST API</span>
+                            <span class="integration-tag">Read/Write</span>
+                            <span class="integration-tag">OAuth2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon">🔧</div>
+                    <div class="integration-content">
+                        <h4>OSS - Operations Support System</h4>
+                        <p>Statut réseau par île, incidents en cours, tickets maintenance. Alertes proactives vers clients impactés.</p>
+                        <div class="integration-tags">
+                            <span class="integration-tag">SNMP</span>
+                            <span class="integration-tag">Webhooks</span>
+                            <span class="integration-tag">Read-only</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon">👥</div>
+                    <div class="integration-content">
+                        <h4>CRM - Salesforce / Autre</h4>
+                        <p>Fiche client unifiée, historique interactions, segmentation marketing. Sync bidirectionnelle des contacts.</p>
+                        <div class="integration-tags">
+                            <span class="integration-tag">Salesforce API</span>
+                            <span class="integration-tag">Sync</span>
+                            <span class="integration-tag">Bi-directionnel</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-icon">📦</div>
+                    <div class="integration-content">
+                        <h4>Système Postal</h4>
+                        <p>Tracking colis inter-îles, estimation livraison, notifications étapes. Intégration système logistique La Poste Polynésie.</p>
+                        <div class="integration-tags">
+                            <span class="integration-tag">API Tracking</span>
+                            <span class="integration-tag">Webhooks</span>
+                            <span class="integration-tag">Real-time</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Flow -->
+        <div class="data-flow">
+            <div class="flow-header">
+                <h3>Flux de données type : Message client</h3>
+            </div>
+
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="flow-step-icon">💬</div>
+                    <h4>Réception</h4>
+                    <p>Widget, WhatsApp, SMS</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">🧠</div>
+                    <h4>Classification</h4>
+                    <p>Claude Haiku intent</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">📚</div>
+                    <h4>RAG Query</h4>
+                    <p>Contexte Supabase</p>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">✨</div>
+                    <h4>Réponse</h4>
+                    <p>Génération + Envoi</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>DEMO PACIFIK'AI - Architecture technique pour OPT Polynésie<br>
+        <a href="demo-hub.html">Retour au Hub Demo</a></p>
+    </footer>
+</body>
+</html>

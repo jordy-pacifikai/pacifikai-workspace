@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarifs et ROI - THE MOORINGS TAHITI | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #003366;
+            --red: #CC0000;
+            --white: #FFFFFF;
+            --light-blue: #E8F4FD;
+            --dark-navy: #001a33;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--light-blue);
+            color: var(--navy);
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: var(--navy);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--white);
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: var(--red);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 140px 40px 80px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--dark-navy) 100%);
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--red);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            color: var(--white);
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: var(--red);
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.8);
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 80px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-intro {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .pricing-intro h2 {
+            font-size: 36px;
+            color: var(--navy);
+            margin-bottom: 15px;
+        }
+
+        .pricing-intro p {
+            font-size: 18px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,51,102,0.1);
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--navy), var(--red));
+        }
+
+        .pricing-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+
+        .pricing-info h3 {
+            font-size: 28px;
+            color: var(--navy);
+            margin-bottom: 15px;
+        }
+
+        .pricing-info p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .pricing-highlights {
+            list-style: none;
+        }
+
+        .pricing-highlights li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pricing-highlights li:last-child {
+            border-bottom: none;
+        }
+
+        .highlight-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--light-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .highlight-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--navy);
+        }
+
+        .pricing-box {
+            background: linear-gradient(135deg, var(--navy), var(--dark-navy));
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .pricing-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .pricing-amount {
+            font-size: 60px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .pricing-currency {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .pricing-equivalent {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .pricing-includes {
+            text-align: left;
+        }
+
+        .pricing-includes h4 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .pricing-includes ul {
+            list-style: none;
+        }
+
+        .pricing-includes li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .pricing-includes svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--success);
+        }
+
+        /* ROI Section */
+        .roi-section {
+            background: var(--white);
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,51,102,0.1);
+            margin-bottom: 60px;
+        }
+
+        .roi-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .roi-header h2 {
+            font-size: 32px;
+            color: var(--navy);
+            margin-bottom: 15px;
+        }
+
+        .roi-header p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .roi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .roi-card {
+            background: var(--light-blue);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .roi-card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--navy);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .roi-card-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--white);
+        }
+
+        .roi-card h3 {
+            font-size: 16px;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .roi-before-after {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .roi-before {
+            font-size: 24px;
+            color: #888;
+            text-decoration: line-through;
+        }
+
+        .roi-arrow {
+            color: var(--success);
+            font-size: 24px;
+        }
+
+        .roi-after {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .roi-impact {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Calculation */
+        .roi-calculation {
+            background: var(--navy);
+            border-radius: 20px;
+            padding: 40px;
+            color: var(--white);
+        }
+
+        .roi-calculation h3 {
+            font-size: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .calculation-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .calc-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+
+        .calc-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .calc-value.highlight {
+            color: var(--success);
+        }
+
+        .calc-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Timeline */
+        .timeline-section {
+            margin-bottom: 60px;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .timeline-header h2 {
+            font-size: 32px;
+            color: var(--navy);
+            margin-bottom: 15px;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 60px;
+            right: 60px;
+            height: 4px;
+            background: #ddd;
+        }
+
+        .timeline-item {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--white);
+            border: 4px solid var(--navy);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .timeline-icon svg {
+            width: 35px;
+            height: 35px;
+            fill: var(--navy);
+        }
+
+        .timeline-item h4 {
+            font-size: 16px;
+            color: var(--navy);
+            margin-bottom: 5px;
+        }
+
+        .timeline-item p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* CTA */
+        .cta-section {
+            background: linear-gradient(135deg, var(--navy), var(--dark-navy));
+            border-radius: 30px;
+            padding: 60px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .cta-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #a00000;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--white);
+            color: var(--navy);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .demo-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--red);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-header {
+                grid-template-columns: 1fr;
+            }
+
+            .roi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calculation-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .timeline {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .timeline::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .pricing-amount {
+                font-size: 42px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .calculation-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg>
+            </div>
+            <span class="logo-text">THE MOORINGS x PACIFIK'AI</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Accueil</a>
+            <a href="demo-hub.html">Hub Demo</a>
+            <a href="builds-presentation.html">Solutions</a>
+            <a href="dashboard.html">Dashboard</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge">Investissement & Retour</div>
+        <h1>ROI Mesurable,<br><span>Resultats Garantis</span></h1>
+        <p>Un pack adapte a la taille de votre flotte avec un objectif clair : passer de 60% a 80% de taux d'utilisation.</p>
+    </section>
+
+    <section class="pricing-section">
+        <div class="pricing-intro">
+            <h2>Pack Charter Premium</h2>
+            <p>Solution complete integrant les 4 builds IA + support prioritaire + iterations illimitees pendant 3 mois.</p>
+        </div>
+
+        <div class="pricing-card">
+            <div class="pricing-header">
+                <div class="pricing-info">
+                    <h3>Solution Complete THE MOORINGS</h3>
+                    <p>
+                        Pack sur mesure pour operateur charter avec flotte multi-bateaux.
+                        Inclut l'ensemble des 4 builds (Chatbot Navigation, Newsletter Segmentee,
+                        SEO/GEO Content Factory, ROI Analyst) plus l'integration avec vos systemes existants.
+                    </p>
+                    <ul class="pricing-highlights">
+                        <li>
+                            <div class="highlight-icon"><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg></div>
+                            <span>Integration systeme de reservation charter</span>
+                        </li>
+                        <li>
+                            <div class="highlight-icon"><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg></div>
+                            <span>API meteo marine en temps reel</span>
+                        </li>
+                        <li>
+                            <div class="highlight-icon"><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg></div>
+                            <span>Base de donnees itineraires et mouillages</span>
+                        </li>
+                        <li>
+                            <div class="highlight-icon"><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg></div>
+                            <span>Formation equipe (2 sessions incluses)</span>
+                        </li>
+                        <li>
+                            <div class="highlight-icon"><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg></div>
+                            <span>Support prioritaire 3 mois</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="pricing-box">
+                    <div class="pricing-label">Investissement Initial</div>
+                    <div class="pricing-amount">2.5M</div>
+                    <div class="pricing-currency">XPF</div>
+                    <div class="pricing-equivalent">Equivalent ~21 000 EUR</div>
+
+                    <div class="pricing-includes">
+                        <h4>Inclus dans le pack</h4>
+                        <ul>
+                            <li><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg> Build 1: Chatbot Navigation</li>
+                            <li><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg> Build 2: Newsletter Segmentee</li>
+                            <li><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg> Build 3: SEO/GEO Content</li>
+                            <li><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg> Build 4: ROI Analyst Dashboard</li>
+                            <li><svg viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg> Iterations illimitees (3 mois)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROI Section -->
+        <div class="roi-section">
+            <div class="roi-header">
+                <h2>Impact Mesurable sur votre Business</h2>
+                <p>Objectif principal : ameliorer le taux d'utilisation de votre flotte de 60% a 80%</p>
+            </div>
+
+            <div class="roi-grid">
+                <div class="roi-card">
+                    <div class="roi-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg>
+                    </div>
+                    <h3>Taux d'Utilisation Flotte</h3>
+                    <div class="roi-before-after">
+                        <span class="roi-before">60%</span>
+                        <span class="roi-arrow">→</span>
+                        <span class="roi-after">80%</span>
+                    </div>
+                    <p class="roi-impact">+33% de jours de location par bateau</p>
+                </div>
+
+                <div class="roi-card">
+                    <div class="roi-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/></svg>
+                    </div>
+                    <h3>Temps Reponse Client</h3>
+                    <div class="roi-before-after">
+                        <span class="roi-before">24h</span>
+                        <span class="roi-arrow">→</span>
+                        <span class="roi-after">Instant</span>
+                    </div>
+                    <p class="roi-impact">Chatbot IA disponible 24/7</p>
+                </div>
+
+                <div class="roi-card">
+                    <div class="roi-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M16,11.78L20.24,4.45L21.97,5.45L16.74,14.5L10.23,10.75L5.46,19H22V21H2V3H4V17.54L9.5,8L16,11.78Z"/></svg>
+                    </div>
+                    <h3>Trafic Organique</h3>
+                    <div class="roi-before-after">
+                        <span class="roi-before">Base</span>
+                        <span class="roi-arrow">→</span>
+                        <span class="roi-after">+180%</span>
+                    </div>
+                    <p class="roi-impact">Domination SEO/GEO Polynesie</p>
+                </div>
+            </div>
+
+            <div class="roi-calculation">
+                <h3>Calcul ROI sur 12 mois (Estimation flotte 5 bateaux)</h3>
+                <div class="calculation-grid">
+                    <div class="calc-item">
+                        <div class="calc-value">52</div>
+                        <div class="calc-label">Semaines/an</div>
+                    </div>
+                    <div class="calc-item">
+                        <div class="calc-value">+10.4</div>
+                        <div class="calc-label">Semaines gagnes/bateau</div>
+                    </div>
+                    <div class="calc-item">
+                        <div class="calc-value">6 500 EUR</div>
+                        <div class="calc-label">Tarif moyen/semaine</div>
+                    </div>
+                    <div class="calc-item">
+                        <div class="calc-value highlight">+338K EUR</div>
+                        <div class="calc-label">Revenue additionnel/an</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-section">
+            <div class="timeline-header">
+                <h2>Deploiement en 8 Semaines</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z"/></svg>
+                    </div>
+                    <h4>Semaine 1-2</h4>
+                    <p>Audit & Setup<br>Integration donnees</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12,3C17.5,3 22,6.58 22,11C22,15.42 17.5,19 12,19C10.76,19 9.57,18.82 8.47,18.5C5.55,21 2,21 2,21C4.33,18.67 4.7,17.1 4.75,16.5C3.05,15.07 2,13.13 2,11C2,6.58 6.5,3 12,3Z"/></svg>
+                    </div>
+                    <h4>Semaine 3-4</h4>
+                    <p>Chatbot<br>Newsletter</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3Z"/></svg>
+                    </div>
+                    <h4>Semaine 5-6</h4>
+                    <p>SEO/GEO<br>Content Factory</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <svg viewBox="0 0 24 24"><path d="M16,11.78L20.24,4.45L21.97,5.45L16.74,14.5L10.23,10.75L5.46,19H22V21H2V3H4V17.54L9.5,8L16,11.78Z"/></svg>
+                    </div>
+                    <h4>Semaine 7-8</h4>
+                    <p>Dashboard ROI<br>Formation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h2>Pret a transformer votre activite charter ?</h2>
+            <p>Planifions un appel de 30 minutes pour evaluer precisement le ROI potentiel pour votre flotte specifique.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">Planifier un appel</a>
+                <a href="delivery-architecture.html" class="btn btn-secondary">Voir l'architecture technique</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        Demo PACIFIK'AI - Proposition commerciale THE MOORINGS TAHITI - Base Raiatea
+    </footer>
+
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+</body>
+</html>

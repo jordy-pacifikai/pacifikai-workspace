@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banque de Polynésie - Assistant Bancaire IA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sg-red: #E60028;
+            --sg-red-dark: #B8001F;
+            --sg-black: #1A1A1A;
+            --sg-gray: #4A4A4A;
+            --sg-light: #F5F5F5;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: var(--sg-light);
+            color: var(--sg-black);
+            line-height: 1.6;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.85) 0%, rgba(230, 0, 40, 0.75) 100%),
+                        url('https://images.unsplash.com/photo-1589308078059-be1415eab4c3?w=1920') center/cover;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--sg-red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--sg-black);
+        }
+
+        .logo-text span {
+            color: var(--sg-red);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--sg-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--sg-red);
+        }
+
+        .nav-cta {
+            background: var(--sg-red);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-cta:hover {
+            background: var(--sg-red-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Content */
+        .hero-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4rem 5%;
+            gap: 4rem;
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title span {
+            color: var(--sg-red);
+            background: white;
+            padding: 0 10px;
+            border-radius: 4px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-features {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .hero-feature-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--sg-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--sg-red);
+            color: white;
+            padding: 16px 36px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--sg-red-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(230, 0, 40, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 16px 36px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 2px solid white;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--sg-black);
+        }
+
+        /* Chatbot Container */
+        .chatbot-container {
+            flex: 1;
+            max-width: 450px;
+        }
+
+        .chatbot {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chatbot-avatar {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .chatbot-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .chatbot-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chatbot-messages {
+            height: 350px;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background: #FAFAFA;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-bot {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--sg-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border-top-left-radius: 4px;
+            max-width: 85%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .message-user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message-user .message-content {
+            background: var(--sg-red);
+            color: white;
+            border-radius: 16px;
+            border-top-right-radius: 4px;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .quick-action {
+            background: var(--sg-light);
+            border: 1px solid #E0E0E0;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-action:hover {
+            background: var(--sg-red);
+            color: white;
+            border-color: var(--sg-red);
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #E0E0E0;
+            gap: 10px;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid #E0E0E0;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chatbot-input input:focus {
+            border-color: var(--sg-red);
+        }
+
+        .chatbot-input button {
+            width: 50px;
+            height: 50px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-input button:hover {
+            background: var(--sg-red-dark);
+            transform: scale(1.05);
+        }
+
+        /* Stats Section */
+        .stats {
+            background: white;
+            padding: 4rem 5%;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 12px;
+            background: var(--sg-light);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--sg-red);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--sg-gray);
+            font-size: 1.1rem;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 5%;
+            background: var(--sg-light);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(230, 0, 40, 0.1);
+            color: var(--sg-red);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--sg-black);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--sg-gray);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border-color: var(--sg-red);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            color: var(--sg-black);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--sg-gray);
+            line-height: 1.7;
+        }
+
+        /* Security Section */
+        .security {
+            padding: 6rem 5%;
+            background: var(--sg-black);
+            color: white;
+        }
+
+        .security-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .security-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .security-text h2 span {
+            color: var(--sg-red);
+        }
+
+        .security-text p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .security-list {
+            list-style: none;
+        }
+
+        .security-list li {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .security-list li::before {
+            content: "✓";
+            width: 30px;
+            height: 30px;
+            background: var(--sg-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .security-visual {
+            background: linear-gradient(135deg, #2A2A2A 0%, #1A1A1A 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .security-badge {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+        }
+
+        .security-visual h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .certifications {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .certification {
+            background: rgba(255,255,255,0.1);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 6rem 5%;
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            text-align: center;
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--sg-red);
+            padding: 16px 36px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-outline-white {
+            background: transparent;
+            color: white;
+            padding: 16px 36px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 2px solid white;
+            transition: all 0.3s;
+        }
+
+        .btn-outline-white:hover {
+            background: white;
+            color: var(--sg-red);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--sg-black);
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo span {
+            color: var(--sg-red);
+        }
+
+        footer p {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Demo Navigation */
+        .demo-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .demo-nav-toggle {
+            width: 60px;
+            height: 60px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(230, 0, 40, 0.4);
+            transition: all 0.3s;
+        }
+
+        .demo-nav-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .demo-nav-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 1rem;
+            min-width: 250px;
+            display: none;
+        }
+
+        .demo-nav-menu.active {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .demo-nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--sg-black);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .demo-nav-menu a:hover {
+            background: var(--sg-light);
+            color: var(--sg-red);
+        }
+
+        .demo-nav-menu a.active {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-features {
+                justify-content: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .security-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">BP</div>
+            <div class="logo-text">Banque de <span>Polynésie</span></div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#features">Fonctionnalites</a></li>
+            <li><a href="#security">Securite</a></li>
+            <li><a href="builds-presentation.html">Solutions</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+        </ul>
+        <a href="demo-hub.html" class="nav-cta">Voir la demo</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <span class="hero-badge">Powered by PACIFIK'AI</span>
+                <h1 class="hero-title">Votre Assistant <span>Bancaire</span> disponible 24h/24</h1>
+                <p class="hero-subtitle">Transformez l'experience client de votre banque avec un assistant IA intelligent, securise et conforme aux normes bancaires.</p>
+
+                <div class="hero-features">
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">&#10003;</div>
+                        <span>Simulation credit instantanee</span>
+                    </div>
+                    <div class="hero-feature">
+                        <div class="hero-feature-icon">&#10003;</div>
+                        <span>Prise de RDV automatique</span>
+                    </div>
+                </div>
+
+                <div class="hero-buttons">
+                    <a href="builds-presentation.html" class="btn-primary">Decouvrir nos solutions</a>
+                    <a href="video-script.html" class="btn-secondary">Voir la video</a>
+                </div>
+            </div>
+
+            <!-- Chatbot Demo -->
+            <div class="chatbot-container">
+                <div class="chatbot">
+                    <div class="chatbot-header">
+                        <div class="chatbot-avatar">&#128170;</div>
+                        <div class="chatbot-info">
+                            <h3>Assistant Bancaire</h3>
+                            <div class="chatbot-status">
+                                <span class="status-dot"></span>
+                                En ligne - Pret a vous aider
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chatbot-messages" id="chatMessages">
+                        <div class="message message-bot">
+                            <div class="message-avatar">BP</div>
+                            <div class="message-content">
+                                <p>Ia ora na ! Je suis votre assistant bancaire. Comment puis-je vous aider aujourd'hui ?</p>
+                                <div class="quick-actions">
+                                    <button class="quick-action" onclick="sendMessage('Simuler un credit immobilier')">Simuler un credit</button>
+                                    <button class="quick-action" onclick="sendMessage('Trouver une agence')">Trouver une agence</button>
+                                    <button class="quick-action" onclick="sendMessage('Prendre rendez-vous')">Prendre RDV</button>
+                                    <button class="quick-action" onclick="sendMessage('Quels sont vos tarifs ?')">Tarifs</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chatbot-input">
+                        <input type="text" id="userInput" placeholder="Posez votre question..." onkeypress="handleKeyPress(event)">
+                        <button onclick="sendUserMessage()">&#10148;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">-40%</div>
+                <div class="stat-label">Appels call center</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Disponibilite</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">+35%</div>
+                <div class="stat-label">Satisfaction client</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3s</div>
+                <div class="stat-label">Temps de reponse</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <span class="section-badge">Fonctionnalites</span>
+            <h2 class="section-title">Un assistant complet pour vos clients</h2>
+            <p class="section-subtitle">Toutes les fonctionnalites dont votre banque a besoin pour offrir un service client d'excellence.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#128176;</div>
+                <h3>Simulation de credit</h3>
+                <p>Calcul instantane des mensualites pour credits immobiliers et a la consommation. Taux personnalises selon le profil client.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128205;</div>
+                <h3>Localisation agences</h3>
+                <p>Trouvez l'agence la plus proche parmi nos 30 points de vente sur toutes les iles de Polynesie francaise.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128197;</div>
+                <h3>Prise de rendez-vous</h3>
+                <p>Reservation automatique avec un conseiller. Synchronisation directe avec les agendas des agences.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128218;</div>
+                <h3>FAQ intelligente</h3>
+                <p>Reponses instantanees sur les produits, tarifs, procedures. Base de connaissances mise a jour en temps reel.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#127968;</div>
+                <h3>Conseil epargne</h3>
+                <p>Orientation vers les solutions d'epargne adaptees : Livret A, PEL, assurance-vie, placements.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128272;</div>
+                <h3>100% Securise</h3>
+                <p>Aucune donnee client sensible ne transite. Hebergement prive conforme RGPD et reglementations bancaires.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section class="security" id="security">
+        <div class="security-content">
+            <div class="security-text">
+                <h2>Securite et <span>conformite</span> garanties</h2>
+                <p>Notre solution est concue pour repondre aux exigences les plus strictes du secteur bancaire. Aucune donnee sensible ne transite par notre systeme.</p>
+
+                <ul class="security-list">
+                    <li>Hebergement prive sur vos serveurs</li>
+                    <li>Aucun acces aux donnees clients</li>
+                    <li>Conformite RGPD et secret bancaire</li>
+                    <li>Chiffrement de bout en bout</li>
+                    <li>Audit de securite complet</li>
+                </ul>
+            </div>
+
+            <div class="security-visual">
+                <div class="security-badge">&#128274;</div>
+                <h3>Infrastructure securisee</h3>
+                <p>L'assistant fonctionne uniquement sur les informations publiques (FAQ, tarifs, produits). Les donnees bancaires restent dans vos systemes.</p>
+
+                <div class="certifications">
+                    <span class="certification">RGPD</span>
+                    <span class="certification">ISO 27001</span>
+                    <span class="certification">PCI DSS</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <h2>Pret a transformer votre service client ?</h2>
+        <p>Rejoignez les banques qui ont deja adopte l'IA pour ameliorer leur relation client.</p>
+        <div class="cta-buttons">
+            <a href="pricing-strategy.html" class="btn-white">Voir notre offre</a>
+            <a href="demo-hub.html" class="btn-outline-white">Explorer la demo</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Banque de <span>Polynesie</span> x PACIFIK'AI</div>
+            <p>Demo realisee par PACIFIK'AI - Agence d'automatisation IA en Polynesie francaise</p>
+        </div>
+    </footer>
+
+    <!-- Demo Navigation -->
+    <div class="demo-nav">
+        <button class="demo-nav-toggle" onclick="toggleDemoNav()">&#9776;</button>
+        <div class="demo-nav-menu" id="demoNavMenu">
+            <a href="index.html" class="active">Chatbot Landing</a>
+            <a href="builds-presentation.html">4 Builds IA</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="blog.html">Blog Conseil</a>
+            <a href="pricing-strategy.html">Offre & Pricing</a>
+            <a href="n8n-visualizer.html">Workflows n8n</a>
+            <a href="delivery-architecture.html">Architecture</a>
+            <a href="video-script.html">Script Video</a>
+            <a href="demo-hub.html">Hub Demo</a>
+        </div>
+    </div>
+
+    <script>
+        // Demo responses for the chatbot
+        const responses = {
+            'credit': {
+                text: "Pour une simulation de credit immobilier, j'ai besoin de quelques informations :\n\n- Montant souhaite : ?\n- Duree (10, 15, 20, 25 ans) : ?\n- Votre situation : Salarie, Fonctionnaire, Independant ?\n\nPar exemple, pour 30M XPF sur 20 ans, la mensualite serait d'environ 175 000 XPF (taux indicatif 2.5%).",
+                followUp: ['Simuler 30M sur 20 ans', 'Credit conso', 'Prendre RDV conseiller']
+            },
+            'agence': {
+                text: "Nous avons 30 agences en Polynesie francaise :\n\n**Tahiti** : Papeete Centre, Fare Tony, Punaauia, Faa'a, Pirae, Arue, Mahina, Taravao\n\n**Moorea** : Maharepa\n\n**Iles Sous-le-Vent** : Raiatea, Bora Bora, Huahine\n\n**Marquises** : Nuku Hiva, Hiva Oa\n\nQuelle ile vous interesse ?",
+                followUp: ['Agence Papeete', 'Horaires ouverture', 'Prendre RDV']
+            },
+            'rdv': {
+                text: "Je peux vous fixer un rendez-vous avec un conseiller.\n\nQuel est l'objet de votre demande ?\n- Ouverture de compte\n- Credit immobilier\n- Credit consommation\n- Epargne / Placement\n- Assurance\n- Autre",
+                followUp: ['Credit immobilier', 'Ouverture compte', 'Epargne']
+            },
+            'tarifs': {
+                text: "Voici nos principales offres :\n\n**Compte Essentiel** : 1 500 XPF/mois\n- Carte Visa Classic\n- Banque en ligne\n\n**Compte Premium** : 3 500 XPF/mois\n- Carte Visa Premier\n- Assurances incluses\n\n**Compte Pro** : 4 500 XPF/mois\n- Terminal de paiement\n- Gestion de tresorerie\n\nVoulez-vous plus de details sur une offre ?",
+                followUp: ['Compte Premium', 'Compte Pro', 'Comparer']
+            },
+            'default': {
+                text: "Je comprends votre demande. Pour mieux vous aider, pouvez-vous preciser votre besoin ? Je peux vous renseigner sur :\n\n- Les simulations de credit\n- Nos agences et horaires\n- La prise de rendez-vous\n- Les tarifs et offres\n- L'epargne et les placements",
+                followUp: ['Simuler un credit', 'Trouver une agence', 'Tarifs']
+            }
+        };
+
+        function sendMessage(text) {
+            const messagesContainer = document.getElementById('chatMessages');
+
+            // Add user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message message-user';
+            userDiv.innerHTML = `<div class="message-content"><p>${text}</p></div>`;
+            messagesContainer.appendChild(userDiv);
+
+            // Determine response
+            let response = responses.default;
+            const lowerText = text.toLowerCase();
+
+            if (lowerText.includes('credit') || lowerText.includes('simuler') || lowerText.includes('pret')) {
+                response = responses.credit;
+            } else if (lowerText.includes('agence') || lowerText.includes('trouver') || lowerText.includes('ou')) {
+                response = responses.agence;
+            } else if (lowerText.includes('rdv') || lowerText.includes('rendez') || lowerText.includes('conseiller')) {
+                response = responses.rdv;
+            } else if (lowerText.includes('tarif') || lowerText.includes('prix') || lowerText.includes('cout') || lowerText.includes('offre')) {
+                response = responses.tarifs;
+            }
+
+            // Add bot response with delay
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'message message-bot';
+
+                let quickActionsHtml = '';
+                if (response.followUp) {
+                    quickActionsHtml = '<div class="quick-actions">' +
+                        response.followUp.map(q => `<button class="quick-action" onclick="sendMessage('${q}')">${q}</button>`).join('') +
+                        '</div>';
+                }
+
+                botDiv.innerHTML = `
+                    <div class="message-avatar">BP</div>
+                    <div class="message-content">
+                        <p>${response.text.replace(/\n/g, '<br>')}</p>
+                        ${quickActionsHtml}
+                    </div>
+                `;
+                messagesContainer.appendChild(botDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 800);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendUserMessage() {
+            const input = document.getElementById('userInput');
+            if (input.value.trim()) {
+                sendMessage(input.value);
+                input.value = '';
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendUserMessage();
+            }
+        }
+
+        function toggleDemoNav() {
+            const menu = document.getElementById('demoNavMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('demoNavMenu');
+            const toggle = document.querySelector('.demo-nav-toggle');
+            if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

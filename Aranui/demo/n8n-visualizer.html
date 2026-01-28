@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisation Workflows n8n | ARANUI x PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --aranui-blue: #005B8F;
+            --aranui-blue-dark: #004670;
+            --aranui-orange: #F5A623;
+            --aranui-orange-light: #FFB84D;
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-400: #9CA3AF;
+            --gray-600: #4B5563;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --warning: #F59E0B;
+            --purple: #8B5CF6;
+            --n8n-green: #00C853;
+            --n8n-pink: #FF6D5A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-900);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--aranui-orange);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logo-text h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .demo-badge {
+            background: var(--aranui-orange);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding-top: 80px;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Tabs Sidebar */
+        .tabs-sidebar {
+            width: 280px;
+            background: rgba(0,0,0,0.3);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem 1rem;
+            flex-shrink: 0;
+        }
+
+        .tabs-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+        }
+
+        .workflow-tab {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+
+        .workflow-tab:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .workflow-tab.active {
+            background: var(--aranui-blue);
+        }
+
+        .tab-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .workflow-tab:nth-child(2) .tab-icon { background: rgba(0,91,143,0.3); }
+        .workflow-tab:nth-child(3) .tab-icon { background: rgba(245,166,35,0.3); }
+        .workflow-tab:nth-child(4) .tab-icon { background: rgba(16,185,129,0.3); }
+        .workflow-tab:nth-child(5) .tab-icon { background: rgba(139,92,246,0.3); }
+
+        .workflow-tab.active .tab-icon {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .tab-info {
+            flex: 1;
+        }
+
+        .tab-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .tab-status {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+        }
+
+        .workflow-tab.active .tab-status {
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .canvas-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .canvas-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .canvas-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .canvas-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-execute {
+            background: var(--n8n-green);
+            color: white;
+        }
+
+        .btn-execute:hover {
+            background: #00E676;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Workflow Canvas */
+        .workflow-canvas {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .nodes-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 2rem;
+        }
+
+        /* Nodes */
+        .workflow-node {
+            position: absolute;
+            background: var(--gray-800);
+            border-radius: 12px;
+            padding: 1rem;
+            min-width: 160px;
+            border: 2px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .workflow-node:hover {
+            border-color: var(--aranui-blue);
+            transform: translateY(-2px);
+        }
+
+        .workflow-node.active {
+            border-color: var(--n8n-green);
+            box-shadow: 0 0 20px rgba(0,200,83,0.3);
+        }
+
+        .workflow-node.executing {
+            animation: nodeExecute 1s ease-in-out;
+        }
+
+        @keyframes nodeExecute {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); border-color: var(--n8n-green); }
+            100% { transform: scale(1); }
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .node-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .node-icon.webhook { background: #FF6D5A; }
+        .node-icon.openai { background: #10B981; }
+        .node-icon.supabase { background: #3ECF8E; }
+        .node-icon.email { background: #EA4335; }
+        .node-icon.http { background: #6366F1; }
+        .node-icon.code { background: #F59E0B; }
+        .node-icon.split { background: #8B5CF6; }
+        .node-icon.airtable { background: #18BFFF; }
+        .node-icon.wordpress { background: #21759B; }
+
+        .node-name {
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .node-type {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+        }
+
+        /* Connections */
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gray-600), var(--aranui-blue));
+            transform-origin: left center;
+        }
+
+        .connection-line.active {
+            background: linear-gradient(90deg, var(--n8n-green), var(--aranui-blue));
+            animation: flowData 1s linear infinite;
+        }
+
+        @keyframes flowData {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 0%; }
+        }
+
+        /* Impact Panel */
+        .impact-panel {
+            width: 320px;
+            background: rgba(0,0,0,0.3);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            flex-shrink: 0;
+        }
+
+        .panel-section {
+            margin-bottom: 2rem;
+        }
+
+        .panel-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .impact-stat {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .impact-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--aranui-orange);
+            margin-bottom: 0.25rem;
+        }
+
+        .impact-label {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+        }
+
+        .impact-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--success);
+            margin-left: 0.5rem;
+        }
+
+        /* Execution Log */
+        .execution-log {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .log-entry {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .log-time {
+            color: var(--gray-400);
+            flex-shrink: 0;
+        }
+
+        .log-message {
+            color: var(--gray-200);
+        }
+
+        .log-message.success { color: var(--success); }
+        .log-message.warning { color: var(--warning); }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .impact-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .tabs-sidebar {
+                display: none;
+            }
+
+            .main-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">n8n</div>
+            <div class="logo-text">
+                <h1>Workflow Visualizer</h1>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="demo-hub.html">Hub Demo</a>
+            <a href="builds-presentation.html">Les Builds</a>
+            <a href="delivery-architecture.html">Architecture</a>
+            <span class="demo-badge">ARANUI x PACIFIK'AI</span>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Tabs Sidebar -->
+        <aside class="tabs-sidebar">
+            <div class="tabs-title">Workflows</div>
+
+            <div class="workflow-tab active" onclick="switchWorkflow(1)">
+                <div class="tab-icon">🚢</div>
+                <div class="tab-info">
+                    <div class="tab-name">Chatbot Concierge</div>
+                    <div class="tab-status">Active - 247 executions/jour</div>
+                </div>
+            </div>
+
+            <div class="workflow-tab" onclick="switchWorkflow(2)">
+                <div class="tab-icon">📬</div>
+                <div class="tab-info">
+                    <div class="tab-name">Newsletter Segment</div>
+                    <div class="tab-status">Planifie - Lundi 9h</div>
+                </div>
+            </div>
+
+            <div class="workflow-tab" onclick="switchWorkflow(3)">
+                <div class="tab-icon">📝</div>
+                <div class="tab-info">
+                    <div class="tab-name">SEO Content Factory</div>
+                    <div class="tab-status">Hebdomadaire - Dimanche</div>
+                </div>
+            </div>
+
+            <div class="workflow-tab" onclick="switchWorkflow(4)">
+                <div class="tab-icon">📊</div>
+                <div class="tab-info">
+                    <div class="tab-name">ROI Analyst</div>
+                    <div class="tab-status">Temps reel - Continu</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <main class="canvas-area">
+            <div class="canvas-header">
+                <div class="canvas-title">
+                    <h2 id="workflowTitle">Build 1: Chatbot Concierge</h2>
+                    <span class="status-badge">En ligne</span>
+                </div>
+                <div class="canvas-actions">
+                    <button class="canvas-btn btn-outline">
+                        <span>📋</span> Logs
+                    </button>
+                    <button class="canvas-btn btn-execute" onclick="executeWorkflow()">
+                        <span>▶</span> Executer Test
+                    </button>
+                </div>
+            </div>
+
+            <div class="workflow-canvas">
+                <div class="canvas-grid"></div>
+                <div class="nodes-container" id="nodesContainer">
+                    <!-- Workflow 1: Chatbot -->
+                    <div class="workflow-node" id="node1" style="left: 50px; top: 150px;">
+                        <div class="node-header">
+                            <div class="node-icon webhook">🌐</div>
+                            <div>
+                                <div class="node-name">Webhook Chat</div>
+                                <div class="node-type">Trigger</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-node" id="node2" style="left: 280px; top: 80px;">
+                        <div class="node-header">
+                            <div class="node-icon code">🔍</div>
+                            <div>
+                                <div class="node-name">Detect Language</div>
+                                <div class="node-type">Code</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-node" id="node3" style="left: 280px; top: 220px;">
+                        <div class="node-header">
+                            <div class="node-icon supabase">🗄️</div>
+                            <div>
+                                <div class="node-name">Search Knowledge</div>
+                                <div class="node-type">Supabase Vector</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-node" id="node4" style="left: 510px; top: 150px;">
+                        <div class="node-header">
+                            <div class="node-icon openai">🤖</div>
+                            <div>
+                                <div class="node-name">Claude AI</div>
+                                <div class="node-type">Generate Response</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-node" id="node5" style="left: 740px; top: 80px;">
+                        <div class="node-header">
+                            <div class="node-icon airtable">📊</div>
+                            <div>
+                                <div class="node-name">Log Conversation</div>
+                                <div class="node-type">Airtable</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-node" id="node6" style="left: 740px; top: 220px;">
+                        <div class="node-header">
+                            <div class="node-icon http">📤</div>
+                            <div>
+                                <div class="node-name">Send Response</div>
+                                <div class="node-type">HTTP Response</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SVG Connections -->
+                <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                    <defs>
+                        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:var(--gray-600)"/>
+                            <stop offset="100%" style="stop-color:var(--aranui-blue)"/>
+                        </linearGradient>
+                    </defs>
+                    <path id="conn1" d="M 230 185 Q 255 130 280 115" stroke="url(#lineGradient)" stroke-width="2" fill="none"/>
+                    <path id="conn2" d="M 230 185 Q 255 220 280 255" stroke="url(#lineGradient)" stroke-width="2" fill="none"/>
+                    <path id="conn3" d="M 440 115 Q 475 130 510 185" stroke="url(#lineGradient)" stroke-width="2" fill="none"/>
+                    <path id="conn4" d="M 440 255 Q 475 220 510 185" stroke="url(#lineGradient)" stroke-width="2" fill="none"/>
+                    <path id="conn5" d="M 670 185 Q 705 130 740 115" stroke="url(#lineGradient)" stroke-width="2" fill="none"/>
+                    <path id="conn6" d="M 670 185 Q 705 220 740 255" stroke="url(#lineGradient)" stroke-width="2" fill="none"/>
+                </svg>
+            </div>
+        </main>
+
+        <!-- Impact Panel -->
+        <aside class="impact-panel">
+            <div class="panel-section">
+                <div class="panel-title">Impact Build 1</div>
+
+                <div class="impact-stat">
+                    <div class="impact-value">-40%</div>
+                    <div class="impact-label">Tickets support reduits</div>
+                </div>
+
+                <div class="impact-stat">
+                    <div class="impact-value">+25%</div>
+                    <div class="impact-label">Conversions formulaire</div>
+                </div>
+
+                <div class="impact-stat">
+                    <div class="impact-value">24/7</div>
+                    <div class="impact-label">Disponibilite</div>
+                </div>
+
+                <div class="impact-stat">
+                    <div class="impact-value">3</div>
+                    <div class="impact-label">Langues supportees (FR/EN/DE)</div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <div class="panel-title">Execution Log</div>
+                <div class="execution-log" id="executionLog">
+                    <div class="log-entry">
+                        <span class="log-time">14:32:15</span>
+                        <span class="log-message success">Webhook received - FR detected</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">14:32:15</span>
+                        <span class="log-message">Searching Supabase vectors...</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">14:32:16</span>
+                        <span class="log-message success">5 relevant documents found</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">14:32:16</span>
+                        <span class="log-message">Generating Claude response...</span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">14:32:18</span>
+                        <span class="log-message success">Response sent (247 tokens)</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        const workflowData = {
+            1: {
+                title: 'Build 1: Chatbot Concierge',
+                impact: {
+                    stat1: { value: '-40%', label: 'Tickets support reduits' },
+                    stat2: { value: '+25%', label: 'Conversions formulaire' },
+                    stat3: { value: '24/7', label: 'Disponibilite' },
+                    stat4: { value: '3', label: 'Langues supportees (FR/EN/DE)' }
+                }
+            },
+            2: {
+                title: 'Build 2: Newsletter Segmentee',
+                impact: {
+                    stat1: { value: '+35%', label: 'Taux d\'ouverture' },
+                    stat2: { value: '+15%', label: 'Demandes de devis' },
+                    stat3: { value: '4', label: 'Segments automatises' },
+                    stat4: { value: '5', label: 'Emails sequence bienvenue' }
+                }
+            },
+            3: {
+                title: 'Build 3: SEO Content Factory',
+                impact: {
+                    stat1: { value: '+60%', label: 'Trafic organique' },
+                    stat2: { value: 'Top 5', label: 'Position "croisiere marquises"' },
+                    stat3: { value: '4/mois', label: 'Articles generes' },
+                    stat4: { value: 'GEO', label: 'Optimisation Google AI' }
+                }
+            },
+            4: {
+                title: 'Build 4: ROI Analyst',
+                impact: {
+                    stat1: { value: 'Temps reel', label: 'Suivi remplissage' },
+                    stat2: { value: '-20%', label: 'Budget marketing optimise' },
+                    stat3: { value: 'Auto', label: 'Rapports hebdo' },
+                    stat4: { value: 'Multi-touch', label: 'Attribution' }
+                }
+            }
+        };
+
+        function switchWorkflow(id) {
+            // Update tabs
+            document.querySelectorAll('.workflow-tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index + 1 === id);
+            });
+
+            // Update title
+            document.getElementById('workflowTitle').textContent = workflowData[id].title;
+
+            // Update impact stats
+            const stats = workflowData[id].impact;
+            const statElements = document.querySelectorAll('.impact-stat');
+            let i = 0;
+            for (const key in stats) {
+                if (statElements[i]) {
+                    statElements[i].querySelector('.impact-value').textContent = stats[key].value;
+                    statElements[i].querySelector('.impact-label').textContent = stats[key].label;
+                }
+                i++;
+            }
+        }
+
+        function executeWorkflow() {
+            const nodes = document.querySelectorAll('.workflow-node');
+            const log = document.getElementById('executionLog');
+
+            // Clear previous execution
+            nodes.forEach(node => node.classList.remove('active', 'executing'));
+
+            // Animate execution
+            let delay = 0;
+            nodes.forEach((node, index) => {
+                setTimeout(() => {
+                    node.classList.add('executing');
+                    setTimeout(() => {
+                        node.classList.remove('executing');
+                        node.classList.add('active');
+
+                        // Add log entry
+                        const time = new Date().toLocaleTimeString('fr-FR');
+                        const messages = [
+                            'Webhook triggered',
+                            'Language detected: FR',
+                            'Vector search completed',
+                            'AI response generated',
+                            'Conversation logged',
+                            'Response sent successfully'
+                        ];
+
+                        const entry = document.createElement('div');
+                        entry.className = 'log-entry';
+                        entry.innerHTML = `
+                            <span class="log-time">${time}</span>
+                            <span class="log-message success">${messages[index]}</span>
+                        `;
+                        log.prepend(entry);
+
+                    }, 400);
+                }, delay);
+                delay += 500;
+            });
+
+            // Reset after completion
+            setTimeout(() => {
+                nodes.forEach(node => node.classList.remove('active'));
+            }, delay + 2000);
+        }
+    </script>
+</body>
+</html>

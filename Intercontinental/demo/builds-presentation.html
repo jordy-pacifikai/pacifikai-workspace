@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les 4 Builds IA | InterContinental Tahiti & Bora Bora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #B8860B;
+            --gold-light: #D4A73A;
+            --bordeaux: #722F37;
+            --bordeaux-dark: #5A252C;
+            --white: #FFFFFF;
+            --cream: #FAF8F5;
+            --charcoal: #2D2D2D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--cream);
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .demo-badge {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--gold);
+            color: var(--white);
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 60px;
+            background: var(--white);
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: var(--charcoal);
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+
+        .nav-links a {
+            color: var(--charcoal);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--gold);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--bordeaux), var(--bordeaux-dark));
+            color: var(--white);
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--white);
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Builds Section */
+        .builds {
+            padding: 80px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .build-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-bottom: 100px;
+            padding: 60px;
+            background: var(--white);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        }
+
+        .build-card:nth-child(even) {
+            direction: rtl;
+        }
+
+        .build-card:nth-child(even) > * {
+            direction: ltr;
+        }
+
+        .build-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold), var(--bordeaux));
+            color: var(--white);
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            border-radius: 50%;
+            margin-bottom: 25px;
+        }
+
+        .build-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--charcoal);
+            margin-bottom: 20px;
+        }
+
+        .build-description {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .build-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .build-features li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            border-bottom: 1px solid #F0F0F0;
+            font-size: 15px;
+        }
+
+        .build-features li:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+
+        .build-features li:after {
+            content: "\2713";
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--white);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .build-visual {
+            background: var(--cream);
+            border-radius: 10px;
+            padding: 40px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Chatbot Preview */
+        .chatbot-preview {
+            width: 100%;
+            max-width: 350px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .chatbot-preview-header {
+            background: linear-gradient(135deg, var(--bordeaux), var(--bordeaux-dark));
+            color: var(--white);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .chat-info h4 {
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .chat-info p {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .language-flags {
+            display: flex;
+            gap: 5px;
+            margin-left: auto;
+        }
+
+        .flag {
+            width: 24px;
+            height: 16px;
+            border-radius: 2px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
+        }
+
+        .chatbot-preview-body {
+            padding: 20px;
+            background: #F5F5F5;
+            min-height: 200px;
+        }
+
+        .chat-bubble {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 15px;
+            border-bottom-left-radius: 5px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Newsletter Preview */
+        .newsletter-preview {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .newsletter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .newsletter-tab {
+            padding: 10px 20px;
+            background: var(--white);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .newsletter-tab.active {
+            background: var(--gold);
+            color: var(--white);
+        }
+
+        .newsletter-card {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .newsletter-header {
+            background: linear-gradient(135deg, var(--gold), var(--bordeaux));
+            color: var(--white);
+            padding: 25px;
+            text-align: center;
+        }
+
+        .newsletter-header h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .newsletter-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .newsletter-content {
+            padding: 25px;
+        }
+
+        .newsletter-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .newsletter-item:last-child {
+            border-bottom: none;
+        }
+
+        .newsletter-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--cream);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .newsletter-text h5 {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .newsletter-text p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* SEO Preview */
+        .seo-preview {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .search-bar {
+            background: var(--white);
+            border-radius: 30px;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
+        }
+
+        .search-result {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--gold);
+        }
+
+        .search-result-url {
+            color: var(--gold);
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .search-result-title {
+            color: var(--bordeaux);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .search-result-desc {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .search-result .ranking {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--white);
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 3px;
+            margin-top: 10px;
+        }
+
+        /* ROI Preview */
+        .roi-preview {
+            width: 100%;
+            max-width: 400px;
+            background: var(--white);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .roi-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .roi-header h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--charcoal);
+        }
+
+        .roi-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .roi-metric {
+            text-align: center;
+            padding: 20px;
+            background: var(--cream);
+            border-radius: 8px;
+        }
+
+        .roi-metric .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--bordeaux);
+            margin-bottom: 5px;
+        }
+
+        .roi-metric .label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .roi-metric.highlight {
+            background: linear-gradient(135deg, var(--gold), var(--bordeaux));
+            color: var(--white);
+        }
+
+        .roi-metric.highlight .value,
+        .roi-metric.highlight .label {
+            color: var(--white);
+        }
+
+        .roi-chart {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .roi-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .roi-bar-label {
+            width: 100px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .roi-bar-track {
+            flex: 1;
+            height: 12px;
+            background: #E0E0E0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .roi-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--bordeaux));
+            border-radius: 6px;
+        }
+
+        .roi-bar-value {
+            width: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Summary Section */
+        .summary {
+            background: var(--charcoal);
+            color: var(--white);
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .summary-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .summary-subtitle {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 50px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto 50px;
+        }
+
+        .summary-item {
+            padding: 30px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .summary-item .number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .summary-item .text {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--white);
+            padding: 18px 50px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            background: #1A1A1A;
+            color: var(--white);
+            padding: 40px 60px;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+        }
+
+        @media (max-width: 1024px) {
+            .build-card {
+                grid-template-columns: 1fr;
+            }
+            .build-card:nth-child(even) {
+                direction: ltr;
+            }
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 36px;
+            }
+            .build-card {
+                padding: 30px;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">IC</div>
+            <span class="logo-text">InterContinental</span>
+        </div>
+        <nav class="nav-links">
+            <a href="demo-hub.html">Hub</a>
+            <a href="index.html">Site</a>
+            <a href="builds-presentation.html" class="active">Builds IA</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="pricing-strategy.html">Tarifs</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-badge">Solutions IA Hotellerie</span>
+        <h1 class="hero-title">Les 4 Builds Strategiques</h1>
+        <p class="hero-subtitle">Une suite complete d'automatisations IA concues pour transformer l'experience client et optimiser vos performances.</p>
+    </section>
+
+    <!-- Builds -->
+    <section class="builds">
+        <!-- Build 1: Chatbot -->
+        <div class="build-card">
+            <div class="build-content">
+                <div class="build-number">1</div>
+                <h2 class="build-title">Chatbot Concierge Multilingue</h2>
+                <p class="build-description">Un assistant virtuel sophistique disponible 24h/24 en 5 langues (FR, EN, JP, CN, ES) pour accompagner vos clients a chaque etape de leur sejour.</p>
+                <ul class="build-features">
+                    <li>Reservations restaurants & spa instantanees</li>
+                    <li>Recommandations d'excursions personnalisees</li>
+                    <li>Room service et demandes speciales</li>
+                    <li>Escalade intelligente vers la reception</li>
+                    <li>Integration PMS Opera/Protel</li>
+                </ul>
+            </div>
+            <div class="build-visual">
+                <div class="chatbot-preview">
+                    <div class="chatbot-preview-header">
+                        <div class="chat-avatar">IC</div>
+                        <div class="chat-info">
+                            <h4>Concierge Virtuel</h4>
+                            <p>En ligne - 5 langues</p>
+                        </div>
+                        <div class="language-flags">
+                            <span class="flag">FR</span>
+                            <span class="flag">EN</span>
+                            <span class="flag">JP</span>
+                        </div>
+                    </div>
+                    <div class="chatbot-preview-body">
+                        <div class="chat-bubble">
+                            Ia ora na ! Je suis votre concierge virtuel InterContinental. Comment puis-je sublimer votre sejour ?
+                        </div>
+                        <div class="chat-bubble" style="background: linear-gradient(135deg, var(--gold), var(--bordeaux)); color: white; border-radius: 15px; border-bottom-right-radius: 5px; margin-left: 50px;">
+                            Je souhaite reserver un diner romantique au Lotus
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Build 2: Newsletter -->
+        <div class="build-card">
+            <div class="build-content">
+                <div class="build-number">2</div>
+                <h2 class="build-title">Newsletter Personnalisee</h2>
+                <p class="build-description">Des communications ultra-ciblees selon le segment client (lune de miel, famille, business) et le moment du parcours (pre-stay, in-stay, post-stay).</p>
+                <ul class="build-features">
+                    <li>Segmentation automatique par profil client</li>
+                    <li>Pre-stay: anticipation des besoins</li>
+                    <li>In-stay: upselling contextuel</li>
+                    <li>Post-stay: fidelisation et reviews</li>
+                    <li>Contenu genere par IA</li>
+                </ul>
+            </div>
+            <div class="build-visual">
+                <div class="newsletter-preview">
+                    <div class="newsletter-tabs">
+                        <div class="newsletter-tab active">Honeymoon</div>
+                        <div class="newsletter-tab">Famille</div>
+                        <div class="newsletter-tab">Business</div>
+                    </div>
+                    <div class="newsletter-card">
+                        <div class="newsletter-header">
+                            <h4>Votre Lune de Miel de Reve</h4>
+                            <p>J-3 avant votre arrivee a Bora Bora</p>
+                        </div>
+                        <div class="newsletter-content">
+                            <div class="newsletter-item">
+                                <div class="newsletter-icon">&#128141;</div>
+                                <div class="newsletter-text">
+                                    <h5>Diner aux Chandelles</h5>
+                                    <p>Plage privee au coucher du soleil</p>
+                                </div>
+                            </div>
+                            <div class="newsletter-item">
+                                <div class="newsletter-icon">&#128134;</div>
+                                <div class="newsletter-text">
+                                    <h5>Massage en Duo</h5>
+                                    <p>Rituel polynesien au Deep Ocean Spa</p>
+                                </div>
+                            </div>
+                            <div class="newsletter-item">
+                                <div class="newsletter-icon">&#127754;</div>
+                                <div class="newsletter-text">
+                                    <h5>Excursion Privee</h5>
+                                    <p>Lagon turquoise en pirogue traditionnelle</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Build 3: SEO/GEO -->
+        <div class="build-card">
+            <div class="build-content">
+                <div class="build-number">3</div>
+                <h2 class="build-title">SEO/GEO Content Factory</h2>
+                <p class="build-description">Production automatisee de contenu optimise pour dominer les recherches "meilleur hotel Bora Bora" et capturer le trafic organique qualifie.</p>
+                <ul class="build-features">
+                    <li>Articles SEO generes par IA</li>
+                    <li>Optimisation GEO (ChatGPT, Perplexity)</li>
+                    <li>Position 1 sur "lune de miel Bora Bora"</li>
+                    <li>Contenu multilingue automatique</li>
+                    <li>Blog voyage luxe premium</li>
+                </ul>
+            </div>
+            <div class="build-visual">
+                <div class="seo-preview">
+                    <div class="search-bar">
+                        <svg width="20" height="20" fill="#999" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        <input type="text" value="meilleur hotel bora bora" readonly>
+                    </div>
+                    <div class="search-result">
+                        <div class="search-result-url">intercontinental.com/borabora</div>
+                        <div class="search-result-title">InterContinental Bora Bora | Le Meilleur Hotel 5 Etoiles</div>
+                        <div class="search-result-desc">Decouvrez le resort le plus exclusif de Polynesie. Villas sur pilotis, spa thalasso unique au monde, experiences inoubliables...</div>
+                        <span class="ranking">#1 - Position Organique</span>
+                    </div>
+                    <div class="search-result">
+                        <div class="search-result-url">fourseasons.com/borabora</div>
+                        <div class="search-result-title">Four Seasons Bora Bora</div>
+                        <div class="search-result-desc">Resort de luxe avec villas overwater...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Build 4: ROI Analyst -->
+        <div class="build-card">
+            <div class="build-content">
+                <div class="build-number">4</div>
+                <h2 class="build-title">ROI Analyst Dashboard</h2>
+                <p class="build-description">Tableau de bord intelligent avec KPIs hoteliers en temps reel et alertes automatiques pour optimiser votre revenue management.</p>
+                <ul class="build-features">
+                    <li>RevPAR, ADR, Taux d'occupation temps reel</li>
+                    <li>Comparaison resorts (Tahiti, Bora Bora)</li>
+                    <li>Alertes automatiques anomalies</li>
+                    <li>Predictions IA haute saison</li>
+                    <li>Benchmark concurrence (Four Seasons, St Regis)</li>
+                </ul>
+            </div>
+            <div class="build-visual">
+                <div class="roi-preview">
+                    <div class="roi-header">
+                        <h4>Performance Janvier 2026</h4>
+                    </div>
+                    <div class="roi-metrics">
+                        <div class="roi-metric highlight">
+                            <div class="value">842 EUR</div>
+                            <div class="label">RevPAR</div>
+                        </div>
+                        <div class="roi-metric">
+                            <div class="value">87%</div>
+                            <div class="label">Occupation</div>
+                        </div>
+                        <div class="roi-metric">
+                            <div class="value">968 EUR</div>
+                            <div class="label">ADR</div>
+                        </div>
+                        <div class="roi-metric">
+                            <div class="value">+18%</div>
+                            <div class="label">Direct vs OTA</div>
+                        </div>
+                    </div>
+                    <div class="roi-chart">
+                        <div class="roi-bar">
+                            <span class="roi-bar-label">Tahiti</span>
+                            <div class="roi-bar-track">
+                                <div class="roi-bar-fill" style="width: 75%"></div>
+                            </div>
+                            <span class="roi-bar-value">75%</span>
+                        </div>
+                        <div class="roi-bar">
+                            <span class="roi-bar-label">Thalasso</span>
+                            <div class="roi-bar-track">
+                                <div class="roi-bar-fill" style="width: 92%"></div>
+                            </div>
+                            <span class="roi-bar-value">92%</span>
+                        </div>
+                        <div class="roi-bar">
+                            <span class="roi-bar-label">Le Moana</span>
+                            <div class="roi-bar-track">
+                                <div class="roi-bar-fill" style="width: 88%"></div>
+                            </div>
+                            <span class="roi-bar-value">88%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="summary">
+        <h2 class="summary-title">L'Ecosysteme Complet</h2>
+        <p class="summary-subtitle">4 builds interconnectes pour une transformation digitale complete de vos 3 resorts.</p>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="number">24/7</div>
+                <div class="text">Disponibilite concierge virtuel</div>
+            </div>
+            <div class="summary-item">
+                <div class="number">5</div>
+                <div class="text">Langues supportees</div>
+            </div>
+            <div class="summary-item">
+                <div class="number">+15%</div>
+                <div class="text">Reservations directes</div>
+            </div>
+            <div class="summary-item">
+                <div class="number">3</div>
+                <div class="text">Resorts connectes</div>
+            </div>
+        </div>
+        <a href="pricing-strategy.html" class="cta-button">Decouvrir les Tarifs</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">Demo PACIFIK'AI - Solutions d'automatisation IA pour l'hotellerie de luxe</p>
+    </footer>
+</body>
+</html>

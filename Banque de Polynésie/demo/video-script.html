@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Video - Banque de Polynesie x PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sg-red: #E60028;
+            --sg-red-dark: #B8001F;
+            --sg-black: #1A1A1A;
+            --sg-gray: #4A4A4A;
+            --sg-light: #F5F5F5;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: var(--sg-black);
+            color: white;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(26, 26, 26, 0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--sg-red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--sg-red);
+        }
+
+        .nav-badge {
+            background: var(--sg-red);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 5rem 5%;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(230, 0, 40, 0.2) 0%, transparent 100%);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 span {
+            color: var(--sg-red);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Script Container */
+        .script-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 5% 5rem;
+        }
+
+        /* Video Preview */
+        .video-preview {
+            background: #161B22;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .video-placeholder {
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            border-radius: 12px;
+            padding: 4rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .play-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: var(--sg-red);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .play-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .video-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-duration {
+            opacity: 0.8;
+        }
+
+        .video-specs {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .spec-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px 24px;
+            border-radius: 8px;
+        }
+
+        .spec-label {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .spec-value {
+            font-weight: 600;
+        }
+
+        /* Script Sections */
+        .script-section {
+            background: #161B22;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .script-header {
+            background: linear-gradient(90deg, var(--sg-red), var(--sg-red-dark));
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-number {
+            background: white;
+            color: var(--sg-red);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title h3 {
+            font-size: 1.2rem;
+        }
+
+        .section-timing {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .script-content {
+            padding: 2rem;
+        }
+
+        .script-text {
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid var(--sg-red);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .script-text .highlight {
+            color: var(--sg-red);
+            font-weight: 600;
+        }
+
+        .visual-cues {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .cue-tag {
+            background: rgba(230, 0, 40, 0.2);
+            color: var(--sg-red);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Key Messages */
+        .key-messages {
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .key-messages h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .messages-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .message-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .message-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-card p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* Extra Possibilities */
+        .extras-section {
+            background: #161B22;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .extras-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .extras-subtitle {
+            text-align: center;
+            opacity: 0.7;
+            margin-bottom: 2rem;
+        }
+
+        .extras-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .extra-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .extra-card:hover {
+            border-color: var(--sg-red);
+            transform: translateY(-5px);
+        }
+
+        .extra-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--sg-red);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .extra-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .extra-card p {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* Teleprompter */
+        .teleprompter-section {
+            background: white;
+            color: var(--sg-black);
+            border-radius: 16px;
+            padding: 2.5rem;
+        }
+
+        .teleprompter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .teleprompter-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .teleprompter-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-action {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--sg-red-dark);
+        }
+
+        .btn-secondary {
+            background: var(--sg-light);
+            color: var(--sg-black);
+        }
+
+        .teleprompter-content {
+            font-size: 1.3rem;
+            line-height: 2;
+            color: var(--sg-gray);
+        }
+
+        .teleprompter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .teleprompter-content .speaker-note {
+            background: #FFF3CD;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #F39C12;
+        }
+
+        /* Demo Nav */
+        .demo-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .demo-nav-toggle {
+            width: 60px;
+            height: 60px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(230, 0, 40, 0.4);
+        }
+
+        .demo-nav-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: #21262D;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            padding: 1rem;
+            min-width: 250px;
+            display: none;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .demo-nav-menu.active {
+            display: block;
+        }
+
+        .demo-nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .demo-nav-menu a:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .demo-nav-menu a.active {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .messages-grid, .extras-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .script-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">BP</div>
+            <div class="logo-text">Banque de <span>Polynesie</span></div>
+        </div>
+        <span class="nav-badge">&#127909; Script Video</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1>Script <span>Video Prospection</span></h1>
+        <p>Video de presentation personnalisee pour Banque de Polynesie - Expert en automatisation marketing bancaire</p>
+    </section>
+
+    <!-- Script Container -->
+    <div class="script-container">
+        <!-- Video Preview -->
+        <div class="video-preview">
+            <div class="video-placeholder">
+                <div class="play-icon">&#9658;</div>
+                <div class="video-title">Video de prospection - Banque de Polynesie</div>
+                <div class="video-duration">Duree estimee : 2-3 minutes</div>
+            </div>
+            <div class="video-specs">
+                <div class="spec-item">
+                    <div class="spec-label">Format</div>
+                    <div class="spec-value">1080p / 4K</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Style</div>
+                    <div class="spec-value">Face camera + Demo</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Ton</div>
+                    <div class="spec-value">Pro & Rassurant</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script Section 1: Hook -->
+        <div class="script-section">
+            <div class="script-header">
+                <div class="section-title">
+                    <span class="section-number">1</span>
+                    <h3>Accroche</h3>
+                </div>
+                <span class="section-timing">0:00 - 0:15</span>
+            </div>
+            <div class="script-content">
+                <div class="script-text">
+                    "Ia ora na ! Je m'appelle Jordy, je suis <span class="highlight">expert en automatisation marketing</span> pour le secteur bancaire en Polynesie francaise.
+                    <br><br>
+                    Aujourd'hui, je vais vous montrer comment <span class="highlight">transformer l'experience client de votre banque</span> tout en reduisant la charge de votre call center de 40%."
+                </div>
+                <div class="visual-cues">
+                    <span class="cue-tag">&#127909; Face camera</span>
+                    <span class="cue-tag">&#127965; Fond avec iles</span>
+                    <span class="cue-tag">&#128172; Sous-titres</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script Section 2: Problem -->
+        <div class="script-section">
+            <div class="script-header">
+                <div class="section-title">
+                    <span class="section-number">2</span>
+                    <h3>Le probleme</h3>
+                </div>
+                <span class="section-timing">0:15 - 0:35</span>
+            </div>
+            <div class="script-content">
+                <div class="script-text">
+                    "Je sais que vous faites face a plusieurs defis :
+                    <br><br>
+                    - Vos clients veulent des reponses <span class="highlight">immediates</span>, meme a 22h
+                    <br>
+                    - Votre call center est <span class="highlight">sature</span> par des questions repetitives
+                    <br>
+                    - BCI et Banque de Tahiti <span class="highlight">investissent dans le digital</span>
+                    <br>
+                    - Et vos equipes marketing manquent de temps pour personnaliser la communication"
+                </div>
+                <div class="visual-cues">
+                    <span class="cue-tag">&#128200; Stats a l'ecran</span>
+                    <span class="cue-tag">&#128161; Points en bullet</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script Section 3: Solution -->
+        <div class="script-section">
+            <div class="script-header">
+                <div class="section-title">
+                    <span class="section-number">3</span>
+                    <h3>La solution - 4 Builds</h3>
+                </div>
+                <span class="section-timing">0:35 - 1:30</span>
+            </div>
+            <div class="script-content">
+                <div class="script-text">
+                    "C'est pourquoi j'ai concu <span class="highlight">4 automatisations</span> specifiquement pour une banque comme la votre :
+                    <br><br>
+                    <span class="highlight">Build 1 : Un chatbot 24/7</span> qui repond aux questions, simule les credits en temps reel, et prend les rendez-vous automatiquement.
+                    <br><br>
+                    <span class="highlight">Build 2 : Des newsletters personnalisees</span> par segment - jeunes, familles, pro - envoyees au bon moment du parcours client.
+                    <br><br>
+                    <span class="highlight">Build 3 : Une strategie SEO locale</span> pour dominer Google sur 'credit immobilier Polynesie' et attirer du trafic qualifie.
+                    <br><br>
+                    <span class="highlight">Build 4 : Un dashboard temps reel</span> pour piloter votre acquisition et mesurer chaque euro investi."
+                </div>
+                <div class="visual-cues">
+                    <span class="cue-tag">&#128187; Demo chatbot</span>
+                    <span class="cue-tag">&#128202; Dashboard preview</span>
+                    <span class="cue-tag">&#127909; Screen recording</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script Section 4: Security -->
+        <div class="script-section">
+            <div class="script-header">
+                <div class="section-title">
+                    <span class="section-number">4</span>
+                    <h3>Securite (point critique)</h3>
+                </div>
+                <span class="section-timing">1:30 - 1:50</span>
+            </div>
+            <div class="script-content">
+                <div class="script-text">
+                    "Je sais ce que vous pensez : <span class="highlight">'Et la securite ?'</span>
+                    <br><br>
+                    Soyez rassures : <span class="highlight">aucune donnee client ne transite</span> par notre systeme. Le chatbot fonctionne uniquement sur vos informations publiques - FAQ, tarifs, produits. Tout est heberge sur <span class="highlight">votre infrastructure</span>, conforme RGPD et au secret bancaire."
+                </div>
+                <div class="visual-cues">
+                    <span class="cue-tag">&#128274; Icones securite</span>
+                    <span class="cue-tag">&#128203; Schema architecture</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script Section 5: Teaser -->
+        <div class="script-section">
+            <div class="script-header">
+                <div class="section-title">
+                    <span class="section-number">5</span>
+                    <h3>Teaser - Au-dela des 4 builds</h3>
+                </div>
+                <span class="section-timing">1:50 - 2:15</span>
+            </div>
+            <div class="script-content">
+                <div class="script-text">
+                    "Ces 4 builds, c'est juste un <span class="highlight">apercu</span> de ce qu'on peut faire ensemble.
+                    <br><br>
+                    Je peux aussi automatiser :
+                    <br>
+                    - L'<span class="highlight">onboarding complet</span> des nouveaux clients
+                    <br>
+                    - Les <span class="highlight">relances impayés</span> intelligentes
+                    <br>
+                    - Les <span class="highlight">alertes commerciales</span> pour vos conseillers
+                    <br>
+                    - Les <span class="highlight">enquetes satisfaction</span> post-RDV
+                    <br>
+                    - Le <span class="highlight">cross-selling automatique</span> base sur le profil client
+                    <br><br>
+                    Bref, tout ce qui peut etre automatise pour que vos equipes se concentrent sur ce qui compte vraiment : <span class="highlight">la relation humaine</span>."
+                </div>
+                <div class="visual-cues">
+                    <span class="cue-tag">&#128161; Liste animee</span>
+                    <span class="cue-tag">&#127919; Emphasis sur "relation humaine"</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script Section 6: CTA -->
+        <div class="script-section">
+            <div class="script-header">
+                <div class="section-title">
+                    <span class="section-number">6</span>
+                    <h3>Call to Action</h3>
+                </div>
+                <span class="section-timing">2:15 - 2:30</span>
+            </div>
+            <div class="script-content">
+                <div class="script-text">
+                    "Vous voulez voir comment ca fonctionnerait concretement pour <span class="highlight">Banque de Polynesie</span> ?
+                    <br><br>
+                    J'ai prepare une <span class="highlight">demo complete</span> avec un chatbot configure pour vos produits, vos agences, vos tarifs.
+                    <br><br>
+                    Cliquez sur le lien en description ou repondez a ce message pour <span class="highlight">planifier un appel de 30 minutes</span>.
+                    <br><br>
+                    Mauruuru, et a tres vite !"
+                </div>
+                <div class="visual-cues">
+                    <span class="cue-tag">&#128279; Lien en description</span>
+                    <span class="cue-tag">&#128075; Salut final</span>
+                    <span class="cue-tag">&#127965; Outro avec logo</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Messages -->
+        <div class="key-messages">
+            <h2>Messages cles a faire passer</h2>
+            <div class="messages-grid">
+                <div class="message-card">
+                    <h4>Expert local</h4>
+                    <p>"Je connais le marche polynesien et ses specificites"</p>
+                </div>
+                <div class="message-card">
+                    <h4>Securite garantie</h4>
+                    <p>"Aucune donnee sensible ne sort de votre systeme"</p>
+                </div>
+                <div class="message-card">
+                    <h4>ROI mesurable</h4>
+                    <p>"-40% appels, +20% conversion - des resultats concrets"</p>
+                </div>
+                <div class="message-card">
+                    <h4>Plus qu'un prestataire</h4>
+                    <p>"Un partenaire qui comprend vos enjeux bancaires"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Extra Possibilities -->
+        <div class="extras-section">
+            <h2>Ce qu'on peut AUSSI automatiser</h2>
+            <p class="extras-subtitle">A mentionner pour montrer l'etendue des possibilites</p>
+            <div class="extras-grid">
+                <div class="extra-card">
+                    <div class="extra-icon">&#128100;</div>
+                    <h4>Onboarding client</h4>
+                    <p>Parcours automatise J+1 a J+30</p>
+                </div>
+                <div class="extra-card">
+                    <div class="extra-icon">&#128176;</div>
+                    <h4>Relances impayes</h4>
+                    <p>Escalade intelligente multi-canal</p>
+                </div>
+                <div class="extra-card">
+                    <div class="extra-icon">&#128276;</div>
+                    <h4>Alertes commerciales</h4>
+                    <p>Notification conseiller temps reel</p>
+                </div>
+                <div class="extra-card">
+                    <div class="extra-icon">&#11088;</div>
+                    <h4>Enquetes satisfaction</h4>
+                    <p>NPS automatise post-interaction</p>
+                </div>
+                <div class="extra-card">
+                    <div class="extra-icon">&#128184;</div>
+                    <h4>Cross-selling</h4>
+                    <p>Recommandations basees sur le profil</p>
+                </div>
+                <div class="extra-card">
+                    <div class="extra-icon">&#128202;</div>
+                    <h4>Reporting automatique</h4>
+                    <p>Rapports hebdo pour la direction</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teleprompter -->
+        <div class="teleprompter-section">
+            <div class="teleprompter-header">
+                <h2>Teleprompter - Script complet</h2>
+                <div class="teleprompter-actions">
+                    <button class="btn-action btn-secondary" onclick="copyScript()">Copier le texte</button>
+                    <button class="btn-action btn-primary" onclick="printScript()">Imprimer</button>
+                </div>
+            </div>
+            <div class="teleprompter-content" id="fullScript">
+                <p><strong>[ACCROCHE - 15s]</strong></p>
+                <p>Ia ora na ! Je m'appelle Jordy, je suis expert en automatisation marketing pour le secteur bancaire en Polynesie francaise.</p>
+                <p>Aujourd'hui, je vais vous montrer comment transformer l'experience client de votre banque tout en reduisant la charge de votre call center de 40%.</p>
+
+                <div class="speaker-note">Pause - Regarder la camera, sourire confiant</div>
+
+                <p><strong>[PROBLEME - 20s]</strong></p>
+                <p>Je sais que vous faites face a plusieurs defis :</p>
+                <p>Vos clients veulent des reponses immediates, meme a 22h. Votre call center est sature par des questions repetitives. BCI et Banque de Tahiti investissent dans le digital. Et vos equipes marketing manquent de temps pour personnaliser la communication.</p>
+
+                <div class="speaker-note">Ton empathique - montrer qu'on comprend leurs problemes</div>
+
+                <p><strong>[SOLUTION - 55s]</strong></p>
+                <p>C'est pourquoi j'ai concu 4 automatisations specifiquement pour une banque comme la votre :</p>
+                <p>Build 1 : Un chatbot 24/7 qui repond aux questions, simule les credits en temps reel, et prend les rendez-vous automatiquement.</p>
+                <p>Build 2 : Des newsletters personnalisees par segment - jeunes, familles, pro - envoyees au bon moment du parcours client.</p>
+                <p>Build 3 : Une strategie SEO locale pour dominer Google sur "credit immobilier Polynesie" et attirer du trafic qualifie.</p>
+                <p>Build 4 : Un dashboard temps reel pour piloter votre acquisition et mesurer chaque euro investi.</p>
+
+                <div class="speaker-note">Montrer les demos pendant cette partie</div>
+
+                <p><strong>[SECURITE - 20s]</strong></p>
+                <p>Je sais ce que vous pensez : "Et la securite ?"</p>
+                <p>Soyez rassures : aucune donnee client ne transite par notre systeme. Le chatbot fonctionne uniquement sur vos informations publiques. Tout est heberge sur votre infrastructure, conforme RGPD et au secret bancaire.</p>
+
+                <div class="speaker-note">Ton serieux et rassurant sur cette partie</div>
+
+                <p><strong>[TEASER - 25s]</strong></p>
+                <p>Ces 4 builds, c'est juste un apercu de ce qu'on peut faire ensemble.</p>
+                <p>Je peux aussi automatiser : l'onboarding complet des nouveaux clients, les relances impayes intelligentes, les alertes commerciales pour vos conseillers, les enquetes satisfaction post-RDV, le cross-selling automatique base sur le profil client.</p>
+                <p>Bref, tout ce qui peut etre automatise pour que vos equipes se concentrent sur ce qui compte vraiment : la relation humaine.</p>
+
+                <p><strong>[CTA - 15s]</strong></p>
+                <p>Vous voulez voir comment ca fonctionnerait concretement pour Banque de Polynesie ?</p>
+                <p>J'ai prepare une demo complete avec un chatbot configure pour vos produits, vos agences, vos tarifs.</p>
+                <p>Cliquez sur le lien en description ou repondez a ce message pour planifier un appel de 30 minutes.</p>
+                <p>Mauruuru, et a tres vite !</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Nav -->
+    <div class="demo-nav">
+        <button class="demo-nav-toggle" onclick="toggleDemoNav()">&#9776;</button>
+        <div class="demo-nav-menu" id="demoNavMenu">
+            <a href="index.html">Chatbot Landing</a>
+            <a href="builds-presentation.html">4 Builds IA</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="blog.html">Blog Conseil</a>
+            <a href="pricing-strategy.html">Offre & Pricing</a>
+            <a href="n8n-visualizer.html">Workflows n8n</a>
+            <a href="delivery-architecture.html">Architecture</a>
+            <a href="video-script.html" class="active">Script Video</a>
+            <a href="demo-hub.html">Hub Demo</a>
+        </div>
+    </div>
+
+    <script>
+        function copyScript() {
+            const script = document.getElementById('fullScript').innerText;
+            navigator.clipboard.writeText(script).then(() => {
+                alert('Script copie dans le presse-papier !');
+            });
+        }
+
+        function printScript() {
+            window.print();
+        }
+
+        function toggleDemoNav() {
+            document.getElementById('demoNavMenu').classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('demoNavMenu');
+            const toggle = document.querySelector('.demo-nav-toggle');
+            if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

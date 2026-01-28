@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Securisee - Banque de Polynesie x PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sg-red: #E60028;
+            --sg-red-dark: #B8001F;
+            --sg-black: #1A1A1A;
+            --sg-gray: #4A4A4A;
+            --sg-light: #F5F5F5;
+            --white: #FFFFFF;
+            --success: #27AE60;
+            --warning: #F39C12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: var(--sg-light);
+            color: var(--sg-black);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--sg-red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--sg-red);
+        }
+
+        .nav-badge {
+            background: var(--success);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--sg-black) 0%, #2A2A2A 100%);
+            color: white;
+            padding: 5rem 5%;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 span {
+            color: var(--sg-red);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Key Message */
+        .key-message {
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            padding: 3rem 5%;
+            text-align: center;
+            color: white;
+        }
+
+        .key-message-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .key-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        .key-message h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .key-message p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        /* Architecture Diagram */
+        .architecture-section {
+            padding: 5rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--sg-black);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--sg-gray);
+        }
+
+        .architecture-diagram {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+        }
+
+        .diagram-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .layer {
+            border: 2px dashed #E0E0E0;
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .layer-label {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: white;
+            padding: 0 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--sg-gray);
+        }
+
+        .layer.client {
+            border-color: var(--sg-red);
+            background: rgba(230, 0, 40, 0.03);
+        }
+
+        .layer.client .layer-label {
+            color: var(--sg-red);
+        }
+
+        .layer.pacifikai {
+            border-color: #3498DB;
+            background: rgba(52, 152, 219, 0.03);
+        }
+
+        .layer.pacifikai .layer-label {
+            color: #3498DB;
+        }
+
+        .layer.external {
+            border-color: var(--success);
+            background: rgba(39, 174, 96, 0.03);
+        }
+
+        .layer.external .layer-label {
+            color: var(--success);
+        }
+
+        .layer-content {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .component {
+            background: white;
+            border: 1px solid #E0E0E0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            min-width: 150px;
+            transition: all 0.3s;
+        }
+
+        .component:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: var(--sg-red);
+        }
+
+        .component-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--sg-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .component-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .component-desc {
+            font-size: 0.85rem;
+            color: var(--sg-gray);
+        }
+
+        .data-flow {
+            display: flex;
+            justify-content: center;
+            padding: 1rem 0;
+        }
+
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--sg-gray);
+            font-size: 0.9rem;
+        }
+
+        .flow-arrow::before, .flow-arrow::after {
+            content: "";
+            width: 40px;
+            height: 2px;
+            background: #E0E0E0;
+        }
+
+        /* Security Principles */
+        .security-principles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .principle-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--sg-red);
+        }
+
+        .principle-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(230, 0, 40, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .principle-card h3 {
+            font-size: 1.2rem;
+            color: var(--sg-black);
+            margin-bottom: 0.75rem;
+        }
+
+        .principle-card p {
+            color: var(--sg-gray);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Data Flow Table */
+        .data-flow-section {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .data-table {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--sg-light);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+        }
+
+        .data-table th {
+            background: var(--sg-black);
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: white;
+        }
+
+        .data-table .status-yes {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .data-table .status-no {
+            color: var(--sg-red);
+            font-weight: 600;
+        }
+
+        /* Compliance Section */
+        .compliance-section {
+            padding: 5rem 5%;
+            background: var(--sg-black);
+            color: white;
+        }
+
+        .compliance-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .compliance-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .compliance-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .compliance-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .compliance-badge {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+
+        .compliance-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .compliance-card p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Deployment Options */
+        .deployment-section {
+            padding: 5rem 5%;
+        }
+
+        .deployment-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .deployment-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .deployment-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .deployment-header {
+            background: var(--sg-black);
+            color: white;
+            padding: 2rem;
+        }
+
+        .deployment-header.recommended {
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+        }
+
+        .deployment-header h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .deployment-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .recommend-badge {
+            display: inline-block;
+            background: white;
+            color: var(--sg-red);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .deployment-body {
+            padding: 2rem;
+        }
+
+        .deployment-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .deployment-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .deployment-features li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-check {
+            color: var(--success);
+            font-size: 1.2rem;
+        }
+
+        .deployment-note {
+            background: var(--sg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--sg-gray);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .faq-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            cursor: pointer;
+        }
+
+        .faq-question h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .faq-toggle {
+            font-size: 1.5rem;
+            color: var(--sg-red);
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer p {
+            padding-bottom: 1.5rem;
+            color: var(--sg-gray);
+            line-height: 1.8;
+        }
+
+        /* Demo Nav */
+        .demo-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .demo-nav-toggle {
+            width: 60px;
+            height: 60px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(230, 0, 40, 0.4);
+        }
+
+        .demo-nav-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 1rem;
+            min-width: 250px;
+            display: none;
+        }
+
+        .demo-nav-menu.active {
+            display: block;
+        }
+
+        .demo-nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--sg-black);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .demo-nav-menu a:hover {
+            background: var(--sg-light);
+            color: var(--sg-red);
+        }
+
+        .demo-nav-menu a.active {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .security-principles {
+                grid-template-columns: 1fr;
+            }
+
+            .compliance-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .deployment-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .compliance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .layer-content {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">BP</div>
+            <div class="logo-text">Banque de <span>Polynesie</span></div>
+        </div>
+        <span class="nav-badge">&#128274; Architecture Securisee</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-badge">Securite & Conformite</span>
+        <h1>Architecture <span>100% securisee</span></h1>
+        <p>Une solution concue pour le secteur bancaire avec hebergement prive et conformite totale aux normes RGPD et au secret bancaire.</p>
+    </section>
+
+    <!-- Key Message -->
+    <section class="key-message">
+        <div class="key-message-content">
+            <div class="key-icon">&#128274;</div>
+            <h2>AUCUNE DONNEE CLIENT NE TRANSITE</h2>
+            <p>Le chatbot et les automatisations fonctionnent uniquement sur les informations publiques : FAQ, tarifs, produits, horaires. Les donnees bancaires sensibles restent dans vos systemes et ne sont jamais accessibles par notre solution.</p>
+        </div>
+    </section>
+
+    <!-- Architecture Diagram -->
+    <section class="architecture-section">
+        <div class="section-header">
+            <h2>Architecture technique</h2>
+            <p>Vue d'ensemble du deploiement et des flux de donnees</p>
+        </div>
+
+        <div class="architecture-diagram">
+            <div class="diagram-layers">
+                <!-- Client Layer -->
+                <div class="layer client">
+                    <span class="layer-label">INFRASTRUCTURE BANQUE DE POLYNESIE</span>
+                    <div class="layer-content">
+                        <div class="component">
+                            <div class="component-icon">&#127760;</div>
+                            <div class="component-name">Site Web</div>
+                            <div class="component-desc">Widget chatbot integre</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128451;</div>
+                            <div class="component-name">CRM / Core Banking</div>
+                            <div class="component-desc">Donnees clients (isole)</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128197;</div>
+                            <div class="component-name">Calendriers</div>
+                            <div class="component-desc">Agendas agences</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128231;</div>
+                            <div class="component-name">Email Server</div>
+                            <div class="component-desc">Envoi newsletters</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-flow">
+                    <div class="flow-arrow">HTTPS chiffre (pas de donnees clients)</div>
+                </div>
+
+                <!-- PACIFIK'AI Layer -->
+                <div class="layer pacifikai">
+                    <span class="layer-label">SOLUTION PACIFIK'AI (Self-Hosted)</span>
+                    <div class="layer-content">
+                        <div class="component">
+                            <div class="component-icon">&#9881;</div>
+                            <div class="component-name">n8n</div>
+                            <div class="component-desc">Orchestrateur workflows</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128218;</div>
+                            <div class="component-name">Vector DB</div>
+                            <div class="component-desc">FAQ / Base produits</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128202;</div>
+                            <div class="component-name">PostgreSQL</div>
+                            <div class="component-desc">Logs & Analytics</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128736;</div>
+                            <div class="component-name">Dashboard</div>
+                            <div class="component-desc">Interface admin</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-flow">
+                    <div class="flow-arrow">API securisee (questions anonymes)</div>
+                </div>
+
+                <!-- External Layer -->
+                <div class="layer external">
+                    <span class="layer-label">SERVICES EXTERNES (API)</span>
+                    <div class="layer-content">
+                        <div class="component">
+                            <div class="component-icon">&#129302;</div>
+                            <div class="component-name">Claude API</div>
+                            <div class="component-desc">IA conversationnelle</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon">&#128200;</div>
+                            <div class="component-name">Analytics</div>
+                            <div class="component-desc">GA4 / Search Console</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Principles -->
+        <div class="security-principles">
+            <div class="principle-card">
+                <div class="principle-icon">&#127968;</div>
+                <h3>Self-Hosted</h3>
+                <p>n8n et toutes les bases de donnees sont deployes sur votre infrastructure. Vous gardez le controle total sur les donnees et les acces.</p>
+            </div>
+            <div class="principle-card">
+                <div class="principle-icon">&#128683;</div>
+                <h3>Zero donnee sensible</h3>
+                <p>Le chatbot n'a pas acces au Core Banking. Il fonctionne uniquement avec les informations publiques (tarifs, produits, FAQ).</p>
+            </div>
+            <div class="principle-card">
+                <div class="principle-icon">&#128272;</div>
+                <h3>Chiffrement E2E</h3>
+                <p>Toutes les communications sont chiffrees en HTTPS/TLS. Les donnees au repos sont egalement chiffrees (AES-256).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Flow Table -->
+    <section class="data-flow-section">
+        <div class="section-header">
+            <h2>Flux de donnees detaille</h2>
+            <p>Ce qui transite et ce qui reste isole</p>
+        </div>
+
+        <div class="data-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type de donnee</th>
+                        <th>Transite par PACIFIK'AI ?</th>
+                        <th>Stocke ?</th>
+                        <th>Commentaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Questions utilisateur</td>
+                        <td class="status-yes">Oui</td>
+                        <td>Logs anonymes</td>
+                        <td>Aucune info personnelle requise</td>
+                    </tr>
+                    <tr>
+                        <td>Reponses chatbot</td>
+                        <td class="status-yes">Oui</td>
+                        <td>Logs</td>
+                        <td>Basees sur FAQ publiques</td>
+                    </tr>
+                    <tr>
+                        <td>Donnees comptes clients</td>
+                        <td class="status-no">Non</td>
+                        <td>Non</td>
+                        <td>Reste dans Core Banking</td>
+                    </tr>
+                    <tr>
+                        <td>Soldes / Transactions</td>
+                        <td class="status-no">Non</td>
+                        <td>Non</td>
+                        <td>Aucun acces</td>
+                    </tr>
+                    <tr>
+                        <td>Infos personnelles (nom, tel)</td>
+                        <td class="status-no">Non</td>
+                        <td>Non</td>
+                        <td>Saisies directement dans vos systemes</td>
+                    </tr>
+                    <tr>
+                        <td>Creneaux RDV disponibles</td>
+                        <td class="status-yes">Oui</td>
+                        <td>Non</td>
+                        <td>Lecture seule, pas de donnees clients</td>
+                    </tr>
+                    <tr>
+                        <td>Tarifs / Produits</td>
+                        <td class="status-yes">Oui</td>
+                        <td>Oui (cache)</td>
+                        <td>Informations publiques</td>
+                    </tr>
+                    <tr>
+                        <td>Emails newsletters</td>
+                        <td class="status-no">Non</td>
+                        <td>Non</td>
+                        <td>Envoi depuis vos serveurs</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Compliance Section -->
+    <section class="compliance-section">
+        <div class="compliance-content">
+            <div class="compliance-header">
+                <h2>Conformite et certifications</h2>
+            </div>
+
+            <div class="compliance-grid">
+                <div class="compliance-card">
+                    <div class="compliance-badge">&#128196;</div>
+                    <h3>RGPD</h3>
+                    <p>Conformite totale au reglement europeen sur la protection des donnees</p>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-badge">&#127970;</div>
+                    <h3>Secret bancaire</h3>
+                    <p>Aucun acces aux donnees couvertes par le secret bancaire</p>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-badge">&#128274;</div>
+                    <h3>ISO 27001</h3>
+                    <p>Processus alignes sur les standards de securite de l'information</p>
+                </div>
+                <div class="compliance-card">
+                    <div class="compliance-badge">&#128179;</div>
+                    <h3>PCI DSS</h3>
+                    <p>Aucune donnee de paiement ne transite par notre solution</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deployment Options -->
+    <section class="deployment-section">
+        <div class="deployment-content">
+            <div class="section-header">
+                <h2>Options de deploiement</h2>
+                <p>Choisissez l'option qui correspond a vos contraintes</p>
+            </div>
+
+            <div class="deployment-options">
+                <div class="deployment-card">
+                    <div class="deployment-header recommended">
+                        <span class="recommend-badge">Recommande</span>
+                        <h3>Self-Hosted sur vos serveurs</h3>
+                        <p>Controle total sur votre infrastructure</p>
+                    </div>
+                    <div class="deployment-body">
+                        <ul class="deployment-features">
+                            <li><span class="feature-check">&#10003;</span> n8n deploye dans votre datacenter</li>
+                            <li><span class="feature-check">&#10003;</span> Bases de donnees sur vos serveurs</li>
+                            <li><span class="feature-check">&#10003;</span> Aucune donnee ne sort de votre reseau</li>
+                            <li><span class="feature-check">&#10003;</span> Vous gerez les acces et la securite</li>
+                            <li><span class="feature-check">&#10003;</span> Support PACIFIK'AI a distance</li>
+                        </ul>
+                        <div class="deployment-note">
+                            Ideal pour les banques avec DSI et infrastructure existante. Validation complete par vos equipes securite.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="deployment-card">
+                    <div class="deployment-header">
+                        <h3>Cloud Prive Dedie</h3>
+                        <p>Infrastructure geree avec isolation complete</p>
+                    </div>
+                    <div class="deployment-body">
+                        <ul class="deployment-features">
+                            <li><span class="feature-check">&#10003;</span> Serveurs dedies (pas de mutualisation)</li>
+                            <li><span class="feature-check">&#10003;</span> Hebergement region Pacifique possible</li>
+                            <li><span class="feature-check">&#10003;</span> PACIFIK'AI gere l'infrastructure</li>
+                            <li><span class="feature-check">&#10003;</span> Backups et monitoring inclus</li>
+                            <li><span class="feature-check">&#10003;</span> SLA 99.9% garantit</li>
+                        </ul>
+                        <div class="deployment-note">
+                            Alternative si vous preferez externaliser la gestion technique. Memes garanties de securite.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Security -->
+    <section class="faq-section">
+        <div class="faq-content">
+            <div class="section-header">
+                <h2>Questions securite</h2>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>Qui a acces aux donnees ?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>En deploiement self-hosted, seules vos equipes ont acces. PACIFIK'AI n'a pas d'acces direct aux systemes en production. Pour le support, nous utilisons des sessions superviseees avec votre accord explicite.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>Les questions des clients sont-elles stockees ?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Les conversations sont logguees pour analyse et amelioration, mais de maniere anonyme. Aucune information permettant d'identifier un client n'est conservee. Les logs sont purges selon votre politique de retention.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>Comment fonctionne l'integration calendrier ?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Le chatbot accede en lecture seule aux creneaux disponibles. Il ne voit pas les RDV existants ni les informations des clients. Quand un client reserve, les infos sont directement saisies dans votre systeme, pas dans le notre.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>Que se passe-t-il si un client donne des infos sensibles dans le chat ?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Le chatbot est configure pour ne pas demander d'informations sensibles (numeros de compte, mots de passe, etc.). Si un client en fournit spontanement, nous avons des filtres pour les detecter et ne pas les stocker. Le client est redirige vers un canal securise.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>Comment validez-vous la securite avant deploiement ?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Nous fournissons toute la documentation technique pour votre DSI et RSSI. Nous participons aux audits de securite si necessaire. Le deploiement n'est effectue qu'apres validation de vos equipes. Un audit de penetration peut etre realise sur demande.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Nav -->
+    <div class="demo-nav">
+        <button class="demo-nav-toggle" onclick="toggleDemoNav()">&#9776;</button>
+        <div class="demo-nav-menu" id="demoNavMenu">
+            <a href="index.html">Chatbot Landing</a>
+            <a href="builds-presentation.html">4 Builds IA</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="blog.html">Blog Conseil</a>
+            <a href="pricing-strategy.html">Offre & Pricing</a>
+            <a href="n8n-visualizer.html">Workflows n8n</a>
+            <a href="delivery-architecture.html" class="active">Architecture</a>
+            <a href="video-script.html">Script Video</a>
+            <a href="demo-hub.html">Hub Demo</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            item.classList.toggle('active');
+        }
+
+        function toggleDemoNav() {
+            document.getElementById('demoNavMenu').classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('demoNavMenu');
+            const toggle = document.querySelector('.demo-nav-toggle');
+            if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

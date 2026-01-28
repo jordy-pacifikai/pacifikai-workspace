@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Demo | ARANUI x PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --aranui-blue: #005B8F;
+            --aranui-blue-dark: #004670;
+            --aranui-orange: #F5A623;
+            --aranui-orange-light: #FFB84D;
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-400: #9CA3AF;
+            --gray-600: #4B5563;
+            --gray-800: #1F2937;
+            --success: #10B981;
+            --success-light: #D1FAE5;
+            --warning: #F59E0B;
+            --warning-light: #FEF3C7;
+            --danger: #EF4444;
+            --danger-light: #FEE2E2;
+            --purple: #8B5CF6;
+            --purple-light: #EDE9FE;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--aranui-blue) 0%, var(--aranui-blue-dark) 100%);
+            padding: 2rem;
+            color: white;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--aranui-orange);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .logo-text h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-item.active {
+            background: var(--aranui-orange);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .demo-badge {
+            background: var(--aranui-orange);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: auto;
+        }
+
+        /* Main Content */
+        .main {
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--aranui-orange);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--aranui-orange-light);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .kpi-icon.blue { background: #E0F2FE; }
+        .kpi-icon.orange { background: #FEF3C7; }
+        .kpi-icon.green { background: #D1FAE5; }
+        .kpi-icon.purple { background: #EDE9FE; }
+
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+        }
+
+        .kpi-trend.up {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .kpi-trend.down {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            transition: all 0.3s;
+        }
+
+        .chart-btn.active {
+            background: var(--aranui-blue);
+            color: white;
+        }
+
+        /* Mock Chart */
+        .mock-chart {
+            height: 250px;
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--aranui-blue) 0%, var(--aranui-blue-dark) 100%);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+
+        .chart-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+        }
+
+        .chart-bar::before {
+            content: attr(data-month);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: var(--gray-400);
+        }
+
+        /* Donut Chart */
+        .donut-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 250px;
+        }
+
+        .donut-chart {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--aranui-blue) 0deg 162deg,
+                var(--aranui-orange) 162deg 252deg,
+                var(--success) 252deg 324deg,
+                var(--gray-300) 324deg 360deg
+            );
+            position: relative;
+        }
+
+        .donut-chart::after {
+            content: '87%';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--aranui-blue);
+        }
+
+        .donut-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* Workflow Buttons */
+        .workflow-section {
+            margin-bottom: 2rem;
+        }
+
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .workflow-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .workflow-card:hover {
+            border-color: var(--aranui-blue);
+            transform: translateY(-3px);
+        }
+
+        .workflow-card.running {
+            border-color: var(--success);
+        }
+
+        .workflow-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+
+        .workflow-card:nth-child(1) .workflow-icon { background: #E0F2FE; }
+        .workflow-card:nth-child(2) .workflow-icon { background: #FEF3C7; }
+        .workflow-card:nth-child(3) .workflow-icon { background: #D1FAE5; }
+        .workflow-card:nth-child(4) .workflow-icon { background: #EDE9FE; }
+
+        .workflow-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .workflow-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        .workflow-status.active {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .workflow-status.running {
+            background: var(--warning-light);
+            color: var(--warning);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Reservations Table */
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+
+        th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-400);
+            font-weight: 600;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        td {
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        tr:hover td {
+            background: var(--gray-50);
+        }
+
+        .cruise-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .cruise-icon {
+            width: 35px;
+            height: 35px;
+            background: var(--aranui-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .progress-fill.high { background: var(--success); }
+        .progress-fill.medium { background: var(--warning); }
+        .progress-fill.low { background: var(--danger); }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.confirmed { background: var(--success-light); color: var(--success); }
+        .status-badge.pending { background: var(--warning-light); color: var(--warning); }
+        .status-badge.open { background: #E0F2FE; color: var(--aranui-blue); }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">A</div>
+            <div class="logo-text">
+                <h2>ARANUI</h2>
+                <span>Marketing Dashboard</span>
+            </div>
+        </div>
+
+        <nav>
+            <div class="nav-section">
+                <div class="nav-section-title">Principal</div>
+                <a href="dashboard.html" class="nav-item active">
+                    <span class="nav-item-icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="index.html" class="nav-item">
+                    <span class="nav-item-icon">🚢</span>
+                    Chatbot Demo
+                </a>
+                <a href="blog.html" class="nav-item">
+                    <span class="nav-item-icon">📝</span>
+                    Blog SEO
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Configuration</div>
+                <a href="n8n-visualizer.html" class="nav-item">
+                    <span class="nav-item-icon">⚙️</span>
+                    Workflows n8n
+                </a>
+                <a href="delivery-architecture.html" class="nav-item">
+                    <span class="nav-item-icon">🏗️</span>
+                    Architecture
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Proposition</div>
+                <a href="builds-presentation.html" class="nav-item">
+                    <span class="nav-item-icon">🎯</span>
+                    Les 4 Builds
+                </a>
+                <a href="pricing-strategy.html" class="nav-item">
+                    <span class="nav-item-icon">💰</span>
+                    Tarification
+                </a>
+                <a href="video-script.html" class="nav-item">
+                    <span class="nav-item-icon">🎬</span>
+                    Script Video
+                </a>
+            </div>
+        </nav>
+
+        <div class="demo-badge">
+            Demo PACIFIK'AI
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Header -->
+        <div class="header">
+            <h1>Dashboard Marketing</h1>
+            <div class="header-actions">
+                <div class="date-range">
+                    📅 Janvier 2026 - Mars 2026
+                </div>
+                <button class="btn btn-primary">
+                    📥 Exporter
+                </button>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon blue">🚢</div>
+                    <span class="kpi-trend up">+12%</span>
+                </div>
+                <div class="kpi-value">87%</div>
+                <div class="kpi-label">Taux de Remplissage Moyen</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon orange">📋</div>
+                    <span class="kpi-trend up">+23%</span>
+                </div>
+                <div class="kpi-value">847</div>
+                <div class="kpi-label">Reservations Q1 2026</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon green">💰</div>
+                    <span class="kpi-trend up">+18%</span>
+                </div>
+                <div class="kpi-value">485M</div>
+                <div class="kpi-label">CA Projete (XPF)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon purple">🎯</div>
+                    <span class="kpi-trend up">+8%</span>
+                </div>
+                <div class="kpi-value">7.2M</div>
+                <div class="kpi-label">Panier Moyen (XPF)</div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Reservations par Mois</div>
+                    <div class="chart-actions">
+                        <button class="chart-btn active">2026</button>
+                        <button class="chart-btn">2025</button>
+                    </div>
+                </div>
+                <div class="mock-chart">
+                    <div class="chart-bar" style="height: 65%;" data-value="142" data-month="Jan"></div>
+                    <div class="chart-bar" style="height: 78%;" data-value="186" data-month="Fev"></div>
+                    <div class="chart-bar" style="height: 85%;" data-value="203" data-month="Mar"></div>
+                    <div class="chart-bar" style="height: 72%;" data-value="168" data-month="Avr"></div>
+                    <div class="chart-bar" style="height: 88%;" data-value="215" data-month="Mai"></div>
+                    <div class="chart-bar" style="height: 95%;" data-value="234" data-month="Juin"></div>
+                    <div class="chart-bar" style="height: 100%;" data-value="254" data-month="Juil"></div>
+                    <div class="chart-bar" style="height: 92%;" data-value="225" data-month="Aout"></div>
+                    <div class="chart-bar" style="height: 80%;" data-value="192" data-month="Sep"></div>
+                    <div class="chart-bar" style="height: 68%;" data-value="156" data-month="Oct"></div>
+                    <div class="chart-bar" style="height: 55%;" data-value="124" data-month="Nov"></div>
+                    <div class="chart-bar" style="height: 60%;" data-value="138" data-month="Dec"></div>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Repartition par Segment</div>
+                </div>
+                <div class="donut-container">
+                    <div class="donut-chart"></div>
+                    <div class="donut-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--aranui-blue);"></div>
+                            Couples 45%
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--aranui-orange);"></div>
+                            Groupes 25%
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--success);"></div>
+                            Aventuriers 20%
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--gray-400);"></div>
+                            Autres 10%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Buttons -->
+        <div class="workflow-section">
+            <div class="chart-header" style="margin-bottom: 1.5rem;">
+                <div class="chart-title">Workflows Automatises - Cliquer pour Declencher</div>
+            </div>
+            <div class="workflow-grid">
+                <div class="workflow-card" onclick="triggerWorkflow(this, 1)">
+                    <div class="workflow-icon">🚢</div>
+                    <div class="workflow-title">Chatbot Concierge</div>
+                    <span class="workflow-status active">Actif 24/7</span>
+                </div>
+                <div class="workflow-card" onclick="triggerWorkflow(this, 2)">
+                    <div class="workflow-icon">📬</div>
+                    <div class="workflow-title">Newsletter Segment</div>
+                    <span class="workflow-status active">Planifie</span>
+                </div>
+                <div class="workflow-card" onclick="triggerWorkflow(this, 3)">
+                    <div class="workflow-icon">📝</div>
+                    <div class="workflow-title">SEO Content Factory</div>
+                    <span class="workflow-status active">4/mois</span>
+                </div>
+                <div class="workflow-card" onclick="triggerWorkflow(this, 4)">
+                    <div class="workflow-icon">📊</div>
+                    <div class="workflow-title">ROI Analyst</div>
+                    <span class="workflow-status active">Temps reel</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservations Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <div class="table-title">Prochaines Croisieres - Taux de Remplissage</div>
+                <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                    Voir tout
+                </button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Croisiere</th>
+                        <th>Date Depart</th>
+                        <th>Capacite</th>
+                        <th>Remplissage</th>
+                        <th>Revenue (XPF)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="cruise-name">
+                                <div class="cruise-icon">🚢</div>
+                                <div>
+                                    <strong>Marquises Janvier #1</strong>
+                                    <div style="font-size: 0.75rem; color: var(--gray-400);">14 jours</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>15 Jan 2026</td>
+                        <td>254 places</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill high" style="width: 98%;"></div>
+                                </div>
+                                <span style="font-weight: 600;">98%</span>
+                            </div>
+                        </td>
+                        <td>178M</td>
+                        <td><span class="status-badge confirmed">Complet</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="cruise-name">
+                                <div class="cruise-icon">🚢</div>
+                                <div>
+                                    <strong>Marquises Janvier #2</strong>
+                                    <div style="font-size: 0.75rem; color: var(--gray-400);">14 jours</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>29 Jan 2026</td>
+                        <td>254 places</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill high" style="width: 92%;"></div>
+                                </div>
+                                <span style="font-weight: 600;">92%</span>
+                            </div>
+                        </td>
+                        <td>165M</td>
+                        <td><span class="status-badge pending">Quelques places</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="cruise-name">
+                                <div class="cruise-icon">🚢</div>
+                                <div>
+                                    <strong>Marquises Fevrier #1</strong>
+                                    <div style="font-size: 0.75rem; color: var(--gray-400);">14 jours</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>12 Fev 2026</td>
+                        <td>254 places</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill medium" style="width: 78%;"></div>
+                                </div>
+                                <span style="font-weight: 600;">78%</span>
+                            </div>
+                        </td>
+                        <td>142M</td>
+                        <td><span class="status-badge open">En vente</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="cruise-name">
+                                <div class="cruise-icon">🚢</div>
+                                <div>
+                                    <strong>Marquises Fevrier #2</strong>
+                                    <div style="font-size: 0.75rem; color: var(--gray-400);">14 jours</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>26 Fev 2026</td>
+                        <td>254 places</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill medium" style="width: 65%;"></div>
+                                </div>
+                                <span style="font-weight: 600;">65%</span>
+                            </div>
+                        </td>
+                        <td>118M</td>
+                        <td><span class="status-badge open">En vente</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="cruise-name">
+                                <div class="cruise-icon">🚢</div>
+                                <div>
+                                    <strong>Marquises Mars #1</strong>
+                                    <div style="font-size: 0.75rem; color: var(--gray-400);">14 jours</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>12 Mar 2026</td>
+                        <td>254 places</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill low" style="width: 45%;"></div>
+                                </div>
+                                <span style="font-weight: 600;">45%</span>
+                            </div>
+                        </td>
+                        <td>82M</td>
+                        <td><span class="status-badge open">En vente</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        // Configuration des webhooks n8n
+        const WEBHOOKS = {
+            1: {
+                url: 'https://n8n.srv1140766.hstgr.cloud/webhook/aranui-concierge',
+                name: 'Chatbot Concierge',
+                payload: { message: 'Test chatbot', language: 'fr' }
+            },
+            2: {
+                url: 'https://n8n.srv1140766.hstgr.cloud/webhook/aranui-newsletter',
+                name: 'Newsletter',
+                payload: { nom: 'Test Dashboard', segment: 'Aventurier', email: 'test@demo.com', emailGenerique: 'Decouvrez les Marquises' }
+            },
+            3: {
+                url: 'https://n8n.srv1140766.hstgr.cloud/webhook/aranui-seo-content',
+                name: 'SEO Content',
+                payload: { topic: 'Nuku Hiva', keywords: 'marquises voyage', language: 'fr' }
+            },
+            4: {
+                url: 'https://n8n.srv1140766.hstgr.cloud/webhook/aranui-roi-analyst',
+                name: 'ROI Analyst',
+                payload: { periode: 'janvier 2026', question: 'Analyse remplissage' }
+            }
+        };
+
+        async function triggerWorkflow(card, workflowId) {
+            const statusEl = card.querySelector('.workflow-status');
+            const originalText = statusEl.textContent;
+            const originalClass = statusEl.className;
+            const workflow = WEBHOOKS[workflowId];
+
+            card.classList.add('running');
+            statusEl.className = 'workflow-status running';
+            statusEl.textContent = 'Execution...';
+
+            try {
+                const response = await fetch(workflow.url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(workflow.payload)
+                });
+
+                card.classList.remove('running');
+                statusEl.className = originalClass;
+                statusEl.textContent = originalText;
+
+                const isSuccess = response.ok;
+                const data = await response.json().catch(() => ({}));
+
+                showNotification(
+                    isSuccess ? `${workflow.name} execute avec succes!` : `Erreur: ${data.message || 'Echec'}`,
+                    isSuccess ? '#10B981' : '#EF4444'
+                );
+
+                if (isSuccess) {
+                    console.log(`Workflow ${workflowId} result:`, data);
+                }
+            } catch (error) {
+                card.classList.remove('running');
+                statusEl.className = originalClass;
+                statusEl.textContent = originalText;
+                showNotification(`Erreur connexion: ${error.message}`, '#EF4444');
+            }
+        }
+
+        function showNotification(message, bgColor) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                background: ${bgColor};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                font-weight: 600;
+                animation: slideIn 0.3s ease;
+                z-index: 1000;
+                max-width: 400px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+    </script>
+</body>
+</html>

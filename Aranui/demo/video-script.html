@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Video Presentation | ARANUI x PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --aranui-blue: #005B8F;
+            --aranui-blue-dark: #004670;
+            --aranui-orange: #F5A623;
+            --aranui-orange-light: #FFB84D;
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-400: #9CA3AF;
+            --gray-600: #4B5563;
+            --gray-800: #1F2937;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--aranui-blue) 0%, var(--aranui-blue-dark) 100%);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--aranui-orange);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        .demo-badge {
+            background: var(--aranui-orange);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--aranui-blue) 0%, var(--aranui-blue-dark) 100%);
+            padding: 10rem 2rem 6rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--aranui-orange);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Script Card */
+        .script-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .script-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .scene-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--aranui-blue), var(--aranui-blue-dark));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .scene-info {
+            flex: 1;
+        }
+
+        .scene-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .scene-duration {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gray-100);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .script-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .column-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .visual-description {
+            background: var(--gray-50);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--aranui-blue);
+        }
+
+        .visual-description p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .voiceover-text {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(245,166,35,0.1), rgba(245,166,35,0.05));
+            border-radius: 12px;
+            border-left: 4px solid var(--aranui-orange);
+        }
+
+        .voiceover-text p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--gray-800);
+        }
+
+        .voiceover-text p strong {
+            color: var(--aranui-blue);
+        }
+
+        .voiceover-text p em {
+            color: var(--aranui-orange);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        /* Key Points */
+        .key-points {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .key-point::before {
+            content: '→';
+            color: var(--aranui-orange);
+            font-weight: bold;
+        }
+
+        .key-point span {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        /* Opening Hook */
+        .opening-card {
+            background: linear-gradient(135deg, var(--aranui-blue) 0%, var(--aranui-blue-dark) 100%);
+            color: white;
+        }
+
+        .opening-card .scene-number {
+            background: var(--aranui-orange);
+        }
+
+        .opening-card .visual-description {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--aranui-orange);
+        }
+
+        .opening-card .visual-description p {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .opening-card .voiceover-text {
+            background: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+
+        .opening-card .voiceover-text p {
+            color: white;
+        }
+
+        .opening-card .voiceover-text p strong {
+            color: var(--aranui-orange);
+        }
+
+        .opening-card .column-label {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .opening-card .key-point span {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Summary */
+        .summary-section {
+            background: var(--gray-50);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-top: 4rem;
+        }
+
+        .summary-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .summary-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            color: var(--aranui-blue);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--aranui-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        /* Approach Note */
+        .approach-note {
+            background: var(--success);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .approach-note h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .approach-note p {
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-800);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer p {
+            opacity: 0.7;
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--aranui-orange);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .script-content {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .script-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">A</div>
+            <div class="logo-text">
+                <h1>ARANUI</h1>
+                <span>Script Video</span>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="demo-hub.html">Hub Demo</a>
+            <a href="builds-presentation.html">Les Builds</a>
+            <a href="pricing-strategy.html">Tarifs</a>
+            <span class="demo-badge">Demo PACIFIK'AI</span>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">🎬 Script Video Prospection</div>
+        <h1>Presentation Video pour Aranui</h1>
+        <p>Script complet pour une video de 2-3 minutes presentant PACIFIK'AI comme expert en automatisation marketing capable d'automatiser TOUT le processus marketing</p>
+    </section>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Approach Note -->
+        <div class="approach-note">
+            <h3>Nouvelle Approche: Expert Marketing Automation</h3>
+            <p>Cette video ne presente pas juste 4 builds, mais positionne PACIFIK'AI comme expert capable d'automatiser <strong>l'ensemble du processus marketing</strong> d'Aranui. Les 4 builds sont des exemples concrets, mais les possibilites vont bien au-dela: CRM automatise, retargeting, onboarding voyageurs, gestion reclamations, enquetes satisfaction...</p>
+        </div>
+
+        <!-- Scene 1: Opening Hook -->
+        <div class="script-card opening-card">
+            <div class="script-header">
+                <div class="scene-number">1</div>
+                <div class="scene-info">
+                    <h2 class="scene-title">L'Accroche - Le Probleme</h2>
+                    <span class="scene-duration">⏱️ 15-20 secondes</span>
+                </div>
+            </div>
+
+            <div class="script-content">
+                <div>
+                    <div class="column-label">Visuel</div>
+                    <div class="visual-description">
+                        <p>Plan aerien de l'Aranui 5 naviguant vers les Marquises. Transition vers un bureau de reservation avec des telephones qui sonnent, des emails non lus, une equipe debordee.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="column-label">Voix-off</div>
+                    <div class="voiceover-text">
+                        <p>"<strong>Vous vendez l'une des experiences de voyage les plus uniques au monde.</strong> Mais pendant que vos prospects rêvent des Marquises... vos equipes croulent sous les questions repetitives, les emails manuels, et un taux de remplissage qui pourrait être bien meilleur."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-points">
+                <div class="key-point"><span>Commencer par valoriser l'unicite d'Aranui (pas une critique)</span></div>
+                <div class="key-point"><span>Identifier le probleme universel: gap entre potentiel et realite</span></div>
+            </div>
+        </div>
+
+        <!-- Scene 2: Introduction -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">2</div>
+                <div class="scene-info">
+                    <h2 class="scene-title">La Solution - Expert Automation</h2>
+                    <span class="scene-duration">⏱️ 20-25 secondes</span>
+                </div>
+            </div>
+
+            <div class="script-content">
+                <div>
+                    <div class="column-label">Visuel</div>
+                    <div class="visual-description">
+                        <p>Ecran divise: a gauche, le chaos manuel. A droite, des workflows automatises qui s'executent en arriere-plan pendant que l'equipe se concentre sur le service client haut de gamme.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="column-label">Voix-off</div>
+                    <div class="voiceover-text">
+                        <p>"Je m'appelle Jordy, et je suis <em>expert en automatisation marketing</em>. Mon metier: prendre tout ce qui est repetitif, chronophage, et manuel dans votre marketing... et le faire fonctionner <strong>tout seul, 24 heures sur 24</strong>."</p>
+                        <p style="margin-top: 1rem;">"Pour Aranui, j'ai concu un ecosysteme complet. Laissez-moi vous montrer <em>4 exemples concrets</em>."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-points">
+                <div class="key-point"><span>Se positionner comme EXPERT, pas comme vendeur de produit</span></div>
+                <div class="key-point"><span>"4 exemples" = ouverture vers plus de possibilites</span></div>
+            </div>
+        </div>
+
+        <!-- Scene 3: Build 1 -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">3</div>
+                <div class="scene-info">
+                    <h2 class="scene-title">Build 1: Chatbot Concierge</h2>
+                    <span class="scene-duration">⏱️ 25-30 secondes</span>
+                </div>
+            </div>
+
+            <div class="script-content">
+                <div>
+                    <div class="column-label">Visuel</div>
+                    <div class="visual-description">
+                        <p>Demo du chatbot en action: un visiteur pose une question sur les cabines. Le chatbot repond instantanement en francais, puis exemple en anglais. Split-screen montrant 3 conversations simultanees.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="column-label">Voix-off</div>
+                    <div class="voiceover-text">
+                        <p>"<strong>Premier exemple</strong>: un concierge virtuel qui connait Aranui aussi bien que votre meilleur commercial. Il repond instantanement en francais, anglais et allemand, <em>24 heures sur 24</em>."</p>
+                        <p style="margin-top: 1rem;">"Itineraires, cabines, tarifs, bagages... il sait tout. Et il ne prend jamais de pause dejeuner."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-points">
+                <div class="key-point"><span>Impact: -40% tickets support, +25% conversions</span></div>
+                <div class="key-point"><span>Humour leger pour humaniser ("pause dejeuner")</span></div>
+            </div>
+        </div>
+
+        <!-- Scene 4: Build 2 -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">4</div>
+                <div class="scene-info">
+                    <h2 class="scene-title">Build 2: Newsletter Intelligente</h2>
+                    <span class="scene-duration">⏱️ 25-30 secondes</span>
+                </div>
+            </div>
+
+            <div class="script-content">
+                <div>
+                    <div class="column-label">Visuel</div>
+                    <div class="visual-description">
+                        <p>Animation montrant 4 profils de prospects (aventurier, retraite, groupe, photographe) recevant chacun un email different. Zoom sur les taux d'ouverture qui grimpent.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="column-label">Voix-off</div>
+                    <div class="voiceover-text">
+                        <p>"<strong>Deuxieme exemple</strong>: un aventurier de 35 ans et un couple de retraites ne veulent pas lire le même email. Mon systeme detecte le profil de chaque prospect et lui envoie <em>exactement</em> le contenu qui va le faire rêver."</p>
+                        <p style="margin-top: 1rem;">"Automatiquement. Chaque semaine. Sans que vous touchiez a quoi que ce soit."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-points">
+                <div class="key-point"><span>Impact: +35% taux d'ouverture, +15% demandes de devis</span></div>
+                <div class="key-point"><span>Insister sur la personnalisation = respect du prospect</span></div>
+            </div>
+        </div>
+
+        <!-- Scene 5: Build 3 -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">5</div>
+                <div class="scene-info">
+                    <h2 class="scene-title">Build 3: SEO Content Factory</h2>
+                    <span class="scene-duration">⏱️ 20-25 secondes</span>
+                </div>
+            </div>
+
+            <div class="script-content">
+                <div>
+                    <div class="column-label">Visuel</div>
+                    <div class="visual-description">
+                        <p>Simulation Google: recherche "croisiere marquises", site Aranui apparait en premiere page. Transition vers des articles de blog generes automatiquement.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="column-label">Voix-off</div>
+                    <div class="voiceover-text">
+                        <p>"<strong>Troisieme exemple</strong>: quand quelqu'un tape 'croisiere Marquises' sur Google, c'est Aranui qui doit apparaitre en premier. Pas Paul Gauguin, pas Ponant. <em>Vous.</em>"</p>
+                        <p style="margin-top: 1rem;">"Mon systeme genere automatiquement des articles SEO optimises, chaque semaine, sans redacteur."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-points">
+                <div class="key-point"><span>Mentionner les concurrents = montrer qu'on connait le marche</span></div>
+                <div class="key-point"><span>Impact: +60% trafic organique</span></div>
+            </div>
+        </div>
+
+        <!-- Scene 6: Build 4 -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">6</div>
+                <div class="scene-info">
+                    <h2 class="scene-title">Build 4: ROI Analyst</h2>
+                    <span class="scene-duration">⏱️ 20-25 secondes</span>
+                </div>
+            </div>
+
+            <div class="script-content">
+                <div>
+                    <div class="column-label">Visuel</div>
+                    <div class="visual-description">
+                        <p>Dashboard en temps reel: taux de remplissage par croisiere, courbe des reservations, alertes automatiques. Notification sur telephone "Croisiere Mars: objectif 80% atteint".</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="column-label">Voix-off</div>
+                    <div class="voiceover-text">
+                        <p>"<strong>Quatrieme exemple</strong>: un tableau de bord qui vous montre, en temps reel, le taux de remplissage de chaque croisiere. Avec des alertes automatiques si un depart risque de partir a moitie vide."</p>
+                        <p style="margin-top: 1rem;">"Pour que vous puissiez reagir <em>avant</em> qu'il soit trop tard."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-points">
+                <div class="key-point"><span>Impact: decisions data-driven, pas au feeling</span></div>
+            </div>
+        </div>
+
+        <!-- Scene 7: Beyond -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">7</div>
+                <div class="scene-info">
+                    <h2 class="scene-title">Au-dela des 4 Builds</h2>
+                    <span class="scene-duration">⏱️ 20-25 secondes</span>
+                </div>
+            </div>
+
+            <div class="script-content">
+                <div>
+                    <div class="column-label">Visuel</div>
+                    <div class="visual-description">
+                        <p>Liste deroulante d'autres automatisations possibles: CRM automatise, retargeting Facebook, onboarding voyageurs, gestion reclamations, enquetes satisfaction, relance abandons...</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="column-label">Voix-off</div>
+                    <div class="voiceover-text">
+                        <p>"Et ce ne sont que <em>4 exemples</em>. Je peux automatiser bien plus: la gestion de votre CRM, le retargeting de vos visiteurs, l'onboarding de vos voyageurs avant le depart, le suivi des reclamations, les enquetes satisfaction post-croisiere..."</p>
+                        <p style="margin-top: 1rem;">"<strong>Tout ce qui est repetitif dans votre marketing peut tourner tout seul.</strong>"</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-points">
+                <div class="key-point"><span>CRUCIAL: ouvrir le champ des possibles</span></div>
+                <div class="key-point"><span>Montrer que les 4 builds ne sont qu'un debut</span></div>
+            </div>
+        </div>
+
+        <!-- Scene 8: Close -->
+        <div class="script-card opening-card">
+            <div class="script-header">
+                <div class="scene-number">8</div>
+                <div class="scene-info">
+                    <h2 class="scene-title">Le Close - Appel a l'Action</h2>
+                    <span class="scene-duration">⏱️ 20-25 secondes</span>
+                </div>
+            </div>
+
+            <div class="script-content">
+                <div>
+                    <div class="column-label">Visuel</div>
+                    <div class="visual-description">
+                        <p>Retour sur le plan aerien de l'Aranui 5, navire plein de passagers heureux. Overlay avec les coordonnees contact et le logo PACIFIK'AI.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="column-label">Voix-off</div>
+                    <div class="voiceover-text">
+                        <p>"L'Aranui vend une experience unique. Votre marketing devrait être a la hauteur. <strong>Automatise, intelligent, et toujours actif.</strong>"</p>
+                        <p style="margin-top: 1rem;">"Vous voulez qu'on en discute? Je vous propose 30 minutes pour explorer ensemble ce qu'on pourrait automatiser chez vous."</p>
+                        <p style="margin-top: 1rem;"><em>PACIFIK'AI - L'automatisation au service du tourisme polynesien.</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-points">
+                <div class="key-point"><span>CTA clair: 30 minutes de decouverte</span></div>
+                <div class="key-point"><span>Positionner comme partenaire local</span></div>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-section">
+            <div class="summary-header">
+                <h2>Resume du Script</h2>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-value">2-3 min</div>
+                    <div class="summary-label">Duree totale video</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">8</div>
+                    <div class="summary-label">Scenes/Sequences</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">1</div>
+                    <div class="summary-label">Message cle: Tout automatiser</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Demo realisee par <a href="#">PACIFIK'AI</a> - Expert en automatisation marketing pour le tourisme polynesien</p>
+    </footer>
+</body>
+</html>

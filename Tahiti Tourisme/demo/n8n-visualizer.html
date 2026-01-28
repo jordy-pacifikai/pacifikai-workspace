@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflows n8n | Automatisation Tahiti Tourisme</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --turquoise: #00B5AD;
+            --turquoise-dark: #009690;
+            --turquoise-light: #E6F7F6;
+            --orange: #FF6B35;
+            --white: #FFFFFF;
+            --sand: #F5F0E8;
+            --dark: #1A2A3A;
+            --gray: #6B7280;
+            --green: #10B981;
+            --purple: #8B5CF6;
+            --yellow: #F59E0B;
+            --pink: #EC4899;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #1A1A2E;
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--white);
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--turquoise);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon i {
+            color: var(--white);
+            font-size: 1.3rem;
+        }
+
+        .logo h1 {
+            font-size: 1.3rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+        .demo-badge {
+            background: var(--orange);
+            color: var(--white);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(0,0,0,0.2);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .workflow-list {
+            list-style: none;
+        }
+
+        .workflow-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .workflow-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .workflow-item.active {
+            border-color: var(--turquoise);
+            background: rgba(0,181,173,0.1);
+        }
+
+        .workflow-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .workflow-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .workflow-icon.chat { background: var(--turquoise); }
+        .workflow-icon.mail { background: var(--orange); }
+        .workflow-icon.content { background: var(--purple); }
+        .workflow-icon.analytics { background: var(--green); }
+
+        .workflow-name {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .workflow-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .status-dot.inactive {
+            background: var(--gray);
+        }
+
+        /* Workflow Canvas */
+        .canvas-area {
+            padding: 2rem;
+            overflow: auto;
+        }
+
+        .canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .canvas-title h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .canvas-title p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+
+        .canvas-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--turquoise);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--turquoise-dark);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Workflow Diagram */
+        .workflow-diagram {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workflow-diagram::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 30px 30px;
+        }
+
+        .nodes-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .node-row {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .node {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            min-width: 180px;
+            text-align: center;
+            position: relative;
+            color: var(--dark);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .node:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+
+        .node-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.8rem;
+            font-size: 1.2rem;
+            color: var(--white);
+        }
+
+        .node-icon.webhook { background: var(--purple); }
+        .node-icon.language { background: var(--turquoise); }
+        .node-icon.ai { background: var(--orange); }
+        .node-icon.database { background: var(--green); }
+        .node-icon.response { background: var(--pink); }
+        .node-icon.email { background: #3B82F6; }
+        .node-icon.schedule { background: var(--yellow); }
+        .node-icon.content { background: #8B5CF6; }
+        .node-icon.analytics { background: #14B8A6; }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .node-subtitle {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        /* Connectors */
+        .connector {
+            position: absolute;
+            background: var(--turquoise);
+            z-index: 0;
+        }
+
+        .connector-v {
+            width: 3px;
+            height: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .connector-h {
+            height: 3px;
+            width: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Arrows between rows */
+        .row-connector {
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem 0;
+        }
+
+        .arrow-down {
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--turquoise), var(--turquoise-dark));
+            position: relative;
+        }
+
+        .arrow-down::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 10px solid var(--turquoise-dark);
+        }
+
+        /* Branch Connectors */
+        .branch-connector {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0.5rem 0;
+        }
+
+        .branch-line {
+            display: flex;
+            align-items: center;
+        }
+
+        .branch-vertical {
+            width: 3px;
+            height: 20px;
+            background: var(--turquoise);
+        }
+
+        .branch-horizontal {
+            height: 3px;
+            width: 150px;
+            background: var(--turquoise);
+        }
+
+        /* Stats Panel */
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--turquoise);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .stats-panel {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .node-row {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-project-diagram"></i>
+            </div>
+            <h1>n8n Workflows</h1>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html">Chatbot</a>
+            <a href="builds-presentation.html">Solutions</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="demo-hub.html">Hub</a>
+        </nav>
+        <span class="demo-badge">Demo PACIFIK'AI</span>
+    </header>
+
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Workflows Tahiti Tourisme</div>
+            <ul class="workflow-list">
+                <li class="workflow-item active" onclick="showWorkflow('chatbot')">
+                    <div class="workflow-header">
+                        <div class="workflow-icon chat"><i class="fas fa-comments"></i></div>
+                        <span class="workflow-name">Chatbot Multilingue</span>
+                    </div>
+                    <div class="workflow-status">
+                        <span class="status-dot"></span>
+                        Actif - 24/7
+                    </div>
+                </li>
+                <li class="workflow-item" onclick="showWorkflow('newsletter')">
+                    <div class="workflow-header">
+                        <div class="workflow-icon mail"><i class="fas fa-envelope"></i></div>
+                        <span class="workflow-name">Newsletter Marchés</span>
+                    </div>
+                    <div class="workflow-status">
+                        <span class="status-dot"></span>
+                        Actif - Hebdo
+                    </div>
+                </li>
+                <li class="workflow-item" onclick="showWorkflow('content')">
+                    <div class="workflow-header">
+                        <div class="workflow-icon content"><i class="fas fa-pen-fancy"></i></div>
+                        <span class="workflow-name">Content Factory</span>
+                    </div>
+                    <div class="workflow-status">
+                        <span class="status-dot"></span>
+                        Actif - Quotidien
+                    </div>
+                </li>
+                <li class="workflow-item" onclick="showWorkflow('analytics')">
+                    <div class="workflow-header">
+                        <div class="workflow-icon analytics"><i class="fas fa-chart-line"></i></div>
+                        <span class="workflow-name">Analytics Destination</span>
+                    </div>
+                    <div class="workflow-status">
+                        <span class="status-dot"></span>
+                        Actif - Temps réel
+                    </div>
+                </li>
+            </ul>
+
+            <div class="sidebar-title" style="margin-top: 2rem;">Statistiques Globales</div>
+            <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
+                    <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Exécutions/jour</span>
+                    <span style="font-weight: 600;">2,450</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
+                    <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Taux succès</span>
+                    <span style="font-weight: 600; color: var(--green);">99.2%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Temps moyen</span>
+                    <span style="font-weight: 600;">1.2s</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas Area -->
+        <main class="canvas-area">
+            <div class="canvas-header">
+                <div class="canvas-title">
+                    <h2 id="workflowTitle">Chatbot Guide Multilingue</h2>
+                    <p id="workflowDesc">Routage automatique par langue + réponses IA personnalisées</p>
+                </div>
+                <div class="canvas-actions">
+                    <button class="btn btn-secondary"><i class="fas fa-code"></i> JSON</button>
+                    <button class="btn btn-primary"><i class="fas fa-play"></i> Tester</button>
+                </div>
+            </div>
+
+            <!-- Chatbot Workflow -->
+            <div class="workflow-diagram" id="chatbotWorkflow">
+                <div class="nodes-container">
+                    <!-- Row 1: Trigger -->
+                    <div class="node-row">
+                        <div class="node">
+                            <div class="node-icon webhook"><i class="fas fa-bolt"></i></div>
+                            <div class="node-title">Webhook</div>
+                            <div class="node-subtitle">Message entrant</div>
+                        </div>
+                    </div>
+
+                    <div class="row-connector"><div class="arrow-down"></div></div>
+
+                    <!-- Row 2: Language Detection -->
+                    <div class="node-row">
+                        <div class="node">
+                            <div class="node-icon language"><i class="fas fa-language"></i></div>
+                            <div class="node-title">Détection Langue</div>
+                            <div class="node-subtitle">FR/EN/JP/ES/DE</div>
+                        </div>
+                    </div>
+
+                    <div class="row-connector"><div class="arrow-down"></div></div>
+
+                    <!-- Row 3: Switch by Language -->
+                    <div class="node-row">
+                        <div class="node" style="background: var(--turquoise); color: white;">
+                            <div class="node-icon" style="background: white;"><i class="fas fa-code-branch" style="color: var(--turquoise);"></i></div>
+                            <div class="node-title">Switch Langue</div>
+                            <div class="node-subtitle">5 branches</div>
+                        </div>
+                    </div>
+
+                    <div class="row-connector"><div class="arrow-down"></div></div>
+
+                    <!-- Row 4: AI Processing per language -->
+                    <div class="node-row">
+                        <div class="node">
+                            <div class="node-icon ai"><i class="fas fa-brain"></i></div>
+                            <div class="node-title">Claude AI</div>
+                            <div class="node-subtitle">Prompt FR</div>
+                        </div>
+                        <div class="node">
+                            <div class="node-icon ai"><i class="fas fa-brain"></i></div>
+                            <div class="node-title">Claude AI</div>
+                            <div class="node-subtitle">Prompt EN</div>
+                        </div>
+                        <div class="node">
+                            <div class="node-icon ai"><i class="fas fa-brain"></i></div>
+                            <div class="node-title">Claude AI</div>
+                            <div class="node-subtitle">Prompt JP</div>
+                        </div>
+                    </div>
+
+                    <div class="row-connector"><div class="arrow-down"></div></div>
+
+                    <!-- Row 5: Database Lookup -->
+                    <div class="node-row">
+                        <div class="node">
+                            <div class="node-icon database"><i class="fas fa-database"></i></div>
+                            <div class="node-title">Supabase</div>
+                            <div class="node-subtitle">118 îles + hébergements</div>
+                        </div>
+                    </div>
+
+                    <div class="row-connector"><div class="arrow-down"></div></div>
+
+                    <!-- Row 6: Response -->
+                    <div class="node-row">
+                        <div class="node">
+                            <div class="node-icon response"><i class="fas fa-reply"></i></div>
+                            <div class="node-title">Réponse Webhook</div>
+                            <div class="node-subtitle">JSON formaté</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Newsletter Workflow (hidden by default) -->
+            <div class="workflow-diagram" id="newsletterWorkflow" style="display: none;">
+                <div class="nodes-container">
+                    <div class="node-row">
+                        <div class="node">
+                            <div class="node-icon schedule"><i class="fas fa-clock"></i></div>
+                            <div class="node-title">Schedule</div>
+                            <div class="node-subtitle">Chaque lundi 9h</div>
+                        </div>
+                    </div>
+
+                    <div class="row-connector"><div class="arrow-down"></div></div>
+
+                    <div class="node-row">
+                        <div class="node">
+                            <div class="node-icon database"><i class="fas fa-database"></i></div>
+                            <div class="node-title">Airtable</div>
+                            <div class="node-subtitle">Segments marchés</div>
+                        </div>
+                    </div>
+
+                    <div class="row-connector"><div class="arrow-down"></div></div>
+
+                    <div class="node-row">
+                        <div class="node" style="background: var(--orange); color: white;">
+                            <div class="node-icon" style="background: white;"><i class="fas fa-code-branch" style="color: var(--orange);"></i></div>
+                            <div class="node-title">Switch Marché</div>
+                            <div class="node-subtitle">USA/FR/JP/AU/NZ</div>
+                        </div>
+                    </div>
+
+                    <div class="row-connector"><div class="arrow-down"></div></div>
+
+                    <div class="node-row">
+                        <div class="node">
+                            <div class="node-icon ai"><i class="fas fa-brain"></i></div>
+                            <div class="node-title">Claude AI</div>
+                            <div class="node-subtitle">Génération contenu</div>
+                        </div>
+                    </div>
+
+                    <div class="row-connector"><div class="arrow-down"></div></div>
+
+                    <div class="node-row">
+                        <div class="node">
+                            <div class="node-icon email"><i class="fas fa-envelope"></i></div>
+                            <div class="node-title">Brevo</div>
+                            <div class="node-subtitle">Envoi segmenté</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Panel -->
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Nodes actifs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Langues</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1.2s</div>
+                    <div class="stat-label">Temps réponse</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Disponibilité</div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--purple);"></div>
+                    <span>Trigger</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--turquoise);"></div>
+                    <span>Traitement</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--orange);"></div>
+                    <span>IA</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--green);"></div>
+                    <span>Database</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: var(--pink);"></div>
+                    <span>Output</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const workflows = {
+            chatbot: {
+                title: 'Chatbot Guide Multilingue',
+                desc: 'Routage automatique par langue + réponses IA personnalisées'
+            },
+            newsletter: {
+                title: 'Newsletter par Marché Source',
+                desc: 'Génération et envoi automatique segmenté par pays'
+            },
+            content: {
+                title: 'Content Factory SEO/GEO',
+                desc: 'Production automatisée d\'articles optimisés'
+            },
+            analytics: {
+                title: 'Analytics Destination',
+                desc: 'Collecte et reporting automatique des KPIs tourisme'
+            }
+        };
+
+        function showWorkflow(type) {
+            // Update active state
+            document.querySelectorAll('.workflow-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Update title
+            document.getElementById('workflowTitle').textContent = workflows[type].title;
+            document.getElementById('workflowDesc').textContent = workflows[type].desc;
+
+            // Show/hide diagrams (simplified for demo)
+            document.getElementById('chatbotWorkflow').style.display = type === 'chatbot' ? 'block' : 'none';
+            document.getElementById('newsletterWorkflow').style.display = type === 'newsletter' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

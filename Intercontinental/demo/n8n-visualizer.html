@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflows n8n | InterContinental - PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #B8860B;
+            --gold-light: #D4A73A;
+            --bordeaux: #722F37;
+            --bordeaux-dark: #5A252C;
+            --white: #FFFFFF;
+            --cream: #FAF8F5;
+            --charcoal: #2D2D2D;
+            --n8n-orange: #FF6D5A;
+            --n8n-purple: #7B61FF;
+            --n8n-green: #00C853;
+            --n8n-blue: #2196F3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #1A1A2E;
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+        .demo-badge {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--gold);
+            color: var(--white);
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 60px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--gold);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 80px 60px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(123, 97, 255, 0.1) 0%, transparent 100%);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--n8n-purple);
+            color: var(--white);
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            border-radius: 20px;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            opacity: 0.7;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Workflows Section */
+        .workflows-section {
+            padding: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .workflow-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .workflow-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .workflow-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--n8n-purple), var(--n8n-orange));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .workflow-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .workflow-desc {
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        .workflow-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 200, 83, 0.1);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--n8n-green);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--n8n-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Workflow Canvas */
+        .workflow-canvas {
+            padding: 40px;
+            background: #0D0D1A;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .workflow-nodes {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .workflow-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .node-box {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .node-box:hover {
+            border-color: var(--n8n-purple);
+            transform: scale(1.05);
+        }
+
+        .node-box.trigger {
+            background: linear-gradient(135deg, rgba(123, 97, 255, 0.2), rgba(123, 97, 255, 0.05));
+            border-color: var(--n8n-purple);
+        }
+
+        .node-box.ai {
+            background: linear-gradient(135deg, rgba(255, 109, 90, 0.2), rgba(255, 109, 90, 0.05));
+            border-color: var(--n8n-orange);
+        }
+
+        .node-box.action {
+            background: linear-gradient(135deg, rgba(0, 200, 83, 0.2), rgba(0, 200, 83, 0.05));
+            border-color: var(--n8n-green);
+        }
+
+        .node-box.data {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.2), rgba(33, 150, 243, 0.05));
+            border-color: var(--n8n-blue);
+        }
+
+        .node-label {
+            font-size: 11px;
+            opacity: 0.7;
+            text-align: center;
+            max-width: 100px;
+        }
+
+        .node-connector {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--n8n-purple), var(--n8n-orange));
+            position: relative;
+        }
+
+        .node-connector:after {
+            content: "";
+            position: absolute;
+            right: -5px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid var(--n8n-orange);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        /* Workflow Stats */
+        .workflow-stats {
+            display: flex;
+            gap: 30px;
+            padding: 20px 30px;
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-icon {
+            width: 35px;
+            height: 35px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .stat-info {
+            font-size: 12px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .stat-label {
+            opacity: 0.5;
+        }
+
+        /* Technical Details */
+        .tech-details {
+            padding: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tech-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--n8n-purple);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: rgba(255,255,255,0.02);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tech-item-title {
+            font-size: 11px;
+            opacity: 0.5;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tech-item-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--n8n-green);
+        }
+
+        /* Summary Section */
+        .summary-section {
+            padding: 80px 60px;
+            background: linear-gradient(180deg, transparent, rgba(184, 134, 11, 0.1));
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .summary-card {
+            text-align: center;
+            padding: 40px 30px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+
+        .summary-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        /* CTA */
+        .cta-section {
+            padding: 60px;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold), var(--bordeaux));
+            color: var(--white);
+            padding: 18px 50px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: 1px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(184, 134, 11, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background: #0D0D1A;
+            color: var(--white);
+            padding: 40px 60px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-text {
+            opacity: 0.5;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1024px) {
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .workflow-header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            .workflow-nodes {
+                flex-direction: column;
+            }
+            .node-connector {
+                width: 2px;
+                height: 30px;
+            }
+            .node-connector:after {
+                right: -4px;
+                top: auto;
+                bottom: -5px;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 8px solid var(--n8n-orange);
+            }
+            .tech-grid, .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">IC</div>
+            <span class="logo-text">InterContinental</span>
+        </div>
+        <nav class="nav-links">
+            <a href="demo-hub.html">Hub</a>
+            <a href="index.html">Site</a>
+            <a href="builds-presentation.html">Builds IA</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="n8n-visualizer.html" class="active">Workflows</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-badge">n8n Automation</span>
+        <h1 class="hero-title">Architecture des Workflows</h1>
+        <p class="hero-subtitle">4 workflows n8n interconnectes pour automatiser l'ensemble de votre experience client.</p>
+    </section>
+
+    <!-- Workflows Section -->
+    <section class="workflows-section">
+        <!-- Workflow 1: Chatbot Multilingue -->
+        <div class="workflow-card">
+            <div class="workflow-header">
+                <div class="workflow-info">
+                    <div class="workflow-number">1</div>
+                    <div>
+                        <h3 class="workflow-title">Chatbot Concierge Multilingue</h3>
+                        <p class="workflow-desc">Traitement des messages clients en 5 langues avec escalade intelligente</p>
+                    </div>
+                </div>
+                <div class="workflow-status">
+                    <span class="status-dot"></span>
+                    Production
+                </div>
+            </div>
+
+            <div class="workflow-canvas">
+                <div class="workflow-nodes">
+                    <div class="workflow-node">
+                        <div class="node-box trigger">&#128172;</div>
+                        <span class="node-label">Webhook Message</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box data">&#127760;</div>
+                        <span class="node-label">Detect Language</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box ai">&#129302;</div>
+                        <span class="node-label">Claude AI</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box data">&#128451;</div>
+                        <span class="node-label">Supabase FAQ</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box action">&#128232;</div>
+                        <span class="node-label">Response</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box action">&#128276;</div>
+                        <span class="node-label">Escalade Reception</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-stats">
+                <div class="stat-item">
+                    <div class="stat-icon">&#128200;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">2,847</div>
+                        <div class="stat-label">Executions/mois</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#9889;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">1.2s</div>
+                        <div class="stat-label">Temps moyen</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#127919;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">94%</div>
+                        <div class="stat-label">Resolution auto</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#127468;&#127463;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Langues</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-details">
+                <h4 class="tech-title">Details Techniques</h4>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-item-title">Trigger</div>
+                        <div class="tech-item-value">Webhook POST</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">Model IA</div>
+                        <div class="tech-item-value">Claude Sonnet</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">Database</div>
+                        <div class="tech-item-value">Supabase pgvector</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">Escalade</div>
+                        <div class="tech-item-value">WhatsApp API</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow 2: Newsletter Segmentee -->
+        <div class="workflow-card">
+            <div class="workflow-header">
+                <div class="workflow-info">
+                    <div class="workflow-number">2</div>
+                    <div>
+                        <h3 class="workflow-title">Newsletter Personnalisee</h3>
+                        <p class="workflow-desc">Emails segmentes pre-stay, in-stay, post-stay selon profil client</p>
+                    </div>
+                </div>
+                <div class="workflow-status">
+                    <span class="status-dot"></span>
+                    Production
+                </div>
+            </div>
+
+            <div class="workflow-canvas">
+                <div class="workflow-nodes">
+                    <div class="workflow-node">
+                        <div class="node-box trigger">&#128197;</div>
+                        <span class="node-label">Cron Quotidien</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box data">&#128451;</div>
+                        <span class="node-label">Airtable CRM</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box data">&#128203;</div>
+                        <span class="node-label">Segmentation</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box ai">&#129302;</div>
+                        <span class="node-label">Content Generator</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box action">&#128231;</div>
+                        <span class="node-label">Brevo Send</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box data">&#128202;</div>
+                        <span class="node-label">Track Open/Click</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-stats">
+                <div class="stat-item">
+                    <div class="stat-icon">&#128231;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">12,450</div>
+                        <div class="stat-label">Emails/mois</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#128065;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">42%</div>
+                        <div class="stat-label">Taux ouverture</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#128073;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">8.3%</div>
+                        <div class="stat-label">Taux clic</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#128176;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">+22%</div>
+                        <div class="stat-label">Upselling</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-details">
+                <h4 class="tech-title">Details Techniques</h4>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-item-title">Trigger</div>
+                        <div class="tech-item-value">Cron 09:00 UTC</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">Segments</div>
+                        <div class="tech-item-value">Honeymoon, Family, Business</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">ESP</div>
+                        <div class="tech-item-value">Brevo API v3</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">Templates</div>
+                        <div class="tech-item-value">9 variations</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow 3: Content Factory -->
+        <div class="workflow-card">
+            <div class="workflow-header">
+                <div class="workflow-info">
+                    <div class="workflow-number">3</div>
+                    <div>
+                        <h3 class="workflow-title">SEO/GEO Content Factory</h3>
+                        <p class="workflow-desc">Generation automatique d'articles SEO pour le blog voyage luxe</p>
+                    </div>
+                </div>
+                <div class="workflow-status">
+                    <span class="status-dot"></span>
+                    Production
+                </div>
+            </div>
+
+            <div class="workflow-canvas">
+                <div class="workflow-nodes">
+                    <div class="workflow-node">
+                        <div class="node-box trigger">&#128197;</div>
+                        <span class="node-label">Cron Hebdo</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box data">&#128269;</div>
+                        <span class="node-label">Keywords Research</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box ai">&#129302;</div>
+                        <span class="node-label">Claude Opus</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box ai">&#127912;</div>
+                        <span class="node-label">Image Generator</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box action">&#128196;</div>
+                        <span class="node-label">WordPress Publish</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box action">&#128225;</div>
+                        <span class="node-label">Social Share</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-stats">
+                <div class="stat-item">
+                    <div class="stat-icon">&#128221;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Articles/semaine</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#127760;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">45K</div>
+                        <div class="stat-label">Visiteurs/mois</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#128200;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">#1</div>
+                        <div class="stat-label">Positions SEO</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#128176;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">3.2%</div>
+                        <div class="stat-label">Conversion</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-details">
+                <h4 class="tech-title">Details Techniques</h4>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-item-title">Model Content</div>
+                        <div class="tech-item-value">Claude Opus 4.5</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">Model Image</div>
+                        <div class="tech-item-value">DALL-E 3</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">CMS</div>
+                        <div class="tech-item-value">WordPress REST API</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">Social</div>
+                        <div class="tech-item-value">Facebook, Instagram, Pinterest</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow 4: Analytics Real-time -->
+        <div class="workflow-card">
+            <div class="workflow-header">
+                <div class="workflow-info">
+                    <div class="workflow-number">4</div>
+                    <div>
+                        <h3 class="workflow-title">ROI Analytics Real-time</h3>
+                        <p class="workflow-desc">Collecte et analyse des KPIs hoteliers avec alertes automatiques</p>
+                    </div>
+                </div>
+                <div class="workflow-status">
+                    <span class="status-dot"></span>
+                    Production
+                </div>
+            </div>
+
+            <div class="workflow-canvas">
+                <div class="workflow-nodes">
+                    <div class="workflow-node">
+                        <div class="node-box trigger">&#128337;</div>
+                        <span class="node-label">Cron 15min</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box data">&#127970;</div>
+                        <span class="node-label">PMS Opera</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box data">&#128202;</div>
+                        <span class="node-label">Calculate KPIs</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box ai">&#129302;</div>
+                        <span class="node-label">Anomaly Detection</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box data">&#128451;</div>
+                        <span class="node-label">Supabase Store</span>
+                    </div>
+                    <div class="node-connector"></div>
+                    <div class="workflow-node">
+                        <div class="node-box action">&#128276;</div>
+                        <span class="node-label">Slack Alerts</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-stats">
+                <div class="stat-item">
+                    <div class="stat-icon">&#128200;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">96</div>
+                        <div class="stat-label">Executions/jour</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#127919;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">15</div>
+                        <div class="stat-label">KPIs trackes</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#128276;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Alertes/semaine</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">&#127970;</div>
+                    <div class="stat-info">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Resorts</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-details">
+                <h4 class="tech-title">Details Techniques</h4>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-item-title">PMS</div>
+                        <div class="tech-item-value">Opera Cloud API</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">KPIs</div>
+                        <div class="tech-item-value">RevPAR, ADR, Occ%, NPS</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">Storage</div>
+                        <div class="tech-item-value">Supabase PostgreSQL</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-item-title">Alerting</div>
+                        <div class="tech-item-value">Slack + Email</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Summary Section -->
+    <section class="summary-section">
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-value">4</div>
+                <div class="summary-label">Workflows Production</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value">15K+</div>
+                <div class="summary-label">Executions/mois</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value">99.8%</div>
+                <div class="summary-label">Uptime</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value">24/7</div>
+                <div class="summary-label">Automatisation</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <a href="delivery-architecture.html" class="cta-button">Voir l'Architecture Complete</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">Demo PACIFIK'AI - Workflows n8n pour InterContinental Tahiti & Bora Bora</p>
+    </footer>
+</body>
+</html>

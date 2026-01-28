@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Charter - THE MOORINGS TAHITI | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #003366;
+            --red: #CC0000;
+            --white: #FFFFFF;
+            --light-blue: #E8F4FD;
+            --dark-navy: #001a33;
+            --success: #10B981;
+            --warning: #F59E0B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f5f7fa;
+            color: var(--navy);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
+            background: var(--navy);
+            padding: 30px 20px;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--red);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 25px;
+            height: 25px;
+            fill: var(--white);
+        }
+
+        .sidebar-logo-text {
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .sidebar-logo-sub {
+            color: rgba(255,255,255,0.5);
+            font-size: 11px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+        .sidebar-menu a.active {
+            background: var(--red);
+        }
+
+        .sidebar-menu svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Main Content */
+        .main {
+            margin-left: 260px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: var(--navy);
+        }
+
+        .header-date {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-header {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-header.primary {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .btn-header.secondary {
+            background: var(--white);
+            color: var(--navy);
+            border: 1px solid #ddd;
+        }
+
+        .btn-header svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kpi-icon.blue { background: var(--light-blue); }
+        .kpi-icon.green { background: #D1FAE5; }
+        .kpi-icon.orange { background: #FEF3C7; }
+        .kpi-icon.red { background: #FEE2E2; }
+
+        .kpi-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .kpi-icon.blue svg { fill: var(--navy); }
+        .kpi-icon.green svg { fill: var(--success); }
+        .kpi-icon.orange svg { fill: var(--warning); }
+        .kpi-icon.red svg { fill: var(--red); }
+
+        .kpi-trend {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .kpi-trend.up {
+            background: #D1FAE5;
+            color: var(--success);
+        }
+
+        .kpi-trend.down {
+            background: #FEE2E2;
+            color: var(--red);
+        }
+
+        .kpi-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 5px;
+        }
+
+        .kpi-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .card-action {
+            font-size: 13px;
+            color: var(--red);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Fleet Status */
+        .fleet-list {
+            list-style: none;
+        }
+
+        .fleet-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .fleet-item:last-child {
+            border-bottom: none;
+        }
+
+        .fleet-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--light-blue);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .fleet-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--navy);
+        }
+
+        .fleet-info {
+            flex: 1;
+        }
+
+        .fleet-name {
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 3px;
+        }
+
+        .fleet-details {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .fleet-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .fleet-status.available {
+            background: #D1FAE5;
+            color: var(--success);
+        }
+
+        .fleet-status.booked {
+            background: var(--light-blue);
+            color: var(--navy);
+        }
+
+        .fleet-status.maintenance {
+            background: #FEF3C7;
+            color: var(--warning);
+        }
+
+        /* Weather Widget */
+        .weather-widget {
+            background: linear-gradient(135deg, var(--navy), var(--dark-navy));
+            border-radius: 16px;
+            padding: 25px;
+            color: var(--white);
+        }
+
+        .weather-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .weather-location {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .weather-temp {
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .weather-icon svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--white);
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .weather-detail {
+            text-align: center;
+        }
+
+        .weather-detail-value {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .weather-detail-label {
+            font-size: 11px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        /* Calendar */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #ddd;
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-nav button svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--navy);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #888;
+            padding: 10px 0;
+            text-transform: uppercase;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calendar-day:hover {
+            background: var(--light-blue);
+        }
+
+        .calendar-day.today {
+            background: var(--red);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .calendar-day.has-booking {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .calendar-day.partial {
+            background: linear-gradient(135deg, var(--navy) 50%, var(--light-blue) 50%);
+            color: var(--white);
+        }
+
+        /* Bookings Table */
+        .bookings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bookings-table th {
+            text-align: left;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            border-bottom: 1px solid #eee;
+        }
+
+        .bookings-table td {
+            padding: 15px 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .booking-client {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .booking-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--light-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--navy);
+            font-size: 14px;
+        }
+
+        .booking-type {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .booking-type.bareboat {
+            background: var(--light-blue);
+            color: var(--navy);
+        }
+
+        .booking-type.skippered {
+            background: #FEF3C7;
+            color: var(--warning);
+        }
+
+        .booking-type.crewed {
+            background: #D1FAE5;
+            color: var(--success);
+        }
+
+        .demo-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--red);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">
+                <svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg>
+            </div>
+            <div>
+                <div class="sidebar-logo-text">THE MOORINGS</div>
+                <div class="sidebar-logo-sub">Raiatea Dashboard</div>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" class="active">
+                    <svg viewBox="0 0 24 24"><path d="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z"/></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg>
+                    Flotte
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3H18V1"/></svg>
+                    Reservations
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/></svg>
+                    Clients
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg viewBox="0 0 24 24"><path d="M16,11.78L20.24,4.45L21.97,5.45L16.74,14.5L10.23,10.75L5.46,19H22V21H2V3H4V17.54L9.5,8L16,11.78Z"/></svg>
+                    Analytics
+                </a>
+            </li>
+            <li>
+                <a href="index.html">
+                    <svg viewBox="0 0 24 24"><path d="M12,3C17.5,3 22,6.58 22,11C22,15.42 17.5,19 12,19C10.76,19 9.57,18.82 8.47,18.5C5.55,21 2,21 2,21C4.33,18.67 4.7,17.1 4.75,16.5C3.05,15.07 2,13.13 2,11C2,6.58 6.5,3 12,3Z"/></svg>
+                    Chatbot IA
+                </a>
+            </li>
+            <li>
+                <a href="demo-hub.html">
+                    <svg viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/></svg>
+                    Hub Demo
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <div>
+                <h1>Dashboard Charter</h1>
+                <span class="header-date">Dimanche 26 Janvier 2026 - Raiatea, Polynesie francaise</span>
+            </div>
+            <div class="header-actions">
+                <a href="#" class="btn-header secondary">
+                    <svg viewBox="0 0 24 24"><path d="M17,12C17,14.42 15.28,16.44 13,16.9V21H11V16.9C8.72,16.44 7,14.42 7,12C7,9.58 8.72,7.56 11,7.1V3H13V7.1C15.28,7.56 17,9.58 17,12M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>
+                    Exporter
+                </a>
+                <a href="#" class="btn-header primary">
+                    <svg viewBox="0 0 24 24"><path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/></svg>
+                    Nouvelle reservation
+                </a>
+            </div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon blue">
+                        <svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg>
+                    </div>
+                    <span class="kpi-trend up">+12%</span>
+                </div>
+                <div class="kpi-value">78%</div>
+                <div class="kpi-label">Taux utilisation flotte</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon green">
+                        <svg viewBox="0 0 24 24"><path d="M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3H18V1"/></svg>
+                    </div>
+                    <span class="kpi-trend up">+8%</span>
+                </div>
+                <div class="kpi-value">12</div>
+                <div class="kpi-label">Reservations cette semaine</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon orange">
+                        <svg viewBox="0 0 24 24"><path d="M5,6H23V18H5V6M14,9A3,3 0 0,1 17,12A3,3 0 0,1 14,15A3,3 0 0,1 11,12A3,3 0 0,1 14,9M9,8A2,2 0 0,1 7,10V14A2,2 0 0,1 9,16H19A2,2 0 0,1 21,14V10A2,2 0 0,1 19,8H9M1,10H3V20H19V22H1V10Z"/></svg>
+                    </div>
+                    <span class="kpi-trend up">+23%</span>
+                </div>
+                <div class="kpi-value">847K</div>
+                <div class="kpi-label">Revenue mensuel (EUR)</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon red">
+                        <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/></svg>
+                    </div>
+                    <span class="kpi-trend down">-5%</span>
+                </div>
+                <div class="kpi-value">4.2h</div>
+                <div class="kpi-label">Temps moyen check-in</div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Statut de la Flotte</h2>
+                    <a href="#" class="card-action">Voir tout</a>
+                </div>
+                <ul class="fleet-list">
+                    <li class="fleet-item">
+                        <div class="fleet-icon">
+                            <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                        </div>
+                        <div class="fleet-info">
+                            <div class="fleet-name">Moorings 4500 #1 "Mana"</div>
+                            <div class="fleet-details">En mer - Retour 28/01 - Famille Dupont</div>
+                        </div>
+                        <span class="fleet-status booked">En charter</span>
+                    </li>
+                    <li class="fleet-item">
+                        <div class="fleet-icon">
+                            <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                        </div>
+                        <div class="fleet-info">
+                            <div class="fleet-name">Moorings 4500 #2 "Hina"</div>
+                            <div class="fleet-details">Base Raiatea - Prochain depart 29/01</div>
+                        </div>
+                        <span class="fleet-status available">Disponible</span>
+                    </li>
+                    <li class="fleet-item">
+                        <div class="fleet-icon">
+                            <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                        </div>
+                        <div class="fleet-info">
+                            <div class="fleet-name">Moorings 5000 "Moana"</div>
+                            <div class="fleet-details">En mer - Retour 02/02 - Groupe Martin</div>
+                        </div>
+                        <span class="fleet-status booked">En charter</span>
+                    </li>
+                    <li class="fleet-item">
+                        <div class="fleet-icon">
+                            <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                        </div>
+                        <div class="fleet-info">
+                            <div class="fleet-name">Moorings 4000 "Tane"</div>
+                            <div class="fleet-details">Maintenance preventive - Retour 30/01</div>
+                        </div>
+                        <span class="fleet-status maintenance">Maintenance</span>
+                    </li>
+                    <li class="fleet-item">
+                        <div class="fleet-icon">
+                            <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                        </div>
+                        <div class="fleet-info">
+                            <div class="fleet-name">Moorings 4000 "Oro"</div>
+                            <div class="fleet-details">Base Raiatea - Disponible immediatement</div>
+                        </div>
+                        <span class="fleet-status available">Disponible</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="weather-widget" style="margin-bottom: 20px;">
+                    <div class="weather-header">
+                        <div>
+                            <div class="weather-location">Raiatea, Iles Sous-le-Vent</div>
+                            <div class="weather-temp">28C</div>
+                        </div>
+                        <div class="weather-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M3.36,17L5.12,13.23C5.26,14 5.53,14.78 5.95,15.5C6.37,16.24 6.91,16.86 7.5,17.37L3.36,17M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M20.64,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.46,14.77 18.73,14 18.87,13.21L20.64,17M12,22L9.59,18.56C10.33,18.83 11.14,19 12,19C12.82,19 13.63,18.83 14.37,18.56L12,22Z"/></svg>
+                        </div>
+                    </div>
+                    <div class="weather-details">
+                        <div class="weather-detail">
+                            <div class="weather-detail-value">18 kts</div>
+                            <div class="weather-detail-label">Vent ESE</div>
+                        </div>
+                        <div class="weather-detail">
+                            <div class="weather-detail-value">0.8m</div>
+                            <div class="weather-detail-label">Houle</div>
+                        </div>
+                        <div class="weather-detail">
+                            <div class="weather-detail-value">30C</div>
+                            <div class="weather-detail-label">Eau</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Janvier 2026</h2>
+                        <div class="calendar-nav">
+                            <button><svg viewBox="0 0 24 24"><path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/></svg></button>
+                            <button><svg viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/></svg></button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-day-header">Lun</div>
+                        <div class="calendar-day-header">Mar</div>
+                        <div class="calendar-day-header">Mer</div>
+                        <div class="calendar-day-header">Jeu</div>
+                        <div class="calendar-day-header">Ven</div>
+                        <div class="calendar-day-header">Sam</div>
+                        <div class="calendar-day-header">Dim</div>
+
+                        <div class="calendar-day"></div>
+                        <div class="calendar-day"></div>
+                        <div class="calendar-day">1</div>
+                        <div class="calendar-day">2</div>
+                        <div class="calendar-day">3</div>
+                        <div class="calendar-day has-booking">4</div>
+                        <div class="calendar-day has-booking">5</div>
+
+                        <div class="calendar-day has-booking">6</div>
+                        <div class="calendar-day has-booking">7</div>
+                        <div class="calendar-day has-booking">8</div>
+                        <div class="calendar-day has-booking">9</div>
+                        <div class="calendar-day has-booking">10</div>
+                        <div class="calendar-day partial">11</div>
+                        <div class="calendar-day">12</div>
+
+                        <div class="calendar-day">13</div>
+                        <div class="calendar-day">14</div>
+                        <div class="calendar-day">15</div>
+                        <div class="calendar-day">16</div>
+                        <div class="calendar-day">17</div>
+                        <div class="calendar-day has-booking">18</div>
+                        <div class="calendar-day has-booking">19</div>
+
+                        <div class="calendar-day has-booking">20</div>
+                        <div class="calendar-day has-booking">21</div>
+                        <div class="calendar-day has-booking">22</div>
+                        <div class="calendar-day has-booking">23</div>
+                        <div class="calendar-day has-booking">24</div>
+                        <div class="calendar-day has-booking">25</div>
+                        <div class="calendar-day today">26</div>
+
+                        <div class="calendar-day has-booking">27</div>
+                        <div class="calendar-day partial">28</div>
+                        <div class="calendar-day">29</div>
+                        <div class="calendar-day">30</div>
+                        <div class="calendar-day">31</div>
+                        <div class="calendar-day"></div>
+                        <div class="calendar-day"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Table -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Reservations a venir</h2>
+                <a href="#" class="card-action">Voir tout</a>
+            </div>
+            <table class="bookings-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Bateau</th>
+                        <th>Type</th>
+                        <th>Dates</th>
+                        <th>Duree</th>
+                        <th>Montant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="booking-client">
+                                <div class="booking-avatar">JM</div>
+                                <div>
+                                    <div style="font-weight: 600;">Jean Martin</div>
+                                    <div style="font-size: 12px; color: #888;">jean.martin@email.com</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Moorings 4500 "Hina"</td>
+                        <td><span class="booking-type skippered">Skippered</span></td>
+                        <td>29 Jan - 05 Fev</td>
+                        <td>7 jours</td>
+                        <td style="font-weight: 600;">8 450 EUR</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="booking-client">
+                                <div class="booking-avatar">SB</div>
+                                <div>
+                                    <div style="font-weight: 600;">Sophie Bernard</div>
+                                    <div style="font-size: 12px; color: #888;">s.bernard@company.fr</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Moorings 5000 "Moana"</td>
+                        <td><span class="booking-type crewed">Crewed</span></td>
+                        <td>03 Fev - 13 Fev</td>
+                        <td>10 jours</td>
+                        <td style="font-weight: 600;">14 200 EUR</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="booking-client">
+                                <div class="booking-avatar">PL</div>
+                                <div>
+                                    <div style="font-weight: 600;">Pierre Leblanc</div>
+                                    <div style="font-size: 12px; color: #888;">p.leblanc@voile.org</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Moorings 4000 "Oro"</td>
+                        <td><span class="booking-type bareboat">Bareboat</span></td>
+                        <td>01 Fev - 08 Fev</td>
+                        <td>7 jours</td>
+                        <td style="font-weight: 600;">3 200 EUR</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="booking-client">
+                                <div class="booking-avatar">MD</div>
+                                <div>
+                                    <div style="font-weight: 600;">Marie Dubois</div>
+                                    <div style="font-size: 12px; color: #888;">marie.d@gmail.com</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Moorings 4500 "Mana"</td>
+                        <td><span class="booking-type skippered">Skippered</span></td>
+                        <td>10 Fev - 17 Fev</td>
+                        <td>7 jours</td>
+                        <td style="font-weight: 600;">8 450 EUR</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+</body>
+</html>

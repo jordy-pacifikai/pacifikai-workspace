@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4 Builds IA Télécom - OPT Polynésie | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --opt-blue: #0066B3;
+            --opt-blue-dark: #004d87;
+            --opt-blue-light: #e0f2fe;
+            --opt-orange: #FF6600;
+            --opt-orange-dark: #cc5200;
+            --opt-orange-light: #fff7ed;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --green: #22c55e;
+            --green-light: #f0fdf4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--opt-blue);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-orange));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--opt-blue);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--opt-blue) 0%, var(--opt-blue-dark) 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,102,0,0.15) 0%, transparent 70%);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 span {
+            color: var(--opt-orange);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Builds Grid */
+        .builds-section {
+            max-width: 1400px;
+            margin: -3rem auto 4rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .builds-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .build-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .build-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,102,179,0.15);
+        }
+
+        .build-header {
+            padding: 2rem;
+            position: relative;
+        }
+
+        .build-card:nth-child(1) .build-header {
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-blue-dark));
+        }
+
+        .build-card:nth-child(2) .build-header {
+            background: linear-gradient(135deg, var(--opt-orange), var(--opt-orange-dark));
+        }
+
+        .build-card:nth-child(3) .build-header {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        .build-card:nth-child(4) .build-header {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        }
+
+        .build-number {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .build-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .build-header h2 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .build-header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+        }
+
+        .build-content {
+            padding: 2rem;
+        }
+
+        .build-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .build-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.875rem;
+            font-size: 0.95rem;
+            color: var(--gray-700);
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--green-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--green);
+            font-size: 0.75rem;
+        }
+
+        .build-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .metric {
+            text-align: center;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--opt-blue);
+        }
+
+        .build-card:nth-child(2) .metric-value {
+            color: var(--opt-orange);
+        }
+
+        .build-card:nth-child(3) .metric-value {
+            color: #059669;
+        }
+
+        .build-card:nth-child(4) .metric-value {
+            color: #7c3aed;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-top: 0.25rem;
+        }
+
+        .build-cta {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            background: var(--gray-50);
+            color: var(--opt-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .build-cta:hover {
+            background: var(--opt-blue);
+            color: white;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            padding: 4rem 2rem;
+            background: var(--white);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+        }
+
+        .use-cases-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .use-case-card {
+            background: var(--gray-50);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .use-case-card:hover {
+            border-color: var(--opt-blue);
+            background: var(--opt-blue-light);
+        }
+
+        .use-case-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--opt-blue);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .use-case-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .use-case-card p {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        /* Competitor Analysis */
+        .competitor-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--gray-900), #1a365d);
+        }
+
+        .competitor-section .section-header h2 {
+            color: white;
+        }
+
+        .competitor-section .section-header p {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .competitor-table {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            background: rgba(255,255,255,0.1);
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.9);
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .check {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .cross {
+            color: #ef4444;
+        }
+
+        .partial {
+            color: var(--opt-orange);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 4rem 2rem;
+            background: var(--opt-orange);
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .cta-btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .cta-btn.primary {
+            background: white;
+            color: var(--opt-orange);
+        }
+
+        .cta-btn.primary:hover {
+            background: var(--gray-100);
+        }
+
+        .cta-btn.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .cta-btn.secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            color: rgba(255,255,255,0.6);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--opt-orange);
+            text-decoration: none;
+        }
+
+        @media (max-width: 1024px) {
+            .builds-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .use-cases-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .use-cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .table-header,
+            .table-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .table-header > *:first-child,
+            .table-row > *:first-child {
+                grid-column: 1 / -1;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">
+            <div class="logo-icon">OPT</div>
+            <span>OPT x PACIFIK'AI</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="n8n-visualizer.html">Workflows</a></li>
+            <li><a href="pricing-strategy.html">Tarifs</a></li>
+            <li><a href="demo-hub.html">Hub Demo</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">4 SOLUTIONS TELECOM IA</span>
+            <h1>Automatisation <span>intelligente</span> pour opérateur télécom</h1>
+            <p>Builds spécialement conçus pour les défis d'OPT Polynésie : SAV 24/7, rétention client, conquête marché face à Vodafone.</p>
+        </div>
+    </section>
+
+    <section class="builds-section">
+        <div class="builds-grid">
+            <!-- Build 1: Chatbot SAV -->
+            <div class="build-card">
+                <div class="build-header">
+                    <div class="build-number">01</div>
+                    <div class="build-icon">💬</div>
+                    <h2>Chatbot SAV 24/7</h2>
+                    <p>Support client automatisé sur tous les canaux - dépannage, factures, forfaits</p>
+                </div>
+                <div class="build-content">
+                    <ul class="build-features">
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Diagnostic automatique</strong> - Panne internet, mobile, fixe avec guide interactif</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Gestion factures</strong> - Consultation, explication, paiement, contestation</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Changement forfait</strong> - Upgrade/downgrade, comparaison, activation immédiate</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Couverture par île</strong> - Info réseau en temps réel pour 118 îles</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Escalade intelligente</strong> - Transfert vers humain si complexité détectée</span>
+                        </li>
+                    </ul>
+                    <div class="build-metrics">
+                        <div class="metric">
+                            <div class="metric-value">-70%</div>
+                            <div class="metric-label">Appels call center</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">24/7</div>
+                            <div class="metric-label">Disponibilité</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">&lt;30s</div>
+                            <div class="metric-label">Temps réponse</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">85%</div>
+                            <div class="metric-label">Résolution auto</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="n8n-visualizer.html#chatbot" class="build-cta">Voir le workflow →</a>
+            </div>
+
+            <!-- Build 2: Newsletter Offres -->
+            <div class="build-card">
+                <div class="build-header">
+                    <div class="build-number">02</div>
+                    <div class="build-icon">📧</div>
+                    <h2>Newsletter Lifecycle</h2>
+                    <p>Emails automatisés personnalisés - bienvenue, offres, rétention, win-back</p>
+                </div>
+                <div class="build-content">
+                    <ul class="build-features">
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Séquence bienvenue</strong> - Onboarding nouveau client, activation services</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Promotions ciblées</strong> - Nouveaux forfaits, fibre, offres saisonnières</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Upgrade intelligent</strong> - Proposition fibre si éligible, forfait supérieur</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Rétention proactive</strong> - Offre fidélité avant fin engagement</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Win-back churners</strong> - Reconquête ex-clients vers Vodafone</span>
+                        </li>
+                    </ul>
+                    <div class="build-metrics">
+                        <div class="metric">
+                            <div class="metric-value">+45%</div>
+                            <div class="metric-label">Taux ouverture</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">+12%</div>
+                            <div class="metric-label">Conversion upgrade</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">-15%</div>
+                            <div class="metric-label">Churn rate</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">Auto</div>
+                            <div class="metric-label">Segmentation IA</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="n8n-visualizer.html#newsletter" class="build-cta">Voir le workflow →</a>
+            </div>
+
+            <!-- Build 3: SEO/GEO -->
+            <div class="build-card">
+                <div class="build-header">
+                    <div class="build-number">03</div>
+                    <div class="build-icon">🔍</div>
+                    <h2>SEO/GEO Content Factory</h2>
+                    <p>Domination Google Polynésie - articles optimisés, fiches locales, avis</p>
+                </div>
+                <div class="build-content">
+                    <ul class="build-features">
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Articles SEO</strong> - "Meilleur opérateur Polynésie", "Fibre Tahiti", "Forfait mobile"</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Fiches Google Business</strong> - Chaque agence OPT optimisée localement</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Comparatifs concurrence</strong> - OPT vs Vodafone, avantages objectifs</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>FAQ dynamique</strong> - Réponses aux questions fréquentes Polynésie</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Gestion avis</strong> - Réponses automatiques aux avis Google</span>
+                        </li>
+                    </ul>
+                    <div class="build-metrics">
+                        <div class="metric">
+                            <div class="metric-value">+180%</div>
+                            <div class="metric-label">Trafic organique</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">Top 3</div>
+                            <div class="metric-label">Position Google</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">16/mois</div>
+                            <div class="metric-label">Articles publiés</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">100%</div>
+                            <div class="metric-label">Avis répondus</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="n8n-visualizer.html#seo" class="build-cta">Voir le workflow →</a>
+            </div>
+
+            <!-- Build 4: ROI Analyst -->
+            <div class="build-card">
+                <div class="build-header">
+                    <div class="build-number">04</div>
+                    <div class="build-icon">📊</div>
+                    <h2>ROI Analyst Télécom</h2>
+                    <p>Intelligence business - churn prediction, ARPU, NPS, analyse concurrence</p>
+                </div>
+                <div class="build-content">
+                    <ul class="build-features">
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Churn prediction</strong> - Détection clients à risque 30j avant départ</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Analyse ARPU</strong> - Revenu moyen par segment, évolution, benchmarks</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>NPS tracking</strong> - Satisfaction client temps réel, alertes négatives</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Veille concurrence</strong> - Suivi offres Vodafone, alertes prix</span>
+                        </li>
+                        <li>
+                            <span class="feature-icon">✓</span>
+                            <span><strong>Rapports automatiques</strong> - Dashboard direction hebdomadaire</span>
+                        </li>
+                    </ul>
+                    <div class="build-metrics">
+                        <div class="metric">
+                            <div class="metric-value">-15%</div>
+                            <div class="metric-label">Réduction churn</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">+8%</div>
+                            <div class="metric-label">ARPU moyen</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">Temps réel</div>
+                            <div class="metric-label">Alertes critiques</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">Weekly</div>
+                            <div class="metric-label">Reporting auto</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="n8n-visualizer.html#roi" class="build-cta">Voir le workflow →</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="use-cases">
+        <div class="section-header">
+            <h2>Cas d'usage concrets OPT</h2>
+            <p>Chaque build répond à un défi spécifique de l'opérateur télécom polynésien.</p>
+        </div>
+
+        <div class="use-cases-grid">
+            <div class="use-case-card">
+                <div class="use-case-icon">📱</div>
+                <h3>Activation SIM</h3>
+                <p>Client achète SIM en agence, activation automatique, SMS bienvenue avec tutos</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">💸</div>
+                <h3>Relance impayés</h3>
+                <p>Détection facture impayée J+7, SMS rappel, escalade si J+15, suspension douce</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">📶</div>
+                <h3>Panne réseau île</h3>
+                <p>Détection incident, notification clients concernés, ETA réparation, SMS rétablissement</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">🔄</div>
+                <h3>Migration fibre</h3>
+                <p>Détection éligibilité fibre, email proposition, prise RDV installateur automatique</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">🏃</div>
+                <h3>Win-back Vodafone</h3>
+                <p>Détection portabilité sortante, offre reconquête personnalisée sous 48h</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">📦</div>
+                <h3>Suivi colis postal</h3>
+                <p>Tracking inter-îles temps réel, notifications arrivée, estimation livraison</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">🎂</div>
+                <h3>Offres anniversaire</h3>
+                <p>Email automatique J-jour, bonus data offert, promotion personnalisée</p>
+            </div>
+            <div class="use-case-card">
+                <div class="use-case-icon">📞</div>
+                <h3>Support technique</h3>
+                <p>Chatbot diagnostic, reset box à distance, escalade technicien si besoin</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="competitor-section">
+        <div class="section-header">
+            <h2>Avantage concurrentiel vs Vodafone</h2>
+            <p>L'automatisation IA comme différenciateur stratégique sur le marché polynésien.</p>
+        </div>
+
+        <div class="competitor-table">
+            <div class="table-header">
+                <div>Fonctionnalité</div>
+                <div>OPT + IA</div>
+                <div>Vodafone</div>
+            </div>
+            <div class="table-row">
+                <div>Support client 24/7</div>
+                <div class="check">✓ Chatbot IA</div>
+                <div class="cross">✗ Horaires bureau</div>
+            </div>
+            <div class="table-row">
+                <div>Réponse instantanée</div>
+                <div class="check">✓ &lt;30 secondes</div>
+                <div class="cross">✗ File d'attente</div>
+            </div>
+            <div class="table-row">
+                <div>Diagnostic panne auto</div>
+                <div class="check">✓ Guide interactif</div>
+                <div class="partial">~ Manuel</div>
+            </div>
+            <div class="table-row">
+                <div>Offres personnalisées</div>
+                <div class="check">✓ IA prédictive</div>
+                <div class="cross">✗ Offres génériques</div>
+            </div>
+            <div class="table-row">
+                <div>Couverture 118 îles</div>
+                <div class="check">✓ Historique</div>
+                <div class="partial">~ Partielle</div>
+            </div>
+            <div class="table-row">
+                <div>Rétention proactive</div>
+                <div class="check">✓ Churn prediction</div>
+                <div class="cross">✗ Réactive</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Prêt à transformer l'expérience client OPT ?</h2>
+            <p>Ces 4 builds sont un aperçu. L'automatisation peut aller beaucoup plus loin : activation SIM automatique, facturation intelligente, maintenance prédictive réseau.</p>
+            <div class="cta-buttons">
+                <a href="pricing-strategy.html" class="cta-btn primary">Voir la proposition</a>
+                <a href="demo-hub.html" class="cta-btn secondary">Explorer toutes les démos</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>DEMO PACIFIK'AI - Démonstration d'automatisation IA pour OPT Polynésie<br>
+        <a href="demo-hub.html">Retour au Hub</a></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Video | InterContinental - PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #B8860B;
+            --gold-light: #D4A73A;
+            --bordeaux: #722F37;
+            --bordeaux-dark: #5A252C;
+            --white: #FFFFFF;
+            --cream: #FAF8F5;
+            --charcoal: #2D2D2D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--charcoal);
+            color: var(--white);
+            line-height: 1.8;
+        }
+
+        .demo-badge {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--gold);
+            color: var(--white);
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 60px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--gold);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 80px 60px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(184, 134, 11, 0.1) 0%, transparent 100%);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bordeaux);
+            color: var(--white);
+            padding: 10px 25px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            border-radius: 30px;
+        }
+
+        .hero-badge svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--gold);
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            opacity: 0.7;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Video Info */
+        .video-info {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 40px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 5px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        /* Script Section */
+        .script-section {
+            padding: 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .script-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .script-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 25px 30px;
+            background: rgba(184, 134, 11, 0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .scene-number {
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .scene-info {
+            flex: 1;
+        }
+
+        .scene-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .scene-timing {
+            font-size: 13px;
+            color: var(--gold);
+        }
+
+        .scene-duration {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .script-body {
+            padding: 30px;
+        }
+
+        .script-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .script-row:last-child {
+            border-bottom: none;
+        }
+
+        .script-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gold);
+        }
+
+        .script-content {
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .script-content em {
+            color: rgba(255,255,255,0.5);
+            font-style: italic;
+        }
+
+        .script-content strong {
+            color: var(--gold);
+        }
+
+        /* Speaker Quote */
+        .speaker-quote {
+            background: rgba(184, 134, 11, 0.1);
+            border-left: 4px solid var(--gold);
+            padding: 20px 25px;
+            border-radius: 0 10px 10px 0;
+            margin: 15px 0;
+            font-size: 16px;
+        }
+
+        /* Visual Notes */
+        .visual-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(114, 47, 55, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 5px 5px 5px 0;
+        }
+
+        .visual-note:before {
+            content: "&#127909;";
+        }
+
+        /* Key Points */
+        .key-points {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+        }
+
+        .key-points-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+        }
+
+        .key-point-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .key-point-text {
+            font-size: 14px;
+        }
+
+        /* Automation Ideas */
+        .automation-section {
+            padding: 80px 60px;
+            background: linear-gradient(180deg, transparent, rgba(114, 47, 55, 0.2));
+        }
+
+        .automation-section .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            color: var(--gold);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            opacity: 0.7;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .automation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .automation-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .automation-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+        }
+
+        .automation-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold), var(--bordeaux));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .automation-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .automation-desc {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 15px;
+        }
+
+        .automation-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(184, 134, 11, 0.2);
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 15px;
+        }
+
+        /* CTA */
+        .cta-section {
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .cta-btn {
+            padding: 18px 40px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            border-radius: 5px;
+        }
+
+        .cta-btn.primary {
+            background: var(--gold);
+            color: var(--white);
+        }
+
+        .cta-btn.primary:hover {
+            background: var(--gold-light);
+        }
+
+        .cta-btn.secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .cta-btn.secondary:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0,0,0,0.3);
+            padding: 40px 60px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-text {
+            opacity: 0.5;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1024px) {
+            .automation-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 36px;
+            }
+            .video-info {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .script-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .automation-grid {
+                grid-template-columns: 1fr;
+            }
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">IC</div>
+            <span class="logo-text">InterContinental</span>
+        </div>
+        <nav class="nav-links">
+            <a href="demo-hub.html">Hub</a>
+            <a href="builds-presentation.html">Builds IA</a>
+            <a href="pricing-strategy.html">Tarifs</a>
+            <a href="video-script.html" class="active">Video</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-badge">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            Video Presentation
+        </span>
+        <h1 class="hero-title">Script Video Prospection</h1>
+        <p class="hero-subtitle">Approche "Expert en automatisation marketing hotelier" - Presentation des 4 builds comme apercu des possibilites.</p>
+
+        <div class="video-info">
+            <div class="info-item">
+                <div class="info-value">2:30</div>
+                <div class="info-label">Duree totale</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value">5</div>
+                <div class="info-label">Scenes</div>
+            </div>
+            <div class="info-item">
+                <div class="info-value">Luxe</div>
+                <div class="info-label">Ton</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Script Section -->
+    <section class="script-section">
+        <!-- Scene 1 -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">1</div>
+                <div class="scene-info">
+                    <h3 class="scene-title">Accroche - Le Defi Hotelier</h3>
+                    <span class="scene-timing">00:00 - 00:25</span>
+                </div>
+                <span class="scene-duration">25 sec</span>
+            </div>
+            <div class="script-body">
+                <div class="script-row">
+                    <span class="script-label">Visuel</span>
+                    <div class="script-content">
+                        <span class="visual-note">Vue aerienne Bora Bora au lever du soleil</span>
+                        <span class="visual-note">Transition vers reception occupee</span>
+                        <span class="visual-note">Notifications qui s'accumulent</span>
+                    </div>
+                </div>
+                <div class="script-row">
+                    <span class="script-label">Voix Off</span>
+                    <div class="script-content">
+                        <div class="speaker-quote">
+                            "Dans l'hotellerie de luxe, chaque interaction compte. Mais entre les demandes clients 24h/24, les reservations multi-canaux et la concurrence des OTA... <strong>comment offrir l'excellence sans multiplier les equipes ?</strong>"
+                        </div>
+                    </div>
+                </div>
+                <div class="script-row">
+                    <span class="script-label">Musique</span>
+                    <div class="script-content">
+                        <em>Piano elegant, montee progressive en tension</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 2 -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">2</div>
+                <div class="scene-info">
+                    <h3 class="scene-title">Positionnement Expert</h3>
+                    <span class="scene-timing">00:25 - 00:50</span>
+                </div>
+                <span class="scene-duration">25 sec</span>
+            </div>
+            <div class="script-body">
+                <div class="script-row">
+                    <span class="script-label">Visuel</span>
+                    <div class="script-content">
+                        <span class="visual-note">Logo PACIFIK'AI avec animation subtile</span>
+                        <span class="visual-note">Portrait fondateur (optionnel)</span>
+                        <span class="visual-note">Montage rapide: n8n, dashboards, chatbot</span>
+                    </div>
+                </div>
+                <div class="script-row">
+                    <span class="script-label">Voix Off</span>
+                    <div class="script-content">
+                        <div class="speaker-quote">
+                            "Je suis <strong>expert en automatisation marketing hotelier</strong>. Depuis la Polynesie, j'aide les hotels premium a automatiser leur marketing et leur relation client avec l'intelligence artificielle. Pas des gadgets - <strong>des systemes qui travaillent pour vous 24h/24</strong>."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 3 -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">3</div>
+                <div class="scene-info">
+                    <h3 class="scene-title">Les 4 Builds - Apercu</h3>
+                    <span class="scene-timing">00:50 - 01:40</span>
+                </div>
+                <span class="scene-duration">50 sec</span>
+            </div>
+            <div class="script-body">
+                <div class="script-row">
+                    <span class="script-label">Visuel</span>
+                    <div class="script-content">
+                        <span class="visual-note">Split screen 4 quadrants avec animations</span>
+                        <span class="visual-note">Chatbot en action multilangue</span>
+                        <span class="visual-note">Email personnalise qui s'ecrit</span>
+                        <span class="visual-note">Article blog qui se genere</span>
+                        <span class="visual-note">Dashboard KPIs temps reel</span>
+                    </div>
+                </div>
+                <div class="script-row">
+                    <span class="script-label">Voix Off</span>
+                    <div class="script-content">
+                        <div class="speaker-quote">
+                            "Voici un apercu de ce que je peux automatiser pour vous :<br><br>
+                            <strong>Un concierge virtuel</strong> qui repond en 5 langues, reserve le spa, recommande des excursions... et escalade intelligemment vers votre equipe.<br><br>
+                            <strong>Des newsletters personnalisees</strong> - lune de miel, famille, business - envoyees au bon moment du parcours client.<br><br>
+                            <strong>Un blog qui s'ecrit tout seul</strong> et vous positionne #1 sur 'meilleur hotel Bora Bora'.<br><br>
+                            <strong>Un dashboard temps reel</strong> qui vous alerte quand les metriques bougent."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 4 -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">4</div>
+                <div class="scene-info">
+                    <h3 class="scene-title">Expansion des Possibilites</h3>
+                    <span class="scene-timing">01:40 - 02:10</span>
+                </div>
+                <span class="scene-duration">30 sec</span>
+            </div>
+            <div class="script-body">
+                <div class="script-row">
+                    <span class="script-label">Visuel</span>
+                    <div class="script-content">
+                        <span class="visual-note">Liste qui defile avec icones</span>
+                        <span class="visual-note">Animations check marks</span>
+                        <span class="visual-note">Workflows n8n en arriere-plan</span>
+                    </div>
+                </div>
+                <div class="script-row">
+                    <span class="script-label">Voix Off</span>
+                    <div class="script-content">
+                        <div class="speaker-quote">
+                            "Et ce n'est qu'un apercu. Je peux aussi automatiser :<br><br>
+                            Vos <strong>emails pre-arrivee</strong> avec recommandations personnalisees...<br>
+                            L'<strong>upselling intelligent</strong> pendant le sejour...<br>
+                            Les <strong>enquetes de satisfaction</strong> post-checkout...<br>
+                            Votre <strong>programme de fidelite</strong>...<br>
+                            Et les <strong>alertes revenue management</strong> quand vos concurrents bougent."
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <h4 class="key-points-title">Points Cles a Afficher</h4>
+                    <div class="key-point">
+                        <span class="key-point-icon">&#10003;</span>
+                        <span class="key-point-text">Pre-arrival emails personnalises</span>
+                    </div>
+                    <div class="key-point">
+                        <span class="key-point-icon">&#10003;</span>
+                        <span class="key-point-text">Upselling contextuel automatique</span>
+                    </div>
+                    <div class="key-point">
+                        <span class="key-point-icon">&#10003;</span>
+                        <span class="key-point-text">Enquetes satisfaction + analyse</span>
+                    </div>
+                    <div class="key-point">
+                        <span class="key-point-icon">&#10003;</span>
+                        <span class="key-point-text">Loyalty program automatise</span>
+                    </div>
+                    <div class="key-point">
+                        <span class="key-point-icon">&#10003;</span>
+                        <span class="key-point-text">Revenue management alerts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 5 -->
+        <div class="script-card">
+            <div class="script-header">
+                <div class="scene-number">5</div>
+                <div class="scene-info">
+                    <h3 class="scene-title">Call-to-Action</h3>
+                    <span class="scene-timing">02:10 - 02:30</span>
+                </div>
+                <span class="scene-duration">20 sec</span>
+            </div>
+            <div class="script-body">
+                <div class="script-row">
+                    <span class="script-label">Visuel</span>
+                    <div class="script-content">
+                        <span class="visual-note">Retour vue aerienne Bora Bora sunset</span>
+                        <span class="visual-note">Logo PACIFIK'AI</span>
+                        <span class="visual-note">Coordonnees contact</span>
+                    </div>
+                </div>
+                <div class="script-row">
+                    <span class="script-label">Voix Off</span>
+                    <div class="script-content">
+                        <div class="speaker-quote">
+                            "L'automatisation n'est pas l'avenir de l'hotellerie de luxe. <strong>C'est maintenant.</strong><br><br>
+                            Contactez-moi pour un audit gratuit de vos process actuels. On identifie ensemble ce qui peut etre automatise <strong>des la semaine prochaine</strong>."
+                        </div>
+                    </div>
+                </div>
+                <div class="script-row">
+                    <span class="script-label">Texte Ecran</span>
+                    <div class="script-content">
+                        <strong>PACIFIK'AI</strong><br>
+                        Automatisation IA pour l'hotellerie premium<br>
+                        <em>contact@pacifikai.io</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Automation Ideas -->
+    <section class="automation-section">
+        <div class="section-header">
+            <span class="section-badge">Au-dela des 4 Builds</span>
+            <h2 class="section-title">Autres Automatisations Possibles</h2>
+            <p class="section-subtitle">Des idees a mentionner pour montrer l'etendue des possibilites.</p>
+        </div>
+
+        <div class="automation-grid">
+            <div class="automation-card">
+                <div class="automation-icon">&#128231;</div>
+                <h3 class="automation-title">Pre-Arrival Emails</h3>
+                <p class="automation-desc">Sequence personnalisee J-7, J-3, J-1 avec recommandations basees sur le profil.</p>
+                <span class="automation-tag">Engagement +45%</span>
+            </div>
+
+            <div class="automation-card">
+                <div class="automation-icon">&#128176;</div>
+                <h3 class="automation-title">Upselling Intelligent</h3>
+                <p class="automation-desc">Offres contextuelles pendant le sejour basees sur le comportement temps reel.</p>
+                <span class="automation-tag">Revenue +22%</span>
+            </div>
+
+            <div class="automation-card">
+                <div class="automation-icon">&#11088;</div>
+                <h3 class="automation-title">Review Management</h3>
+                <p class="automation-desc">Demande d'avis automatique post-checkout + reponses IA aux reviews.</p>
+                <span class="automation-tag">NPS +15 pts</span>
+            </div>
+
+            <div class="automation-card">
+                <div class="automation-icon">&#127873;</div>
+                <h3 class="automation-title">Loyalty Program</h3>
+                <p class="automation-desc">Points, niveaux, recompenses gerees automatiquement avec communications ciblees.</p>
+                <span class="automation-tag">Retention +30%</span>
+            </div>
+
+            <div class="automation-card">
+                <div class="automation-icon">&#128202;</div>
+                <h3 class="automation-title">Revenue Alerts</h3>
+                <p class="automation-desc">Surveillance concurrence + alertes quand ajuster les tarifs.</p>
+                <span class="automation-tag">RevPAR +8%</span>
+            </div>
+
+            <div class="automation-card">
+                <div class="automation-icon">&#128587;</div>
+                <h3 class="automation-title">Staff Scheduling</h3>
+                <p class="automation-desc">Prevision d'occupation + planning equipes optimise automatiquement.</p>
+                <span class="automation-tag">Couts -12%</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2 class="cta-title">Pret a Tourner Cette Video ?</h2>
+        <div class="cta-buttons">
+            <a href="demo-hub.html" class="cta-btn primary">Voir la Demo Complete</a>
+            <a href="pricing-strategy.html" class="cta-btn secondary">Consulter les Tarifs</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">Demo PACIFIK'AI - Script video prospection pour InterContinental</p>
+    </footer>
+</body>
+</html>

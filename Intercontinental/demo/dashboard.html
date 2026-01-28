@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Hotelier | InterContinental Tahiti & Bora Bora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #B8860B;
+            --gold-light: #D4A73A;
+            --bordeaux: #722F37;
+            --bordeaux-dark: #5A252C;
+            --white: #FFFFFF;
+            --cream: #FAF8F5;
+            --charcoal: #2D2D2D;
+            --success: #27AE60;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #F0F2F5;
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .demo-badge {
+            position: fixed;
+            top: 20px;
+            left: 280px;
+            background: var(--gold);
+            color: var(--white);
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--charcoal), #1A1A1A);
+            padding: 30px 0;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 25px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-section-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0 25px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 25px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background: rgba(255,255,255,0.05);
+            color: var(--gold);
+        }
+
+        .sidebar-menu li a.active {
+            border-left: 3px solid var(--gold);
+        }
+
+        .sidebar-menu li a svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--charcoal);
+        }
+
+        .dashboard-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .date-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--white);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #E0E0E0;
+        }
+
+        .date-picker svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--gold);
+        }
+
+        .refresh-btn {
+            width: 45px;
+            height: 45px;
+            background: var(--gold);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: var(--gold-light);
+        }
+
+        .refresh-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--white);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .kpi-icon.gold {
+            background: rgba(184, 134, 11, 0.1);
+        }
+
+        .kpi-icon.bordeaux {
+            background: rgba(114, 47, 55, 0.1);
+        }
+
+        .kpi-icon.success {
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .kpi-icon.warning {
+            background: rgba(243, 156, 18, 0.1);
+        }
+
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .kpi-trend.up {
+            color: var(--success);
+        }
+
+        .kpi-trend.down {
+            color: var(--danger);
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--charcoal);
+            margin-bottom: 5px;
+        }
+
+        .kpi-label {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Resort Cards */
+        .resorts-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--charcoal);
+            margin-bottom: 20px;
+        }
+
+        .resorts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .resort-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .resort-header {
+            padding: 20px;
+            color: var(--white);
+            position: relative;
+        }
+
+        .resort-header.tahiti {
+            background: linear-gradient(135deg, var(--bordeaux), var(--bordeaux-dark));
+        }
+
+        .resort-header.thalasso {
+            background: linear-gradient(135deg, var(--gold), #8B6914);
+        }
+
+        .resort-header.moana {
+            background: linear-gradient(135deg, #2C3E50, #1A252F);
+        }
+
+        .resort-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .resort-location {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .resort-rating {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .resort-metrics {
+            padding: 20px;
+        }
+
+        .resort-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .resort-metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .metric-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--charcoal);
+        }
+
+        .metric-value.positive {
+            color: var(--success);
+        }
+
+        .metric-value.negative {
+            color: var(--danger);
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--charcoal);
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.direct {
+            background: var(--gold);
+        }
+
+        .legend-dot.ota {
+            background: var(--bordeaux);
+        }
+
+        /* Simulated Chart */
+        .chart-placeholder {
+            height: 250px;
+            background: linear-gradient(180deg, rgba(184, 134, 11, 0.1) 0%, transparent 100%);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .chart-bar-group {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .chart-bar {
+            width: 30px;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s;
+        }
+
+        .chart-bar.direct {
+            background: linear-gradient(180deg, var(--gold), var(--gold-light));
+        }
+
+        .chart-bar.ota {
+            background: linear-gradient(180deg, var(--bordeaux), var(--bordeaux-dark));
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 20px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .chart-label {
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* Source Distribution */
+        .source-list {
+            list-style: none;
+        }
+
+        .source-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .source-item:last-child {
+            border-bottom: none;
+        }
+
+        .source-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: var(--cream);
+        }
+
+        .source-info {
+            flex: 1;
+        }
+
+        .source-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .source-bar {
+            height: 6px;
+            background: #E0E0E0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .source-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .source-bar-fill.direct {
+            background: var(--gold);
+        }
+
+        .source-bar-fill.booking {
+            background: #003580;
+        }
+
+        .source-bar-fill.expedia {
+            background: #FFCC00;
+        }
+
+        .source-bar-fill.other {
+            background: #999;
+        }
+
+        .source-percent {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--charcoal);
+        }
+
+        /* Alerts Section */
+        .alerts-section {
+            margin-bottom: 30px;
+        }
+
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .alert-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 15px;
+            border-left: 4px solid;
+        }
+
+        .alert-card.success {
+            border-color: var(--success);
+        }
+
+        .alert-card.warning {
+            border-color: var(--warning);
+        }
+
+        .alert-card.danger {
+            border-color: var(--danger);
+        }
+
+        .alert-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .alert-card.success .alert-icon {
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .alert-card.warning .alert-icon {
+            background: rgba(243, 156, 18, 0.1);
+        }
+
+        .alert-card.danger .alert-icon {
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 5px;
+        }
+
+        .alert-message {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .alert-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .alert-action {
+            font-size: 12px;
+            color: var(--gold);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* NPS Section */
+        .nps-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nps-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .nps-score {
+            text-align: center;
+        }
+
+        .nps-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .nps-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .nps-breakdown {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .nps-category {
+            text-align: center;
+        }
+
+        .nps-category-value {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .nps-category-value.promoters {
+            color: var(--success);
+        }
+
+        .nps-category-value.passives {
+            color: var(--warning);
+        }
+
+        .nps-category-value.detractors {
+            color: var(--danger);
+        }
+
+        .nps-category-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 1400px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .resorts-grid {
+                grid-template-columns: 1fr;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .demo-badge {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">IC</div>
+            <span class="logo-text">InterContinental</span>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Navigation</div>
+            <ul class="sidebar-menu">
+                <li><a href="demo-hub.html"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg> Hub Demo</a></li>
+                <li><a href="index.html"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> Site Web</a></li>
+                <li><a href="dashboard.html" class="active"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg> Dashboard</a></li>
+            </ul>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Analytics</div>
+            <ul class="sidebar-menu">
+                <li><a href="#"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg> RevPAR</a></li>
+                <li><a href="#"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg> Occupation</a></li>
+                <li><a href="#"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg> ADR</a></li>
+            </ul>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Ressources</div>
+            <ul class="sidebar-menu">
+                <li><a href="builds-presentation.html"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> Builds IA</a></li>
+                <li><a href="pricing-strategy.html"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg> Tarifs</a></li>
+                <li><a href="n8n-visualizer.html"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg> Workflows n8n</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">Dashboard Performance</h1>
+                <p class="dashboard-subtitle">Vue consolidee des 3 resorts - Janvier 2026</p>
+            </div>
+            <div class="header-actions">
+                <div class="date-picker">
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+                    Janvier 2026
+                </div>
+                <button class="refresh-btn">
+                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon gold">&#128176;</div>
+                    <div class="kpi-trend up">&#8593; +8.3%</div>
+                </div>
+                <div class="kpi-value">842 EUR</div>
+                <div class="kpi-label">RevPAR Moyen (3 resorts)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon bordeaux">&#127970;</div>
+                    <div class="kpi-trend up">&#8593; +5.2%</div>
+                </div>
+                <div class="kpi-value">87%</div>
+                <div class="kpi-label">Taux d'Occupation Global</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon success">&#128178;</div>
+                    <div class="kpi-trend up">&#8593; +12.1%</div>
+                </div>
+                <div class="kpi-value">968 EUR</div>
+                <div class="kpi-label">ADR (Average Daily Rate)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon warning">&#128200;</div>
+                    <div class="kpi-trend up">&#8593; +18%</div>
+                </div>
+                <div class="kpi-value">42%</div>
+                <div class="kpi-label">Reservations Directes vs OTA</div>
+            </div>
+        </div>
+
+        <!-- Resorts Section -->
+        <div class="resorts-section">
+            <h2 class="section-title">Performance par Resort</h2>
+            <div class="resorts-grid">
+                <div class="resort-card">
+                    <div class="resort-header tahiti">
+                        <h3 class="resort-name">InterContinental Tahiti</h3>
+                        <p class="resort-location">Resort & Spa - Faa'a</p>
+                        <span class="resort-rating">4 Etoiles</span>
+                    </div>
+                    <div class="resort-metrics">
+                        <div class="resort-metric">
+                            <span class="metric-label">RevPAR</span>
+                            <span class="metric-value">485 EUR</span>
+                        </div>
+                        <div class="resort-metric">
+                            <span class="metric-label">Occupation</span>
+                            <span class="metric-value">75%</span>
+                        </div>
+                        <div class="resort-metric">
+                            <span class="metric-label">ADR</span>
+                            <span class="metric-value">647 EUR</span>
+                        </div>
+                        <div class="resort-metric">
+                            <span class="metric-label">vs M-1</span>
+                            <span class="metric-value positive">+6.8%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resort-card">
+                    <div class="resort-header thalasso">
+                        <h3 class="resort-name">IC Bora Bora Thalasso</h3>
+                        <p class="resort-location">Resort & Thalasso Spa</p>
+                        <span class="resort-rating">5 Etoiles</span>
+                    </div>
+                    <div class="resort-metrics">
+                        <div class="resort-metric">
+                            <span class="metric-label">RevPAR</span>
+                            <span class="metric-value">1,284 EUR</span>
+                        </div>
+                        <div class="resort-metric">
+                            <span class="metric-label">Occupation</span>
+                            <span class="metric-value">92%</span>
+                        </div>
+                        <div class="resort-metric">
+                            <span class="metric-label">ADR</span>
+                            <span class="metric-value">1,395 EUR</span>
+                        </div>
+                        <div class="resort-metric">
+                            <span class="metric-label">vs M-1</span>
+                            <span class="metric-value positive">+11.2%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resort-card">
+                    <div class="resort-header moana">
+                        <h3 class="resort-name">IC Bora Bora Le Moana</h3>
+                        <p class="resort-location">Resort - Bora Bora</p>
+                        <span class="resort-rating">4 Etoiles</span>
+                    </div>
+                    <div class="resort-metrics">
+                        <div class="resort-metric">
+                            <span class="metric-label">RevPAR</span>
+                            <span class="metric-value">756 EUR</span>
+                        </div>
+                        <div class="resort-metric">
+                            <span class="metric-label">Occupation</span>
+                            <span class="metric-value">88%</span>
+                        </div>
+                        <div class="resort-metric">
+                            <span class="metric-label">ADR</span>
+                            <span class="metric-value">859 EUR</span>
+                        </div>
+                        <div class="resort-metric">
+                            <span class="metric-label">vs M-1</span>
+                            <span class="metric-value positive">+8.5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Reservations: Direct vs OTA</h3>
+                    <div class="chart-legend">
+                        <span class="legend-item"><span class="legend-dot direct"></span> Direct</span>
+                        <span class="legend-item"><span class="legend-dot ota"></span> OTA</span>
+                    </div>
+                </div>
+                <div class="chart-placeholder">
+                    <div class="chart-bars">
+                        <div class="chart-bar-group">
+                            <div class="chart-bar direct" style="height: 65%"></div>
+                            <div class="chart-bar ota" style="height: 85%"></div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar direct" style="height: 70%"></div>
+                            <div class="chart-bar ota" style="height: 80%"></div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar direct" style="height: 75%"></div>
+                            <div class="chart-bar ota" style="height: 75%"></div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar direct" style="height: 82%"></div>
+                            <div class="chart-bar ota" style="height: 68%"></div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar direct" style="height: 88%"></div>
+                            <div class="chart-bar ota" style="height: 62%"></div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar direct" style="height: 95%"></div>
+                            <div class="chart-bar ota" style="height: 55%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-labels">
+                    <span class="chart-label">Aout</span>
+                    <span class="chart-label">Sept</span>
+                    <span class="chart-label">Oct</span>
+                    <span class="chart-label">Nov</span>
+                    <span class="chart-label">Dec</span>
+                    <span class="chart-label">Jan</span>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Sources de Reservation</h3>
+                </div>
+                <ul class="source-list">
+                    <li class="source-item">
+                        <div class="source-icon">&#127760;</div>
+                        <div class="source-info">
+                            <div class="source-name">Site Direct</div>
+                            <div class="source-bar">
+                                <div class="source-bar-fill direct" style="width: 42%"></div>
+                            </div>
+                        </div>
+                        <span class="source-percent">42%</span>
+                    </li>
+                    <li class="source-item">
+                        <div class="source-icon">&#128214;</div>
+                        <div class="source-info">
+                            <div class="source-name">Booking.com</div>
+                            <div class="source-bar">
+                                <div class="source-bar-fill booking" style="width: 28%"></div>
+                            </div>
+                        </div>
+                        <span class="source-percent">28%</span>
+                    </li>
+                    <li class="source-item">
+                        <div class="source-icon">&#9992;</div>
+                        <div class="source-info">
+                            <div class="source-name">Expedia</div>
+                            <div class="source-bar">
+                                <div class="source-bar-fill expedia" style="width: 18%"></div>
+                            </div>
+                        </div>
+                        <span class="source-percent">18%</span>
+                    </li>
+                    <li class="source-item">
+                        <div class="source-icon">&#128222;</div>
+                        <div class="source-info">
+                            <div class="source-name">Autres</div>
+                            <div class="source-bar">
+                                <div class="source-bar-fill other" style="width: 12%"></div>
+                            </div>
+                        </div>
+                        <span class="source-percent">12%</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Alerts Section -->
+        <div class="alerts-section">
+            <h2 class="section-title">Alertes IA</h2>
+            <div class="alerts-grid">
+                <div class="alert-card success">
+                    <div class="alert-icon">&#128200;</div>
+                    <div class="alert-content">
+                        <h4 class="alert-title">Objectif RevPAR Atteint</h4>
+                        <p class="alert-message">Le Thalasso a depasse son objectif RevPAR de 8% ce mois-ci.</p>
+                        <div class="alert-meta">
+                            <span class="alert-time">Il y a 2 heures</span>
+                            <a href="#" class="alert-action">Voir details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert-card warning">
+                    <div class="alert-icon">&#9888;</div>
+                    <div class="alert-content">
+                        <h4 class="alert-title">Taux OTA Eleve - Tahiti</h4>
+                        <p class="alert-message">Les reservations OTA representent 65% sur Tahiti. Action recommandee.</p>
+                        <div class="alert-meta">
+                            <span class="alert-time">Il y a 5 heures</span>
+                            <a href="#" class="alert-action">Optimiser</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert-card success">
+                    <div class="alert-icon">&#127775;</div>
+                    <div class="alert-content">
+                        <h4 class="alert-title">NPS en Hausse</h4>
+                        <p class="alert-message">Le score NPS global a augmente de 5 points ce trimestre.</p>
+                        <div class="alert-meta">
+                            <span class="alert-time">Hier</span>
+                            <a href="#" class="alert-action">Voir rapport</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert-card danger">
+                    <div class="alert-icon">&#128680;</div>
+                    <div class="alert-content">
+                        <h4 class="alert-title">Pic de Demandes Chatbot</h4>
+                        <p class="alert-message">+45% de messages non resolus hier soir. Escalade automatique activee.</p>
+                        <div class="alert-meta">
+                            <span class="alert-time">Il y a 12 heures</span>
+                            <a href="#" class="alert-action">Analyser</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NPS Section -->
+        <div class="nps-card">
+            <div class="nps-header">
+                <h3 class="chart-title">Net Promoter Score (NPS)</h3>
+            </div>
+            <div class="nps-score">
+                <div class="nps-value">+72</div>
+                <div class="nps-label">Score NPS Global</div>
+            </div>
+            <div class="nps-breakdown">
+                <div class="nps-category">
+                    <div class="nps-category-value promoters">78%</div>
+                    <div class="nps-category-label">Promoteurs</div>
+                </div>
+                <div class="nps-category">
+                    <div class="nps-category-value passives">16%</div>
+                    <div class="nps-category-label">Passifs</div>
+                </div>
+                <div class="nps-category">
+                    <div class="nps-category-value detractors">6%</div>
+                    <div class="nps-category-label">Detracteurs</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

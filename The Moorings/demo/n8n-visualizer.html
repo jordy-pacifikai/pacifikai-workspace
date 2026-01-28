@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflows n8n - THE MOORINGS TAHITI | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #003366;
+            --red: #CC0000;
+            --white: #FFFFFF;
+            --light-blue: #E8F4FD;
+            --dark-navy: #001a33;
+            --n8n-orange: #FF6D5A;
+            --n8n-purple: #9B59B6;
+            --n8n-green: #27AE60;
+            --n8n-blue: #3498DB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #0d1117;
+            color: var(--white);
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--n8n-orange);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--white);
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 140px 40px 80px;
+            text-align: center;
+            background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--n8n-orange);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--white), var(--n8n-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.6);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Workflows Section */
+        .workflows-section {
+            padding: 60px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .workflow-card {
+            background: #161b22;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .workflow-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--n8n-orange);
+        }
+
+        .workflow-header {
+            padding: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .workflow-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .workflow-icon.orange { background: rgba(255, 109, 90, 0.2); }
+        .workflow-icon.purple { background: rgba(155, 89, 182, 0.2); }
+        .workflow-icon.green { background: rgba(39, 174, 96, 0.2); }
+        .workflow-icon.blue { background: rgba(52, 152, 219, 0.2); }
+
+        .workflow-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .workflow-icon.orange svg { fill: var(--n8n-orange); }
+        .workflow-icon.purple svg { fill: var(--n8n-purple); }
+        .workflow-icon.green svg { fill: var(--n8n-green); }
+        .workflow-icon.blue svg { fill: var(--n8n-blue); }
+
+        .workflow-title h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .workflow-title span {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .workflow-status {
+            margin-left: auto;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .workflow-status.active {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--n8n-green);
+        }
+
+        /* Flow Visualization */
+        .workflow-flow {
+            padding: 30px;
+            background: #0d1117;
+            overflow-x: auto;
+        }
+
+        .flow-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: max-content;
+        }
+
+        .flow-node {
+            background: #21262d;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        .flow-node-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flow-node-icon.trigger { background: var(--n8n-orange); }
+        .flow-node-icon.process { background: var(--n8n-purple); }
+        .flow-node-icon.ai { background: var(--n8n-green); }
+        .flow-node-icon.output { background: var(--n8n-blue); }
+        .flow-node-icon.data { background: #F39C12; }
+
+        .flow-node-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--white);
+        }
+
+        .flow-node-text {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .flow-node-sub {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .flow-connector {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+            position: relative;
+        }
+
+        .flow-connector::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-left-color: rgba(255,255,255,0.3);
+        }
+
+        /* Workflow Details */
+        .workflow-details {
+            padding: 25px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--white);
+            margin-bottom: 5px;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Tech Stack */
+        .tech-section {
+            padding: 80px 40px;
+            background: #161b22;
+        }
+
+        .tech-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tech-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .tech-header h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .tech-header p {
+            color: rgba(255,255,255,0.6);
+            font-size: 16px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .tech-card {
+            background: #21262d;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--n8n-orange);
+        }
+
+        .tech-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .tech-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--n8n-orange);
+        }
+
+        .tech-card h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .tech-card p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px;
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .demo-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--n8n-orange);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        @media (max-width: 1024px) {
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/></svg>
+            </div>
+            <span class="logo-text">n8n Workflows</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Accueil</a>
+            <a href="demo-hub.html">Hub Demo</a>
+            <a href="builds-presentation.html">Solutions</a>
+            <a href="delivery-architecture.html">Architecture</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge">Automatisation n8n</div>
+        <h1>Workflows Charter Automatises</h1>
+        <p>Architecture n8n sur mesure pour THE MOORINGS : chatbot, newsletters, content factory et analytics en temps reel.</p>
+    </section>
+
+    <section class="workflows-section">
+        <div class="workflow-grid">
+            <!-- Workflow 1: Chatbot Pre-Reservation -->
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-icon orange">
+                        <svg viewBox="0 0 24 24"><path d="M12,3C17.5,3 22,6.58 22,11C22,15.42 17.5,19 12,19C10.76,19 9.57,18.82 8.47,18.5C5.55,21 2,21 2,21C4.33,18.67 4.7,17.1 4.75,16.5C3.05,15.07 2,13.13 2,11C2,6.58 6.5,3 12,3Z"/></svg>
+                    </div>
+                    <div class="workflow-title">
+                        <h3>Chatbot Pre-Reservation</h3>
+                        <span>Build 1 - Conseiller Navigation</span>
+                    </div>
+                    <span class="workflow-status active">Actif</span>
+                </div>
+
+                <div class="workflow-flow">
+                    <div class="flow-container">
+                        <div class="flow-node">
+                            <div class="flow-node-icon trigger">
+                                <svg viewBox="0 0 24 24"><path d="M12,3C17.5,3 22,6.58 22,11C22,15.42 17.5,19 12,19C10.76,19 9.57,18.82 8.47,18.5C5.55,21 2,21 2,21C4.33,18.67 4.7,17.1 4.75,16.5C3.05,15.07 2,13.13 2,11C2,6.58 6.5,3 12,3Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Webhook Chat</div>
+                                <div class="flow-node-sub">Message utilisateur</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon data">
+                                <svg viewBox="0 0 24 24"><path d="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9M4,14V17C4,19.21 7.58,21 12,21C16.42,21 20,19.21 20,17V14C20,16.21 16.42,18 12,18C7.58,18 4,16.21 4,14Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Supabase RAG</div>
+                                <div class="flow-node-sub">Vector search</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon ai">
+                                <svg viewBox="0 0 24 24"><path d="M21.5,9.5L20,7.5L17,8.5L15.5,6L13.5,7.5L12,6L10.5,7.5L8.5,6L7,8.5L4,7.5L2.5,9.5L4,11.5L2.5,14.5L4,16.5L7,15.5L8.5,18L10.5,16.5L12,18L13.5,16.5L15.5,18L17,15.5L20,16.5L21.5,14.5L20,11.5L21.5,9.5M12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Claude Sonnet</div>
+                                <div class="flow-node-sub">Generation reponse</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon process">
+                                <svg viewBox="0 0 24 24"><path d="M6,19A5,5 0 0,1 1,14A5,5 0 0,1 6,9C7,6.65 9.3,5 12,5C15.43,5 18.24,7.66 18.5,11.03L19,11A4,4 0 0,1 23,15A4,4 0 0,1 19,19H6Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">API Meteo</div>
+                                <div class="flow-node-sub">Conditions temps reel</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon output">
+                                <svg viewBox="0 0 24 24"><path d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M20,16H6L4,18V4H20"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Reponse Chat</div>
+                                <div class="flow-node-sub">Widget website</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-details">
+                    <div class="detail-item">
+                        <div class="detail-value">~2s</div>
+                        <div class="detail-label">Temps reponse</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">850</div>
+                        <div class="detail-label">Docs indexes</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">24/7</div>
+                        <div class="detail-label">Disponibilite</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow 2: Newsletter Saisonniere -->
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-icon purple">
+                        <svg viewBox="0 0 24 24"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/></svg>
+                    </div>
+                    <div class="workflow-title">
+                        <h3>Newsletter Saisonniere</h3>
+                        <span>Build 2 - Communication segmentee</span>
+                    </div>
+                    <span class="workflow-status active">Actif</span>
+                </div>
+
+                <div class="workflow-flow">
+                    <div class="flow-container">
+                        <div class="flow-node">
+                            <div class="flow-node-icon trigger">
+                                <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Cron Trigger</div>
+                                <div class="flow-node-sub">Bi-mensuel</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon data">
+                                <svg viewBox="0 0 24 24"><path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Airtable CRM</div>
+                                <div class="flow-node-sub">Segments clients</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon process">
+                                <svg viewBox="0 0 24 24"><path d="M14,17H17L19,13V7H13V13H16M6,17H9L11,13V7H5V13H8L6,17Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Split Segments</div>
+                                <div class="flow-node-sub">3 audiences</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon ai">
+                                <svg viewBox="0 0 24 24"><path d="M21.5,9.5L20,7.5L17,8.5L15.5,6L13.5,7.5L12,6L10.5,7.5L8.5,6L7,8.5L4,7.5L2.5,9.5L4,11.5L2.5,14.5L4,16.5L7,15.5L8.5,18L10.5,16.5L12,18L13.5,16.5L15.5,18L17,15.5L20,16.5L21.5,14.5L20,11.5L21.5,9.5M12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Claude IA</div>
+                                <div class="flow-node-sub">Contenu adapte</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon output">
+                                <svg viewBox="0 0 24 24"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Brevo</div>
+                                <div class="flow-node-sub">Envoi email</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-details">
+                    <div class="detail-item">
+                        <div class="detail-value">3</div>
+                        <div class="detail-label">Segments</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">2x/mois</div>
+                        <div class="detail-label">Frequence</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">52%</div>
+                        <div class="detail-label">Taux ouverture</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow 3: Content Factory -->
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-icon green">
+                        <svg viewBox="0 0 24 24"><path d="M14,17H17L19,13V7H13V13H16M6,17H9L11,13V7H5V13H8L6,17Z"/></svg>
+                    </div>
+                    <div class="workflow-title">
+                        <h3>Content Factory SEO</h3>
+                        <span>Build 3 - Blog automatise</span>
+                    </div>
+                    <span class="workflow-status active">Actif</span>
+                </div>
+
+                <div class="workflow-flow">
+                    <div class="flow-container">
+                        <div class="flow-node">
+                            <div class="flow-node-icon trigger">
+                                <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Cron Hebdo</div>
+                                <div class="flow-node-sub">Chaque lundi</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon process">
+                                <svg viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Research</div>
+                                <div class="flow-node-sub">Trends + Keywords</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon ai">
+                                <svg viewBox="0 0 24 24"><path d="M21.5,9.5L20,7.5L17,8.5L15.5,6L13.5,7.5L12,6L10.5,7.5L8.5,6L7,8.5L4,7.5L2.5,9.5L4,11.5L2.5,14.5L4,16.5L7,15.5L8.5,18L10.5,16.5L12,18L13.5,16.5L15.5,18L17,15.5L20,16.5L21.5,14.5L20,11.5L21.5,9.5M12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Claude Opus</div>
+                                <div class="flow-node-sub">Redaction article</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon process">
+                                <svg viewBox="0 0 24 24"><path d="M5,3C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3H5M5,5H19V19H5V5M7,7V9H17V7H7M7,11V13H17V11H7M7,15V17H14V15H7Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">SEO Optimize</div>
+                                <div class="flow-node-sub">Meta + Schema</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon output">
+                                <svg viewBox="0 0 24 24"><path d="M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3M7.5,15A1.5,1.5 0 0,0 6,16.5A1.5,1.5 0 0,0 7.5,18A1.5,1.5 0 0,0 9,16.5A1.5,1.5 0 0,0 7.5,15M6,10V12H18V10H6M6,6V8H18V6H6Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">WordPress</div>
+                                <div class="flow-node-sub">Publication</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-details">
+                    <div class="detail-item">
+                        <div class="detail-value">4</div>
+                        <div class="detail-label">Articles/mois</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">2000+</div>
+                        <div class="detail-label">Mots/article</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">GEO</div>
+                        <div class="detail-label">AI-Ready</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow 4: Analytics Flotte -->
+            <div class="workflow-card">
+                <div class="workflow-header">
+                    <div class="workflow-icon blue">
+                        <svg viewBox="0 0 24 24"><path d="M16,11.78L20.24,4.45L21.97,5.45L16.74,14.5L10.23,10.75L5.46,19H22V21H2V3H4V17.54L9.5,8L16,11.78Z"/></svg>
+                    </div>
+                    <div class="workflow-title">
+                        <h3>Analytics Flotte</h3>
+                        <span>Build 4 - ROI Dashboard</span>
+                    </div>
+                    <span class="workflow-status active">Actif</span>
+                </div>
+
+                <div class="workflow-flow">
+                    <div class="flow-container">
+                        <div class="flow-node">
+                            <div class="flow-node-icon trigger">
+                                <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Cron Daily</div>
+                                <div class="flow-node-sub">6h00 Tahiti</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon data">
+                                <svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">API Reservations</div>
+                                <div class="flow-node-sub">Systeme charter</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon process">
+                                <svg viewBox="0 0 24 24"><path d="M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Calcul KPIs</div>
+                                <div class="flow-node-sub">Aggregation</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon ai">
+                                <svg viewBox="0 0 24 24"><path d="M21.5,9.5L20,7.5L17,8.5L15.5,6L13.5,7.5L12,6L10.5,7.5L8.5,6L7,8.5L4,7.5L2.5,9.5L4,11.5L2.5,14.5L4,16.5L7,15.5L8.5,18L10.5,16.5L12,18L13.5,16.5L15.5,18L17,15.5L20,16.5L21.5,14.5L20,11.5L21.5,9.5M12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">AI Insights</div>
+                                <div class="flow-node-sub">Predictions</div>
+                            </div>
+                        </div>
+
+                        <div class="flow-connector"></div>
+
+                        <div class="flow-node">
+                            <div class="flow-node-icon output">
+                                <svg viewBox="0 0 24 24"><path d="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z"/></svg>
+                            </div>
+                            <div>
+                                <div class="flow-node-text">Dashboard</div>
+                                <div class="flow-node-sub">Temps reel</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-details">
+                    <div class="detail-item">
+                        <div class="detail-value">12</div>
+                        <div class="detail-label">KPIs trackes</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">Daily</div>
+                        <div class="detail-label">Mise a jour</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value">AI</div>
+                        <div class="detail-label">Predictions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="tech-section">
+        <div class="tech-content">
+            <div class="tech-header">
+                <h2>Stack Technique</h2>
+                <p>Technologies eprouvees pour une solution robuste et evolutive</p>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2Z"/></svg>
+                    </div>
+                    <h4>n8n Self-Hosted</h4>
+                    <p>Orchestration workflows sur serveur dedie Hostinger. Controle total et scalabilite.</p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21.5,9.5L20,7.5L17,8.5L15.5,6L13.5,7.5L12,6L10.5,7.5L8.5,6L7,8.5L4,7.5L2.5,9.5L4,11.5L2.5,14.5L4,16.5L7,15.5L8.5,18L10.5,16.5L12,18L13.5,16.5L15.5,18L17,15.5L20,16.5L21.5,14.5L20,11.5L21.5,9.5Z"/></svg>
+                    </div>
+                    <h4>Claude API</h4>
+                    <p>Sonnet pour vitesse, Opus pour qualite. IA conversationnelle et generation contenu.</p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9Z"/></svg>
+                    </div>
+                    <h4>Supabase</h4>
+                    <p>PostgreSQL + Vector Store pour RAG. Stockage documents et embeddings navigation.</p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg viewBox="0 0 24 24"><path d="M4,3H20A2,2 0 0,1 22,5V19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19V5A2,2 0 0,1 4,3M4,7V19H20V7H4Z"/></svg>
+                    </div>
+                    <h4>Airtable</h4>
+                    <p>CRM client, planning flotte, logs operations. Interface no-code pour l'equipe.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        Demo PACIFIK'AI - Architecture n8n pour THE MOORINGS TAHITI - Base Raiatea
+    </footer>
+
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+</body>
+</html>

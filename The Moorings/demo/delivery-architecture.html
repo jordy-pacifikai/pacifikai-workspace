@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Technique - THE MOORINGS TAHITI | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #003366;
+            --red: #CC0000;
+            --white: #FFFFFF;
+            --light-blue: #E8F4FD;
+            --dark-navy: #001a33;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f8fafc;
+            color: var(--navy);
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: var(--navy);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--white);
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: var(--red);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 140px 40px 80px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--dark-navy) 100%);
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--red);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            color: var(--white);
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.8);
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Architecture Section */
+        .architecture-section {
+            padding: 80px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            color: var(--navy);
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,51,102,0.1);
+            margin-bottom: 60px;
+        }
+
+        .diagram-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .diagram-title h3 {
+            font-size: 24px;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .diagram-title p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .diagram-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .diagram-layer {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 30px;
+            border-left: 4px solid var(--navy);
+        }
+
+        .diagram-layer.frontend { border-left-color: #3498DB; }
+        .diagram-layer.orchestration { border-left-color: #FF6D5A; }
+        .diagram-layer.ai { border-left-color: #27AE60; }
+        .diagram-layer.data { border-left-color: #9B59B6; }
+        .diagram-layer.external { border-left-color: #F39C12; }
+
+        .layer-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .layer-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .layer-icon.frontend { background: rgba(52, 152, 219, 0.1); }
+        .layer-icon.orchestration { background: rgba(255, 109, 90, 0.1); }
+        .layer-icon.ai { background: rgba(39, 174, 96, 0.1); }
+        .layer-icon.data { background: rgba(155, 89, 182, 0.1); }
+        .layer-icon.external { background: rgba(243, 156, 18, 0.1); }
+
+        .layer-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .layer-icon.frontend svg { fill: #3498DB; }
+        .layer-icon.orchestration svg { fill: #FF6D5A; }
+        .layer-icon.ai svg { fill: #27AE60; }
+        .layer-icon.data svg { fill: #9B59B6; }
+        .layer-icon.external svg { fill: #F39C12; }
+
+        .layer-title h4 {
+            font-size: 18px;
+            color: var(--navy);
+            margin-bottom: 5px;
+        }
+
+        .layer-title span {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .layer-components {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .component {
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .component:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .component-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--light-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .component-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--navy);
+        }
+
+        .component-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--navy);
+        }
+
+        .component-sub {
+            font-size: 11px;
+            color: #888;
+        }
+
+        /* Connectors */
+        .connectors {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .connector-line {
+            width: 2px;
+            height: 40px;
+            background: linear-gradient(180deg, #ddd 0%, var(--navy) 50%, #ddd 100%);
+            position: relative;
+        }
+
+        .connector-line::before,
+        .connector-line::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--navy);
+            border-radius: 50%;
+        }
+
+        .connector-line::before { top: 0; }
+        .connector-line::after { bottom: 0; }
+
+        /* Data Flow */
+        .data-flow-section {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,51,102,0.1);
+            margin-bottom: 60px;
+        }
+
+        .flow-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .flow-card {
+            text-align: center;
+            padding: 30px 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            position: relative;
+        }
+
+        .flow-card::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid var(--navy);
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        .flow-card:last-child::after {
+            display: none;
+        }
+
+        .flow-number {
+            width: 40px;
+            height: 40px;
+            background: var(--navy);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin: 0 auto 20px;
+        }
+
+        .flow-card h4 {
+            font-size: 16px;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .flow-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Integration Details */
+        .integration-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .integration-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 40px rgba(0,51,102,0.1);
+        }
+
+        .integration-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .integration-icon {
+            width: 55px;
+            height: 55px;
+            background: var(--light-blue);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .integration-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--navy);
+        }
+
+        .integration-header h4 {
+            font-size: 18px;
+            color: var(--navy);
+        }
+
+        .integration-list {
+            list-style: none;
+        }
+
+        .integration-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .integration-list li:last-child {
+            border-bottom: none;
+        }
+
+        .integration-list li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--red);
+            border-radius: 50%;
+        }
+
+        /* Code Block */
+        .code-section {
+            background: #1e293b;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 60px;
+        }
+
+        .code-header {
+            background: #0f172a;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background: #ef4444; }
+        .code-dot.yellow { background: #eab308; }
+        .code-dot.green { background: #22c55e; }
+
+        .code-title {
+            margin-left: 15px;
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .code-content {
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #e2e8f0;
+        }
+
+        .code-content .comment { color: #64748b; }
+        .code-content .keyword { color: #f472b6; }
+        .code-content .string { color: #a3e635; }
+        .code-content .property { color: #38bdf8; }
+
+        /* Footer */
+        footer {
+            padding: 40px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .demo-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--red);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        @media (max-width: 1024px) {
+            .flow-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .flow-card::after {
+                display: none;
+            }
+
+            .integration-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .flow-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .layer-components {
+                flex-direction: column;
+            }
+
+            .component {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg>
+            </div>
+            <span class="logo-text">THE MOORINGS x PACIFIK'AI</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Accueil</a>
+            <a href="demo-hub.html">Hub Demo</a>
+            <a href="n8n-visualizer.html">Workflows</a>
+            <a href="pricing-strategy.html">Tarifs</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge">Documentation Technique</div>
+        <h1>Architecture de Livraison</h1>
+        <p>Vue complete de l'infrastructure technique : integrations, flux de donnees et composants de la solution THE MOORINGS.</p>
+    </section>
+
+    <section class="architecture-section">
+        <div class="section-header">
+            <h2>Architecture Multi-Couches</h2>
+            <p>Une architecture moderne et scalable construite sur des technologies eprouvees</p>
+        </div>
+
+        <div class="architecture-diagram">
+            <div class="diagram-title">
+                <h3>Vue d'Ensemble du Systeme</h3>
+                <p>5 couches interconnectees pour une solution complete</p>
+            </div>
+
+            <div class="diagram-layers">
+                <!-- Frontend Layer -->
+                <div class="diagram-layer frontend">
+                    <div class="layer-header">
+                        <div class="layer-icon frontend">
+                            <svg viewBox="0 0 24 24"><path d="M16.36,14C16.44,13.34 16.5,12.68 16.5,12C16.5,11.32 16.44,10.66 16.36,10H19.74C19.9,10.64 20,11.31 20,12C20,12.69 19.9,13.36 19.74,14M14.59,19.56C15.19,18.45 15.65,17.25 15.97,16H18.92C17.96,17.65 16.43,18.93 14.59,19.56M14.34,14H9.66C9.56,13.34 9.5,12.68 9.5,12C9.5,11.32 9.56,10.65 9.66,10H14.34C14.43,10.65 14.5,11.32 14.5,12C14.5,12.68 14.43,13.34 14.34,14M12,19.96C11.17,18.76 10.5,17.43 10.09,16H13.91C13.5,17.43 12.83,18.76 12,19.96M8,8H5.08C6.03,6.34 7.57,5.06 9.4,4.44C8.8,5.55 8.35,6.75 8,8M5.08,16H8C8.35,17.25 8.8,18.45 9.4,19.56C7.57,18.93 6.03,17.65 5.08,16M4.26,14C4.1,13.36 4,12.69 4,12C4,11.31 4.1,10.64 4.26,10H7.64C7.56,10.66 7.5,11.32 7.5,12C7.5,12.68 7.56,13.34 7.64,14M12,4.03C12.83,5.23 13.5,6.57 13.91,8H10.09C10.5,6.57 11.17,5.23 12,4.03M18.92,8H15.97C15.65,6.75 15.19,5.55 14.59,4.44C16.43,5.07 17.96,6.34 18.92,8M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
+                        </div>
+                        <div class="layer-title">
+                            <h4>Couche Frontend</h4>
+                            <span>Interfaces utilisateur et points d'entree</span>
+                        </div>
+                    </div>
+                    <div class="layer-components">
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M12,3C17.5,3 22,6.58 22,11C22,15.42 17.5,19 12,19C10.76,19 9.57,18.82 8.47,18.5C5.55,21 2,21 2,21C4.33,18.67 4.7,17.1 4.75,16.5C3.05,15.07 2,13.13 2,11C2,6.58 6.5,3 12,3Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Widget Chatbot</div>
+                                <div class="component-sub">Embed JS</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Dashboard</div>
+                                <div class="component-sub">React SPA</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Email Templates</div>
+                                <div class="component-sub">MJML/HTML</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3M7.5,15A1.5,1.5 0 0,0 6,16.5A1.5,1.5 0 0,0 7.5,18A1.5,1.5 0 0,0 9,16.5A1.5,1.5 0 0,0 7.5,15M6,10V12H18V10H6M6,6V8H18V6H6Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Blog CMS</div>
+                                <div class="component-sub">WordPress/Headless</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connectors"><div class="connector-line"></div></div>
+
+                <!-- Orchestration Layer -->
+                <div class="diagram-layer orchestration">
+                    <div class="layer-header">
+                        <div class="layer-icon orchestration">
+                            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6Z"/></svg>
+                        </div>
+                        <div class="layer-title">
+                            <h4>Couche Orchestration</h4>
+                            <span>n8n Self-Hosted - Moteur d'automatisation</span>
+                        </div>
+                    </div>
+                    <div class="layer-components">
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M12,3C17.5,3 22,6.58 22,11C22,15.42 17.5,19 12,19C10.76,19 9.57,18.82 8.47,18.5C5.55,21 2,21 2,21C4.33,18.67 4.7,17.1 4.75,16.5C3.05,15.07 2,13.13 2,11C2,6.58 6.5,3 12,3Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Chatbot Workflow</div>
+                                <div class="component-sub">RAG + Claude</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Newsletter Workflow</div>
+                                <div class="component-sub">Segmentation auto</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M14,17H17L19,13V7H13V13H16M6,17H9L11,13V7H5V13H8L6,17Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Content Factory</div>
+                                <div class="component-sub">SEO/GEO auto</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M16,11.78L20.24,4.45L21.97,5.45L16.74,14.5L10.23,10.75L5.46,19H22V21H2V3H4V17.54L9.5,8L16,11.78Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Analytics Workflow</div>
+                                <div class="component-sub">KPIs + Insights</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connectors"><div class="connector-line"></div></div>
+
+                <!-- AI Layer -->
+                <div class="diagram-layer ai">
+                    <div class="layer-header">
+                        <div class="layer-icon ai">
+                            <svg viewBox="0 0 24 24"><path d="M21.5,9.5L20,7.5L17,8.5L15.5,6L13.5,7.5L12,6L10.5,7.5L8.5,6L7,8.5L4,7.5L2.5,9.5L4,11.5L2.5,14.5L4,16.5L7,15.5L8.5,18L10.5,16.5L12,18L13.5,16.5L15.5,18L17,15.5L20,16.5L21.5,14.5L20,11.5L21.5,9.5M12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15Z"/></svg>
+                        </div>
+                        <div class="layer-title">
+                            <h4>Couche Intelligence Artificielle</h4>
+                            <span>Claude API + Embeddings</span>
+                        </div>
+                    </div>
+                    <div class="layer-components">
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M21.5,9.5L20,7.5L17,8.5L15.5,6L13.5,7.5L12,6L10.5,7.5L8.5,6L7,8.5L4,7.5L2.5,9.5L4,11.5L2.5,14.5L4,16.5L7,15.5L8.5,18L10.5,16.5L12,18L13.5,16.5L15.5,18L17,15.5L20,16.5L21.5,14.5L20,11.5L21.5,9.5Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Claude Sonnet</div>
+                                <div class="component-sub">Chat rapide</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M21.5,9.5L20,7.5L17,8.5L15.5,6L13.5,7.5L12,6L10.5,7.5L8.5,6L7,8.5L4,7.5L2.5,9.5L4,11.5L2.5,14.5L4,16.5L7,15.5L8.5,18L10.5,16.5L12,18L13.5,16.5L15.5,18L17,15.5L20,16.5L21.5,14.5L20,11.5L21.5,9.5Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Claude Opus</div>
+                                <div class="component-sub">Redaction contenu</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Embeddings</div>
+                                <div class="component-sub">text-embedding-3</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Vector Search</div>
+                                <div class="component-sub">RAG retrieval</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connectors"><div class="connector-line"></div></div>
+
+                <!-- Data Layer -->
+                <div class="diagram-layer data">
+                    <div class="layer-header">
+                        <div class="layer-icon data">
+                            <svg viewBox="0 0 24 24"><path d="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9M4,14V17C4,19.21 7.58,21 12,21C16.42,21 20,19.21 20,17V14C20,16.21 16.42,18 12,18C7.58,18 4,16.21 4,14Z"/></svg>
+                        </div>
+                        <div class="layer-title">
+                            <h4>Couche Donnees</h4>
+                            <span>Stockage et persistance</span>
+                        </div>
+                    </div>
+                    <div class="layer-components">
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Supabase PostgreSQL</div>
+                                <div class="component-sub">Donnees structurees</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Supabase Vector</div>
+                                <div class="component-sub">Embeddings RAG</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M4,3H20A2,2 0 0,1 22,5V19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19V5A2,2 0 0,1 4,3M4,7V19H20V7H4Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Airtable</div>
+                                <div class="component-sub">CRM + Operations</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Supabase Storage</div>
+                                <div class="component-sub">Documents PDF</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connectors"><div class="connector-line"></div></div>
+
+                <!-- External Layer -->
+                <div class="diagram-layer external">
+                    <div class="layer-header">
+                        <div class="layer-icon external">
+                            <svg viewBox="0 0 24 24"><path d="M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M13,17H11V15H13V17M13,13H11V7H13V13Z"/></svg>
+                        </div>
+                        <div class="layer-title">
+                            <h4>Services Externes</h4>
+                            <span>APIs tierces et integrations</span>
+                        </div>
+                    </div>
+                    <div class="layer-components">
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Systeme Reservation</div>
+                                <div class="component-sub">API charter</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M6,19A5,5 0 0,1 1,14A5,5 0 0,1 6,9C7,6.65 9.3,5 12,5C15.43,5 18.24,7.66 18.5,11.03L19,11A4,4 0 0,1 23,15A4,4 0 0,1 19,19H6Z"/></svg></div>
+                            <div>
+                                <div class="component-text">API Meteo Marine</div>
+                                <div class="component-sub">Temps reel</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Brevo</div>
+                                <div class="component-sub">Email delivery</div>
+                            </div>
+                        </div>
+                        <div class="component">
+                            <div class="component-icon"><svg viewBox="0 0 24 24"><path d="M16,11.78L20.24,4.45L21.97,5.45L16.74,14.5L10.23,10.75L5.46,19H22V21H2V3H4V17.54L9.5,8L16,11.78Z"/></svg></div>
+                            <div>
+                                <div class="component-text">Google Analytics</div>
+                                <div class="component-sub">Tracking</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Flow -->
+        <div class="data-flow-section">
+            <div class="diagram-title">
+                <h3>Flux de Donnees - Chatbot Navigation</h3>
+                <p>De la question utilisateur a la reponse personnalisee</p>
+            </div>
+
+            <div class="flow-grid">
+                <div class="flow-card">
+                    <div class="flow-number">1</div>
+                    <h4>Reception</h4>
+                    <p>Message utilisateur recu via webhook n8n depuis le widget chatbot</p>
+                </div>
+                <div class="flow-card">
+                    <div class="flow-number">2</div>
+                    <h4>Enrichissement</h4>
+                    <p>RAG search dans Supabase Vector + API meteo pour contexte temps reel</p>
+                </div>
+                <div class="flow-card">
+                    <div class="flow-number">3</div>
+                    <h4>Generation</h4>
+                    <p>Claude Sonnet genere une reponse contextuelle avec les donnees enrichies</p>
+                </div>
+                <div class="flow-card">
+                    <div class="flow-number">4</div>
+                    <h4>Livraison</h4>
+                    <p>Reponse formatee renvoyee au widget + log conversation en base</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Details -->
+        <div class="integration-section">
+            <div class="integration-card">
+                <div class="integration-header">
+                    <div class="integration-icon">
+                        <svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg>
+                    </div>
+                    <h4>Systeme Reservation</h4>
+                </div>
+                <ul class="integration-list">
+                    <li>API REST pour disponibilites flotte</li>
+                    <li>Webhook nouveaux bookings</li>
+                    <li>Sync calendrier temps reel</li>
+                    <li>Export donnees clients (RGPD)</li>
+                    <li>Integration tarification dynamique</li>
+                </ul>
+            </div>
+
+            <div class="integration-card">
+                <div class="integration-header">
+                    <div class="integration-icon">
+                        <svg viewBox="0 0 24 24"><path d="M6,19A5,5 0 0,1 1,14A5,5 0 0,1 6,9C7,6.65 9.3,5 12,5C15.43,5 18.24,7.66 18.5,11.03L19,11A4,4 0 0,1 23,15A4,4 0 0,1 19,19H6Z"/></svg>
+                    </div>
+                    <h4>API Meteo Marine</h4>
+                </div>
+                <ul class="integration-list">
+                    <li>Conditions Raiatea temps reel</li>
+                    <li>Previsions 7 jours</li>
+                    <li>Marees et courants</li>
+                    <li>Alertes automatiques</li>
+                    <li>Historique pour analytics</li>
+                </ul>
+            </div>
+
+            <div class="integration-card">
+                <div class="integration-header">
+                    <div class="integration-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3Z"/></svg>
+                    </div>
+                    <h4>Supabase Vector Store</h4>
+                </div>
+                <ul class="integration-list">
+                    <li>850+ documents navigation indexes</li>
+                    <li>Guides itineraires polynesiend</li>
+                    <li>Fiches techniques bateaux</li>
+                    <li>Procedures securite</li>
+                    <li>FAQs et support</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Code Example -->
+        <div class="code-section">
+            <div class="code-header">
+                <div class="code-dot red"></div>
+                <div class="code-dot yellow"></div>
+                <div class="code-dot green"></div>
+                <span class="code-title">chatbot-workflow.json - Configuration n8n</span>
+            </div>
+            <div class="code-content">
+                <pre><span class="comment">// Exemple de configuration workflow chatbot</span>
+{
+  <span class="property">"name"</span>: <span class="string">"Moorings Chatbot Navigation"</span>,
+  <span class="property">"nodes"</span>: [
+    {
+      <span class="property">"type"</span>: <span class="string">"n8n-nodes-base.webhook"</span>,
+      <span class="property">"name"</span>: <span class="string">"Chat Webhook"</span>,
+      <span class="property">"parameters"</span>: {
+        <span class="property">"path"</span>: <span class="string">"moorings-chat"</span>,
+        <span class="property">"responseMode"</span>: <span class="string">"responseNode"</span>
+      }
+    },
+    {
+      <span class="property">"type"</span>: <span class="string">"n8n-nodes-base.supabase"</span>,
+      <span class="property">"name"</span>: <span class="string">"Vector Search"</span>,
+      <span class="property">"parameters"</span>: {
+        <span class="property">"operation"</span>: <span class="string">"select"</span>,
+        <span class="property">"table"</span>: <span class="string">"navigation_docs"</span>,
+        <span class="property">"options"</span>: {
+          <span class="property">"filter"</span>: <span class="string">"embedding.match(query_embedding, 0.7)"</span>
+        }
+      }
+    },
+    {
+      <span class="property">"type"</span>: <span class="string">"@n8n/n8n-nodes-langchain.openAiChat"</span>,
+      <span class="property">"name"</span>: <span class="string">"Claude Sonnet"</span>,
+      <span class="property">"parameters"</span>: {
+        <span class="property">"model"</span>: <span class="string">"claude-3-5-sonnet-20241022"</span>,
+        <span class="property">"systemPrompt"</span>: <span class="string">"Tu es un conseiller navigation expert..."</span>
+      }
+    }
+  ]
+}</pre>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        Demo PACIFIK'AI - Architecture technique THE MOORINGS TAHITI - Base Raiatea
+    </footer>
+
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+</body>
+</html>

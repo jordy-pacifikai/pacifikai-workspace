@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategie de Prix | InterContinental - PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #B8860B;
+            --gold-light: #D4A73A;
+            --bordeaux: #722F37;
+            --bordeaux-dark: #5A252C;
+            --white: #FFFFFF;
+            --cream: #FAF8F5;
+            --charcoal: #2D2D2D;
+            --success: #27AE60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--cream);
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .demo-badge {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--gold);
+            color: var(--white);
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            z-index: 1000;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 60px;
+            background: var(--white);
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        .logo-text {
+            color: var(--charcoal);
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+
+        .nav-links a {
+            color: var(--charcoal);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--gold);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--bordeaux), var(--bordeaux-dark));
+            color: var(--white);
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--white);
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 80px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            color: var(--gold);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--charcoal);
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Pricing Grid */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid var(--gold);
+        }
+
+        .pricing-card.featured:before {
+            content: "RECOMMANDE";
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: var(--gold);
+            color: var(--white);
+            padding: 8px 40px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transform: rotate(45deg);
+        }
+
+        .pricing-header {
+            padding: 40px 30px 30px;
+            text-align: center;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .pricing-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--charcoal);
+            margin-bottom: 10px;
+        }
+
+        .pricing-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .pricing-amount {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .currency {
+            font-size: 20px;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .price {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--bordeaux);
+        }
+
+        .price-suffix {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .price-note {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .pricing-body {
+            padding: 30px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #F5F5F5;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-check {
+            width: 20px;
+            height: 20px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--white);
+            font-size: 12px;
+        }
+
+        .pricing-cta {
+            display: block;
+            text-align: center;
+            background: var(--bordeaux);
+            color: var(--white);
+            padding: 18px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .pricing-cta:hover {
+            background: var(--bordeaux-dark);
+        }
+
+        .pricing-card.featured .pricing-cta {
+            background: var(--gold);
+        }
+
+        .pricing-card.featured .pricing-cta:hover {
+            background: var(--gold-light);
+        }
+
+        /* ROI Section */
+        .roi-section {
+            background: var(--charcoal);
+            color: var(--white);
+            padding: 80px 60px;
+        }
+
+        .roi-section .section-badge {
+            color: var(--gold);
+        }
+
+        .roi-section .section-title {
+            color: var(--white);
+        }
+
+        .roi-section .section-subtitle {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .roi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto 60px;
+        }
+
+        .roi-card {
+            text-align: center;
+            padding: 40px 25px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .roi-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .roi-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .roi-detail {
+            font-size: 12px;
+            color: var(--success);
+            margin-top: 10px;
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            padding: 80px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        }
+
+        .comparison-table thead {
+            background: linear-gradient(135deg, var(--bordeaux), var(--bordeaux-dark));
+            color: var(--white);
+        }
+
+        .comparison-table th {
+            padding: 25px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .comparison-table th:first-child {
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 20px;
+            font-size: 14px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tbody tr:hover {
+            background: var(--cream);
+        }
+
+        .check-icon {
+            color: var(--success);
+            font-size: 18px;
+        }
+
+        .cross-icon {
+            color: #CCC;
+            font-size: 18px;
+        }
+
+        /* Savings Calculator */
+        .calculator-section {
+            background: var(--cream);
+            padding: 60px;
+            border-radius: 15px;
+            margin: 60px auto;
+            max-width: 800px;
+        }
+
+        .calculator-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .calculator-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .calculator-row:last-child {
+            border-bottom: none;
+            padding-top: 30px;
+        }
+
+        .calculator-label {
+            font-size: 15px;
+            color: #666;
+        }
+
+        .calculator-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--charcoal);
+        }
+
+        .calculator-value.highlight {
+            font-size: 28px;
+            color: var(--success);
+        }
+
+        .calculator-value.negative {
+            color: #E74C3C;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--gold), var(--bordeaux));
+            color: var(--white);
+            padding: 80px 60px;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .cta-text {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .cta-btn {
+            padding: 18px 40px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .cta-btn.primary {
+            background: var(--white);
+            color: var(--bordeaux);
+        }
+
+        .cta-btn.primary:hover {
+            background: var(--cream);
+        }
+
+        .cta-btn.secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .cta-btn.secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--charcoal);
+            color: var(--white);
+            padding: 40px 60px;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .roi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .roi-grid {
+                grid-template-columns: 1fr;
+            }
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+            }
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">IC</div>
+            <span class="logo-text">InterContinental</span>
+        </div>
+        <nav class="nav-links">
+            <a href="demo-hub.html">Hub</a>
+            <a href="index.html">Site</a>
+            <a href="builds-presentation.html">Builds IA</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="pricing-strategy.html" class="active">Tarifs</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-badge">Proposition Commerciale</span>
+        <h1 class="hero-title">Investissement & ROI</h1>
+        <p class="hero-subtitle">Une solution complete pour vos 3 resorts avec un retour sur investissement mesurable des le premier trimestre.</p>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <div class="section-header">
+            <span class="section-badge">Options</span>
+            <h2 class="section-title">Choisissez Votre Formule</h2>
+            <p class="section-subtitle">Trois niveaux d'engagement adaptes a vos objectifs de transformation digitale.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Essential -->
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <h3 class="pricing-name">Essential</h3>
+                    <p class="pricing-desc">Demarrage rapide pour 1 resort</p>
+                    <div class="pricing-amount">
+                        <span class="currency">XPF</span>
+                        <span class="price">1.2M</span>
+                    </div>
+                    <p class="price-note">~ 10,000 EUR</p>
+                </div>
+                <div class="pricing-body">
+                    <ul class="pricing-features">
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Chatbot Concierge (2 langues)
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Newsletter basique
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Dashboard KPIs essentiels
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Support email
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            1 resort inclus
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="pricing-cta">Demander un Devis</a>
+            </div>
+
+            <!-- Premium (Featured) -->
+            <div class="pricing-card featured">
+                <div class="pricing-header">
+                    <h3 class="pricing-name">Premium</h3>
+                    <p class="pricing-desc">Solution complete 3 resorts</p>
+                    <div class="pricing-amount">
+                        <span class="currency">XPF</span>
+                        <span class="price">4M</span>
+                    </div>
+                    <p class="price-note">~ 33,500 EUR</p>
+                </div>
+                <div class="pricing-body">
+                    <ul class="pricing-features">
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Chatbot multilingue (5 langues)
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Newsletter personnalisee
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            SEO/GEO Content Factory
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Dashboard ROI complet
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Integration PMS Opera
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            3 resorts inclus
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Support prioritaire 24/7
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="pricing-cta">Demarrer Maintenant</a>
+            </div>
+
+            <!-- Enterprise -->
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <h3 class="pricing-name">Enterprise</h3>
+                    <p class="pricing-desc">Sur-mesure groupe hotelier</p>
+                    <div class="pricing-amount">
+                        <span class="price" style="font-size: 32px;">Sur Devis</span>
+                    </div>
+                    <p class="price-note">Contact direct</p>
+                </div>
+                <div class="pricing-body">
+                    <ul class="pricing-features">
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Tout Premium inclus
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            IA personnalisee marque
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Integrations custom illimitees
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Formation equipes on-site
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            Account Manager dedie
+                        </li>
+                        <li>
+                            <span class="feature-check">&#10003;</span>
+                            SLA 99.9% garanti
+                        </li>
+                    </ul>
+                </div>
+                <a href="#" class="pricing-cta">Nous Contacter</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI Section -->
+    <section class="roi-section">
+        <div class="section-header">
+            <span class="section-badge">Retour sur Investissement</span>
+            <h2 class="section-title">Impact Mesurable</h2>
+            <p class="section-subtitle">Des resultats concrets bases sur nos deployments hoteliers similaires.</p>
+        </div>
+
+        <div class="roi-grid">
+            <div class="roi-card">
+                <div class="roi-value">+15%</div>
+                <div class="roi-label">Reservations Directes</div>
+                <div class="roi-detail">vs OTA en 6 mois</div>
+            </div>
+            <div class="roi-card">
+                <div class="roi-value">-18%</div>
+                <div class="roi-label">Commissions OTA</div>
+                <div class="roi-detail">Economies annuelles</div>
+            </div>
+            <div class="roi-card">
+                <div class="roi-value">+22%</div>
+                <div class="roi-label">Upselling</div>
+                <div class="roi-detail">Spa, restaurants, activites</div>
+            </div>
+            <div class="roi-card">
+                <div class="roi-value">+35%</div>
+                <div class="roi-label">Engagement</div>
+                <div class="roi-detail">Taux ouverture newsletters</div>
+            </div>
+        </div>
+
+        <!-- Savings Calculator -->
+        <div class="calculator-section">
+            <h3 class="calculator-title">Calcul des Economies (Pack Premium)</h3>
+            <div class="calculator-row">
+                <span class="calculator-label">CA annuel estime (3 resorts)</span>
+                <span class="calculator-value">12,000,000 EUR</span>
+            </div>
+            <div class="calculator-row">
+                <span class="calculator-label">Part OTA actuelle (45%)</span>
+                <span class="calculator-value">5,400,000 EUR</span>
+            </div>
+            <div class="calculator-row">
+                <span class="calculator-label">Commissions OTA (18%)</span>
+                <span class="calculator-value negative">- 972,000 EUR</span>
+            </div>
+            <div class="calculator-row">
+                <span class="calculator-label">Reduction OTA avec PACIFIK'AI (-15pts)</span>
+                <span class="calculator-value">30% via OTA</span>
+            </div>
+            <div class="calculator-row">
+                <span class="calculator-label">Nouvelles commissions OTA</span>
+                <span class="calculator-value negative">- 648,000 EUR</span>
+            </div>
+            <div class="calculator-row">
+                <span class="calculator-label">Economies annuelles</span>
+                <span class="calculator-value highlight">+ 324,000 EUR</span>
+            </div>
+            <div class="calculator-row">
+                <span class="calculator-label">ROI du Pack Premium (33,500 EUR)</span>
+                <span class="calculator-value highlight">x9.7</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison-section">
+        <div class="section-header">
+            <span class="section-badge">Comparatif</span>
+            <h2 class="section-title">Fonctionnalites par Formule</h2>
+        </div>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Fonctionnalite</th>
+                    <th>Essential</th>
+                    <th>Premium</th>
+                    <th>Enterprise</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Chatbot Concierge IA</td>
+                    <td><span class="check-icon">&#10003;</span> 2 langues</td>
+                    <td><span class="check-icon">&#10003;</span> 5 langues</td>
+                    <td><span class="check-icon">&#10003;</span> Illimite</td>
+                </tr>
+                <tr>
+                    <td>Newsletter Personnalisee</td>
+                    <td><span class="check-icon">&#10003;</span> Basique</td>
+                    <td><span class="check-icon">&#10003;</span> Segmentee</td>
+                    <td><span class="check-icon">&#10003;</span> IA generative</td>
+                </tr>
+                <tr>
+                    <td>SEO/GEO Content Factory</td>
+                    <td><span class="cross-icon">-</span></td>
+                    <td><span class="check-icon">&#10003;</span></td>
+                    <td><span class="check-icon">&#10003;</span></td>
+                </tr>
+                <tr>
+                    <td>Dashboard ROI</td>
+                    <td><span class="check-icon">&#10003;</span> KPIs base</td>
+                    <td><span class="check-icon">&#10003;</span> Complet</td>
+                    <td><span class="check-icon">&#10003;</span> Custom</td>
+                </tr>
+                <tr>
+                    <td>Integration PMS</td>
+                    <td><span class="cross-icon">-</span></td>
+                    <td><span class="check-icon">&#10003;</span> Opera/Protel</td>
+                    <td><span class="check-icon">&#10003;</span> Tous PMS</td>
+                </tr>
+                <tr>
+                    <td>Nombre de Resorts</td>
+                    <td>1</td>
+                    <td>3</td>
+                    <td>Illimite</td>
+                </tr>
+                <tr>
+                    <td>Support</td>
+                    <td>Email</td>
+                    <td>Prioritaire 24/7</td>
+                    <td>Account Manager</td>
+                </tr>
+                <tr>
+                    <td>Formation</td>
+                    <td>Documentation</td>
+                    <td>Webinaires</td>
+                    <td>On-site</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2 class="cta-title">Pret a Transformer Votre Experience Client ?</h2>
+        <p class="cta-text">Planifiez un appel decouverte avec notre equipe pour discuter de vos besoins specifiques et obtenir une demonstration personnalisee.</p>
+        <div class="cta-buttons">
+            <a href="#" class="cta-btn primary">Planifier un Appel</a>
+            <a href="demo-hub.html" class="cta-btn secondary">Voir la Demo</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">Demo PACIFIK'AI - Proposition commerciale pour InterContinental Tahiti & Bora Bora</p>
+    </footer>
+</body>
+</html>

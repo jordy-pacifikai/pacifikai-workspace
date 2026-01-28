@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard IA - Air Tahiti | PACIFIK'AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #F8FAFC;
+            --bg-secondary: #FFFFFF;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-glass: rgba(255, 255, 255, 0.6);
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
+            --border-color: rgba(148, 163, 184, 0.2);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --at-primary: #E63946;
+            --at-primary-dark: #c12836;
+            --at-blue: #1D3557;
+            --at-teal: #2A9D8F;
+            --at-gold: #F4A261;
+            --at-orange: #E76F51;
+            --build1: #2A9D8F;
+            --build1-bg: rgba(42, 157, 143, 0.1);
+            --build2: #EC4899;
+            --build2-bg: rgba(236, 72, 153, 0.1);
+            --build3: #F4A261;
+            --build3-bg: rgba(244, 162, 97, 0.1);
+            --build4: #8B5CF6;
+            --build4-bg: rgba(139, 92, 246, 0.1);
+            --success: #10B981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --warning: #F59E0B;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --danger: #EF4444;
+            --glass-blur: blur(20px);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0F172A;
+            --bg-secondary: #1E293B;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --bg-glass: rgba(30, 41, 59, 0.6);
+            --text-primary: #F1F5F9;
+            --text-secondary: #CBD5E1;
+            --text-muted: #64748B;
+            --border-color: rgba(148, 163, 184, 0.1);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .bg-orbs {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+        }
+
+        .orb-1 {
+            width: 600px; height: 600px;
+            background: linear-gradient(135deg, var(--at-primary), var(--at-orange));
+            top: -200px; right: -100px;
+        }
+
+        .orb-2 {
+            width: 400px; height: 400px;
+            background: linear-gradient(135deg, var(--at-teal), var(--at-blue));
+            bottom: -100px; left: -100px;
+        }
+
+        [data-theme="dark"] .orb { opacity: 0.15; }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-glass);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: var(--glass-border);
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, var(--at-primary), var(--at-orange));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .header-title h1 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .header-title span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theme-toggle {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            border: var(--glass-border);
+            background: var(--bg-glass);
+            backdrop-filter: var(--glass-blur);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover { transform: scale(1.05); }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--success-bg);
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .live-dot {
+            width: 6px; height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        .demo-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--at-primary), var(--at-orange));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+        }
+
+        .demo-btn:hover { transform: translateY(-2px); }
+        .demo-btn.active { background: linear-gradient(135deg, var(--success), #059669); }
+
+        /* Main */
+        .main { padding: 24px 0; }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+        }
+
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glass);
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .card-hero { grid-column: span 8; }
+        .card-stats { grid-column: span 4; }
+        .card-wide { grid-column: span 6; }
+        .card-medium { grid-column: span 4; }
+
+        /* AI Insights */
+        .hero-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .hero-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--build4), var(--build2));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .hero-title h2 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .hero-title span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .hero-badge {
+            padding: 4px 10px;
+            background: var(--build4-bg);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--build4);
+        }
+
+        .insights-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .insight-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .insight-item:hover {
+            border-color: var(--build4);
+            transform: translateX(2px);
+        }
+
+        .insight-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .insight-icon.success { background: var(--success-bg); }
+        .insight-icon.warning { background: var(--warning-bg); }
+        .insight-icon.info { background: var(--build1-bg); }
+        .insight-icon.danger { background: rgba(239, 68, 68, 0.1); }
+
+        .insight-content h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .insight-content p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .insight-tag {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 2px 6px;
+            background: var(--border-color);
+            border-radius: 4px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Stats */
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .stats-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-item {
+            padding: 14px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover { border-color: var(--at-primary); }
+
+        .stat-icon {
+            width: 32px; height: 32px;
+            margin: 0 auto 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .stat-item.build-1 .stat-icon { background: var(--build1-bg); }
+        .stat-item.build-2 .stat-icon { background: var(--build2-bg); }
+        .stat-item.build-3 .stat-icon { background: var(--build3-bg); }
+        .stat-item.build-4 .stat-icon { background: var(--build4-bg); }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .sparkline {
+            height: 24px;
+            margin-top: 6px;
+        }
+
+        .sparkline svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sparkline path {
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        .sparkline .line-1 { stroke: var(--build1); }
+        .sparkline .line-2 { stroke: var(--build2); }
+        .sparkline .line-3 { stroke: var(--build3); }
+        .sparkline .line-4 { stroke: var(--build4); }
+
+        /* Build Cards */
+        .build-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .build-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .build-card.b1 .build-icon { background: var(--build1-bg); }
+        .build-card.b2 .build-icon { background: var(--build2-bg); }
+        .build-card.b3 .build-icon { background: var(--build3-bg); }
+        .build-card.b4 .build-icon { background: var(--build4-bg); }
+
+        .build-info h3 {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .build-info span {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .build-metrics {
+            display: flex;
+            gap: 12px;
+        }
+
+        .metric { flex: 1; }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .metric-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* ROI Card */
+        .roi-card {
+            background: linear-gradient(135deg, var(--at-primary), var(--at-orange));
+            color: white;
+        }
+
+        .roi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .roi-header h3 {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .roi-badge {
+            padding: 4px 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .roi-value {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .roi-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .roi-details {
+            display: flex;
+            gap: 16px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .roi-detail { flex: 1; }
+
+        .roi-detail-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .roi-detail-label {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        /* Routes Card */
+        .routes-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .routes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .route-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .route-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .route-icon {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            background: var(--build1-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .route-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .route-change {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .route-change.up {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .route-change.down {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+        }
+
+        /* Activity */
+        .activity-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .activity-item.new {
+            animation: slideIn 0.5s ease;
+            background: var(--build1-bg);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .activity-icon {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.build-1 { background: var(--build1-bg); }
+        .activity-icon.build-2 { background: var(--build2-bg); }
+        .activity-icon.build-3 { background: var(--build3-bg); }
+        .activity-icon.build-4 { background: var(--build4-bg); }
+
+        .activity-content { flex: 1; min-width: 0; }
+
+        .activity-title {
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .activity-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .activity-time {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Workflow Triggers */
+        .workflow-triggers-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+
+        .workflow-triggers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .workflow-btn {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .workflow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .workflow-btn.build-2:hover { border-color: var(--build2); }
+        .workflow-btn.build-3:hover { border-color: var(--build3); }
+        .workflow-btn.build-4:hover { border-color: var(--build4); }
+
+        .workflow-btn.loading { pointer-events: none; opacity: 0.8; }
+
+        .workflow-btn.success {
+            border-color: var(--success) !important;
+            background: var(--success-bg);
+        }
+
+        .workflow-btn-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .workflow-btn.build-2 .workflow-btn-icon { background: var(--build2-bg); }
+        .workflow-btn.build-3 .workflow-btn-icon { background: var(--build3-bg); }
+        .workflow-btn.build-4 .workflow-btn-icon { background: var(--build4-bg); }
+
+        .workflow-btn-content { flex: 1; }
+
+        .workflow-btn-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .workflow-btn-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .workflow-btn-loader {
+            display: none;
+            width: 20px; height: 20px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--at-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .workflow-btn.loading .workflow-btn-loader { display: block; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .workflow-btn-check {
+            display: none;
+            width: 24px; height: 24px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 700;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .workflow-btn.success .workflow-btn-check { display: flex; }
+
+        /* Actions */
+        .actions-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--at-primary);
+            transform: translateY(-1px);
+        }
+
+        .action-btn span:first-child { font-size: 14px; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 14px 18px;
+            background: var(--bg-glass);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: 14px;
+            box-shadow: var(--shadow-glass);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            max-width: 320px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .toast-content h4 {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .toast-content p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .demo-progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--at-primary), var(--at-gold), var(--success));
+            width: 0%;
+            transition: width 0.3s;
+            z-index: 1001;
+        }
+
+        .footer {
+            padding: 20px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--at-primary);
+            text-decoration: none;
+        }
+
+        .value-update {
+            animation: valuePop 0.6s ease;
+        }
+
+        @keyframes valuePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); color: var(--success); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 1200px) {
+            .card-hero { grid-column: span 12; }
+            .card-stats { grid-column: span 12; }
+        }
+
+        @media (max-width: 768px) {
+            .card-wide, .card-medium { grid-column: span 12; }
+            .demo-btn span:last-child { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="demo-progress" id="demoProgress"></div>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-left">
+                <div class="logo">🌺</div>
+                <div class="header-title">
+                    <h1>Dashboard IA - Air Tahiti</h1>
+                    <span>48 destinations • Powered by PACIFIK'AI</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme (T)">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <div class="live-badge">
+                    <div class="live-dot"></div>
+                    <span>Live</span>
+                </div>
+                <button class="demo-btn" id="demoBtn" onclick="toggleDemoMode()">
+                    <span>🎬</span>
+                    <span id="demoBtnText">Démo</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="bento-grid">
+
+                <!-- AI Insights -->
+                <div class="glass-card card-hero">
+                    <div class="hero-header">
+                        <div class="hero-title">
+                            <div class="hero-icon">🧠</div>
+                            <div>
+                                <h2>AI Insights - 48 Destinations</h2>
+                                <span>Recommandations temps réel</span>
+                            </div>
+                        </div>
+                        <span class="hero-badge">3 nouvelles</span>
+                    </div>
+                    <div class="insights-list" id="insightsList">
+                        <div class="insight-item">
+                            <div class="insight-icon success">📈</div>
+                            <div class="insight-content">
+                                <h4>Rurutu +141% (saison baleines)</h4>
+                                <p>Pic saisonnier détecté. Recommandation: augmenter fréquence vols jul-oct</p>
+                                <span class="insight-tag">Build 4 • ROI</span>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-icon danger">⚠️</div>
+                            <div class="insight-content">
+                                <h4>Rangiroa -8.9% vs Air Moana</h4>
+                                <p>Concurrence low-cost détectée. Recommandation: push campagne plongeurs</p>
+                                <span class="insight-tag">Build 4 • Concurrence</span>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-icon info">🌺</div>
+                            <div class="insight-content">
+                                <h4>Chatbot: 70% questions Tuamotu</h4>
+                                <p>Intérêt fort pour plongée. Top: Rangiroa, Fakarava, Tikehau</p>
+                                <span class="insight-tag">Build 1 • Teva</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="glass-card card-stats">
+                    <div class="stats-header">
+                        <h3>Performance 24h</h3>
+                        <span style="font-size: 11px; color: var(--text-muted);" id="lastUpdate">--:--</span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item build-1">
+                            <div class="stat-icon">🌺</div>
+                            <div class="stat-value" id="b1-conversations">--</div>
+                            <div class="stat-label">Conversations</div>
+                            <div class="sparkline"><svg viewBox="0 0 100 24"><path class="line-1" d="M0,20 Q25,15 50,12 T100,8" /></svg></div>
+                        </div>
+                        <div class="stat-item build-2">
+                            <div class="stat-icon">✉️</div>
+                            <div class="stat-value" id="b2-emails">--</div>
+                            <div class="stat-label">Emails</div>
+                            <div class="sparkline"><svg viewBox="0 0 100 24"><path class="line-2" d="M0,18 Q25,20 50,14 T100,6" /></svg></div>
+                        </div>
+                        <div class="stat-item build-3">
+                            <div class="stat-icon">📝</div>
+                            <div class="stat-value" id="b3-articles">--</div>
+                            <div class="stat-label">Articles</div>
+                            <div class="sparkline"><svg viewBox="0 0 100 24"><path class="line-3" d="M0,22 Q25,18 50,16 T100,4" /></svg></div>
+                        </div>
+                        <div class="stat-item build-4">
+                            <div class="stat-icon">🚨</div>
+                            <div class="stat-value" id="b4-alerts">--</div>
+                            <div class="stat-label">Alertes</div>
+                            <div class="sparkline"><svg viewBox="0 0 100 24"><path class="line-4" d="M0,12 Q25,16 50,10 T100,14" /></svg></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Build Cards -->
+                <div class="glass-card card-medium build-card b1">
+                    <div class="build-header">
+                        <div class="build-icon">🌺</div>
+                        <div class="build-info">
+                            <h3>Concierge Teva</h3>
+                            <span>48 destinations RAG</span>
+                        </div>
+                    </div>
+                    <div class="build-metrics">
+                        <div class="metric"><div class="metric-value">22</div><div class="metric-label">FAQ embed.</div></div>
+                        <div class="metric"><div class="metric-value">&lt;3s</div><div class="metric-label">Réponse</div></div>
+                        <div class="metric"><div class="metric-value">7</div><div class="metric-label">Segments</div></div>
+                    </div>
+                </div>
+
+                <div class="glass-card card-medium build-card b2">
+                    <div class="build-header">
+                        <div class="build-icon">✉️</div>
+                        <div class="build-info">
+                            <h3>Newsletter IA</h3>
+                            <span>7 segments</span>
+                        </div>
+                    </div>
+                    <div class="build-metrics">
+                        <div class="metric"><div class="metric-value">100</div><div class="metric-label">Score</div></div>
+                        <div class="metric"><div class="metric-value">170</div><div class="metric-label">Mots/email</div></div>
+                        <div class="metric"><div class="metric-value">+40%</div><div class="metric-label">CTR</div></div>
+                    </div>
+                </div>
+
+                <div class="glass-card card-medium build-card b3">
+                    <div class="build-header">
+                        <div class="build-icon">📝</div>
+                        <div class="build-info">
+                            <h3>SEO 48 Îles</h3>
+                            <span>GEO 2026</span>
+                        </div>
+                    </div>
+                    <div class="build-metrics">
+                        <div class="metric"><div class="metric-value">80</div><div class="metric-label">GEO Score</div></div>
+                        <div class="metric"><div class="metric-value">1852</div><div class="metric-label">Mots/art.</div></div>
+                        <div class="metric"><div class="metric-value">48</div><div class="metric-label">Îles</div></div>
+                    </div>
+                </div>
+
+                <!-- ROI Card -->
+                <div class="glass-card card-wide roi-card">
+                    <div class="roi-header">
+                        <h3>Avantage vs Air Moana</h3>
+                        <span class="roi-badge">ROI 5x</span>
+                    </div>
+                    <div class="roi-value">+25%</div>
+                    <div class="roi-label">Conversion service client grâce à l'IA</div>
+                    <div class="roi-details">
+                        <div class="roi-detail"><div class="roi-detail-value">48</div><div class="roi-detail-label">Destinations couvertes</div></div>
+                        <div class="roi-detail"><div class="roi-detail-value">7</div><div class="roi-detail-label">Segments clients</div></div>
+                        <div class="roi-detail"><div class="roi-detail-value">24/7</div><div class="roi-detail-label">Disponibilité</div></div>
+                    </div>
+                </div>
+
+                <!-- Routes Monitoring -->
+                <div class="glass-card card-wide routes-card">
+                    <h3>🛫 Routes Surveillées</h3>
+                    <div class="routes-list">
+                        <div class="route-item">
+                            <div class="route-info">
+                                <div class="route-icon">🤿</div>
+                                <span class="route-name">PPT → Rangiroa</span>
+                            </div>
+                            <span class="route-change down">-8.9%</span>
+                        </div>
+                        <div class="route-item">
+                            <div class="route-info">
+                                <div class="route-icon">🤿</div>
+                                <span class="route-name">PPT → Fakarava</span>
+                            </div>
+                            <span class="route-change down">-7.5%</span>
+                        </div>
+                        <div class="route-item">
+                            <div class="route-info">
+                                <div class="route-icon">🐋</div>
+                                <span class="route-name">PPT → Rurutu</span>
+                            </div>
+                            <span class="route-change up">+141%</span>
+                        </div>
+                        <div class="route-item">
+                            <div class="route-info">
+                                <div class="route-icon">💑</div>
+                                <span class="route-name">PPT → Bora Bora</span>
+                            </div>
+                            <span class="route-change up">+12%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity -->
+                <div class="glass-card card-wide activity-card">
+                    <h3>Activité Récente</h3>
+                    <div class="activity-list" id="activityList">
+                        <div class="activity-item">
+                            <div class="activity-icon build-1">🌺</div>
+                            <div class="activity-content"><div class="activity-title">Question plongée Rangiroa</div><div class="activity-desc">Équipement gratuit confirmé</div></div>
+                            <div class="activity-time">2 min</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon build-2">✉️</div>
+                            <div class="activity-content"><div class="activity-title">Email segment Plongeurs</div><div class="activity-desc">Score: 100/100</div></div>
+                            <div class="activity-time">5 min</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon build-3">📝</div>
+                            <div class="activity-content"><div class="activity-title">Article Marquises</div><div class="activity-desc">1852 mots, GEO: 80</div></div>
+                            <div class="activity-time">12 min</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon build-4">🚨</div>
+                            <div class="activity-content"><div class="activity-title">Alerte Air Moana</div><div class="activity-desc">Rangiroa -8.9%</div></div>
+                            <div class="activity-time">18 min</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workflow Triggers -->
+                <div class="glass-card card-wide workflow-triggers-card">
+                    <h3>🚀 Déclencher les Workflows</h3>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px;">Cliquez pour lancer un workflow et voir le résultat</p>
+                    <div class="workflow-triggers">
+                        <button class="workflow-btn build-2" id="triggerNewsletter" onclick="triggerNewsletter()">
+                            <div class="workflow-btn-icon">✉️</div>
+                            <div class="workflow-btn-content">
+                                <div class="workflow-btn-title">Build 2 • Newsletter 7 Segments</div>
+                                <div class="workflow-btn-desc">Générer un email "Plongeurs"</div>
+                            </div>
+                            <div class="workflow-btn-loader" id="loaderNewsletter"></div>
+                            <div class="workflow-btn-check" id="checkNewsletter">✓</div>
+                        </button>
+                        <button class="workflow-btn build-3" id="triggerSEO" onclick="triggerSEO()">
+                            <div class="workflow-btn-icon">📝</div>
+                            <div class="workflow-btn-content">
+                                <div class="workflow-btn-title">Build 3 • Article 48 Îles</div>
+                                <div class="workflow-btn-desc">Générer un article SEO+GEO</div>
+                            </div>
+                            <div class="workflow-btn-loader" id="loaderSEO"></div>
+                            <div class="workflow-btn-check" id="checkSEO">✓</div>
+                        </button>
+                        <button class="workflow-btn build-4" id="triggerROI" onclick="triggerROI()">
+                            <div class="workflow-btn-icon">📊</div>
+                            <div class="workflow-btn-content">
+                                <div class="workflow-btn-title">Build 4 • Analyse 48 Routes</div>
+                                <div class="workflow-btn-desc">Détecter anomalies vs Air Moana</div>
+                            </div>
+                            <div class="workflow-btn-loader" id="loaderROI"></div>
+                            <div class="workflow-btn-check" id="checkROI">✓</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="glass-card card-wide actions-card">
+                    <h3>Liens Rapides</h3>
+                    <div class="actions-grid">
+                        <a href="index.html" class="action-btn"><span>🌺</span>Chatbot Teva</a>
+                        <a href="blog.html" class="action-btn"><span>📰</span>Blog 48 Îles</a>
+                        <a href="https://airtable.com/appQcQdGTyFjtnttN" target="_blank" class="action-btn"><span>📊</span>Airtable</a>
+                        <a href="builds-presentation.html" class="action-btn"><span>📄</span>Présentation</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Dashboard IA pour Air Tahiti • <a href="#">PACIFIK'AI</a> • 48 destinations • Rafraîchissement auto 30s</p>
+        </div>
+    </footer>
+
+    <div class="toast" id="demoToast">
+        <div class="toast-icon" id="toastIcon" style="background: var(--build1-bg);">🌺</div>
+        <div class="toast-content">
+            <h4 id="toastTitle">Action...</h4>
+            <p id="toastDesc">Description</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            document.getElementById('themeIcon').textContent = next === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', next);
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.getElementById('themeIcon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        const AIRTABLE_TOKEN = 'patt4FIWRU2CMlxim.65e8c8c2e8f61c7d20e1ba8ae491d76b107f421734f773485209705850f152d1';
+        const BASE_ID = 'appQcQdGTyFjtnttN';
+
+        async function updateDashboard() {
+            // Default values for Air Tahiti
+            document.getElementById('b1-conversations').textContent = 89;
+            document.getElementById('b2-emails').textContent = 45;
+            document.getElementById('b3-articles').textContent = 8;
+            document.getElementById('b4-alerts').textContent = 4;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+        }
+
+        updateDashboard();
+        setInterval(updateDashboard, 30000);
+
+        let demoMode = false, demoInterval = null, demoStep = 0;
+
+        const demoScenario = [
+            { delay: 2000, toast: { icon: '🌺', bg: 'var(--build1-bg)', title: 'Build 1 - Teva', desc: 'Question plongée reçue...' }, activity: { icon: '🌺', class: 'build-1', title: 'Nouvelle question', desc: 'Équipement plongée Rangiroa?', time: 'À l\'instant' } },
+            { delay: 3000, toast: { icon: '🤿', bg: 'var(--build1-bg)', title: 'Réponse RAG', desc: '5kg gratuits confirmé (2.3s)' }, updateMetric: { id: 'b1-conversations', increment: 1 } },
+            { delay: 2500, toast: { icon: '✉️', bg: 'var(--build2-bg)', title: 'Build 2 - Newsletter', desc: 'Segment Plongeurs...' }, activity: { icon: '✉️', class: 'build-2', title: 'Email personnalisé', desc: 'Segment "Plongeurs"', time: 'À l\'instant' } },
+            { delay: 2500, toast: { icon: '💌', bg: 'var(--build2-bg)', title: 'Email généré!', desc: 'Score: 100/100' }, updateMetric: { id: 'b2-emails', increment: 1 }, progress: 30 },
+            { delay: 2000, toast: { icon: '📝', bg: 'var(--build3-bg)', title: 'Build 3 - SEO', desc: 'Article Marquises...' }, progress: 50 },
+            { delay: 4000, toast: { icon: '🎯', bg: 'var(--build3-bg)', title: 'Article publié!', desc: 'Score GEO: 80' }, activity: { icon: '📝', class: 'build-3', title: 'Nouvel article', desc: 'Nuku Hiva: Terre des Hommes', time: 'À l\'instant' }, updateMetric: { id: 'b3-articles', increment: 1 }, progress: 75 },
+            { delay: 2500, toast: { icon: '🚨', bg: 'var(--build4-bg)', title: 'Build 4 - Alerte', desc: 'Anomalie Rangiroa...' }, activity: { icon: '🚨', class: 'build-4', title: 'Alerte vs Air Moana', desc: 'Rangiroa -8.9%', time: 'À l\'instant' }, updateMetric: { id: 'b4-alerts', increment: 1 } },
+            { delay: 2000, toast: { icon: '🐋', bg: 'var(--success-bg)', title: 'Opportunité!', desc: 'Rurutu +141% baleines' }, progress: 100 },
+            { delay: 2500, toast: { icon: '✅', bg: 'var(--success-bg)', title: 'Démo terminée!', desc: '4 Builds • 48 destinations' }, progress: 0 }
+        ];
+
+        function toggleDemoMode() {
+            demoMode = !demoMode;
+            const btn = document.getElementById('demoBtn');
+            if (demoMode) { btn.classList.add('active'); document.getElementById('demoBtnText').textContent = 'Stop'; startDemo(); }
+            else { btn.classList.remove('active'); document.getElementById('demoBtnText').textContent = 'Démo'; stopDemo(); }
+        }
+
+        function startDemo() { demoStep = 0; document.getElementById('demoProgress').style.width = '0%'; runDemoStep(); }
+
+        function stopDemo() { if (demoInterval) { clearTimeout(demoInterval); demoInterval = null; } hideToast(); document.getElementById('demoProgress').style.width = '0%'; }
+
+        function runDemoStep() {
+            if (!demoMode || demoStep >= demoScenario.length) {
+                if (demoStep >= demoScenario.length) setTimeout(() => { demoMode = false; document.getElementById('demoBtn').classList.remove('active'); document.getElementById('demoBtnText').textContent = 'Démo'; hideToast(); }, 3000);
+                return;
+            }
+            const step = demoScenario[demoStep];
+            if (step.toast) showToast(step.toast);
+            if (step.activity) addActivity(step.activity);
+            if (step.updateMetric) updateMetricValue(step.updateMetric.id, step.updateMetric.increment);
+            if (step.progress !== undefined) document.getElementById('demoProgress').style.width = step.progress + '%';
+            demoStep++;
+            if (demoStep < demoScenario.length) demoInterval = setTimeout(runDemoStep, demoScenario[demoStep].delay);
+        }
+
+        function showToast(data) {
+            const toast = document.getElementById('demoToast');
+            document.getElementById('toastIcon').textContent = data.icon;
+            document.getElementById('toastIcon').style.background = data.bg;
+            document.getElementById('toastTitle').textContent = data.title;
+            document.getElementById('toastDesc').textContent = data.desc;
+            toast.classList.add('show');
+        }
+
+        function hideToast() { document.getElementById('demoToast').classList.remove('show'); }
+
+        function addActivity(data) {
+            const list = document.getElementById('activityList');
+            const item = document.createElement('div');
+            item.className = 'activity-item new';
+            item.innerHTML = `<div class="activity-icon ${data.class}">${data.icon}</div><div class="activity-content"><div class="activity-title">${data.title}</div><div class="activity-desc">${data.desc}</div></div><div class="activity-time">${data.time}</div>`;
+            list.insertBefore(item, list.firstChild);
+            setTimeout(() => item.classList.remove('new'), 500);
+            while (list.children.length > 5) list.removeChild(list.lastChild);
+        }
+
+        function updateMetricValue(id, increment) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = (parseInt(el.textContent) || 0) + increment;
+            el.classList.add('value-update');
+            setTimeout(() => el.classList.remove('value-update'), 600);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'd' || e.key === 'D') toggleDemoMode();
+            if (e.key === 't' || e.key === 'T') toggleTheme();
+        });
+
+        // Workflow Triggers
+        const N8N_BASE = 'https://n8n.srv1140766.hstgr.cloud/webhook';
+
+        async function triggerNewsletter() {
+            const btn = document.getElementById('triggerNewsletter');
+            btn.classList.add('loading');
+            btn.classList.remove('success');
+
+            showToast({ icon: '✉️', bg: 'var(--build2-bg)', title: 'Build 2 - Newsletter', desc: 'Génération en cours...' });
+            addActivity({ icon: '✉️', class: 'build-2', title: 'Newsletter déclenchée', desc: 'Segment: Plongeurs', time: 'À l\'instant' });
+
+            try {
+                const response = await fetch(`${N8N_BASE}/at-newsletter-demo`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nom: 'Marie', segment: 'Plongeurs', email: 'demo@test.com' })
+                });
+                const data = await response.json();
+
+                btn.classList.remove('loading');
+                btn.classList.add('success');
+                updateMetricValue('b2-emails', 1);
+                showToast({ icon: '💌', bg: 'var(--success-bg)', title: 'Email généré!', desc: `Score: ${data.score || 100}/100` });
+            } catch (error) {
+                btn.classList.remove('loading');
+                showToast({ icon: '⚠️', bg: 'var(--warning-bg)', title: 'Workflow en cours', desc: 'Vérifiez n8n...' });
+            }
+
+            setTimeout(() => btn.classList.remove('success'), 5000);
+        }
+
+        async function triggerSEO() {
+            const btn = document.getElementById('triggerSEO');
+            btn.classList.add('loading');
+            btn.classList.remove('success');
+
+            showToast({ icon: '📝', bg: 'var(--build3-bg)', title: 'Build 3 - SEO+GEO', desc: 'Génération article...' });
+
+            try {
+                const response = await fetch(`${N8N_BASE}/at-seo-content`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topicIndex: 0 })
+                });
+                const data = await response.json();
+
+                btn.classList.remove('loading');
+                btn.classList.add('success');
+                updateMetricValue('b3-articles', 1);
+                showToast({ icon: '🎯', bg: 'var(--success-bg)', title: 'Article publié!', desc: `Score GEO: ${data.geo_score || 80}` });
+
+                setTimeout(() => {
+                    if (confirm('Article généré! Voir sur le blog?')) {
+                        window.open('blog.html', '_blank');
+                    }
+                }, 1000);
+            } catch (error) {
+                btn.classList.remove('loading');
+                showToast({ icon: '⚠️', bg: 'var(--warning-bg)', title: 'Workflow en cours', desc: 'Vérifiez n8n...' });
+            }
+
+            setTimeout(() => btn.classList.remove('success'), 5000);
+        }
+
+        async function triggerROI() {
+            const btn = document.getElementById('triggerROI');
+            btn.classList.add('loading');
+            btn.classList.remove('success');
+
+            showToast({ icon: '📊', bg: 'var(--build4-bg)', title: 'Build 4 - ROI', desc: 'Analyse 48 routes...' });
+
+            try {
+                const response = await fetch(`${N8N_BASE}/at-roi-analyst`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                const data = await response.json();
+
+                btn.classList.remove('loading');
+                btn.classList.add('success');
+                updateMetricValue('b4-alerts', 1);
+
+                showToast({ icon: '🚨', bg: 'var(--success-bg)', title: 'Analyse terminée!', desc: 'Rangiroa -8.9%, Fakarava -7.5%' });
+                addActivity({ icon: '🚨', class: 'build-4', title: 'Alerte vs Air Moana', desc: data.recommandation || '2 alertes', time: 'À l\'instant' });
+            } catch (error) {
+                btn.classList.remove('loading');
+                showToast({ icon: '⚠️', bg: 'var(--warning-bg)', title: 'Workflow en cours', desc: 'Vérifiez n8n...' });
+            }
+
+            setTimeout(() => btn.classList.remove('success'), 5000);
+        }
+    </script>
+</body>
+</html>

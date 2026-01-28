@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4 Builds IA - Banque de Polynesie x PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sg-red: #E60028;
+            --sg-red-dark: #B8001F;
+            --sg-black: #1A1A1A;
+            --sg-gray: #4A4A4A;
+            --sg-light: #F5F5F5;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: var(--sg-light);
+            color: var(--sg-black);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--sg-red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            color: var(--sg-red);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--sg-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--sg-red);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--sg-black) 0%, #2A2A2A 100%);
+            color: white;
+            padding: 5rem 5%;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--sg-red);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 span {
+            color: var(--sg-red);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Builds Grid */
+        .builds-section {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .builds-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2.5rem;
+        }
+
+        .build-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.4s;
+            border: 2px solid transparent;
+        }
+
+        .build-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+            border-color: var(--sg-red);
+        }
+
+        .build-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            color: white;
+        }
+
+        .build-number {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .build-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .build-header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .build-content {
+            padding: 2rem;
+        }
+
+        .build-description {
+            color: var(--sg-gray);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .build-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .build-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 1rem;
+            color: var(--sg-black);
+        }
+
+        .build-features li::before {
+            content: "&#10003;";
+            color: var(--sg-red);
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .build-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--sg-light);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--sg-red);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--sg-gray);
+        }
+
+        .build-use-cases {
+            padding: 1.5rem;
+            background: #FFF5F5;
+            border-radius: 12px;
+            border-left: 4px solid var(--sg-red);
+        }
+
+        .build-use-cases h4 {
+            color: var(--sg-red);
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .build-use-cases ul {
+            list-style: none;
+        }
+
+        .build-use-cases li {
+            color: var(--sg-gray);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .build-use-cases li::before {
+            content: "- ";
+            color: var(--sg-red);
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--sg-black);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--sg-gray);
+        }
+
+        .comparison-table {
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .comparison-table th {
+            background: var(--sg-black);
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .comparison-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .comparison-table tr:hover {
+            background: var(--sg-light);
+        }
+
+        .comparison-table .highlight {
+            color: var(--sg-red);
+            font-weight: 600;
+        }
+
+        /* Synergy Section */
+        .synergy-section {
+            padding: 5rem 5%;
+            background: linear-gradient(135deg, var(--sg-red) 0%, var(--sg-red-dark) 100%);
+            color: white;
+        }
+
+        .synergy-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .synergy-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .synergy-text p {
+            font-size: 1.15rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .synergy-flow {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .flow-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .flow-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .flow-number {
+            width: 50px;
+            height: 50px;
+            background: white;
+            color: var(--sg-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .flow-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .flow-content p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        /* CTA */
+        .cta-section {
+            padding: 5rem 5%;
+            text-align: center;
+            background: var(--sg-black);
+            color: white;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--sg-red);
+            color: white;
+            padding: 16px 36px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: var(--sg-red-dark);
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 16px 36px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid white;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--sg-black);
+        }
+
+        /* Demo Nav */
+        .demo-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .demo-nav-toggle {
+            width: 60px;
+            height: 60px;
+            background: var(--sg-red);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(230, 0, 40, 0.4);
+        }
+
+        .demo-nav-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 1rem;
+            min-width: 250px;
+            display: none;
+        }
+
+        .demo-nav-menu.active {
+            display: block;
+        }
+
+        .demo-nav-menu a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--sg-black);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .demo-nav-menu a:hover {
+            background: var(--sg-light);
+            color: var(--sg-red);
+        }
+
+        .demo-nav-menu a.active {
+            background: var(--sg-red);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .builds-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .synergy-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .build-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">BP</div>
+            <div class="logo-text">Banque de <span>Polynesie</span></div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Chatbot</a></li>
+            <li><a href="builds-presentation.html" class="active">4 Builds</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="pricing-strategy.html">Offre</a></li>
+            <li><a href="demo-hub.html">Hub Demo</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-badge">Solutions PACIFIK'AI</span>
+        <h1>4 Builds IA pour <span>transformer</span> votre banque</h1>
+        <p>Une suite complete d'automatisations pour ameliorer l'experience client, optimiser vos operations et depasser la concurrence.</p>
+    </section>
+
+    <!-- Builds Grid -->
+    <section class="builds-section">
+        <div class="builds-grid">
+            <!-- Build 1: Chatbot -->
+            <div class="build-card">
+                <div class="build-header">
+                    <span class="build-number">BUILD 1</span>
+                    <h2>Chatbot Bancaire 24/7</h2>
+                    <p>Assistant IA intelligent pour vos clients</p>
+                </div>
+                <div class="build-content">
+                    <p class="build-description">
+                        Un assistant virtuel disponible jour et nuit pour repondre aux questions de vos clients, simuler des credits et organiser des rendez-vous avec vos conseillers.
+                    </p>
+
+                    <ul class="build-features">
+                        <li>FAQ intelligente sur tous vos produits et services</li>
+                        <li>Simulation de credit instantanee (immobilier, conso)</li>
+                        <li>Prise de rendez-vous automatique avec synchronisation agendas</li>
+                        <li>Localisation des 30 agences avec horaires</li>
+                        <li>Orientation vers le bon conseiller selon le besoin</li>
+                    </ul>
+
+                    <div class="build-metrics">
+                        <div class="metric">
+                            <div class="metric-value">-40%</div>
+                            <div class="metric-label">Appels call center</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">24/7</div>
+                            <div class="metric-label">Disponibilite</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">3s</div>
+                            <div class="metric-label">Temps reponse</div>
+                        </div>
+                    </div>
+
+                    <div class="build-use-cases">
+                        <h4>Cas d'usage concrets</h4>
+                        <ul>
+                            <li>Client qui veut connaitre ses mensualites avant un RDV</li>
+                            <li>Question sur les conditions d'ouverture de compte</li>
+                            <li>Recherche d'agence ouverte le samedi</li>
+                            <li>Demande de RDV pour un credit immobilier</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Build 2: Newsletter -->
+            <div class="build-card">
+                <div class="build-header">
+                    <span class="build-number">BUILD 2</span>
+                    <h2>Newsletter Client Segmentee</h2>
+                    <p>Communication personnalisee par segment</p>
+                </div>
+                <div class="build-content">
+                    <p class="build-description">
+                        Des newsletters automatiques et personnalisees pour chaque segment de clientele : jeunes, familles, seniors, professionnels et entreprises.
+                    </p>
+
+                    <ul class="build-features">
+                        <li>Segmentation automatique par profil client</li>
+                        <li>Contenu adapte : jeunes (epargne), familles (credit immo), pro (tresorerie)</li>
+                        <li>Envoi automatise selon le lifecycle client</li>
+                        <li>A/B testing des objets et contenus</li>
+                        <li>Tracking des taux d'ouverture et clics</li>
+                    </ul>
+
+                    <div class="build-metrics">
+                        <div class="metric">
+                            <div class="metric-value">+45%</div>
+                            <div class="metric-label">Taux ouverture</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">5</div>
+                            <div class="metric-label">Segments cibles</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">Auto</div>
+                            <div class="metric-label">Envoi programme</div>
+                        </div>
+                    </div>
+
+                    <div class="build-use-cases">
+                        <h4>Exemples de newsletters</h4>
+                        <ul>
+                            <li>Jeunes (18-25) : "Ton premier Livret A, comment ca marche ?"</li>
+                            <li>Familles : "Les aides pour acheter votre fare"</li>
+                            <li>Seniors : "Preparer votre retraite en Polynesie"</li>
+                            <li>Pro/TPE : "Optimiser la tresorerie de votre activite"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Build 3: SEO/GEO -->
+            <div class="build-card">
+                <div class="build-header">
+                    <span class="build-number">BUILD 3</span>
+                    <h2>SEO/GEO Content Factory</h2>
+                    <p>Dominez Google sur les recherches locales</p>
+                </div>
+                <div class="build-content">
+                    <p class="build-description">
+                        Generez automatiquement du contenu optimise pour les recherches locales et devenez la reference sur "credit immobilier Polynesie", "meilleur taux Tahiti", etc.
+                    </p>
+
+                    <ul class="build-features">
+                        <li>Generation automatique d'articles SEO optimises</li>
+                        <li>Ciblage des requetes locales a fort potentiel</li>
+                        <li>Integration des donnees marche polynesien</li>
+                        <li>Publication automatique sur le blog</li>
+                        <li>Suivi des positions Google et optimisation continue</li>
+                    </ul>
+
+                    <div class="build-metrics">
+                        <div class="metric">
+                            <div class="metric-value">+200%</div>
+                            <div class="metric-label">Trafic organique</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">Top 3</div>
+                            <div class="metric-label">Positions visees</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">20+</div>
+                            <div class="metric-label">Articles/mois</div>
+                        </div>
+                    </div>
+
+                    <div class="build-use-cases">
+                        <h4>Requetes cibles</h4>
+                        <ul>
+                            <li>"Meilleur taux credit immobilier Polynesie 2024"</li>
+                            <li>"Ouvrir un compte bancaire Tahiti"</li>
+                            <li>"Credit auto Papeete comparatif"</li>
+                            <li>"Epargne retraite Polynesie francaise"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Build 4: ROI Analyst -->
+            <div class="build-card">
+                <div class="build-header">
+                    <span class="build-number">BUILD 4</span>
+                    <h2>ROI Analyst Dashboard</h2>
+                    <p>Pilotage data de votre acquisition</p>
+                </div>
+                <div class="build-content">
+                    <p class="build-description">
+                        Un tableau de bord intelligent qui analyse en temps reel vos KPIs d'acquisition, de conversion et d'attrition pour optimiser vos investissements marketing.
+                    </p>
+
+                    <ul class="build-features">
+                        <li>Dashboard temps reel des KPIs marketing</li>
+                        <li>Analyse du cout d'acquisition par canal</li>
+                        <li>Suivi des conversions par produit et segment</li>
+                        <li>Alertes automatiques sur les anomalies</li>
+                        <li>Rapports hebdomadaires automatises</li>
+                    </ul>
+
+                    <div class="build-metrics">
+                        <div class="metric">
+                            <div class="metric-value">-25%</div>
+                            <div class="metric-label">Cout acquisition</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">+20%</div>
+                            <div class="metric-label">Taux conversion</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">Real-time</div>
+                            <div class="metric-label">Donnees</div>
+                        </div>
+                    </div>
+
+                    <div class="build-use-cases">
+                        <h4>Metriques suivies</h4>
+                        <ul>
+                            <li>Cout d'acquisition par nouveau client</li>
+                            <li>Taux de conversion site web / chatbot</li>
+                            <li>Performance des campagnes par canal</li>
+                            <li>Taux d'attrition et raisons de depart</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="comparison-section">
+        <div class="section-header">
+            <h2>Comparatif avec la concurrence</h2>
+            <p>Comment vous demarquer de BCI et Banque de Tahiti</p>
+        </div>
+
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fonctionnalite</th>
+                        <th>Banque de Polynesie + PACIFIK'AI</th>
+                        <th>BCI</th>
+                        <th>Banque de Tahiti</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Chatbot IA 24/7</td>
+                        <td class="highlight">Oui - Simulation credit incluse</td>
+                        <td>Non</td>
+                        <td>FAQ basique</td>
+                    </tr>
+                    <tr>
+                        <td>Prise RDV en ligne</td>
+                        <td class="highlight">Automatique + confirmation</td>
+                        <td>Formulaire mail</td>
+                        <td>Formulaire mail</td>
+                    </tr>
+                    <tr>
+                        <td>Newsletter personnalisee</td>
+                        <td class="highlight">IA + segmentation fine</td>
+                        <td>Newsletter unique</td>
+                        <td>Newsletter unique</td>
+                    </tr>
+                    <tr>
+                        <td>Contenu SEO local</td>
+                        <td class="highlight">20+ articles/mois automatises</td>
+                        <td>Occasionnel</td>
+                        <td>Rare</td>
+                    </tr>
+                    <tr>
+                        <td>Analytics marketing</td>
+                        <td class="highlight">Dashboard temps reel</td>
+                        <td>Reporting mensuel</td>
+                        <td>Reporting trimestriel</td>
+                    </tr>
+                    <tr>
+                        <td>Disponibilite support</td>
+                        <td class="highlight">24/7 via chatbot + horaires agence</td>
+                        <td>Heures ouvrables</td>
+                        <td>Heures ouvrables</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Synergy Section -->
+    <section class="synergy-section">
+        <div class="synergy-content">
+            <div class="synergy-text">
+                <h2>Les 4 builds fonctionnent en synergie</h2>
+                <p>
+                    Chaque build alimente les autres pour creer un ecosysteme marketing complet.
+                    Le chatbot genere des leads qualifies, la newsletter les nurture, le SEO attire
+                    du trafic organique, et le dashboard mesure tout pour optimiser en continu.
+                </p>
+            </div>
+
+            <div class="synergy-flow">
+                <div class="flow-item">
+                    <div class="flow-number">1</div>
+                    <div class="flow-content">
+                        <h4>SEO attire le trafic</h4>
+                        <p>Les articles optimises attirent des visiteurs qualifies sur le site</p>
+                    </div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-number">2</div>
+                    <div class="flow-content">
+                        <h4>Chatbot qualifie et convertit</h4>
+                        <p>L'assistant engage les visiteurs et capture leurs besoins</p>
+                    </div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-number">3</div>
+                    <div class="flow-content">
+                        <h4>Newsletter nurture</h4>
+                        <p>Les emails personnalises accompagnent jusqu'a la conversion</p>
+                    </div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-number">4</div>
+                    <div class="flow-content">
+                        <h4>Dashboard optimise</h4>
+                        <p>Les analytics identifient les leviers a actionner</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Pret a deployer les 4 builds ?</h2>
+        <p>Transformez votre relation client et prenez l'avantage sur la concurrence.</p>
+        <div class="cta-buttons">
+            <a href="pricing-strategy.html" class="btn-primary">Voir l'offre complete</a>
+            <a href="n8n-visualizer.html" class="btn-secondary">Explorer les workflows</a>
+        </div>
+    </section>
+
+    <!-- Demo Nav -->
+    <div class="demo-nav">
+        <button class="demo-nav-toggle" onclick="toggleDemoNav()">&#9776;</button>
+        <div class="demo-nav-menu" id="demoNavMenu">
+            <a href="index.html">Chatbot Landing</a>
+            <a href="builds-presentation.html" class="active">4 Builds IA</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="blog.html">Blog Conseil</a>
+            <a href="pricing-strategy.html">Offre & Pricing</a>
+            <a href="n8n-visualizer.html">Workflows n8n</a>
+            <a href="delivery-architecture.html">Architecture</a>
+            <a href="video-script.html">Script Video</a>
+            <a href="demo-hub.html">Hub Demo</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleDemoNav() {
+            document.getElementById('demoNavMenu').classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('demoNavMenu');
+            const toggle = document.querySelector('.demo-nav-toggle');
+            if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

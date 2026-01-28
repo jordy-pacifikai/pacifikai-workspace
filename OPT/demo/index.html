@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPT Polynésie - Assistant IA | Vini, Mana, La Poste</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --opt-blue: #0066B3;
+            --opt-blue-dark: #004d87;
+            --opt-orange: #FF6600;
+            --opt-orange-dark: #cc5200;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--opt-blue);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-orange));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--opt-blue);
+        }
+
+        .nav-cta {
+            background: var(--opt-orange);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .nav-cta:hover {
+            background: var(--opt-orange-dark);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--opt-blue) 0%, var(--opt-blue-dark) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="40" fill="rgba(255,102,0,0.1)"/><circle cx="60" cy="70" r="30" fill="rgba(255,255,255,0.05)"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-text h1 span {
+            color: var(--opt-orange);
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2rem;
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge {
+            background: rgba(255,255,255,0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--opt-orange);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Chatbot */
+        .chatbot-container {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 400px;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-blue-dark));
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chatbot-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--opt-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .chatbot-info h3 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .chatbot-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chatbot-messages {
+            height: 350px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: var(--gray-50);
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.bot {
+            align-items: flex-start;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 85%;
+            padding: 0.875rem 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+
+        .message.bot .message-bubble {
+            background: var(--white);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-bubble {
+            background: var(--opt-blue);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .quick-action {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            padding: 0.5rem 0.875rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--opt-blue);
+        }
+
+        .quick-action:hover {
+            background: var(--opt-blue);
+            color: white;
+            border-color: var(--opt-blue);
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 1rem;
+            background: var(--white);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 0.875rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .chatbot-input input:focus {
+            border-color: var(--opt-blue);
+        }
+
+        .chatbot-input button {
+            background: var(--opt-orange);
+            color: white;
+            border: none;
+            padding: 0 1.25rem;
+            margin-left: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .chatbot-input button:hover {
+            background: var(--opt-orange-dark);
+        }
+
+        /* Coverage Map Section */
+        .coverage-section {
+            padding: 5rem 2rem;
+            background: var(--white);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+        }
+
+        .coverage-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .coverage-map {
+            background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .map-placeholder {
+            position: absolute;
+            inset: 2rem;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-blue-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .island-dots {
+            position: absolute;
+            inset: 0;
+        }
+
+        .island-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--opt-orange);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(255,102,0,0.3);
+        }
+
+        .island-dot.large {
+            width: 16px;
+            height: 16px;
+        }
+
+        .island-dot::before {
+            content: attr(data-label);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            background: var(--gray-900);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .island-dot:hover::before {
+            opacity: 1;
+        }
+
+        .coverage-info h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1.5rem;
+        }
+
+        .coverage-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .coverage-stat {
+            background: var(--gray-50);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--opt-blue);
+        }
+
+        .coverage-stat.orange {
+            border-left-color: var(--opt-orange);
+        }
+
+        .coverage-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--opt-blue);
+        }
+
+        .coverage-stat.orange .coverage-stat-value {
+            color: var(--opt-orange);
+        }
+
+        .coverage-stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-top: 0.25rem;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 5rem 2rem;
+            background: var(--gray-50);
+        }
+
+        .services-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .service-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--opt-blue);
+            box-shadow: 0 12px 40px rgba(0,102,179,0.15);
+        }
+
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-blue-dark));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+            font-size: 1.75rem;
+        }
+
+        .service-card.vini .service-icon {
+            background: linear-gradient(135deg, var(--opt-orange), var(--opt-orange-dark));
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+        }
+
+        .service-card p {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+        }
+
+        .service-link {
+            color: var(--opt-blue);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .service-link:hover {
+            text-decoration: underline;
+        }
+
+        /* AI Features */
+        .ai-features {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--gray-900), #1a365d);
+        }
+
+        .ai-features .section-header h2 {
+            color: white;
+        }
+
+        .ai-features .section-header p {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--opt-orange);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-card h3 {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            color: white;
+            padding: 3rem 2rem 1.5rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--opt-orange);
+        }
+
+        .footer-brand p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+
+        .footer-links h4 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--opt-orange);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 2rem auto 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+        }
+
+        .demo-banner {
+            background: var(--opt-orange);
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .chatbot-container {
+                margin: 0 auto;
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .coverage-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-banner">
+        DEMO - Propulsé par PACIFIK'AI | Assistant IA pour OPT Polynésie
+    </div>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">OPT</div>
+            <span>OPT Polynésie</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#couverture">Couverture</a></li>
+            <li><a href="#forfaits">Forfaits</a></li>
+            <li><a href="#assistance">Assistance</a></li>
+        </ul>
+        <a href="demo-hub.html" class="nav-cta">Voir la démo complète</a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Votre opérateur <span>connecte 118 îles</span> avec l'IA</h1>
+                <p>OPT révolutionne l'expérience client en Polynésie française. Mobile Vini, Internet Mana, services postaux : un seul assistant IA pour tout gérer.</p>
+
+                <div class="hero-badges">
+                    <span class="hero-badge">Vini Mobile</span>
+                    <span class="hero-badge">Mana Internet</span>
+                    <span class="hero-badge">La Poste Polynésie</span>
+                    <span class="hero-badge">Fibre Optique</span>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">118</div>
+                        <div class="stat-label">Îles couvertes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">98%</div>
+                        <div class="stat-label">Couverture mobile</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">Support IA</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chatbot-container">
+                <div class="chatbot-header">
+                    <div class="chatbot-avatar">🤖</div>
+                    <div class="chatbot-info">
+                        <h3>Assistant OPT</h3>
+                        <div class="chatbot-status">
+                            <div class="status-dot"></div>
+                            En ligne - Prêt à vous aider
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chatbot-messages">
+                    <div class="message bot">
+                        <div class="message-bubble">
+                            Ia ora na ! Je suis votre assistant OPT. Comment puis-je vous aider aujourd'hui ?
+                        </div>
+                        <div class="quick-actions">
+                            <button class="quick-action" onclick="sendMessage('Forfaits mobiles')">📱 Forfaits Vini</button>
+                            <button class="quick-action" onclick="sendMessage('Couverture réseau')">📡 Couverture</button>
+                            <button class="quick-action" onclick="sendMessage('Ma facture')">📄 Factures</button>
+                            <button class="quick-action" onclick="sendMessage('Points de vente')">📍 Agences</button>
+                        </div>
+                    </div>
+                    <div class="message user">
+                        <div class="message-bubble">
+                            Quels sont vos forfaits fibre ?
+                        </div>
+                    </div>
+                    <div class="message bot">
+                        <div class="message-bubble">
+                            Voici nos offres Mana Fibre disponibles à Tahiti et Moorea :
+                            <br><br>
+                            <strong>Mana Fibre 100</strong> - 8 990 XPF/mois<br>
+                            100 Mbps, idéal pour famille
+                            <br><br>
+                            <strong>Mana Fibre 300</strong> - 12 990 XPF/mois<br>
+                            300 Mbps, streaming 4K
+                            <br><br>
+                            <strong>Mana Fibre Pro</strong> - 19 990 XPF/mois<br>
+                            500 Mbps, IP fixe incluse
+                            <br><br>
+                            Voulez-vous vérifier l'éligibilité de votre adresse ?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chatbot-input">
+                    <input type="text" placeholder="Posez votre question..." id="userInput" onkeypress="handleKeyPress(event)">
+                    <button onclick="sendUserMessage()">→</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services-section" id="services">
+        <div class="section-header">
+            <h2>Tous vos services, une seule IA</h2>
+            <p>L'assistant OPT vous accompagne sur l'ensemble de nos offres : mobile, internet, fixe et postal.</p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card vini">
+                <div class="service-icon">📱</div>
+                <h3>Vini Mobile</h3>
+                <p>Forfaits prépayés et postpayés, 4G+ sur toute la Polynésie, roaming international.</p>
+                <a href="#" class="service-link">Découvrir les forfaits →</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🌐</div>
+                <h3>Mana Internet</h3>
+                <p>ADSL, Fibre optique, 4G Box. Solutions adaptées à chaque île et chaque besoin.</p>
+                <a href="#" class="service-link">Tester votre éligibilité →</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📞</div>
+                <h3>Téléphonie Fixe</h3>
+                <p>Lignes fixes professionnelles et résidentielles, standards téléphoniques.</p>
+                <a href="#" class="service-link">Voir les offres →</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📦</div>
+                <h3>La Poste Polynésie</h3>
+                <p>Envois courrier et colis, suivi en temps réel, services postaux inter-îles.</p>
+                <a href="#" class="service-link">Suivre un envoi →</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="coverage-section" id="couverture">
+        <div class="section-header">
+            <h2>Couverture réseau unique en Polynésie</h2>
+            <p>Le défi de connecter 118 îles dispersées sur un territoire grand comme l'Europe.</p>
+        </div>
+
+        <div class="coverage-grid">
+            <div class="coverage-map">
+                <div class="map-placeholder">
+                    <div>
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🗺️</div>
+                        <strong>Carte interactive</strong><br>
+                        Polynésie française<br>
+                        5 archipels - 118 îles<br><br>
+                        <small>Cliquez pour voir la couverture détaillée</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="coverage-info">
+                <h3>Leader sur tous les archipels</h3>
+                <div class="coverage-stats">
+                    <div class="coverage-stat">
+                        <div class="coverage-stat-value">98%</div>
+                        <div class="coverage-stat-label">Population couverte 4G</div>
+                    </div>
+                    <div class="coverage-stat orange">
+                        <div class="coverage-stat-value">76</div>
+                        <div class="coverage-stat-label">Îles avec couverture mobile</div>
+                    </div>
+                    <div class="coverage-stat">
+                        <div class="coverage-stat-value">35</div>
+                        <div class="coverage-stat-label">Sites fibre optique</div>
+                    </div>
+                    <div class="coverage-stat orange">
+                        <div class="coverage-stat-value">24/7</div>
+                        <div class="coverage-stat-label">Surveillance réseau</div>
+                    </div>
+                </div>
+                <p style="margin-top: 1.5rem; color: var(--gray-600);">
+                    Notre réseau connecte les Îles du Vent, Sous-le-Vent, Tuamotu, Marquises et Australes.
+                    L'IA assistant connaît la couverture exacte de chaque île.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="ai-features">
+        <div class="section-header">
+            <h2>L'IA au service des Polynésiens</h2>
+            <p>Automatisation intelligente pour une expérience client fluide, sur chaque île.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>SAV automatisé 24/7</h3>
+                <p>Diagnostic de panne, suivi de factures, changement de forfait. L'IA résout 70% des demandes sans attente.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Analyse prédictive</h3>
+                <p>Détection du churn avant départ, optimisation ARPU, prédiction des besoins réseau par île.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Offres personnalisées</h3>
+                <p>Recommandations de forfaits basées sur l'usage réel. Upsell intelligent vers la fibre quand éligible.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📡</div>
+                <h3>Support technique</h3>
+                <p>Guide de dépannage interactif pour box internet, configuration mobile, diagnostic réseau.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3>Géolocalisation agences</h3>
+                <p>Trouvez l'agence OPT la plus proche avec horaires en temps réel, même sur les îles éloignées.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <h3>Alertes proactives</h3>
+                <p>Notifications de maintenance réseau, fin de promotion, seuil de consommation atteint.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>OPT Polynésie</h3>
+                <p>L'opérateur historique qui connecte la Polynésie française depuis plus de 100 ans. Mobile, Internet, Fixe, Postal - Un seul partenaire pour toutes vos communications.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Mobile Vini</h4>
+                <ul>
+                    <li><a href="#">Forfaits prépayés</a></li>
+                    <li><a href="#">Forfaits postpayés</a></li>
+                    <li><a href="#">Recharge en ligne</a></li>
+                    <li><a href="#">Roaming</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Internet Mana</h4>
+                <ul>
+                    <li><a href="#">Fibre optique</a></li>
+                    <li><a href="#">ADSL</a></li>
+                    <li><a href="#">4G Box</a></li>
+                    <li><a href="#">Test éligibilité</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Assistance</h4>
+                <ul>
+                    <li><a href="#">Chat IA 24/7</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Agences</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>DEMO PACIFIK'AI - Ce site est une démonstration des capacités d'automatisation IA pour OPT Polynésie</p>
+        </div>
+    </footer>
+
+    <script>
+        function sendMessage(text) {
+            const messagesContainer = document.querySelector('.chatbot-messages');
+
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = `<div class="message-bubble">${text}</div>`;
+            messagesContainer.appendChild(userMsg);
+
+            // Simulate bot response
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'message bot';
+                let response = '';
+
+                if (text.includes('Forfaits') || text.includes('forfait')) {
+                    response = `Voici nos forfaits Vini les plus populaires :<br><br>
+                    <strong>Vini 3000</strong> - 3 000 XPF/mois<br>3 Go + appels illimités Vini<br><br>
+                    <strong>Vini 5000</strong> - 5 000 XPF/mois<br>10 Go + appels illimités tous réseaux<br><br>
+                    <strong>Vini Illimité</strong> - 9 900 XPF/mois<br>Data illimitée + roaming inclus`;
+                } else if (text.includes('Couverture') || text.includes('réseau')) {
+                    response = `Notre couverture réseau :<br><br>
+                    <strong>Tahiti & Moorea</strong> - 4G+ et Fibre<br>
+                    <strong>Îles Sous-le-Vent</strong> - 4G (Bora, Huahine, Raiatea)<br>
+                    <strong>Tuamotu</strong> - 4G sur 23 atolls<br>
+                    <strong>Marquises</strong> - 4G sur 6 îles<br><br>
+                    Quelle île vous intéresse ?`;
+                } else if (text.includes('facture') || text.includes('Facture')) {
+                    response = `Pour consulter votre facture :<br><br>
+                    1. Connectez-vous sur mon-compte.opt.pf<br>
+                    2. Rubrique "Mes factures"<br><br>
+                    Ou donnez-moi votre numéro de ligne et je vous envoie le détail par SMS.`;
+                } else if (text.includes('Points') || text.includes('Agences')) {
+                    response = `Les agences OPT les plus proches :<br><br>
+                    <strong>Papeete Centre</strong><br>Lun-Ven 7h30-16h<br><br>
+                    <strong>Faa'a Aéroport</strong><br>7j/7 6h-22h<br><br>
+                    <strong>Punaauia</strong><br>Lun-Sam 8h-17h<br><br>
+                    Besoin d'une autre localisation ?`;
+                } else {
+                    response = `Je comprends votre demande concernant "${text}". Un conseiller OPT va vous recontacter dans les plus brefs délais. En attendant, puis-je vous aider sur autre chose ?`;
+                }
+
+                botMsg.innerHTML = `<div class="message-bubble">${response}</div>`;
+                messagesContainer.appendChild(botMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 800);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendUserMessage() {
+            const input = document.getElementById('userInput');
+            if (input.value.trim()) {
+                sendMessage(input.value);
+                input.value = '';
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendUserMessage();
+            }
+        }
+    </script>
+</body>
+</html>

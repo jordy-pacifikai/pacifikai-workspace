@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Tech & Digital - OPT Polynésie | Fibre, Mobile, Connectivité</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --opt-blue: #0066B3;
+            --opt-blue-dark: #004d87;
+            --opt-blue-light: #e0f2fe;
+            --opt-orange: #FF6600;
+            --opt-orange-dark: #cc5200;
+            --opt-orange-light: #fff7ed;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--opt-blue);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-orange));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--opt-blue);
+        }
+
+        /* Hero */
+        .blog-hero {
+            background: linear-gradient(135deg, var(--opt-blue) 0%, var(--opt-blue-dark) 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .blog-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .blog-hero p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-bar {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-bar button {
+            padding: 1rem 1.5rem;
+            background: var(--opt-orange);
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-bar button:hover {
+            background: var(--opt-orange-dark);
+        }
+
+        /* Categories */
+        .categories {
+            max-width: 1200px;
+            margin: -1.5rem auto 3rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .categories-wrapper {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .category-tag {
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .category-tag:hover, .category-tag.active {
+            background: var(--opt-blue);
+            color: white;
+        }
+
+        .category-tag.orange:hover, .category-tag.orange.active {
+            background: var(--opt-orange);
+        }
+
+        /* Main Content */
+        .blog-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+
+        /* Featured Article */
+        .featured-article {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .featured-image {
+            height: 300px;
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-blue-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .featured-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="15" fill="rgba(255,102,0,0.2)"/><circle cx="80" cy="80" r="20" fill="rgba(255,255,255,0.1)"/></svg>');
+        }
+
+        .featured-image-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .featured-image-content .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--opt-orange);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        .featured-content {
+            padding: 2rem;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .article-category {
+            color: var(--opt-blue);
+            font-weight: 500;
+        }
+
+        .featured-content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .featured-content h2 a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .featured-content h2 a:hover {
+            color: var(--opt-blue);
+        }
+
+        .featured-content p {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .read-more {
+            color: var(--opt-orange);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+
+        /* Article Cards */
+        .articles-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            transition: all 0.3s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .article-image {
+            background: linear-gradient(135deg, var(--opt-blue-light), var(--gray-100));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .article-image.orange {
+            background: linear-gradient(135deg, var(--opt-orange-light), var(--gray-100));
+        }
+
+        .article-body {
+            padding: 1.5rem;
+        }
+
+        .article-body h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .article-body h3 a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .article-body h3 a:hover {
+            color: var(--opt-blue);
+        }
+
+        .article-body p {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-bottom: 0.75rem;
+        }
+
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--gray-400);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .sidebar-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--opt-blue);
+        }
+
+        /* Popular Articles */
+        .popular-list {
+            list-style: none;
+        }
+
+        .popular-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .popular-item:last-child {
+            border-bottom: none;
+        }
+
+        .popular-number {
+            width: 32px;
+            height: 32px;
+            background: var(--opt-blue-light);
+            color: var(--opt-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .popular-content h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+        }
+
+        .popular-content h4 a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .popular-content h4 a:hover {
+            color: var(--opt-blue);
+        }
+
+        .popular-content span {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+
+        /* Newsletter Box */
+        .newsletter-box {
+            background: linear-gradient(135deg, var(--opt-blue), var(--opt-blue-dark));
+            color: white;
+        }
+
+        .newsletter-box .sidebar-title {
+            color: white;
+            border-bottom-color: rgba(255,255,255,0.3);
+        }
+
+        .newsletter-box p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .newsletter-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .newsletter-input button {
+            padding: 0.75rem 1rem;
+            background: var(--opt-orange);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .newsletter-input button:hover {
+            background: var(--opt-orange-dark);
+        }
+
+        /* Tags Cloud */
+        .tags-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.4rem 0.75rem;
+            background: var(--gray-100);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .tag:hover {
+            background: var(--opt-blue);
+            color: white;
+        }
+
+        /* Stats Card */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--opt-blue);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        /* Demo Banner */
+        .demo-banner {
+            background: var(--opt-orange);
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            color: rgba(255,255,255,0.6);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--opt-orange);
+            text-decoration: none;
+        }
+
+        @media (max-width: 1024px) {
+            .blog-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .article-card {
+                grid-template-columns: 1fr;
+            }
+
+            .article-image {
+                height: 150px;
+            }
+
+            .sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .blog-hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-banner">
+        DEMO PACIFIK'AI - Blog généré automatiquement par IA pour OPT Polynésie
+    </div>
+
+    <nav>
+        <a href="index.html" class="logo">
+            <div class="logo-icon">OPT</div>
+            <span>Blog OPT</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="#" class="active">Blog</a></li>
+            <li><a href="builds-presentation.html">Solutions IA</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="demo-hub.html">Hub Demo</a></li>
+        </ul>
+    </nav>
+
+    <section class="blog-hero">
+        <h1>Blog Tech & Digital OPT</h1>
+        <p>Actualités télécom, guides pratiques et innovations pour rester connecté en Polynésie française.</p>
+        <div class="search-bar">
+            <input type="text" placeholder="Rechercher un article...">
+            <button>Rechercher</button>
+        </div>
+    </section>
+
+    <div class="categories">
+        <div class="categories-wrapper">
+            <a href="#" class="category-tag active">Tous</a>
+            <a href="#" class="category-tag">Fibre Optique</a>
+            <a href="#" class="category-tag orange">Mobile Vini</a>
+            <a href="#" class="category-tag">Couverture Îles</a>
+            <a href="#" class="category-tag orange">Guides Pratiques</a>
+            <a href="#" class="category-tag">Innovation</a>
+        </div>
+    </div>
+
+    <main class="blog-content">
+        <div class="main-articles">
+            <!-- Featured Article -->
+            <article class="featured-article">
+                <div class="featured-image">
+                    <span class="featured-badge">A la une</span>
+                    <div class="featured-image-content">
+                        <div class="icon">🌐</div>
+                        <span>Fibre Optique</span>
+                    </div>
+                </div>
+                <div class="featured-content">
+                    <div class="article-meta">
+                        <span class="article-category">Fibre Optique</span>
+                        <span>15 janvier 2026</span>
+                        <span>8 min de lecture</span>
+                    </div>
+                    <h2><a href="#">Fibre optique à Tahiti : tout ce qu'il faut savoir en 2026</a></h2>
+                    <p>Le déploiement de la fibre optique s'accélère en Polynésie française. Découvrez les zones couvertes, comment tester votre éligibilité, les offres disponibles et notre guide complet pour migrer de l'ADSL vers la fibre. Performances, installation, tarifs : on vous dit tout.</p>
+                    <a href="#" class="read-more">Lire l'article complet →</a>
+                </div>
+            </article>
+
+            <!-- Articles Grid -->
+            <div class="articles-grid">
+                <article class="article-card">
+                    <div class="article-image">📱</div>
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <span class="article-category">Mobile Vini</span>
+                            <span>12 jan 2026</span>
+                        </div>
+                        <h3><a href="#">Forfait mobile : comment choisir le bon pour votre usage ?</a></h3>
+                        <p>Prépayé ou postpayé ? 3 Go ou illimité ? Notre comparatif des forfaits Vini pour trouver l'offre adaptée à vos besoins.</p>
+                        <div class="article-footer">
+                            <span>5 min de lecture</span>
+                            <a href="#" class="read-more">Lire →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="article-card">
+                    <div class="article-image orange">🏝️</div>
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <span class="article-category">Couverture</span>
+                            <span>10 jan 2026</span>
+                        </div>
+                        <h3><a href="#">OPT sur les îles éloignées : le défi de la connectivité</a></h3>
+                        <p>Comment OPT réussit à connecter 118 îles dispersées sur un territoire grand comme l'Europe. Satellites, antennes, innovations.</p>
+                        <div class="article-footer">
+                            <span>7 min de lecture</span>
+                            <a href="#" class="read-more">Lire →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="article-card">
+                    <div class="article-image">📡</div>
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <span class="article-category">Guide</span>
+                            <span>8 jan 2026</span>
+                        </div>
+                        <h3><a href="#">Problème de connexion internet ? Guide de dépannage rapide</a></h3>
+                        <p>Box qui clignote rouge, wifi lent, coupures : les solutions étape par étape pour résoudre les pannes courantes.</p>
+                        <div class="article-footer">
+                            <span>4 min de lecture</span>
+                            <a href="#" class="read-more">Lire →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="article-card">
+                    <div class="article-image orange">⚡</div>
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <span class="article-category">Innovation</span>
+                            <span>5 jan 2026</span>
+                        </div>
+                        <h3><a href="#">La 5G arrive en Polynésie : ce qui va changer</a></h3>
+                        <p>Calendrier de déploiement, performances attendues, impacts sur les forfaits. Tout sur l'arrivée de la 5G dans le fenua.</p>
+                        <div class="article-footer">
+                            <span>6 min de lecture</span>
+                            <a href="#" class="read-more">Lire →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="article-card">
+                    <div class="article-image">🔒</div>
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <span class="article-category">Sécurité</span>
+                            <span>3 jan 2026</span>
+                        </div>
+                        <h3><a href="#">Protéger votre réseau wifi : les bonnes pratiques</a></h3>
+                        <p>Mot de passe sécurisé, WPA3, réseau invité : sécurisez votre connexion et protégez vos données personnelles.</p>
+                        <div class="article-footer">
+                            <span>5 min de lecture</span>
+                            <a href="#" class="read-more">Lire →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="article-card">
+                    <div class="article-image orange">💼</div>
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <span class="article-category">Entreprise</span>
+                            <span>28 déc 2025</span>
+                        </div>
+                        <h3><a href="#">Solutions Pro OPT : les offres pour les entreprises polynésiennes</a></h3>
+                        <p>Fibre dédiée, VPN, téléphonie IP, cloud : les solutions télécom adaptées aux PME et grandes entreprises.</p>
+                        <div class="article-footer">
+                            <span>6 min de lecture</span>
+                            <a href="#" class="read-more">Lire →</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-card newsletter-box">
+                <h3 class="sidebar-title">Newsletter OPT</h3>
+                <p>Recevez nos actualités, offres exclusives et guides pratiques directement dans votre boîte mail.</p>
+                <div class="newsletter-input">
+                    <input type="email" placeholder="Votre email">
+                    <button>OK</button>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Articles populaires</h3>
+                <ul class="popular-list">
+                    <li class="popular-item">
+                        <span class="popular-number">1</span>
+                        <div class="popular-content">
+                            <h4><a href="#">Comment tester son éligibilité fibre ?</a></h4>
+                            <span>12.4k vues</span>
+                        </div>
+                    </li>
+                    <li class="popular-item">
+                        <span class="popular-number">2</span>
+                        <div class="popular-content">
+                            <h4><a href="#">Comparatif forfaits Vini vs Vodafone</a></h4>
+                            <span>8.7k vues</span>
+                        </div>
+                    </li>
+                    <li class="popular-item">
+                        <span class="popular-number">3</span>
+                        <div class="popular-content">
+                            <h4><a href="#">Couverture 4G aux Tuamotu</a></h4>
+                            <span>6.2k vues</span>
+                        </div>
+                    </li>
+                    <li class="popular-item">
+                        <span class="popular-number">4</span>
+                        <div class="popular-content">
+                            <h4><a href="#">Configurer sa box Mana</a></h4>
+                            <span>5.8k vues</span>
+                        </div>
+                    </li>
+                    <li class="popular-item">
+                        <span class="popular-number">5</span>
+                        <div class="popular-content">
+                            <h4><a href="#">Activer le roaming international</a></h4>
+                            <span>4.3k vues</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Blog en chiffres</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">Articles publiés</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">24k</div>
+                        <div class="stat-label">Lecteurs/mois</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">16</div>
+                        <div class="stat-label">Nouveaux/mois</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4.8</div>
+                        <div class="stat-label">Note moyenne</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Tags populaires</h3>
+                <div class="tags-cloud">
+                    <a href="#" class="tag">Fibre optique</a>
+                    <a href="#" class="tag">Vini</a>
+                    <a href="#" class="tag">4G</a>
+                    <a href="#" class="tag">Tahiti</a>
+                    <a href="#" class="tag">Moorea</a>
+                    <a href="#" class="tag">Tuamotu</a>
+                    <a href="#" class="tag">Box internet</a>
+                    <a href="#" class="tag">Forfait mobile</a>
+                    <a href="#" class="tag">Roaming</a>
+                    <a href="#" class="tag">WiFi</a>
+                    <a href="#" class="tag">5G</a>
+                    <a href="#" class="tag">Entreprise</a>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <h3 class="sidebar-title">Besoin d'aide ?</h3>
+                <p style="font-size: 0.9rem; color: var(--gray-600); margin-bottom: 1rem;">Notre assistant IA répond à toutes vos questions 24h/24.</p>
+                <a href="index.html" style="display: block; text-align: center; padding: 0.875rem; background: var(--opt-blue); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">Discuter avec l'assistant</a>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <p>DEMO PACIFIK'AI - Contenu généré automatiquement par IA pour démonstration<br>
+        <a href="demo-hub.html">Retour au Hub Demo</a></p>
+    </footer>
+</body>
+</html>

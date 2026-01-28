@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Navigation Polynesie - THE MOORINGS TAHITI | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #003366;
+            --red: #CC0000;
+            --white: #FFFFFF;
+            --light-blue: #E8F4FD;
+            --dark-navy: #001a33;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--white);
+            color: var(--navy);
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: var(--navy);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--white);
+        }
+
+        .logo-text {
+            color: var(--white);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: var(--red);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 140px 40px 80px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--dark-navy) 100%);
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--red);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            color: var(--white);
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            color: rgba(255,255,255,0.8);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .seo-tags {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .seo-tag {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        /* Blog Content */
+        .blog-section {
+            padding: 80px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .featured-article {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 50px;
+            margin-bottom: 80px;
+            align-items: center;
+        }
+
+        .featured-image {
+            height: 450px;
+            background: linear-gradient(135deg, var(--navy), #004488);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-image::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><path d="M0,20 Q25,5 50,15 T100,10 L100,20 Z" fill="%23002244" opacity="0.5"/></svg>');
+            background-size: cover;
+        }
+
+        .featured-image svg {
+            width: 200px;
+            height: 150px;
+            fill: rgba(255,255,255,0.2);
+        }
+
+        .featured-label {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--red);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .featured-content h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 36px;
+            color: var(--navy);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .featured-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .featured-excerpt {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 30px;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--red);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .read-more svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            transition: transform 0.3s;
+        }
+
+        .read-more:hover svg {
+            transform: translateX(5px);
+        }
+
+        /* Articles Grid */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .section-header h2 {
+            font-size: 32px;
+            color: var(--navy);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            background: var(--white);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-tab:hover,
+        .filter-tab.active {
+            background: var(--navy);
+            color: var(--white);
+            border-color: var(--navy);
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .article-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0,51,102,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,51,102,0.15);
+        }
+
+        .article-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--navy), var(--dark-navy));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .article-image svg {
+            width: 80px;
+            height: 60px;
+            fill: rgba(255,255,255,0.2);
+        }
+
+        .article-category {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--red);
+            color: var(--white);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .article-content {
+            padding: 25px;
+        }
+
+        .article-content h3 {
+            font-family: 'Merriweather', serif;
+            font-size: 20px;
+            color: var(--navy);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .article-excerpt {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .article-read-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-read-time svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        /* SEO Section */
+        .seo-section {
+            background: var(--light-blue);
+            padding: 80px 40px;
+            margin: 0 -40px;
+        }
+
+        .seo-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .seo-section h2 {
+            font-size: 32px;
+            color: var(--navy);
+            margin-bottom: 20px;
+        }
+
+        .seo-section p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .keyword-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .keyword-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 16px;
+            text-align: left;
+        }
+
+        .keyword-card h4 {
+            font-size: 14px;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .keyword-volume {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--red);
+            margin-bottom: 5px;
+        }
+
+        .keyword-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        /* Newsletter */
+        .newsletter-section {
+            padding: 80px 40px;
+            background: linear-gradient(135deg, var(--navy), var(--dark-navy));
+            text-align: center;
+        }
+
+        .newsletter-section h2 {
+            color: var(--white);
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .newsletter-section p {
+            color: rgba(255,255,255,0.8);
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 18px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .newsletter-form button {
+            padding: 18px 35px;
+            background: var(--red);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .newsletter-form button:hover {
+            background: #a00000;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-navy);
+            padding: 40px;
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+
+        .demo-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--red);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        @media (max-width: 1024px) {
+            .featured-article {
+                grid-template-columns: 1fr;
+            }
+
+            .articles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .keyword-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .keyword-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24"><path d="M3,13A9,9 0 0,0 12,22C12,17 7.97,13 3,13M21,13C16.03,13 12,17 12,22A9,9 0 0,0 21,13Z"/></svg>
+            </div>
+            <span class="logo-text">THE MOORINGS x PACIFIK'AI</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Accueil</a>
+            <a href="demo-hub.html">Hub Demo</a>
+            <a href="builds-presentation.html">Solutions IA</a>
+            <a href="dashboard.html">Dashboard</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge">Blog SEO/GEO - Demo</div>
+        <h1>Le Blog Navigation Polynesie</h1>
+        <p>Contenu optimise pour dominer les recherches "location catamaran Polynesie" et repondre aux requetes IA.</p>
+        <div class="seo-tags">
+            <span class="seo-tag">Location catamaran Polynesie</span>
+            <span class="seo-tag">Charter Tahiti</span>
+            <span class="seo-tag">Croisiere iles Sous-le-Vent</span>
+            <span class="seo-tag">Bareboat Raiatea</span>
+        </div>
+    </section>
+
+    <section class="blog-section">
+        <!-- Featured Article -->
+        <div class="featured-article">
+            <div class="featured-image">
+                <span class="featured-label">Guide Complet</span>
+                <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z M30,25 L30,10 L35,25 M60,20 L60,5 L65,20"/></svg>
+            </div>
+            <div class="featured-content">
+                <h2>Naviguer aux Iles Sous-le-Vent : Le Guide Complet 2026</h2>
+                <div class="featured-meta">
+                    <span>15 Janvier 2026</span>
+                    <span>12 min de lecture</span>
+                    <span>Navigation</span>
+                </div>
+                <p class="featured-excerpt">
+                    Raiatea, Tahaa, Bora Bora, Huahine - les quatre joyaux de la navigation polynesienne. Ce guide exhaustif couvre tout ce que vous devez savoir pour une croisiere reussie : meilleurs mouillages, conditions meteo par saison, itineraires recommandes et conseils d'experts locaux.
+                </p>
+                <a href="#" class="read-more">
+                    Lire l'article complet
+                    <svg viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Articles Grid -->
+        <div class="section-header">
+            <h2>Articles Recents</h2>
+            <div class="filter-tabs">
+                <button class="filter-tab active">Tous</button>
+                <button class="filter-tab">Navigation</button>
+                <button class="filter-tab">Destinations</button>
+                <button class="filter-tab">Conseils</button>
+            </div>
+        </div>
+
+        <div class="articles-grid">
+            <article class="article-card">
+                <div class="article-image">
+                    <span class="article-category">Conseils</span>
+                    <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                </div>
+                <div class="article-content">
+                    <h3>Bareboat vs Skippered : Comment Choisir sa Formule Charter</h3>
+                    <p class="article-excerpt">
+                        Premier charter ou navigateur confirme ? Decouvrez les avantages de chaque formule et trouvez celle qui correspond a votre experience.
+                    </p>
+                    <div class="article-meta">
+                        <span>12 Jan 2026</span>
+                        <span class="article-read-time">
+                            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/></svg>
+                            8 min
+                        </span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="article-image">
+                    <span class="article-category">Destinations</span>
+                    <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                </div>
+                <div class="article-content">
+                    <h3>Les 10 Plus Beaux Mouillages de Polynesie Francaise</h3>
+                    <p class="article-excerpt">
+                        Du lagon secret de Tahaa aux eaux cristallines de Bora Bora, notre selection des spots incontournables pour jeter l'ancre.
+                    </p>
+                    <div class="article-meta">
+                        <span>8 Jan 2026</span>
+                        <span class="article-read-time">
+                            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/></svg>
+                            10 min
+                        </span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="article-image">
+                    <span class="article-category">Navigation</span>
+                    <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                </div>
+                <div class="article-content">
+                    <h3>Meteo Polynesie : Quand Partir pour une Croisiere Ideale</h3>
+                    <p class="article-excerpt">
+                        Alizes, saison seche, cyclones - tout comprendre sur le climat polynesien pour planifier votre charter au meilleur moment.
+                    </p>
+                    <div class="article-meta">
+                        <span>5 Jan 2026</span>
+                        <span class="article-read-time">
+                            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/></svg>
+                            6 min
+                        </span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="article-image">
+                    <span class="article-category">Destinations</span>
+                    <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                </div>
+                <div class="article-content">
+                    <h3>Raiatea : La Base Ideale pour Explorer les Iles Sous-le-Vent</h3>
+                    <p class="article-excerpt">
+                        Pourquoi Raiatea est le point de depart parfait pour votre croisiere polynesienne. Histoire, logistique et premiers mouillages.
+                    </p>
+                    <div class="article-meta">
+                        <span>2 Jan 2026</span>
+                        <span class="article-read-time">
+                            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/></svg>
+                            7 min
+                        </span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="article-image">
+                    <span class="article-category">Conseils</span>
+                    <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                </div>
+                <div class="article-content">
+                    <h3>Checklist Pre-Depart : Preparer son Charter en Polynesie</h3>
+                    <p class="article-excerpt">
+                        Documents, equipements, avitaillement - tout ce qu'il faut preparer avant d'embarquer pour une croisiere sans stress.
+                    </p>
+                    <div class="article-meta">
+                        <span>28 Dec 2025</span>
+                        <span class="article-read-time">
+                            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/></svg>
+                            5 min
+                        </span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="article-image">
+                    <span class="article-category">Navigation</span>
+                    <svg viewBox="0 0 100 60"><path d="M10,50 Q25,20 50,25 Q75,30 90,50 L90,55 L10,55 Z"/></svg>
+                </div>
+                <div class="article-content">
+                    <h3>Naviguer en Catamaran : Guide pour Debutants</h3>
+                    <p class="article-excerpt">
+                        Stabilite, espace, confort - pourquoi le catamaran est ideal pour decouvrir la navigation. Conseils techniques et pratiques.
+                    </p>
+                    <div class="article-meta">
+                        <span>22 Dec 2025</span>
+                        <span class="article-read-time">
+                            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/></svg>
+                            9 min
+                        </span>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <!-- SEO Metrics -->
+        <div class="seo-section">
+            <div class="seo-content">
+                <h2>Performance SEO/GEO</h2>
+                <p>Ce blog est optimise pour capturer le trafic organique sur les requetes a forte intention d'achat et repondre aux recherches IA (ChatGPT, Perplexity, Gemini).</p>
+                <div class="keyword-grid">
+                    <div class="keyword-card">
+                        <h4>"location catamaran polynesie"</h4>
+                        <div class="keyword-volume">2.4K</div>
+                        <div class="keyword-label">Recherches/mois</div>
+                    </div>
+                    <div class="keyword-card">
+                        <h4>"charter tahiti"</h4>
+                        <div class="keyword-volume">1.8K</div>
+                        <div class="keyword-label">Recherches/mois</div>
+                    </div>
+                    <div class="keyword-card">
+                        <h4>"croisiere bora bora"</h4>
+                        <div class="keyword-volume">3.1K</div>
+                        <div class="keyword-label">Recherches/mois</div>
+                    </div>
+                    <div class="keyword-card">
+                        <h4>"bareboat polynesie"</h4>
+                        <div class="keyword-volume">890</div>
+                        <div class="keyword-label">Recherches/mois</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter-section">
+        <h2>Cap sur l'Aventure</h2>
+        <p>Recevez nos guides navigation, offres speciales et conseils d'experts.</p>
+        <form class="newsletter-form">
+            <input type="email" placeholder="Votre email">
+            <button type="submit">S'abonner</button>
+        </form>
+    </section>
+
+    <footer>
+        Demo PACIFIK'AI - Blog SEO/GEO pour THE MOORINGS TAHITI - Contenu genere par IA
+    </footer>
+
+    <div class="demo-badge">DEMO PACIFIK'AI</div>
+</body>
+</html>
