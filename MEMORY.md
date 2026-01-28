@@ -101,7 +101,7 @@ API Key: patOOpXRc... (dans AIRTABLE_CONFIG du dashboard)
 
 ```
 Model: claude-sonnet-4-5-20250929
-API Key: sk-ant-api03-OiXYG... (dans CLAUDE_CONFIG du dashboard)
+API Key: [RÉVOQUÉE - Remplacer dans dashboard/index.html]
 ```
 
 **IMPORTANT**: Claude Haiku banni. Minimum = Sonnet 4.5
@@ -391,7 +391,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 AIRTABLE_API_KEY=pat46LSKbLbvTLFCm.3431b75c27ab9fc638cb8e784f6559347ede36c1d9801a9df511f2aaed941faf
 AIRTABLE_BASE_ID=appWd0x5YZPHKL0VK
 N8N_WEBHOOK_BASE=https://n8n.srv1140766.hstgr.cloud/webhook
-ANTHROPIC_API_KEY=sk-ant-api03-OiXYGj...
+ANTHROPIC_API_KEY=[RÉVOQUÉE - Créer nouvelle clé sur console.anthropic.com]
 ```
 
 **Corrections techniques:**
