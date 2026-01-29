@@ -6129,7 +6129,7 @@
                         <div class="fiche-ia-empty" id="fiche-ia-empty">
                             <p>Aucune fiche de recherche generee pour ce prospect.</p>
                             <p class="fiche-ia-hint">La fiche contient: contexte entreprise, 10 features automatisables, script d'appel, email de prospection, estimation potentiel.</p>
-                            <button class="btn btn-primary fiche-ia-generate" onclick="generateFicheIA()">
+                            <button class="btn btn-primary fiche-ia-generate" id="btn-generate-fiche" onclick="generateFicheIA()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
                                     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                                 </svg>
@@ -7863,6 +7863,12 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         // Controller global pour pouvoir annuler la generation
         let ficheGenerationController = null;
 
+        // Etat de la generation en cours (prospectId si en cours, null sinon)
+        let ficheGenerationInProgress = null;
+        let ficheGenerationProspect = null;
+        let ficheGenerationStartTime = null;
+        let ficheGenerationProgressInterval = null;
+
         async function generateFicheIA() {
             const prospect = prospects.find(p => p.id === currentProspectId);
 
@@ -7870,6 +7876,26 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 showToast('Aucun prospect selectionne');
                 return;
             }
+
+            // Si une generation est deja en cours pour CE prospect, juste rouvrir le modal
+            if (ficheGenerationInProgress === prospect.id) {
+                reopenFicheProgressModal();
+                return;
+            }
+
+            // Si une generation est en cours pour un AUTRE prospect, prevenir
+            if (ficheGenerationInProgress !== null) {
+                showToast('Generation deja en cours pour ' + ficheGenerationProspect.company);
+                return;
+            }
+
+            // Marquer la generation comme en cours
+            ficheGenerationInProgress = prospect.id;
+            ficheGenerationProspect = prospect;
+            ficheGenerationStartTime = Date.now();
+
+            // Mettre a jour le bouton
+            updateFicheButtonState(true);
 
             // Afficher le modal de progression
             showFicheProgressModal(prospect);
@@ -7880,10 +7906,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 ficheGenerationController.abort();
             }, 15 * 60 * 1000); // 15 minutes
 
-            // Demarrer le timer de progression
-            const startTime = Date.now();
-            const progressInterval = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            // Demarrer le timer de progression (utiliser variable globale)
+            ficheGenerationProgressInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - ficheGenerationStartTime) / 1000);
                 updateFicheProgressTime(elapsed);
             }, 1000);
 
@@ -7902,7 +7927,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 });
 
                 clearTimeout(timeoutId);
-                clearInterval(progressInterval);
+                if (ficheGenerationProgressInterval) {
+                    clearInterval(ficheGenerationProgressInterval);
+                    ficheGenerationProgressInterval = null;
+                }
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
@@ -7938,7 +7966,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
             } catch (error) {
                 clearTimeout(timeoutId);
-                clearInterval(progressInterval);
+                if (ficheGenerationProgressInterval) {
+                    clearInterval(ficheGenerationProgressInterval);
+                    ficheGenerationProgressInterval = null;
+                }
 
                 console.error('[Fiche IA] Erreur:', error);
 
@@ -7949,14 +7980,62 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 }
             } finally {
                 ficheGenerationController = null;
+                resetFicheGenerationState();
             }
         }
 
         function cancelFicheGeneration() {
             if (ficheGenerationController) {
                 ficheGenerationController.abort();
-                closeFicheProgressModal();
-                showToast('Generation annulee');
+            }
+            if (ficheGenerationProgressInterval) {
+                clearInterval(ficheGenerationProgressInterval);
+                ficheGenerationProgressInterval = null;
+            }
+            resetFicheGenerationState();
+            closeFicheProgressModal();
+            showToast('Generation annulee');
+        }
+
+        function resetFicheGenerationState() {
+            ficheGenerationInProgress = null;
+            ficheGenerationProspect = null;
+            ficheGenerationStartTime = null;
+            updateFicheButtonState(false);
+        }
+
+        function updateFicheButtonState(isGenerating) {
+            const btn = document.getElementById('btn-generate-fiche');
+            if (!btn) return;
+
+            if (isGenerating) {
+                btn.innerHTML = '<span class="loading-spinner" style="width: 16px; height: 16px; margin-right: 8px;"></span>Generation en cours...';
+                btn.classList.add('generating');
+            } else {
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Generer la fiche';
+                btn.classList.remove('generating');
+            }
+        }
+
+        function hideFicheModal() {
+            const modal = document.getElementById('fiche-progress-modal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        function reopenFicheProgressModal() {
+            const modal = document.getElementById('fiche-progress-modal');
+            if (modal) {
+                modal.classList.add('show');
+                // Mettre a jour le temps affiche
+                if (ficheGenerationStartTime) {
+                    const elapsed = Math.floor((Date.now() - ficheGenerationStartTime) / 1000);
+                    updateFicheProgressTime(elapsed);
+                }
+            } else if (ficheGenerationProspect) {
+                // Recreer le modal si il a ete supprime
+                showFicheProgressModal(ficheGenerationProspect);
             }
         }
 
@@ -7970,9 +8049,15 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             modal.id = 'fiche-progress-modal';
             modal.innerHTML = `
                 <div class="modal" onclick="event.stopPropagation()" style="max-width: 500px;">
-                    <div class="modal-header">
+                    <div class="modal-header" style="position: relative;">
                         <h2 class="modal-title">Generation Fiche IA</h2>
                         <div class="modal-subtitle">${prospect.company} - ${prospect.sector || 'Business'}</div>
+                        <button class="btn-close-modal" onclick="hideFicheModal()" title="Masquer (generation continue en arriere-plan)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
                     </div>
                     <div class="modal-body" style="text-align: center; padding: 2rem;">
                         <div class="loading-spinner" style="margin: 0 auto 1.5rem; width: 48px; height: 48px;"></div>
@@ -13673,6 +13758,35 @@ Reponds UNIQUEMENT avec le texte du post.`;
         @keyframes pulse-step {
             0%, 100% { transform: translateY(-50%) scale(1); opacity: 1; }
             50% { transform: translateY(-50%) scale(1.2); opacity: 0.7; }
+        }
+
+        /* Bouton close modal */
+        .btn-close-modal {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .btn-close-modal:hover {
+            background: var(--bg-subtle);
+            color: var(--text);
+        }
+
+        /* Bouton generation en cours */
+        .fiche-ia-generate.generating {
+            pointer-events: auto;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+            animation: pulse-generating 2s ease-in-out infinite;
+        }
+        @keyframes pulse-generating {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         /* Success notification top-right */
