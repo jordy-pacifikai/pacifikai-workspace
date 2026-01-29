@@ -6566,6 +6566,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             // Auto-sync from Airtable on load
             syncFromAirtable();
 
+            // Restaurer l'etat de generation de fiche si en cours
+            restoreFicheGenerationState();
+
             // Check Claude API key
             if (!getClaudeApiKey()) {
                 console.log('%c[PACIFIK\'AI] Pour activer le chatbot IA, configure ta clé:', 'color: orange; font-weight: bold');
@@ -7869,6 +7872,74 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         let ficheGenerationStartTime = null;
         let ficheGenerationProgressInterval = null;
 
+        // Clé localStorage pour persister l'état de génération
+        const FICHE_GENERATION_STORAGE_KEY = 'pacifikai_fiche_generation';
+
+        // Sauvegarder l'état dans localStorage
+        function saveFicheGenerationState() {
+            if (ficheGenerationInProgress && ficheGenerationProspect) {
+                localStorage.setItem(FICHE_GENERATION_STORAGE_KEY, JSON.stringify({
+                    prospectId: ficheGenerationInProgress,
+                    prospect: ficheGenerationProspect,
+                    startTime: ficheGenerationStartTime,
+                    savedAt: Date.now()
+                }));
+            }
+        }
+
+        // Effacer l'état du localStorage
+        function clearFicheGenerationState() {
+            localStorage.removeItem(FICHE_GENERATION_STORAGE_KEY);
+        }
+
+        // Restaurer l'état depuis localStorage (appelé au chargement)
+        function restoreFicheGenerationState() {
+            const saved = localStorage.getItem(FICHE_GENERATION_STORAGE_KEY);
+            if (!saved) return;
+
+            try {
+                const state = JSON.parse(saved);
+                const elapsed = Date.now() - state.startTime;
+                const maxDuration = 15 * 60 * 1000; // 15 minutes max
+
+                // Si plus de 15 minutes, la generation est probablement terminee ou echouee
+                if (elapsed > maxDuration) {
+                    clearFicheGenerationState();
+                    return;
+                }
+
+                // Restaurer l'etat
+                ficheGenerationInProgress = state.prospectId;
+                ficheGenerationProspect = state.prospect;
+                ficheGenerationStartTime = state.startTime;
+
+                // Afficher le bouton en mode "en cours" si on est sur ce prospect
+                updateFicheButtonState(true);
+
+                // Demarrer le timer de progression
+                ficheGenerationProgressInterval = setInterval(() => {
+                    const elapsedNow = Math.floor((Date.now() - ficheGenerationStartTime) / 1000);
+                    updateFicheProgressTime(elapsedNow);
+
+                    // Auto-clear apres 15 minutes
+                    if (elapsedNow > 15 * 60) {
+                        clearInterval(ficheGenerationProgressInterval);
+                        resetFicheGenerationState();
+                        clearFicheGenerationState();
+                    }
+                }, 1000);
+
+                // Note: on ne peut pas reprendre le fetch, mais au moins l'UI est coherente
+                // Le workflow n8n tourne independamment
+                console.log('[Fiche IA] Etat restaure - generation en cours pour:', state.prospect.company);
+                showToast('Generation en cours pour ' + state.prospect.company + ' (restauree)');
+
+            } catch (e) {
+                console.error('[Fiche IA] Erreur restauration etat:', e);
+                clearFicheGenerationState();
+            }
+        }
+
         async function generateFicheIA() {
             const prospect = prospects.find(p => p.id === currentProspectId);
 
@@ -7893,6 +7964,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             ficheGenerationInProgress = prospect.id;
             ficheGenerationProspect = prospect;
             ficheGenerationStartTime = Date.now();
+
+            // Sauvegarder l'etat dans localStorage
+            saveFicheGenerationState();
 
             // Mettre a jour le bouton
             updateFicheButtonState(true);
@@ -8001,6 +8075,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             ficheGenerationInProgress = null;
             ficheGenerationProspect = null;
             ficheGenerationStartTime = null;
+            clearFicheGenerationState(); // Effacer localStorage
             updateFicheButtonState(false);
         }
 
