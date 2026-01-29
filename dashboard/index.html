@@ -7878,12 +7878,16 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         // Sauvegarder l'état dans localStorage
         function saveFicheGenerationState() {
             if (ficheGenerationInProgress && ficheGenerationProspect) {
-                localStorage.setItem(FICHE_GENERATION_STORAGE_KEY, JSON.stringify({
+                const stateToSave = {
                     prospectId: ficheGenerationInProgress,
                     prospect: ficheGenerationProspect,
                     startTime: ficheGenerationStartTime,
                     savedAt: Date.now()
-                }));
+                };
+                localStorage.setItem(FICHE_GENERATION_STORAGE_KEY, JSON.stringify(stateToSave));
+                console.log('[Fiche IA] Etat sauvegarde:', stateToSave);
+            } else {
+                console.log('[Fiche IA] Pas de sauvegarde - inProgress:', ficheGenerationInProgress, 'prospect:', ficheGenerationProspect);
             }
         }
 
@@ -7894,8 +7898,13 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
         // Restaurer l'état depuis localStorage (appelé au chargement)
         function restoreFicheGenerationState() {
+            console.log('[Fiche IA] Tentative de restauration...');
             const saved = localStorage.getItem(FICHE_GENERATION_STORAGE_KEY);
-            if (!saved) return;
+            console.log('[Fiche IA] Donnees localStorage:', saved);
+            if (!saved) {
+                console.log('[Fiche IA] Aucune donnee a restaurer');
+                return;
+            }
 
             try {
                 const state = JSON.parse(saved);
@@ -8124,11 +8133,11 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             modal.id = 'fiche-progress-modal';
             modal.innerHTML = `
                 <div class="modal" onclick="event.stopPropagation()" style="max-width: 500px;">
-                    <div class="modal-header" style="position: relative;">
+                    <div class="modal-header" style="position: relative; padding-right: 40px;">
                         <h2 class="modal-title">Generation Fiche IA</h2>
                         <div class="modal-subtitle">${prospect.company} - ${prospect.sector || 'Business'}</div>
                         <button class="btn-close-modal" onclick="hideFicheModal()" title="Masquer (generation continue en arriere-plan)">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
                                 <line x1="18" y1="6" x2="6" y2="18"/>
                                 <line x1="6" y1="6" x2="18" y2="18"/>
                             </svg>
