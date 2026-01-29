@@ -1655,6 +1655,72 @@
             height: 16px;
         }
 
+        .asset-card-menu {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .asset-card {
+            position: relative;
+        }
+
+        .asset-card:hover .asset-card-menu {
+            opacity: 1;
+        }
+
+        .asset-card-menu:hover {
+            background: var(--bg-tertiary);
+            color: var(--text);
+        }
+
+        .asset-menu-dropdown {
+            position: fixed;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            padding: 4px;
+            z-index: 10000;
+            min-width: 140px;
+        }
+
+        .asset-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .asset-menu-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .asset-menu-item.danger {
+            color: #ef4444;
+        }
+
+        .asset-menu-item.danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
         /* Asset Preview Modal */
         .asset-preview-container {
             width: 90vw;
@@ -1988,6 +2054,7 @@
             display: flex;
             gap: 0.5rem;
             margin-bottom: 0.75rem;
+            align-items: center;
         }
 
         .note-input {
@@ -6240,7 +6307,7 @@
                     </div>
                     <div class="note-input-wrap">
                         <textarea class="note-input" id="modal-note-input" placeholder="Ajouter une note..." rows="2"></textarea>
-                        <button class="btn btn-primary" onclick="addNote()" style="align-self: flex-end;">
+                        <button class="btn btn-primary" onclick="addNote()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
                     </div>
@@ -6484,6 +6551,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                         Object.values(PROSPECT_ASSETS).reduce((acc, p) => acc + (p.files?.length || 0), 0), 'fichiers');
                     console.log('[Assets] Genere le:', manifest.generated);
 
+                    // Fusionner avec les assets stockes en localStorage (fiches generees)
+                    mergeLocalStorageAssets();
+
                     // Re-render if already loaded
                     if (prospects.length > 0) {
                         renderProspectsViews();
@@ -6495,6 +6565,45 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             } catch (error) {
                 console.error('[Assets] Erreur chargement manifest:', error);
                 loadAssetsFallback();
+            }
+        }
+
+        // Fusionner les assets du localStorage avec PROSPECT_ASSETS
+        function mergeLocalStorageAssets() {
+            const savedAssets = localStorage.getItem('assetsManifest_updated');
+            if (!savedAssets) return;
+
+            try {
+                const parsed = JSON.parse(savedAssets);
+                const localProspects = parsed.prospects || {};
+
+                for (const [company, data] of Object.entries(localProspects)) {
+                    if (!data.files) continue;
+
+                    // Filtrer seulement les fichiers generes (isGenerated: true)
+                    const generatedFiles = data.files.filter(f => f.isGenerated === true);
+
+                    if (generatedFiles.length === 0) continue;
+
+                    // Creer l'entree si elle n'existe pas
+                    if (!PROSPECT_ASSETS[company]) {
+                        PROSPECT_ASSETS[company] = { folder: company, files: [] };
+                    }
+
+                    // Ajouter les fichiers generes s'ils n'existent pas deja
+                    for (const genFile of generatedFiles) {
+                        const exists = PROSPECT_ASSETS[company].files.some(f =>
+                            f.file === genFile.file || (f.isGenerated && genFile.isGenerated)
+                        );
+                        if (!exists) {
+                            PROSPECT_ASSETS[company].files.unshift(genFile);
+                        }
+                    }
+                }
+
+                console.log('[Assets] Fiches generees fusionnees depuis localStorage');
+            } catch (e) {
+                console.error('[Assets] Erreur fusion localStorage:', e);
             }
         }
 
@@ -7632,16 +7741,20 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     doc: '📄'
                 };
 
-                assetsGrid.innerHTML = sortedFiles.map(f => `
+                assetsGrid.innerHTML = sortedFiles.map((f, idx) => `
                     <div class="asset-card ${f.favorite ? 'favorite' : ''}" onclick="openAsset('${assets.folder}', '${f.file}')">
                         <div class="asset-card-icon ${f.type}">${typeIcons[f.type] || '📄'}</div>
                         <div class="asset-card-content">
                             <div class="asset-card-name">${f.favorite ? '★ ' : ''}${f.name}</div>
                             <div class="asset-card-desc">${f.desc}</div>
                         </div>
-                        <div class="asset-card-arrow">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-                        </div>
+                        <button class="asset-card-menu" onclick="event.stopPropagation(); showAssetMenu(event, '${prospect.company}', '${f.file}')" title="Options">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                <circle cx="12" cy="5" r="2"/>
+                                <circle cx="12" cy="12" r="2"/>
+                                <circle cx="12" cy="19" r="2"/>
+                            </svg>
+                        </button>
                     </div>
                 `).join('');
             } else {
@@ -7668,22 +7781,39 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             currentProspectId = null;
         }
 
-        function openAsset(folder, file) {
-            // Chemin relatif depuis le dossier dashboard (les dossiers clients sont au meme niveau)
-            const relativePath = `../${encodeURIComponent(folder)}/${file.split('/').map(p => encodeURIComponent(p)).join('/')}`;
+        function openAsset(folder, file, directUrl = null) {
+            // Si une URL directe est fournie (Supabase), l'utiliser
+            // Sinon chercher dans le manifest
+            let assetUrl = directUrl;
+
+            if (!assetUrl) {
+                // Chercher l'URL dans PROSPECT_ASSETS
+                const assets = PROSPECT_ASSETS[folder];
+                if (assets && assets.files) {
+                    const assetFile = assets.files.find(f => f.file === file);
+                    if (assetFile && assetFile.url) {
+                        assetUrl = assetFile.url;
+                    }
+                }
+            }
+
+            // Fallback: construire URL relative (pour compatibilite)
+            if (!assetUrl) {
+                assetUrl = `/${encodeURIComponent(folder)}/${file.split('/').map(p => encodeURIComponent(p)).join('/')}`;
+            }
 
             console.log('[openAsset] Folder:', folder);
             console.log('[openAsset] File:', file);
-            console.log('[openAsset] Relative path:', relativePath);
+            console.log('[openAsset] URL:', assetUrl);
 
             const extension = file.split('.').pop().toLowerCase();
             const fileName = file.split('/').pop();
 
             // Ouvrir dans une popup preview
-            openAssetPreview(folder, fileName, relativePath, extension);
+            openAssetPreview(folder, fileName, assetUrl, extension);
         }
 
-        function openAssetPreview(folder, fileName, url, extension) {
+        async function openAssetPreview(folder, fileName, url, extension) {
             // Supprimer popup existante si presente
             const existing = document.getElementById('asset-preview-modal');
             if (existing) existing.remove();
@@ -7693,9 +7823,26 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             modal.id = 'asset-preview-modal';
             modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
-            // Pour les PDFs, on utilise un object/embed, pour le reste iframe
             const isPdf = extension === 'pdf';
-            const iframeSrc = url;
+            const isHtml = ['html', 'htm'].includes(extension);
+            const isMd = extension === 'md';
+
+            // Pour les fichiers HTML depuis Supabase, on fetch et injecte via srcdoc
+            // Car Supabase retourne text/plain au lieu de text/html
+            let iframeContent = '';
+            if (isHtml && url.includes('supabase.co')) {
+                try {
+                    const response = await fetch(url);
+                    const htmlContent = await response.text();
+                    // Echapper les caracteres speciaux pour srcdoc
+                    iframeContent = htmlContent
+                        .replace(/&/g, '&amp;')
+                        .replace(/"/g, '&quot;');
+                } catch (e) {
+                    console.error('Erreur fetch HTML:', e);
+                    iframeContent = '';
+                }
+            }
 
             modal.innerHTML = `
                 <div class="asset-preview-container" onclick="event.stopPropagation()">
@@ -7725,7 +7872,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                             ? `<object data="${url}" type="application/pdf" width="100%" height="100%">
                                  <p>Impossible d'afficher le PDF. <a href="${url}" target="_blank">Telecharger</a></p>
                                </object>`
-                            : `<iframe src="${url}" frameborder="0"></iframe>`
+                            : (iframeContent
+                                ? `<iframe srcdoc="${iframeContent}" frameborder="0"></iframe>`
+                                : `<iframe src="${url}" frameborder="0"></iframe>`)
                         }
                     </div>
                 </div>
@@ -7826,14 +7975,16 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         // ============================================
 
         function checkFicheIA(prospect) {
-            // Cherche si FICHE_RECHERCHE.md existe dans les assets
+            // Cherche si une fiche recherche existe dans les assets
             const assets = getProspectAssets(prospect.company);
             if (!assets || !assets.files) return null;
 
             const ficheFile = assets.files.find(f =>
+                f.name.toLowerCase().includes('fiche recherche') ||
                 f.name.toLowerCase().includes('fiche_recherche') ||
                 f.name.toLowerCase().includes('fiche-recherche') ||
-                f.name.toLowerCase() === 'fiche_recherche.md'
+                f.file?.toLowerCase().includes('fiche_recherche') ||
+                f.isGenerated === true
             );
 
             return ficheFile || null;
@@ -7858,6 +8009,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 badge.textContent = 'Non generee';
                 badge.classList.remove('available');
             }
+
+            // Mettre a jour l'etat du bouton selon si une generation est en cours pour CE prospect
+            const isGeneratingThisProspect = ficheGenerationInProgress === prospect.id;
+            updateFicheButtonState(isGeneratingThisProspect);
         }
 
         // Variable pour stocker la dernière fiche générée
@@ -7922,8 +8077,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 ficheGenerationProspect = state.prospect;
                 ficheGenerationStartTime = state.startTime;
 
-                // Afficher le bouton en mode "en cours" si on est sur ce prospect
-                updateFicheButtonState(true);
+                // Note: Le bouton sera mis a jour automatiquement quand on ouvre un prospect
+                // via updateFicheIASection()
 
                 // Demarrer le timer de progression
                 ficheGenerationProgressInterval = setInterval(() => {
@@ -8022,12 +8177,14 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 const data = await response.json();
                 console.log('[Fiche IA] Reponse recue:', data);
 
-                if (data.success && data.markdown) {
-                    // Stocker la fiche générée
+                if (data.success && (data.html || data.markdown)) {
+                    // Stocker la fiche générée (supporte html ou markdown)
+                    const content = data.html || data.markdown;
                     lastGeneratedFiche = {
                         company: prospect.company,
-                        markdown: data.markdown,
-                        filename: data.filename || 'FICHE_RECHERCHE.md',
+                        html: data.html,
+                        markdown: data.markdown || data.html,
+                        filename: data.filename || 'FICHE_RECHERCHE.html',
                         generatedAt: data.generatedAt
                     };
 
@@ -8233,7 +8390,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     ${prospect.company} - Deep Research complete
                 </p>
                 <div style="background: var(--bg-subtle); border-radius: 8px; padding: 1rem; text-align: left; max-height: 200px; overflow-y: auto; margin-bottom: 1rem;">
-                    <pre style="font-size: 0.75rem; white-space: pre-wrap; margin: 0;">${data.markdown.substring(0, 500)}...</pre>
+                    <pre style="font-size: 0.75rem; white-space: pre-wrap; margin: 0;">${(data.html || data.markdown || '').substring(0, 500)}...</pre>
                 </div>
             `;
 
@@ -8958,15 +9115,15 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
         function addFicheToAssets(company, data) {
             // Ajouter la fiche aux assets locaux (pour l'affichage)
-            if (!assetsManifest.prospects[company]) {
-                assetsManifest.prospects[company] = {
+            if (!PROSPECT_ASSETS[company]) {
+                PROSPECT_ASSETS[company] = {
                     folder: company,
                     files: []
                 };
             }
 
             // Vérifier si FICHE_RECHERCHE existe déjà
-            const existingIndex = assetsManifest.prospects[company].files.findIndex(
+            const existingIndex = PROSPECT_ASSETS[company].files.findIndex(
                 f => f.name === 'Fiche Recherche IA' || f.file?.includes('FICHE_RECHERCHE')
             );
 
@@ -8981,13 +9138,13 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             };
 
             if (existingIndex >= 0) {
-                assetsManifest.prospects[company].files[existingIndex] = ficheEntry;
+                PROSPECT_ASSETS[company].files[existingIndex] = ficheEntry;
             } else {
-                assetsManifest.prospects[company].files.unshift(ficheEntry);
+                PROSPECT_ASSETS[company].files.unshift(ficheEntry);
             }
 
             // Sauvegarder le manifest mis a jour dans localStorage
-            localStorage.setItem('assetsManifest_updated', JSON.stringify(assetsManifest));
+            localStorage.setItem('assetsManifest_updated', JSON.stringify({prospects: PROSPECT_ASSETS}));
 
             // Mettre à jour l'affichage de la section Fiche IA
             const prospect = prospects.find(p => p.company === company);
@@ -8996,6 +9153,75 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             }
 
             console.log('[Fiche IA] Asset ajoute pour', company, '- Telecharge le HTML et place-le dans:', company + '/FICHE_RECHERCHE.html');
+        }
+
+        // Menu contextuel pour les assets
+        let currentAssetMenu = null;
+
+        function showAssetMenu(event, company, fileName) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Fermer menu existant
+            closeAssetMenu();
+
+            const menu = document.createElement('div');
+            menu.className = 'asset-menu-dropdown';
+            menu.innerHTML = `
+                <button class="asset-menu-item danger" onclick="deleteAsset('${company}', '${fileName}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    Supprimer
+                </button>
+            `;
+
+            // Positionner le menu
+            menu.style.left = event.clientX + 'px';
+            menu.style.top = event.clientY + 'px';
+
+            document.body.appendChild(menu);
+            currentAssetMenu = menu;
+
+            // Fermer au clic ailleurs
+            setTimeout(() => {
+                document.addEventListener('click', closeAssetMenu, { once: true });
+            }, 10);
+        }
+
+        function closeAssetMenu() {
+            if (currentAssetMenu) {
+                currentAssetMenu.remove();
+                currentAssetMenu = null;
+            }
+        }
+
+        function deleteAsset(company, fileName) {
+            closeAssetMenu();
+
+            if (!PROSPECT_ASSETS[company]) return;
+
+            // Trouver et supprimer le fichier
+            const fileIndex = PROSPECT_ASSETS[company].files.findIndex(f => f.file === fileName);
+            if (fileIndex === -1) return;
+
+            const file = PROSPECT_ASSETS[company].files[fileIndex];
+
+            if (!confirm(`Supprimer "${file.name}" ?`)) return;
+
+            PROSPECT_ASSETS[company].files.splice(fileIndex, 1);
+
+            // Sauvegarder
+            localStorage.setItem('assetsManifest_updated', JSON.stringify({prospects: PROSPECT_ASSETS}));
+
+            // Re-render le prospect detail
+            const prospect = prospects.find(p => p.company === company);
+            if (prospect) {
+                openProspectDetail(prospect.id);
+            }
+
+            showToast('Asset supprime');
+            console.log('[Assets] Supprime:', fileName, 'pour', company);
         }
 
         function openFicheIA() {
