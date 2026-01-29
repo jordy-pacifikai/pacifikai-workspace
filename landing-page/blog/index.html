@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | PACIFIK'AI - Automatisation IA en Polynésie</title>
+    <meta name="description" content="Découvrez comment les entreprises leaders utilisent l'IA pour transformer leurs opérations. Cas concrets, études et insights.">
+
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <link rel="apple-touch-icon" href="../assets/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a0a12;
+            --bg-card: #0f1020;
+            --bg-card-hover: #151630;
+            --border: #1a1a2e;
+            --border-light: #252540;
+            --text: #ffffff;
+            --text-secondary: #8888aa;
+            --text-dim: #555570;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.4);
+            --accent-soft: rgba(59, 130, 246, 0.1);
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* Nav */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 42px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text);
+        }
+
+        .nav-cta {
+            padding: 0.6rem 1.2rem;
+            background: var(--text);
+            color: var(--bg);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent);
+            color: var(--text);
+        }
+
+        /* Hero Blog */
+        .blog-hero {
+            padding: 10rem 3rem 4rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .blog-hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .blog-hero h1 .highlight {
+            color: var(--accent);
+        }
+
+        .blog-hero p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Categories */
+        .categories {
+            padding: 2rem 3rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .category-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font);
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            border-color: var(--accent);
+            color: var(--text);
+            background: var(--accent-soft);
+        }
+
+        /* Articles Grid */
+        .articles-section {
+            padding: 4rem 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .article-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.1);
+        }
+
+        .article-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--accent-soft) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .article-image-icon {
+            font-size: 4rem;
+            opacity: 0.3;
+        }
+
+        .article-category {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            padding: 0.35rem 0.75rem;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .article-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+        }
+
+        .article-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 0.75rem;
+        }
+
+        .article-excerpt {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .article-read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+
+        .article-read-more svg {
+            transition: transform 0.2s;
+        }
+
+        .article-card:hover .article-read-more svg {
+            transform: translateX(4px);
+        }
+
+        /* Featured Article */
+        .featured-article {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 0;
+        }
+
+        .featured-article .article-image {
+            height: 100%;
+            min-height: 300px;
+        }
+
+        .featured-article .article-content {
+            padding: 2rem;
+        }
+
+        .featured-article .article-title {
+            font-size: 1.5rem;
+        }
+
+        .featured-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Newsletter CTA */
+        .newsletter-cta {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .newsletter-cta h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .newsletter-cta p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.9rem;
+        }
+
+        .newsletter-form input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .newsletter-form input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .newsletter-form button {
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: 6px;
+            font-family: var(--font);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .newsletter-form button:hover {
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem 3rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            nav { padding: 1rem 1.5rem; }
+            .nav-links { display: none; }
+            .blog-hero { padding: 8rem 1.5rem 3rem; }
+            .categories { padding: 1.5rem; }
+            .articles-section { padding: 2rem 1.5rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+            .featured-article { grid-template-columns: 1fr; }
+            .featured-article .article-image { min-height: 200px; }
+            .newsletter-cta { padding: 2rem 1.5rem; }
+            .newsletter-form { flex-direction: column; }
+            footer { padding: 1.5rem; flex-direction: column; gap: 1rem; }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .article-card {
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .article-card:nth-child(1) { animation-delay: 0.1s; }
+        .article-card:nth-child(2) { animation-delay: 0.2s; }
+        .article-card:nth-child(3) { animation-delay: 0.3s; }
+        .article-card:nth-child(4) { animation-delay: 0.4s; }
+        .article-card:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="../index.html" class="logo">
+            <img src="../assets/logo.png" alt="PACIFIK'AI" class="logo-img">
+        </a>
+        <ul class="nav-links">
+            <li><a href="../index.html#process">Processus</a></li>
+            <li><a href="../index.html#services">Services</a></li>
+            <li><a href="index.html" class="active">Blog</a></li>
+            <li><a href="../index.html#contact">Contact</a></li>
+        </ul>
+        <a href="../index.html#contact" class="nav-cta">Nous contacter</a>
+    </nav>
+
+    <section class="blog-hero">
+        <h1>L'IA en <span class="highlight">action</span></h1>
+        <p>Cas concrets d'entreprises qui transforment leurs operations avec l'intelligence artificielle.</p>
+    </section>
+
+    <section class="categories">
+        <button class="category-btn active" data-category="all">Tous</button>
+        <button class="category-btn" data-category="aviation">Aviation</button>
+        <button class="category-btn" data-category="hotellerie">Hotellerie</button>
+        <button class="category-btn" data-category="restauration">Restauration</button>
+        <button class="category-btn" data-category="tourisme">Tourisme</button>
+        <button class="category-btn" data-category="finance">Finance</button>
+        <button class="category-btn" data-category="logistique">Logistique</button>
+    </section>
+
+    <section class="articles-section">
+        <div class="articles-grid">
+
+            <!-- FEATURED: Article Aviation -->
+            <a href="articles/klm-service-client-ia.html" class="article-card featured-article" data-category="aviation">
+                <div class="article-image">
+                    <span class="article-category">Aviation</span>
+                    <img src="https://v3b.fal.media/files/b/0a8c5bb7/AmFVDpoLDQsO9W7xPFti1_cff11274c3d141b7ae8052110a4b1fad.png" alt="KLM IA service client">
+                </div>
+                <div class="article-content">
+                    <span class="featured-badge">A la une</span>
+                    <div class="article-meta">
+                        <span>29 janvier 2026</span>
+                        <span>8 min de lecture</span>
+                    </div>
+                    <h2 class="article-title">Comment KLM a reduit de 50% le temps de reponse client grace a l'IA</h2>
+                    <p class="article-excerpt">La compagnie aerienne neerlandaise a deploye un agent IA qui traite 1.7 million de messages par an. Decouvrez comment cette technologie pourrait transformer le service client des compagnies polynesiennes.</p>
+                    <span class="article-read-more">
+                        Lire l'article
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Article Hotellerie -->
+            <a href="articles/marriott-chatbot-reservation.html" class="article-card" data-category="hotellerie">
+                <div class="article-image">
+                    <span class="article-category">Hotellerie</span>
+                    <img src="https://v3b.fal.media/files/b/0a8c5bba/JjL4e8xzZQKqn1msaHopY_a4daac51f27343cba2456cf3fb5905ef.png" alt="Marriott chatbot IA">
+                </div>
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span>29 janvier 2026</span>
+                        <span>7 min de lecture</span>
+                    </div>
+                    <h2 class="article-title">Marriott : +35% de reservations directes avec son chatbot IA</h2>
+                    <p class="article-excerpt">Le geant hotelier a deploye un assistant virtuel sur WhatsApp qui gere les reservations 24/7 et reduit la dependance aux OTAs.</p>
+                    <span class="article-read-more">
+                        Lire l'article
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Article Restauration -->
+            <a href="articles/starbucks-deep-brew-ia.html" class="article-card" data-category="restauration">
+                <div class="article-image">
+                    <span class="article-category">Restauration</span>
+                    <img src="https://v3b.fal.media/files/b/0a8c5bbc/z7vc-eBDfbizjAurNlPEc_b405efbecdbb46efb4ad552ee5acce5c.png" alt="Starbucks Deep Brew IA">
+                </div>
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span>29 janvier 2026</span>
+                        <span>8 min de lecture</span>
+                    </div>
+                    <h2 class="article-title">Starbucks Deep Brew : l'IA qui personnalise 400 millions de commandes</h2>
+                    <p class="article-excerpt">Comment le geant du cafe utilise l'IA pour personnaliser l'experience client et optimiser ses operations a grande echelle.</p>
+                    <span class="article-read-more">
+                        Lire l'article
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <!-- Article Finance -->
+            <a href="articles/hsbc-extraction-documents.html" class="article-card" data-category="finance">
+                <div class="article-image">
+                    <span class="article-category">Finance</span>
+                    <img src="https://v3b.fal.media/files/b/0a8c5bbe/Wnx3WF5OZR3_FooVxKaD8_e8bafb6f3a0540f2b4c82db35145e4c9.png" alt="HSBC extraction IA documents">
+                </div>
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span>29 janvier 2026</span>
+                        <span>7 min de lecture</span>
+                    </div>
+                    <h2 class="article-title">HSBC economise 200 000 heures/an avec l'extraction IA</h2>
+                    <p class="article-excerpt">La banque mondiale automatise le traitement de millions de documents. Un modele applicable aux cabinets comptables polynesiens.</p>
+                    <span class="article-read-more">
+                        Lire l'article
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+        </div>
+
+        <!-- Newsletter CTA -->
+        <div class="newsletter-cta">
+            <h3>Restez informe</h3>
+            <p>Recevez nos analyses sur l'IA et l'automatisation, adaptees au marche polynesien.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Votre email" required>
+                <button type="submit">S'inscrire</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-left">
+            &copy; 2026 PACIFIK'AI - Tahiti, Polynesie francaise
+        </div>
+        <div class="footer-links">
+            <a href="https://www.facebook.com/profile.php?id=61587101037690" target="_blank">Facebook</a>
+            <a href="mailto:jordy@pacifikai.com">Contact</a>
+        </div>
+    </footer>
+
+    <script>
+        // Category Filter
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const articleCards = document.querySelectorAll('.article-card');
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Filter articles
+                const category = btn.dataset.category;
+                articleCards.forEach(card => {
+                    if (category === 'all' || card.dataset.category === category) {
+                        card.style.display = 'flex';
+                        card.style.animation = 'fadeIn 0.6s ease forwards';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Newsletter form
+        document.querySelector('.newsletter-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Merci ! Vous serez notifie des prochains articles.');
+        });
+    </script>
+</body>
+</html>
