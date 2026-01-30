@@ -369,6 +369,11 @@
             padding: 1rem 1.25rem;
         }
 
+        /* Task Kanban (4 columns: A faire, En cours, Bloque, Termine) */
+        #task-kanban {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
         .pipeline-col {
             background: var(--bg);
             border-radius: 8px;
@@ -380,6 +385,30 @@
         .pipeline-col.drag-over {
             background: rgba(59, 130, 246, 0.1);
             border: 1px dashed var(--accent);
+        }
+
+        /* Task Kanban Columns (uses .pipeline-column instead of .pipeline-col) */
+        .pipeline-column {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 0.75rem;
+            min-height: 300px;
+            transition: background 0.2s ease;
+        }
+
+        .pipeline-cards {
+            min-height: 200px;
+        }
+
+        .pipeline-cards.drag-over {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px dashed var(--accent);
+            border-radius: 6px;
+        }
+
+        .task-card.dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
         }
 
         .pipeline-header {
@@ -1621,7 +1650,7 @@
         .asset-card-icon.wf { background: rgba(249, 115, 22, 0.15); }
         .asset-card-icon.doc { background: rgba(59, 130, 246, 0.15); }
 
-        .asset-card-content { flex: 1; min-width: 0; }
+        .asset-card-content { flex: 1; min-width: 0; padding-right: 28px; }
 
         .asset-card-name {
             font-size: 0.875rem;
@@ -4945,14 +4974,22 @@
             <div class="view" id="view-tasks">
                 <header class="header">
                     <div class="header-left">
-                        <h1>Taches</h1>
-                        <p>Gestion des taches par projet</p>
+                        <h1>Gestion des Taches</h1>
+                        <p>Suivi des taches par projet et assignation</p>
                     </div>
                     <div class="header-actions">
+                        <select class="filter-select" id="task-assignee-filter" onchange="filterTasks()">
+                            <option value="all">Tous</option>
+                            <option value="Jordy">Jordy</option>
+                            <option value="Honovai">Honovai</option>
+                            <option value="unassigned">Non assigne</option>
+                        </select>
                         <select class="filter-select" id="task-project-filter" onchange="filterTasks()">
                             <option value="all">Tous les projets</option>
                             <option value="ATN">Air Tahiti Nui</option>
                             <option value="PACIFIKAI">PACIFIK'AI</option>
+                            <option value="HVC">High Value Capital</option>
+                            <option value="COWAN">Cowan Motor</option>
                             <option value="other">Autres</option>
                         </select>
                         <select class="filter-select" id="task-priority-filter" onchange="filterTasks()">
@@ -4961,7 +4998,11 @@
                             <option value="Normal">Normal</option>
                             <option value="Faible">Faible</option>
                         </select>
-                        <button class="btn btn-primary" onclick="addTask()">
+                        <button class="btn btn-ghost" onclick="loadTasksFromAirtable()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            Sync
+                        </button>
+                        <button class="btn btn-primary" onclick="openTaskModal()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                             Nouvelle tache
                         </button>
@@ -6328,6 +6369,137 @@
         </div>
     </div>
 
+    <!-- Task Edit Modal -->
+    <div class="modal-overlay" id="task-modal" onclick="closeTaskModal(event)">
+        <div class="modal" onclick="event.stopPropagation()" style="max-width: 600px;">
+            <div class="modal-header">
+                <div class="modal-title-section">
+                    <h2 class="modal-title" id="task-modal-title">Nouvelle Tache</h2>
+                    <div class="modal-subtitle" id="task-modal-subtitle">Creer une nouvelle tache</div>
+                </div>
+                <button class="modal-close" onclick="closeTaskModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <form id="task-form" onsubmit="saveTask(event)">
+                    <input type="hidden" id="task-edit-id">
+
+                    <!-- Title -->
+                    <div class="edit-form-group" style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Titre de la tache *</label>
+                        <input type="text" id="task-title" required placeholder="Ex: Preparer proposition commerciale" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem;">
+                    </div>
+
+                    <!-- Row: Project + Priority -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="edit-form-group">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Projet</label>
+                            <select id="task-project" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem;">
+                                <option value="">Aucun projet</option>
+                                <option value="ATN">Air Tahiti Nui</option>
+                                <option value="PACIFIKAI">PACIFIK'AI</option>
+                                <option value="HVC">High Value Capital</option>
+                                <option value="COWAN">Cowan Motor</option>
+                            </select>
+                        </div>
+                        <div class="edit-form-group">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Priorite</label>
+                            <select id="task-priority" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem;">
+                                <option value="Normal">Normal</option>
+                                <option value="Urgent">Urgent</option>
+                                <option value="Faible">Faible</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Row: Assignee + Due Date -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="edit-form-group">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Assigne a</label>
+                            <select id="task-assignee" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem;">
+                                <option value="">Non assigne</option>
+                                <option value="Jordy">Jordy</option>
+                                <option value="Honovai">Honovai</option>
+                            </select>
+                        </div>
+                        <div class="edit-form-group">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Date d'echeance</label>
+                            <input type="date" id="task-due-date" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem;">
+                        </div>
+                    </div>
+
+                    <!-- Row: Status + Estimated Time -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="edit-form-group">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Statut</label>
+                            <select id="task-status" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem;">
+                                <option value="À faire">A faire</option>
+                                <option value="En cours">En cours</option>
+                                <option value="Bloqué">Bloque</option>
+                                <option value="Terminé">Termine</option>
+                            </select>
+                        </div>
+                        <div class="edit-form-group">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Temps estime (heures)</label>
+                            <input type="number" id="task-estimated-time" min="0" step="0.5" placeholder="Ex: 2" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem;">
+                        </div>
+                    </div>
+
+                    <!-- Linked Prospect -->
+                    <div class="edit-form-group" style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Prospect lie</label>
+                        <select id="task-prospect" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem;">
+                            <option value="">Aucun prospect</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="edit-form-group" style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Description</label>
+                        <textarea id="task-description" rows="3" placeholder="Details de la tache..." style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem; resize: vertical;"></textarea>
+                    </div>
+
+                    <!-- Comments Section (only in edit mode) -->
+                    <div id="task-comments-section" style="display: none; margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Commentaires</label>
+                        <div id="task-comments-list" style="max-height: 150px; overflow-y: auto; margin-bottom: 0.5rem;"></div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="task-new-comment" placeholder="Ajouter un commentaire..." style="flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.75rem; color: var(--text); font-size: 0.8125rem;">
+                            <button type="button" class="btn btn-ghost" onclick="addTaskComment()" style="padding: 0.5rem 0.75rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- History Section (only in edit mode) -->
+                    <div id="task-history-section" style="display: none; margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Historique</label>
+                        <div id="task-history-list" style="max-height: 120px; overflow-y: auto; font-size: 0.75rem; color: var(--text-dim);"></div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <div>
+                            <button type="button" id="task-delete-btn" class="btn btn-ghost" onclick="deleteCurrentTask()" style="display: none; color: var(--red);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                Supprimer
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button type="button" class="btn btn-ghost" onclick="closeTaskModal()">Annuler</button>
+                            <button type="submit" class="btn btn-primary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span id="task-save-btn-text">Creer</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         console.log('[PACIFIKAI Dashboard] Script chargement debut...');
 
@@ -6355,6 +6527,10 @@
         const TASKS_TABLE_ID = 'tblOqUUWT2ExGfjGw';
         let currentTaskProjectFilter = 'all';
         let currentTaskPriorityFilter = 'all';
+        let currentTaskAssigneeFilter = 'all';
+        let currentEditingTaskId = null;
+        let taskComments = {}; // { taskId: [{ text, date, author }] }
+        let taskHistory = {}; // { taskId: [{ action, date, details }] }
 
         // Content Calendar Table Config
         const CONTENT_TABLE_ID = 'tblj296C1kSmUcVvO';
@@ -6392,6 +6568,28 @@
             console.log('Aucune clé API configurée. Utilise: configureClaudeKey("sk-ant-...")');
             return false;
         };
+
+        // Fonction pour supprimer toutes les fiches generees du localStorage
+        window.clearAllFiches = function() {
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('fiche_') || key === 'pacifikai_fiche_generation')) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            console.log('Fiches supprimees:', keysToRemove);
+            if (typeof showToast === 'function') showToast(keysToRemove.length + ' fiches supprimees du localStorage');
+            return keysToRemove;
+        };
+
+        // Auto-clear au chargement si parametre URL ?clearfiches=1
+        if (new URLSearchParams(window.location.search).get('clearfiches') === '1') {
+            window.clearAllFiches();
+            // Retirer le parametre de l'URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
 
         const CLAUDE_CONFIG = {
             get apiKey() { return getClaudeApiKey(); },
@@ -6958,17 +7156,45 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     headers: { 'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}` }
                 });
                 const data = await res.json();
-                airtableTasks = data.records.map(r => ({
-                    id: r.id,
-                    title: r.fields['Tâche'] || '',
-                    description: r.fields['Description'] || '',
-                    status: r.fields['Status'] || 'À faire',
-                    priority: r.fields['Priorité'] || 'Normal',
-                    dueDate: r.fields['Due Date'] || null,
-                    hours: r.fields['Temps estimé (h)'] || 0,
-                    project: extractProject(r.fields['Tâche'] || '')
-                }));
+                airtableTasks = data.records.map(r => {
+                    // Parse metadata from description if present
+                    let desc = r.fields['Description'] || '';
+                    let assignee = '';
+                    let prospectId = '';
+
+                    // Check for JSON metadata at end of description
+                    const metaMatch = desc.match(/\n---META---\n(.+)$/);
+                    if (metaMatch) {
+                        try {
+                            const meta = JSON.parse(metaMatch[1]);
+                            assignee = meta.assignee || '';
+                            prospectId = meta.prospectId || '';
+                            desc = desc.replace(/\n---META---\n.+$/, '');
+                        } catch(e) {}
+                    }
+
+                    return {
+                        id: r.id,
+                        title: r.fields['Tâche'] || '',
+                        description: desc,
+                        status: r.fields['Status'] || 'À faire',
+                        priority: r.fields['Priorité'] || 'Normal',
+                        dueDate: r.fields['Due Date'] || null,
+                        hours: r.fields['Temps estimé (h)'] || 0,
+                        project: extractProject(r.fields['Tâche'] || ''),
+                        assignee: assignee,
+                        prospectId: prospectId
+                    };
+                });
+
+                // Load comments and history from localStorage
+                const savedComments = localStorage.getItem('pk_task_comments');
+                const savedHistory = localStorage.getItem('pk_task_history');
+                if (savedComments) taskComments = JSON.parse(savedComments);
+                if (savedHistory) taskHistory = JSON.parse(savedHistory);
+
                 renderTasks();
+                setupTaskDragAndDrop();
             } catch (err) {
                 console.error('Erreur chargement tasks Airtable:', err);
             }
@@ -6982,16 +7208,20 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         function filterTasks() {
             currentTaskProjectFilter = document.getElementById('task-project-filter').value;
             currentTaskPriorityFilter = document.getElementById('task-priority-filter').value;
+            currentTaskAssigneeFilter = document.getElementById('task-assignee-filter').value;
             renderTasks();
         }
 
         function getFilteredTasks() {
             return airtableTasks.filter(t => {
                 const projectMatch = currentTaskProjectFilter === 'all' ||
-                    (currentTaskProjectFilter === 'other' && !['ATN', 'PACIFIKAI'].includes(t.project)) ||
+                    (currentTaskProjectFilter === 'other' && !['ATN', 'PACIFIKAI', 'HVC', 'COWAN'].includes(t.project)) ||
                     t.project === currentTaskProjectFilter;
                 const priorityMatch = currentTaskPriorityFilter === 'all' || t.priority === currentTaskPriorityFilter;
-                return projectMatch && priorityMatch;
+                const assigneeMatch = currentTaskAssigneeFilter === 'all' ||
+                    (currentTaskAssigneeFilter === 'unassigned' && !t.assignee) ||
+                    t.assignee === currentTaskAssigneeFilter;
+                return projectMatch && priorityMatch && assigneeMatch;
             });
         }
 
@@ -7022,57 +7252,333 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 document.getElementById(cfg.count).textContent = items.length;
                 document.getElementById(cfg.el).innerHTML = items.map(t => renderTaskCard(t)).join('');
             });
+
+            // Re-setup drag and drop after render
+            setupTaskDragAndDrop();
         }
 
         function renderTaskCard(t) {
             const priorityClass = { 'Urgent': 'hot', 'Normal': '', 'Faible': 'tiede' }[t.priority] || '';
             const dueStr = t.dueDate ? new Date(t.dueDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '';
             const isOverdue = t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'Terminé';
+            const assigneeInitial = t.assignee ? t.assignee.charAt(0).toUpperCase() : '';
+            const assigneeColor = t.assignee === 'Jordy' ? 'var(--accent)' : t.assignee === 'Honovai' ? 'var(--purple)' : 'var(--text-dim)';
 
             return `
-                <div class="pipeline-card task-card" data-task-id="${t.id}">
-                    <div class="pipeline-card-name">${t.title.replace(/^\[[^\]]+\]\s*/, '')}</div>
+                <div class="pipeline-card task-card" data-task-id="${t.id}" draggable="true" onclick="openTaskModal('${t.id}')" style="cursor: pointer;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                        <div class="pipeline-card-name" style="flex: 1;">${t.title.replace(/^\[[^\]]+\]\s*/, '')}</div>
+                        ${t.assignee ? `<div style="width: 24px; height: 24px; border-radius: 50%; background: ${assigneeColor}; color: white; font-size: 0.625rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0;" title="${t.assignee}">${assigneeInitial}</div>` : ''}
+                    </div>
                     ${t.description ? `<div class="pipeline-card-company" style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.25rem;">${t.description.substring(0, 60)}${t.description.length > 60 ? '...' : ''}</div>` : ''}
-                    <div class="pipeline-card-footer" style="margin-top: 0.5rem;">
-                        ${t.project !== 'other' ? `<span class="badge" style="background: var(--purple); font-size: 0.65rem; padding: 0.15rem 0.35rem;">${t.project}</span>` : ''}
-                        ${dueStr ? `<span style="font-size: 0.7rem; color: ${isOverdue ? 'var(--red)' : 'var(--text-muted)'};">${dueStr}</span>` : ''}
-                        ${t.priority === 'Urgent' ? `<span class="pipeline-card-priority hot">Urgent</span>` : ''}
+                    <div class="pipeline-card-footer" style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.25rem; align-items: center;">
+                        ${t.project !== 'other' ? `<span class="badge" style="background: var(--purple); font-size: 0.6rem; padding: 0.1rem 0.3rem;">${t.project}</span>` : ''}
+                        ${dueStr ? `<span style="font-size: 0.65rem; color: ${isOverdue ? 'var(--red)' : 'var(--text-muted)'};">${isOverdue ? '⚠ ' : ''}${dueStr}</span>` : ''}
+                        ${t.priority === 'Urgent' ? `<span class="badge" style="background: rgba(239, 68, 68, 0.2); color: var(--red); font-size: 0.6rem; padding: 0.1rem 0.3rem;">Urgent</span>` : ''}
+                        ${t.hours ? `<span style="font-size: 0.6rem; color: var(--text-dim);">${t.hours}h</span>` : ''}
                     </div>
                 </div>
             `;
         }
 
-        function addTask() {
-            const title = prompt('Nouvelle tache (prefixe [PROJET] pour associer):');
-            if (title) {
-                // Create in Airtable
-                createTaskInAirtable(title);
+        // Task Modal Functions
+        function openTaskModal(taskId = null) {
+            currentEditingTaskId = taskId;
+            const modal = document.getElementById('task-modal');
+            const form = document.getElementById('task-form');
+
+            // Populate prospect dropdown
+            populateTaskProspectDropdown();
+
+            if (taskId) {
+                // Edit mode
+                const task = airtableTasks.find(t => t.id === taskId);
+                if (!task) return;
+
+                document.getElementById('task-modal-title').textContent = 'Modifier la Tache';
+                document.getElementById('task-modal-subtitle').textContent = `ID: ${taskId}`;
+                document.getElementById('task-save-btn-text').textContent = 'Enregistrer';
+                document.getElementById('task-delete-btn').style.display = 'inline-flex';
+                document.getElementById('task-comments-section').style.display = 'block';
+                document.getElementById('task-history-section').style.display = 'block';
+
+                // Fill form
+                document.getElementById('task-edit-id').value = taskId;
+                document.getElementById('task-title').value = task.title.replace(/^\[[^\]]+\]\s*/, '');
+                document.getElementById('task-project').value = task.project !== 'other' ? task.project : '';
+                document.getElementById('task-priority').value = task.priority;
+                document.getElementById('task-assignee').value = task.assignee || '';
+                document.getElementById('task-due-date').value = task.dueDate || '';
+                document.getElementById('task-status').value = task.status;
+                document.getElementById('task-estimated-time').value = task.hours || '';
+                document.getElementById('task-prospect').value = task.prospectId || '';
+                document.getElementById('task-description').value = task.description;
+
+                // Render comments
+                renderTaskComments(taskId);
+                // Render history
+                renderTaskHistory(taskId);
+            } else {
+                // Create mode
+                document.getElementById('task-modal-title').textContent = 'Nouvelle Tache';
+                document.getElementById('task-modal-subtitle').textContent = 'Creer une nouvelle tache';
+                document.getElementById('task-save-btn-text').textContent = 'Creer';
+                document.getElementById('task-delete-btn').style.display = 'none';
+                document.getElementById('task-comments-section').style.display = 'none';
+                document.getElementById('task-history-section').style.display = 'none';
+
+                form.reset();
+                document.getElementById('task-status').value = 'À faire';
+                document.getElementById('task-priority').value = 'Normal';
             }
+
+            modal.style.display = 'flex';
         }
 
-        async function createTaskInAirtable(title) {
+        function closeTaskModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('task-modal').style.display = 'none';
+            currentEditingTaskId = null;
+        }
+
+        function populateTaskProspectDropdown() {
+            const select = document.getElementById('task-prospect');
+            select.innerHTML = '<option value="">Aucun prospect</option>';
+            prospects.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.company}</option>`;
+            });
+        }
+
+        async function saveTask(event) {
+            event.preventDefault();
+
+            const taskId = document.getElementById('task-edit-id').value;
+            const title = document.getElementById('task-title').value.trim();
+            const project = document.getElementById('task-project').value;
+            const priority = document.getElementById('task-priority').value;
+            const assignee = document.getElementById('task-assignee').value;
+            const dueDate = document.getElementById('task-due-date').value;
+            const status = document.getElementById('task-status').value;
+            const hours = document.getElementById('task-estimated-time').value;
+            const prospectId = document.getElementById('task-prospect').value;
+            const description = document.getElementById('task-description').value.trim();
+
+            if (!title) {
+                showToast('Le titre est obligatoire');
+                return;
+            }
+
+            // Build full title with project prefix
+            const fullTitle = project ? `[${project}] ${title}` : title;
+
+            // Build description with metadata
+            let fullDesc = description;
+            if (assignee || prospectId) {
+                const meta = { assignee, prospectId };
+                fullDesc += `\n---META---\n${JSON.stringify(meta)}`;
+            }
+
+            const fields = {
+                'Tâche': fullTitle,
+                'Status': status,
+                'Priorité': priority,
+                'Description': fullDesc
+            };
+
+            if (dueDate) fields['Due Date'] = dueDate;
+            if (hours) fields['Temps estimé (h)'] = parseFloat(hours);
+
             try {
-                const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${TASKS_TABLE_ID}`;
+                let url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${TASKS_TABLE_ID}`;
+                let method = 'POST';
+
+                if (taskId) {
+                    url += `/${taskId}`;
+                    method = 'PATCH';
+                    // Add history entry
+                    addTaskHistoryEntry(taskId, 'modified', 'Tache modifiee');
+                }
+
                 const res = await fetch(url, {
-                    method: 'POST',
+                    method,
                     headers: {
                         'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        fields: {
-                            'Tâche': title,
-                            'Status': 'À faire',
-                            'Priorité': 'Normal'
-                        }
-                    })
+                    body: JSON.stringify({ fields })
                 });
+
                 if (res.ok) {
+                    showToast(taskId ? 'Tache mise a jour!' : 'Tache creee!');
+                    closeTaskModal();
+                    await loadTasksFromAirtable();
+
+                    if (!taskId) {
+                        // New task - add history
+                        const data = await res.json();
+                        addTaskHistoryEntry(data.id, 'created', 'Tache creee');
+                    }
+                } else {
+                    const err = await res.text();
+                    console.error('Erreur save task:', err);
+                    showToast('Erreur lors de la sauvegarde');
+                }
+            } catch (err) {
+                console.error('Erreur save task:', err);
+                showToast('Erreur connexion');
+            }
+        }
+
+        async function deleteCurrentTask() {
+            if (!currentEditingTaskId) return;
+
+            if (!confirm('Supprimer cette tache ?')) return;
+
+            try {
+                const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.baseId}/${TASKS_TABLE_ID}/${currentEditingTaskId}`;
+                const res = await fetch(url, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${AIRTABLE_CONFIG.apiKey}` }
+                });
+
+                if (res.ok) {
+                    showToast('Tache supprimee');
+                    closeTaskModal();
                     await loadTasksFromAirtable();
                 }
             } catch (err) {
-                console.error('Erreur creation task:', err);
+                console.error('Erreur delete task:', err);
             }
+        }
+
+        // Task Comments
+        function renderTaskComments(taskId) {
+            const list = document.getElementById('task-comments-list');
+            const comments = taskComments[taskId] || [];
+
+            if (comments.length === 0) {
+                list.innerHTML = '<p style="font-size: 0.75rem; color: var(--text-dim); padding: 0.5rem;">Aucun commentaire</p>';
+                return;
+            }
+
+            list.innerHTML = comments.map(c => `
+                <div style="padding: 0.5rem; background: var(--bg); border-radius: 6px; margin-bottom: 0.375rem; font-size: 0.8125rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                        <span style="font-weight: 500; color: var(--accent);">${c.author || 'Jordy'}</span>
+                        <span style="font-size: 0.6875rem; color: var(--text-dim);">${new Date(c.date).toLocaleDateString('fr-FR')}</span>
+                    </div>
+                    <div style="color: var(--text-muted);">${c.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function addTaskComment() {
+            const input = document.getElementById('task-new-comment');
+            const text = input.value.trim();
+            if (!text || !currentEditingTaskId) return;
+
+            if (!taskComments[currentEditingTaskId]) {
+                taskComments[currentEditingTaskId] = [];
+            }
+
+            taskComments[currentEditingTaskId].push({
+                text,
+                date: new Date().toISOString(),
+                author: 'Jordy' // Could be dynamic based on logged in user
+            });
+
+            localStorage.setItem('pk_task_comments', JSON.stringify(taskComments));
+            renderTaskComments(currentEditingTaskId);
+            addTaskHistoryEntry(currentEditingTaskId, 'comment', `Commentaire ajoute: "${text.substring(0, 30)}..."`);
+            input.value = '';
+        }
+
+        // Task History
+        function renderTaskHistory(taskId) {
+            const list = document.getElementById('task-history-list');
+            const history = taskHistory[taskId] || [];
+
+            if (history.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-dim); padding: 0.25rem;">Aucun historique</p>';
+                return;
+            }
+
+            list.innerHTML = history.slice(-10).reverse().map(h => `
+                <div style="padding: 0.25rem 0; border-bottom: 1px solid var(--border);">
+                    <span style="color: var(--text-muted);">${new Date(h.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                    <span style="margin-left: 0.5rem;">${h.details}</span>
+                </div>
+            `).join('');
+        }
+
+        function addTaskHistoryEntry(taskId, action, details) {
+            if (!taskHistory[taskId]) {
+                taskHistory[taskId] = [];
+            }
+
+            taskHistory[taskId].push({
+                action,
+                details,
+                date: new Date().toISOString()
+            });
+
+            localStorage.setItem('pk_task_history', JSON.stringify(taskHistory));
+        }
+
+        // Drag and Drop for Tasks
+        function setupTaskDragAndDrop() {
+            const cards = document.querySelectorAll('.task-card');
+            const columns = document.querySelectorAll('.pipeline-column .pipeline-cards');
+
+            cards.forEach(card => {
+                card.addEventListener('dragstart', handleTaskDragStart);
+                card.addEventListener('dragend', handleTaskDragEnd);
+            });
+
+            columns.forEach(col => {
+                col.addEventListener('dragover', handleTaskDragOver);
+                col.addEventListener('dragleave', handleTaskDragLeave);
+                col.addEventListener('drop', handleTaskDrop);
+            });
+        }
+
+        let draggedTaskId = null;
+
+        function handleTaskDragStart(e) {
+            draggedTaskId = e.target.dataset.taskId;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleTaskDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('.pipeline-cards').forEach(col => col.classList.remove('drag-over'));
+        }
+
+        function handleTaskDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleTaskDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        async function handleTaskDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+
+            if (!draggedTaskId) return;
+
+            const column = e.currentTarget.closest('.pipeline-column');
+            const newStatus = column.dataset.status;
+
+            if (newStatus) {
+                await updateTaskStatus(draggedTaskId, newStatus);
+                addTaskHistoryEntry(draggedTaskId, 'status_change', `Statut change vers: ${newStatus}`);
+            }
+
+            draggedTaskId = null;
         }
 
         async function updateTaskStatus(taskId, newStatus) {
@@ -7975,7 +8481,25 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         // ============================================
 
         function checkFicheIA(prospect) {
-            // Cherche si une fiche recherche existe dans les assets
+            // 1. Verifier d'abord le localStorage (fiches generees)
+            const ficheKey = `fiche_${prospect.company.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            const storedFiche = localStorage.getItem(ficheKey);
+            if (storedFiche) {
+                try {
+                    const ficheData = JSON.parse(storedFiche);
+                    return {
+                        name: 'Fiche Recherche IA',
+                        isGenerated: true,
+                        date: ficheData.generatedAt ? new Date(ficheData.generatedAt).toLocaleDateString('fr-FR') : null,
+                        fromLocalStorage: true,
+                        data: ficheData
+                    };
+                } catch (e) {
+                    console.error('[checkFicheIA] Erreur parsing localStorage:', e);
+                }
+            }
+
+            // 2. Chercher dans les assets (manifest/Airtable)
             const assets = getProspectAssets(prospect.company);
             if (!assets || !assets.files) return null;
 
@@ -8010,9 +8534,25 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 badge.classList.remove('available');
             }
 
-            // Mettre a jour l'etat du bouton selon si une generation est en cours pour CE prospect
-            const isGeneratingThisProspect = ficheGenerationInProgress === prospect.id;
-            updateFicheButtonState(isGeneratingThisProspect);
+            // Mettre a jour l'etat du bouton selon l'etat de generation
+            // Comparer par nom d'entreprise (stable) plutot que par ID
+            const isGeneratingThisProspect = ficheGenerationProspect &&
+                ficheGenerationProspect.company === prospect.company;
+
+            if (isGeneratingThisProspect) {
+                // Generation en cours pour CE prospect
+                updateFicheButtonState('generating');
+                // Afficher le modal de progression
+                const existingModal = document.getElementById('fiche-progress-modal');
+                if (!existingModal) {
+                    showFicheProgressModal(ficheGenerationProspect);
+                } else {
+                    existingModal.classList.add('show');
+                }
+            } else {
+                // Pas de generation en cours pour ce prospect
+                updateFicheButtonState('idle');
+            }
         }
 
         // Variable pour stocker la dernière fiche générée
@@ -8035,6 +8575,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             if (ficheGenerationInProgress && ficheGenerationProspect) {
                 const stateToSave = {
                     prospectId: ficheGenerationInProgress,
+                    prospectCompany: ficheGenerationProspect.company, // Utiliser le nom (stable) en plus de l'ID
                     prospect: ficheGenerationProspect,
                     startTime: ficheGenerationStartTime,
                     savedAt: Date.now()
@@ -8096,6 +8637,19 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 // Note: on ne peut pas reprendre le fetch, mais au moins l'UI est coherente
                 // Le workflow n8n tourne independamment
                 console.log('[Fiche IA] Etat restaure - generation en cours pour:', state.prospect.company);
+
+                // IMPORTANT: Mettre a jour le bouton ET afficher le modal
+                // Delai pour que le DOM soit pret (apres render())
+                setTimeout(() => {
+                    // 1. Mettre a jour le bouton (meme si le prospect n'est pas ouvert)
+                    updateFicheButtonState('generating');
+                    console.log('[Fiche IA] Bouton mis a jour en mode "generating"');
+
+                    // 2. Afficher le modal de progression
+                    showFicheProgressModal(state.prospect);
+                    console.log('[Fiche IA] Modal de progression affiche');
+                }, 300); // Petit delai pour que le DOM soit pret
+
                 showToast('Generation en cours pour ' + state.prospect.company + ' (restauree)');
 
             } catch (e) {
@@ -8133,7 +8687,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             saveFicheGenerationState();
 
             // Mettre a jour le bouton
-            updateFicheButtonState(true);
+            updateFicheButtonState('generating');
 
             // Afficher le modal de progression
             showFicheProgressModal(prospect);
@@ -8242,19 +8796,28 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             ficheGenerationProspect = null;
             ficheGenerationStartTime = null;
             clearFicheGenerationState(); // Effacer localStorage
-            updateFicheButtonState(false);
+            updateFicheButtonState('idle');
         }
 
-        function updateFicheButtonState(isGenerating) {
+        function updateFicheButtonState(state) {
             const btn = document.getElementById('btn-generate-fiche');
-            if (!btn) return;
+            if (!btn) {
+                console.log('[Fiche IA] Bouton non trouve, etat demande:', state);
+                return;
+            }
 
-            if (isGenerating) {
+            console.log('[Fiche IA] updateFicheButtonState:', state);
+
+            btn.classList.remove('generating');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+
+            if (state === 'generating') {
                 btn.innerHTML = '<span class="loading-spinner" style="width: 16px; height: 16px; margin-right: 8px;"></span>Generation en cours...';
                 btn.classList.add('generating');
+                btn.disabled = true;
             } else {
                 btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Generer la fiche';
-                btn.classList.remove('generating');
             }
         }
 
@@ -8335,6 +8898,12 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             requestAnimationFrame(() => {
                 modal.classList.add('show');
             });
+
+            // Si on restaure apres rechargement, afficher le temps ecoule
+            if (ficheGenerationStartTime) {
+                const elapsed = Math.floor((Date.now() - ficheGenerationStartTime) / 1000);
+                updateFicheProgressTime(elapsed);
+            }
 
             // Animation des steps
             animateFicheProgressSteps();
@@ -9167,6 +9736,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
             const menu = document.createElement('div');
             menu.className = 'asset-menu-dropdown';
+            menu.id = 'current-asset-menu';
             menu.innerHTML = `
                 <button class="asset-menu-item danger" onclick="deleteAsset('${company}', '${fileName}')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
@@ -9183,13 +9753,21 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             document.body.appendChild(menu);
             currentAssetMenu = menu;
 
-            // Fermer au clic ailleurs
+            // Fermer au clic ailleurs (utiliser capture pour intercepter TOUS les clics)
             setTimeout(() => {
-                document.addEventListener('click', closeAssetMenu, { once: true });
-            }, 10);
+                document.addEventListener('click', handleAssetMenuClose, true);
+            }, 0);
+        }
+
+        function handleAssetMenuClose(event) {
+            const menu = document.getElementById('current-asset-menu');
+            if (menu && !menu.contains(event.target)) {
+                closeAssetMenu();
+            }
         }
 
         function closeAssetMenu() {
+            document.removeEventListener('click', handleAssetMenuClose, true);
             if (currentAssetMenu) {
                 currentAssetMenu.remove();
                 currentAssetMenu = null;
@@ -9234,7 +9812,18 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 return;
             }
 
-            // Verifier si on a le HTML en localStorage
+            // Verifier via checkFicheIA (localStorage + assets)
+            const fiche = checkFicheIA(prospect);
+
+            // Si fiche trouvee dans localStorage
+            if (fiche && fiche.fromLocalStorage && fiche.data) {
+                // Charger dans lastGeneratedFiche pour les actions (copier, telecharger)
+                lastGeneratedFiche = fiche.data;
+                showFichePreviewModal(prospect, fiche.data);
+                return;
+            }
+
+            // Verifier si on a le HTML en localStorage (ancien format)
             const ficheHtmlKey = `fiche_html_${prospect.company.replace(/[^a-zA-Z0-9]/g, '_')}`;
             const storedHtml = localStorage.getItem(ficheHtmlKey);
             if (storedHtml) {
@@ -9242,20 +9831,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 return;
             }
 
-            // Verifier si on a le markdown en localStorage
-            const ficheKey = `fiche_${prospect.company.replace(/[^a-zA-Z0-9]/g, '_')}`;
-            const storedFiche = localStorage.getItem(ficheKey);
-            if (storedFiche) {
-                try {
-                    const ficheData = JSON.parse(storedFiche);
-                    showFichePreviewModal(prospect, ficheData);
-                    return;
-                } catch (e) {
-                    console.error('[Fiche IA] Erreur parsing localStorage:', e);
-                }
-            }
-
-            const fiche = checkFicheIA(prospect);
+            // Si fiche dans assets (Supabase/manifest)
             if (fiche) {
                 const assets = getProspectAssets(prospect.company);
                 openAsset(assets.folder, fiche.file || fiche.name);
