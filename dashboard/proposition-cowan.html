@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="fr" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Marketing IA - PACIFIK'AI x COWAN MOTOR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --dark: #141414;
+            --gray-900: #1a1a1a;
+            --gray-800: #262626;
+            --gray-600: #525252;
+            --gray-400: #a3a3a3;
+            --gray-200: #e5e5e5;
+            --white: #fafafa;
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.1);
+            --success: #22c55e;
+            --success-soft: rgba(34, 197, 94, 0.1);
+            --orange: #f97316;
+            --orange-soft: rgba(249, 115, 22, 0.1);
+            --purple: #8b5cf6;
+            --purple-soft: rgba(139, 92, 246, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--black);
+            color: var(--white);
+            line-height: 1.7;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 100% 80% at 10% 20%, rgba(249, 115, 22, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse 80% 60% at 90% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 50% at 50% 50%, rgba(249, 115, 22, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+            animation: meshMove 20s ease-in-out infinite;
+        }
+
+        @keyframes meshMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -20px) scale(1.02); }
+            50% { transform: translate(-20px, 30px) scale(0.98); }
+            75% { transform: translate(20px, 20px) scale(1.01); }
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.2) 0%, rgba(249, 115, 22, 0.05) 40%, transparent 70%);
+            top: 5%;
+            left: -150px;
+            filter: blur(40px);
+            animation: float1 18s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            bottom: 10%;
+            right: -100px;
+            filter: blur(50px);
+            animation: float2 15s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(80px, 40px) scale(1.1); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-60px, -80px) scale(1.15); }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-bottom: 1px solid var(--gray-800);
+            margin-bottom: 60px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--orange-soft);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--orange);
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .header h1 {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, var(--orange) 0%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-sub {
+            color: var(--gray-400);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 24px;
+        }
+
+        .header-date {
+            display: inline-block;
+            background: var(--gray-900);
+            border: 1px solid var(--gray-800);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            width: 40px;
+            height: 40px;
+            background: var(--orange-soft);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 60px;
+        }
+
+        .stat-card {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-800);
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--orange) 0%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        /* Dashboard Preview */
+        .dashboard-preview {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-800);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-header {
+            background: var(--gray-800);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dashboard-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dashboard-dot.red { background: #ef4444; }
+        .dashboard-dot.yellow { background: #fbbf24; }
+        .dashboard-dot.green { background: #22c55e; }
+
+        .dashboard-url {
+            margin-left: 16px;
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        .dashboard-iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+            background: var(--dark);
+        }
+
+        .dashboard-link {
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .dashboard-link a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--orange) 0%, #fbbf24 100%);
+            color: var(--black);
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-link a:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-800);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--orange);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--accent-soft);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Options Premium */
+        .premium-section {
+            background: linear-gradient(135deg, var(--gray-900) 0%, rgba(249, 115, 22, 0.05) 100%);
+            border: 1px solid var(--orange);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+
+        .premium-section .section-title {
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .premium-subtitle {
+            text-align: center;
+            color: var(--gray-400);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .option-card {
+            background: var(--dark);
+            border: 1px solid var(--gray-800);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            border-color: var(--gray-600);
+        }
+
+        .option-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .option-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--orange-soft);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .option-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .option-info p {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        .option-badge {
+            background: var(--orange-soft);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: var(--orange);
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .option-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--orange);
+        }
+
+        .pack-complet {
+            background: var(--dark);
+            border: 2px solid var(--orange);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .pack-complet .label {
+            font-size: 11px;
+            color: var(--orange);
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .pack-complet .old-price {
+            text-decoration: line-through;
+            color: var(--gray-600);
+            font-size: 14px;
+        }
+
+        .pack-complet .new-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--orange);
+            margin-left: 12px;
+        }
+
+        .pack-complet .savings {
+            font-size: 12px;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        /* ROI Table */
+        .roi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+
+        .roi-table th,
+        .roi-table td {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            border-bottom: 1px solid var(--gray-800);
+        }
+
+        .roi-table th {
+            background: var(--gray-900);
+            font-weight: 600;
+            color: var(--gray-400);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .roi-table td.negative {
+            color: #ef4444;
+        }
+
+        .roi-table td.positive {
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .roi-table tr:last-child td {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .roi-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .roi-card {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-800);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .roi-card.highlight {
+            border-color: var(--orange);
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--orange-soft) 100%);
+        }
+
+        .roi-card .label {
+            font-size: 11px;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .roi-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--orange);
+        }
+
+        .roi-card .detail {
+            font-size: 12px;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        /* Pricing */
+        .pricing-card {
+            background: var(--gray-900);
+            border: 2px solid var(--orange);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 550px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .pricing-card::before {
+            content: 'CLE EN MAIN';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--orange) 0%, #fbbf24 100%);
+            color: var(--black);
+            padding: 6px 20px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .pricing-title {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .pricing-title h3 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .pricing-title p {
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        .pricing-amount {
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .pricing-amount .price {
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .pricing-amount .currency {
+            font-size: 20px;
+            color: var(--gray-400);
+            margin-left: 8px;
+        }
+
+        .pricing-amount .period {
+            font-size: 13px;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 24px 0;
+        }
+
+        .pricing-features li {
+            padding: 10px 0;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--gray-800);
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li::before {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: var(--success-soft);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Credits & Support */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .info-box {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-800);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .info-box h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+
+        .info-box.support h4 {
+            color: var(--success);
+        }
+
+        .credit-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-800);
+        }
+
+        .credit-row:last-child {
+            border-bottom: none;
+        }
+
+        .credit-row .name {
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        .credit-row .price {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .support-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-800);
+        }
+
+        .support-row:last-child {
+            border-bottom: none;
+        }
+
+        .support-row .period {
+            font-size: 11px;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .support-row .value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .support-row .value.free {
+            color: var(--success);
+        }
+
+        .support-row .value.paid {
+            color: var(--orange);
+        }
+
+        /* CTA */
+        .cta-section {
+            background: linear-gradient(135deg, var(--gray-900) 0%, rgba(249, 115, 22, 0.1) 100%);
+            border: 1px solid var(--orange);
+            border-radius: 20px;
+            padding: 48px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .cta-section h2 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .cta-section p {
+            color: var(--gray-400);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn.primary {
+            background: linear-gradient(135deg, var(--orange) 0%, #fbbf24 100%);
+            color: var(--black);
+        }
+
+        .cta-btn.secondary {
+            background: transparent;
+            border: 1px solid var(--gray-600);
+            color: var(--white);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--gray-800);
+            margin-top: 60px;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .footer-logo span {
+            color: var(--orange);
+        }
+
+        .footer p {
+            color: var(--gray-400);
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: var(--orange);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .header {
+                padding: 40px 0 30px;
+            }
+
+            .stats-grid,
+            .features-grid,
+            .roi-cards,
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section {
+                padding: 32px 24px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .option-card {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .option-info {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-badge">
+                DASHBOARD - Proposition sur-mesure
+            </div>
+            <h1>Votre <span>Dashboard Marketing IA</span><br>pour 4 pages Facebook</h1>
+            <p class="header-sub">Generation de contenu par IA, visuels 2K automatiques, publication programmee. Vous controlez tout depuis une interface unique.</p>
+            <div class="header-date">Proposition valide jusqu'au 15 fevrier 2026</div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Pages Facebook</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">48+</div>
+                <div class="stat-label">Posts/mois</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">48</div>
+                <div class="stat-label">Visuels IA 2K</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">24/7</div>
+                <div class="stat-label">Publication auto</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Preview -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="icon">&#x1F4BB;</span>
+                Votre Dashboard - Deja Operationnel
+            </h2>
+            <div class="dashboard-preview">
+                <div class="dashboard-header">
+                    <div class="dashboard-dot red"></div>
+                    <div class="dashboard-dot yellow"></div>
+                    <div class="dashboard-dot green"></div>
+                    <span class="dashboard-url">cowan.pacifikai.com</span>
+                </div>
+                <a href="https://dashboard-omega-five-23.vercel.app" target="_blank" style="display: block;">
+                    <div style="width: 100%; height: 450px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='linear-gradient(135deg, #1e293b 0%, #334155 100%)'" onmouseout="this.style.background='linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'">
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #0ea5e9, #22d3ee); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; color: white;">CM</div>
+                            <div style="font-size: 24px; font-weight: 700; color: white;">COWAN <span style="color: #0ea5e9;">MOTOR</span></div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 600px;">
+                            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; text-align: center;">
+                                <div style="font-size: 28px; font-weight: 700; color: #0ea5e9;">12,332</div>
+                                <div style="font-size: 11px; color: #94a3b8;">Abonnes</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; text-align: center;">
+                                <div style="font-size: 28px; font-weight: 700; color: #10b981;">5</div>
+                                <div style="font-size: 11px; color: #94a3b8;">Posts/mois</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; text-align: center;">
+                                <div style="font-size: 28px; font-weight: 700; color: #f59e0b;">4.2%</div>
+                                <div style="font-size: 11px; color: #94a3b8;">Engagement</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; text-align: center;">
+                                <div style="font-size: 28px; font-weight: 700; color: #8b5cf6;">49</div>
+                                <div style="font-size: 11px; color: #94a3b8;">Planifies</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; color: #94a3b8; font-size: 14px;">
+                            <span>Cliquez pour voir le dashboard en direct</span>
+                            <span style="color: var(--orange);">&#x2192;</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="dashboard-link">
+                <a href="https://dashboard-omega-five-23.vercel.app" target="_blank">
+                    Voir le dashboard en direct &#x2192;
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Incluses -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="icon">&#x2705;</span>
+                Fonctionnalites Incluses
+            </h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4CA;</div>
+                    <h4>Vue 360 Multi-Pages</h4>
+                    <p>Visualisez les performances de vos 4 pages Facebook en temps reel : abonnes, engagement, posts planifies.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4C5;</div>
+                    <h4>Calendrier Editorial 14 jours</h4>
+                    <p>Planifiez 14 jours de contenu en avance. Filtrez par page, glissez-deposez pour replanifier.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4A1;</div>
+                    <h4>Generation IA de Contenu</h4>
+                    <p>Claude redige vos posts automatiquement : texte accrocheur, hashtags optimises, ton adapte.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F3A8;</div>
+                    <h4>Visuels IA 2K Professionnels</h4>
+                    <p>FAL.ai genere des images haute qualite : visuels produits, mannequins virtuels polynesiens.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x23F0;</div>
+                    <h4>Publication Automatique 24/7</h4>
+                    <p>Vos posts sont publies automatiquement aux heures optimales sur les 4 pages Facebook.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x2753;</div>
+                    <h4>Quiz Interactifs</h4>
+                    <p>Quiz "Le saviez-vous ?" pour booster l'engagement : securite routiere, entretien auto, conseils pneus.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Options Premium -->
+        <section class="premium-section">
+            <h2 class="section-title">
+                <span class="icon">&#x2B50;</span>
+                Options Premium Recommandees
+            </h2>
+            <p class="premium-subtitle">Maximisez votre retour sur investissement avec ces modules additionnels</p>
+
+            <div class="option-card">
+                <div class="option-info">
+                    <div class="option-icon">&#x1F4AC;</div>
+                    <div>
+                        <h4>Chatbot IA Facebook Messenger</h4>
+                        <p>Assistant IA 24h/24 pour questions, RDV, qualification prospects</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="option-badge">RECOMMANDE</span>
+                    <span class="option-price">+250 000 XPF</span>
+                </div>
+            </div>
+
+            <div class="option-card">
+                <div class="option-info">
+                    <div class="option-icon">&#x1F50D;</div>
+                    <div>
+                        <h4>Analyse Concurrentielle IA</h4>
+                        <p>Surveillance de 5 concurrents, alertes promos, benchmark mensuel</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="option-badge">RECOMMANDE</span>
+                    <span class="option-price">+180 000 XPF</span>
+                </div>
+            </div>
+
+            <div class="option-card">
+                <div class="option-info">
+                    <div class="option-icon">&#x1F4C8;</div>
+                    <div>
+                        <h4>KPIs Avances + Recommandations IA</h4>
+                        <p>Analyse performances, suggestions horaires, hashtags, audiences</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="option-badge">RECOMMANDE</span>
+                    <span class="option-price">+150 000 XPF</span>
+                </div>
+            </div>
+
+            <div class="option-card">
+                <div class="option-info">
+                    <div class="option-icon">&#x1F9EA;</div>
+                    <div>
+                        <h4>A/B Testing Automatique</h4>
+                        <p>L'IA teste differentes versions et garde ce qui fonctionne</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="option-badge">RECOMMANDE</span>
+                    <span class="option-price">+120 000 XPF</span>
+                </div>
+            </div>
+
+            <div class="option-card">
+                <div class="option-info">
+                    <div class="option-icon">&#x1F4F0;</div>
+                    <div>
+                        <h4>Veille Sectorielle Automobile</h4>
+                        <p>Rapport hebdomadaire tendances, reglementations, opportunites</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="option-badge">RECOMMANDE</span>
+                    <span class="option-price">+100 000 XPF</span>
+                </div>
+            </div>
+
+            <div class="pack-complet">
+                <div class="label">PACK COMPLET - 5 OPTIONS</div>
+                <div>
+                    <span class="old-price">800 000 XPF</span>
+                    <span class="new-price">650 000 XPF</span>
+                </div>
+                <div class="savings">Economisez 150 000 XPF en prenant toutes les options</div>
+            </div>
+        </section>
+
+        <!-- ROI -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="icon">&#x1F4B0;</span>
+                Retour sur Investissement
+            </h2>
+
+            <table class="roi-table">
+                <thead>
+                    <tr>
+                        <th>Poste de depense</th>
+                        <th>Solution Traditionnelle</th>
+                        <th>Dashboard PACIFIK'AI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Community Manager (48 posts/mois)</td>
+                        <td class="negative">250 000 - 350 000 XPF/mois</td>
+                        <td class="positive">~2 400 XPF/mois</td>
+                    </tr>
+                    <tr>
+                        <td>Shooting photo (48 visuels/mois)</td>
+                        <td class="negative">180 000 - 280 000 XPF/mois</td>
+                        <td class="positive">~4 800 XPF/mois</td>
+                    </tr>
+                    <tr>
+                        <td>Graphiste (maquettes, quiz)</td>
+                        <td class="negative">100 000 - 150 000 XPF/mois</td>
+                        <td class="positive">Inclus</td>
+                    </tr>
+                    <tr>
+                        <td>Outil planification (4 pages)</td>
+                        <td class="negative">25 000 - 50 000 XPF/mois</td>
+                        <td class="positive">Inclus</td>
+                    </tr>
+                    <tr>
+                        <td><strong>TOTAL MENSUEL</strong></td>
+                        <td class="negative"><strong>555 000 - 830 000 XPF/mois</strong></td>
+                        <td class="positive"><strong>~7 200 XPF/mois</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="roi-cards">
+                <div class="roi-card">
+                    <div class="label">Temps economise</div>
+                    <div class="value">40h/mois</div>
+                    <div class="detail">Creation + planification</div>
+                </div>
+                <div class="roi-card highlight">
+                    <div class="label">Rentabilise en</div>
+                    <div class="value">~2 mois</div>
+                    <div class="detail">vs CM + photographe</div>
+                </div>
+                <div class="roi-card">
+                    <div class="label">Economie 1ere annee</div>
+                    <div class="value">5M+ XPF</div>
+                    <div class="detail">vs solution traditionnelle</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="section">
+            <h2 class="section-title" style="justify-content: center;">
+                <span class="icon">&#x1F3AF;</span>
+                Tarification
+            </h2>
+
+            <div class="pricing-card">
+                <div class="pricing-title">
+                    <h3>Suite Marketing IA Complete</h3>
+                    <p>Dashboard + workflows - Paiement unique</p>
+                </div>
+                <div class="pricing-amount">
+                    <span class="price">1 200 000</span>
+                    <span class="currency">XPF</span>
+                    <div class="period">paiement unique - vous etes proprietaire</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><strong>Dashboard personnalise COWAN MOTOR</strong></li>
+                    <li>Configuration des 4 pages Facebook</li>
+                    <li>5 workflows n8n complets</li>
+                    <li>Generateur de posts IA illimite</li>
+                    <li>Generateur de visuels IA 2K</li>
+                    <li>Calendrier editorial avec planification</li>
+                    <li>Publication automatique Facebook 24/7</li>
+                    <li>Quiz interactifs "Le saviez-vous ?"</li>
+                    <li>Formation equipe complete (3h)</li>
+                    <li>Documentation utilisateur</li>
+                    <li><strong>6 mois d'interventions incluses</strong></li>
+                </ul>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-box">
+                    <h4>Credits IA - Systeme Prepaye</h4>
+                    <p style="font-size: 12px; color: var(--gray-400); margin-bottom: 16px;">Compteur integre au dashboard. Rechargez selon vos besoins.</p>
+                    <div class="credit-row">
+                        <span class="name">Generation de textes (Claude IA)</span>
+                        <span class="price">50 XPF/post</span>
+                    </div>
+                    <div class="credit-row">
+                        <span class="name">Generation de visuels (FAL.ai)</span>
+                        <span class="price">100 XPF/image</span>
+                    </div>
+                    <p style="font-size: 11px; color: var(--gray-400); margin-top: 12px; text-align: center;">Exemple: 48 posts + 48 visuels = ~7 200 XPF/mois</p>
+                </div>
+                <div class="info-box support">
+                    <h4>Support & Interventions</h4>
+                    <p style="font-size: 12px; color: var(--gray-400); margin-bottom: 16px;">Support WhatsApp inclus a vie pour les questions simples.</p>
+                    <div class="support-row">
+                        <span class="period">6 premiers mois</span>
+                        <span class="value free">GRATUIT</span>
+                    </div>
+                    <div class="support-row">
+                        <span class="period">Apres 6 mois</span>
+                        <span class="value paid">15 000 XPF/h</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <h2>Pret a Automatiser Votre Marketing ?</h2>
+            <p>Le dashboard est deja configure et operationnel.<br>Plus qu'a connecter vos pages Facebook !</p>
+            <div class="cta-buttons">
+                <a href="mailto:jordy@pacifikai.com?subject=COWAN%20MOTOR%20-%20Validation%20Dashboard&body=Bonjour%20Jordy%2C%0A%0AJe%20souhaite%20valider%20le%20dashboard%20marketing.%0A%0ACordialement%2C%0ATevahitua%20Cowan" class="cta-btn primary">
+                    Valider la proposition
+                </a>
+                <a href="https://dashboard-omega-five-23.vercel.app" target="_blank" class="cta-btn secondary">
+                    Explorer le dashboard
+                </a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-logo">PACIFIK'<span>AI</span></div>
+            <p>
+                <a href="mailto:jordy@pacifikai.com">jordy@pacifikai.com</a><br>
+                Proposition commerciale - Tahiti, Polynesie francaise<br>
+                Cette proposition est valide 15 jours. Tarifs en XPF TTC.
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

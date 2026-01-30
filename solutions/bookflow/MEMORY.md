@@ -227,7 +227,10 @@ const { appointments, loading, createAppointment, updateAppointment, getAvailabl
 ## Commandes Utiles
 
 ```bash
-# Demarrer l'app
+# Demarrer l'app (web)
+cd app && npx expo start --web
+
+# Demarrer l'app (mobile via Expo Go)
 cd app && npx expo start
 
 # TypeScript check
@@ -239,4 +242,47 @@ cd app && npm install --legacy-peer-deps
 
 ---
 
-**Derniere MAJ**: 2026-01-27
+## Sessions de Travail
+
+### Session 2026-01-29 - Sprint 1 Quasi Complet
+
+**Realise:**
+- Schema Supabase complet (10 tables + RLS + fonctions)
+- Projet Expo initialise avec toutes les dependencies
+- 24 ecrans crees (auth, client, pro, onboarding)
+- 5 hooks React (auth, business, services, clients, appointments)
+- Client Supabase configure
+- Types TypeScript pour toutes les tables
+- App testable en web (`npx expo start --web`)
+
+**Ecrans Client (5):**
+- index.tsx - Accueil avec RDV a venir
+- explore.tsx - Explorer les pros (placeholder)
+- appointments.tsx - Historique RDV
+- chat.tsx - Assistant IA (placeholder)
+- profile.tsx - Profil avec carte fidelite
+
+**Ecrans Pro (5):**
+- index.tsx - Dashboard avec stats
+- agenda.tsx - Calendrier (placeholder)
+- clients.tsx - Liste clients
+- services.tsx - Gestion prestations
+- settings.tsx - Parametres + abonnement
+
+**Ecrans Auth (3):**
+- login.tsx - Connexion email/password + OAuth
+- signup.tsx - Inscription client ou pro
+- forgot-password.tsx - Reset password
+
+**Ecrans Onboarding (1):**
+- pro.tsx - Creation du business apres inscription
+
+**Reste a faire Sprint 1:**
+- [ ] WatermelonDB pour mode offline
+
+**Prochaine etape:**
+Sprint 2 - Flow de reservation complet
+
+---
+
+**Derniere MAJ**: 2026-01-29
