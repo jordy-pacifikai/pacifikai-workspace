@@ -8469,11 +8469,14 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             try {
                 // TOUTES les requêtes en parallèle pour un chargement ultra-rapide
                 const [supabaseProspects, supabaseTasks, supabaseContent, supabaseInfras] = await Promise.all([
-                    supabase.getProspects().catch(() => []),
-                    supabase.getTasks().catch(() => []),
-                    supabase.getContent().catch(() => []),
-                    supabase.getClientInfrastructures().catch(() => [])
+                    supabase.getProspects().catch(err => { console.error('[Supabase] getProspects FAILED:', err); return []; }),
+                    supabase.getTasks().catch(err => { console.error('[Supabase] getTasks FAILED:', err); return []; }),
+                    supabase.getContent().catch(err => { console.error('[Supabase] getContent FAILED:', err); return []; }),
+                    supabase.getClientInfrastructures().catch(err => { console.error('[Supabase] getInfras FAILED:', err); return []; })
                 ]);
+
+                console.log('[Supabase] Raw prospects count:', supabaseProspects?.length || 0);
+                console.log('[Supabase] First prospect:', supabaseProspects?.[0]);
 
                 // Transformer prospects
                 prospects = supabaseProspects.map(p => ({
