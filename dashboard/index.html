@@ -1964,17 +1964,30 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 200;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 99999;
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 1rem;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
         .modal-overlay.show {
             display: flex;
+        }
+
+        /* Force modal au centre et visible */
+        .modal-overlay .modal {
+            position: relative;
+            margin: auto;
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
         }
 
         /* Modal - Linear/Vercel Style */
@@ -10054,7 +10067,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
             // Créer la modal à l'intérieur de l'overlay
             overlay.innerHTML = `
-                <div class="modal" style="max-width: 520px;" onclick="event.stopPropagation()">
+                <div class="modal" style="max-width: 520px; width: 95%; margin: auto;" onclick="event.stopPropagation()">
                     <div class="modal-header">
                         <div class="modal-title-section">
                             <h2 class="modal-title" style="display: flex; align-items: center; gap: 0.5rem;">
