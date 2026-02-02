@@ -7986,22 +7986,28 @@
 
         // Afficher le modal de configuration
         function showConfigModal() {
-            let modal = document.getElementById('config-modal');
-            if (!modal) {
-                modal = document.createElement('div');
-                modal.id = 'config-modal';
-                modal.className = 'modal';
-                modal.innerHTML = `
-                    <div class="modal-content" style="max-width: 500px;">
+            let overlay = document.getElementById('config-modal-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'config-modal-overlay';
+                overlay.className = 'modal-overlay';
+                overlay.onclick = function(e) {
+                    // Ne pas fermer sur backdrop car config obligatoire
+                    e.stopPropagation();
+                };
+                overlay.innerHTML = `
+                    <div class="modal" style="max-width: 500px;" onclick="event.stopPropagation()">
                         <div class="modal-header">
-                            <h2 style="display: flex; align-items: center; gap: 0.5rem;">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                </svg>
-                                Configuration PACIFIK'AI
-                            </h2>
+                            <div class="modal-title-section">
+                                <h2 class="modal-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    </svg>
+                                    Configuration PACIFIK'AI
+                                </h2>
+                            </div>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body" style="padding: 1.5rem;">
                             <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
                                 Pour utiliser le dashboard, configure tes clés API. Elles seront stockées localement dans ton navigateur.
                             </p>
@@ -8022,7 +8028,7 @@
                                 <small style="color: var(--text-dim);">Obtenir sur airtable.com/create/tokens</small>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="form-actions" style="padding: 1rem 1.5rem; border-top: 1px solid var(--border);">
                             <button class="btn btn-primary" onclick="saveConfigFromModal()">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
@@ -8034,14 +8040,19 @@
                         </div>
                     </div>
                 `;
-                document.body.appendChild(modal);
+                document.body.appendChild(overlay);
             }
-            modal.classList.add('show');
+            // Afficher avec animation
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => overlay.classList.add('show'), 10);
         }
 
         function hideConfigModal() {
-            const modal = document.getElementById('config-modal');
-            if (modal) modal.classList.remove('show');
+            const overlay = document.getElementById('config-modal-overlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
         }
 
         function saveConfigFromModal() {
@@ -9995,12 +10006,20 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
         // Modal pour créer un nouveau prospect
         function openNewProspectModal() {
-            // Créer un modal simple pour nouveau prospect
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.id = 'new-prospect-modal';
-            modal.innerHTML = `
-                <div class="modal-content" style="max-width: 500px;">
+            // Créer le backdrop/overlay avec z-index correct
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'new-prospect-modal-overlay';
+            overlay.onclick = function(e) {
+                // Fermer si click sur le backdrop (pas sur la modal elle-même)
+                if (e.target === overlay) {
+                    closeNewProspectModal();
+                }
+            };
+
+            // Créer la modal à l'intérieur de l'overlay
+            overlay.innerHTML = `
+                <div class="modal" style="max-width: 500px;">
                     <div class="modal-header">
                         <h2>Nouveau Prospect</h2>
                         <button class="modal-close" onclick="closeNewProspectModal()">&times;</button>
@@ -10053,16 +10072,30 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     </div>
                 </div>
             `;
-            document.body.appendChild(modal);
-            setTimeout(() => modal.classList.add('show'), 10);
+
+            document.body.appendChild(overlay);
+            // Bloquer le scroll du body
+            document.body.style.overflow = 'hidden';
+            // Afficher avec animation
+            setTimeout(() => overlay.classList.add('show'), 10);
             document.getElementById('new-prospect-company').focus();
+
+            // Fermeture avec ESC
+            overlay._escHandler = function(e) {
+                if (e.key === 'Escape') closeNewProspectModal();
+            };
+            document.addEventListener('keydown', overlay._escHandler);
         }
 
         function closeNewProspectModal() {
-            const modal = document.getElementById('new-prospect-modal');
-            if (modal) {
-                modal.classList.remove('show');
-                setTimeout(() => modal.remove(), 200);
+            const overlay = document.getElementById('new-prospect-modal-overlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+                if (overlay._escHandler) {
+                    document.removeEventListener('keydown', overlay._escHandler);
+                }
+                setTimeout(() => overlay.remove(), 200);
             }
         }
 
