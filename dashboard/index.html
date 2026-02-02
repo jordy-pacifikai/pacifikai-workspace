@@ -10057,8 +10057,18 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
         // Modal pour créer un nouveau prospect
         function openNewProspectModal() {
+            console.log('[MODAL] openNewProspectModal called');
+
+            // Supprimer toute modal existante d'abord
+            const existing = document.getElementById('new-prospect-modal-overlay');
+            if (existing) {
+                console.log('[MODAL] Removing existing modal');
+                existing.remove();
+            }
+
             // Créer le backdrop/overlay avec z-index correct
             const overlay = document.createElement('div');
+            console.log('[MODAL] Creating overlay element');
             overlay.className = 'modal-overlay';
             overlay.id = 'new-prospect-modal-overlay';
             overlay.onclick = function(e) {
@@ -10143,11 +10153,21 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             `;
 
             document.body.appendChild(overlay);
+            console.log('[MODAL] Overlay appended to body');
+            console.log('[MODAL] Overlay in DOM:', document.getElementById('new-prospect-modal-overlay') !== null);
+
             // Bloquer le scroll du body
             document.body.style.overflow = 'hidden';
-            // Afficher avec animation
-            setTimeout(() => overlay.classList.add('show'), 10);
-            setTimeout(() => document.getElementById('new-prospect-company').focus(), 100);
+
+            // Afficher avec animation - FORCER la visibilité
+            overlay.style.display = 'flex';
+            overlay.classList.add('show');
+            console.log('[MODAL] Show class added, display set to flex');
+
+            setTimeout(() => {
+                const input = document.getElementById('new-prospect-company');
+                if (input) input.focus();
+            }, 100);
 
             // Fermeture avec ESC
             overlay._escHandler = function(e) {
