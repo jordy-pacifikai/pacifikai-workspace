@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Discovery - Identifier vos taches automatisables | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #333333;
+            --gray: #666666;
+            --light-gray: #e5e5e5;
+            --border: #cccccc;
+            --light: #f5f5f5;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--white);
+            color: var(--primary);
+            line-height: 1.5;
+            font-size: 10pt;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 12mm 15mm 20mm 15mm;
+            margin: 0 auto;
+            background: var(--white);
+            position: relative;
+            page-break-after: always;
+        }
+
+        .page:last-child {
+            page-break-after: auto;
+        }
+
+        /* Cover Page */
+        .cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 50mm 25mm;
+            border: 3px solid var(--primary);
+        }
+
+        .cover-logo {
+            width: 180px;
+            margin-bottom: 30px;
+        }
+
+        .cover h1 {
+            font-size: 28pt;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+            color: var(--primary);
+        }
+
+        .cover h2 {
+            font-size: 14pt;
+            font-weight: 400;
+            color: var(--secondary);
+            margin-bottom: 50px;
+        }
+
+        .cover-meta {
+            position: absolute;
+            bottom: 25mm;
+            font-size: 9pt;
+            color: var(--gray);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .header-logo {
+            height: 28px;
+        }
+
+        .header-title {
+            font-size: 9pt;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* Content */
+        h2 {
+            font-size: 16pt;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+
+        h3 {
+            font-size: 12pt;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 15px 0 8px 0;
+        }
+
+        h4 {
+            font-size: 10pt;
+            font-weight: 600;
+            color: var(--secondary);
+            margin: 12px 0 6px 0;
+        }
+
+        p {
+            margin-bottom: 10px;
+            color: var(--secondary);
+            font-size: 9.5pt;
+        }
+
+        /* Intro box */
+        .intro-box {
+            background: var(--light);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .intro-box p {
+            font-size: 10pt;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--light);
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 22pt;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 8pt;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        /* Steps */
+        .step {
+            display: flex;
+            gap: 15px;
+            margin: 18px 0;
+            padding: 15px;
+            background: var(--light);
+            border: 1px solid var(--border);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16pt;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 11pt;
+        }
+
+        .step-content p {
+            margin: 4px 0 0 0;
+            font-size: 9pt;
+        }
+
+        /* Department cards */
+        .dept-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .dept-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 12px;
+        }
+
+        .dept-icon {
+            font-size: 16pt;
+            margin-bottom: 8px;
+        }
+
+        .dept-card h4 {
+            margin: 0 0 8px 0;
+            color: var(--primary);
+            font-size: 10pt;
+        }
+
+        .dept-card ul {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+            font-size: 8pt;
+            color: var(--secondary);
+        }
+
+        .dept-card li {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .dept-card .checkbox {
+            width: 10px;
+            height: 10px;
+            border: 1.5px solid var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Journal table */
+        .journal-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 8pt;
+        }
+
+        .journal-table th {
+            background: var(--primary);
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .journal-table td {
+            padding: 8px;
+            border: 1px solid var(--border);
+            min-height: 20px;
+        }
+
+        .journal-table tr:nth-child(even) {
+            background: var(--light);
+        }
+
+        .journal-table .example {
+            color: var(--gray);
+            font-style: italic;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--light-gray);
+            font-size: 9pt;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox {
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--primary);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .checkbox.checked {
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        /* Tips box */
+        .tip-box {
+            background: var(--light);
+            border-left: 4px solid var(--secondary);
+            padding: 12px 15px;
+            margin: 15px 0;
+        }
+
+        .tip-box strong {
+            color: var(--primary);
+        }
+
+        .tip-box p {
+            color: var(--secondary);
+            margin: 0;
+            font-size: 9pt;
+        }
+
+        /* Success box */
+        .success-box {
+            background: var(--light);
+            border: 2px solid var(--primary);
+            padding: 12px 15px;
+            margin: 15px 0;
+        }
+
+        .success-box strong {
+            color: var(--primary);
+        }
+
+        .success-box p {
+            color: var(--secondary);
+            margin: 0;
+            font-size: 9pt;
+        }
+
+        /* Examples */
+        .example-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .example-card {
+            background: var(--light);
+            padding: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .example-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 0;
+            font-size: 9pt;
+        }
+
+        .example-card p {
+            font-size: 8pt;
+            margin-bottom: 6px;
+        }
+
+        .example-before {
+            border-left: 3px solid var(--secondary);
+        }
+
+        .example-after {
+            border-left: 3px solid var(--primary);
+        }
+
+        /* ROI Calculator */
+        .roi-section {
+            background: var(--light);
+            border: 2px solid var(--primary);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .roi-section h3 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .roi-formula {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        .roi-box {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            text-align: center;
+        }
+
+        .roi-box .number {
+            font-size: 16pt;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .roi-box .label {
+            font-size: 7pt;
+            color: var(--gray);
+        }
+
+        .roi-operator {
+            font-size: 18pt;
+            font-weight: 300;
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 12mm;
+            left: 15mm;
+            right: 15mm;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+            font-size: 7pt;
+            color: var(--gray);
+        }
+
+        /* CTA Page */
+        .cta-section {
+            background: var(--light);
+            border: 2px solid var(--primary);
+            padding: 30px;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .cta-section h2 {
+            color: var(--primary);
+            border: none;
+            font-size: 18pt;
+            margin-bottom: 10px;
+        }
+
+        .cta-section p {
+            color: var(--secondary);
+            font-size: 10pt;
+            margin-bottom: 20px;
+        }
+
+        .cta-contact {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 25px;
+        }
+
+        .cta-contact-item {
+            text-align: center;
+        }
+
+        .cta-contact-item .icon {
+            font-size: 20pt;
+            margin-bottom: 6px;
+        }
+
+        .cta-contact-item .label {
+            font-size: 8pt;
+            color: var(--gray);
+        }
+
+        .cta-contact-item .value {
+            font-size: 10pt;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                padding: 10mm 12mm 18mm 12mm;
+            }
+
+            .step-number {
+                background: var(--primary) !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .journal-table th {
+                background: var(--primary) !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PAGE 1: COVER -->
+    <div class="page cover">
+        <h1>PACIFIK'AI</h1>
+        <h1>Guide Discovery</h1>
+        <h2>Identifiez vos taches automatisables<br>en 1 etape simple</h2>
+        <div class="cover-meta">
+            PACIFIK'AI - Automatisation Intelligente<br>
+            honovai@pacifikai.com | jordy@pacifikai.com | +689 89 55 81 89
+        </div>
+    </div>
+
+    <!-- PAGE 2: INTRODUCTION -->
+    <div class="page">
+        <div class="header">
+            <span style="font-weight: 700; font-size: 11pt;">PACIFIK'AI</span>
+            <span class="header-title">Guide Discovery - Page 2/6</span>
+        </div>
+
+        <h2>Pourquoi ce guide?</h2>
+
+        <div class="intro-box">
+            <p><strong>80% des entreprises</strong> passent plus de 20 heures par semaine sur des taches repetitives qui pourraient etre automatisees. Ce guide vous aide a les identifier.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">20h+</div>
+                <div class="stat-label">par semaine perdues<br>en taches repetitives</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">40%</div>
+                <div class="stat-label">des taches admin<br>sont automatisables</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3-6x</div>
+                <div class="stat-label">ROI moyen sur<br>une automatisation</div>
+            </div>
+        </div>
+
+        <h3>La methode</h3>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h4>Tenez un journal des taches pendant 3 jours</h4>
+                <p>Notez chaque tache repetitive, son temps et sa frequence. C'est la cle pour quantifier le gain potentiel.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number" style="background: var(--gray);">+</div>
+            <div class="step-content">
+                <h4>Optionnel: Questionnaire par departement</h4>
+                <p>Des questions ciblees pour identifier rapidement les zones a fort potentiel d'automatisation dans votre entreprise.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>PACIFIK'AI - Automatisation Intelligente</span>
+            <span>honovai@pacifikai.com | jordy@pacifikai.com</span>
+        </div>
+    </div>
+
+    <!-- PAGE 3: QUESTIONNAIRE PAR DEPARTEMENT -->
+    <div class="page">
+        <div class="header">
+            <span style="font-weight: 700; font-size: 11pt;">PACIFIK'AI</span>
+            <span class="header-title">Guide Discovery - Page 3/6</span>
+        </div>
+
+        <h2>Optionnel: Questionnaire par departement</h2>
+
+        <p>Cochez les situations qui correspondent a votre quotidien. Plus vous cochez, plus le potentiel d'automatisation est eleve.</p>
+
+        <div class="dept-grid">
+            <div class="dept-card">
+                <div class="dept-icon">&#128188;</div>
+                <h4>Commercial / Ventes</h4>
+                <ul>
+                    <li><span class="checkbox"></span> Je passe du temps a relancer manuellement des prospects</li>
+                    <li><span class="checkbox"></span> Je cree des devis/propositions a la main</li>
+                    <li><span class="checkbox"></span> Je copie-colle des infos entre CRM et emails</li>
+                    <li><span class="checkbox"></span> Je qualifie les leads un par un</li>
+                    <li><span class="checkbox"></span> Je fais des suivis post-vente manuels</li>
+                </ul>
+            </div>
+
+            <div class="dept-card">
+                <div class="dept-icon">&#128176;</div>
+                <h4>Finance / Comptabilite</h4>
+                <ul>
+                    <li><span class="checkbox"></span> Je saisis des factures manuellement</li>
+                    <li><span class="checkbox"></span> Je fais des rappels de paiement a la main</li>
+                    <li><span class="checkbox"></span> Je cree des rapports financiers repetitifs</li>
+                    <li><span class="checkbox"></span> Je rapproche des ecritures manuellement</li>
+                    <li><span class="checkbox"></span> Je traite les notes de frais une par une</li>
+                </ul>
+            </div>
+
+            <div class="dept-card">
+                <div class="dept-icon">&#128101;</div>
+                <h4>Ressources Humaines</h4>
+                <ul>
+                    <li><span class="checkbox"></span> Je trie des CV manuellement</li>
+                    <li><span class="checkbox"></span> J'envoie les memes emails aux candidats</li>
+                    <li><span class="checkbox"></span> Je prepare l'onboarding document par document</li>
+                    <li><span class="checkbox"></span> Je gere les conges sur Excel/papier</li>
+                    <li><span class="checkbox"></span> Je reponds aux memes questions RH</li>
+                </ul>
+            </div>
+
+            <div class="dept-card">
+                <div class="dept-icon">&#127897;</div>
+                <h4>Support Client</h4>
+                <ul>
+                    <li><span class="checkbox"></span> Je reponds aux memes questions chaque jour</li>
+                    <li><span class="checkbox"></span> Je classe les tickets manuellement</li>
+                    <li><span class="checkbox"></span> Je transfere des demandes entre services</li>
+                    <li><span class="checkbox"></span> Je cherche des infos dans plusieurs systemes</li>
+                    <li><span class="checkbox"></span> Je fais des suivis de satisfaction manuels</li>
+                </ul>
+            </div>
+
+            <div class="dept-card">
+                <div class="dept-icon">&#128227;</div>
+                <h4>Marketing / Communication</h4>
+                <ul>
+                    <li><span class="checkbox"></span> Je publie manuellement sur les reseaux</li>
+                    <li><span class="checkbox"></span> Je cree des rapports de performance a la main</li>
+                    <li><span class="checkbox"></span> Je segmente mes listes email manuellement</li>
+                    <li><span class="checkbox"></span> Je redimensionne des images pour chaque plateforme</li>
+                    <li><span class="checkbox"></span> Je compile des stats de plusieurs sources</li>
+                </ul>
+            </div>
+
+            <div class="dept-card">
+                <div class="dept-icon">&#9881;</div>
+                <h4>Operations / Logistique</h4>
+                <ul>
+                    <li><span class="checkbox"></span> Je mets a jour des stocks manuellement</li>
+                    <li><span class="checkbox"></span> Je cree des bons de commande a la main</li>
+                    <li><span class="checkbox"></span> Je fais le suivi des livraisons par email</li>
+                    <li><span class="checkbox"></span> Je planifie les ressources sur Excel</li>
+                    <li><span class="checkbox"></span> Je synchronise des donnees entre systemes</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <p><strong>Conseil:</strong> Si vous avez coche 3+ elements dans un departement, c'est une zone prioritaire pour l'automatisation.</p>
+        </div>
+
+        <div class="footer">
+            <span>PACIFIK'AI - Automatisation Intelligente</span>
+            <span>honovai@pacifikai.com | jordy@pacifikai.com</span>
+        </div>
+    </div>
+
+    <!-- PAGE 4: JOURNAL DES TACHES -->
+    <div class="page">
+        <div class="header">
+            <span style="font-weight: 700; font-size: 11pt;">PACIFIK'AI</span>
+            <span class="header-title">Guide Discovery - Page 4/6</span>
+        </div>
+
+        <h2>Journal des taches (3 jours)</h2>
+
+        <p>Pendant 3 jours ouvrables, notez chaque tache repetitive que vous effectuez. Soyez precis sur le temps.</p>
+
+        <h3>Jour 1 - Date: _______________</h3>
+
+        <table class="journal-table">
+            <thead>
+                <tr>
+                    <th style="width: 12%">Heure</th>
+                    <th style="width: 30%">Tache effectuee</th>
+                    <th style="width: 15%">Temps</th>
+                    <th style="width: 18%">Frequence</th>
+                    <th style="width: 25%">Outil utilise</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="example">9h00</td>
+                    <td class="example">Tri et reponse emails prospects</td>
+                    <td class="example">45 min</td>
+                    <td class="example">Quotidien</td>
+                    <td class="example">Gmail + CRM</td>
+                </tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+
+        <h3>Jour 2 - Date: _______________</h3>
+
+        <table class="journal-table">
+            <thead>
+                <tr>
+                    <th style="width: 12%">Heure</th>
+                    <th style="width: 30%">Tache effectuee</th>
+                    <th style="width: 15%">Temps</th>
+                    <th style="width: 18%">Frequence</th>
+                    <th style="width: 25%">Outil utilise</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+
+        <h3>Jour 3 - Date: _______________</h3>
+
+        <table class="journal-table">
+            <thead>
+                <tr>
+                    <th style="width: 12%">Heure</th>
+                    <th style="width: 30%">Tache effectuee</th>
+                    <th style="width: 15%">Temps</th>
+                    <th style="width: 18%">Frequence</th>
+                    <th style="width: 25%">Outil utilise</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <span>PACIFIK'AI - Automatisation Intelligente</span>
+            <span>honovai@pacifikai.com | jordy@pacifikai.com</span>
+        </div>
+    </div>
+
+    <!-- PAGE 5: EXEMPLES CONCRETS -->
+    <div class="page">
+        <div class="header">
+            <span style="font-weight: 700; font-size: 11pt;">PACIFIK'AI</span>
+            <span class="header-title">Guide Discovery - Page 5/6</span>
+        </div>
+
+        <h2>Exemples d'automatisations courantes</h2>
+
+        <p>Voici des exemples concrets de taches que nos clients ont automatisees et le temps gagne:</p>
+
+        <div class="example-grid">
+            <div class="example-card example-before">
+                <h4>AVANT: Relance prospects</h4>
+                <p><strong>Temps:</strong> 2h/jour</p>
+                <p>Verification manuelle du CRM, redaction d'emails personnalises, copier-coller des coordonnees, suivi dans un tableau Excel.</p>
+            </div>
+            <div class="example-card example-after">
+                <h4>APRES: Automatise</h4>
+                <p><strong>Temps:</strong> 15 min/jour (supervision)</p>
+                <p>Sequences d'emails automatiques, personnalisation par IA, suivi automatique, alertes uniquement pour les reponses chaudes.</p>
+            </div>
+        </div>
+
+        <div class="example-grid">
+            <div class="example-card example-before">
+                <h4>AVANT: Traitement factures</h4>
+                <p><strong>Temps:</strong> 4h/semaine</p>
+                <p>Reception par email, telechargement PDF, saisie manuelle dans le logiciel compta, classement dans les dossiers.</p>
+            </div>
+            <div class="example-card example-after">
+                <h4>APRES: Automatise</h4>
+                <p><strong>Temps:</strong> 30 min/semaine (validation)</p>
+                <p>Extraction auto des donnees par OCR, pre-saisie dans la compta, classement automatique, alerte si anomalie.</p>
+            </div>
+        </div>
+
+        <div class="example-grid">
+            <div class="example-card example-before">
+                <h4>AVANT: Support client FAQ</h4>
+                <p><strong>Temps:</strong> 3h/jour</p>
+                <p>Repondre aux memes questions par email/chat, chercher les infos dans la doc, rediriger vers le bon service.</p>
+            </div>
+            <div class="example-card example-after">
+                <h4>APRES: Automatise</h4>
+                <p><strong>Temps:</strong> 45 min/jour (cas complexes)</p>
+                <p>Chatbot IA qui repond 24/7, escalade intelligente, base de connaissances auto-mise a jour.</p>
+            </div>
+        </div>
+
+        <div class="success-box">
+            <p><strong>Resultat moyen:</strong> Nos clients recuperent entre <strong>10 et 25 heures par semaine</strong> grace aux automatisations.</p>
+        </div>
+
+        <h3>Criteres d'une tache automatisable</h3>
+
+        <ul class="checklist" style="margin-top: 12px;">
+            <li><span class="checkbox checked">&#10003;</span> <strong>Repetitive</strong> - Elle revient regulierement (quotidien, hebdo, mensuel)</li>
+            <li><span class="checkbox checked">&#10003;</span> <strong>Basee sur des regles</strong> - "Si X, alors Y" (pas de jugement humain complexe)</li>
+            <li><span class="checkbox checked">&#10003;</span> <strong>Chronophage</strong> - Elle prend du temps qui pourrait etre mieux utilise</li>
+            <li><span class="checkbox checked">&#10003;</span> <strong>Source d'erreurs</strong> - Les erreurs humaines sont frequentes</li>
+            <li><span class="checkbox checked">&#10003;</span> <strong>Multi-outils</strong> - Elle implique plusieurs logiciels/systemes</li>
+        </ul>
+
+        <div class="footer">
+            <span>PACIFIK'AI - Automatisation Intelligente</span>
+            <span>honovai@pacifikai.com | jordy@pacifikai.com</span>
+        </div>
+    </div>
+
+    <!-- PAGE 6: PROCHAINES ETAPES -->
+    <div class="page">
+        <div class="header">
+            <span style="font-weight: 700; font-size: 11pt;">PACIFIK'AI</span>
+            <span class="header-title">Guide Discovery - Page 6/6</span>
+        </div>
+
+        <h2>Prochaines etapes</h2>
+
+        <p>Vous avez complete le guide? Voici comment nous allons transformer ces informations en automatisations concretes:</p>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h4>Call de priorisation (30 min - gratuit)</h4>
+                <p>Ensemble, nous identifions les 3 automatisations prioritaires avec le meilleur ratio effort/impact.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number" style="background: var(--gray);">2</div>
+            <div class="step-content">
+                <h4>Optionnel: Envoyez-nous votre guide complete</h4>
+                <p>Par email a <strong>honovai@pacifikai.com | jordy@pacifikai.com</strong> ou WhatsApp au <strong>+689 89 55 81 89</strong>. Photo ou scan du document rempli.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h4>Proposition personnalisee</h4>
+                <p>Vous recevez un devis detaille avec: automatisations recommandees, timeline, prix, et ROI attendu.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h4>Implementation et formation</h4>
+                <p>Nous deployons vos automatisations et formons votre equipe. Support inclus pendant 30 jours.</p>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Pret a gagner du temps?</h2>
+            <p>Contactez-moi pour planifier votre call de priorisation gratuit.</p>
+
+            <div class="cta-contact">
+                <div class="cta-contact-item">
+                    <div class="icon">&#128231;</div>
+                    <div class="label">Email</div>
+                    <div class="value">honovai@pacifikai.com | jordy@pacifikai.com</div>
+                </div>
+                <div class="cta-contact-item">
+                    <div class="icon">&#128241;</div>
+                    <div class="label">WhatsApp</div>
+                    <div class="value">+689 89 55 81 89</div>
+                </div>
+                <div class="cta-contact-item">
+                    <div class="icon">&#127760;</div>
+                    <div class="label">Site web</div>
+                    <div class="value">pacifikai.com</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>PACIFIK'AI - Automatisation Intelligente</span>
+            <span>honovai@pacifikai.com | jordy@pacifikai.com</span>
+        </div>
+    </div>
+
+</body>
+</html>
