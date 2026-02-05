@@ -843,15 +843,19 @@
             border-radius: var(--radius-lg);
             padding: 0.875rem;
             min-height: 300px;
+            display: flex;
+            flex-direction: column;
             transition: all var(--transition-normal);
         }
 
         .pipeline-cards {
-            min-height: 200px;
+            flex: 1;
+            min-height: 100px;
             padding: 0.25rem;
         }
 
-        .pipeline-cards.drag-over {
+        .pipeline-cards.drag-over,
+        .pipeline-column.drag-over {
             background: var(--accent-glow);
             border: 1px dashed var(--accent);
             border-radius: var(--radius-md);
@@ -10295,14 +10299,14 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         // Drag and Drop for Tasks
         function setupTaskDragAndDrop() {
             const cards = document.querySelectorAll('.task-card');
-            const columns = document.querySelectorAll('.pipeline-column .pipeline-cards');
+            const dropZones = document.querySelectorAll('#task-kanban .pipeline-column');
 
             cards.forEach(card => {
                 card.addEventListener('dragstart', handleTaskDragStart);
                 card.addEventListener('dragend', handleTaskDragEnd);
             });
 
-            columns.forEach(col => {
+            dropZones.forEach(col => {
                 col.addEventListener('dragover', handleTaskDragOver);
                 col.addEventListener('dragleave', handleTaskDragLeave);
                 col.addEventListener('drop', handleTaskDrop);
@@ -10319,7 +10323,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
         function handleTaskDragEnd(e) {
             e.target.classList.remove('dragging');
-            document.querySelectorAll('.pipeline-cards').forEach(col => col.classList.remove('drag-over'));
+            document.querySelectorAll('#task-kanban .pipeline-column').forEach(col => col.classList.remove('drag-over'));
         }
 
         function handleTaskDragOver(e) {
@@ -10331,41 +10335,75 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             e.currentTarget.classList.remove('drag-over');
         }
 
-        async function handleTaskDrop(e) {
+        function handleTaskDrop(e) {
             e.preventDefault();
             e.currentTarget.classList.remove('drag-over');
 
             if (!draggedTaskId) return;
 
-            const column = e.currentTarget.closest('.pipeline-column');
+            const column = e.currentTarget.closest('.pipeline-column') || e.currentTarget;
             const newStatus = column.dataset.status;
             if (!newStatus) { draggedTaskId = null; return; }
 
             const taskId = draggedTaskId;
             draggedTaskId = null;
 
-            // 1. Update local IMMEDIATEMENT (optimistic)
+            // 1. DOM move instantane — deplacer la card directement
+            const card = document.querySelector(`.task-card[data-task-id="${taskId}"]`);
+            const targetCards = column.querySelector('.pipeline-cards');
+            if (card && targetCards) {
+                targetCards.appendChild(card);
+            }
+
+            // 2. Update data local
             const task = airtableTasks.find(t => t.id === taskId);
             if (!task) return;
             const oldStatus = task.status;
             task.status = newStatus;
 
-            // 2. Re-render TOUT DE SUITE (instantane)
-            renderTasks();
-            setupTaskDragAndDrop();
+            // 3. Update compteurs sans re-render
+            updateTaskKanbanCounts();
             addTaskHistoryEntry(taskId, 'status_change', `Statut change vers: ${newStatus}`);
 
-            // 3. Sync Supabase en arriere-plan
+            // 4. Sync Supabase fire-and-forget
             const statusMap = { 'À faire': 'todo', 'En cours': 'in_progress', 'Bloqué': 'blocked', 'Terminé': 'done' };
-            const supabaseStatus = statusMap[newStatus] || 'todo';
-            try {
-                await supabase.updateTaskStatus(taskId, supabaseStatus);
-            } catch (err) {
+            supabase.updateTaskStatus(taskId, statusMap[newStatus] || 'todo').catch(err => {
                 console.error('[Task D&D] Rollback:', err);
                 task.status = oldStatus;
                 renderTasks();
                 setupTaskDragAndDrop();
                 showToast('Erreur: statut non sauvegarde', 'error');
+            });
+        }
+
+        function updateTaskKanbanCounts() {
+            const filtered = getFilteredTasks();
+            const now = new Date();
+            const done = filtered.filter(t => t.status === 'Terminé').length;
+            const total = filtered.length;
+            const overdue = filtered.filter(t => t.dueDate && new Date(t.dueDate) < now && t.status !== 'Terminé').length;
+
+            document.getElementById('kanban-todo-count').textContent = filtered.filter(t => t.status === 'À faire').length;
+            document.getElementById('kanban-progress-count').textContent = filtered.filter(t => t.status === 'En cours').length;
+            document.getElementById('kanban-blocked-count').textContent = filtered.filter(t => t.status === 'Bloqué').length;
+            document.getElementById('kanban-done-count').textContent = done;
+
+            document.getElementById('task-urgent-count').textContent = filtered.filter(t => t.priority === 'Urgent').length;
+            document.getElementById('task-pending-count').textContent = filtered.filter(t => t.status === 'À faire').length;
+            document.getElementById('task-progress-count').textContent = filtered.filter(t => t.status === 'En cours').length;
+            document.getElementById('task-done-count').textContent = done;
+
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            const progressFill = document.getElementById('task-progress-fill');
+            const progressLabel = document.getElementById('task-progress-label');
+            const progressDetail = document.getElementById('task-progress-detail');
+            const overdueBadge = document.getElementById('task-overdue-badge');
+            if (progressLabel) progressLabel.textContent = `${pct}% termine`;
+            if (progressFill) progressFill.style.width = `${pct}%`;
+            if (progressDetail) progressDetail.textContent = `${done}/${total}`;
+            if (overdueBadge) {
+                overdueBadge.style.display = overdue > 0 ? '' : 'none';
+                overdueBadge.textContent = overdue > 0 ? `${overdue} en retard` : '';
             }
         }
 
