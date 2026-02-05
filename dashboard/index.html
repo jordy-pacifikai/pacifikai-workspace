@@ -6415,7 +6415,7 @@
                                 </button>
                                 <div class="dropdown-menu" id="status-dropdown"></div>
                             </div>
-                            <button class="btn btn-ghost" id="my-prospects-btn" onclick="toggleMyProspects()" style="font-size:0.7rem;padding:3px 8px;border-radius:6px;">
+                            <button class="btn btn-ghost" id="my-prospects-btn" onclick="toggleMyProspects()" style="font-size:0.8rem;padding:6px 12px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);font-weight:500;gap:4px;">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 Mes prospects
                             </button>
@@ -6576,7 +6576,7 @@
                         <p>Suivi des taches par projet et assignation</p>
                     </div>
                     <div class="header-actions">
-                        <button class="btn btn-ghost" id="my-tasks-btn" onclick="toggleMyTasks()" style="font-size:0.75rem;padding:4px 10px;border-radius:6px;">
+                        <button class="btn btn-ghost" id="my-tasks-btn" onclick="toggleMyTasks()" style="font-size:0.8rem;padding:6px 12px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);font-weight:500;gap:4px;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             Mes taches
                         </button>
@@ -10339,31 +10339,53 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
             const column = e.currentTarget.closest('.pipeline-column');
             const newStatus = column.dataset.status;
+            if (!newStatus) { draggedTaskId = null; return; }
 
-            if (newStatus) {
-                await updateTaskStatus(draggedTaskId, newStatus);
-                addTaskHistoryEntry(draggedTaskId, 'status_change', `Statut change vers: ${newStatus}`);
-            }
-
+            const taskId = draggedTaskId;
             draggedTaskId = null;
+
+            // 1. Update local IMMEDIATEMENT (optimistic)
+            const task = airtableTasks.find(t => t.id === taskId);
+            if (!task) return;
+            const oldStatus = task.status;
+            task.status = newStatus;
+
+            // 2. Re-render TOUT DE SUITE (instantane)
+            renderTasks();
+            setupTaskDragAndDrop();
+            addTaskHistoryEntry(taskId, 'status_change', `Statut change vers: ${newStatus}`);
+
+            // 3. Sync Supabase en arriere-plan
+            const statusMap = { 'À faire': 'todo', 'En cours': 'in_progress', 'Bloqué': 'blocked', 'Terminé': 'done' };
+            const supabaseStatus = statusMap[newStatus] || 'todo';
+            try {
+                await supabase.updateTaskStatus(taskId, supabaseStatus);
+            } catch (err) {
+                console.error('[Task D&D] Rollback:', err);
+                task.status = oldStatus;
+                renderTasks();
+                setupTaskDragAndDrop();
+                showToast('Erreur: statut non sauvegarde', 'error');
+            }
         }
 
         async function updateTaskStatus(taskId, newStatus) {
+            const task = airtableTasks.find(t => t.id === taskId);
+            if (!task) return;
+            const oldStatus = task.status;
+            task.status = newStatus;
+            renderTasks();
+            setupTaskDragAndDrop();
+
+            const statusMap = { 'À faire': 'todo', 'En cours': 'in_progress', 'Bloqué': 'blocked', 'Terminé': 'done' };
             try {
-                // Map UI status to Supabase status
-                const statusMap = {
-                    'À faire': 'todo',
-                    'En cours': 'in_progress',
-                    'Bloqué': 'blocked',
-                    'Terminé': 'done'
-                };
-                const supabaseStatus = statusMap[newStatus] || 'todo';
-                await supabase.updateTaskStatus(taskId, supabaseStatus);
-                await loadDataFromSupabase();
-                renderTasks();
-                setupTaskDragAndDrop();
+                await supabase.updateTaskStatus(taskId, statusMap[newStatus] || 'todo');
             } catch (err) {
                 console.error('Erreur update task:', err);
+                task.status = oldStatus;
+                renderTasks();
+                setupTaskDragAndDrop();
+                showToast('Erreur sauvegarde', 'error');
             }
         }
 
@@ -14015,7 +14037,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             }
 
             // N: New task (when on tasks view)
-            if (e.key === 'n' || e.key === 'N') {
+            if ((e.key === 'n' || e.key === 'N') && !e.metaKey && !e.ctrlKey && !e.altKey) {
                 const activeView = document.querySelector('.view.active');
                 if (activeView?.id === 'view-tasks') {
                     e.preventDefault();
