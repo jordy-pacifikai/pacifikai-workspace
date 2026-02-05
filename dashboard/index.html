@@ -11287,9 +11287,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 if (prospect && prospect.status !== newStatus) {
                     prospect.status = newStatus;
                     save();
-                    // Render ALL views to ensure synchronization
                     render();
                     showToast(`${prospect.company} deplace vers ${statusLabel(newStatus)}`);
+                    // Sync to Supabase
+                    updateProspectInAirtable(prospect);
                 }
                 draggedProspectId = null;
             }
