@@ -862,6 +862,64 @@
             transform: rotate(2deg) scale(1.02);
         }
 
+        .task-view-btn.active {
+            background: var(--accent) !important;
+            color: white !important;
+        }
+
+        .task-list-row {
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.15s;
+            font-size: 0.8rem;
+        }
+        .task-list-row:hover {
+            background: var(--bg-tertiary);
+        }
+        .task-list-row td {
+            padding: 0.5rem;
+            vertical-align: middle;
+        }
+        .task-list-row.overdue {
+            border-left: 3px solid var(--red);
+        }
+        .task-list-checkbox {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: transparent;
+        }
+        .task-list-checkbox:hover {
+            border-color: var(--green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .task-list-checkbox.done {
+            border-color: var(--green);
+            background: var(--green);
+        }
+        .quick-priority {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+        .quick-priority:hover { opacity: 0.8; }
+        .quick-priority.Urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+        .quick-priority.Normal { background: rgba(59,130,246,0.15); color: var(--blue); }
+        .quick-priority.Faible { background: rgba(107,114,128,0.15); color: var(--text-muted); }
+
+        .task-kanban-overdue {
+            border-left: 3px solid var(--red) !important;
+        }
+
         .pipeline-header {
             display: flex;
             align-items: center;
@@ -1853,6 +1911,314 @@
             height: 1px;
             background: var(--border);
             margin: 0.25rem 0;
+        }
+
+        /* Temperature Chips */
+        .temp-chips {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.125rem;
+            background: var(--bg);
+            border-radius: 6px;
+        }
+
+        .temp-chip {
+            padding: 0.25rem 0.625rem;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+            background: transparent;
+            color: var(--text-dim);
+        }
+
+        .temp-chip:hover { color: var(--text); background: var(--bg-muted); }
+        .temp-chip.active { color: white; }
+        .temp-chip.active[data-temp="all"] { background: var(--accent); }
+        .temp-chip.active[data-temp="hot"], .temp-chip.hot.active { background: var(--red); }
+        .temp-chip.active[data-temp="chaud"], .temp-chip.chaud.active { background: var(--orange); }
+        .temp-chip.active[data-temp="tiede"], .temp-chip.tiede.active { background: var(--yellow); color: #1a1a2e; }
+        .temp-chip.active[data-temp="froid"], .temp-chip.froid.active { background: var(--blue); }
+
+        /* Filter Toggle Button */
+        .filter-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .filter-toggle:hover { background: var(--bg-muted); color: var(--text); }
+        .filter-toggle.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .filter-toggle svg { width: 12px; height: 12px; }
+
+        /* Active Filters Bar */
+        .active-filters {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .active-filters:empty { display: none; }
+
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.6875rem;
+            background: var(--accent-glow);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 4px;
+            color: var(--accent);
+        }
+
+        .filter-tag-close {
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.15s;
+        }
+
+        .filter-tag-close:hover { opacity: 1; }
+
+        .clear-filters {
+            font-size: 0.6875rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+
+        .clear-filters:hover { color: var(--red); }
+
+        /* Grid View */
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .grid-card {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--border);
+            transition: background 0.2s;
+        }
+
+        .grid-card.hot::before { background: var(--red); }
+        .grid-card.chaud::before { background: var(--orange); }
+        .grid-card.tiede::before { background: var(--yellow); }
+        .grid-card.froid::before { background: var(--blue); }
+
+        .grid-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .grid-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .grid-card-company {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .grid-card-badge {
+            padding: 0.125rem 0.5rem;
+            font-size: 0.625rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            white-space: nowrap;
+        }
+
+        .grid-card-badge.hot { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+        .grid-card-badge.chaud { background: rgba(245, 158, 11, 0.15); color: var(--orange); }
+        .grid-card-badge.tiede { background: rgba(234, 179, 8, 0.15); color: var(--yellow); }
+        .grid-card-badge.froid { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+
+        .grid-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .grid-card-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .grid-card-row strong { color: var(--text); font-weight: 500; }
+
+        .grid-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .grid-card-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .grid-card-status {
+            font-size: 0.6875rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: var(--bg-muted);
+            color: var(--text-muted);
+        }
+
+        .grid-card-assets {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .grid-card-assets span {
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+            background: var(--bg-muted);
+            border-radius: 3px;
+            color: var(--text-dim);
+        }
+
+        .grid-card.has-assets { border-left: 3px solid var(--accent); }
+
+        /* Compact View */
+        .compact-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .compact-row {
+            display: grid;
+            grid-template-columns: 2.5rem 1fr 120px 100px 100px 80px 60px;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            cursor: pointer;
+            transition: background 0.1s;
+            font-size: 0.8125rem;
+        }
+
+        .compact-row:hover { background: var(--bg-muted); }
+        .compact-row:last-child { border-bottom: none; }
+
+        .compact-row .avatar {
+            width: 2rem;
+            height: 2rem;
+            font-size: 0.625rem;
+        }
+
+        .compact-company {
+            font-weight: 500;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .compact-sector {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .compact-status {
+            font-size: 0.6875rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            background: var(--bg-muted);
+            color: var(--text-muted);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .compact-value {
+            font-weight: 600;
+            color: var(--text);
+            text-align: right;
+        }
+
+        .compact-temp {
+            font-size: 0.625rem;
+            font-weight: 600;
+            padding: 0.15rem 0.375rem;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .compact-temp.hot { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+        .compact-temp.chaud { background: rgba(245, 158, 11, 0.15); color: var(--orange); }
+        .compact-temp.tiede { background: rgba(234, 179, 8, 0.15); color: var(--yellow); }
+        .compact-temp.froid { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+
+        .compact-assets-icon {
+            font-size: 0.75rem;
+            text-align: center;
+            color: var(--accent);
+        }
+
+        .compact-header {
+            display: grid;
+            grid-template-columns: 2.5rem 1fr 120px 100px 100px 80px 60px;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid var(--border);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         /* Summary Cards */
@@ -5958,6 +6324,14 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                                 Liste
                             </button>
+                            <button class="view-toggle-btn" data-pview="grid" title="Grille">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                                Grille
+                            </button>
+                            <button class="view-toggle-btn" data-pview="compact" title="Compact">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                                Compact
+                            </button>
                             <button class="view-toggle-btn" data-pview="pipeline" title="Pipeline Status">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                                 Pipeline
@@ -6041,6 +6415,32 @@
                                 </button>
                                 <div class="dropdown-menu" id="status-dropdown"></div>
                             </div>
+                            <button class="btn btn-ghost" id="my-prospects-btn" onclick="toggleMyProspects()" style="font-size:0.7rem;padding:3px 8px;border-radius:6px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                Mes prospects
+                            </button>
+                            <!-- Assignee Filter -->
+                            <div class="dropdown">
+                                <button class="dropdown-btn" onclick="toggleDropdown('assignee-dropdown')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    <span id="assignee-filter-label">Tous assignes</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                </button>
+                                <div class="dropdown-menu" id="assignee-dropdown"></div>
+                            </div>
+                            <!-- Temperature Quick Filters -->
+                            <div class="temp-chips" id="temp-chips">
+                                <button class="temp-chip active" data-temp="all" onclick="setTempFilter('all')">Tous</button>
+                                <button class="temp-chip hot" data-temp="hot" onclick="setTempFilter('hot')">Hot</button>
+                                <button class="temp-chip chaud" data-temp="chaud" onclick="setTempFilter('chaud')">Chaud</button>
+                                <button class="temp-chip tiede" data-temp="tiede" onclick="setTempFilter('tiede')">Tiede</button>
+                                <button class="temp-chip froid" data-temp="froid" onclick="setTempFilter('froid')">Froid</button>
+                            </div>
+                            <!-- Has Assets Toggle -->
+                            <button class="filter-toggle" id="assets-filter-toggle" onclick="toggleAssetsFilter()" title="Filtrer prospects avec assets">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                Assets
+                            </button>
                         </div>
                         <div class="toolbar-right">
                             <!-- Date Filter -->
@@ -6086,6 +6486,27 @@
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                                         Secteur (A-Z)
                                     </div>
+                                    <div class="dropdown-item" data-sort="status" onclick="setSortBy('status')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                        Status (pipeline)
+                                    </div>
+                                    <div class="dropdown-item" data-sort="assignee" onclick="setSortBy('assignee')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                        Assigne
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="dropdown-item" data-sort="date-desc" onclick="setSortBy('date-desc')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                        Date (recent)
+                                    </div>
+                                    <div class="dropdown-item" data-sort="date-asc" onclick="setSortBy('date-asc')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                        Date (ancien)
+                                    </div>
+                                    <div class="dropdown-item" data-sort="score" onclick="setSortBy('score')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        Score IA
+                                    </div>
                                     <div class="dropdown-divider"></div>
                                     <div class="dropdown-item" data-sort="assets" onclick="setSortBy('assets')">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -6116,11 +6537,26 @@
                                                 <th class="sortable" data-sort="value">Valeur</th>
                                                 <th>Score IA</th>
                                                 <th class="sortable" data-sort="priority">Priorite</th>
+                                                <th>Assigne</th>
                                             </tr>
                                         </thead>
                                         <tbody id="prospects-table"></tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grid View (Cards) -->
+                    <div class="prospects-view-container" id="pview-grid">
+                        <div class="grid-view" id="grid-board"></div>
+                    </div>
+
+                    <!-- Compact View -->
+                    <div class="prospects-view-container" id="pview-compact">
+                        <div class="card">
+                            <div class="card-body flush">
+                                <div class="compact-list" id="compact-list"></div>
                             </div>
                         </div>
                     </div>
@@ -6140,9 +6576,16 @@
                         <p>Suivi des taches par projet et assignation</p>
                     </div>
                     <div class="header-actions">
+                        <button class="btn btn-ghost" id="my-tasks-btn" onclick="toggleMyTasks()" style="font-size:0.75rem;padding:4px 10px;border-radius:6px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Mes taches
+                        </button>
+                        <div class="search-input-wrapper" style="position:relative;width:180px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:14px;height:14px;opacity:0.5;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="search-tasks" placeholder="Rechercher..." oninput="filterTasks()" style="width:100%;padding:6px 8px 6px 28px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:0.8rem;">
+                        </div>
                         <select class="filter-select" id="task-assignee-filter" onchange="filterTasks()">
                             <option value="all">Tous</option>
-                            <!-- Populated dynamically -->
                             <option value="unassigned">Non assigne</option>
                         </select>
                         <select class="filter-select" id="task-project-filter" onchange="filterTasks()">
@@ -6159,6 +6602,21 @@
                             <option value="Normal">Normal</option>
                             <option value="Faible">Faible</option>
                         </select>
+                        <select class="filter-select" id="task-sort-select" onchange="filterTasks()">
+                            <option value="priority">Tri: Priorite</option>
+                            <option value="dueDate">Tri: Echeance</option>
+                            <option value="assignee">Tri: Assigne</option>
+                            <option value="project">Tri: Projet</option>
+                            <option value="created">Tri: Creation</option>
+                        </select>
+                        <div class="view-toggle" style="display:flex;gap:2px;background:var(--bg-tertiary);border-radius:6px;padding:2px;">
+                            <button class="btn btn-ghost task-view-btn active" id="task-view-kanban-btn" onclick="switchTaskView('kanban')" title="Vue Kanban" style="padding:4px 8px;border-radius:4px;font-size:0.75rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                            </button>
+                            <button class="btn btn-ghost task-view-btn" id="task-view-list-btn" onclick="switchTaskView('list')" title="Vue Liste" style="padding:4px 8px;border-radius:4px;font-size:0.75rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            </button>
+                        </div>
                         <button class="btn btn-ghost" onclick="loadTasksFromAirtable()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
                             Sync
@@ -6207,6 +6665,37 @@
                                 <span class="stat-value" id="task-done-count">0</span>
                                 <span class="stat-label">Termine</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Task Progress Bar -->
+                    <div id="task-progress-bar-container" style="margin-bottom:1rem;background:var(--bg-tertiary);border-radius:8px;padding:0.5rem 1rem;display:flex;align-items:center;gap:1rem;">
+                        <span style="font-size:0.75rem;color:var(--text-muted);white-space:nowrap;" id="task-progress-label">0% termine</span>
+                        <div style="flex:1;height:6px;background:var(--bg-secondary);border-radius:3px;overflow:hidden;">
+                            <div id="task-progress-fill" style="height:100%;background:var(--green);border-radius:3px;transition:width 0.3s;width:0%;"></div>
+                        </div>
+                        <span style="font-size:0.7rem;color:var(--text-dim);" id="task-progress-detail">0/0</span>
+                        <span id="task-overdue-badge" style="display:none;font-size:0.7rem;background:rgba(239,68,68,0.15);color:var(--red);padding:2px 8px;border-radius:10px;font-weight:600;"></span>
+                    </div>
+
+                    <!-- Task List View -->
+                    <div id="task-list-view" style="display:none;">
+                        <div class="card" style="overflow-x:auto;">
+                            <table style="width:100%;border-collapse:collapse;">
+                                <thead>
+                                    <tr style="border-bottom:1px solid var(--border);font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">
+                                        <th style="padding:0.5rem;text-align:left;width:32px;"></th>
+                                        <th style="padding:0.5rem;text-align:left;">Titre</th>
+                                        <th style="padding:0.5rem;text-align:left;width:80px;">Status</th>
+                                        <th style="padding:0.5rem;text-align:left;width:80px;">Priorite</th>
+                                        <th style="padding:0.5rem;text-align:left;width:90px;">Echeance</th>
+                                        <th style="padding:0.5rem;text-align:left;width:60px;">Assigne</th>
+                                        <th style="padding:0.5rem;text-align:left;width:80px;">Projet</th>
+                                        <th style="padding:0.5rem;text-align:center;width:60px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="task-list-tbody"></tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -7450,6 +7939,10 @@
                         <span class="badge" id="modal-status">-</span>
                         <span>•</span>
                         <span class="badge" id="modal-priority">-</span>
+                        <span>•</span>
+                        <select id="modal-assignee-select" onchange="assignProspectFromModal(this.value)" style="background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-size:0.75rem;cursor:pointer;outline:none;">
+                            <option value="">Non assigne</option>
+                        </select>
                     </div>
                 </div>
                 <button class="modal-close" onclick="closeProspectModal()">
@@ -8077,6 +8570,14 @@
             return member?.display_name || 'Non assigne';
         }
 
+        function renderAssigneeBadge(assignedTo, size = 20) {
+            if (!assignedTo) return '';
+            const name = getMemberName(assignedTo);
+            const color = getMemberColor(assignedTo);
+            const initials = getMemberInitials(assignedTo);
+            return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};color:white;font-size:${Math.round(size*0.3)}rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;" title="${name}">${initials}</div>`;
+        }
+
         // Populate all assignee dropdowns with team members
         function populateAssigneeDropdowns() {
             const dropdowns = [
@@ -8185,6 +8686,8 @@
         let currentSectorFilter = 'all';
         let currentStatusFilter = 'all';
         let currentDateFilter = 'all';
+        let currentTempFilter = 'all';
+        let assetsFilterActive = false;
         let searchQuery = '';
 
         // Airtable Config - Clés chargées depuis localStorage uniquement
@@ -8199,6 +8702,10 @@
         let currentTaskProjectFilter = 'all';
         let currentTaskPriorityFilter = 'all';
         let currentTaskAssigneeFilter = 'all';
+        let currentAssigneeFilter = 'all'; // Prospect assignee filter
+        let currentTaskView = 'kanban';
+        let currentTaskSort = 'priority';
+        let taskSearchQuery = '';
         let currentEditingTaskId = null;
         let taskComments = {}; // { taskId: [{ text, date, author }] }
         let taskHistory = {}; // { taskId: [{ action, date, details }] }
@@ -8509,12 +9016,26 @@ Il parle de facon informelle:
 ### Actions TACHES (Task Manager)
 - **create_task**: Creer une nouvelle tache (title obligatoire, description/priority/dueDate/project optionnels)
 - **update_task_status**: Changer le statut (target=titre partiel, to=A faire/En cours/Termine/Bloque)
+- **edit_task**: Modifier une tache existante (target=titre partiel, fields={description, priority, dueDate, status})
+- **assign_task**: Assigner une tache (target=titre partiel, to="Jordy" ou "Honovai")
 - **delete_task**: Supprimer une tache (target=titre partiel)
+
+### Actions ASSIGNATION
+- **assign_prospect**: Assigner un prospect a un membre (target=nom entreprise, to="Jordy"|"Honovai"|null)
 - **none**: Juste repondre
+
+## EQUIPE PACIFIK'AI
+- **Jordy Banks** - Fondateur, business dev, technique
+- **Honovai** - Assistante, support, suivi clients
 
 Exemples:
 - "cree une tache pour appeler ATN demain" → create_task avec title, dueDate, project=ATN
 - "j'ai fini la tache video loom" → update_task_status avec target contenant "loom", to="Terminé"
+- "assigne ATN a Honovai" → assign_prospect avec target="Air Tahiti Nui", to="Honovai"
+- "change la priorite de la tache X en Urgent" → edit_task avec target="X", fields={priority:"Urgent"}
+- "assigne la tache relance a Jordy" → assign_task avec target="relance", to="Jordy"
+- "mes taches" → liste filtree par l'assignee courant
+- "resume des taches" → synthese structuree de toutes les taches
 
 IMPORTANT: JSON uniquement, pas de texte autour.`
         };
@@ -8748,11 +9269,14 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     priority: t.priorite || 'medium',
                     dueDate: t.due_date,
                     tempsEstime: t.temps_estime,
+                    hours: t.temps_estime,
                     prospectId: t.prospect_id,
                     prospectName: t.prospect?.entreprise || '',
                     assignedTo: t.assigned_to,
+                    assignee: t.assignee?.display_name || '',
                     assigneeName: t.assignee?.display_name || '',
-                    assigneeColor: t.assignee?.avatar_color || '#3b82f6'
+                    assigneeColor: t.assignee?.avatar_color || '#3b82f6',
+                    project: extractProject(t.titre || '')
                 }));
 
                 // Transformer content
@@ -9283,6 +9807,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     <td>${fmtXPF(p.value)}</td>
                     <td>${scoreBadge || '-'}</td>
                     <td>${p.priority ? `<span class="badge ${p.priority}">${priorityLabel(p.priority)}</span>` : '-'}</td>
+                    <td>${renderAssigneeBadge(p.assignedTo, 22) || '<span style="color:var(--text-dim)">-</span>'}</td>
                 </tr>
             `;}).join('');
         }
@@ -9322,11 +9847,14 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             currentTaskProjectFilter = document.getElementById('task-project-filter').value;
             currentTaskPriorityFilter = document.getElementById('task-priority-filter').value;
             currentTaskAssigneeFilter = document.getElementById('task-assignee-filter').value;
+            currentTaskSort = document.getElementById('task-sort-select')?.value || 'priority';
+            const searchEl = document.getElementById('search-tasks');
+            taskSearchQuery = searchEl ? searchEl.value.toLowerCase().trim() : '';
             renderTasks();
         }
 
         function getFilteredTasks() {
-            return airtableTasks.filter(t => {
+            let tasks = airtableTasks.filter(t => {
                 const projectMatch = currentTaskProjectFilter === 'all' ||
                     (currentTaskProjectFilter === 'other' && !['ATN', 'PACIFIKAI', 'HVC', 'COWAN'].includes(t.project)) ||
                     t.project === currentTaskProjectFilter;
@@ -9334,40 +9862,98 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 const assigneeMatch = currentTaskAssigneeFilter === 'all' ||
                     (currentTaskAssigneeFilter === 'unassigned' && !t.assignee) ||
                     t.assignee === currentTaskAssigneeFilter;
-                return projectMatch && priorityMatch && assigneeMatch;
+                const searchMatch = !taskSearchQuery ||
+                    (t.title || '').toLowerCase().includes(taskSearchQuery) ||
+                    (t.description || '').toLowerCase().includes(taskSearchQuery) ||
+                    (t.prospectName || '').toLowerCase().includes(taskSearchQuery) ||
+                    (t.assignee || '').toLowerCase().includes(taskSearchQuery);
+                return projectMatch && priorityMatch && assigneeMatch && searchMatch;
             });
+
+            // Sort
+            const priorityOrder = { 'Urgent': 0, 'Normal': 1, 'Faible': 2 };
+            switch (currentTaskSort) {
+                case 'priority':
+                    tasks.sort((a, b) => (priorityOrder[a.priority] ?? 9) - (priorityOrder[b.priority] ?? 9));
+                    break;
+                case 'dueDate':
+                    tasks.sort((a, b) => {
+                        if (!a.dueDate) return 1;
+                        if (!b.dueDate) return -1;
+                        return new Date(a.dueDate) - new Date(b.dueDate);
+                    });
+                    break;
+                case 'assignee':
+                    tasks.sort((a, b) => (a.assignee || 'ZZZ').localeCompare(b.assignee || 'ZZZ'));
+                    break;
+                case 'project':
+                    tasks.sort((a, b) => (a.project || 'ZZZ').localeCompare(b.project || 'ZZZ'));
+                    break;
+                case 'created':
+                    tasks.sort((a, b) => (b.id || '').localeCompare(a.id || ''));
+                    break;
+            }
+
+            return tasks;
         }
 
         function renderTasks() {
             const filtered = getFilteredTasks();
+            const now = new Date();
 
             // Stats
             const urgent = filtered.filter(t => t.priority === 'Urgent').length;
             const pending = filtered.filter(t => t.status === 'À faire').length;
             const progress = filtered.filter(t => t.status === 'En cours').length;
             const done = filtered.filter(t => t.status === 'Terminé').length;
+            const total = filtered.length;
+            const overdue = filtered.filter(t => t.dueDate && new Date(t.dueDate) < now && t.status !== 'Terminé').length;
 
             document.getElementById('task-urgent-count').textContent = urgent;
             document.getElementById('task-pending-count').textContent = pending;
             document.getElementById('task-progress-count').textContent = progress;
             document.getElementById('task-done-count').textContent = done;
 
-            // Kanban columns
-            const columns = {
-                'À faire': { el: 'kanban-todo', count: 'kanban-todo-count' },
-                'En cours': { el: 'kanban-progress', count: 'kanban-progress-count' },
-                'Bloqué': { el: 'kanban-blocked', count: 'kanban-blocked-count' },
-                'Terminé': { el: 'kanban-done', count: 'kanban-done-count' }
-            };
+            // Progress bar
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            const progressLabel = document.getElementById('task-progress-label');
+            const progressFill = document.getElementById('task-progress-fill');
+            const progressDetail = document.getElementById('task-progress-detail');
+            const overdueBadge = document.getElementById('task-overdue-badge');
+            if (progressLabel) progressLabel.textContent = `${pct}% termine`;
+            if (progressFill) progressFill.style.width = `${pct}%`;
+            if (progressDetail) progressDetail.textContent = `${done}/${total}`;
+            if (overdueBadge) {
+                if (overdue > 0) {
+                    overdueBadge.style.display = '';
+                    overdueBadge.textContent = `${overdue} en retard`;
+                } else {
+                    overdueBadge.style.display = 'none';
+                }
+            }
 
-            Object.entries(columns).forEach(([status, cfg]) => {
-                const items = filtered.filter(t => t.status === status);
-                document.getElementById(cfg.count).textContent = items.length;
-                document.getElementById(cfg.el).innerHTML = items.map(t => renderTaskCard(t)).join('');
-            });
+            // Kanban view
+            if (currentTaskView === 'kanban') {
+                const columns = {
+                    'À faire': { el: 'kanban-todo', count: 'kanban-todo-count' },
+                    'En cours': { el: 'kanban-progress', count: 'kanban-progress-count' },
+                    'Bloqué': { el: 'kanban-blocked', count: 'kanban-blocked-count' },
+                    'Terminé': { el: 'kanban-done', count: 'kanban-done-count' }
+                };
 
-            // Re-setup drag and drop after render
-            setupTaskDragAndDrop();
+                Object.entries(columns).forEach(([status, cfg]) => {
+                    const items = filtered.filter(t => t.status === status);
+                    document.getElementById(cfg.count).textContent = items.length;
+                    document.getElementById(cfg.el).innerHTML = items.map(t => renderTaskCard(t)).join('');
+                });
+
+                setupTaskDragAndDrop();
+            }
+
+            // List view
+            if (currentTaskView === 'list') {
+                renderTaskListView(filtered);
+            }
         }
 
         function renderTaskCard(t) {
@@ -9378,7 +9964,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             const assigneeColor = t.assignee === 'Jordy' ? 'var(--accent)' : t.assignee === 'Honovai' ? 'var(--purple)' : 'var(--text-dim)';
 
             return `
-                <div class="pipeline-card task-card" data-task-id="${t.id}" draggable="true" onclick="openTaskModal('${t.id}')" style="cursor: pointer;">
+                <div class="pipeline-card task-card ${isOverdue ? 'task-kanban-overdue' : ''}" data-task-id="${t.id}" draggable="true" onclick="openTaskModal('${t.id}')" style="cursor: pointer;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
                         <div class="pipeline-card-name" style="flex: 1;">${t.title.replace(/^\[[^\]]+\]\s*/, '')}</div>
                         ${t.assignee ? `<div style="width: 24px; height: 24px; border-radius: 50%; background: ${assigneeColor}; color: white; font-size: 0.625rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0;" title="${t.assignee}">${assigneeInitial}</div>` : ''}
@@ -9392,6 +9978,90 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     </div>
                 </div>
             `;
+        }
+
+        function switchTaskView(view) {
+            currentTaskView = view;
+            document.getElementById('task-kanban').style.display = view === 'kanban' ? '' : 'none';
+            document.getElementById('task-list-view').style.display = view === 'list' ? '' : 'none';
+            document.querySelectorAll('.task-view-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`task-view-${view}-btn`)?.classList.add('active');
+            renderTasks();
+        }
+
+        function renderTaskListView(tasks) {
+            const tbody = document.getElementById('task-list-tbody');
+            if (!tbody) return;
+            const now = new Date();
+
+            tbody.innerHTML = tasks.map(t => {
+                const isOverdue = t.dueDate && new Date(t.dueDate) < now && t.status !== 'Terminé';
+                const isDone = t.status === 'Terminé';
+                const dueStr = t.dueDate ? new Date(t.dueDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '-';
+                const isToday = t.dueDate && new Date(t.dueDate).toDateString() === now.toDateString();
+                const dueColor = isOverdue ? 'var(--red)' : isToday ? 'var(--orange)' : 'var(--text-muted)';
+                const assigneeInitial = t.assignee ? t.assignee.charAt(0).toUpperCase() : '';
+                const assigneeColor = t.assignee === 'Jordy' ? 'var(--accent)' : t.assignee === 'Honovai' ? 'var(--purple)' : 'var(--text-dim)';
+                const statusColors = { 'À faire': 'var(--text-muted)', 'En cours': 'var(--blue)', 'Bloqué': 'var(--orange)', 'Terminé': 'var(--green)' };
+                const nextPriority = { 'Urgent': 'Normal', 'Normal': 'Faible', 'Faible': 'Urgent' };
+
+                return `<tr class="task-list-row ${isOverdue ? 'overdue' : ''}" style="${isDone ? 'opacity:0.6;' : ''}">
+                    <td>
+                        <div class="task-list-checkbox ${isDone ? 'done' : ''}" onclick="event.stopPropagation(); quickToggleTask('${t.id}')" title="${isDone ? 'Reouvrir' : 'Terminer'}">
+                            ${isDone ? '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="width:12px;height:12px;"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                        </div>
+                    </td>
+                    <td style="cursor:pointer;${isDone ? 'text-decoration:line-through;' : ''}" onclick="openTaskModal('${t.id}')">
+                        <div style="font-weight:500;">${t.title.replace(/^\[[^\]]+\]\s*/, '')}</div>
+                        ${t.description ? `<div style="font-size:0.7rem;color:var(--text-dim);margin-top:2px;">${t.description.substring(0, 80)}${t.description.length > 80 ? '...' : ''}</div>` : ''}
+                    </td>
+                    <td><span style="font-size:0.7rem;color:${statusColors[t.status] || 'var(--text-muted)'};font-weight:500;">${t.status}</span></td>
+                    <td><span class="quick-priority ${t.priority}" onclick="event.stopPropagation(); quickChangePriority('${t.id}', '${nextPriority[t.priority] || 'Normal'}')">${t.priority}</span></td>
+                    <td style="font-size:0.75rem;color:${dueColor};font-weight:${isOverdue ? '600' : '400'};">${isOverdue ? '⚠ ' : ''}${dueStr}</td>
+                    <td>${t.assignee ? `<div style="width:22px;height:22px;border-radius:50%;background:${assigneeColor};color:white;font-size:0.6rem;font-weight:600;display:flex;align-items:center;justify-content:center;" title="${t.assignee}">${assigneeInitial}</div>` : ''}</td>
+                    <td>${t.project !== 'other' ? `<span class="badge" style="background:var(--purple);font-size:0.6rem;padding:0.1rem 0.3rem;">${t.project}</span>` : '-'}</td>
+                    <td style="text-align:center;">
+                        <button class="btn btn-ghost" onclick="event.stopPropagation(); openTaskModal('${t.id}')" style="padding:2px 6px;font-size:0.7rem;" title="Modifier">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function quickToggleTask(taskId) {
+            const task = airtableTasks.find(t => t.id === taskId);
+            if (!task) return;
+            const newStatus = task.status === 'Terminé' ? 'À faire' : 'Terminé';
+            task.status = newStatus;
+            renderTasks();
+            try {
+                const statusMap = { 'À faire': 'todo', 'En cours': 'in_progress', 'Bloqué': 'blocked', 'Terminé': 'done' };
+                await supabase.updateTask(taskId, { status: statusMap[newStatus] || 'todo' });
+                showToast(newStatus === 'Terminé' ? 'Tache terminee' : 'Tache rouverte');
+            } catch (err) {
+                console.error('[Task] Quick toggle error:', err);
+                task.status = newStatus === 'Terminé' ? 'À faire' : 'Terminé';
+                renderTasks();
+                showToast('Erreur mise a jour');
+            }
+        }
+
+        async function quickChangePriority(taskId, newPriority) {
+            const task = airtableTasks.find(t => t.id === taskId);
+            if (!task) return;
+            const oldPriority = task.priority;
+            task.priority = newPriority;
+            renderTasks();
+            try {
+                await supabase.updateTask(taskId, { priorite: newPriority });
+                showToast(`Priorite: ${newPriority}`);
+            } catch (err) {
+                console.error('[Task] Quick priority error:', err);
+                task.priority = oldPriority;
+                renderTasks();
+                showToast('Erreur mise a jour');
+            }
         }
 
         // Task Modal Functions
@@ -9861,6 +10531,23 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             statusDropdown.innerHTML = statuses.map(s => `
                 <div class="dropdown-item ${currentStatusFilter === s.key ? 'active' : ''}" onclick="setStatusFilter('${s.key}')">${s.label}</div>
             `).join('');
+
+            // Assignees
+            const assigneeDropdown = document.getElementById('assignee-dropdown');
+            if (assigneeDropdown) {
+                assigneeDropdown.innerHTML = `
+                    <div class="dropdown-item ${currentAssigneeFilter === 'all' ? 'active' : ''}" onclick="setAssigneeFilter('all')">Tous assignes</div>
+                    <div class="dropdown-divider"></div>
+                    ${teamMembers.map(m => `
+                        <div class="dropdown-item ${currentAssigneeFilter === m.id ? 'active' : ''}" onclick="setAssigneeFilter('${m.id}')">
+                            <span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:${m.avatar_color};color:white;font-size:0.6rem;text-align:center;line-height:18px;margin-right:6px;">${m.display_name.charAt(0)}</span>
+                            ${m.display_name}
+                        </div>
+                    `).join('')}
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item ${currentAssigneeFilter === 'unassigned' ? 'active' : ''}" onclick="setAssigneeFilter('unassigned')">Non assigne</div>
+                `;
+            }
         }
 
         function setupDropdowns() {
@@ -9906,11 +10593,217 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 'value-asc': 'Valeur ↑',
                 'company': 'Entreprise',
                 'sector': 'Secteur',
+                'status': 'Status',
+                'assignee': 'Assigne',
+                'date-desc': 'Date ↓',
+                'date-asc': 'Date ↑',
+                'score': 'Score IA',
                 'assets': 'Avec assets'
             };
             document.getElementById('sort-label').textContent = labels[sort] || 'Trier par';
             renderProspectsViews();
             toggleDropdown('sort-dropdown');
+        }
+
+        function setTempFilter(temp) {
+            currentTempFilter = temp;
+            document.querySelectorAll('.temp-chip').forEach(chip => {
+                chip.classList.toggle('active', chip.dataset.temp === temp);
+            });
+            renderProspectsViews();
+        }
+
+        function toggleAssetsFilter() {
+            assetsFilterActive = !assetsFilterActive;
+            document.getElementById('assets-filter-toggle').classList.toggle('active', assetsFilterActive);
+            renderProspectsViews();
+        }
+
+        function setAssigneeFilter(assigneeId) {
+            currentAssigneeFilter = assigneeId;
+            const label = assigneeId === 'all' ? 'Tous assignes' :
+                          assigneeId === 'unassigned' ? 'Non assigne' :
+                          getMemberName(assigneeId);
+            document.getElementById('assignee-filter-label').textContent = label;
+            buildFilterDropdowns();
+            renderProspectsViews();
+            toggleDropdown('assignee-dropdown');
+        }
+
+        async function assignProspectFromModal(memberId) {
+            if (!currentProspectId) return;
+            const prospect = prospects.find(p => p.id === currentProspectId);
+            if (!prospect) return;
+
+            const newValue = memberId || null;
+            const oldValue = prospect.assignedTo;
+            if (newValue === oldValue) return;
+
+            prospect.assignedTo = newValue;
+            const id = prospect.supabaseId || prospect.id;
+            try {
+                await supabase.updateProspect(id, { assigned_to: newValue });
+                const name = newValue ? getMemberName(newValue) : 'personne';
+                showToast(`${prospect.company} assigne a ${name}`);
+                renderProspectsViews();
+            } catch (err) {
+                console.error('[Assign] Error:', err);
+                prospect.assignedTo = oldValue;
+                showToast('Erreur assignation');
+            }
+        }
+
+        function toggleMyProspects() {
+            const btn = document.getElementById('my-prospects-btn');
+            if (!currentUser) return;
+            const myId = currentUser.id;
+            if (currentAssigneeFilter === myId) {
+                setAssigneeFilter('all');
+                btn.style.background = '';
+                btn.style.color = '';
+            } else {
+                setAssigneeFilter(myId);
+                btn.style.background = 'var(--accent)';
+                btn.style.color = 'white';
+            }
+        }
+
+        function toggleMyTasks() {
+            const btn = document.getElementById('my-tasks-btn');
+            const select = document.getElementById('task-assignee-filter');
+            if (!currentUser) return;
+            const myName = getMemberName(currentUser.id);
+            if (currentTaskAssigneeFilter === myName) {
+                currentTaskAssigneeFilter = 'all';
+                if (select) select.value = 'all';
+                btn.style.background = '';
+                btn.style.color = '';
+            } else {
+                currentTaskAssigneeFilter = myName;
+                if (select) select.value = myName;
+                btn.style.background = 'var(--accent)';
+                btn.style.color = 'white';
+            }
+            renderTasks();
+        }
+
+        // Context menu for prospect cards (right-click to assign)
+        let contextMenuTarget = null;
+
+        function showProspectContextMenu(event, prospectId) {
+            event.preventDefault();
+            event.stopPropagation();
+            contextMenuTarget = prospectId;
+
+            let menu = document.getElementById('prospect-context-menu');
+            if (!menu) {
+                menu = document.createElement('div');
+                menu.id = 'prospect-context-menu';
+                menu.style.cssText = 'position:fixed;z-index:9999;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.3);min-width:180px;padding:4px;display:none;';
+                document.body.appendChild(menu);
+            }
+
+            const prospect = prospects.find(p => p.id === prospectId);
+            if (!prospect) return;
+
+            menu.innerHTML = `
+                <div style="padding:6px 10px;font-size:0.7rem;color:var(--text-dim);font-weight:600;border-bottom:1px solid var(--border);margin-bottom:2px;">${prospect.company}</div>
+                <div style="padding:4px 10px;font-size:0.7rem;color:var(--text-muted);">Assigner a:</div>
+                ${teamMembers.map(m => `
+                    <div style="padding:6px 10px;cursor:pointer;font-size:0.8rem;border-radius:4px;display:flex;align-items:center;gap:8px;${prospect.assignedTo === m.id ? 'background:var(--bg-tertiary);' : ''}"
+                         onmouseover="this.style.background='var(--bg-tertiary)'" onmouseout="this.style.background='${prospect.assignedTo === m.id ? 'var(--bg-tertiary)' : ''}'"
+                         onclick="quickAssignProspect('${prospectId}', '${m.id}')">
+                        <span style="width:18px;height:18px;border-radius:50%;background:${m.avatar_color};color:white;font-size:0.55rem;display:flex;align-items:center;justify-content:center;font-weight:600;">${m.display_name.charAt(0)}</span>
+                        ${m.display_name} ${prospect.assignedTo === m.id ? '✓' : ''}
+                    </div>
+                `).join('')}
+                <div style="border-top:1px solid var(--border);margin-top:2px;padding:6px 10px;cursor:pointer;font-size:0.8rem;border-radius:4px;color:var(--text-muted);"
+                     onmouseover="this.style.background='var(--bg-tertiary)'" onmouseout="this.style.background=''"
+                     onclick="quickAssignProspect('${prospectId}', null)">
+                    Retirer assignation
+                </div>
+            `;
+
+            menu.style.left = Math.min(event.clientX, window.innerWidth - 200) + 'px';
+            menu.style.top = Math.min(event.clientY, window.innerHeight - 250) + 'px';
+            menu.style.display = 'block';
+
+            // Close on click outside
+            setTimeout(() => {
+                document.addEventListener('click', closeContextMenu, { once: true });
+            }, 10);
+        }
+
+        function closeContextMenu() {
+            const menu = document.getElementById('prospect-context-menu');
+            if (menu) menu.style.display = 'none';
+        }
+
+        async function quickAssignProspect(prospectId, memberId) {
+            closeContextMenu();
+            const prospect = prospects.find(p => p.id === prospectId);
+            if (!prospect) return;
+            prospect.assignedTo = memberId;
+            renderProspectsViews();
+            const id = prospect.supabaseId || prospect.id;
+            try {
+                await supabase.updateProspect(id, { assigned_to: memberId });
+                const name = memberId ? getMemberName(memberId) : 'personne';
+                showToast(`${prospect.company} assigne a ${name}`);
+            } catch (err) {
+                console.error('[Assign] Quick assign error:', err);
+                showToast('Erreur assignation');
+            }
+        }
+
+        function clearAllFilters() {
+            searchQuery = '';
+            currentSectorFilter = 'all';
+            currentStatusFilter = 'all';
+            currentDateFilter = 'all';
+            currentTempFilter = 'all';
+            currentAssigneeFilter = 'all';
+            assetsFilterActive = false;
+            currentSort = 'priority';
+            document.getElementById('search-prospects').value = '';
+            document.getElementById('sector-filter-label').textContent = 'Tous secteurs';
+            document.getElementById('status-filter-label').textContent = 'Tous status';
+            document.getElementById('date-filter-label').textContent = 'Toutes dates';
+            document.getElementById('assignee-filter-label').textContent = 'Tous assignes';
+            document.getElementById('sort-label').textContent = 'Priorite';
+            document.getElementById('assets-filter-toggle').classList.remove('active');
+            document.querySelectorAll('.temp-chip').forEach(chip => {
+                chip.classList.toggle('active', chip.dataset.temp === 'all');
+            });
+            buildFilterDropdowns();
+            renderProspectsViews();
+        }
+
+        function renderActiveFilters() {
+            let container = document.getElementById('active-filters-bar');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'active-filters-bar';
+                container.className = 'active-filters';
+                const toolbar = document.querySelector('#view-prospects .toolbar');
+                toolbar.insertAdjacentElement('afterend', container);
+            }
+            const tags = [];
+            if (searchQuery) tags.push({ label: `Recherche: "${searchQuery}"`, clear: () => { searchQuery = ''; document.getElementById('search-prospects').value = ''; renderProspectsViews(); } });
+            if (currentSectorFilter !== 'all') tags.push({ label: `Secteur: ${currentSectorFilter}`, clear: () => setSectorFilter('all') });
+            if (currentStatusFilter !== 'all') tags.push({ label: `Status: ${statusLabel(currentStatusFilter)}`, clear: () => setStatusFilter('all') });
+            if (currentTempFilter !== 'all') tags.push({ label: `Temp: ${currentTempFilter}`, clear: () => setTempFilter('all') });
+            if (assetsFilterActive) tags.push({ label: 'Avec assets', clear: () => toggleAssetsFilter() });
+            if (currentAssigneeFilter !== 'all') tags.push({ label: `Assigne: ${currentAssigneeFilter === 'unassigned' ? 'Non assigne' : getMemberName(currentAssigneeFilter)}`, clear: () => setAssigneeFilter('all') });
+            if (currentDateFilter !== 'all') tags.push({ label: `Date: ${currentDateFilter}`, clear: () => setDateFilter('all') });
+
+            if (tags.length === 0) { container.innerHTML = ''; return; }
+
+            container.innerHTML = tags.map((t, i) =>
+                `<span class="filter-tag">${t.label} <span class="filter-tag-close" onclick="activeFilterClearFns[${i}]()">&times;</span></span>`
+            ).join('') + `<button class="clear-filters" onclick="clearAllFilters()">Tout effacer</button>`;
+
+            window.activeFilterClearFns = tags.map(t => t.clear);
         }
 
         function setDateFilter(dateFilter) {
@@ -9948,7 +10841,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             }
 
             // CSV Header
-            const headers = ['Entreprise', 'Contact', 'Email', 'Telephone', 'Poste', 'Secteur', 'Status', 'Priorite', 'Valeur XPF', 'Date'];
+            const headers = ['Entreprise', 'Contact', 'Email', 'Telephone', 'Poste', 'Secteur', 'Status', 'Priorite', 'Valeur XPF', 'Date', 'Assigne a'];
 
             // CSV Rows
             const rows = filtered.map(p => [
@@ -9961,7 +10854,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 statusLabel(p.status) || '',
                 priorityLabel(p.priority) || '',
                 p.value || 0,
-                p.date || ''
+                p.date || '',
+                p.assignedTo ? getMemberName(p.assignedTo) : ''
             ]);
 
             // Build CSV content
@@ -10044,6 +10938,28 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 });
             }
 
+            // Temperature filter
+            if (currentTempFilter !== 'all') {
+                filtered = filtered.filter(p => p.priority === currentTempFilter);
+            }
+
+            // Assets filter
+            if (assetsFilterActive) {
+                filtered = filtered.filter(p => {
+                    const assets = getProspectAssets(p.company);
+                    return assets && assets.files && assets.files.length > 0;
+                });
+            }
+
+            // Assignee filter
+            if (currentAssigneeFilter !== 'all') {
+                if (currentAssigneeFilter === 'unassigned') {
+                    filtered = filtered.filter(p => !p.assignedTo);
+                } else {
+                    filtered = filtered.filter(p => p.assignedTo === currentAssigneeFilter);
+                }
+            }
+
             // Sort
             const priorityOrder = { hot: 0, chaud: 1, tiede: 2, froid: 3 };
             const statusOrder = { lead: 0, contacted: 1, meeting: 2, proposal: 3, won: 4, lost: 5 };
@@ -10064,8 +10980,31 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 case 'sector':
                     filtered.sort((a, b) => a.sector.localeCompare(b.sector));
                     break;
+                case 'status':
+                    filtered.sort((a, b) => (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99));
+                    break;
+                case 'date-desc':
+                    filtered.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                    break;
+                case 'date-asc':
+                    filtered.sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
+                    break;
+                case 'score':
+                    filtered.sort((a, b) => (b.score || 0) - (a.score || 0));
+                    break;
+                case 'assignee':
+                    filtered.sort((a, b) => {
+                        const nameA = a.assignedTo ? getMemberName(a.assignedTo) : 'ZZZ';
+                        const nameB = b.assignedTo ? getMemberName(b.assignedTo) : 'ZZZ';
+                        return nameA.localeCompare(nameB);
+                    });
+                    break;
                 case 'assets':
-                    filtered.sort((a, b) => ((b.assets?.length || 0) - (a.assets?.length || 0)));
+                    filtered.sort((a, b) => {
+                        const aAssets = getProspectAssets(a.company);
+                        const bAssets = getProspectAssets(b.company);
+                        return ((bAssets?.files?.length || 0) - (aAssets?.files?.length || 0));
+                    });
                     break;
             }
 
@@ -10076,7 +11015,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             renderSummaryCards();
             renderKanbanTemp();
             renderProspectsTable(currentStatusFilter === 'all' ? 'all' : currentStatusFilter);
+            renderGridView();
+            renderCompactView();
             renderPipelineStatus();
+            renderActiveFilters();
             document.getElementById('prospects-count-header').textContent = getFilteredProspects().length;
         }
 
@@ -10088,6 +11030,95 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 document.getElementById('sum-' + temp).textContent = items.length;
                 document.getElementById('sum-' + temp + '-val').textContent = fmtXPF(total);
             });
+        }
+
+        // ============================================
+        // GRID VIEW (Cards)
+        // ============================================
+
+        function renderGridView() {
+            const board = document.getElementById('grid-board');
+            if (!board) return;
+            const filtered = getFilteredProspects();
+
+            if (filtered.length === 0) {
+                board.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-dim);">Aucun prospect ne correspond aux filtres</div>';
+                return;
+            }
+
+            board.innerHTML = filtered.map(p => {
+                const assets = getProspectAssets(p.company);
+                const hasAssets = assets && assets.files && assets.files.length > 0;
+                const initials = (p.company || '').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+                const assetIcons = hasAssets ? `<div class="grid-card-assets">
+                    ${assets.files.slice(0, 4).map(f => `<span>${f.type}</span>`).join('')}
+                    ${assets.files.length > 4 ? `<span>+${assets.files.length - 4}</span>` : ''}
+                </div>` : '';
+
+                return `<div class="grid-card ${p.priority || 'froid'} ${hasAssets ? 'has-assets' : ''}" onclick="showProspectModal('${p.id}')" oncontextmenu="showProspectContextMenu(event, '${p.id}')">
+                    <div class="grid-card-header">
+                        <div class="grid-card-company">${p.company}</div>
+                        <span class="grid-card-badge ${p.priority || 'froid'}">${priorityLabel(p.priority)}</span>
+                    </div>
+                    <div class="grid-card-info">
+                        ${p.contact || p.name ? `<div class="grid-card-row"><span>Contact</span><strong>${p.contact || p.name}</strong></div>` : ''}
+                        <div class="grid-card-row"><span>Secteur</span><strong>${p.sector || '-'}</strong></div>
+                        <div class="grid-card-row"><span>Status</span><strong>${statusLabel(p.status)}</strong></div>
+                        ${p.score ? `<div class="grid-card-row"><span>Score IA</span><strong>${p.score}/100</strong></div>` : ''}
+                    </div>
+                    ${assetIcons}
+                    <div class="grid-card-footer">
+                        <span class="grid-card-value">${fmtXPF(p.value)}</span>
+                        ${renderAssigneeBadge(p.assignedTo, 20)}
+                        <span class="grid-card-status">${statusLabel(p.status)}</span>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // ============================================
+        // COMPACT VIEW (One-liner rows)
+        // ============================================
+
+        function renderCompactView() {
+            const list = document.getElementById('compact-list');
+            if (!list) return;
+            const filtered = getFilteredProspects();
+
+            const header = `<div class="compact-header">
+                <span></span>
+                <span>Entreprise</span>
+                <span>Secteur</span>
+                <span>Status</span>
+                <span>Valeur</span>
+                <span>Temp.</span>
+                <span>Assigne</span>
+                <span>Assets</span>
+            </div>`;
+
+            if (filtered.length === 0) {
+                list.innerHTML = header + '<div style="text-align:center;padding:2rem;color:var(--text-dim);">Aucun resultat</div>';
+                return;
+            }
+
+            const avatarColors = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
+            list.innerHTML = header + filtered.map((p, i) => {
+                const initials = (p.company || '').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+                const color = avatarColors[i % avatarColors.length];
+                const assets = getProspectAssets(p.company);
+                const hasAssets = assets && assets.files && assets.files.length > 0;
+
+                return `<div class="compact-row" onclick="showProspectModal('${p.id}')" oncontextmenu="showProspectContextMenu(event, '${p.id}')">
+                    <div class="avatar" style="background:${color}">${initials}</div>
+                    <div class="compact-company">${p.company}</div>
+                    <div class="compact-sector">${p.sector || '-'}</div>
+                    <div class="compact-status">${statusLabel(p.status)}</div>
+                    <div class="compact-value">${fmtXPF(p.value)}</div>
+                    <div class="compact-temp ${p.priority || 'froid'}">${priorityLabel(p.priority)}</div>
+                    <div class="compact-assignee">${renderAssigneeBadge(p.assignedTo, 18)}</div>
+                    <div class="compact-assets-icon">${hasAssets ? `${assets.files.length}` : '-'}</div>
+                </div>`;
+            }).join('');
         }
 
         // ============================================
@@ -10137,7 +11168,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                      data-id="${p.id}"
                      ondragstart="handleDragStart(event, '${p.id}')"
                      ondragend="handleDragEnd(event)"
-                     onclick="openProspectDetail('${p.id}')">
+                     onclick="openProspectDetail('${p.id}')"
+                     oncontextmenu="showProspectContextMenu(event, '${p.id}')">
                     <div class="kanban-card-header">
                         <span class="kanban-card-company">${p.company}${renderAssetIcons(p.assets)}</span>
                         <span class="kanban-card-status badge ${p.status}">${statusLabel(p.status)}</span>
@@ -10146,6 +11178,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     <div class="kanban-card-sector">${p.sector}</div>
                     <div class="kanban-card-footer">
                         <span class="kanban-card-value">${fmtXPF(p.value)}</span>
+                        ${renderAssigneeBadge(p.assignedTo, 20)}
                     </div>
                 </div>
             `;
@@ -10497,6 +11530,13 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 priorityBadge.style.display = '';
             } else {
                 priorityBadge.style.display = 'none';
+            }
+
+            // Assignee select
+            const assigneeSelect = document.getElementById('modal-assignee-select');
+            if (assigneeSelect) {
+                assigneeSelect.innerHTML = '<option value="">Non assigne</option>' +
+                    teamMembers.map(m => `<option value="${m.id}" ${prospect.assignedTo === m.id ? 'selected' : ''}>${m.display_name}</option>`).join('');
             }
 
             // Assets
@@ -12946,10 +13986,41 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             cancelEditMode();
         }
 
-        // Close modal on Escape key
+        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
+            // Don't trigger shortcuts when typing in inputs
+            const tag = document.activeElement?.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+                if (e.key === 'Escape') {
+                    document.activeElement.blur();
+                }
+                return;
+            }
+
             if (e.key === 'Escape') {
                 closeProspectModal();
+                closeContextMenu();
+            }
+
+            // Ctrl/Cmd+K: Open MANA chat
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const chatPanel = document.getElementById('chatbot-panel');
+                if (chatPanel) {
+                    chatPanel.classList.toggle('open');
+                    if (chatPanel.classList.contains('open')) {
+                        document.getElementById('chatbot-input')?.focus();
+                    }
+                }
+            }
+
+            // N: New task (when on tasks view)
+            if (e.key === 'n' || e.key === 'N') {
+                const activeView = document.querySelector('.view.active');
+                if (activeView?.id === 'view-tasks') {
+                    e.preventDefault();
+                    openTaskModal();
+                }
             }
         });
 
@@ -12990,11 +14061,13 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                                  ondragstart="handleDragStart(event, '${p.id}')"
                                  ondragend="handleDragEnd(event)"
                                  onclick="openProspectDetail('${p.id}')"
+                                 oncontextmenu="showProspectContextMenu(event, '${p.id}')"
                                  style="cursor: pointer;">
                                 <div class="pipeline-card-name">${p.company}${renderAssetIcons(p.assets, true)}</div>
                                 <div class="pipeline-card-company">${p.sector}</div>
                                 <div class="pipeline-card-footer">
                                     <span class="pipeline-card-value">${fmtXPF(p.value)}</span>
+                                    ${renderAssigneeBadge(p.assignedTo, 18)}
                                     ${p.priority ? `<span class="pipeline-card-priority ${p.priority}">${priorityLabel(p.priority)}</span>` : ''}
                                 </div>
                             </div>
@@ -13394,6 +14467,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
             let suggestions = [];
 
+            // Detect active view
+            const activeView = document.querySelector('.view.active');
+            const activeViewId = activeView ? activeView.id.replace('view-', '') : 'dashboard';
+
             // If a prospect is currently selected (modal open)
             if (currentProspectId) {
                 const prospect = prospects.find(p => p.id === currentProspectId);
@@ -13404,6 +14481,14 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                         { text: 'Historique', action: `Quel est l'historique avec ${prospect.company}?` }
                     ];
                 }
+            } else if (activeViewId === 'tasks') {
+                const overdue = airtableTasks.filter(t => t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'Terminé').length;
+                suggestions = [
+                    { text: 'Mes taches', action: 'Quelles sont mes taches?' },
+                    { text: `En retard (${overdue})`, action: 'Liste les taches en retard' },
+                    { text: 'Resume semaine', action: 'Fais un resume des taches de la semaine' },
+                    { text: 'Taches urgentes', action: 'Quelles taches sont urgentes?' }
+                ];
             } else {
                 // Default suggestions
                 suggestions = [
@@ -13816,13 +14901,37 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
         async function processMessage(message) {
             // ============================================
-            // MANA AGENT v2 - VIA N8N WEBHOOK
+            // MANA AGENT v3 - INTELLIGENT ROUTING
             // Mémoire persistante dans Airtable
-            // Vision 360° (CRM, Tasks, Roadmap, Content, Workflows)
+            // Vision 360° (CRM, Tasks, Roadmap, Content, Workflows, Assets)
             // ============================================
 
+            // Detect intent for routing
+            const intent = detectIntent(message);
+            console.log('[MANA v3] Intent detected:', intent.type, 'confidence:', intent.confidence);
+
+            // Build enriched context
+            const fullContext = buildFullContext();
+
+            // Get current prospect context if modal is open
+            let prospectContext = '';
+            if (currentProspectId) {
+                const prospect = prospects.find(p => p.id === currentProspectId);
+                if (prospect) {
+                    const assets = getProspectAssets(prospect.company);
+                    prospectContext = `\n\n### PROSPECT ACTUELLEMENT SELECTIONNE\n` +
+                        `- Entreprise: ${prospect.company}\n` +
+                        `- Secteur: ${prospect.sector}\n` +
+                        `- Status: ${statusLabel(prospect.status)}\n` +
+                        `- Priorite: ${prospect.priority}\n` +
+                        `- Valeur: ${fmtXPF(prospect.value)}\n` +
+                        `- Contact: ${prospect.contact || 'N/A'}\n` +
+                        `- Assets: ${assets ? assets.files.map(f => f.name).join(', ') : 'Aucun'}`;
+                }
+            }
+
             try {
-                console.log('[MANA v3] Envoi au webhook n8n avec session:', MANA_SESSION_ID);
+                console.log('[MANA v3] Envoi au webhook n8n avec session:', MANA_SESSION_ID, 'intent:', intent.type);
 
                 const response = await fetch(N8N_MANA_WEBHOOK, {
                     method: 'POST',
@@ -13831,7 +14940,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     },
                     body: JSON.stringify({
                         message: message,
-                        session_id: MANA_SESSION_ID
+                        session_id: MANA_SESSION_ID,
+                        intent: intent.type,
+                        context: fullContext + prospectContext
                     })
                 });
 
@@ -13951,6 +15062,59 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         }
 
         // Build comprehensive context for Claude
+        // ============================================
+        // INTENT DETECTION - Route to MANA or RAG
+        // ============================================
+        function detectIntent(message) {
+            const msg = message.toLowerCase().trim();
+
+            // CRM Actions - Route to MANA
+            const crmPatterns = [
+                /\b(modifi|chang|met|passe)\b.*(priorit|status|statut|temperature)/i,
+                /\b(creer?|ajoute|nouveau)\b.*(prospect|tache|task|rappel|followup)/i,
+                /\b(supprim|efface|retire)\b/i,
+                /\b(relance|email|appel|contact)\b.*\b(prospect|client)\b/i,
+                /\b(liste|affiche|montre|donne)\b.*(prospect|tache|task|pipeline)/i,
+                /combien\s+(de\s+)?(prospect|client|tache)/i,
+                /\b(pipeline|total|valeur)\b/i,
+                /\bfiche\b.*\b(de|du|d')\b/i,
+                /\b(qui|quel)\b.*\b(hot|chaud|tiede|froid|prioritaire)\b/i,
+                /\ba\s+relancer\b/i,
+                /\b(assigne|attribu)\b.*(tache|task|prospect|client)/i,
+                /\b(resume|synthese|recap)\b.*(tache|task|semaine)/i,
+                /\bmes\s+taches\b/i,
+                /\btaches?\s*(urgent|en retard|overdue|bloque)/i,
+                /\b(modifi|edit|change)\b.*(tache|task)/i,
+            ];
+
+            // FAQ/Knowledge - Could route to RAG (currently uses MANA with context)
+            const faqPatterns = [
+                /\b(qu'est-ce|c'est quoi|explique|comment)\b.*\b(pacifik|service|offre|tarif|prix)\b/i,
+                /\b(process|methode|etape)\b/i,
+                /\b(avantage|benefice|pourquoi)\b.*\b(ia|automatisation|n8n)\b/i,
+            ];
+
+            // Check CRM patterns
+            for (const pattern of crmPatterns) {
+                if (pattern.test(msg)) {
+                    return { type: 'crm_action', confidence: 0.9 };
+                }
+            }
+
+            // Check FAQ patterns
+            for (const pattern of faqPatterns) {
+                if (pattern.test(msg)) {
+                    return { type: 'question_faq', confidence: 0.7 };
+                }
+            }
+
+            // Default to CRM (MANA handles both with context)
+            return { type: 'crm_action', confidence: 0.5 };
+        }
+
+        // ============================================
+        // BUILD FULL CONTEXT - Enhanced with all data
+        // ============================================
         function buildFullContext() {
             const stats = {
                 total: prospects.length,
@@ -13979,15 +15143,42 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             }).join('\n');
 
             // Build tasks context
+            const now = new Date();
             const urgentTasks = airtableTasks.filter(t => t.priority === 'Urgent' && t.status !== 'Terminé');
             const pendingTasks = airtableTasks.filter(t => t.status === 'À faire');
             const inProgressTasks = airtableTasks.filter(t => t.status === 'En cours');
             const doneTasks = airtableTasks.filter(t => t.status === 'Terminé');
+            const overdueTasks = airtableTasks.filter(t => t.dueDate && new Date(t.dueDate) < now && t.status !== 'Terminé');
 
             const tasksList = airtableTasks.map(t => {
                 const dueStr = t.dueDate ? ` (due: ${t.dueDate})` : '';
-                return `- [${t.status}] ${t.title}${dueStr} - ${t.priority}`;
+                const assignStr = t.assignee ? ` [${t.assignee}]` : '';
+                const projectStr = t.project && t.project !== 'other' ? ` {${t.project}}` : '';
+                return `- [${t.status}] ${t.title}${dueStr}${assignStr}${projectStr} - ${t.priority}`;
             }).join('\n');
+
+            // Team & assignments context
+            const teamContext = teamMembers.map(m => `- ${m.display_name} (${m.id})`).join('\n');
+            const assignedProspects = prospects.filter(p => p.assignedTo);
+            const assignmentContext = teamMembers.map(m => {
+                const assigned = assignedProspects.filter(p => p.assignedTo === m.id);
+                return `- ${m.display_name}: ${assigned.length > 0 ? assigned.map(p => p.company).join(', ') : 'Aucun'}`;
+            }).join('\n');
+
+            // Build assets context per prospect
+            const assetsContext = prospects.slice(0, 10).map(p => {
+                const assets = getProspectAssets(p.company);
+                if (assets && assets.files && assets.files.length > 0) {
+                    const filesList = assets.files.map(f => `${f.type}: ${f.name}`).join(', ');
+                    return `- ${p.company}: ${filesList}`;
+                }
+                return null;
+            }).filter(Boolean).join('\n');
+
+            // Build conversation history context
+            const recentHistory = chatHistory.slice(-5).map(m =>
+                `[${m.role}]: ${m.content.substring(0, 100)}...`
+            ).join('\n');
 
             return `### Statistiques Pipeline
 - Total prospects: ${stats.total}
@@ -14015,14 +15206,30 @@ ${chaudList || 'Aucun'}
 ### Rappels en attente
 ${todayFollowups || 'Aucun'}
 
+### EQUIPE
+${teamContext || 'Aucun membre'}
+
+### ASSIGNATION PROSPECTS
+${assignmentContext || 'Aucune assignation'}
+
 ### TACHES (${airtableTasks.length} total)
 - Urgentes: ${urgentTasks.length}
 - A faire: ${pendingTasks.length}
 - En cours: ${inProgressTasks.length}
 - Terminees: ${doneTasks.length}
+- EN RETARD: ${overdueTasks.length}
+
+### TACHES EN RETARD
+${overdueTasks.length > 0 ? overdueTasks.map(t => `- ⚠ ${t.title} (due: ${t.dueDate}) - ${t.assignee || 'Non assigne'}`).join('\n') : 'Aucune'}
 
 ### Liste des taches
 ${tasksList || 'Aucune tache'}
+
+### ASSETS PAR PROSPECT
+${assetsContext || 'Aucun asset'}
+
+### HISTORIQUE CONVERSATION RECENTE
+${recentHistory || 'Nouvelle conversation'}
 
 ### Liste complete des prospects
 ${prospects.map(p => `- ${p.company} | ${p.sector} | ${p.priority} | ${statusLabel(p.status)} | ${fmtXPF(p.value)}`).join('\n')}
@@ -14133,6 +15340,66 @@ ${prospects.map(p => `- ${p.company} | ${p.sector} | ${p.priority} | ${statusLab
                     );
                     if (taskToDelete) {
                         await deleteTaskInAirtable(taskToDelete.id);
+                        needsRefresh = true;
+                    }
+                    break;
+
+                case 'edit_task':
+                    const taskToEdit = airtableTasks.find(t =>
+                        t.title.toLowerCase().includes(action.target.toLowerCase())
+                    );
+                    if (taskToEdit) {
+                        const fields = action.fields || {};
+                        const updates = {};
+                        if (fields.priority) { taskToEdit.priority = fields.priority; updates.priorite = fields.priority; }
+                        if (fields.description) { taskToEdit.description = fields.description; updates.description = fields.description; }
+                        if (fields.dueDate) { taskToEdit.dueDate = fields.dueDate; updates.due_date = fields.dueDate; }
+                        if (fields.status) {
+                            const statusMap = { 'À faire': 'todo', 'En cours': 'in_progress', 'Bloqué': 'blocked', 'Terminé': 'done' };
+                            taskToEdit.status = fields.status;
+                            updates.status = statusMap[fields.status] || fields.status;
+                        }
+                        if (Object.keys(updates).length > 0) {
+                            await supabase.updateTask(taskToEdit.id, updates);
+                        }
+                        needsRefresh = true;
+                    }
+                    break;
+
+                case 'assign_task':
+                    const taskToAssign = airtableTasks.find(t =>
+                        t.title.toLowerCase().includes(action.target.toLowerCase())
+                    );
+                    if (taskToAssign) {
+                        const member = teamMembers.find(m =>
+                            m.display_name.toLowerCase() === (action.to || '').toLowerCase()
+                        );
+                        if (member) {
+                            taskToAssign.assignee = member.display_name;
+                            taskToAssign.assignedTo = member.id;
+                            await supabase.updateTask(taskToAssign.id, { assigned_to: member.id });
+                            needsRefresh = true;
+                        }
+                    }
+                    break;
+
+                case 'assign_prospect':
+                    const prospectToAssign = findProspectByName(action.target);
+                    if (prospectToAssign) {
+                        if (action.to === null || action.to === 'null' || action.to === '') {
+                            prospectToAssign.assignedTo = null;
+                            const pid = prospectToAssign.supabaseId || prospectToAssign.id;
+                            await supabase.updateProspect(pid, { assigned_to: null });
+                        } else {
+                            const memberP = teamMembers.find(m =>
+                                m.display_name.toLowerCase() === action.to.toLowerCase()
+                            );
+                            if (memberP) {
+                                prospectToAssign.assignedTo = memberP.id;
+                                const pid = prospectToAssign.supabaseId || prospectToAssign.id;
+                                await supabase.updateProspect(pid, { assigned_to: memberP.id });
+                            }
+                        }
                         needsRefresh = true;
                     }
                     break;
@@ -16374,6 +17641,10 @@ Reponds UNIQUEMENT avec le texte du post.`;
             }
             if (name === 'newsletter') {
                 loadNewsletterCampaigns();
+            }
+            // Update MANA suggestions based on active view
+            if (typeof updateChatSuggestions === 'function') {
+                updateChatSuggestions();
             }
         };
 
