@@ -11995,7 +11995,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     const companyEsc = JSON.stringify(prospect.company);
                     const urlEsc = f.url ? JSON.stringify(f.url) : 'null';
                     return `
-                    <div class="asset-card ${f.favorite ? 'favorite' : ''}" data-asset-type="${f.type || 'doc'}" onclick="openAsset(${folderEsc}, ${fileEsc}, ${urlEsc})">
+                    <div class="asset-card ${f.favorite ? 'favorite' : ''}" data-asset-type="${f.type || 'doc'}" onclick="event.stopPropagation(); openAsset(${folderEsc}, ${fileEsc}, ${urlEsc})">
                         <div class="asset-card-icon ${f.type}">${typeIcons[f.type] || '📄'}</div>
                         <div class="asset-card-content">
                             <div class="asset-card-name">${f.favorite ? '★ ' : ''}${f.name}</div>
@@ -17533,7 +17533,13 @@ Reponds UNIQUEMENT avec le texte du post.`;
             contextMenuProspectId = null;
         }
 
-        document.addEventListener('click', hideContextMenu);
+        document.addEventListener('click', (e) => {
+            // Ne pas cacher si on clique sur le bouton menu ou dans le menu lui-meme
+            if (e.target.closest('.prospect-menu-btn') || e.target.closest('#context-menu')) {
+                return;
+            }
+            hideContextMenu();
+        });
         document.addEventListener('contextmenu', (e) => {
             if (!e.target.closest('.pipeline-card')) {
                 hideContextMenu();
