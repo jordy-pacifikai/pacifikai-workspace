@@ -466,9 +466,9 @@ class SupabaseClient {
     }
 
     // Polling pour temps reel (rafraichit toutes les X secondes)
-    startMessengerPolling(callback, intervalMs = 5000) {
-        // Stocker le dernier message vu
-        this._lastMessageTime = new Date().toISOString();
+    startMessengerPolling(callback, intervalMs = 5000, initialTimestamp = null) {
+        // Utiliser le timestamp fourni ou NOW par defaut
+        this._lastMessageTime = initialTimestamp || new Date().toISOString();
         this._messengerCallback = callback;
 
         this._messengerPollInterval = setInterval(async () => {

@@ -10027,9 +10027,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             } else if (name === 'focus' && typeof renderFocusMode === 'function') {
                 renderFocusMode();
             } else if (name === 'messages' && typeof loadMessengerConversations === 'function') {
-                loadMessengerConversations();
-                // Demarrer le polling temps reel pour les messages
-                startMessengerRealtime();
+                // Charger les conversations puis demarrer le polling avec le bon timestamp
+                loadMessengerConversations().then(lastTimestamp => {
+                    startMessengerRealtime(lastTimestamp);
+                });
             } else if (name === 'finance' && typeof loadFinanceData === 'function') {
                 loadFinanceData();
             }
@@ -18275,13 +18276,18 @@ Reponds UNIQUEMENT avec le texte du post.`;
                 updateMessagesKPIs();
                 updateNavMessagesCount();
 
+                // Retourner le timestamp du dernier message pour le polling
+                const lastTimestamp = messages.length > 0 ? messages[0].created_at : null;
+                return lastTimestamp;
+
             } catch (error) {
                 console.error('[Messages] Error loading from Supabase:', error);
+                return null;
             }
         }
 
         // Temps reel - polling toutes les 5 secondes
-        function startMessengerRealtime() {
+        function startMessengerRealtime(initialTimestamp = null) {
             if (!supabase.startMessengerPolling) return;
 
             supabase.startMessengerPolling((newMessages) => {
@@ -18343,7 +18349,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
                         renderChatMessages(currentConv);
                     }
                 }
-            }, 5000); // Poll toutes les 5 secondes
+            }, 5000, initialTimestamp); // Poll toutes les 5 secondes, depuis le dernier message connu
         }
 
         function renderConversationsList() {
