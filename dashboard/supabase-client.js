@@ -465,6 +465,42 @@ class SupabaseClient {
         return result[0];
     }
 
+    // Polling pour temps reel (rafraichit toutes les X secondes)
+    startMessengerPolling(callback, intervalMs = 5000) {
+        // Stocker le dernier message vu
+        this._lastMessageTime = new Date().toISOString();
+        this._messengerCallback = callback;
+
+        this._messengerPollInterval = setInterval(async () => {
+            try {
+                // Chercher les nouveaux messages depuis la derniere verification
+                const newMessages = await this.select('messenger_messages', {
+                    created_at: `gt.${this._lastMessageTime}`
+                }, { order: 'created_at.asc', limit: 50 });
+
+                if (newMessages && newMessages.length > 0) {
+                    // Mettre a jour le timestamp
+                    this._lastMessageTime = newMessages[newMessages.length - 1].created_at;
+                    // Appeler le callback avec les nouveaux messages
+                    if (this._messengerCallback) {
+                        this._messengerCallback(newMessages);
+                    }
+                }
+            } catch (e) {
+                console.error('Erreur polling messages:', e);
+            }
+        }, intervalMs);
+
+        return this._messengerPollInterval;
+    }
+
+    stopMessengerPolling() {
+        if (this._messengerPollInterval) {
+            clearInterval(this._messengerPollInterval);
+            this._messengerPollInterval = null;
+        }
+    }
+
     // === BLOG ARTICLES ===
 
     async getBlogArticles() {

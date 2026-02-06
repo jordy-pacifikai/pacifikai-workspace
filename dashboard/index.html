@@ -4304,6 +4304,83 @@
             justify-content: center;
         }
 
+        /* Escalation Styles */
+        .conversation-item.escalation {
+            border-left: 3px solid var(--red);
+            background: rgba(255, 59, 48, 0.06);
+        }
+
+        .conversation-item.escalation:hover {
+            background: rgba(255, 59, 48, 0.12);
+        }
+
+        .conversation-item.escalation.active {
+            background: rgba(255, 59, 48, 0.18);
+            border-left: 3px solid var(--red);
+        }
+
+        .escalation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.375rem;
+            background: var(--red);
+            color: white;
+            font-size: 0.5625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .escalation-banner {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 59, 48, 0.1);
+            border-bottom: 1px solid rgba(255, 59, 48, 0.2);
+            color: var(--red);
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        .escalation-banner svg {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+        }
+
+        .escalation-banner span {
+            flex: 1;
+        }
+
+        .escalation-banner .btn {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            background: var(--red);
+            color: white;
+            border: none;
+        }
+
+        .escalation-banner .btn:hover {
+            background: #e53935;
+        }
+
+        [data-theme="dark"] .conversation-item.escalation {
+            background: rgba(255, 69, 58, 0.1);
+        }
+
+        [data-theme="dark"] .conversation-item.escalation:hover {
+            background: rgba(255, 69, 58, 0.18);
+        }
+
+        [data-theme="dark"] .escalation-banner {
+            background: rgba(255, 69, 58, 0.15);
+            border-bottom-color: rgba(255, 69, 58, 0.25);
+        }
+
         /* Chat Detail */
         .chat-detail {
             background: var(--bg-subtle);
@@ -7888,6 +7965,7 @@
                         <select class="filter-select" id="messages-filter" onchange="filterMessages()">
                             <option value="all">Toutes les conversations</option>
                             <option value="unread">Non lus</option>
+                            <option value="escalation">Escalades (humain requis)</option>
                             <option value="manual">Reponses manuelles</option>
                         </select>
                         <button class="btn btn-ghost" onclick="loadMessengerConversations()">
@@ -7961,6 +8039,12 @@
                             </div>
 
                             <div class="chat-detail-content" id="chat-detail-content" style="display: none;">
+                                <!-- Escalation Banner (hidden by default) -->
+                                <div class="escalation-banner" id="escalation-banner" style="display: none;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                    <span>Ce client souhaite parler a un humain</span>
+                                    <button class="btn" onclick="resolveEscalation()">Marquer traite</button>
+                                </div>
                                 <div class="chat-detail-header">
                                     <div class="chat-user-info">
                                         <div class="chat-user-avatar" id="chat-user-avatar">?</div>
@@ -7993,7 +8077,7 @@
                                     </div>
                                     <div class="chat-input-note">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                                        Les reponses manuelles sont envoyees via l'API Facebook et loguees dans Airtable
+                                        Les reponses manuelles sont envoyees via l'API Facebook et loguees dans Supabase
                                     </div>
                                 </div>
                             </div>
@@ -9921,6 +10005,11 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         }
 
         function showView(name) {
+            // Arreter le polling messages si on quitte l'onglet
+            if (typeof supabase !== 'undefined' && supabase.stopMessengerPolling) {
+                supabase.stopMessengerPolling();
+            }
+
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('view-' + name).classList.add('active');
@@ -9939,6 +10028,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 renderFocusMode();
             } else if (name === 'messages' && typeof loadMessengerConversations === 'function') {
                 loadMessengerConversations();
+                // Demarrer le polling temps reel pour les messages
+                startMessengerRealtime();
             } else if (name === 'finance' && typeof loadFinanceData === 'function') {
                 loadFinanceData();
             }
@@ -18117,7 +18208,8 @@ Reponds UNIQUEMENT avec le texte du post.`;
                 prospects.forEach(p => {
                     prospectsMap.set(p.sender_id, {
                         name: p.name || p.first_name || 'Utilisateur',
-                        profilePic: p.profile_pic
+                        profilePic: p.profile_pic,
+                        requiresHuman: p.requires_human_intervention || false
                     });
                 });
 
@@ -18134,6 +18226,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
                             senderId: senderId,
                             userName: prospectInfo.name || 'Utilisateur',
                             profilePic: prospectInfo.profilePic,
+                            requiresHuman: prospectInfo.requiresHuman || false,
                             messages: [],
                             lastMessage: null,
                             unreadCount: 0
@@ -18147,8 +18240,14 @@ Reponds UNIQUEMENT avec le texte du post.`;
                         content: record.content || '',
                         createdAt: record.created_at,
                         read: record.read || false,
-                        manual: record.responded_manually || false
+                        manual: record.responded_manually || false,
+                        requiresHuman: record.requires_human || false
                     };
+
+                    // If any message requires human, mark the conversation
+                    if (msg.requiresHuman) {
+                        conversationsMap.get(senderId).requiresHuman = true;
+                    }
 
                     conv.messages.push(msg);
 
@@ -18181,6 +18280,72 @@ Reponds UNIQUEMENT avec le texte du post.`;
             }
         }
 
+        // Temps reel - polling toutes les 5 secondes
+        function startMessengerRealtime() {
+            if (!supabase.startMessengerPolling) return;
+
+            supabase.startMessengerPolling((newMessages) => {
+                console.log(`[Messages] Temps reel: ${newMessages.length} nouveaux messages`);
+
+                // Ajouter les nouveaux messages aux conversations existantes
+                newMessages.forEach(msg => {
+                    const senderId = msg.sender_id;
+                    let conv = messengerConversations.find(c => c.senderId === senderId);
+
+                    if (!conv) {
+                        // Nouvelle conversation
+                        conv = {
+                            senderId: senderId,
+                            userName: 'Nouvel utilisateur',
+                            messages: [],
+                            lastMessage: null,
+                            unreadCount: 0
+                        };
+                        messengerConversations.unshift(conv);
+                    }
+
+                    // Ajouter le message s'il n'existe pas deja
+                    const exists = conv.messages.some(m => m.id === msg.id);
+                    if (!exists) {
+                        const newMsg = {
+                            id: msg.id,
+                            role: msg.role || 'user',
+                            content: msg.content || '',
+                            createdAt: msg.created_at,
+                            read: msg.read || false
+                        };
+                        conv.messages.push(newMsg);
+
+                        if (!conv.lastMessage || new Date(newMsg.createdAt) > new Date(conv.lastMessage.createdAt)) {
+                            conv.lastMessage = newMsg;
+                        }
+
+                        if (newMsg.role === 'user' && !newMsg.read) {
+                            conv.unreadCount++;
+                        }
+                    }
+                });
+
+                // Re-trier et re-rendre
+                messengerConversations.sort((a, b) => {
+                    const dateA = a.lastMessage ? new Date(a.lastMessage.createdAt) : new Date(0);
+                    const dateB = b.lastMessage ? new Date(b.lastMessage.createdAt) : new Date(0);
+                    return dateB - dateA;
+                });
+
+                renderConversationsList();
+                updateNavMessagesCount();
+
+                // Si la conversation actuelle a de nouveaux messages, re-rendre le chat
+                if (currentConversationId) {
+                    const currentConv = messengerConversations.find(c => c.senderId === currentConversationId);
+                    if (currentConv && newMessages.some(m => m.sender_id === currentConversationId)) {
+                        renderChatMessages(currentConv);
+                    }
+                }
+            }, 5000); // Poll toutes les 5 secondes
+        }
+
         function renderConversationsList() {
             const container = document.getElementById('conversations-items');
             if (!container) return;
@@ -18190,6 +18355,8 @@ Reponds UNIQUEMENT avec le texte du post.`;
             // Apply filter
             if (currentMessagesFilter === 'unread') {
                 filtered = filtered.filter(c => c.unreadCount > 0);
+            } else if (currentMessagesFilter === 'escalation') {
+                filtered = filtered.filter(c => c.requiresHuman);
             } else if (currentMessagesFilter === 'manual') {
                 filtered = filtered.filter(c => c.messages.some(m => m.manual));
             }
@@ -18221,12 +18388,13 @@ Reponds UNIQUEMENT avec le texte du post.`;
                 const time = conv.lastMessage ? formatMessageTime(conv.lastMessage.createdAt) : '';
                 const isActive = currentConversationId === conv.senderId;
                 const isUnread = conv.unreadCount > 0;
+                const isEscalation = conv.requiresHuman;
 
                 return `
-                    <div class="conversation-item ${isActive ? 'active' : ''} ${isUnread ? 'unread' : ''}" onclick="selectConversation('${conv.senderId}')">
+                    <div class="conversation-item ${isActive ? 'active' : ''} ${isUnread ? 'unread' : ''} ${isEscalation ? 'escalation' : ''}" onclick="selectConversation('${conv.senderId}')">
                         <div class="conversation-avatar">${initials}</div>
                         <div class="conversation-info">
-                            <div class="conversation-name">${conv.userName}</div>
+                            <div class="conversation-name">${conv.userName} ${isEscalation ? '<span class="escalation-badge">HUMAIN</span>' : ''}</div>
                             <div class="conversation-preview">${preview}</div>
                         </div>
                         <div class="conversation-meta">
@@ -18270,6 +18438,12 @@ Reponds UNIQUEMENT avec le texte du post.`;
             document.getElementById('chat-user-avatar').textContent = initials;
             document.getElementById('chat-user-name').textContent = conv.userName;
             document.getElementById('chat-user-id').textContent = `ID: ${conv.senderId}`;
+
+            // Show/hide escalation banner
+            const escalationBanner = document.getElementById('escalation-banner');
+            if (escalationBanner) {
+                escalationBanner.style.display = conv.requiresHuman ? 'flex' : 'none';
+            }
 
             // Render messages
             const container = document.getElementById('chat-messages-container');
@@ -18424,6 +18598,45 @@ Reponds UNIQUEMENT avec le texte du post.`;
             } catch (error) {
                 console.error('[Messages] Error sending reply:', error);
                 addNotification('error', 'Erreur envoi: ' + error.message);
+            }
+        }
+
+        // Resolve escalation - mark human intervention as handled
+        async function resolveEscalation() {
+            if (!currentConversationId) return;
+
+            const conv = messengerConversations.find(c => c.senderId === currentConversationId);
+            if (!conv || !conv.requiresHuman) return;
+
+            try {
+                // 1. Update prospect flag in Supabase
+                const prospects = await supabase.getMessengerProspects();
+                const prospect = prospects.find(p => p.sender_id === currentConversationId);
+
+                if (prospect) {
+                    await supabase.update('messenger_prospects', prospect.id, {
+                        requires_human_intervention: false
+                    });
+                }
+
+                // 2. Update messages with requires_human flag
+                const humanMsgIds = conv.messages.filter(m => m.requiresHuman).map(m => m.id);
+                if (humanMsgIds.length > 0) {
+                    await supabase.updateMessengerMessagesBatch(humanMsgIds, { requires_human: false });
+                }
+
+                // 3. Update local state
+                conv.requiresHuman = false;
+                conv.messages.forEach(m => m.requiresHuman = false);
+
+                // 4. Update UI
+                document.getElementById('escalation-banner').style.display = 'none';
+                renderConversationsList();
+                addNotification('success', 'Escalade marquee comme traitee');
+
+            } catch (error) {
+                console.error('[Messages] Error resolving escalation:', error);
+                addNotification('error', 'Erreur: ' + error.message);
             }
         }
 
