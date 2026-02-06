@@ -1,6 +1,9 @@
 // PACIFIK'AI Dashboard - Supabase Client
 // Remplace toutes les intégrations Airtable par Supabase
 
+// Sauvegarder le SDK officiel Supabase (charge via CDN) avant qu'on ecrase window.supabase
+const _SupabaseSDK = window.supabase;
+
 const SUPABASE_URL = 'https://ogsimsfqwibcmotaeevb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nc2ltc2Zxd2liY21vdGFlZXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyMzY3NDYsImV4cCI6MjA4NDgxMjc0Nn0.3UdAzq1GQYOlZRlZ7-pXVMVJMEjDmTd68jUjoJWeAEI';
 
@@ -498,6 +501,66 @@ class SupabaseClient {
         if (this._messengerPollInterval) {
             clearInterval(this._messengerPollInterval);
             this._messengerPollInterval = null;
+        }
+    }
+
+    // === MESSENGER REALTIME (WebSocket) ===
+
+    // Initialiser le client Supabase officiel pour Realtime
+    initRealtimeClient() {
+        if (this._realtimeClient) return this._realtimeClient;
+
+        if (_SupabaseSDK && _SupabaseSDK.createClient) {
+            this._realtimeClient = _SupabaseSDK.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+            console.log('[Realtime] Client initialise');
+        } else {
+            console.error('[Realtime] SDK Supabase non disponible');
+        }
+        return this._realtimeClient;
+    }
+
+    // Souscrire aux changements de messenger_messages
+    subscribeToMessenger(onInsert, onUpdate = null) {
+        const client = this.initRealtimeClient();
+        if (!client) {
+            console.error('[Realtime] Impossible de souscrire - client non disponible');
+            return null;
+        }
+
+        this._messengerChannel = client
+            .channel('messenger_realtime')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'messenger_messages' },
+                (payload) => {
+                    console.log('[Realtime] Nouveau message:', payload.new);
+                    if (onInsert) onInsert(payload.new);
+                }
+            )
+            .on(
+                'postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: 'messenger_messages' },
+                (payload) => {
+                    console.log('[Realtime] Message mis a jour:', payload.new);
+                    if (onUpdate) onUpdate(payload.new);
+                }
+            )
+            .subscribe((status) => {
+                console.log('[Realtime] Status:', status);
+            });
+
+        return this._messengerChannel;
+    }
+
+    // Arreter la souscription
+    unsubscribeFromMessenger() {
+        if (this._messengerChannel) {
+            this._messengerChannel.unsubscribe();
+            this._messengerChannel = null;
+            console.log('[Realtime] Desouscrit');
         }
     }
 

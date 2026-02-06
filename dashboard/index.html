@@ -8874,6 +8874,8 @@
         </div>
     </div>
 
+    <!-- Supabase Official SDK (for Realtime) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase Client -->
     <script src="supabase-client.js"></script>
 
@@ -10005,9 +10007,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         }
 
         function showView(name) {
-            // Arreter le polling messages si on quitte l'onglet
-            if (typeof supabase !== 'undefined' && supabase.stopMessengerPolling) {
-                supabase.stopMessengerPolling();
+            // Arreter le Realtime/polling messages si on quitte l'onglet
+            if (typeof supabase !== 'undefined') {
+                if (supabase.unsubscribeFromMessenger) supabase.unsubscribeFromMessenger();
+                if (supabase.stopMessengerPolling) supabase.stopMessengerPolling();
             }
 
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -10027,9 +10030,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             } else if (name === 'focus' && typeof renderFocusMode === 'function') {
                 renderFocusMode();
             } else if (name === 'messages' && typeof loadMessengerConversations === 'function') {
-                // Charger les conversations puis demarrer le polling avec le bon timestamp
-                loadMessengerConversations().then(lastTimestamp => {
-                    startMessengerRealtime(lastTimestamp);
+                // Charger les conversations puis demarrer Realtime WebSocket
+                loadMessengerConversations().then(() => {
+                    startMessengerRealtime();
                 });
             } else if (name === 'finance' && typeof loadFinanceData === 'function') {
                 loadFinanceData();
@@ -18286,15 +18289,18 @@ Reponds UNIQUEMENT avec le texte du post.`;
             }
         }
 
-        // Temps reel - polling toutes les 5 secondes
-        function startMessengerRealtime(initialTimestamp = null) {
-            if (!supabase.startMessengerPolling) return;
+        // Temps reel - Supabase Realtime WebSocket
+        function startMessengerRealtime() {
+            // Utiliser Realtime WebSocket au lieu du polling
+            if (!supabase.subscribeToMessenger) {
+                console.warn('[Messages] Realtime non disponible, fallback polling');
+                return;
+            }
 
-            supabase.startMessengerPolling((newMessages) => {
-                console.log(`[Messages] Temps reel: ${newMessages.length} nouveaux messages`);
-
-                // Ajouter les nouveaux messages aux conversations existantes
-                newMessages.forEach(msg => {
+            supabase.subscribeToMessenger(
+                // onInsert - nouveau message
+                (msg) => {
+                    console.log('[Messages] Realtime: nouveau message recu');
                     const senderId = msg.sender_id;
                     let conv = messengerConversations.find(c => c.senderId === senderId);
 
@@ -18329,27 +18335,38 @@ Reponds UNIQUEMENT avec le texte du post.`;
                         if (newMsg.role === 'user' && !newMsg.read) {
                             conv.unreadCount++;
                         }
+
+                        // Re-trier et re-rendre
+                        messengerConversations.sort((a, b) => {
+                            const dateA = a.lastMessage ? new Date(a.lastMessage.createdAt) : new Date(0);
+                            const dateB = b.lastMessage ? new Date(b.lastMessage.createdAt) : new Date(0);
+                            return dateB - dateA;
+                        });
+
+                        renderConversationsList();
+                        updateMessagesKPIs();
+                        updateNavMessagesCount();
+
+                        // Si on est sur cette conversation, afficher le message
+                        if (currentConversationId === senderId) {
+                            renderChatMessages(conv);
+                        }
                     }
-                });
-
-                // Re-trier et re-rendre
-                messengerConversations.sort((a, b) => {
-                    const dateA = a.lastMessage ? new Date(a.lastMessage.createdAt) : new Date(0);
-                    const dateB = b.lastMessage ? new Date(b.lastMessage.createdAt) : new Date(0);
-                    return dateB - dateA;
-                });
-
-                renderConversationsList();
-                updateNavMessagesCount();
-
-                // Si la conversation actuelle a de nouveaux messages, re-rendre le chat
-                if (currentConversationId) {
-                    const currentConv = messengerConversations.find(c => c.senderId === currentConversationId);
-                    if (currentConv && newMessages.some(m => m.sender_id === currentConversationId)) {
-                        renderChatMessages(currentConv);
+                },
+                // onUpdate - message modifie (read, etc)
+                (msg) => {
+                    const senderId = msg.sender_id;
+                    const conv = messengerConversations.find(c => c.senderId === senderId);
+                    if (conv) {
+                        const existingMsg = conv.messages.find(m => m.id === msg.id);
+                        if (existingMsg) {
+                            existingMsg.read = msg.read;
+                            existingMsg.content = msg.content;
+                        }
+                        renderConversationsList();
                     }
                 }
-            }, 5000, initialTimestamp); // Poll toutes les 5 secondes, depuis le dernier message connu
+            );
         }
 
         function renderConversationsList() {
