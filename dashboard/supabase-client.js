@@ -441,6 +441,90 @@ class SupabaseClient {
         return await this.select('messenger_conversations', {}, { order: 'created_at.desc' });
     }
 
+    async getMessengerMessages(senderId = null) {
+        const filters = senderId ? { sender_id: `eq.${senderId}` } : {};
+        return await this.select('messenger_messages', filters, { order: 'created_at.desc', limit: 100 });
+    }
+
+    async getMessengerProspects() {
+        return await this.select('messenger_prospects', {}, { order: 'last_contact_at.desc' });
+    }
+
+    async updateMessengerMessage(id, data) {
+        return await this.update('messenger_messages', id, data);
+    }
+
+    async updateMessengerMessagesBatch(ids, data) {
+        // Update multiple messages with same data
+        const promises = ids.map(id => this.update('messenger_messages', id, data));
+        return await Promise.all(promises);
+    }
+
+    async createMessengerMessage(data) {
+        const result = await this.insert('messenger_messages', data);
+        return result[0];
+    }
+
+    // === BLOG ARTICLES ===
+
+    async getBlogArticles() {
+        return await this.select('blog_articles', {}, { order: 'publish_date.desc' });
+    }
+
+    async getBlogArticle(id) {
+        const results = await this.select('blog_articles', { id: `eq.${id}` });
+        return results[0];
+    }
+
+    async createBlogArticle(data) {
+        const result = await this.insert('blog_articles', data);
+        await this.logActivity('create', 'blog', result[0].id, data.title);
+        return result[0];
+    }
+
+    async updateBlogArticle(id, data) {
+        const article = await this.getBlogArticle(id);
+        const result = await this.update('blog_articles', id, data);
+        await this.logActivity('update', 'blog', id, article?.title, { changes: data });
+        return result[0];
+    }
+
+    async deleteBlogArticle(id) {
+        const article = await this.getBlogArticle(id);
+        await this.delete('blog_articles', id);
+        await this.logActivity('delete', 'blog', id, article?.title);
+    }
+
+    // === NEWSLETTER CAMPAIGNS ===
+
+    async getNewsletterCampaigns() {
+        return await this.select('newsletter_campaigns', {}, { order: 'scheduled_date.desc' });
+    }
+
+    async getNewsletterCampaign(id) {
+        const results = await this.select('newsletter_campaigns', { id: `eq.${id}` });
+        return results[0];
+    }
+
+    async createNewsletterCampaign(data) {
+        const result = await this.insert('newsletter_campaigns', data);
+        await this.logActivity('create', 'newsletter', result[0].id, data.subject);
+        return result[0];
+    }
+
+    async updateNewsletterCampaign(id, data) {
+        const campaign = await this.getNewsletterCampaign(id);
+        const result = await this.update('newsletter_campaigns', id, data);
+        await this.logActivity('update', 'newsletter', id, campaign?.subject, { changes: data });
+        return result[0];
+    }
+
+    async deleteNewsletterCampaign(id) {
+        const campaign = await this.getNewsletterCampaign(id);
+        await this.delete('newsletter_campaigns', id);
+        await this.logActivity('delete', 'newsletter', id, campaign?.subject);
+    }
+
     // === CLIENT INFRASTRUCTURES ===
 
     async getClientInfrastructures() {
