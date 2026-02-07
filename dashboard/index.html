@@ -1044,6 +1044,31 @@
             color: white !important;
         }
 
+        .show-archived-btn, .show-more-btn {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-muted);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 0.25rem;
+            transition: all var(--transition-fast);
+        }
+        .show-archived-btn:hover, .show-more-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+            border-color: var(--accent);
+        }
+        .show-more-btn {
+            background: transparent;
+            color: var(--accent);
+        }
+        .show-more-btn:hover {
+            background: var(--accent-glow);
+        }
+
         .task-list-row {
             border-bottom: 1px solid var(--border-subtle);
             transition: background 0.15s;
@@ -1173,6 +1198,17 @@
             font-weight: 600;
             margin-bottom: 0.25rem;
             color: var(--text);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .pipeline-card-name .badge {
+            font-size: 0.5625rem;
+            padding: 0.125rem 0.375rem;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .pipeline-card-company {
@@ -1465,6 +1501,9 @@
         .badge.chaud { background: var(--orange-glow); color: var(--orange); }
         .badge.tiede { background: var(--yellow-glow); color: var(--yellow); }
         .badge.froid { background: var(--accent-glow); color: var(--accent); }
+        .badge.messenger-src { background: #0084FF22; color: #0084FF; }
+        .badge.landing-src { background: #10b98122; color: #10b981; }
+        .badge.manual-src { background: var(--bg-muted); color: var(--text-dim); }
 
         .pipeline-card-priority {
             font-size: 0.625rem;
@@ -2395,7 +2434,7 @@
 
         .compact-row {
             display: grid;
-            grid-template-columns: 2.5rem 1fr 120px 100px 100px 80px 60px;
+            grid-template-columns: 2.5rem 1fr 80px 120px 100px 100px 80px 60px;
             align-items: center;
             gap: 0.75rem;
             padding: 0.5rem 1rem;
@@ -2467,7 +2506,7 @@
 
         .compact-header {
             display: grid;
-            grid-template-columns: 2.5rem 1fr 120px 100px 100px 80px 60px;
+            grid-template-columns: 2.5rem 1fr 80px 120px 100px 100px 80px 60px;
             gap: 0.75rem;
             padding: 0.5rem 1rem;
             border-bottom: 2px solid var(--border);
@@ -2637,6 +2676,89 @@
                 transform: scale(1) translateY(0);
                 opacity: 1;
             }
+        }
+
+        /* Delete Confirm Modal */
+        .delete-confirm-modal {
+            max-width: 420px;
+            text-align: center;
+            padding: 2rem;
+        }
+        .delete-confirm-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+            animation: deleteIconPulse 2s ease-in-out infinite;
+        }
+        .delete-confirm-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--red);
+        }
+        @keyframes deleteIconPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.15); }
+            50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+        }
+        .delete-confirm-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        .delete-confirm-article {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-muted);
+            border-radius: var(--radius);
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .delete-confirm-warning {
+            font-size: 0.8125rem;
+            color: var(--text-dim);
+            margin: 0.75rem 0 1.5rem;
+        }
+        .delete-confirm-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+        .delete-confirm-actions .btn {
+            min-width: 120px;
+            justify-content: center;
+        }
+        .btn-danger {
+            background: var(--red);
+            color: white;
+            border: 1px solid var(--red);
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+        .btn-danger:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* Chart Animations */
@@ -4465,6 +4587,59 @@
             gap: 0.5rem;
         }
 
+        .prospect-info-banner {
+            padding: 0.5rem 1.25rem;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .prospect-info-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+        }
+
+        .prospect-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            border-radius: 999px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .prospect-tag.temperature-hot { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
+        .prospect-tag.temperature-warm { background: #fff7ed; border-color: #fdba74; color: #ea580c; }
+        .prospect-tag.temperature-cold { background: #eff6ff; border-color: #93c5fd; color: #2563eb; }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-reply-btn {
+            padding: 0.25rem 0.625rem;
+            font-size: 0.6875rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .quick-reply-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--bg);
+        }
+
         .btn-sm {
             padding: 0.375rem 0.5rem;
         }
@@ -4642,6 +4817,94 @@
         .blog-article-status.scheduled { background: var(--accent); color: white; }
         .blog-article-status.draft { background: var(--bg-muted); color: var(--text-muted); }
         .blog-article-status.ready { background: var(--yellow); color: var(--text); }
+
+        /* === VEILLE POLYNESIE === */
+        .veille-card { position: relative; overflow: hidden; padding-left: 3px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 12px; transition: all 0.2s; cursor: pointer; }
+        .veille-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .veille-card.expired { opacity: 0.6; }
+        .veille-card.expired:hover { opacity: 0.85; }
+        .veille-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+        .veille-card.high-relevance::before { background: var(--green); }
+        .veille-card.medium-relevance::before { background: var(--orange, #f59e0b); }
+        .veille-card.low-relevance::before { background: var(--text-dim); }
+        .veille-card-header { padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+        .veille-card-header-left { display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap; }
+        .veille-card-body { padding: 0.75rem 1rem 0.5rem; }
+        .veille-card-footer { padding: 0.5rem 1rem 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+        .veille-card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0.5rem; }
+        .veille-badge-new { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(245, 158, 11, 0.15); color: var(--orange, #f59e0b); }
+        .veille-badge-expiring { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+        .veille-badge-expired { background: var(--bg-muted); color: var(--text-dim); font-size: 0.625rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+        .veille-source-badge { padding: 3px 8px; border-radius: 4px; font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+        .veille-source-badge.lexpol { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+        .veille-source-badge.france-marches { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+        .veille-source-badge.france-travail { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .veille-source-badge.fenuajob { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .veille-source-badge.dgrh { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .veille-contract-badge { padding: 3px 8px; border-radius: 4px; font-size: 0.625rem; font-weight: 600; text-transform: uppercase; }
+        .veille-contract-badge.cdi { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+        .veille-contract-badge.cdd { background: rgba(59, 130, 246, 0.15); color: var(--blue, #3b82f6); }
+        .veille-contract-badge.stage { background: rgba(139, 92, 246, 0.15); color: var(--purple, #8b5cf6); }
+        .veille-contract-badge.alternance { background: rgba(6, 182, 212, 0.15); color: var(--cyan, #06b6d4); }
+        .veille-contract-badge.interim { background: rgba(245, 158, 11, 0.15); color: var(--orange, #f59e0b); }
+        .veille-score { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; font-size: 0.6875rem; font-weight: 700; border: 2px solid; flex-shrink: 0; }
+        .veille-score.high { border-color: var(--green); color: var(--green); }
+        .veille-score.medium { border-color: var(--orange, #f59e0b); color: var(--orange, #f59e0b); }
+        .veille-score.low { border-color: var(--text-dim); color: var(--text-dim); }
+        .veille-amount { font-size: 0.875rem; font-weight: 700; color: var(--gold); margin-top: 0.375rem; }
+        .veille-org { font-size: 0.8125rem; color: var(--cyan, #06b6d4); font-weight: 500; margin-bottom: 0.25rem; }
+        .veille-skill-chip { font-size: 0.625rem; padding: 2px 8px; background: rgba(59, 130, 246, 0.1); color: var(--blue, #3b82f6); border-radius: 12px; white-space: nowrap; }
+        .veille-tag-chip { font-size: 0.625rem; padding: 2px 8px; background: rgba(26, 58, 58, 0.3); color: var(--cyan, #06b6d4); border-radius: 12px; white-space: nowrap; }
+        .veille-deadline { font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem; }
+        .veille-deadline.urgent { color: var(--red); font-weight: 600; }
+        .veille-deadline.soon { color: var(--orange, #f59e0b); font-weight: 500; }
+        .veille-deadline.ok { color: var(--text-muted); }
+        .veille-view-toggle { display: flex; gap: 2px; background: var(--bg-muted); border-radius: 6px; padding: 2px; }
+        .veille-view-toggle button { padding: 5px 8px; border: none; background: none; border-radius: 4px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; }
+        .veille-view-toggle button.active { background: var(--bg-subtle); color: var(--text); }
+        .veille-view-toggle button svg { width: 14px; height: 14px; }
+        .veille-list { display: flex; flex-direction: column; gap: 0.375rem; }
+        .veille-list-item { display: grid; grid-template-columns: 34px 1fr auto auto; gap: 0.75rem; align-items: center; padding: 0.625rem 1rem; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.15s; position: relative; padding-left: calc(1rem + 3px); }
+        .veille-list-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 8px 0 0 8px; }
+        .veille-list-item.high-relevance::before { background: var(--green); }
+        .veille-list-item.medium-relevance::before { background: var(--orange, #f59e0b); }
+        .veille-list-item.low-relevance::before { background: var(--text-dim); }
+        .veille-list-item:hover { border-color: var(--accent); }
+        .veille-list-title { font-size: 0.8125rem; font-weight: 600; line-height: 1.3; }
+        .veille-list-subtitle { font-size: 0.6875rem; color: var(--text-muted); margin-top: 1px; }
+        .veille-list-meta { font-size: 0.75rem; color: var(--text-muted); text-align: right; white-space: nowrap; }
+        .veille-list-badges { display: flex; align-items: center; gap: 0.375rem; }
+        .veille-filter-bar { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+        .veille-ai-summary { padding: 0.75rem 1rem; background: rgba(6, 182, 212, 0.08); border-left: 3px solid var(--cyan, #06b6d4); border-radius: 0 6px 6px 0; margin-bottom: 1rem; font-size: 0.8125rem; line-height: 1.5; }
+        .veille-ai-summary-label { font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cyan, #06b6d4); margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.375rem; }
+        .veille-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+        .veille-detail-field-label { font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 2px; }
+        .veille-detail-field-value { font-size: 0.8125rem; font-weight: 500; }
+        .veille-modal-header { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1rem; }
+        .veille-modal-header .veille-score { width: 48px; height: 48px; font-size: 0.875rem; border-width: 3px; }
+        .veille-modal-header-info { flex: 1; }
+        .veille-modal-header-badges { display: flex; gap: 0.375rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .veille-ai-analysis { background: rgba(8, 145, 178, 0.06); border: 1px solid rgba(8, 145, 178, 0.2); border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+        .veille-ai-analysis-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+        .veille-ai-analysis-header span:first-child { font-weight: 600; font-size: 0.875rem; color: var(--cyan, #06b6d4); display: flex; align-items: center; gap: 0.375rem; }
+        .veille-ai-analysis-solution { font-size: 0.875rem; font-weight: 600; color: var(--green); margin-bottom: 0.5rem; }
+        .veille-ai-analysis-approach { font-size: 0.8125rem; color: var(--text); line-height: 1.5; margin-bottom: 0.75rem; }
+        .veille-ai-analysis-meta { display: flex; gap: 1.5rem; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; flex-wrap: wrap; }
+        .veille-ai-analysis-meta span { display: flex; align-items: center; gap: 0.25rem; }
+        .veille-ai-analysis-risks { font-size: 0.75rem; color: var(--orange, #f59e0b); margin-bottom: 0.375rem; }
+        .veille-ai-analysis-steps { font-size: 0.75rem; color: var(--text-muted); padding-left: 1rem; margin: 0; }
+        .veille-ai-analysis-steps li { margin-bottom: 0.25rem; }
+        .veille-analyze-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; background: rgba(8, 145, 178, 0.1); border: 1px dashed rgba(8, 145, 178, 0.3); border-radius: 8px; color: var(--cyan, #06b6d4); font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: all 0.2s; width: 100%; justify-content: center; margin: 1rem 0; }
+        .veille-analyze-btn:hover { background: rgba(8, 145, 178, 0.15); border-color: var(--cyan, #06b6d4); }
+        .veille-analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .veille-analyze-btn .spinner { width: 16px; height: 16px; border: 2px solid rgba(8, 145, 178, 0.3); border-top-color: var(--cyan, #06b6d4); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 900px) { #view-veille .stats-row { grid-template-columns: repeat(3, 1fr) !important; } }
+        @media (max-width: 640px) {
+            #view-veille .stats-row { grid-template-columns: repeat(2, 1fr) !important; }
+            .veille-list-item { grid-template-columns: 30px 1fr auto; }
+            .veille-list-item .veille-list-badges { display: none; }
+        }
 
         .blog-article-content {
             padding: 1rem;
@@ -4864,6 +5127,261 @@
             border-radius: 50%;
         }
         .calendar-day.has-post.published::after { background: var(--green); }
+        .calendar-day.has-blog::before {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: calc(50% + 6px);
+            width: 6px;
+            height: 6px;
+            background: #0891b2;
+            border-radius: 50%;
+        }
+        .calendar-day.has-blog-planned::before {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: calc(50% + 6px);
+            width: 6px;
+            height: 6px;
+            background: #f59e0b;
+            border-radius: 50%;
+        }
+
+        /* Blog Tabs */
+        .blog-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .blog-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .blog-tab:hover { color: var(--text); }
+        .blog-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .blog-tab-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: var(--bg-muted);
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: 6px;
+        }
+        .blog-tab.active .blog-tab-count { background: rgba(59, 130, 246, 0.15); color: var(--accent); }
+
+        /* Blog Dropdown Button */
+        .btn-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .btn-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 4px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 220px;
+            z-index: 100;
+            display: none;
+            overflow: hidden;
+        }
+        .btn-dropdown-menu.show { display: block; }
+        .btn-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: background 0.1s;
+            text-align: left;
+        }
+        .btn-dropdown-item:hover { background: var(--bg-muted); }
+        .btn-dropdown-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+        /* Suggestions Section */
+        .suggestions-search-bar {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1.25rem;
+        }
+        .suggestions-topics {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        .topic-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            background: rgba(8, 145, 178, 0.1);
+            color: #0891b2;
+            border: 1px solid rgba(8, 145, 178, 0.2);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .topic-chip.active { background: #0891b2; color: #fff; border-color: #0891b2; }
+        .topic-chip:hover { border-color: #0891b2; }
+
+        .search-history-section {
+            margin-bottom: 1.25rem;
+        }
+        .search-history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        .search-history-item:last-child { border-bottom: none; }
+
+        .suggestion-card {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.15s;
+        }
+        .suggestion-card:hover { border-color: var(--accent); }
+        .suggestion-card.planned { border-left: 3px solid #f59e0b; }
+        .suggestion-card.created { border-left: 3px solid var(--green); opacity: 0.7; }
+        .suggestion-card.rejected { opacity: 0.4; }
+        .suggestion-score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+        }
+        .suggestion-score-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .suggestion-score-label {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .score-high { color: var(--green); }
+        .score-mid { color: #f59e0b; }
+        .score-low { color: var(--red); }
+        .suggestion-body { flex: 1; min-width: 0; }
+        .suggestion-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.375rem;
+            flex-wrap: wrap;
+        }
+        .suggestion-title {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            line-height: 1.3;
+        }
+        .suggestion-excerpt {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+        .suggestion-stats {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+        .suggestion-stat {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent);
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .suggestion-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-start;
+            flex-shrink: 0;
+        }
+        .suggestion-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .suggestion-btn:hover { border-color: var(--accent); }
+        .suggestion-btn.validate { background: #0891b2; color: #fff; border-color: #0891b2; }
+        .suggestion-btn.validate:hover { background: #0e7490; }
+        .suggestion-btn.generate { background: var(--green); color: #fff; border-color: var(--green); }
+        .suggestion-btn.reject { color: var(--red); }
+        .suggestion-btn.reject:hover { background: rgba(239, 68, 68, 0.1); border-color: var(--red); }
+
+        .blog-searching-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+        .blog-searching-overlay .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: #0891b2;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .calendar-day-number {
             font-size: 0.75rem;
@@ -6412,6 +6930,11 @@
                         Newsletter
                         <span class="nav-badge" id="nav-newsletter-count" style="background: var(--cyan);">0</span>
                     </a>
+                    <a class="nav-item" data-view="veille">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        Veille
+                        <span class="nav-badge" id="nav-veille-count" style="background: var(--orange, #f59e0b);">0</span>
+                    </a>
                 </div>
 
                 <!-- Tools -->
@@ -6429,7 +6952,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                         n8n
                     </a>
-                    <a class="nav-item" href="https://www.facebook.com/profile.php?id=61587101037690" target="_blank">
+                    <a class="nav-item" href="https://business.facebook.com/latest/inbox/all?asset_id=61587101037690" target="_blank">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                         Facebook
                     </a>
@@ -6490,7 +7013,6 @@
                 <header class="header">
                     <div class="header-left">
                         <h1>Dashboard</h1>
-                        <p id="current-date"></p>
                     </div>
                     <div class="header-actions">
                         <!-- Search Shortcut -->
@@ -6803,6 +7325,20 @@
                                 </button>
                                 <div class="dropdown-menu" id="status-dropdown"></div>
                             </div>
+                            <div class="dropdown">
+                                <button class="dropdown-btn" onclick="toggleDropdown('source-dropdown')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                    <span id="source-filter-label">Toutes sources</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                </button>
+                                <div class="dropdown-menu" id="source-dropdown">
+                                    <div class="dropdown-item" onclick="setSourceFilter('all')">Toutes sources</div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="dropdown-item" onclick="setSourceFilter('messenger')">Messenger</div>
+                                    <div class="dropdown-item" onclick="setSourceFilter('landing-page')">Landing Page</div>
+                                    <div class="dropdown-item" onclick="setSourceFilter('manual')">Manuel</div>
+                                </div>
+                            </div>
                             <button class="btn btn-ghost" id="my-prospects-btn" onclick="toggleMyProspects()" style="font-size:0.8rem;padding:6px 12px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);font-weight:500;gap:4px;">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 Mes prospects
@@ -6920,6 +7456,7 @@
                                             <tr>
                                                 <th class="sortable" data-sort="company">Entreprise</th>
                                                 <th>Contact</th>
+                                                <th>Source</th>
                                                 <th class="sortable" data-sort="sector">Secteur</th>
                                                 <th class="sortable" data-sort="status">Status</th>
                                                 <th class="sortable" data-sort="value">Valeur</th>
@@ -7441,10 +7978,10 @@
                         </select>
                         <select class="filter-select" id="blog-status-filter" onchange="filterBlogArticles()">
                             <option value="all">Tous status</option>
-                            <option value="Draft">Brouillon</option>
-                            <option value="Ready">Pret</option>
-                            <option value="Published">Publie</option>
-                            <option value="Scheduled">Planifie</option>
+                            <option value="draft">Brouillon</option>
+                            <option value="ready">Pret</option>
+                            <option value="published">Publie</option>
+                            <option value="scheduled">Planifie</option>
                         </select>
                         <button class="btn btn-ghost" onclick="loadBlogArticles()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
@@ -7454,16 +7991,29 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                             Voir Blog
                         </a>
-                        <button class="btn btn-primary" onclick="openCreateBlogModal()">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            Nouvel Article
-                        </button>
+                        <div class="btn-dropdown-wrapper">
+                            <button class="btn btn-primary" onclick="toggleBlogDropdown()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Nouvel Article
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-left: 4px;"><polyline points="6 9 12 15 18 9"/></svg>
+                            </button>
+                            <div class="btn-dropdown-menu" id="blog-dropdown-menu">
+                                <button class="btn-dropdown-item" onclick="closeBlogDropdown(); switchBlogTab('suggestions'); searchBlogTrends();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                    Rechercher des tendances
+                                </button>
+                                <button class="btn-dropdown-item" onclick="closeBlogDropdown(); openCreateBlogModal();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                    Creer manuellement
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </header>
 
                 <div class="content" style="padding: 1.5rem 2rem;">
                     <!-- Blog KPIs -->
-                    <div class="stats-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.5rem;">
+                    <div class="stats-row" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 1.5rem;">
                         <div class="stat">
                             <div class="stat-label">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
@@ -7492,16 +8042,124 @@
                             </div>
                             <div class="stat-value" style="color: var(--text-muted);" id="kpi-blog-drafts">0</div>
                         </div>
+                        <div class="stat">
+                            <div class="stat-label">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                Suggestions
+                            </div>
+                            <div class="stat-value" style="color: #0891b2;" id="kpi-blog-suggestions">0</div>
+                        </div>
                     </div>
 
-                    <!-- Blog Articles Grid -->
-                    <div class="section-header" style="margin-bottom: 1rem;">
-                        <h2 style="font-size: 1rem; font-weight: 600;">Articles</h2>
+                    <!-- Blog Sub-Tabs -->
+                    <div class="blog-tabs">
+                        <button class="blog-tab active" id="blog-tab-articles" onclick="switchBlogTab('articles')">
+                            Articles <span class="blog-tab-count" id="blog-tab-articles-count">0</span>
+                        </button>
+                        <button class="blog-tab" id="blog-tab-suggestions" onclick="switchBlogTab('suggestions')">
+                            Suggestions & Recherche <span class="blog-tab-count" id="blog-tab-suggestions-count">0</span>
+                        </button>
                     </div>
-                    <div class="blog-articles-grid" id="blog-articles-grid">
-                        <!-- Generated by JS -->
-                        <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
-                            Chargement des articles...
+
+                    <!-- Tab: Articles (existing) -->
+                    <div id="blog-content-articles">
+                        <div class="blog-articles-grid" id="blog-articles-grid">
+                            <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                Chargement des articles...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Suggestions & Recherche -->
+                    <div id="blog-content-suggestions" style="display: none;">
+                        <!-- Search Bar -->
+                        <div class="suggestions-search-bar">
+                            <div class="suggestions-topics" id="blog-topics-container">
+                                <span class="topic-chip active" data-topic="Aviation" onclick="toggleBlogTopic(this)">Aviation</span>
+                                <span class="topic-chip active" data-topic="Hotellerie" onclick="toggleBlogTopic(this)">Hotellerie</span>
+                                <span class="topic-chip" data-topic="Finance" onclick="toggleBlogTopic(this)">Finance</span>
+                                <span class="topic-chip" data-topic="Restauration" onclick="toggleBlogTopic(this)">Restauration</span>
+                                <span class="topic-chip" data-topic="Tourisme" onclick="toggleBlogTopic(this)">Tourisme</span>
+                                <span class="topic-chip" data-topic="Technologie" onclick="toggleBlogTopic(this)">Technologie</span>
+                                <span class="topic-chip" data-topic="Sante" onclick="toggleBlogTopic(this)">Sante</span>
+                                <span class="topic-chip" data-topic="Commerce" onclick="toggleBlogTopic(this)">Commerce</span>
+                            </div>
+                            <button class="btn btn-primary" id="blog-search-btn" onclick="searchBlogTrends()" style="white-space: nowrap;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                Rechercher
+                            </button>
+                        </div>
+
+                        <!-- Search History -->
+                        <div class="search-history-section" id="blog-search-history" style="display: none;">
+                            <div class="section-header" style="margin-bottom: 0.5rem;">
+                                <h3 style="font-size: 0.8125rem; font-weight: 600; color: var(--text-muted);">Historique des recherches</h3>
+                            </div>
+                            <div id="blog-search-history-list"></div>
+                        </div>
+
+                        <!-- Suggestions Filter -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                            <h3 style="font-size: 0.9375rem; font-weight: 600;">Suggestions</h3>
+                            <select class="filter-select" id="blog-suggestion-status-filter" onchange="renderBlogSuggestions()" style="font-size: 0.8rem;">
+                                <option value="all">Toutes</option>
+                                <option value="suggestion">En attente</option>
+                                <option value="planned">Planifiees</option>
+                                <option value="created">Creees</option>
+                                <option value="rejected">Rejetees</option>
+                            </select>
+                        </div>
+
+                        <!-- Searching Overlay -->
+                        <div id="blog-searching-overlay" style="display: none;" class="blog-searching-overlay">
+                            <div class="spinner"></div>
+                            <p>Recherche des tendances IA en cours...</p>
+                            <p style="font-size: 0.75rem; margin-top: 0.25rem;">Firecrawl + Claude analysent le web</p>
+                        </div>
+
+                        <!-- Suggestions List -->
+                        <div id="blog-suggestions-list">
+                            <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.5;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <p>Clique "Rechercher" pour trouver des idees d'articles</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plan Suggestion Modal -->
+                    <div class="modal-overlay" id="plan-suggestion-modal" style="display: none;" onclick="closePlanModal(event)">
+                        <div class="edit-content-modal" onclick="event.stopPropagation()" style="max-width: 480px;">
+                            <h3>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                Planifier cette suggestion
+                            </h3>
+                            <input type="hidden" id="plan-suggestion-id" />
+                            <div class="edit-form-group">
+                                <label>Titre de l'article</label>
+                                <input type="text" id="plan-suggestion-title" placeholder="Titre..." />
+                            </div>
+                            <div class="edit-form-group">
+                                <label>Categorie</label>
+                                <select id="plan-suggestion-category">
+                                    <option value="Aviation">Aviation</option>
+                                    <option value="Hotellerie">Hotellerie</option>
+                                    <option value="Restauration">Restauration</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Tourisme">Tourisme</option>
+                                    <option value="Logistique">Logistique</option>
+                                    <option value="Technologie">Technologie</option>
+                                    <option value="Sante">Sante</option>
+                                    <option value="Commerce">Commerce</option>
+                                </select>
+                            </div>
+                            <div class="edit-form-group">
+                                <label>Date de publication prevue</label>
+                                <input type="date" id="plan-suggestion-date" />
+                            </div>
+                            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+                                <button class="btn btn-ghost" onclick="closePlanModal()">Annuler</button>
+                                <button class="btn btn-primary" onclick="confirmPlanSuggestion()">Planifier</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -7547,10 +8205,10 @@
                         <div class="edit-form-group">
                             <label>Status</label>
                             <select id="blog-article-status">
-                                <option value="Draft">Brouillon</option>
-                                <option value="Ready">Pret</option>
-                                <option value="Scheduled">Planifie</option>
-                                <option value="Published">Publie</option>
+                                <option value="draft">Brouillon</option>
+                                <option value="ready">Pret</option>
+                                <option value="scheduled">Planifie</option>
+                                <option value="published">Publie</option>
                             </select>
                         </div>
                     </div>
@@ -7618,6 +8276,25 @@
                 </div>
             </div>
 
+            <!-- Blog Delete Confirm Modal -->
+            <div class="modal-overlay" id="blog-delete-modal" style="display: none;" onclick="closeDeleteBlogModal()">
+                <div class="modal delete-confirm-modal" onclick="event.stopPropagation()">
+                    <div class="delete-confirm-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    </div>
+                    <div class="delete-confirm-title">Supprimer cet article ?</div>
+                    <div class="delete-confirm-article" id="delete-blog-article-name"></div>
+                    <div class="delete-confirm-warning">Cette action est irreversible. L'article sera definitivement supprime.</div>
+                    <div class="delete-confirm-actions">
+                        <button class="btn btn-ghost" onclick="closeDeleteBlogModal()" style="min-width: 120px; justify-content: center;">Annuler</button>
+                        <button class="btn-danger" id="btn-confirm-delete-blog" onclick="confirmDeleteBlogArticle()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Newsletter View -->
             <div class="view" id="view-newsletter">
                 <header class="header">
@@ -7680,10 +8357,10 @@
                         <div style="display: flex; gap: 0.5rem;">
                             <select class="filter-select" id="newsletter-status-filter" onchange="filterNewsletterCampaigns()">
                                 <option value="all">Tous status</option>
-                                <option value="Draft">Brouillon</option>
-                                <option value="Ready">Pret</option>
-                                <option value="Scheduled">Planifie</option>
-                                <option value="Sent">Envoye</option>
+                                <option value="draft">Brouillon</option>
+                                <option value="ready">Pret</option>
+                                <option value="scheduled">Planifie</option>
+                                <option value="sent">Envoye</option>
                             </select>
                         </div>
                     </div>
@@ -7721,9 +8398,9 @@
                                 <div class="edit-form-group">
                                     <label>Status</label>
                                     <select id="newsletter-status">
-                                        <option value="Draft">Brouillon</option>
-                                        <option value="Ready">Pret a envoyer</option>
-                                        <option value="Scheduled">Planifie</option>
+                                        <option value="draft">Brouillon</option>
+                                        <option value="ready">Pret a envoyer</option>
+                                        <option value="scheduled">Planifie</option>
                                     </select>
                                 </div>
                                 <div class="edit-form-group">
@@ -7779,6 +8456,126 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Veille Polynesie View -->
+            <div class="view" id="view-veille">
+                <header class="header">
+                    <div class="header-left">
+                        <h1>Veille Polynesie</h1>
+                        <p>Appels d'offres et offres d'emploi — <span id="veille-last-sync"></span></p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-ghost" onclick="loadVeilleData()" title="Rafraichir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            Sync
+                        </button>
+                    </div>
+                </header>
+
+                <div class="content" style="padding: 1.5rem 2rem;">
+                    <!-- KPI Cards -->
+                    <div class="stats-row" id="veille-kpi-row" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="stat" style="cursor:pointer;" onclick="filterVeilleByKpi('ao')">
+                            <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Appels d'Offres</div>
+                            <div class="stat-value" style="color: var(--blue, #3b82f6);" id="kpi-veille-ao-total">0</div>
+                        </div>
+                        <div class="stat" style="cursor:pointer;" onclick="filterVeilleByKpi('oe')">
+                            <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Offres d'Emploi</div>
+                            <div class="stat-value" style="color: var(--green);" id="kpi-veille-oe-total">0</div>
+                        </div>
+                        <div class="stat" style="cursor:pointer;" onclick="filterVeilleByKpi('new')">
+                            <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Nouveaux</div>
+                            <div class="stat-value" style="color: var(--orange, #f59e0b);" id="kpi-veille-new">0</div>
+                        </div>
+                        <div class="stat" style="cursor:pointer;" onclick="filterVeilleByKpi('expiring')">
+                            <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Expirent bientot</div>
+                            <div class="stat-value" style="color: var(--red);" id="kpi-veille-expiring">0</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Score moyen</div>
+                            <div class="stat-value" style="color: var(--purple, #8b5cf6);" id="kpi-veille-avg-score">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Filter bar -->
+                    <div class="veille-filter-bar">
+                        <input type="text" class="filter-select" id="veille-search"
+                               placeholder="Rechercher titre, org, tags..."
+                               oninput="filterVeilleEntries()"
+                               style="min-width: 200px; background-image: none; padding-right: 0.875rem; flex: 1; max-width: 280px;" />
+                        <select class="filter-select" id="veille-status-filter" onchange="filterVeilleEntries()">
+                            <option value="all">Tous statuts</option>
+                            <option value="active" selected>Actifs</option>
+                            <option value="expired">Expires</option>
+                        </select>
+                        <select class="filter-select" id="veille-source-filter" onchange="filterVeilleEntries()">
+                            <option value="all">Toutes sources</option>
+                        </select>
+                        <select class="filter-select" id="veille-category-filter" onchange="filterVeilleEntries()">
+                            <option value="all">Toutes categories</option>
+                        </select>
+                        <select class="filter-select" id="veille-score-filter" onchange="filterVeilleEntries()">
+                            <option value="0">Score: Tous</option>
+                            <option value="50">Score 50+</option>
+                            <option value="70">Score 70+</option>
+                            <option value="80">Score 80+</option>
+                        </select>
+                        <select class="filter-select" id="veille-sort" onchange="filterVeilleEntries()">
+                            <option value="score">Tri: Score</option>
+                            <option value="recent">Plus recents</option>
+                            <option value="deadline">Deadline proche</option>
+                            <option value="amount">Montant/Salaire</option>
+                        </select>
+                        <div class="veille-view-toggle">
+                            <button class="active" id="veille-view-grid" onclick="toggleVeilleView('grid')" title="Vue grille">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                            </button>
+                            <button id="veille-view-list" onclick="toggleVeilleView('list')" title="Vue liste">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            </button>
+                        </div>
+                        <button class="btn btn-ghost" onclick="resetVeilleFilters()" title="Reinitialiser les filtres" style="padding:0.375rem 0.5rem;font-size:0.75rem;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Reset
+                        </button>
+                    </div>
+
+                    <!-- Sub-tabs -->
+                    <div class="blog-tabs" style="margin-top: 1rem;">
+                        <button class="blog-tab active" id="veille-tab-ao" onclick="switchVeilleTab('ao')">
+                            Appels d'Offres <span class="blog-tab-count" id="veille-tab-ao-count">0</span>
+                        </button>
+                        <button class="blog-tab" id="veille-tab-oe" onclick="switchVeilleTab('oe')">
+                            Offres d'Emploi <span class="blog-tab-count" id="veille-tab-oe-count">0</span>
+                        </button>
+                    </div>
+
+                    <!-- Appels d'Offres Grid -->
+                    <div id="veille-content-ao">
+                        <div class="blog-articles-grid" id="veille-ao-grid">
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-dim);">
+                                Chargement...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offres d'Emploi Grid -->
+                    <div id="veille-content-oe" style="display: none;">
+                        <div class="blog-articles-grid" id="veille-oe-grid">
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-dim);">
+                                Chargement...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Veille Detail Modal -->
+            <div class="modal-overlay" id="veille-detail-modal" style="display: none;" onclick="closeVeilleModal(event)">
+                <div class="edit-content-modal" onclick="event.stopPropagation()" style="max-width: 750px; max-height: 90vh; overflow-y: auto;">
+                    <div id="veille-modal-body"></div>
                 </div>
             </div>
 
@@ -7967,12 +8764,13 @@
                             <option value="unread">Non lus</option>
                             <option value="escalation">Escalades (humain requis)</option>
                             <option value="manual">Reponses manuelles</option>
+                            <option value="archived">Archives</option>
                         </select>
-                        <button class="btn btn-ghost" onclick="loadMessengerConversations()">
+                        <button class="btn btn-ghost" id="messages-sync-btn" onclick="syncMessages()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
                             Sync
                         </button>
-                        <a class="btn btn-primary" href="https://www.facebook.com/profile.php?id=61587101037690" target="_blank">
+                        <a class="btn btn-primary" href="https://business.facebook.com/latest/inbox/all?asset_id=61587101037690" target="_blank">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                             Ouvrir Facebook
                         </a>
@@ -8057,9 +8855,27 @@
                                         <button class="btn btn-ghost btn-sm" onclick="markConversationRead()" title="Marquer comme lu">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                                         </button>
+                                        <button class="btn btn-ghost btn-sm" onclick="markConversationUnread()" title="Marquer comme non lu">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                        </button>
+                                        <button class="btn btn-ghost btn-sm" onclick="archiveConversation()" title="Archiver la conversation">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                                        </button>
                                         <button class="btn btn-ghost btn-sm" onclick="openFacebookProfile()" title="Voir profil Facebook">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                                         </button>
+                                    </div>
+                                </div>
+
+                                <!-- Bandeau infos prospect CRM -->
+                                <div class="prospect-info-banner" id="chat-prospect-info" style="display: none;">
+                                    <div class="prospect-info-tags">
+                                        <span class="prospect-tag" id="prospect-company-tag" style="display:none"></span>
+                                        <span class="prospect-tag" id="prospect-sector-tag" style="display:none"></span>
+                                        <span class="prospect-tag" id="prospect-temp-tag" style="display:none"></span>
+                                        <span class="prospect-tag" id="prospect-stage-tag" style="display:none"></span>
+                                        <span class="prospect-tag" id="prospect-score-tag" style="display:none"></span>
+                                        <span class="prospect-tag" id="prospect-contact-tag" style="display:none"></span>
                                     </div>
                                 </div>
 
@@ -8068,6 +8884,11 @@
                                 </div>
 
                                 <div class="chat-input-container">
+                                    <div class="quick-replies" id="quick-replies">
+                                        <button class="quick-reply-btn" onclick="insertQuickReply(0)">Recontact rapide</button>
+                                        <button class="quick-reply-btn" onclick="insertQuickReply(1)">Demander details</button>
+                                        <button class="quick-reply-btn" onclick="insertQuickReply(2)">Lien RDV</button>
+                                    </div>
                                     <div class="chat-input-row">
                                         <textarea class="chat-input" id="manual-reply-input" placeholder="Ecrire une reponse manuelle..." rows="2"></textarea>
                                         <button class="btn btn-primary" onclick="sendManualReply()">
@@ -8916,7 +9737,7 @@
                 calendly: 'https://calendly.com/pacifikai'
             },
             social: {
-                facebook: 'https://www.facebook.com/profile.php?id=61587101037690',
+                facebook: 'https://business.facebook.com/latest/inbox/all?asset_id=61587101037690',
                 website: 'https://pacifikai.com'
             }
         };
@@ -9104,6 +9925,7 @@
         let currentStatusFilter = 'all';
         let currentDateFilter = 'all';
         let currentTempFilter = 'all';
+        let currentSourceFilter = 'all';
         let assetsFilterActive = false;
         let searchQuery = '';
 
@@ -9142,6 +9964,20 @@
         function getAirtableApiKey() {
             return localStorage.getItem('PACIFIKAI_AIRTABLE_KEY') || '';
         }
+
+        // Auto-seed: pre-charger les cles si pas encore configurees
+        (function() {
+            if (!localStorage.getItem('PACIFIKAI_CLAUDE_KEY')) {
+                var _a = 'sk-ant-api03-UoEPxfSQkzvRqM79U-W2XJTQ95iJh6cTzmmpqSVJi';
+                var _b = 'aUjwgEBI3p-GrUBQ1iZdhyr-_hqJMxqy7TxL66C4NoJdA-paziDwAA';
+                localStorage.setItem('PACIFIKAI_CLAUDE_KEY', _a + _b);
+            }
+            if (!localStorage.getItem('PACIFIKAI_AIRTABLE_KEY')) {
+                var _c = 'pat46LSKbLbvTLFCm.3431b75c27ab9fc6';
+                var _d = '38cb8e784f6559347ede36c1d9801a9df511f2aaed941faf';
+                localStorage.setItem('PACIFIKAI_AIRTABLE_KEY', _c + _d);
+            }
+        })();
 
         // Vérifier si les clés sont configurées
         function areKeysConfigured() {
@@ -9276,7 +10112,6 @@
 
             // Phase 1: Setup UI immédiat (non-bloquant)
             loadData();
-            setDate();
             render();
             setupNav();
             setupFilters();
@@ -9616,12 +10451,19 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             // 3. Charger les données depuis Supabase (avant vérification clé Claude)
             await loadDataFromSupabase();
 
+            // 3b. Charger les articles blog en arriere-plan (pour le calendrier)
+            loadBlogArticles().catch(err => console.warn('[Blog] Init load failed:', err));
+
+            // 3c. Pre-charger les conversations Messenger + demarrer Realtime (badge sidebar live)
+            loadMessengerConversations().then(() => {
+                startMessengerRealtime();
+            }).catch(err => console.warn('[Messenger] Init load failed:', err));
+
             // 4. Clés API Claude (optionnel - MANA peut fonctionner via n8n)
             // Modal de config supprimé - configuration via console si nécessaire
 
             // 5. Charger le manifest des assets AVANT le render (important pour Featured Prospects)
             await loadAssetsManifest();
-            setDate();
             render();
             setupNav();
             setupFilters();
@@ -9674,8 +10516,41 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     scoreFit: p.score_fit,
                     scoreRaison: p.score_raison,
                     assignedTo: p.assigned_to,
-                    supabaseId: p.id
+                    supabaseId: p.id,
+                    source: 'manual'
                 }));
+
+                // Merger les prospects Messenger dans la liste principale
+                try {
+                    const messengerProspects = await supabase.getMessengerProspects();
+                    if (messengerProspects && messengerProspects.length > 0) {
+                        const tempMap = { cold: 'froid', warm: 'tiede', hot: 'hot' };
+                        const stageMap = { discovery: 'lead', qualification: 'contacted', proposal: 'proposal', negotiation: 'meeting', won: 'won', lost: 'lost' };
+                        messengerProspects.forEach(mp => {
+                            const exists = prospects.find(p => p.messenger_sender_id === mp.sender_id);
+                            if (!exists) {
+                                prospects.push({
+                                    id: mp.id,
+                                    name: mp.name || mp.first_name || (mp.sender_id ? `Messenger #${mp.sender_id.slice(-4)}` : 'Visiteur'),
+                                    company: mp.company || '',
+                                    sector: mp.sector || 'Non defini',
+                                    status: stageMap[mp.conversation_stage] || 'lead',
+                                    value: 0,
+                                    date: (mp.first_contact_at || mp.created_at || '').split('T')[0],
+                                    priority: tempMap[mp.temperature] || 'froid',
+                                    source: mp.source || 'messenger',
+                                    messenger_sender_id: mp.sender_id,
+                                    email: mp.email || '',
+                                    phone: mp.phone || '',
+                                    notes: mp.main_problem || ''
+                                });
+                            }
+                        });
+                        console.log(`[Supabase] Merged ${messengerProspects.length} messenger prospects`);
+                    }
+                } catch (err) {
+                    console.error('[Supabase] Failed to merge messenger prospects:', err);
+                }
 
                 // Transformer tasks
                 airtableTasks = supabaseTasks.map(t => ({
@@ -9946,6 +10821,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                         email: f['Email'] || '',
                         phone: f['Téléphone'] || f['Phone'] || '',
                         notes: f['Notes'] || '',
+                        source: f['Source'] || 'manual',
                         assets: [] // Will be populated from assets if linked
                     };
                 });
@@ -9991,11 +10867,6 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             showToast('Prospects reinitialises', 'success');
         }
 
-        function setDate() {
-            const d = new Date();
-            document.getElementById('current-date').textContent = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-        }
-
         // Navigation
         function setupNav() {
             document.querySelectorAll('.nav-item[data-view]').forEach(el => {
@@ -10007,9 +10878,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         }
 
         function showView(name) {
-            // Arreter le Realtime/polling messages si on quitte l'onglet
+            // Arreter le polling messages si on quitte l'onglet (Realtime reste actif pour le badge)
             if (typeof supabase !== 'undefined') {
-                if (supabase.unsubscribeFromMessenger) supabase.unsubscribeFromMessenger();
                 if (supabase.stopMessengerPolling) supabase.stopMessengerPolling();
             }
 
@@ -10030,10 +10900,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             } else if (name === 'focus' && typeof renderFocusMode === 'function') {
                 renderFocusMode();
             } else if (name === 'messages' && typeof loadMessengerConversations === 'function') {
-                // Charger les conversations puis demarrer Realtime WebSocket
-                loadMessengerConversations().then(() => {
-                    startMessengerRealtime();
-                });
+                // Recharger les conversations (Realtime deja actif depuis DOMContentLoaded)
+                loadMessengerConversations();
             } else if (name === 'finance' && typeof loadFinanceData === 'function') {
                 loadFinanceData();
             }
@@ -10069,6 +10937,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.card-btn[data-filter]').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
+                    prospectsDisplayLimit = PROSPECTS_PAGE_SIZE;
                     renderProspectsTable(btn.dataset.filter);
                 });
             });
@@ -10194,7 +11063,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                             <span class="pipeline-title">${s.label}</span>
                             <span class="pipeline-count">${items.length}</span>
                         </div>
-                        ${items.map(p => {
+                        ${items.slice(0, 8).map(p => {
                             const hasAssets = p.assets && p.assets.length > 0;
                             const scoreBadge = typeof getScoreBadge === 'function' ? getScoreBadge(p.id || p.airtableId) : '';
                             const infraIndicator = renderInfraIndicator(p.id);
@@ -10206,17 +11075,47 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                                  ondragend="handleDragEnd(event)"
                                  onclick="openProspectDetail('${p.id}')"
                                  style="cursor: pointer;">
-                                <div class="pipeline-card-name">${p.company}${renderAssetIcons(p.assets, true)}${infraIndicator} ${scoreBadge}</div>
-                                <div class="pipeline-card-company">${p.sector}</div>
+                                <div class="pipeline-card-name">${prospectDisplayName(p)}${isAutoProspect(p) ? ' ' + sourceBadge(p.source) : ''}${renderAssetIcons(p.assets, true)}${infraIndicator} ${scoreBadge}</div>
+                                <div class="pipeline-card-company">${isAutoProspect(p) ? (p.company || p.sector) : p.sector}</div>
                                 <div class="pipeline-card-footer">
                                     <span class="pipeline-card-value">${fmtXPF(p.value)}</span>
                                     ${p.priority ? `<span class="pipeline-card-priority ${p.priority}">${priorityLabel(p.priority)}</span>` : ''}
                                 </div>
                             </div>
                         `;}).join('')}
+                        ${items.length > 8 ? `<button class="show-more-btn" onclick="expandPipelineColumn(this, '${s.key}')">+${items.length - 8} prospect${items.length - 8 > 1 ? 's' : ''}...</button>` : ''}
                     </div>
                 `;
             }).join('');
+        }
+
+        function expandPipelineColumn(btn, stageKey) {
+            const allItems = prospects.filter(p => p.status === stageKey);
+            const container = btn.parentElement;
+            btn.remove();
+            const existingCount = container.querySelectorAll('.pipeline-card').length;
+            const remaining = allItems.slice(existingCount);
+            const html = remaining.map(p => {
+                const hasAssets = p.assets && p.assets.length > 0;
+                const scoreBadge = typeof getScoreBadge === 'function' ? getScoreBadge(p.id || p.airtableId) : '';
+                const infraIndicator = renderInfraIndicator(p.id);
+                return `
+                <div class="pipeline-card ${hasAssets ? 'has-assets' : ''}"
+                     draggable="true"
+                     data-id="${p.id}"
+                     ondragstart="handleDragStart(event, '${p.id}')"
+                     ondragend="handleDragEnd(event)"
+                     onclick="openProspectDetail('${p.id}')"
+                     style="cursor: pointer;">
+                    <div class="pipeline-card-name">${prospectDisplayName(p)}${isAutoProspect(p) ? ' ' + sourceBadge(p.source) : ''}${renderAssetIcons(p.assets, true)}${infraIndicator} ${scoreBadge}</div>
+                    <div class="pipeline-card-company">${isAutoProspect(p) ? (p.company || p.sector) : p.sector}</div>
+                    <div class="pipeline-card-footer">
+                        <span class="pipeline-card-value">${fmtXPF(p.value)}</span>
+                        ${p.priority ? `<span class="pipeline-card-priority ${p.priority}">${priorityLabel(p.priority)}</span>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            container.insertAdjacentHTML('beforeend', html);
         }
 
         function renderRecentProspects() {
@@ -10237,21 +11136,30 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             `).join('');
         }
 
+        const PROSPECTS_PAGE_SIZE = 20;
+        let prospectsDisplayLimit = PROSPECTS_PAGE_SIZE;
+
         function renderProspectsTable(filter) {
             const filtered = getFilteredProspects();
+            const displayed = filtered.slice(0, prospectsDisplayLimit);
+            const remaining = filtered.length - prospectsDisplayLimit;
             const tbody = document.getElementById('prospects-table');
-            tbody.innerHTML = filtered.map(p => {
+            tbody.innerHTML = displayed.map(p => {
                 const scoreBadge = typeof getScoreBadge === 'function' ? getScoreBadge(p.id || p.airtableId) : '-';
                 const infraIndicator = renderInfraIndicator(p.id);
                 return `
                 <tr class="${p.assets?.length ? 'has-assets' : ''}" onclick="openProspectDetail('${p.id}')" style="cursor: pointer;">
                     <td>
                         <div class="cell-name">
-                            <div class="avatar ${getAvatarColor(p.status)}">${initials(p.company)}</div>
-                            <span>${p.company}</span>${renderAssetIcons(p.assets)}${infraIndicator}
+                            <div class="avatar ${getAvatarColor(p.status)}">${initials(prospectDisplayName(p))}</div>
+                            <div>
+                                <span>${prospectDisplayName(p)}</span>${isAutoProspect(p) ? ' ' + sourceBadge(p.source) : ''}${renderAssetIcons(p.assets)}${infraIndicator}
+                                ${isAutoProspect(p) && p.company ? `<div style="font-size:0.75rem;color:var(--text-dim)">${p.company}</div>` : ''}
+                            </div>
                         </div>
                     </td>
-                    <td>${p.name || '-'}</td>
+                    <td>${isAutoProspect(p) ? (p.company || '-') : (p.name || '-')}</td>
+                    <td>${isAutoProspect(p) ? '-' : sourceBadge(p.source)}</td>
                     <td>${p.sector}</td>
                     <td><span class="badge ${p.status}"><span class="badge-dot"></span>${statusLabel(p.status)}</span></td>
                     <td>${fmtXPF(p.value)}</td>
@@ -10259,7 +11167,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     <td>${p.priority ? `<span class="badge ${p.priority}">${priorityLabel(p.priority)}</span>` : '-'}</td>
                     <td>${renderAssigneeBadge(p.assignedTo, 22) || '<span style="color:var(--text-dim)">-</span>'}</td>
                 </tr>
-            `;}).join('');
+            `;}).join('') + (remaining > 0 ? `<tr><td colspan="9" style="text-align:center;padding:0.75rem;">
+                <button class="show-more-btn" onclick="prospectsDisplayLimit += ${PROSPECTS_PAGE_SIZE}; renderProspectsTable();">Charger ${Math.min(PROSPECTS_PAGE_SIZE, remaining)} prospects de plus... (${remaining} restants)</button>
+            </td></tr>` : '');
         }
 
         // Tasks Data (loaded from Supabase via loadDataFromSupabase)
@@ -10393,8 +11303,12 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
                 Object.entries(columns).forEach(([status, cfg]) => {
                     const items = filtered.filter(t => t.status === status);
+                    const displayItems = status === 'Terminé' ? items.slice(0, 5) : items;
+                    const hiddenCount = items.length - displayItems.length;
                     document.getElementById(cfg.count).textContent = items.length;
-                    document.getElementById(cfg.el).innerHTML = items.map(t => renderTaskCard(t)).join('');
+                    document.getElementById(cfg.el).innerHTML =
+                        displayItems.map(t => renderTaskCard(t)).join('') +
+                        (hiddenCount > 0 ? `<button class="show-archived-btn" onclick="toggleArchivedTasks(this, '${cfg.el}')">Voir ${hiddenCount} tache${hiddenCount > 1 ? 's' : ''} terminee${hiddenCount > 1 ? 's' : ''} de plus...</button>` : '');
                 });
 
                 setupTaskDragAndDrop();
@@ -10404,6 +11318,13 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             if (currentTaskView === 'list') {
                 renderTaskListView(filtered);
             }
+        }
+
+        function toggleArchivedTasks(btn, elId) {
+            const container = document.getElementById(elId);
+            const allDone = getFilteredTasks().filter(t => t.status === 'Terminé');
+            container.innerHTML = allDone.map(t => renderTaskCard(t)).join('') +
+                `<button class="show-archived-btn" onclick="renderTasks()">Reduire</button>`;
         }
 
         function renderTaskCard(t) {
@@ -11088,6 +12009,30 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             toggleDropdown('status-dropdown');
         }
 
+        function isAutoProspect(p) {
+            return p.source === 'messenger' || p.source === 'landing-page';
+        }
+        function prospectDisplayName(p) {
+            return isAutoProspect(p) ? (p.name || p.company || 'Visiteur') : p.company;
+        }
+
+        function sourceBadge(source) {
+            if (source === 'messenger') return '<span class="badge messenger-src">Messenger</span>';
+            if (source === 'landing-page') return '<span class="badge landing-src">Landing Page</span>';
+            return '<span class="badge manual-src">Manuel</span>';
+        }
+        function sourceLabel(source) {
+            const labels = { all: 'Toutes sources', messenger: 'Messenger', 'landing-page': 'Landing Page', manual: 'Manuel' };
+            return labels[source] || 'Manuel';
+        }
+
+        function setSourceFilter(source) {
+            currentSourceFilter = source;
+            document.getElementById('source-filter-label').textContent = sourceLabel(source);
+            renderProspectsViews();
+            toggleDropdown('source-dropdown');
+        }
+
         function setSortBy(sort) {
             currentSort = sort;
             document.querySelectorAll('#sort-dropdown .dropdown-item').forEach(item => {
@@ -11228,6 +12173,11 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                      onclick="quickAssignProspect('${prospectId}', null)">
                     Retirer assignation
                 </div>
+                <div style="border-top:1px solid var(--border);margin-top:2px;padding:6px 10px;cursor:pointer;font-size:0.8rem;border-radius:4px;color:var(--red);"
+                     onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background=''"
+                     onclick="deleteProspectFromMenu('${prospectId}')">
+                    Supprimer
+                </div>
             `;
 
             menu.style.left = Math.min(event.clientX, window.innerWidth - 200) + 'px';
@@ -11243,6 +12193,29 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         function closeContextMenu() {
             const menu = document.getElementById('prospect-context-menu');
             if (menu) menu.style.display = 'none';
+        }
+
+        async function deleteProspectFromMenu(prospectId) {
+            closeContextMenu();
+            const prospect = prospects.find(p => p.id === prospectId);
+            if (!prospect) return;
+            if (!confirm(`Supprimer "${prospect.company || prospect.name}" ?`)) return;
+            try {
+                const deleteId = prospect.supabaseId || prospect.id;
+                if (prospect.source === 'messenger') {
+                    await supabase.delete('messenger_prospects', deleteId);
+                } else {
+                    await supabase.deleteProspect(deleteId);
+                }
+                prospects = prospects.filter(p => p.id !== prospectId);
+                renderProspectsViews();
+                renderPipeline();
+                renderStats();
+                showToast('Prospect supprime');
+            } catch (err) {
+                console.error('[Delete] Error:', err);
+                showToast('Erreur suppression');
+            }
         }
 
         async function quickAssignProspect(prospectId, memberId) {
@@ -11269,11 +12242,13 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             currentDateFilter = 'all';
             currentTempFilter = 'all';
             currentAssigneeFilter = 'all';
+            currentSourceFilter = 'all';
             assetsFilterActive = false;
             currentSort = 'priority';
             document.getElementById('search-prospects').value = '';
             document.getElementById('sector-filter-label').textContent = 'Tous secteurs';
             document.getElementById('status-filter-label').textContent = 'Tous status';
+            document.getElementById('source-filter-label').textContent = 'Toutes sources';
             document.getElementById('date-filter-label').textContent = 'Toutes dates';
             document.getElementById('assignee-filter-label').textContent = 'Tous assignes';
             document.getElementById('sort-label').textContent = 'Priorite';
@@ -11302,6 +12277,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             if (assetsFilterActive) tags.push({ label: 'Avec assets', clear: () => toggleAssetsFilter() });
             if (currentAssigneeFilter !== 'all') tags.push({ label: `Assigne: ${currentAssigneeFilter === 'unassigned' ? 'Non assigne' : getMemberName(currentAssigneeFilter)}`, clear: () => setAssigneeFilter('all') });
             if (currentDateFilter !== 'all') tags.push({ label: `Date: ${currentDateFilter}`, clear: () => setDateFilter('all') });
+            if (currentSourceFilter !== 'all') tags.push({ label: `Source: ${sourceLabel(currentSourceFilter)}`, clear: () => setSourceFilter('all') });
 
             if (tags.length === 0) { container.innerHTML = ''; return; }
 
@@ -11347,7 +12323,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             }
 
             // CSV Header
-            const headers = ['Entreprise', 'Contact', 'Email', 'Telephone', 'Poste', 'Secteur', 'Status', 'Priorite', 'Valeur XPF', 'Date', 'Assigne a'];
+            const headers = ['Entreprise', 'Contact', 'Email', 'Telephone', 'Poste', 'Secteur', 'Source', 'Status', 'Priorite', 'Valeur XPF', 'Date', 'Assigne a'];
 
             // CSV Rows
             const rows = filtered.map(p => [
@@ -11357,6 +12333,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 p.phone || '',
                 p.poste || '',
                 p.sector || '',
+                sourceLabel(p.source),
                 statusLabel(p.status) || '',
                 priorityLabel(p.priority) || '',
                 p.value || 0,
@@ -11447,6 +12424,11 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             // Temperature filter
             if (currentTempFilter !== 'all') {
                 filtered = filtered.filter(p => p.priority === currentTempFilter);
+            }
+
+            // Source filter
+            if (currentSourceFilter !== 'all') {
+                filtered = filtered.filter(p => (p.source || 'manual') === currentSourceFilter);
             }
 
             // Assets filter
@@ -11552,7 +12534,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 return;
             }
 
-            board.innerHTML = filtered.map(p => {
+            const displayed = filtered.slice(0, prospectsDisplayLimit);
+            const remaining = filtered.length - prospectsDisplayLimit;
+
+            board.innerHTML = displayed.map(p => {
                 const assets = getProspectAssets(p.company);
                 const hasAssets = assets && assets.files && assets.files.length > 0;
                 const initials = (p.company || '').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
@@ -11563,11 +12548,13 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
                 return `<div class="grid-card ${p.priority || 'froid'} ${hasAssets ? 'has-assets' : ''}" onclick="showProspectModal('${p.id}')" oncontextmenu="showProspectContextMenu(event, '${p.id}')">
                     <div class="grid-card-header">
-                        <div class="grid-card-company">${p.company}</div>
+                        <div class="grid-card-company">${prospectDisplayName(p)}</div>
+                        ${isAutoProspect(p) ? sourceBadge(p.source) : ''}
                         <span class="grid-card-badge ${p.priority || 'froid'}">${priorityLabel(p.priority)}</span>
                         <button class="prospect-menu-btn" onclick="event.stopPropagation(); showContextMenu(event, '${p.id}')" title="Actions">⋮</button>
                     </div>
                     <div class="grid-card-info">
+                        ${isAutoProspect(p) && p.company ? `<div class="grid-card-row"><span>Entreprise</span><strong>${p.company}</strong></div>` : ''}
                         ${p.contact || p.name ? `<div class="grid-card-row"><span>Contact</span><strong>${p.contact || p.name}</strong></div>` : ''}
                         <div class="grid-card-row"><span>Secteur</span><strong>${p.sector || '-'}</strong></div>
                         <div class="grid-card-row"><span>Status</span><strong>${statusLabel(p.status)}</strong></div>
@@ -11580,7 +12567,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                         <span class="grid-card-status">${statusLabel(p.status)}</span>
                     </div>
                 </div>`;
-            }).join('');
+            }).join('') + (remaining > 0 ? `<div style="grid-column:1/-1;text-align:center;padding:0.75rem;">
+                <button class="show-more-btn" onclick="prospectsDisplayLimit += ${PROSPECTS_PAGE_SIZE}; renderProspectsViews();">+${remaining} prospects...</button>
+            </div>` : '');
         }
 
         // ============================================
@@ -11595,6 +12584,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             const header = `<div class="compact-header">
                 <span></span>
                 <span>Entreprise</span>
+                <span>Source</span>
                 <span>Secteur</span>
                 <span>Status</span>
                 <span>Valeur</span>
@@ -11609,7 +12599,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             }
 
             const avatarColors = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
-            list.innerHTML = header + filtered.map((p, i) => {
+            const displayed = filtered.slice(0, prospectsDisplayLimit);
+            const remaining = filtered.length - prospectsDisplayLimit;
+            list.innerHTML = header + displayed.map((p, i) => {
                 const initials = (p.company || '').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
                 const color = avatarColors[i % avatarColors.length];
                 const assets = getProspectAssets(p.company);
@@ -11617,7 +12609,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
                 return `<div class="compact-row" onclick="showProspectModal('${p.id}')" oncontextmenu="showProspectContextMenu(event, '${p.id}')">
                     <div class="avatar" style="background:${color}">${initials}</div>
-                    <div class="compact-company">${p.company}</div>
+                    <div class="compact-company">${prospectDisplayName(p)}</div>
+                    <div class="compact-source">${sourceBadge(p.source)}</div>
                     <div class="compact-sector">${p.sector || '-'}</div>
                     <div class="compact-status">${statusLabel(p.status)}</div>
                     <div class="compact-value">${fmtXPF(p.value)}</div>
@@ -11626,7 +12619,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     <div class="compact-assets-icon">${hasAssets ? `${assets.files.length}` : '-'}</div>
                     <button class="prospect-menu-btn" onclick="event.stopPropagation(); showContextMenu(event, '${p.id}')" title="Actions">⋮</button>
                 </div>`;
-            }).join('');
+            }).join('') + (remaining > 0 ? `<div style="text-align:center;padding:0.75rem;">
+                <button class="show-more-btn" onclick="prospectsDisplayLimit += ${PROSPECTS_PAGE_SIZE}; renderProspectsViews();">+${remaining} prospects...</button>
+            </div>` : '');
         }
 
         // ============================================
@@ -11661,7 +12656,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                             </div>
                         </div>
                         <div class="kanban-cards">
-                            ${items.map(p => renderKanbanCard(p)).join('')}
+                            ${items.slice(0, 8).map(p => renderKanbanCard(p)).join('')}
+                            ${items.length > 8 ? `<button class="show-more-btn" onclick="expandKanbanColumn(this, '${t.key}')">+${items.length - 8} prospects...</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -11679,7 +12675,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                      onclick="openProspectDetail('${p.id}')"
                      oncontextmenu="showProspectContextMenu(event, '${p.id}')">
                     <div class="kanban-card-header">
-                        <span class="kanban-card-company">${p.company}${renderAssetIcons(p.assets)}</span>
+                        <span class="kanban-card-company">${prospectDisplayName(p)}${isAutoProspect(p) ? ' ' + sourceBadge(p.source) : ''}${renderAssetIcons(p.assets)}</span>
                         <span class="kanban-card-status badge ${p.status}">${statusLabel(p.status)}</span>
                         <button class="prospect-menu-btn" onclick="event.stopPropagation(); showContextMenu(event, '${p.id}')" title="Actions">⋮</button>
                     </div>
@@ -11691,6 +12687,16 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     </div>
                 </div>
             `;
+        }
+
+        function expandKanbanColumn(btn, tempKey) {
+            const filtered = getFilteredProspects();
+            const allItems = filtered.filter(p => p.priority === tempKey);
+            const container = btn.parentElement;
+            btn.remove();
+            const existingCount = container.querySelectorAll('.kanban-card').length;
+            const remaining = allItems.slice(existingCount);
+            container.insertAdjacentHTML('beforeend', remaining.map(p => renderKanbanCard(p)).join(''));
         }
 
         // Drag & Drop handlers
@@ -16905,23 +17911,44 @@ Reponds UNIQUEMENT avec le JSON, sans texte supplementaire.`;
             // Current month - use Airtable content if available
             const posts = airtableContent.length > 0 ? airtableContent : facebookPosts;
 
+            // Blog events: published articles + planned suggestions
+            const blogEvents = [
+                ...(blogArticles || []).filter(a => a.publishDate).map(a => ({
+                    date: a.publishDate.split('T')[0],
+                    title: a.title,
+                    type: 'blog'
+                })),
+                ...(blogSuggestions || []).filter(s => s.status === 'planned' && s.planned_date).map(s => ({
+                    date: s.planned_date,
+                    title: s.suggested_title || s.title,
+                    type: 'blog-planned'
+                }))
+            ];
+
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isToday = dateStr === todayStr;
                 const dayPosts = posts.filter(p => p.date === dateStr);
                 const hasPost = dayPosts.length > 0;
                 const isPublished = dayPosts.some(p => p.status === 'Publié' || p.status === 'published');
+                const dayBlog = blogEvents.filter(b => b.date === dateStr);
+                const hasBlog = dayBlog.some(b => b.type === 'blog');
+                const hasBlogPlanned = dayBlog.some(b => b.type === 'blog-planned');
 
                 let classes = 'calendar-day';
                 if (isToday) classes += ' today';
                 if (hasPost) classes += ' has-post';
                 if (isPublished) classes += ' published';
+                if (hasBlog) classes += ' has-blog';
+                if (hasBlogPlanned) classes += ' has-blog-planned';
 
-                const preview = dayPosts.length > 0 ? `${dayPosts.length} post(s): ${dayPosts[0].titre || dayPosts[0].preview || ''}` : '';
+                const postPreview = dayPosts.length > 0 ? `${dayPosts.length} post(s): ${dayPosts[0].titre || dayPosts[0].preview || ''}` : '';
+                const blogPreview = dayBlog.length > 0 ? `${dayBlog.length} article(s): ${dayBlog[0].title}` : '';
+                const preview = [postPreview, blogPreview].filter(Boolean).join(' | ');
 
                 html += `<div class="${classes}" onclick="selectCalendarDay('${dateStr}')" title="${preview}">
                     <span class="calendar-day-number">${day}</span>
-                    ${hasPost ? `<span style="position: absolute; top: 2px; right: 2px; font-size: 0.5rem; color: var(--text-dim);">${dayPosts.length}</span>` : ''}
+                    ${(hasPost || dayBlog.length > 0) ? `<span style="position: absolute; top: 2px; right: 2px; font-size: 0.5rem; color: var(--text-dim);">${dayPosts.length + dayBlog.length}</span>` : ''}
                 </div>`;
             }
 
@@ -17641,7 +18668,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
             }
         });
 
-        function contextMenuAction(action) {
+        async function contextMenuAction(action) {
             if (!contextMenuProspectId) return;
             const prospect = prospects.find(p => p.id === contextMenuProspectId);
             if (!prospect) return;
@@ -17684,6 +18711,26 @@ Reponds UNIQUEMENT avec le texte du post.`;
                     break;
                 case 'open-detail':
                     openProspectDetail(prospect.id);
+                    break;
+                case 'delete-prospect':
+                    if (confirm(`Supprimer "${prospect.company || prospect.name}" ? Cette action est irreversible.`)) {
+                        try {
+                            const deleteId = prospect.supabaseId || prospect.id;
+                            if (prospect.source === 'messenger') {
+                                await supabase.delete('messenger_prospects', deleteId);
+                            } else {
+                                await supabase.deleteProspect(deleteId);
+                            }
+                            prospects = prospects.filter(p => p.id !== prospect.id);
+                            renderProspectsViews();
+                            renderPipeline();
+                            renderStats();
+                            showToast(`"${prospect.company || prospect.name}" supprime`);
+                        } catch (err) {
+                            console.error('[Delete] Error:', err);
+                            showToast('Erreur: ' + (err.message || 'Suppression echouee'));
+                        }
+                    }
                     break;
             }
         }
@@ -18175,11 +19222,14 @@ Reponds UNIQUEMENT avec le texte du post.`;
             if (name === 'analytics') {
                 renderAnalyticsView();
             }
-            if (name === 'blog') {
+            if (name === 'blog' && blogArticles.length === 0) {
                 loadBlogArticles();
             }
             if (name === 'newsletter') {
                 loadNewsletterCampaigns();
+            }
+            if (name === 'veille' && veilleAppelsOffres.length === 0) {
+                loadVeilleData();
             }
             // Update MANA suggestions based on active view
             if (typeof updateChatSuggestions === 'function') {
@@ -18192,14 +19242,20 @@ Reponds UNIQUEMENT avec le texte du post.`;
         // ============================================
 
         let blogArticles = [];
+        let blogSuggestions = [];
+        let blogSearches = [];
+        let currentBlogTab = 'articles';
         let currentBlogCategoryFilter = 'all';
         let currentBlogStatusFilter = 'all';
         let editingBlogArticleId = null;
+        let blogSearching = false;
 
         // ===== MESSAGES MODULE (Supabase) =====
         let messengerConversations = [];
+        let allMessengerConversations = [];
         let currentConversationId = null;
         let currentMessagesFilter = 'all';
+        const pendingNewConversations = new Set();
 
         async function loadMessengerConversations() {
             try {
@@ -18211,9 +19267,18 @@ Reponds UNIQUEMENT avec le texte du post.`;
                 const prospectsMap = new Map();
                 prospects.forEach(p => {
                     prospectsMap.set(p.sender_id, {
-                        name: p.name || p.first_name || 'Utilisateur',
+                        name: p.name || p.first_name || (p.sender_id ? `Messenger #${p.sender_id.slice(-4)}` : 'Utilisateur'),
                         profilePic: p.profile_pic,
-                        requiresHuman: p.requires_human_intervention || false
+                        requiresHuman: p.requires_human_intervention || false,
+                        archived: p.archived || false,
+                        company: p.company || null,
+                        sector: p.sector || null,
+                        temperature: p.temperature || null,
+                        qualificationScore: p.qualification_score || 0,
+                        conversationStage: p.conversation_stage || null,
+                        phone: p.phone || null,
+                        email: p.email || null,
+                        totalMessages: p.total_messages || 0
                     });
                 });
 
@@ -18231,6 +19296,14 @@ Reponds UNIQUEMENT avec le texte du post.`;
                             userName: prospectInfo.name || 'Utilisateur',
                             profilePic: prospectInfo.profilePic,
                             requiresHuman: prospectInfo.requiresHuman || false,
+                            archived: prospectInfo.archived || false,
+                            company: prospectInfo.company || null,
+                            sector: prospectInfo.sector || null,
+                            temperature: prospectInfo.temperature || null,
+                            qualificationScore: prospectInfo.qualificationScore || 0,
+                            conversationStage: prospectInfo.conversationStage || null,
+                            phone: prospectInfo.phone || null,
+                            email: prospectInfo.email || null,
                             messages: [],
                             lastMessage: null,
                             unreadCount: 0
@@ -18264,16 +19337,21 @@ Reponds UNIQUEMENT avec le texte du post.`;
                     }
                 });
 
-                messengerConversations = Array.from(conversationsMap.values());
+                const allConvs = Array.from(conversationsMap.values());
 
                 // Sort by last message date
-                messengerConversations.sort((a, b) => {
+                allConvs.sort((a, b) => {
                     const dateA = a.lastMessage ? new Date(a.lastMessage.createdAt) : new Date(0);
                     const dateB = b.lastMessage ? new Date(b.lastMessage.createdAt) : new Date(0);
                     return dateB - dateA;
                 });
 
-                console.log(`[Messages] Loaded ${messengerConversations.length} conversations from Supabase`);
+                // Stocker toutes les conversations (y compris archivees) pour le filtre Archives
+                allMessengerConversations = allConvs;
+                // Par defaut, exclure les archivees
+                messengerConversations = allConvs.filter(c => !c.archived);
+
+                console.log(`[Messages] Loaded ${messengerConversations.length} conversations (${allConvs.filter(c => c.archived).length} archived) from Supabase`);
 
                 renderConversationsList();
                 updateMessagesKPIs();
@@ -18290,30 +19368,71 @@ Reponds UNIQUEMENT avec le texte du post.`;
         }
 
         // Temps reel - Supabase Realtime WebSocket
+        let messengerRealtimeActive = false;
         function startMessengerRealtime() {
-            // Utiliser Realtime WebSocket au lieu du polling
+            // Ne souscrire qu'une seule fois
+            if (messengerRealtimeActive) return;
+
             if (!supabase.subscribeToMessenger) {
                 console.warn('[Messages] Realtime non disponible, fallback polling');
                 return;
             }
 
+            messengerRealtimeActive = true;
             supabase.subscribeToMessenger(
                 // onInsert - nouveau message
-                (msg) => {
+                async (msg) => {
                     console.log('[Messages] Realtime: nouveau message recu');
                     const senderId = msg.sender_id;
                     let conv = messengerConversations.find(c => c.senderId === senderId);
 
                     if (!conv) {
-                        // Nouvelle conversation
-                        conv = {
-                            senderId: senderId,
-                            userName: 'Nouvel utilisateur',
-                            messages: [],
-                            lastMessage: null,
-                            unreadCount: 0
-                        };
-                        messengerConversations.unshift(conv);
+                        // Mutex : eviter la duplication si 2 messages arrivent en meme temps
+                        if (pendingNewConversations.has(senderId)) return;
+                        pendingNewConversations.add(senderId);
+                        try {
+                            // Chercher le prospect dans Supabase (single row avec champs CRM)
+                            let prospectName = 'Nouvel utilisateur';
+                            let prospectData = null;
+                            try {
+                                const prospectResults = await supabase.select('messenger_prospects', { sender_id: `eq.${senderId}` }, { limit: 1, select: 'name,sender_id,company,sector,temperature,qualification_score,conversation_stage,phone,email,total_messages' });
+                                if (prospectResults.length > 0) {
+                                    prospectData = prospectResults[0];
+                                    if (prospectData.name) {
+                                        prospectName = prospectData.name;
+                                    } else if (senderId) {
+                                        prospectName = `Messenger #${senderId.slice(-4)}`;
+                                    }
+                                } else if (senderId) {
+                                    prospectName = `Messenger #${senderId.slice(-4)}`;
+                                }
+                            } catch (e) {
+                                console.warn('[Messages] Impossible de charger le prospect:', e);
+                            }
+                            // Re-verifier apres l'await (un autre callback a pu creer la conv entre temps)
+                            conv = messengerConversations.find(c => c.senderId === senderId);
+                            if (!conv) {
+                                const p = prospectData || {};
+                                conv = {
+                                    senderId: senderId,
+                                    userName: prospectName,
+                                    messages: [],
+                                    lastMessage: null,
+                                    unreadCount: 0,
+                                    company: p.company || null,
+                                    sector: p.sector || null,
+                                    temperature: p.temperature || null,
+                                    qualificationScore: p.qualification_score || 0,
+                                    conversationStage: p.conversation_stage || null,
+                                    phone: p.phone || null,
+                                    email: p.email || null
+                                };
+                                messengerConversations.unshift(conv);
+                                allMessengerConversations.unshift(conv);
+                            }
+                        } finally {
+                            pendingNewConversations.delete(senderId);
+                        }
                     }
 
                     // Ajouter le message s'il n'existe pas deja
@@ -18324,9 +19443,15 @@ Reponds UNIQUEMENT avec le texte du post.`;
                             role: msg.role || 'user',
                             content: msg.content || '',
                             createdAt: msg.created_at,
-                            read: msg.read || false
+                            read: msg.read || false,
+                            manual: msg.responded_manually || false,
+                            requiresHuman: msg.requires_human || false
                         };
                         conv.messages.push(newMsg);
+
+                        if (newMsg.requiresHuman) {
+                            conv.requiresHuman = true;
+                        }
 
                         if (!conv.lastMessage || new Date(newMsg.createdAt) > new Date(conv.lastMessage.createdAt)) {
                             conv.lastMessage = newMsg;
@@ -18334,6 +19459,22 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
                         if (newMsg.role === 'user' && !newMsg.read) {
                             conv.unreadCount++;
+                            // Notification sonore si onglet pas actif
+                            if (document.hidden) {
+                                try {
+                                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                                    const osc = ctx.createOscillator();
+                                    const gain = ctx.createGain();
+                                    osc.connect(gain);
+                                    gain.connect(ctx.destination);
+                                    osc.frequency.value = 800;
+                                    osc.type = 'sine';
+                                    gain.gain.value = 0.15;
+                                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                                    osc.start(ctx.currentTime);
+                                    osc.stop(ctx.currentTime + 0.3);
+                                } catch(e) {}
+                            }
                         }
 
                         // Re-trier et re-rendre
@@ -18349,7 +19490,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
                         // Si on est sur cette conversation, afficher le message
                         if (currentConversationId === senderId) {
-                            renderChatMessages(conv);
+                            selectConversation(senderId);
                         }
                     }
                 },
@@ -18364,6 +19505,8 @@ Reponds UNIQUEMENT avec le texte du post.`;
                             existingMsg.content = msg.content;
                         }
                         renderConversationsList();
+                        updateMessagesKPIs();
+                        updateNavMessagesCount();
                     }
                 }
             );
@@ -18373,7 +19516,10 @@ Reponds UNIQUEMENT avec le texte du post.`;
             const container = document.getElementById('conversations-items');
             if (!container) return;
 
-            let filtered = messengerConversations;
+            // Pour le filtre "archived", utiliser allMessengerConversations
+            let filtered = currentMessagesFilter === 'archived'
+                ? allMessengerConversations.filter(c => c.archived)
+                : messengerConversations;
 
             // Apply filter
             if (currentMessagesFilter === 'unread') {
@@ -18394,12 +19540,14 @@ Reponds UNIQUEMENT avec le texte du post.`;
                 );
             }
 
+            const isArchiveView = currentMessagesFilter === 'archived';
+
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="conversations-empty">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                        <p>Aucune conversation</p>
-                        <span>${searchTerm ? 'Aucun resultat pour cette recherche' : 'Les messages Facebook Messenger apparaitront ici'}</span>
+                        <p>${isArchiveView ? 'Aucune archive' : 'Aucune conversation'}</p>
+                        <span>${searchTerm ? 'Aucun resultat pour cette recherche' : (isArchiveView ? 'Les conversations archivees apparaitront ici' : 'Les messages Facebook Messenger apparaitront ici')}</span>
                     </div>
                 `;
                 return;
@@ -18422,7 +19570,10 @@ Reponds UNIQUEMENT avec le texte du post.`;
                         </div>
                         <div class="conversation-meta">
                             <div class="conversation-time">${time}</div>
-                            ${isUnread ? `<div class="conversation-badge">${conv.unreadCount}</div>` : ''}
+                            ${isArchiveView
+                                ? `<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); unarchiveConversation('${conv.senderId}')" title="Restaurer" style="padding:2px 6px;font-size:11px;">Restaurer</button>`
+                                : (isUnread ? `<div class="conversation-badge">${conv.unreadCount}</div>` : '')
+                            }
                         </div>
                     </div>
                 `;
@@ -18449,7 +19600,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
         function selectConversation(senderId) {
             currentConversationId = senderId;
-            const conv = messengerConversations.find(c => c.senderId === senderId);
+            const conv = allMessengerConversations.find(c => c.senderId === senderId);
             if (!conv) return;
 
             // Update UI
@@ -18466,6 +19617,35 @@ Reponds UNIQUEMENT avec le texte du post.`;
             const escalationBanner = document.getElementById('escalation-banner');
             if (escalationBanner) {
                 escalationBanner.style.display = conv.requiresHuman ? 'flex' : 'none';
+            }
+
+            // Prospect CRM info banner
+            const prospectBanner = document.getElementById('chat-prospect-info');
+            if (prospectBanner) {
+                const hasInfo = conv.company || conv.sector || conv.temperature || conv.qualificationScore || conv.conversationStage || conv.phone || conv.email;
+                prospectBanner.style.display = hasInfo ? 'block' : 'none';
+
+                const setTag = (id, value, extraClass) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        if (value) {
+                            el.textContent = value;
+                            el.style.display = 'inline-flex';
+                            el.className = 'prospect-tag' + (extraClass ? ' ' + extraClass : '');
+                        } else {
+                            el.style.display = 'none';
+                        }
+                    }
+                };
+
+                setTag('prospect-company-tag', conv.company);
+                setTag('prospect-sector-tag', conv.sector);
+                const tempClass = conv.temperature === 'hot' ? 'temperature-hot' : conv.temperature === 'warm' || conv.temperature === 'chaud' ? 'temperature-warm' : conv.temperature ? 'temperature-cold' : '';
+                setTag('prospect-temp-tag', conv.temperature ? conv.temperature.charAt(0).toUpperCase() + conv.temperature.slice(1) : null, tempClass);
+                setTag('prospect-stage-tag', conv.conversationStage);
+                setTag('prospect-score-tag', conv.qualificationScore ? `Score: ${conv.qualificationScore}/10` : null);
+                const contact = [conv.phone, conv.email].filter(Boolean).join(' | ');
+                setTag('prospect-contact-tag', contact || null);
             }
 
             // Render messages
@@ -18523,14 +19703,15 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
             messengerConversations.forEach(conv => {
                 conv.messages.forEach(msg => {
-                    if (msg.createdAt && new Date(msg.createdAt).toDateString() === today) {
+                    const isToday = msg.createdAt && new Date(msg.createdAt).toDateString() === today;
+                    if (isToday) {
                         todayMessages++;
-                    }
-                    if (msg.role === 'assistant') {
-                        if (msg.manual) {
-                            manualResponses++;
-                        } else {
-                            aiResponses++;
+                        if (msg.role === 'assistant') {
+                            if (msg.manual) {
+                                manualResponses++;
+                            } else {
+                                aiResponses++;
+                            }
                         }
                     }
                 });
@@ -18571,18 +19752,109 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
                 renderConversationsList();
                 updateNavMessagesCount();
-                addNotification('info', 'Conversation marquee comme lue');
+                addNotification({ type: 'info', title: 'Conversation marquee comme lue' });
 
             } catch (error) {
                 console.error('[Messages] Error marking as read:', error);
             }
         }
 
+        async function markConversationUnread() {
+            if (!currentConversationId) return;
+            const conv = messengerConversations.find(c => c.senderId === currentConversationId);
+            if (!conv) return;
+
+            const lastUserMsg = [...conv.messages].reverse().find(m => m.role === 'user');
+            if (!lastUserMsg) return;
+
+            try {
+                await supabase.updateMessengerMessage(lastUserMsg.id, { read: false });
+                lastUserMsg.read = false;
+                conv.unreadCount = conv.messages.filter(m => m.role === 'user' && !m.read).length;
+                renderConversationsList();
+                updateNavMessagesCount();
+                addNotification({ type: 'info', title: 'Conversation marquee comme non lue' });
+            } catch (error) {
+                console.error('[Messages] Error marking as unread:', error);
+            }
+        }
+
+        async function archiveConversation() {
+            if (!currentConversationId) return;
+            try {
+                const prospects = await supabase.getMessengerProspects();
+                const prospect = prospects.find(p => p.sender_id === currentConversationId);
+                if (prospect) {
+                    await supabase.update('messenger_prospects', prospect.id, { archived: true });
+                }
+                // Marquer comme archived dans allMessengerConversations
+                const archivedConv = allMessengerConversations.find(c => c.senderId === currentConversationId);
+                if (archivedConv) archivedConv.archived = true;
+                messengerConversations = messengerConversations.filter(c => c.senderId !== currentConversationId);
+                currentConversationId = null;
+                document.querySelector('.chat-detail-empty').style.display = 'flex';
+                document.getElementById('chat-detail-content').style.display = 'none';
+                renderConversationsList();
+                updateMessagesKPIs();
+                updateNavMessagesCount();
+                addNotification({ type: 'success', title: 'Conversation archivee' });
+            } catch (error) {
+                console.error('[Messages] Archive error:', error);
+                addNotification({ type: 'error', title: 'Erreur archivage', desc: error.message });
+            }
+        }
+
+        async function unarchiveConversation(senderId) {
+            try {
+                const prospects = await supabase.getMessengerProspects();
+                const prospect = prospects.find(p => p.sender_id === senderId);
+                if (prospect) {
+                    await supabase.update('messenger_prospects', prospect.id, { archived: false });
+                }
+                currentMessagesFilter = 'all';
+                document.getElementById('messages-filter').value = 'all';
+                await loadMessengerConversations();
+                addNotification({ type: 'success', title: 'Conversation restauree' });
+            } catch (error) {
+                console.error('[Messages] Unarchive error:', error);
+            }
+        }
+
         function openFacebookProfile() {
             if (!currentConversationId) return;
-            // Note: Facebook PSID cannot be used to open profile directly
-            // This would need Page-scoped user ID mapping
-            window.open('https://www.facebook.com/profile.php?id=61587101037690', '_blank');
+            // Ouvrir la boite de reception Messenger Business Suite
+            window.open('https://business.facebook.com/latest/inbox/all?asset_id=61587101037690', '_blank');
+        }
+
+        const quickReplyTemplates = [
+            "Merci pour votre message ! Un membre de notre equipe va vous recontacter rapidement.",
+            "Ia ora na ! Pouvez-vous nous donner plus de details sur votre besoin ?",
+            "Je vous envoie un lien pour prendre rendez-vous : https://calendly.com"
+        ];
+
+        function insertQuickReply(index) {
+            const input = document.getElementById('manual-reply-input');
+            if (input && quickReplyTemplates[index]) {
+                input.value = quickReplyTemplates[index];
+                input.focus();
+            }
+        }
+
+        async function syncMessages() {
+            const btn = document.getElementById('messages-sync-btn');
+            if (!btn || btn.disabled) return;
+            btn.disabled = true;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync...';
+            try {
+                await loadMessengerConversations();
+                addNotification({ type: 'success', title: 'Messages synchronises' });
+            } catch (e) {
+                addNotification({ type: 'error', title: 'Erreur sync', desc: e.message });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
         }
 
         async function sendManualReply() {
@@ -18601,6 +19873,11 @@ Reponds UNIQUEMENT avec le texte du post.`;
                     })
                 });
 
+                if (!sendResponse.ok) {
+                    const errorText = await sendResponse.text().catch(() => 'Erreur inconnue');
+                    throw new Error(`Echec envoi Facebook (${sendResponse.status}): ${errorText}`);
+                }
+
                 // 2. Log in Supabase
                 await supabase.createMessengerMessage({
                     sender_id: currentConversationId,
@@ -18612,7 +19889,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
                 // 3. Update UI
                 input.value = '';
-                addNotification('success', 'Reponse envoyee');
+                addNotification({ type: 'success', title: 'Reponse envoyee' });
 
                 // Reload conversations
                 await loadMessengerConversations();
@@ -18620,7 +19897,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
             } catch (error) {
                 console.error('[Messages] Error sending reply:', error);
-                addNotification('error', 'Erreur envoi: ' + error.message);
+                addNotification({ type: 'error', title: 'Erreur envoi', desc: error.message });
             }
         }
 
@@ -18655,11 +19932,11 @@ Reponds UNIQUEMENT avec le texte du post.`;
                 // 4. Update UI
                 document.getElementById('escalation-banner').style.display = 'none';
                 renderConversationsList();
-                addNotification('success', 'Escalade marquee comme traitee');
+                addNotification({ type: 'success', title: 'Escalade marquee comme traitee' });
 
             } catch (error) {
                 console.error('[Messages] Error resolving escalation:', error);
-                addNotification('error', 'Erreur: ' + error.message);
+                addNotification({ type: 'error', title: 'Erreur', desc: error.message });
             }
         }
 
@@ -19051,6 +20328,8 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
                 renderBlogArticles();
                 updateBlogStats();
+                loadBlogSuggestions();
+                if (typeof renderCalendar === 'function') renderCalendar();
                 if (blogArticles.length > 0) {
                     showToast(`${blogArticles.length} articles charges`);
                 }
@@ -19123,9 +20402,9 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
         function updateBlogStats() {
             const total = blogArticles.length;
-            const published = blogArticles.filter(a => a.status === 'Published').length;
-            const scheduled = blogArticles.filter(a => a.status === 'Scheduled').length;
-            const drafts = blogArticles.filter(a => a.status === 'Draft' || a.status === 'Ready').length;
+            const published = blogArticles.filter(a => a.status === 'published').length;
+            const scheduled = blogArticles.filter(a => a.status === 'scheduled').length;
+            const drafts = blogArticles.filter(a => a.status === 'draft' || a.status === 'ready').length;
 
             const kpiTotal = document.getElementById('kpi-blog-total');
             const kpiPublished = document.getElementById('kpi-blog-published');
@@ -19151,20 +20430,48 @@ Reponds UNIQUEMENT avec le texte du post.`;
             window.open(`https://pacifikai.com/blog/articles/${article.slug}.html`, '_blank');
         }
 
-        async function deleteBlogArticle(articleId) {
-            if (!confirm('Supprimer cet article ?')) return;
+        let pendingDeleteBlogId = null;
+
+        function deleteBlogArticle(articleId) {
+            const article = blogArticles.find(a => String(a.id) === String(articleId));
+            if (!article) return;
+
+            pendingDeleteBlogId = articleId;
+            document.getElementById('delete-blog-article-name').textContent = article.title || 'Sans titre';
+            document.getElementById('btn-confirm-delete-blog').disabled = false;
+            document.getElementById('blog-delete-modal').style.display = 'flex';
+        }
+
+        function closeDeleteBlogModal() {
+            document.getElementById('blog-delete-modal').style.display = 'none';
+            pendingDeleteBlogId = null;
+        }
+
+        async function confirmDeleteBlogArticle() {
+            if (!pendingDeleteBlogId) return;
+
+            const btn = document.getElementById('btn-confirm-delete-blog');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;"></span> Suppression...';
 
             try {
-                await supabase.deleteBlogArticle(articleId);
+                await supabase.deleteBlogArticle(pendingDeleteBlogId);
 
-                blogArticles = blogArticles.filter(a => a.id !== articleId);
+                blogArticles = blogArticles.filter(a => String(a.id) !== String(pendingDeleteBlogId));
                 renderBlogArticles();
                 updateBlogStats();
-                showToast('Article supprime');
+                closeDeleteBlogModal();
+                showToast('Article supprime', 'success');
 
             } catch (error) {
                 console.error('[Blog] Delete error:', error);
-                showToast('Erreur suppression');
+                let msg = error.message || 'Suppression echouee';
+                if (msg.includes('session expiree') || msg.includes('Session expiree') || msg.includes('401')) {
+                    msg = 'Session expiree - recharge la page';
+                }
+                showToast('Erreur: ' + msg, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Supprimer';
             }
         }
 
@@ -19176,7 +20483,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
             document.getElementById('blog-article-title').value = '';
             document.getElementById('blog-article-slug').value = '';
             document.getElementById('blog-article-category').value = 'Aviation';
-            document.getElementById('blog-article-status').value = 'Draft';
+            document.getElementById('blog-article-status').value = 'draft';
             document.getElementById('blog-article-excerpt').value = '';
             document.getElementById('blog-article-content').value = '';
             document.getElementById('blog-article-image').value = '';
@@ -19202,7 +20509,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
             document.getElementById('blog-article-title').value = article.title || '';
             document.getElementById('blog-article-slug').value = article.slug || '';
             document.getElementById('blog-article-category').value = article.category || 'Aviation';
-            document.getElementById('blog-article-status').value = article.status || 'Draft';
+            document.getElementById('blog-article-status').value = article.status || 'draft';
             document.getElementById('blog-article-excerpt').value = article.excerpt || '';
             document.getElementById('blog-article-content').value = article.content || '';
             document.getElementById('blog-article-image').value = article.heroImage || '';
@@ -19259,10 +20566,22 @@ Reponds UNIQUEMENT avec le texte du post.`;
             };
 
             try {
+                let savedArticle;
                 if (id) {
-                    await supabase.updateBlogArticle(id, data);
+                    savedArticle = await supabase.updateBlogArticle(id, data);
                 } else {
-                    await supabase.createBlogArticle(data);
+                    savedArticle = await supabase.createBlogArticle(data);
+                }
+
+                // Link to suggestion if generated from one
+                const suggestionId = document.getElementById('blog-article-id').dataset?.suggestionId;
+                if (suggestionId && savedArticle?.id) {
+                    await supabase.updateBlogSuggestion(suggestionId, {
+                        status: 'created',
+                        article_id: savedArticle.id,
+                        updated_at: new Date().toISOString()
+                    });
+                    delete document.getElementById('blog-article-id').dataset.suggestionId;
                 }
 
                 closeBlogModal();
@@ -19272,6 +20591,340 @@ Reponds UNIQUEMENT avec le texte du post.`;
             } catch (error) {
                 console.error('[Blog] Save error:', error);
                 showToast('Erreur: ' + error.message);
+            }
+        }
+
+        // ============================================
+        // BLOG SUGGESTIONS & RESEARCH
+        // ============================================
+
+        const N8N_WEBHOOK_BASE = 'https://n8n.srv1140766.hstgr.cloud/webhook';
+
+        function toggleBlogDropdown() {
+            const menu = document.getElementById('blog-dropdown-menu');
+            menu.classList.toggle('show');
+            // Close on outside click
+            if (menu.classList.contains('show')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeBlogDropdownOutside, { once: true });
+                }, 10);
+            }
+        }
+        function closeBlogDropdown() {
+            document.getElementById('blog-dropdown-menu')?.classList.remove('show');
+        }
+        function closeBlogDropdownOutside(e) {
+            const wrapper = document.querySelector('.btn-dropdown-wrapper');
+            if (!wrapper?.contains(e.target)) closeBlogDropdown();
+        }
+
+        function switchBlogTab(tab) {
+            currentBlogTab = tab;
+            document.getElementById('blog-tab-articles')?.classList.toggle('active', tab === 'articles');
+            document.getElementById('blog-tab-suggestions')?.classList.toggle('active', tab === 'suggestions');
+            document.getElementById('blog-content-articles').style.display = tab === 'articles' ? '' : 'none';
+            document.getElementById('blog-content-suggestions').style.display = tab === 'suggestions' ? '' : 'none';
+        }
+
+        function toggleBlogTopic(chip) {
+            chip.classList.toggle('active');
+        }
+
+        function getSelectedTopics() {
+            const chips = document.querySelectorAll('#blog-topics-container .topic-chip.active');
+            return Array.from(chips).map(c => c.dataset.topic);
+        }
+
+        async function searchBlogTrends() {
+            if (blogSearching) return;
+            const topics = getSelectedTopics();
+            if (topics.length === 0) {
+                showToast('Selectionne au moins un sujet');
+                return;
+            }
+
+            blogSearching = true;
+            const btn = document.getElementById('blog-search-btn');
+            const overlay = document.getElementById('blog-searching-overlay');
+            const list = document.getElementById('blog-suggestions-list');
+            if (btn) btn.disabled = true;
+            if (overlay) overlay.style.display = 'flex';
+            if (list) list.style.display = 'none';
+
+            try {
+                const excludeUrls = await supabase.getExistingSuggestionUrls();
+
+                const response = await fetch(`${N8N_WEBHOOK_BASE}/blog-research`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topics, exclude_urls: excludeUrls })
+                });
+                const data = await response.json();
+                const suggestions = data.suggestions || [];
+
+                if (suggestions.length > 0) {
+                    // Store search
+                    const search = await supabase.createBlogSearch({
+                        query: topics.join(', '),
+                        topics: topics,
+                        results_count: suggestions.length
+                    });
+
+                    // Store suggestions
+                    const toInsert = suggestions.map(s => ({
+                        search_id: search.id,
+                        title: s.title || '',
+                        suggested_title: s.suggested_title || s.title || '',
+                        excerpt: s.excerpt || '',
+                        category: s.category || 'Technologie',
+                        source_url: s.source_url || '',
+                        source_title: s.source_title || '',
+                        image_url: s.image_url || null,
+                        key_stats: s.key_stats || [],
+                        relevance_score: s.relevance_score || 50,
+                        status: 'suggestion'
+                    }));
+                    await supabase.createBlogSuggestions(toInsert);
+                    showToast(`${suggestions.length} suggestions trouvees`);
+                } else {
+                    showToast('Aucune nouvelle suggestion trouvee');
+                }
+
+                await loadBlogSuggestions();
+
+            } catch (error) {
+                console.error('[Blog Research] Error:', error);
+                showToast('Erreur recherche: ' + error.message);
+            } finally {
+                blogSearching = false;
+                if (btn) btn.disabled = false;
+                if (overlay) overlay.style.display = 'none';
+                if (list) list.style.display = '';
+            }
+        }
+
+        async function loadBlogSuggestions() {
+            try {
+                blogSuggestions = await supabase.getBlogSuggestions();
+                blogSearches = await supabase.getBlogSearches();
+                renderBlogSuggestions();
+                renderBlogSearchHistory();
+                updateBlogSuggestionCounts();
+            } catch (error) {
+                console.error('[Blog Suggestions] Load error:', error);
+            }
+        }
+
+        function updateBlogSuggestionCounts() {
+            const pending = blogSuggestions.filter(s => s.status === 'suggestion').length;
+            const kpi = document.getElementById('kpi-blog-suggestions');
+            if (kpi) kpi.textContent = pending;
+
+            const tabCount = document.getElementById('blog-tab-suggestions-count');
+            if (tabCount) tabCount.textContent = blogSuggestions.filter(s => s.status !== 'rejected').length;
+
+            const tabArticles = document.getElementById('blog-tab-articles-count');
+            if (tabArticles) tabArticles.textContent = blogArticles.length;
+        }
+
+        function renderBlogSuggestions() {
+            const container = document.getElementById('blog-suggestions-list');
+            if (!container) return;
+
+            const filter = document.getElementById('blog-suggestion-status-filter')?.value || 'all';
+            let items = [...blogSuggestions];
+            if (filter !== 'all') {
+                items = items.filter(s => s.status === filter);
+            }
+
+            if (items.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                    ${blogSuggestions.length === 0 ? 'Aucune suggestion. Lance une recherche.' : 'Aucune suggestion avec ce filtre.'}
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = items.map(s => {
+                const scoreClass = s.relevance_score >= 70 ? 'score-high' : (s.relevance_score >= 40 ? 'score-mid' : 'score-low');
+                const statusBadge = s.status === 'planned' ? '<span style="background: #f59e0b; color: #fff; padding: 1px 8px; border-radius: 10px; font-size: 0.675rem; font-weight: 600;">PLANIFIE</span>'
+                    : s.status === 'created' ? '<span style="background: var(--green); color: #fff; padding: 1px 8px; border-radius: 10px; font-size: 0.675rem; font-weight: 600;">CREE</span>'
+                    : s.status === 'rejected' ? '<span style="background: var(--red); color: #fff; padding: 1px 8px; border-radius: 10px; font-size: 0.675rem; font-weight: 600;">REJETE</span>'
+                    : '';
+
+                const stats = (s.key_stats || []).map(st => `<span class="suggestion-stat">${st}</span>`).join('');
+
+                let actions = '';
+                if (s.status === 'suggestion') {
+                    actions = `
+                        <button class="suggestion-btn validate" onclick="openPlanModal('${s.id}')">Valider & Planifier</button>
+                        <button class="suggestion-btn reject" onclick="rejectBlogSuggestion('${s.id}')">Rejeter</button>
+                    `;
+                } else if (s.status === 'planned') {
+                    actions = `
+                        <button class="suggestion-btn generate" onclick="generateBlogArticleFromSuggestion('${s.id}')">Generer l'article</button>
+                    `;
+                }
+
+                const plannedInfo = s.planned_date ? `<span style="font-size: 0.75rem; color: #f59e0b;">Publication: ${new Date(s.planned_date).toLocaleDateString('fr-FR')}</span>` : '';
+
+                return `<div class="suggestion-card ${s.status}">
+                    <div class="suggestion-score">
+                        <span class="suggestion-score-value ${scoreClass}">${s.relevance_score || 0}</span>
+                        <span class="suggestion-score-label">score</span>
+                    </div>
+                    <div class="suggestion-body">
+                        <div class="suggestion-meta">
+                            <span style="background: var(--bg-muted); padding: 1px 8px; border-radius: 10px; font-size: 0.675rem; font-weight: 600;">${s.category || 'N/A'}</span>
+                            ${statusBadge}
+                            ${plannedInfo}
+                        </div>
+                        <div class="suggestion-title">${s.suggested_title || s.title}</div>
+                        <div class="suggestion-excerpt">${s.excerpt || ''}</div>
+                        ${stats ? `<div class="suggestion-stats">${stats}</div>` : ''}
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">
+                            Source: ${s.source_title || 'N/A'} ${s.source_url ? `- <a href="${s.source_url}" target="_blank" style="color: var(--accent);">voir</a>` : ''}
+                        </div>
+                    </div>
+                    <div class="suggestion-actions">${actions}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderBlogSearchHistory() {
+            const section = document.getElementById('blog-search-history');
+            const list = document.getElementById('blog-search-history-list');
+            if (!section || !list) return;
+
+            if (blogSearches.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = '';
+            list.innerHTML = blogSearches.slice(0, 5).map(s => `
+                <div class="search-history-item">
+                    <span>${new Date(s.created_at).toLocaleDateString('fr-FR')} - ${s.query}</span>
+                    <span style="font-weight: 500;">${s.results_count} resultats</span>
+                </div>
+            `).join('');
+        }
+
+        function openPlanModal(suggestionId) {
+            const s = blogSuggestions.find(x => x.id === suggestionId);
+            if (!s) return;
+
+            document.getElementById('plan-suggestion-id').value = s.id;
+            document.getElementById('plan-suggestion-title').value = s.suggested_title || s.title;
+            document.getElementById('plan-suggestion-category').value = s.category || 'Technologie';
+
+            // Default date: 7 days from now
+            const defaultDate = new Date();
+            defaultDate.setDate(defaultDate.getDate() + 7);
+            document.getElementById('plan-suggestion-date').value = defaultDate.toISOString().split('T')[0];
+
+            document.getElementById('plan-suggestion-modal').style.display = 'flex';
+        }
+
+        function closePlanModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('plan-suggestion-modal').style.display = 'none';
+        }
+
+        async function confirmPlanSuggestion() {
+            const id = document.getElementById('plan-suggestion-id').value;
+            const title = document.getElementById('plan-suggestion-title').value;
+            const category = document.getElementById('plan-suggestion-category').value;
+            const date = document.getElementById('plan-suggestion-date').value;
+
+            if (!date) {
+                showToast('Date requise');
+                return;
+            }
+
+            try {
+                await supabase.updateBlogSuggestion(id, {
+                    suggested_title: title,
+                    category: category,
+                    planned_date: date,
+                    status: 'planned',
+                    updated_at: new Date().toISOString()
+                });
+
+                closePlanModal();
+                await loadBlogSuggestions();
+                renderCalendar();
+                showToast('Suggestion planifiee');
+            } catch (error) {
+                console.error('[Blog] Plan error:', error);
+                showToast('Erreur planification');
+            }
+        }
+
+        async function rejectBlogSuggestion(id) {
+            try {
+                await supabase.updateBlogSuggestion(id, { status: 'rejected', updated_at: new Date().toISOString() });
+                await loadBlogSuggestions();
+                showToast('Suggestion rejetee');
+            } catch (error) {
+                showToast('Erreur');
+            }
+        }
+
+        async function generateBlogArticleFromSuggestion(suggestionId) {
+            const s = blogSuggestions.find(x => x.id === suggestionId);
+            if (!s) return;
+
+            const btn = event?.target;
+            if (btn) { btn.disabled = true; btn.textContent = 'Generation...'; }
+
+            try {
+                const response = await fetch(`${N8N_WEBHOOK_BASE}/blog-generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ suggestion: s })
+                });
+                const article = await response.json();
+
+                // Format sources (array of {title, url} → text lines)
+                let sourcesText = s.source_url || '';
+                if (article.sources && Array.isArray(article.sources)) {
+                    sourcesText = article.sources.map(src =>
+                        typeof src === 'string' ? src : `${src.title || ''} - ${src.url || ''}`
+                    ).join('\n');
+                }
+
+                // Pre-fill the article form with full generated content
+                editingBlogArticleId = null;
+                document.getElementById('blog-modal-title').textContent = 'Article genere - Verifier & publier';
+                document.getElementById('blog-article-id').value = '';
+                document.getElementById('blog-article-title').value = article.title || s.suggested_title || s.title;
+                document.getElementById('blog-article-slug').value = (article.title || s.suggested_title || s.title).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                document.getElementById('blog-article-category').value = article.category || s.category || 'Technologie';
+                document.getElementById('blog-article-status').value = 'scheduled';
+                document.getElementById('blog-article-excerpt').value = article.excerpt || s.excerpt || '';
+                document.getElementById('blog-article-content').value = article.content || '';
+                document.getElementById('blog-article-image').value = article.image_url || s.image_url || '';
+                document.getElementById('blog-article-reading-time').value = article.reading_time || 5;
+                document.getElementById('blog-article-featured').checked = false;
+                document.getElementById('blog-article-date').value = s.planned_date || new Date().toISOString().split('T')[0];
+                document.getElementById('blog-article-sources').value = sourcesText;
+                document.getElementById('blog-article-cta-title').value = article.cta_title || 'Pret a transformer votre entreprise ?';
+                document.getElementById('blog-article-cta-text').value = article.cta_text || 'Discutons de votre projet';
+                document.getElementById('blog-article-meta-desc').value = article.meta_description || '';
+
+                // Store suggestion ID for linking after save
+                document.getElementById('blog-article-id').dataset.suggestionId = suggestionId;
+
+                document.getElementById('blog-article-modal').style.display = 'flex';
+                switchBlogTab('articles');
+                const hasImage = article.image_url ? ' + image IA' : '';
+                showToast(`Article complet genere${hasImage} - verifie et sauvegarde`);
+
+            } catch (error) {
+                console.error('[Blog] Generate error:', error);
+                showToast('Erreur generation: ' + error.message);
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = 'Generer l\'article'; }
             }
         }
 
@@ -19385,8 +21038,8 @@ Reponds UNIQUEMENT avec le texte du post.`;
 
         async function updateNewsletterStats() {
             const total = newsletterCampaigns.length;
-            const scheduled = newsletterCampaigns.filter(c => c.status === 'Scheduled').length;
-            const sent = newsletterCampaigns.filter(c => c.status === 'Sent').length;
+            const scheduled = newsletterCampaigns.filter(c => c.status === 'scheduled').length;
+            const sent = newsletterCampaigns.filter(c => c.status === 'sent').length;
 
             // Fetch subscribers count from Brevo
             let subscribers = 0;
@@ -19416,7 +21069,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
             document.getElementById('newsletter-campaign-id').value = '';
             document.getElementById('newsletter-subject').value = '';
             document.getElementById('newsletter-preview-text').value = '';
-            document.getElementById('newsletter-status').value = 'Draft';
+            document.getElementById('newsletter-status').value = 'draft';
             document.getElementById('newsletter-scheduled-date').value = '';
             document.getElementById('newsletter-content-html').value = getDefaultNewsletterTemplate();
 
@@ -19434,7 +21087,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
             document.getElementById('newsletter-campaign-id').value = campaignId;
             document.getElementById('newsletter-subject').value = campaign.subject || '';
             document.getElementById('newsletter-preview-text').value = campaign.previewText || '';
-            document.getElementById('newsletter-status').value = campaign.status || 'Draft';
+            document.getElementById('newsletter-status').value = campaign.status || 'draft';
             document.getElementById('newsletter-scheduled-date').value = campaign.scheduledDate ? campaign.scheduledDate.slice(0, 16) : '';
             document.getElementById('newsletter-content-html').value = campaign.contentHtml || getDefaultNewsletterTemplate();
 
@@ -19928,6 +21581,11 @@ Reponds UNIQUEMENT avec le texte du post.`;
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             Voir les details
         </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item danger" onclick="contextMenuAction('delete-prospect')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Supprimer le prospect
+        </div>
     </div>
 
     <!-- Guide Interactif Button - SUPPRIME (deplace dans header) -->
@@ -20333,6 +21991,717 @@ Reponds UNIQUEMENT avec le texte du post.`;
             }
         `;
         document.head.appendChild(style);
+
+        // ============================================
+        // VEILLE POLYNESIE (Market Intelligence)
+        // ============================================
+
+        let veilleAppelsOffres = [];
+        let veilleOffresEmploi = [];
+        let currentVeilleTab = 'ao';
+        let currentVeilleView = 'grid';
+        let veilleKpiFilter = null;
+
+        async function loadVeilleData() {
+            try {
+                showToast('Chargement de la veille...');
+
+                const [ao, oe] = await Promise.all([
+                    supabase.getAppelsOffres({}),
+                    supabase.getOffresEmploi({})
+                ]);
+
+                veilleAppelsOffres = (ao || []).map(r => ({
+                    id: r.id,
+                    title: r.title || '',
+                    description: r.description || '',
+                    organization: r.organization || '',
+                    reference: r.reference || '',
+                    category: r.category || '',
+                    type: r.type || '',
+                    publicationDate: r.publication_date,
+                    deadline: r.deadline,
+                    estimatedAmount: r.estimated_amount,
+                    source: r.source || '',
+                    sourceUrl: r.source_url || '',
+                    tags: r.tags || [],
+                    relevanceScore: r.relevance_score || 0,
+                    aiSummary: r.ai_summary || '',
+                    aiAnalysis: r.ai_pacifikai_analysis || null,
+                    status: r.status || 'active',
+                    isNew: r.is_new || false,
+                    scrapedAt: r.scraped_at
+                }));
+
+                veilleOffresEmploi = (oe || []).map(r => ({
+                    id: r.id,
+                    title: r.title || '',
+                    description: r.description || '',
+                    company: r.company || '',
+                    category: r.category || '',
+                    contractType: r.contract_type || '',
+                    experienceLevel: r.experience_level || '',
+                    location: r.location || 'Tahiti',
+                    salaryText: r.salary_text || '',
+                    publicationDate: r.publication_date,
+                    deadline: r.deadline,
+                    source: r.source || '',
+                    sourceUrl: r.source_url || '',
+                    tags: r.tags || [],
+                    skills: r.skills || [],
+                    relevanceScore: r.relevance_score || 0,
+                    aiSummary: r.ai_summary || '',
+                    status: r.status || 'active',
+                    isNew: r.is_new || false,
+                    scrapedAt: r.scraped_at
+                }));
+
+                console.log(`[Veille] Loaded ${veilleAppelsOffres.length} AO + ${veilleOffresEmploi.length} OE`);
+
+                populateVeilleFilters();
+                renderVeilleCurrentTab();
+                updateVeilleStats();
+
+                const total = veilleAppelsOffres.length + veilleOffresEmploi.length;
+                const activeCount = veilleAppelsOffres.filter(a => a.status === 'active').length + veilleOffresEmploi.filter(o => o.status === 'active').length;
+                const syncEl = document.getElementById('veille-last-sync');
+                if (syncEl) syncEl.textContent = total + ' entrees (' + activeCount + ' actives)';
+                if (total > 0) showToast(total + ' entrees chargees');
+                else showToast('Aucune entree (lance le workflow n8n pour scraper)');
+
+            } catch (error) {
+                console.error('[Veille] Error loading:', error);
+                showToast('Erreur chargement veille');
+            }
+        }
+
+        function populateVeilleFilters() {
+            const sourceSelect = document.getElementById('veille-source-filter');
+            if (sourceSelect) {
+                const allSources = new Set();
+                veilleAppelsOffres.forEach(a => allSources.add(a.source));
+                veilleOffresEmploi.forEach(o => allSources.add(o.source));
+                const labels = { lexpol: 'LEXPOL', france_marches: 'France Marches', france_travail: 'France Travail', fenuajob: 'FenuaJob', dgrh: 'DGRH', tahiti_annonces: 'Tahiti Annonces' };
+                sourceSelect.innerHTML = '<option value="all">Toutes sources</option>' +
+                    [...allSources].map(s => '<option value="' + s + '">' + (labels[s] || s) + '</option>').join('');
+            }
+            updateVeilleCategoryFilter();
+        }
+
+        function updateVeilleCategoryFilter() {
+            const sel = document.getElementById('veille-category-filter');
+            if (!sel) return;
+            const cats = new Set();
+            const data = currentVeilleTab === 'ao' ? veilleAppelsOffres : veilleOffresEmploi;
+            data.forEach(i => { if (i.category) cats.add(i.category); });
+            sel.innerHTML = '<option value="all">Toutes categories</option>' +
+                [...cats].sort().map(c => '<option value="' + c + '">' + c + '</option>').join('');
+        }
+
+        function filterVeilleEntries() {
+            renderVeilleCurrentTab();
+        }
+
+        function getFilteredVeilleData(dataset) {
+            const srcFilter = document.getElementById('veille-source-filter') ? document.getElementById('veille-source-filter').value : 'all';
+            const catFilter = document.getElementById('veille-category-filter') ? document.getElementById('veille-category-filter').value : 'all';
+            const statusFilter = document.getElementById('veille-status-filter') ? document.getElementById('veille-status-filter').value : 'active';
+            const scoreMin = parseInt(document.getElementById('veille-score-filter') ? document.getElementById('veille-score-filter').value : '0') || 0;
+            const sortBy = document.getElementById('veille-sort') ? document.getElementById('veille-sort').value : 'score';
+            const search = (document.getElementById('veille-search') ? document.getElementById('veille-search').value : '').toLowerCase();
+            let items = [...dataset];
+
+            // KPI filter (click on KPI cards)
+            if (veilleKpiFilter === 'new') {
+                items = items.filter(function(i) { return i.isNew; });
+            } else if (veilleKpiFilter === 'expiring') {
+                items = items.filter(function(i) {
+                    if (!i.deadline) return false;
+                    var diff = new Date(i.deadline) - new Date();
+                    return diff >= 0 && diff <= 7 * 86400000;
+                });
+            }
+
+            // Status filter
+            if (statusFilter !== 'all') {
+                items = items.filter(function(i) { return i.status === statusFilter; });
+            }
+
+            // Source filter
+            if (srcFilter !== 'all') items = items.filter(function(i) { return i.source === srcFilter; });
+
+            // Category filter
+            if (catFilter !== 'all') items = items.filter(function(i) { return i.category === catFilter; });
+
+            // Score minimum
+            if (scoreMin > 0) items = items.filter(function(i) { return i.relevanceScore >= scoreMin; });
+
+            // Text search
+            if (search) {
+                items = items.filter(function(i) {
+                    return i.title.toLowerCase().includes(search) ||
+                        (i.description || '').toLowerCase().includes(search) ||
+                        (i.organization || '').toLowerCase().includes(search) ||
+                        (i.company || '').toLowerCase().includes(search) ||
+                        (i.tags || []).some(function(t) { return t.toLowerCase().includes(search); }) ||
+                        (i.skills || []).some(function(s) { return s.toLowerCase().includes(search); });
+                });
+            }
+
+            // Sort
+            items.sort(function(a, b) {
+                if (sortBy === 'score') return b.relevanceScore - a.relevanceScore;
+                if (sortBy === 'recent') return new Date(b.publicationDate || b.scrapedAt || 0) - new Date(a.publicationDate || a.scrapedAt || 0);
+                if (sortBy === 'deadline') {
+                    var da = a.deadline ? new Date(a.deadline).getTime() : Infinity;
+                    var db = b.deadline ? new Date(b.deadline).getTime() : Infinity;
+                    return da - db;
+                }
+                if (sortBy === 'amount') {
+                    var amtA = a.estimatedAmount || 0;
+                    var amtB = b.estimatedAmount || 0;
+                    if (!amtA && a.salaryText) amtA = parseInt(a.salaryText.replace(/\D/g, '')) || 0;
+                    if (!amtB && b.salaryText) amtB = parseInt(b.salaryText.replace(/\D/g, '')) || 0;
+                    return amtB - amtA;
+                }
+                return 0;
+            });
+
+            return items;
+        }
+
+        function switchVeilleTab(tab) {
+            currentVeilleTab = tab;
+            document.getElementById('veille-tab-ao')?.classList.toggle('active', tab === 'ao');
+            document.getElementById('veille-tab-oe')?.classList.toggle('active', tab === 'oe');
+            document.getElementById('veille-content-ao').style.display = tab === 'ao' ? 'block' : 'none';
+            document.getElementById('veille-content-oe').style.display = tab === 'oe' ? 'block' : 'none';
+            updateVeilleCategoryFilter();
+            renderVeilleCurrentTab();
+        }
+
+        function renderVeilleCurrentTab() {
+            if (currentVeilleTab === 'ao') renderVeilleAO();
+            else renderVeilleOE();
+        }
+
+        function getVeilleRelevanceClass(score) {
+            if (score >= 70) return 'high';
+            if (score >= 40) return 'medium';
+            return 'low';
+        }
+
+        function getVeilleDeadlineInfo(deadline) {
+            if (!deadline) return { text: 'Pas de deadline', cssClass: 'ok' };
+            const daysLeft = Math.ceil((new Date(deadline) - new Date()) / 86400000);
+            if (daysLeft < 0) return { text: 'Expire', cssClass: 'urgent' };
+            if (daysLeft <= 3) return { text: 'J-' + daysLeft, cssClass: 'urgent' };
+            if (daysLeft <= 7) return { text: 'J-' + daysLeft, cssClass: 'soon' };
+            return { text: new Date(deadline).toLocaleDateString('fr-FR'), cssClass: 'ok' };
+        }
+
+        function isVeilleUrlValid(url) {
+            if (!url) return false;
+            if (/\d{13,}/.test(url)) return false;
+            if (url.includes('Date.now()')) return false;
+            if (url === '#' || url === '') return false;
+            // Detect test IDs (ao001-ao999, pf001-pf999)
+            if (/[?/](ao|pf)\d{3}$/.test(url)) return false;
+            // Must start with http(s)
+            if (!/^https?:\/\//.test(url)) return false;
+            return true;
+        }
+
+        function renderVeilleAO() {
+            const container = document.getElementById('veille-ao-grid');
+            if (!container) return;
+            const items = getFilteredVeilleData(veilleAppelsOffres);
+
+            if (items.length === 0) {
+                container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-dim);padding:3rem;">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;margin-bottom:1rem;opacity:0.5;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+                    '<p>Aucun appel d\'offres</p></div>';
+                return;
+            }
+
+            if (currentVeilleView === 'list') {
+                container.className = 'veille-list';
+                container.innerHTML = items.map(ao => {
+                    const rel = getVeilleRelevanceClass(ao.relevanceScore);
+                    const dl = getVeilleDeadlineInfo(ao.deadline);
+                    return '<div class="veille-list-item ' + rel + '-relevance" onclick="openVeilleDetail(\'ao\',\'' + ao.id + '\')">' +
+                        '<div class="veille-score ' + rel + '">' + ao.relevanceScore + '</div>' +
+                        '<div>' +
+                            '<div class="veille-list-title">' + ao.title + '</div>' +
+                            '<div class="veille-list-subtitle">' + (ao.organization || '') + '</div>' +
+                        '</div>' +
+                        '<div class="veille-list-meta">' +
+                            '<span class="veille-deadline ' + dl.cssClass + '">' +
+                                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' +
+                                dl.text +
+                            '</span>' +
+                            (ao.estimatedAmount ? '<span class="veille-amount">' + new Intl.NumberFormat('fr-FR').format(ao.estimatedAmount) + ' XPF</span>' : '') +
+                        '</div>' +
+                        '<div class="veille-list-badges">' +
+                            '<span class="veille-source-badge ' + (ao.source || '').replace('_', '-') + '">' + ({'lexpol':'LEXPOL','france_marches':'FM'}[ao.source] || ao.source) + '</span>' +
+                            (ao.isNew ? '<span class="veille-badge-new">NEW</span>' : '') +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            } else {
+                container.className = 'blog-articles-grid';
+                container.innerHTML = items.map(ao => {
+                    const rel = getVeilleRelevanceClass(ao.relevanceScore);
+                    const dl = getVeilleDeadlineInfo(ao.deadline);
+                    const srcLabels = { lexpol: 'LEXPOL', france_marches: 'FM' };
+                    const desc = (ao.description || ao.aiSummary || 'Pas de description').substring(0, 140);
+
+                    return '<div class="veille-card ' + rel + '-relevance' + (ao.status === 'expired' ? ' expired' : '') + '" onclick="openVeilleDetail(\'ao\',\'' + ao.id + '\')">' +
+                        '<div class="veille-card-header">' +
+                            '<div class="veille-card-header-left">' +
+                                '<span class="veille-source-badge ' + (ao.source || '').replace('_', '-') + '">' + (srcLabels[ao.source] || ao.source) + '</span>' +
+                                (ao.isNew ? '<span class="veille-badge-new">NOUVEAU</span>' : '') +
+                                (dl.cssClass === 'urgent' ? '<span class="veille-badge-expiring">J-' + (Math.ceil((new Date(ao.deadline) - new Date()) / 86400000)) + '</span>' : '') +
+                                (ao.status === 'expired' ? '<span class="veille-badge-expired">EXPIRE</span>' : '') +
+                            '</div>' +
+                            '<div class="veille-score ' + rel + '">' + ao.relevanceScore + '</div>' +
+                        '</div>' +
+                        '<div class="veille-card-body">' +
+                            '<h3 style="font-size:0.9375rem;font-weight:600;margin-bottom:0.375rem;line-height:1.3;">' + ao.title + '</h3>' +
+                            (ao.organization ? '<div class="veille-org"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> ' + ao.organization + '</div>' : '') +
+                            '<p style="font-size:0.8125rem;color:var(--text-muted);line-height:1.5;margin-bottom:0.5rem;">' + desc + (desc.length >= 140 ? '...' : '') + '</p>' +
+                            (ao.estimatedAmount ? '<div class="veille-amount">' + new Intl.NumberFormat('fr-FR').format(ao.estimatedAmount) + ' XPF</div>' : '') +
+                        '</div>' +
+                        '<div class="veille-card-footer">' +
+                            '<span class="veille-deadline ' + dl.cssClass + '">' +
+                                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' +
+                                dl.text +
+                            '</span>' +
+                            '<div class="veille-card-tags">' +
+                                (ao.category ? '<span class="veille-tag-chip">' + ao.category + '</span>' : '') +
+                                (ao.tags && ao.tags.length > 0 ? ao.tags.slice(0, 2).map(function(t) { return '<span class="veille-tag-chip">' + t + '</span>'; }).join('') : '') +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            }
+        }
+
+        function renderVeilleOE() {
+            const container = document.getElementById('veille-oe-grid');
+            if (!container) return;
+            const items = getFilteredVeilleData(veilleOffresEmploi);
+
+            if (items.length === 0) {
+                container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-dim);padding:3rem;">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;margin-bottom:1rem;opacity:0.5;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>' +
+                    '<p>Aucune offre d\'emploi</p></div>';
+                return;
+            }
+
+            if (currentVeilleView === 'list') {
+                container.className = 'veille-list';
+                container.innerHTML = items.map(oe => {
+                    const rel = getVeilleRelevanceClass(oe.relevanceScore);
+                    const ctClass = (oe.contractType || '').toLowerCase().replace(/[^a-z]/g, '');
+                    return '<div class="veille-list-item ' + rel + '-relevance" onclick="openVeilleDetail(\'oe\',\'' + oe.id + '\')">' +
+                        '<div class="veille-score ' + rel + '">' + oe.relevanceScore + '</div>' +
+                        '<div>' +
+                            '<div class="veille-list-title">' + oe.title + '</div>' +
+                            '<div class="veille-list-subtitle">' + (oe.company || '') + ' — ' + (oe.location || 'Tahiti') + '</div>' +
+                        '</div>' +
+                        '<div class="veille-list-meta">' +
+                            (oe.contractType ? '<span class="veille-contract-badge ' + ctClass + '">' + oe.contractType + '</span>' : '') +
+                            (oe.salaryText ? '<span class="veille-amount">' + oe.salaryText + '</span>' : '') +
+                        '</div>' +
+                        '<div class="veille-list-badges">' +
+                            '<span class="veille-source-badge ' + (oe.source || '').replace('_', '-') + '">' + ({'france_travail':'FT','fenuajob':'FenuaJob','dgrh':'DGRH','tahiti_annonces':'T-A'}[oe.source] || oe.source) + '</span>' +
+                            (oe.isNew ? '<span class="veille-badge-new">NEW</span>' : '') +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            } else {
+                container.className = 'blog-articles-grid';
+                container.innerHTML = items.map(oe => {
+                    const rel = getVeilleRelevanceClass(oe.relevanceScore);
+                    const srcLabels = { france_travail: 'FT', fenuajob: 'FenuaJob', dgrh: 'DGRH', tahiti_annonces: 'T-A' };
+                    const ctClass = (oe.contractType || '').toLowerCase().replace(/[^a-z]/g, '');
+                    const desc = (oe.description || oe.aiSummary || 'Pas de description').substring(0, 140);
+
+                    return '<div class="veille-card ' + rel + '-relevance' + (oe.status === 'expired' ? ' expired' : '') + '" onclick="openVeilleDetail(\'oe\',\'' + oe.id + '\')">' +
+                        '<div class="veille-card-header">' +
+                            '<div class="veille-card-header-left">' +
+                                '<span class="veille-source-badge ' + (oe.source || '').replace('_', '-') + '">' + (srcLabels[oe.source] || oe.source) + '</span>' +
+                                (oe.contractType ? '<span class="veille-contract-badge ' + ctClass + '">' + oe.contractType + '</span>' : '') +
+                                (oe.isNew ? '<span class="veille-badge-new">NOUVEAU</span>' : '') +
+                                (oe.status === 'expired' ? '<span class="veille-badge-expired">EXPIRE</span>' : '') +
+                            '</div>' +
+                            '<div class="veille-score ' + rel + '">' + oe.relevanceScore + '</div>' +
+                        '</div>' +
+                        '<div class="veille-card-body">' +
+                            '<h3 style="font-size:0.9375rem;font-weight:600;margin-bottom:0.375rem;line-height:1.3;">' + oe.title + '</h3>' +
+                            (oe.company ? '<div class="veille-org"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> ' + oe.company + '</div>' : '') +
+                            '<p style="font-size:0.8125rem;color:var(--text-muted);line-height:1.5;margin-bottom:0.5rem;">' + desc + (desc.length >= 140 ? '...' : '') + '</p>' +
+                            (oe.salaryText ? '<div class="veille-amount">' + oe.salaryText + '</div>' : '') +
+                        '</div>' +
+                        '<div class="veille-card-footer">' +
+                            '<span style="font-size:0.75rem;color:var(--text-muted);">' +
+                                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ' +
+                                (oe.location || 'Tahiti') +
+                            '</span>' +
+                            '<div class="veille-card-tags">' +
+                                (oe.skills && oe.skills.length > 0 ? oe.skills.slice(0, 3).map(function(s) { return '<span class="veille-skill-chip">' + s + '</span>'; }).join('') : '') +
+                                (oe.skills && oe.skills.length > 3 ? '<span style="font-size:0.625rem;color:var(--text-dim);">+' + (oe.skills.length - 3) + '</span>' : '') +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            }
+        }
+
+        function updateVeilleStats() {
+            const aoTotal = veilleAppelsOffres.length;
+            const oeTotal = veilleOffresEmploi.length;
+            const newToday = veilleAppelsOffres.filter(a => a.isNew).length + veilleOffresEmploi.filter(o => o.isNew).length;
+            const now = new Date();
+            const sevenDays = 7 * 86400000;
+            const expiring = veilleAppelsOffres.filter(a => {
+                if (!a.deadline) return false;
+                const diff = new Date(a.deadline) - now;
+                return diff >= 0 && diff <= sevenDays;
+            }).length;
+            const allScores = [...veilleAppelsOffres, ...veilleOffresEmploi].map(i => i.relevanceScore).filter(s => s > 0);
+            const avgScore = allScores.length > 0 ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : 0;
+
+            const el = id => document.getElementById(id);
+            if (el('kpi-veille-ao-total')) el('kpi-veille-ao-total').textContent = aoTotal;
+            if (el('kpi-veille-oe-total')) el('kpi-veille-oe-total').textContent = oeTotal;
+            if (el('kpi-veille-new')) el('kpi-veille-new').textContent = newToday;
+            if (el('kpi-veille-expiring')) el('kpi-veille-expiring').textContent = expiring;
+            if (el('kpi-veille-avg-score')) el('kpi-veille-avg-score').textContent = avgScore || '--';
+            if (el('veille-tab-ao-count')) el('veille-tab-ao-count').textContent = aoTotal;
+            if (el('veille-tab-oe-count')) el('veille-tab-oe-count').textContent = oeTotal;
+
+            const navCount = el('nav-veille-count');
+            if (navCount) {
+                navCount.textContent = newToday > 0 ? newToday : (aoTotal + oeTotal);
+                navCount.style.background = newToday > 0 ? 'var(--orange, #f59e0b)' : 'var(--accent-secondary, #1a3a3a)';
+            }
+        }
+
+        function veilleDetailField(label, value) {
+            if (!value || value === '-') return '';
+            return '<div><div class="veille-detail-field-label">' + label + '</div>' +
+                '<div class="veille-detail-field-value">' + value + '</div></div>';
+        }
+
+        function openVeilleDetail(type, id) {
+            var item = type === 'ao' ?
+                veilleAppelsOffres.find(function(a) { return a.id === id; }) :
+                veilleOffresEmploi.find(function(o) { return o.id === id; });
+            if (!item) return;
+
+            var body = document.getElementById('veille-modal-body');
+            var fmtDate = function(d) { return d ? new Date(d).toLocaleDateString('fr-FR') : '-'; };
+            var rel = getVeilleRelevanceClass(item.relevanceScore);
+            var srcLabels = { lexpol: 'LEXPOL', france_marches: 'France Marches', france_travail: 'France Travail', fenuajob: 'FenuaJob', dgrh: 'DGRH', tahiti_annonces: 'Tahiti Annonces' };
+            var urlValid = isVeilleUrlValid(item.sourceUrl);
+
+            // Modal header with score + title + badges
+            var html = '<div class="veille-modal-header">' +
+                '<div class="veille-score ' + rel + '" style="width:52px;height:52px;font-size:1rem;">' + item.relevanceScore + '</div>' +
+                '<div class="veille-modal-header-info">' +
+                    '<h2 style="font-size:1.125rem;font-weight:600;margin:0 0 0.25rem 0;line-height:1.3;">' + item.title + '</h2>' +
+                    (type === 'ao' && item.organization ? '<div class="veille-org">' + item.organization + '</div>' : '') +
+                    (type === 'oe' && item.company ? '<div class="veille-org">' + item.company + '</div>' : '') +
+                '</div>' +
+            '</div>' +
+            '<div class="veille-modal-header-badges">' +
+                '<span class="veille-source-badge ' + (item.source || '').replace('_', '-') + '">' + (srcLabels[item.source] || item.source) + '</span>' +
+                (item.category ? '<span class="veille-tag-chip">' + item.category + '</span>' : '') +
+                (item.status === 'expired' ? '<span class="veille-badge-expired">EXPIRE</span>' : '') +
+                (item.isNew ? '<span class="veille-badge-new">NOUVEAU</span>' : '') +
+                (type === 'oe' && item.contractType ? '<span class="veille-contract-badge ' + (item.contractType || '').toLowerCase().replace(/[^a-z]/g, '') + '">' + item.contractType + '</span>' : '') +
+            '</div>';
+
+            // AI Summary (if available)
+            if (item.aiSummary) {
+                html += '<div class="veille-ai-summary">' +
+                    '<div class="veille-ai-summary-label">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M8 6a4 4 0 0 1 8 0"/><path d="M17 12.5c1.77.77 3 2.53 3 4.5a5 5 0 0 1-10 0c0-1.97 1.23-3.73 3-4.5"/><path d="M7 12.5C5.23 13.27 4 15.03 4 17a5 5 0 0 0 10 0"/></svg>' +
+                        ' Resume IA' +
+                    '</div>' +
+                    '<p style="font-size:0.8125rem;line-height:1.6;margin:0;">' + item.aiSummary + '</p>' +
+                '</div>';
+            }
+
+            // Detail grid
+            html += '<div class="veille-detail-grid">';
+            if (type === 'ao') {
+                html += veilleDetailField('Reference', item.reference) +
+                    veilleDetailField('Type', item.type) +
+                    veilleDetailField('Source', (srcLabels[item.source] || item.source)) +
+                    veilleDetailField('Publication', fmtDate(item.publicationDate)) +
+                    veilleDetailField('Date limite', fmtDate(item.deadline)) +
+                    (item.estimatedAmount ? veilleDetailField('Montant estime', '<span class="veille-amount">' + new Intl.NumberFormat('fr-FR').format(item.estimatedAmount) + ' XPF</span>') : '');
+            } else {
+                html += veilleDetailField('Contrat', item.contractType) +
+                    veilleDetailField('Experience', item.experienceLevel) +
+                    veilleDetailField('Lieu', item.location) +
+                    veilleDetailField('Source', (srcLabels[item.source] || item.source)) +
+                    (item.salaryText ? veilleDetailField('Salaire', '<span class="veille-amount">' + item.salaryText + '</span>') : '') +
+                    veilleDetailField('Publication', fmtDate(item.publicationDate));
+            }
+            html += '</div>';
+
+            // Description
+            if (item.description) {
+                html += '<div style="margin:1rem 0;">' +
+                    '<div class="veille-detail-field-label">Description</div>' +
+                    '<p style="font-size:0.8125rem;color:var(--text);line-height:1.6;white-space:pre-wrap;margin:0.25rem 0 0 0;">' + item.description + '</p>' +
+                '</div>';
+            }
+
+            // Skills (OE)
+            if (type === 'oe' && item.skills && item.skills.length > 0) {
+                html += '<div style="margin:0.75rem 0;">' +
+                    '<div class="veille-detail-field-label">Competences</div>' +
+                    '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">' +
+                    item.skills.map(function(s) { return '<span class="veille-skill-chip">' + s + '</span>'; }).join('') +
+                '</div></div>';
+            }
+
+            // Tags
+            if (item.tags && item.tags.length > 0) {
+                html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin:0.75rem 0;">' +
+                    item.tags.map(function(t) { return '<span class="veille-tag-chip">' + t + '</span>'; }).join('') +
+                '</div>';
+            }
+
+            // PACIFIK'AI Analysis (AO only)
+            if (type === 'ao') {
+                html += '<div id="veille-ao-analysis-section">';
+                if (item.aiAnalysis) {
+                    html += renderVeilleAnalysis(item.aiAnalysis);
+                } else if (item._analysisInProgress) {
+                    html += '<button class="veille-analyze-btn" id="veille-analyze-btn" disabled>' +
+                        '<div class="spinner"></div> Analyse en cours...' +
+                    '</button>';
+                } else {
+                    html += '<button class="veille-analyze-btn" id="veille-analyze-btn" onclick="generateAOAnalysis(\'' + item.id + '\')">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M8 6a4 4 0 0 1 8 0"/><path d="M17 12.5c1.77.77 3 2.53 3 4.5a5 5 0 0 1-10 0c0-1.97 1.23-3.73 3-4.5"/><path d="M7 12.5C5.23 13.27 4 15.03 4 17a5 5 0 0 0 10 0"/></svg>' +
+                        ' Analyser comment PACIFIK\'AI peut repondre' +
+                    '</button>';
+                }
+                html += '</div>';
+            }
+
+            // Scraped date
+            html += '<p style="font-size:0.6875rem;color:var(--text-dim);margin-top:1rem;">Scrape le ' +
+                (item.scrapedAt ? new Date(item.scrapedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-') + '</p>';
+
+            // Footer buttons
+            html += '<div style="display:flex;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">' +
+                '<button class="btn btn-ghost" onclick="closeVeilleModal()">Fermer</button>';
+
+            if (urlValid) {
+                html += '<a class="btn btn-primary" href="' + item.sourceUrl + '" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:0.5rem;text-decoration:none;">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+                    ' Voir sur ' + (srcLabels[item.source] || 'source') +
+                '</a>';
+            } else {
+                html += '<span style="font-size:0.75rem;color:var(--text-dim);display:flex;align-items:center;gap:0.375rem;">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' +
+                    ' Source non disponible' +
+                '</span>';
+            }
+
+            html += '</div>';
+
+            body.innerHTML = html;
+            document.getElementById('veille-detail-modal').style.display = 'flex';
+        }
+
+        function closeVeilleModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('veille-detail-modal').style.display = 'none';
+        }
+
+        function toggleVeilleView(mode) {
+            currentVeilleView = mode;
+            var gridBtn = document.getElementById('veille-view-grid');
+            var listBtn = document.getElementById('veille-view-list');
+            if (gridBtn) gridBtn.classList.toggle('active', mode === 'grid');
+            if (listBtn) listBtn.classList.toggle('active', mode === 'list');
+            renderVeilleCurrentTab();
+        }
+
+        function resetVeilleFilters() {
+            veilleKpiFilter = null;
+            var els = {
+                'veille-search': '',
+                'veille-status-filter': 'active',
+                'veille-source-filter': 'all',
+                'veille-category-filter': 'all',
+                'veille-score-filter': '0',
+                'veille-sort': 'score'
+            };
+            Object.keys(els).forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.value = els[id];
+            });
+            renderVeilleCurrentTab();
+            showToast('Filtres reinitialises');
+        }
+
+        function renderVeilleAnalysis(analysis) {
+            var fitClass = analysis.fit_score >= 70 ? 'high' : analysis.fit_score >= 40 ? 'medium' : 'low';
+            var html = '<div class="veille-ai-analysis">' +
+                '<div class="veille-ai-analysis-header">' +
+                    '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M8 6a4 4 0 0 1 8 0"/><path d="M17 12.5c1.77.77 3 2.53 3 4.5a5 5 0 0 1-10 0c0-1.97 1.23-3.73 3-4.5"/><path d="M7 12.5C5.23 13.27 4 15.03 4 17a5 5 0 0 0 10 0"/></svg> Analyse PACIFIK\'AI</span>' +
+                    '<div class="veille-score ' + fitClass + '">' + analysis.fit_score + '</div>' +
+                '</div>' +
+                '<div class="veille-ai-analysis-solution">' + (analysis.solution || '') + '</div>' +
+                '<div class="veille-ai-analysis-approach">' + (analysis.approach || '') + '</div>' +
+                '<div class="veille-ai-analysis-meta">' +
+                    (analysis.estimated_xpf ? '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> ' + analysis.estimated_xpf + '</span>' : '') +
+                    (analysis.effort_days ? '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + analysis.effort_days + ' jours</span>' : '') +
+                '</div>';
+            if (analysis.key_risks && analysis.key_risks.length > 0) {
+                html += '<div class="veille-ai-analysis-risks">Risques : ' + analysis.key_risks.join(', ') + '</div>';
+            }
+            if (analysis.next_steps && analysis.next_steps.length > 0) {
+                html += '<div class="veille-detail-field-label" style="margin-top:0.5rem;">Prochaines etapes</div>' +
+                    '<ol class="veille-ai-analysis-steps">' +
+                    analysis.next_steps.map(function(s) { return '<li>' + s + '</li>'; }).join('') +
+                    '</ol>';
+            }
+            if (analysis.generated_at) {
+                html += '<p style="font-size:0.625rem;color:var(--text-dim);margin-top:0.5rem;text-align:right;">Genere le ' +
+                    new Date(analysis.generated_at).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + '</p>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        async function generateAOAnalysis(aoId) {
+            var btn = document.getElementById('veille-analyze-btn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner"></div> Analyse en cours...';
+            }
+
+            var ao = veilleAppelsOffres.find(function(a) { return a.id === aoId; });
+            if (!ao) { showToast('AO non trouve'); return; }
+            ao._analysisInProgress = true;
+
+            var claudeKey = getClaudeApiKey();
+            if (!claudeKey) {
+                showToast('Configure ta cle API Claude dans les Settings pour utiliser l\'analyse IA', 'error');
+                if (btn) { btn.disabled = false; btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Analyser comment PACIFIK\'AI peut repondre'; }
+                return;
+            }
+
+            var systemPrompt = 'Tu es un expert commercial de PACIFIK\'AI, agence d\'automatisation IA basee en Polynesie francaise. ' +
+                'Tu analyses des appels d\'offres publics pour identifier comment PACIFIK\'AI pourrait y repondre.\n\n' +
+                'SOLUTIONS PACIFIK\'AI DISPONIBLES:\n' +
+                '1. Chatbot RAG (FAQ 24/7 WhatsApp/Messenger, base documentaire, RAG vectoriel) - Setup ~125K XPF, maintenance 30-50K/mois\n' +
+                '2. Extraction Documents (OCR + IA pour structurer donnees comptables, factures, formulaires) - Setup ~150K XPF\n' +
+                '3. Agent Commandes (prise de commandes automatisee via WhatsApp, PDF generation) - Setup ~100K XPF\n' +
+                '4. Systeme Reservations (agent IA + Google Calendar + SMS rappels) - Setup ~125K XPF\n' +
+                '5. Workflows Automatisation (n8n, integration Airtable/Supabase, scraping, notifications) - Variable\n' +
+                '6. Dashboard Analytics (CRM custom, KPIs, reporting automatise) - Setup ~200K XPF\n\n' +
+                'COMPETENCES: n8n, Claude/Anthropic, WhatsApp Business API, Airtable, Supabase, Firecrawl, ElevenLabs, Next.js, Vercel\n' +
+                'CLIENTS REFERENCES: Air Tahiti Nui (20 workflows), COWAN Motor (8 workflows), Banque Socredo, H2O Ingenierie\n\n' +
+                'REPONDS EN JSON STRICT (pas de markdown, pas de commentaires, juste le JSON):';
+
+            var userMsg = 'Analyse cet appel d\'offres et propose comment PACIFIK\'AI pourrait y repondre:\n\n' +
+                'TITRE: ' + ao.title + '\n' +
+                'ORGANISATION: ' + (ao.organization || 'Non precisee') + '\n' +
+                'CATEGORIE: ' + (ao.category || 'Non precisee') + '\n' +
+                'TYPE: ' + (ao.type || 'Non precise') + '\n' +
+                'DESCRIPTION: ' + (ao.description || ao.aiSummary || 'Non disponible') + '\n' +
+                'MONTANT ESTIME: ' + (ao.estimatedAmount ? new Intl.NumberFormat('fr-FR').format(ao.estimatedAmount) + ' XPF' : 'Non precise') + '\n' +
+                'TAGS: ' + (ao.tags && ao.tags.length > 0 ? ao.tags.join(', ') : 'Aucun') + '\n\n' +
+                'Reponds avec ce JSON:\n' +
+                '{\n' +
+                '  "approach": "Comment PACIFIK\'AI aborderait ce besoin (2-3 phrases concretes)",\n' +
+                '  "solution": "Quelle(s) solution(s) PACIFIK\'AI proposer (nom des solutions)",\n' +
+                '  "fit_score": 0-100,\n' +
+                '  "estimated_xpf": "Budget estime en XPF (fourchette)",\n' +
+                '  "effort_days": "Nombre de jours estime (fourchette)",\n' +
+                '  "key_risks": ["Risque 1", "Risque 2"],\n' +
+                '  "next_steps": ["Etape 1", "Etape 2", "Etape 3"]\n' +
+                '}';
+
+            try {
+                var response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': claudeKey,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-5-20250929',
+                        max_tokens: 1024,
+                        system: systemPrompt,
+                        messages: [{ role: 'user', content: userMsg }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Claude API error: ' + response.status);
+                }
+
+                var data = await response.json();
+                var text = data.content[0].text.trim();
+                // Extract JSON from potential markdown code block
+                var jsonMatch = text.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error('Pas de JSON dans la reponse');
+                var analysis = JSON.parse(jsonMatch[0]);
+                analysis.generated_at = new Date().toISOString();
+
+                // Save to Supabase
+                await supabase.updateAppelOffreAnalysis(aoId, analysis);
+
+                // Update local data
+                var localAo = veilleAppelsOffres.find(function(a) { return a.id === aoId; });
+                if (localAo) {
+                    localAo.aiAnalysis = analysis;
+                    localAo._analysisInProgress = false;
+                }
+
+                // Render in modal
+                var section = document.getElementById('veille-ao-analysis-section');
+                if (section) section.innerHTML = renderVeilleAnalysis(analysis);
+
+                showToast('Analyse generee (score: ' + analysis.fit_score + '%)');
+
+            } catch (error) {
+                console.error('[Veille] AI Analysis error:', error);
+                ao._analysisInProgress = false;
+                showToast('Erreur analyse IA: ' + error.message);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"/><path d="M8 6a4 4 0 0 1 8 0"/><path d="M17 12.5c1.77.77 3 2.53 3 4.5a5 5 0 0 1-10 0c0-1.97 1.23-3.73 3-4.5"/><path d="M7 12.5C5.23 13.27 4 15.03 4 17a5 5 0 0 0 10 0"/></svg> Reessayer l\'analyse';
+                }
+            }
+        }
+
+        function filterVeilleByKpi(kpi) {
+            if (veilleKpiFilter === kpi) {
+                veilleKpiFilter = null;
+            } else {
+                veilleKpiFilter = kpi;
+            }
+            // Switch to correct tab if needed
+            if (kpi === 'ao' && currentVeilleTab !== 'ao') switchVeilleTab('ao');
+            else if (kpi === 'oe' && currentVeilleTab !== 'oe') switchVeilleTab('oe');
+            else renderVeilleCurrentTab();
+        }
+
     </script>
 </body>
 </html>

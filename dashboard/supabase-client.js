@@ -130,6 +130,25 @@ class SupabaseClient {
         return false;
     }
 
+    async ensureValidToken() {
+        if (!this.session) return false;
+        try {
+            const payload = JSON.parse(atob(this.session.access_token.split('.')[1]));
+            const expiresAt = payload.exp * 1000;
+            const fiveMinutes = 5 * 60 * 1000;
+
+            if (Date.now() > expiresAt - fiveMinutes) {
+                console.log('[Auth] Token expiring soon, refreshing...');
+                const refreshed = await this.refreshSession(this.session.refresh_token);
+                if (!refreshed) throw new Error('Session expiree');
+            }
+        } catch (e) {
+            if (e.message === 'Session expiree') throw e;
+            console.warn('[Auth] Token check failed:', e);
+        }
+        return true;
+    }
+
     async loadTeamMember() {
         if (!this.user) return;
         const members = await this.select('team_members', { id: `eq.${this.user.id}` });
@@ -227,6 +246,11 @@ class SupabaseClient {
         if (!response.ok) {
             const error = await response.text();
             throw new Error(`Erreur delete: ${error}`);
+        }
+
+        const deleted = await response.json();
+        if (!deleted || deleted.length === 0) {
+            throw new Error('Suppression echouee - session expiree ou element introuvable');
         }
 
         return true;
@@ -589,9 +613,48 @@ class SupabaseClient {
     }
 
     async deleteBlogArticle(id) {
-        const article = await this.getBlogArticle(id);
+        await this.ensureValidToken();
+
+        let articleTitle = null;
+        try {
+            const article = await this.getBlogArticle(id);
+            articleTitle = article?.title;
+        } catch (e) {
+            console.warn('[Blog] Could not fetch article for logging:', e);
+        }
+
         await this.delete('blog_articles', id);
-        await this.logActivity('delete', 'blog', id, article?.title);
+        await this.logActivity('delete', 'blog', id, articleTitle);
+    }
+
+    // === BLOG SEARCHES ===
+
+    async getBlogSearches() {
+        return await this.select('blog_searches', {}, { order: 'created_at.desc' });
+    }
+
+    async createBlogSearch(data) {
+        const result = await this.insert('blog_searches', data);
+        return result[0];
+    }
+
+    // === BLOG SUGGESTIONS ===
+
+    async getBlogSuggestions(filters = {}) {
+        return await this.select('blog_suggestions', filters, { order: 'relevance_score.desc' });
+    }
+
+    async createBlogSuggestions(suggestions) {
+        return await this.insert('blog_suggestions', suggestions);
+    }
+
+    async updateBlogSuggestion(id, data) {
+        return (await this.update('blog_suggestions', id, data))[0];
+    }
+
+    async getExistingSuggestionUrls() {
+        const all = await this.select('blog_suggestions', {}, { order: 'created_at.desc' });
+        return all.map(s => s.source_url).filter(Boolean);
     }
 
     // === NEWSLETTER CAMPAIGNS ===
@@ -622,6 +685,30 @@ class SupabaseClient {
         const campaign = await this.getNewsletterCampaign(id);
         await this.delete('newsletter_campaigns', id);
         await this.logActivity('delete', 'newsletter', id, campaign?.subject);
+    }
+
+    // === VEILLE POLYNESIE ===
+
+    async getAppelsOffres(filters = {}) {
+        return await this.select('veille_appels_offres', filters, { order: 'created_at.desc' });
+    }
+
+    async getOffresEmploi(filters = {}) {
+        return await this.select('veille_offres_emploi', filters, { order: 'created_at.desc' });
+    }
+
+    async getAppelOffre(id) {
+        const results = await this.select('veille_appels_offres', { id: `eq.${id}` });
+        return results[0];
+    }
+
+    async getOffreEmploi(id) {
+        const results = await this.select('veille_offres_emploi', { id: `eq.${id}` });
+        return results[0];
+    }
+
+    async updateAppelOffreAnalysis(id, analysis) {
+        return await this.update('veille_appels_offres', id, { ai_pacifikai_analysis: analysis });
     }
 
     // === CLIENT INFRASTRUCTURES ===
@@ -676,8 +763,5 @@ class SupabaseClient {
     }
 }
 
-// Instance globale
-const supabase = new SupabaseClient();
-
-// Export pour utilisation dans le dashboard
-window.supabase = supabase;
+// Instance globale (pas de const/let pour eviter conflit avec CDN @supabase/supabase-js)
+window.supabase = new SupabaseClient();
