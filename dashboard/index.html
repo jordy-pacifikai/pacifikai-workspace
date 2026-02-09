@@ -478,6 +478,34 @@
             border-radius: var(--radius-full);
         }
 
+        /* Project tabs */
+        .project-tab {
+            padding: 0.625rem 1rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: var(--font-sans, 'Inter');
+        }
+        .project-tab:hover { color: var(--text); }
+        .project-tab.active { color: var(--accent, #5E6AD2); border-bottom-color: var(--accent, #5E6AD2); }
+
+        /* Project cards */
+        .project-card {
+            background: var(--bg-elevated, #1a1a2e);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .project-card:hover { border-color: var(--accent, #5E6AD2); transform: translateY(-1px); }
+        .project-view-btn.active { background: var(--accent, #5E6AD2) !important; color: #fff !important; }
+
         .sidebar-footer {
             padding: 0.75rem;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -6870,6 +6898,7 @@
                 </button>
             </div>
 
+
             <nav class="nav">
                 <!-- Overview -->
                 <div class="nav-group">
@@ -6905,6 +6934,11 @@
                     <a class="nav-item" data-view="tasks">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                         Taches
+                    </a>
+                    <a class="nav-item" data-view="projects">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        Projets
+                        <span class="nav-badge" id="nav-projects-count" style="background: var(--purple);">0</span>
                     </a>
                     <a class="nav-item" data-view="analytics">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -7507,7 +7541,7 @@
                         </button>
                         <div class="search-input-wrapper" style="position:relative;width:180px;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:14px;height:14px;opacity:0.5;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                            <input type="text" id="search-tasks" placeholder="Rechercher..." oninput="filterTasks()" style="width:100%;padding:6px 8px 6px 28px;background:var(--bg-muted);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:0.8rem;">
+                            <input type="text" id="search-tasks" placeholder="Rechercher..." oninput="filterTasks()" style="width:100%;padding:6px 8px 6px 28px;background:var(--bg-subtle, transparent);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:0.8rem;">
                         </div>
                         <select class="filter-select" id="task-assignee-filter" onchange="filterTasks()">
                             <option value="all">Tous</option>
@@ -7515,11 +7549,8 @@
                         </select>
                         <select class="filter-select" id="task-project-filter" onchange="filterTasks()">
                             <option value="all">Tous les projets</option>
-                            <option value="ATN">Air Tahiti Nui</option>
-                            <option value="PACIFIKAI">PACIFIK'AI</option>
-                            <option value="HVC">High Value Capital</option>
-                            <option value="COWAN">Cowan Motor</option>
-                            <option value="other">Autres</option>
+                            <option value="other">Sans projet</option>
+                            <!-- Populated dynamically by populateProjectDropdowns() -->
                         </select>
                         <select class="filter-select" id="task-priority-filter" onchange="filterTasks()">
                             <option value="all">Toutes priorites</option>
@@ -8647,6 +8678,162 @@
                 </div>
             </div>
 
+            <!-- Projects View -->
+            <div class="view" id="view-projects">
+                <header class="header">
+                    <div class="header-left">
+                        <h1 class="page-title">Projets</h1>
+                    </div>
+                    <div class="header-right">
+                        <button class="btn btn-primary" onclick="openProjectModal()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Nouveau projet
+                        </button>
+                    </div>
+                </header>
+                <div class="content-area" style="padding: 1.5rem;">
+                    <!-- Stats -->
+                    <div id="projects-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;"></div>
+                    <!-- Filters Toolbar -->
+                    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;margin-bottom:1rem;">
+                        <input type="text" id="project-search" placeholder="Rechercher..." oninput="filterProjects()" style="flex:1;min-width:160px;max-width:240px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.75rem;color:var(--text);font-size:0.8rem;">
+                        <select id="project-status-filter" onchange="filterProjects()" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.625rem;color:var(--text);font-size:0.8rem;">
+                            <option value="all">Tous statuts</option>
+                            <option value="active">Actif</option>
+                            <option value="planning">Planification</option>
+                            <option value="paused">En pause</option>
+                            <option value="completed">Termine</option>
+                            <option value="archived">Archive</option>
+                        </select>
+                        <select id="project-priority-filter" onchange="filterProjects()" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.625rem;color:var(--text);font-size:0.8rem;">
+                            <option value="all">Toutes priorites</option>
+                            <option value="urgent">Urgente</option>
+                            <option value="high">Haute</option>
+                            <option value="medium">Normal</option>
+                            <option value="low">Faible</option>
+                        </select>
+                        <select id="project-assignee-filter" onchange="filterProjects()" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.625rem;color:var(--text);font-size:0.8rem;">
+                            <option value="all">Tous assignes</option>
+                            <option value="unassigned">Non assigne</option>
+                        </select>
+                        <div style="margin-left:auto;display:flex;gap:2px;background:var(--bg-muted, rgba(255,255,255,0.05));border-radius:6px;padding:2px;">
+                            <button class="btn btn-ghost project-view-btn active" data-view="grid" onclick="switchProjectView('grid')" style="padding:0.375rem 0.625rem;font-size:0.75rem;border-radius:4px;" title="Grille">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                            </button>
+                            <button class="btn btn-ghost project-view-btn" data-view="list" onclick="switchProjectView('list')" style="padding:0.375rem 0.625rem;font-size:0.75rem;border-radius:4px;" title="Liste">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            </button>
+                            <button class="btn btn-ghost project-view-btn" data-view="roadmap" onclick="switchProjectView('roadmap')" style="padding:0.375rem 0.625rem;font-size:0.75rem;border-radius:4px;" title="Roadmap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="2" y1="12" x2="22" y2="12"/><polyline points="18 6 22 12 18 18"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Projects Container (grid/list/roadmap) -->
+                    <div id="projects-container"></div>
+                </div>
+            </div>
+
+            <!-- Project Detail / Roadmap View -->
+            <div class="view" id="view-project-detail">
+                <header class="header">
+                    <div class="header-left" style="display:flex;align-items:center;gap:1rem;">
+                        <button class="btn btn-ghost" onclick="showView('projects')" style="padding:4px 8px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        </button>
+                        <div>
+                            <h1 class="page-title" id="project-detail-title" style="display:flex;align-items:center;gap:0.5rem;"></h1>
+                            <p id="project-detail-desc" style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;"></p>
+                        </div>
+                    </div>
+                    <div class="header-right" style="display:flex;gap:0.5rem;">
+                        <button class="btn btn-ghost" onclick="openProjectModal(currentProjectDetailId)">Editer</button>
+                        <button class="btn btn-ghost" onclick="archiveProject(currentProjectDetailId)" style="color:var(--warning);">Archiver</button>
+                        <button class="btn btn-ghost" onclick="deleteProjectPermanently(currentProjectDetailId)" style="color:var(--red);">Supprimer</button>
+                    </div>
+                </header>
+                <div class="content-area" style="padding:0 1.5rem 1.5rem;">
+                    <!-- Tabs -->
+                    <div style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.5rem;">
+                        <button class="project-tab active" data-tab="overview" onclick="switchProjectTab('overview')">Vue d'ensemble</button>
+                        <button class="project-tab" data-tab="prospects" onclick="switchProjectTab('prospects')">Prospects</button>
+                        <button class="project-tab" data-tab="tasks" onclick="switchProjectTab('tasks')">Taches</button>
+                        <button class="project-tab" data-tab="timeline" onclick="switchProjectTab('timeline')">Timeline</button>
+                        <button class="project-tab" data-tab="activity" onclick="switchProjectTab('activity')">Activite</button>
+                    </div>
+                    <!-- Tab Content -->
+                    <div id="project-tab-content"></div>
+                </div>
+            </div>
+
+            <!-- Project Modal (Create/Edit) -->
+            <div class="modal-overlay" id="project-modal" style="display:none;" onclick="closeProjectModal(event)">
+                <div class="modal" style="max-width:520px;">
+                    <div class="modal-header">
+                        <h3 id="project-modal-title">Nouveau Projet</h3>
+                        <button class="modal-close" onclick="closeProjectModal()">&times;</button>
+                    </div>
+                    <form onsubmit="saveProject(event)">
+                        <input type="hidden" id="project-edit-id">
+                        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:1rem;">
+                            <div>
+                                <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;">Nom du projet *</label>
+                                <input type="text" id="project-name" required placeholder="Ex: Dossier Strategique IA" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.625rem 0.75rem;color:var(--text);font-size:0.875rem;">
+                            </div>
+                            <div>
+                                <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;">Description</label>
+                                <textarea id="project-description" rows="2" placeholder="Description du projet..." style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.625rem 0.75rem;color:var(--text);font-size:0.875rem;resize:vertical;"></textarea>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                                <div>
+                                    <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;">Statut</label>
+                                    <select id="project-status" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.625rem 0.75rem;color:var(--text);font-size:0.875rem;">
+                                        <option value="planning">Planification</option>
+                                        <option value="active" selected>Actif</option>
+                                        <option value="paused">En pause</option>
+                                        <option value="completed">Termine</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;">Couleur</label>
+                                    <input type="color" id="project-color" value="#5E6AD2" style="width:100%;height:38px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:2px;cursor:pointer;">
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                                <div>
+                                    <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;">Priorite</label>
+                                    <select id="project-priority" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.625rem 0.75rem;color:var(--text);font-size:0.875rem;">
+                                        <option value="low">Faible</option>
+                                        <option value="medium" selected>Normal</option>
+                                        <option value="high">Haute</option>
+                                        <option value="urgent">Urgente</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;">Assigne a</label>
+                                    <select id="project-assignee" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.625rem 0.75rem;color:var(--text);font-size:0.875rem;">
+                                        <option value="">Non assigne</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                                <div>
+                                    <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;">Date debut</label>
+                                    <input type="date" id="project-start-date" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.625rem 0.75rem;color:var(--text);font-size:0.875rem;">
+                                </div>
+                                <div>
+                                    <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;">Date cible</label>
+                                    <input type="date" id="project-target-date" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.625rem 0.75rem;color:var(--text);font-size:0.875rem;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:0.5rem;">
+                            <button type="button" class="btn btn-ghost" onclick="closeProjectModal()">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Analytics View -->
             <div class="view" id="view-analytics">
                 <header class="header">
@@ -9163,6 +9350,23 @@
         </div>
     </div>
 
+    <!-- Confirm Modal (reusable) -->
+    <div class="modal-overlay" id="confirm-modal" style="display:none;" onclick="closeConfirmModal()">
+        <div class="modal" style="max-width:400px;" onclick="event.stopPropagation()">
+            <div style="padding:1.75rem;text-align:center;">
+                <div style="width:48px;height:48px;border-radius:50%;background:rgba(239,68,68,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" style="width:24px;height:24px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </div>
+                <h3 id="confirm-modal-title" style="font-size:1rem;font-weight:600;margin-bottom:0.5rem;">Confirmer la suppression</h3>
+                <p id="confirm-modal-message" style="font-size:0.85rem;color:var(--text-muted);line-height:1.5;margin-bottom:1.5rem;">Etes-vous sur ?</p>
+                <div style="display:flex;gap:0.75rem;justify-content:center;">
+                    <button class="btn btn-ghost" onclick="closeConfirmModal()" style="padding:0.5rem 1.25rem;">Annuler</button>
+                    <button class="btn" id="confirm-modal-action" style="padding:0.5rem 1.25rem;background:var(--red);color:white;border:none;border-radius:8px;font-weight:500;cursor:pointer;">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Prospect Detail Modal -->
     <div class="modal-overlay" id="prospect-modal" onclick="closeProspectModal(event)">
         <div class="modal" onclick="event.stopPropagation()">
@@ -9181,9 +9385,15 @@
                         </select>
                     </div>
                 </div>
-                <button class="modal-close" onclick="closeProspectModal()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <button class="btn btn-ghost" id="delete-prospect-btn" onclick="confirmDeleteProspect()" style="color:var(--red);font-size:0.75rem;padding:4px 10px;border:1px solid var(--red);border-radius:6px;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        Supprimer
+                    </button>
+                    <button class="modal-close" onclick="closeProspectModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
             </div>
             <!-- Modal Tabs Navigation -->
             <div class="modal-tabs">
@@ -9200,6 +9410,11 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     Assets
                     <span class="tab-badge" id="tab-badge-assets">0</span>
+                </button>
+                <button class="modal-tab" onclick="switchProspectTab('tasks')" data-tab="tasks">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    Taches
+                    <span class="tab-badge" id="tab-badge-tasks">0</span>
                 </button>
                 <button class="modal-tab" onclick="switchProspectTab('timeline')" data-tab="timeline">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -9305,6 +9520,23 @@
                             </button>
                         </div>
                         <div class="notes-list" id="modal-notes-list"></div>
+                    </div>
+
+                    <!-- Projets lies -->
+                    <div style="margin-top: 1.5rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                            <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:0.5rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                                Projets lies
+                            </span>
+                            <div style="display:flex;gap:0.375rem;align-items:center;">
+                                <select id="prospect-add-project" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.25rem 0.5rem;color:var(--text);font-size:0.75rem;">
+                                    <option value="">+ Lier un projet</option>
+                                </select>
+                                <button class="btn btn-primary" style="font-size:0.7rem;padding:0.25rem 0.5rem;" onclick="addProjectToCurrentProspect()">Ajouter</button>
+                            </div>
+                        </div>
+                        <div id="prospect-projects-list" style="display:flex;flex-wrap:wrap;gap:0.375rem;"></div>
                     </div>
 
                     <!-- Quick Actions -->
@@ -9450,7 +9682,21 @@
                     </div>
                 </div>
 
-                <!-- TAB 4: Timeline -->
+                <!-- TAB: Taches -->
+                <div class="modal-tab-content" id="tab-content-tasks">
+                    <div class="notes-section">
+                        <div class="notes-header" style="display:flex;align-items:center;justify-content:space-between;">
+                            <div class="notes-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                Taches liees
+                            </div>
+                            <button class="btn btn-ghost" onclick="openTaskModalForProspect()" style="font-size:0.75rem;padding:0.25rem 0.5rem;">+ Nouvelle tache</button>
+                        </div>
+                        <div id="prospect-tasks-list"></div>
+                    </div>
+                </div>
+
+                <!-- TAB: Timeline -->
                 <div class="modal-tab-content" id="tab-content-timeline">
                     <div class="notes-section">
                         <div class="notes-header">
@@ -9491,14 +9737,12 @@
                     <!-- Row: Project + Priority -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                         <div class="edit-form-group">
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Projet</label>
-                            <select id="task-project" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.625rem 0.75rem; color: var(--text); font-size: 0.875rem;">
-                                <option value="">Aucun projet</option>
-                                <option value="ATN">Air Tahiti Nui</option>
-                                <option value="PACIFIKAI">PACIFIK'AI</option>
-                                <option value="HVC">High Value Capital</option>
-                                <option value="COWAN">Cowan Motor</option>
-                            </select>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Projets</label>
+                            <div id="task-projects-container" style="display:flex;flex-wrap:wrap;gap:0.375rem;min-height:36px;padding:0.375rem;border:1px solid var(--border);border-radius:6px;background:var(--bg);align-items:center;">
+                                <select id="task-project-add" onchange="addProjectToTaskModal(this.value);this.value='';" style="background:transparent;border:none;color:var(--text-muted);font-size:0.8rem;cursor:pointer;padding:0.25rem;">
+                                    <option value="">+ Ajouter projet</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="edit-form-group">
                             <label style="display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.375rem;">Priorite</label>
@@ -9938,6 +10182,10 @@
 
         // Tasks Table Config
         const TASKS_TABLE_ID = 'tblOqUUWT2ExGfjGw';
+        let allProjects = [];
+        let currentGlobalProjectFilter = null;
+        let prospectProjectMap = {};
+        let taskProjectMap = {};  // { task_id: [project_id, ...] }
         let currentTaskProjectFilter = 'all';
         let currentTaskPriorityFilter = 'all';
         let currentTaskAssigneeFilter = 'all';
@@ -10485,12 +10733,29 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             console.time('[Supabase] Parallel fetch');
             try {
                 // TOUTES les requêtes en parallèle pour un chargement ultra-rapide
-                const [supabaseProspects, supabaseTasks, supabaseContent, supabaseInfras] = await Promise.all([
+                const [supabaseProspects, supabaseTasks, supabaseContent, supabaseInfras, supabaseProjects, supabaseProjectProspects, supabaseTaskProjects] = await Promise.all([
                     supabase.getProspects().catch(err => { console.error('[Supabase] getProspects FAILED:', err); return []; }),
                     supabase.getTasks().catch(err => { console.error('[Supabase] getTasks FAILED:', err); return []; }),
                     supabase.getContent().catch(err => { console.error('[Supabase] getContent FAILED:', err); return []; }),
-                    supabase.getClientInfrastructures().catch(err => { console.error('[Supabase] getInfras FAILED:', err); return []; })
+                    supabase.getClientInfrastructures().catch(err => { console.error('[Supabase] getInfras FAILED:', err); return []; }),
+                    supabase.getProjects().catch(err => { console.error('[Supabase] getProjects FAILED:', err); return []; }),
+                    supabase.getAllProjectProspectLinks().catch(err => { console.error('[Supabase] getProjectProspects FAILED:', err); return []; }),
+                    supabase.getAllTaskProjectLinks().catch(err => { console.error('[Supabase] getTaskProjects FAILED:', err); return []; })
                 ]);
+
+                // Store projects globally
+                allProjects = supabaseProjects;
+                prospectProjectMap = {};
+                supabaseProjectProspects.forEach(pp => {
+                    if (!prospectProjectMap[pp.prospect_id]) prospectProjectMap[pp.prospect_id] = [];
+                    prospectProjectMap[pp.prospect_id].push(pp.project_id);
+                });
+                taskProjectMap = {};
+                supabaseTaskProjects.forEach(tp => {
+                    if (!taskProjectMap[tp.task_id]) taskProjectMap[tp.task_id] = [];
+                    taskProjectMap[tp.task_id].push(tp.project_id);
+                });
+                populateProjectDropdowns();
 
                 console.log('[Supabase] Raw prospects count:', supabaseProspects?.length || 0);
                 console.log('[Supabase] First prospect:', supabaseProspects?.[0]);
@@ -10568,7 +10833,13 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     assignee: t.assignee?.display_name || '',
                     assigneeName: t.assignee?.display_name || '',
                     assigneeColor: t.assignee?.avatar_color || '#3b82f6',
-                    project: extractProject(t.titre || '')
+                    projectIds: taskProjectMap[t.id] || [],
+                    projects: (taskProjectMap[t.id] || []).map(pid => allProjects.find(p => p.id === pid)).filter(Boolean),
+                    projectId: (taskProjectMap[t.id] || [])[0] || null,
+                    projectName: ((taskProjectMap[t.id] || []).map(pid => allProjects.find(p => p.id === pid)).filter(Boolean))[0]?.name || '',
+                    projectSlug: ((taskProjectMap[t.id] || []).map(pid => allProjects.find(p => p.id === pid)).filter(Boolean))[0]?.slug || '',
+                    projectColor: ((taskProjectMap[t.id] || []).map(pid => allProjects.find(p => p.id === pid)).filter(Boolean))[0]?.color || '',
+                    isMilestone: t.is_milestone || false
                 }));
 
                 // Transformer content
@@ -10904,6 +11175,10 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 loadMessengerConversations();
             } else if (name === 'finance' && typeof loadFinanceData === 'function') {
                 loadFinanceData();
+            } else if (name === 'projects' && typeof renderProjectsView === 'function') {
+                renderProjectsView();
+            } else if (name === 'project-detail' && typeof renderProjectDetail === 'function') {
+                renderProjectDetail(currentProjectDetailId);
             }
         }
 
@@ -11153,7 +11428,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                         <div class="cell-name">
                             <div class="avatar ${getAvatarColor(p.status)}">${initials(prospectDisplayName(p))}</div>
                             <div>
-                                <span>${prospectDisplayName(p)}</span>${isAutoProspect(p) ? ' ' + sourceBadge(p.source) : ''}${renderAssetIcons(p.assets)}${infraIndicator}
+                                <span>${prospectDisplayName(p)}</span>${isAutoProspect(p) ? ' ' + sourceBadge(p.source) : ''}${renderAssetIcons(p.assets)}${infraIndicator}${renderProspectProjectBadges(p.id)}
                                 ${isAutoProspect(p) && p.company ? `<div style="font-size:0.75rem;color:var(--text-dim)">${p.company}</div>` : ''}
                             </div>
                         </div>
@@ -11199,8 +11474,735 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         }
 
         function extractProject(title) {
+            // Legacy - kept for backward compatibility
             const match = title.match(/^\[([^\]]+)\]/);
             return match ? match[1] : 'other';
+        }
+
+        // === TASK MODAL MULTI-PROJECT SELECT ===
+        let taskModalSelectedProjects = [];
+
+        function renderTaskProjectChips() {
+            const container = document.getElementById('task-projects-container');
+            const addSelect = document.getElementById('task-project-add');
+            if (!container || !addSelect) return;
+            const chips = taskModalSelectedProjects.map(pid => {
+                const p = allProjects.find(pr => pr.id === pid);
+                if (!p) return '';
+                return `<span class="badge" style="background:${p.color}22;color:${p.color};font-size:0.75rem;padding:0.2rem 0.5rem;display:inline-flex;align-items:center;gap:0.25rem;">
+                    ${p.name} <span onclick="removeProjectFromTaskModal('${pid}')" style="cursor:pointer;font-size:0.9rem;line-height:1;">&times;</span>
+                </span>`;
+            }).join('');
+            const available = allProjects.filter(p => !taskModalSelectedProjects.includes(p.id));
+            addSelect.innerHTML = '<option value="">+ Ajouter projet</option>' + available.map(p =>
+                `<option value="${p.id}">${p.name}</option>`).join('');
+            container.innerHTML = chips;
+            container.appendChild(addSelect);
+        }
+
+        function addProjectToTaskModal(projectId) {
+            if (!projectId || taskModalSelectedProjects.includes(projectId)) return;
+            taskModalSelectedProjects.push(projectId);
+            renderTaskProjectChips();
+        }
+
+        function removeProjectFromTaskModal(projectId) {
+            taskModalSelectedProjects = taskModalSelectedProjects.filter(id => id !== projectId);
+            renderTaskProjectChips();
+        }
+
+        // === PROSPECT MODAL PROJECT MANAGEMENT ===
+
+        async function addProjectToCurrentProspect() {
+            const select = document.getElementById('prospect-add-project');
+            const projectId = select?.value;
+            if (!projectId || !currentProspectId) return;
+            try {
+                await supabase.addProspectToProject(projectId, currentProspectId);
+                // Update local map
+                if (!prospectProjectMap[currentProspectId]) prospectProjectMap[currentProspectId] = [];
+                prospectProjectMap[currentProspectId].push(projectId);
+                // Re-render the prospect detail
+                openProspectDetail(currentProspectId);
+                showToast('Projet lie!');
+            } catch (err) {
+                console.error('[Prospect] Erreur ajout projet:', err);
+                showToast('Erreur ajout projet');
+            }
+        }
+
+        async function removeProjectFromCurrentProspect(projectId) {
+            if (!currentProspectId) return;
+            try {
+                await supabase.removeProspectFromProject(projectId, currentProspectId);
+                // Update local map
+                if (prospectProjectMap[currentProspectId]) {
+                    prospectProjectMap[currentProspectId] = prospectProjectMap[currentProspectId].filter(id => id !== projectId);
+                }
+                // Re-render the prospect detail
+                openProspectDetail(currentProspectId);
+                showToast('Projet retire');
+            } catch (err) {
+                console.error('[Prospect] Erreur retrait projet:', err);
+                showToast('Erreur retrait projet');
+            }
+        }
+
+        function populateProjectDropdowns() {
+            const filterSelect = document.getElementById('task-project-filter');
+            const globalSelect = document.getElementById('global-project-filter');
+
+            // Filter dropdown
+            if (filterSelect) {
+                const currentVal = filterSelect.value;
+                const staticOptions = '<option value="all">Tous les projets</option><option value="other">Sans projet</option>';
+                filterSelect.innerHTML = staticOptions + allProjects.map(p =>
+                    `<option value="${p.id}" style="color:${p.color};">${p.name}</option>`
+                ).join('');
+                filterSelect.value = currentVal;
+            }
+
+            // Global sidebar filter removed
+        }
+
+        // === PROJECTS SYSTEM ===
+
+        let currentProjectDetailId = null;
+
+        // onGlobalProjectChange removed - sidebar project filter deleted
+
+        function renderProspectProjectBadges(prospectId) {
+            const projectIds = prospectProjectMap[prospectId] || [];
+            if (projectIds.length === 0) return '';
+            return ' ' + projectIds.map(pid => {
+                const p = allProjects.find(pr => pr.id === pid);
+                if (!p) return '';
+                return `<span class="badge" style="background:${p.color}22;color:${p.color};font-size:0.55rem;padding:0.05rem 0.25rem;margin-left:2px;">${p.name}</span>`;
+            }).join('');
+        }
+
+        let currentProjectView = 'grid';
+
+        function renderProjectsView() {
+            const statsEl = document.getElementById('projects-stats');
+            const countEl = document.getElementById('nav-projects-count');
+            if (countEl) countEl.textContent = allProjects.length;
+
+            // Peupler le dropdown assignee des filtres
+            const assigneeFilter = document.getElementById('project-assignee-filter');
+            if (assigneeFilter && assigneeFilter.options.length <= 2) {
+                teamMembers.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.id;
+                    opt.textContent = m.display_name;
+                    assigneeFilter.appendChild(opt);
+                });
+            }
+
+            const active = allProjects.filter(p => p.status === 'active').length;
+            const planning = allProjects.filter(p => ['planning','paused'].includes(p.status)).length;
+            const completed = allProjects.filter(p => p.status === 'completed').length;
+
+            statsEl.innerHTML = [
+                { label: 'Total', value: allProjects.length, color: 'var(--accent, #5E6AD2)' },
+                { label: 'Actifs', value: active, color: 'var(--green, #10b981)' },
+                { label: 'Planification/Pause', value: planning, color: 'var(--orange, #f97316)' },
+                { label: 'Termines', value: completed, color: 'var(--text-muted)' }
+            ].map(s => `
+                <div class="stat-card">
+                    <div class="stat-value" style="color:${s.color};">${s.value}</div>
+                    <div class="stat-label">${s.label}</div>
+                </div>
+            `).join('');
+
+            renderProjectsContent();
+        }
+
+        function filterProjects() {
+            renderProjectsContent();
+        }
+
+        function switchProjectView(view) {
+            currentProjectView = view;
+            document.querySelectorAll('.project-view-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.project-view-btn[data-view="${view}"]`)?.classList.add('active');
+            renderProjectsContent();
+        }
+
+        function getFilteredProjects() {
+            const statusFilter = document.getElementById('project-status-filter')?.value || 'all';
+            const priorityFilter = document.getElementById('project-priority-filter')?.value || 'all';
+            const assigneeFilter = document.getElementById('project-assignee-filter')?.value || 'all';
+            const search = (document.getElementById('project-search')?.value || '').toLowerCase().trim();
+
+            return allProjects.filter(p => {
+                if (statusFilter !== 'all' && p.status !== statusFilter) return false;
+                if (priorityFilter !== 'all' && p.priority !== priorityFilter) return false;
+                if (assigneeFilter === 'unassigned' && p.assigned_to) return false;
+                if (assigneeFilter !== 'all' && assigneeFilter !== 'unassigned' && p.assigned_to !== assigneeFilter) return false;
+                if (search && !(p.name || '').toLowerCase().includes(search) && !(p.description || '').toLowerCase().includes(search)) return false;
+                return true;
+            });
+        }
+
+        function getProjectMeta(p) {
+            const taskCount = airtableTasks.filter(t => t.projectIds && t.projectIds.includes(p.id)).length;
+            const doneTasks = airtableTasks.filter(t => t.projectIds && t.projectIds.includes(p.id) && t.status === 'Terminé').length;
+            const prospectCount = Object.entries(prospectProjectMap).filter(([_, pids]) => pids.includes(p.id)).length;
+            const progress = taskCount > 0 ? Math.round((doneTasks / taskCount) * 100) : 0;
+            const statusLabels = { planning: 'Planification', active: 'Actif', paused: 'En pause', completed: 'Termine', archived: 'Archive' };
+            const statusColors = { planning: 'var(--orange)', active: 'var(--green)', paused: 'var(--text-muted)', completed: 'var(--accent)', archived: 'var(--text-dim)' };
+            const priorityLabels = { urgent: 'Urgent', high: 'Haute', medium: 'Normal', low: 'Faible' };
+            const priorityColors = { urgent: '#ef4444', high: '#f97316', medium: '#5E6AD2', low: '#6b7280' };
+            const assignee = p.assignee || (p.assigned_to ? teamMembers.find(m => m.id === p.assigned_to) : null);
+            return { taskCount, doneTasks, prospectCount, progress, statusLabels, statusColors, priorityLabels, priorityColors, assignee };
+        }
+
+        function renderProjectsContent() {
+            const container = document.getElementById('projects-container');
+            const filtered = getFilteredProjects();
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:3rem;">Aucun projet trouve.</div>';
+                return;
+            }
+
+            if (currentProjectView === 'grid') renderProjectGrid(container, filtered);
+            else if (currentProjectView === 'list') renderProjectList(container, filtered);
+            else if (currentProjectView === 'roadmap') renderProjectRoadmap(container, filtered);
+        }
+
+        function renderProjectGrid(container, projects) {
+            container.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;">` +
+                projects.map(p => {
+                    const m = getProjectMeta(p);
+                    const assigneeHtml = m.assignee ? `<div style="width:22px;height:22px;border-radius:50%;background:${m.assignee.avatar_color || '#5E6AD2'};display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:600;color:#fff;flex-shrink:0;" title="${m.assignee.display_name}">${(m.assignee.display_name || '?')[0]}</div>` : '';
+                    const priorityDot = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${m.priorityColors[p.priority] || '#6b7280'};margin-right:4px;" title="${m.priorityLabels[p.priority] || ''}"></span>`;
+
+                    return `
+                    <div class="project-card" onclick="openProjectDetail('${p.id}')">
+                        <div style="display:flex;align-items:center;gap:0.625rem;margin-bottom:0.75rem;">
+                            <div style="width:12px;height:12px;border-radius:3px;background:${p.color};flex-shrink:0;"></div>
+                            <div style="font-weight:600;font-size:0.9375rem;flex:1;">${p.name}</div>
+                            ${assigneeHtml}
+                            <span class="badge" style="background:${m.statusColors[p.status] || 'var(--text-muted)'}22;color:${m.statusColors[p.status] || 'var(--text-muted)'};font-size:0.65rem;padding:0.125rem 0.375rem;">${priorityDot}${m.statusLabels[p.status] || p.status}</span>
+                        </div>
+                        ${p.description ? `<div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${p.description}</div>` : ''}
+                        <div style="display:flex;gap:1rem;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.75rem;">
+                            <span>${m.prospectCount} prospect${m.prospectCount !== 1 ? 's' : ''}</span>
+                            <span>${m.taskCount} tache${m.taskCount !== 1 ? 's' : ''}</span>
+                            ${p.target_date ? `<span>Cible: ${new Date(p.target_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>` : ''}
+                        </div>
+                        <div style="background:var(--bg-muted, rgba(255,255,255,0.05));border-radius:4px;height:6px;overflow:hidden;">
+                            <div style="height:100%;width:${m.progress}%;background:${p.color};border-radius:4px;transition:width 0.3s;"></div>
+                        </div>
+                        <div style="font-size:0.65rem;color:var(--text-dim);margin-top:0.25rem;text-align:right;">${m.progress}% complete</div>
+                    </div>`;
+                }).join('') + '</div>';
+        }
+
+        function renderProjectList(container, projects) {
+            container.innerHTML = `
+                <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+                    <table style="width:100%;border-collapse:collapse;font-size:0.825rem;">
+                        <thead>
+                            <tr style="background:var(--bg-muted, rgba(255,255,255,0.03));border-bottom:1px solid var(--border);">
+                                <th style="text-align:left;padding:0.625rem 0.75rem;font-weight:600;color:var(--text-muted);font-size:0.7rem;text-transform:uppercase;">Projet</th>
+                                <th style="text-align:center;padding:0.625rem 0.5rem;font-weight:600;color:var(--text-muted);font-size:0.7rem;text-transform:uppercase;">Statut</th>
+                                <th style="text-align:center;padding:0.625rem 0.5rem;font-weight:600;color:var(--text-muted);font-size:0.7rem;text-transform:uppercase;">Priorite</th>
+                                <th style="text-align:center;padding:0.625rem 0.5rem;font-weight:600;color:var(--text-muted);font-size:0.7rem;text-transform:uppercase;">Assigne</th>
+                                <th style="text-align:center;padding:0.625rem 0.5rem;font-weight:600;color:var(--text-muted);font-size:0.7rem;text-transform:uppercase;">Prospects</th>
+                                <th style="text-align:center;padding:0.625rem 0.5rem;font-weight:600;color:var(--text-muted);font-size:0.7rem;text-transform:uppercase;">Taches</th>
+                                <th style="text-align:center;padding:0.625rem 0.5rem;font-weight:600;color:var(--text-muted);font-size:0.7rem;text-transform:uppercase;">Progres</th>
+                                <th style="text-align:center;padding:0.625rem 0.5rem;font-weight:600;color:var(--text-muted);font-size:0.7rem;text-transform:uppercase;">Date cible</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${projects.map(p => {
+                                const m = getProjectMeta(p);
+                                return `
+                                <tr onclick="openProjectDetail('${p.id}')" style="cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.15s;" onmouseenter="this.style.background='rgba(255,255,255,0.03)'" onmouseleave="this.style.background=''">
+                                    <td style="padding:0.625rem 0.75rem;">
+                                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                                            <div style="width:10px;height:10px;border-radius:3px;background:${p.color};flex-shrink:0;"></div>
+                                            <span style="font-weight:500;">${p.name}</span>
+                                        </div>
+                                    </td>
+                                    <td style="text-align:center;padding:0.625rem 0.5rem;">
+                                        <span class="badge" style="background:${m.statusColors[p.status] || 'var(--text-muted)'}22;color:${m.statusColors[p.status] || 'var(--text-muted)'};font-size:0.65rem;padding:0.125rem 0.375rem;">${m.statusLabels[p.status] || p.status}</span>
+                                    </td>
+                                    <td style="text-align:center;padding:0.625rem 0.5rem;">
+                                        <span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:${m.priorityColors[p.priority] || '#6b7280'};">
+                                            <span style="width:8px;height:8px;border-radius:50%;background:${m.priorityColors[p.priority] || '#6b7280'};"></span>
+                                            ${m.priorityLabels[p.priority] || '-'}
+                                        </span>
+                                    </td>
+                                    <td style="text-align:center;padding:0.625rem 0.5rem;">
+                                        ${m.assignee ? `<div style="width:24px;height:24px;border-radius:50%;background:${m.assignee.avatar_color || '#5E6AD2'};display:inline-flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:600;color:#fff;" title="${m.assignee.display_name}">${(m.assignee.display_name || '?')[0]}</div>` : '<span style="color:var(--text-dim);">-</span>'}
+                                    </td>
+                                    <td style="text-align:center;padding:0.625rem 0.5rem;color:var(--text-muted);">${m.prospectCount}</td>
+                                    <td style="text-align:center;padding:0.625rem 0.5rem;color:var(--text-muted);">${m.taskCount}</td>
+                                    <td style="text-align:center;padding:0.625rem 0.5rem;">
+                                        <div style="display:flex;align-items:center;gap:0.375rem;justify-content:center;">
+                                            <div style="width:48px;height:5px;background:var(--bg-muted, rgba(255,255,255,0.05));border-radius:3px;overflow:hidden;">
+                                                <div style="height:100%;width:${m.progress}%;background:${p.color};border-radius:3px;"></div>
+                                            </div>
+                                            <span style="font-size:0.7rem;color:var(--text-dim);">${m.progress}%</span>
+                                        </div>
+                                    </td>
+                                    <td style="text-align:center;padding:0.625rem 0.5rem;font-size:0.75rem;color:var(--text-dim);">${p.target_date ? new Date(p.target_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '-'}</td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+        }
+
+        function renderProjectRoadmap(container, projects) {
+            // Separer projets avec dates et sans dates
+            const withDates = projects.filter(p => p.start_date || p.target_date);
+            const withoutDates = projects.filter(p => !p.start_date && !p.target_date);
+
+            if (withDates.length === 0 && withoutDates.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:3rem;">Aucun projet a afficher.</div>';
+                return;
+            }
+
+            // Calculer la plage temporelle
+            const now = new Date();
+            let minDate = new Date(now);
+            let maxDate = new Date(now);
+            minDate.setMonth(minDate.getMonth() - 1);
+            maxDate.setMonth(maxDate.getMonth() + 3);
+
+            withDates.forEach(p => {
+                const start = p.start_date ? new Date(p.start_date) : null;
+                const end = p.target_date ? new Date(p.target_date) : null;
+                if (start && start < minDate) minDate = new Date(start);
+                if (end && end > maxDate) maxDate = new Date(end);
+            });
+
+            // Ajouter de la marge
+            minDate.setDate(1);
+            maxDate.setMonth(maxDate.getMonth() + 1);
+            maxDate.setDate(0);
+
+            const totalDays = Math.max(1, (maxDate - minDate) / (1000 * 60 * 60 * 24));
+            const getPos = (date) => Math.max(0, Math.min(100, ((date - minDate) / (maxDate - minDate)) * 100));
+            const todayPos = getPos(now);
+
+            // Generer les mois pour l'axe X
+            const months = [];
+            const cursor = new Date(minDate);
+            while (cursor <= maxDate) {
+                months.push({ label: cursor.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }), pos: getPos(new Date(cursor)) });
+                cursor.setMonth(cursor.getMonth() + 1);
+            }
+
+            const statusLabels = { planning: 'Planification', active: 'Actif', paused: 'En pause', completed: 'Termine', archived: 'Archive' };
+
+            container.innerHTML = `
+                <div style="border:1px solid var(--border);border-radius:8px;padding:1rem;overflow-x:auto;">
+                    <!-- Axe X: mois -->
+                    <div style="position:relative;height:28px;margin-bottom:0.25rem;border-bottom:1px solid var(--border);">
+                        ${months.map(m => `<span style="position:absolute;left:${m.pos}%;font-size:0.65rem;color:var(--text-dim);white-space:nowrap;transform:translateX(-50%);">${m.label}</span>`).join('')}
+                    </div>
+                    <!-- Barres projets -->
+                    <div style="position:relative;min-height:${withDates.length * 44 + 10}px;">
+                        <!-- Ligne "aujourd'hui" -->
+                        <div style="position:absolute;left:${todayPos}%;top:0;bottom:0;width:2px;background:var(--red);opacity:0.5;z-index:1;"></div>
+                        <div style="position:absolute;left:${todayPos}%;top:-20px;transform:translateX(-50%);font-size:0.6rem;color:var(--red);white-space:nowrap;z-index:2;">Aujourd'hui</div>
+
+                        ${withDates.map((p, i) => {
+                            const start = p.start_date ? new Date(p.start_date) : new Date(now);
+                            const end = p.target_date ? new Date(p.target_date) : new Date(now.getTime() + 30*24*60*60*1000);
+                            const left = getPos(start);
+                            const right = getPos(end);
+                            const width = Math.max(3, right - left);
+                            const m = getProjectMeta(p);
+
+                            return `
+                            <div style="position:absolute;top:${i * 44 + 8}px;left:${left}%;width:${width}%;height:32px;cursor:pointer;" onclick="openProjectDetail('${p.id}')">
+                                <div style="height:100%;background:${p.color}33;border:1px solid ${p.color};border-radius:6px;display:flex;align-items:center;padding:0 0.5rem;gap:0.375rem;overflow:hidden;transition:background 0.15s;" onmouseenter="this.style.background='${p.color}55'" onmouseleave="this.style.background='${p.color}33'">
+                                    <span style="font-size:0.725rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</span>
+                                    <span class="badge" style="background:${m.statusColors[p.status]}44;color:${m.statusColors[p.status]};font-size:0.55rem;padding:1px 4px;flex-shrink:0;">${statusLabels[p.status] || p.status}</span>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+
+                    ${withoutDates.length > 0 ? `
+                    <div style="margin-top:${withDates.length * 44 + 20}px;padding-top:0.75rem;border-top:1px solid var(--border);">
+                        <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.5rem;">Sans dates definies</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                            ${withoutDates.map(p => `
+                                <div onclick="openProjectDetail('${p.id}')" style="cursor:pointer;display:flex;align-items:center;gap:0.375rem;padding:0.375rem 0.625rem;background:var(--bg-muted, rgba(255,255,255,0.05));border:1px solid var(--border);border-radius:6px;">
+                                    <div style="width:8px;height:8px;border-radius:2px;background:${p.color};"></div>
+                                    <span style="font-size:0.75rem;color:var(--text);">${p.name}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+                </div>`;
+        }
+
+        function openProjectDetail(projectId) {
+            currentProjectDetailId = projectId;
+            showView('project-detail');
+        }
+
+        async function renderProjectDetail(projectId) {
+            if (!projectId) return;
+            const project = allProjects.find(p => p.id === projectId);
+            if (!project) return;
+
+            const titleEl = document.getElementById('project-detail-title');
+            const descEl = document.getElementById('project-detail-desc');
+            titleEl.innerHTML = `<div style="width:14px;height:14px;border-radius:4px;background:${project.color};"></div> ${project.name}`;
+            descEl.textContent = project.description || '';
+
+            switchProjectTab('overview');
+        }
+
+        async function switchProjectTab(tab) {
+            document.querySelectorAll('.project-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.project-tab[data-tab="${tab}"]`)?.classList.add('active');
+
+            const project = allProjects.find(p => p.id === currentProjectDetailId);
+            if (!project) return;
+
+            const contentEl = document.getElementById('project-tab-content');
+            const projectTasks = airtableTasks.filter(t => t.projectIds && t.projectIds.includes(project.id));
+            const projectProspectIds = Object.entries(prospectProjectMap).filter(([_, pids]) => pids.includes(project.id)).map(([pid]) => pid);
+            const projectProspects = prospects.filter(p => projectProspectIds.includes(p.id));
+
+            if (tab === 'overview') {
+                const total = projectTasks.length;
+                const done = projectTasks.filter(t => t.status === 'Terminé').length;
+                const inProgress = projectTasks.filter(t => t.status === 'En cours').length;
+                const todo = projectTasks.filter(t => t.status === 'À faire').length;
+                const progress = total > 0 ? Math.round((done / total) * 100) : 0;
+
+                contentEl.innerHTML = `
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;">
+                        <div class="stat-card"><div class="stat-value" style="color:var(--accent);">${projectProspects.length}</div><div class="stat-label">Prospects</div></div>
+                        <div class="stat-card"><div class="stat-value" style="color:var(--green);">${total}</div><div class="stat-label">Taches</div></div>
+                        <div class="stat-card"><div class="stat-value" style="color:${project.color};">${progress}%</div><div class="stat-label">Completion</div></div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+                        <div style="background:var(--bg-elevated, #1a1a2e);border:1px solid var(--border);border-radius:12px;padding:1.25rem;">
+                            <h4 style="font-size:0.8125rem;margin-bottom:1rem;">Taches par statut</h4>
+                            ${[{l:'A faire', c:todo, cl:'var(--text-muted)'}, {l:'En cours', c:inProgress, cl:'var(--accent)'}, {l:'Terminees', c:done, cl:'var(--green)'}].map(s => `
+                                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                                    <div style="flex:1;font-size:0.8rem;color:var(--text-muted);">${s.l}</div>
+                                    <div style="width:120px;background:var(--bg-muted, rgba(255,255,255,0.05));border-radius:3px;height:8px;overflow:hidden;">
+                                        <div style="height:100%;width:${total > 0 ? (s.c/total*100) : 0}%;background:${s.cl};border-radius:3px;"></div>
+                                    </div>
+                                    <div style="font-size:0.75rem;font-weight:600;width:24px;text-align:right;">${s.c}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div style="background:var(--bg-elevated, #1a1a2e);border:1px solid var(--border);border-radius:12px;padding:1.25rem;">
+                            <h4 style="font-size:0.8125rem;margin-bottom:1rem;">Pipeline prospects</h4>
+                            ${projectProspects.length > 0 ? ['lead','contacted','meeting','proposal','won'].map(s => {
+                                const cnt = projectProspects.filter(p => p.status === s).length;
+                                const colors = {lead:'var(--text-muted)',contacted:'var(--accent)',meeting:'var(--orange)',proposal:'var(--purple)',won:'var(--green)'};
+                                return cnt > 0 ? `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                                    <div style="flex:1;font-size:0.8rem;color:var(--text-muted);text-transform:capitalize;">${s}</div>
+                                    <div style="font-size:0.75rem;font-weight:600;color:${colors[s] || 'var(--text-muted)'};">${cnt}</div>
+                                </div>` : '';
+                            }).join('') : '<div style="font-size:0.8rem;color:var(--text-dim);">Aucun prospect lie</div>'}
+                        </div>
+                    </div>
+                    ${project.start_date || project.target_date ? `<div style="margin-top:1rem;font-size:0.8rem;color:var(--text-dim);">${project.start_date ? 'Debut: ' + new Date(project.start_date).toLocaleDateString('fr-FR') : ''} ${project.target_date ? ' → Cible: ' + new Date(project.target_date).toLocaleDateString('fr-FR') : ''}</div>` : ''}
+                `;
+            } else if (tab === 'prospects') {
+                contentEl.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                        <h4 style="font-size:0.875rem;">${projectProspects.length} prospect${projectProspects.length !== 1 ? 's' : ''} lie${projectProspects.length !== 1 ? 's' : ''}</h4>
+                        <div style="display:flex;gap:0.5rem;align-items:center;">
+                            <select id="project-add-prospect" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.375rem 0.5rem;color:var(--text);font-size:0.8rem;">
+                                <option value="">+ Lier un prospect</option>
+                                ${prospects.filter(p => !projectProspectIds.includes(p.id)).map(p => `<option value="${p.id}">${p.company || p.name}</option>`).join('')}
+                            </select>
+                            <button class="btn btn-primary" style="font-size:0.75rem;padding:0.375rem 0.75rem;" onclick="addProspectToCurrentProject()">Ajouter</button>
+                        </div>
+                    </div>
+                    <table style="width:100%;border-collapse:collapse;font-size:0.8125rem;">
+                        <thead><tr style="border-bottom:1px solid var(--border);">
+                            <th style="text-align:left;padding:0.5rem;color:var(--text-muted);font-weight:500;">Entreprise</th>
+                            <th style="text-align:left;padding:0.5rem;color:var(--text-muted);font-weight:500;">Statut</th>
+                            <th style="text-align:left;padding:0.5rem;color:var(--text-muted);font-weight:500;">Valeur</th>
+                            <th style="text-align:center;padding:0.5rem;width:40px;"></th>
+                        </tr></thead>
+                        <tbody>
+                            ${projectProspects.map(p => `
+                                <tr style="border-bottom:1px solid var(--border);">
+                                    <td style="padding:0.5rem;font-weight:500;">${p.company || p.name}</td>
+                                    <td style="padding:0.5rem;"><span class="badge" style="font-size:0.65rem;">${p.status}</span></td>
+                                    <td style="padding:0.5rem;">${p.value ? Number(p.value).toLocaleString('fr-FR') + ' XPF' : '-'}</td>
+                                    <td style="padding:0.5rem;text-align:center;">
+                                        <button class="btn btn-ghost" onclick="removeProspectFromCurrentProject('${p.id}')" style="padding:2px 6px;color:var(--red);font-size:0.7rem;" title="Retirer">&times;</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                            ${projectProspects.length === 0 ? '<tr><td colspan="4" style="padding:1.5rem;text-align:center;color:var(--text-dim);">Aucun prospect lie a ce projet</td></tr>' : ''}
+                        </tbody>
+                    </table>
+                `;
+            } else if (tab === 'tasks') {
+                const milestones = projectTasks.filter(t => t.isMilestone);
+                const regularTasks = projectTasks.filter(t => !t.isMilestone);
+                contentEl.innerHTML = `
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                        <h4 style="font-size:0.875rem;">${projectTasks.length} tache${projectTasks.length !== 1 ? 's' : ''}</h4>
+                        <button class="btn btn-primary" style="font-size:0.75rem;padding:0.375rem 0.75rem;" onclick="openTaskModal(); taskModalSelectedProjects=['${project.id}']; renderTaskProjectChips();">+ Nouvelle tache</button>
+                    </div>
+                    ${milestones.length > 0 ? `
+                        <div style="margin-bottom:1rem;">
+                            <div style="font-size:0.75rem;font-weight:600;color:var(--gold, #f59e0b);margin-bottom:0.5rem;">MILESTONES</div>
+                            ${milestones.map(t => renderProjectTaskRow(t)).join('')}
+                        </div>
+                    ` : ''}
+                    ${['À faire', 'En cours', 'Terminé'].map(status => {
+                        const tasks = regularTasks.filter(t => t.status === status);
+                        if (tasks.length === 0) return '';
+                        const statusColors = {'À faire':'var(--text-muted)', 'En cours':'var(--accent)', 'Terminé':'var(--green)'};
+                        return `
+                            <div style="margin-bottom:1rem;">
+                                <div style="font-size:0.75rem;font-weight:600;color:${statusColors[status]};margin-bottom:0.5rem;">${status.toUpperCase()} (${tasks.length})</div>
+                                ${tasks.map(t => renderProjectTaskRow(t)).join('')}
+                            </div>
+                        `;
+                    }).join('')}
+                `;
+            } else if (tab === 'timeline') {
+                const timelineTasks = projectTasks.filter(t => t.dueDate).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+                const grouped = {};
+                timelineTasks.forEach(t => {
+                    const month = new Date(t.dueDate).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                    if (!grouped[month]) grouped[month] = [];
+                    grouped[month].push(t);
+                });
+
+                contentEl.innerHTML = `
+                    <div style="position:relative;padding-left:2rem;">
+                        <div style="position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border);"></div>
+                        ${Object.entries(grouped).map(([month, tasks]) => `
+                            <div style="margin-bottom:1.5rem;">
+                                <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:capitalize;margin-bottom:0.75rem;position:relative;">
+                                    <div style="position:absolute;left:-2rem;top:2px;width:18px;height:18px;background:var(--bg-elevated, #1a1a2e);border:2px solid var(--accent);border-radius:50%;"></div>
+                                    ${month}
+                                </div>
+                                ${tasks.map(t => {
+                                    const statusColors = {'À faire':'var(--text-muted)', 'En cours':'var(--accent)', 'Terminé':'var(--green)'};
+                                    const dotSize = t.isMilestone ? '12px' : '8px';
+                                    const dotColor = t.isMilestone ? 'var(--gold, #f59e0b)' : (statusColors[t.status] || 'var(--text-muted)');
+                                    return `
+                                        <div style="display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:0.625rem;position:relative;">
+                                            <div style="position:absolute;left:-2rem;top:4px;width:${dotSize};height:${dotSize};background:${dotColor};border-radius:50%;margin-left:${t.isMilestone ? '-2px' : '0'};"></div>
+                                            <div style="flex:1;">
+                                                <div style="font-size:0.8125rem;font-weight:${t.isMilestone ? '600' : '400'};">${t.isMilestone ? '🏁 ' : ''}${t.title}</div>
+                                                <div style="font-size:0.7rem;color:var(--text-dim);">${new Date(t.dueDate).toLocaleDateString('fr-FR', {day:'numeric', month:'short'})} ${t.assignee ? '• ' + t.assignee : ''}</div>
+                                            </div>
+                                            <span class="badge" style="font-size:0.6rem;background:${statusColors[t.status] || 'var(--text-muted)'}22;color:${statusColors[t.status] || 'var(--text-muted)'};">${t.status}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `).join('')}
+                        ${timelineTasks.length === 0 ? '<div style="color:var(--text-dim);padding:1.5rem 0;">Aucune tache avec date d\'echeance</div>' : ''}
+                    </div>
+                `;
+            } else if (tab === 'activity') {
+                try {
+                    const allActivity = await supabase.getRecentActivity(100);
+                    const projectTaskIds = projectTasks.map(t => t.id);
+                    const projectActivity = allActivity.filter(a =>
+                        (a.entity_type === 'project' && a.entity_id === project.id) ||
+                        (a.entity_type === 'task' && projectTaskIds.includes(a.entity_id)) ||
+                        (a.entity_type === 'prospect' && projectProspectIds.includes(a.entity_id))
+                    ).slice(0, 30);
+
+                    contentEl.innerHTML = `
+                        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                            ${projectActivity.map(a => `
+                                <div style="display:flex;gap:0.75rem;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.8rem;">
+                                    <div style="color:var(--text-dim);font-size:0.7rem;min-width:100px;">${new Date(a.created_at).toLocaleDateString('fr-FR', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'})}</div>
+                                    <div style="flex:1;"><strong>${a.user_name}</strong> ${a.action} ${a.entity_type} <em>${a.entity_name || ''}</em></div>
+                                </div>
+                            `).join('')}
+                            ${projectActivity.length === 0 ? '<div style="color:var(--text-dim);padding:1.5rem 0;text-align:center;">Aucune activite pour ce projet</div>' : ''}
+                        </div>
+                    `;
+                } catch (err) {
+                    contentEl.innerHTML = '<div style="color:var(--red);">Erreur chargement activite</div>';
+                }
+            }
+        }
+
+        function renderProjectTaskRow(t) {
+            const statusColors = {'À faire':'var(--text-muted)', 'En cours':'var(--accent)', 'Terminé':'var(--green)'};
+            const dueStr = t.dueDate ? new Date(t.dueDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '';
+            return `
+                <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem 0.625rem;border:1px solid var(--border);border-radius:8px;margin-bottom:0.375rem;cursor:pointer;" onclick="openTaskModal('${t.id}')">
+                    <div style="width:8px;height:8px;border-radius:50%;background:${statusColors[t.status] || 'var(--text-muted)'};flex-shrink:0;"></div>
+                    <div style="flex:1;font-size:0.8125rem;${t.status === 'Terminé' ? 'text-decoration:line-through;opacity:0.6;' : ''}">${t.isMilestone ? '🏁 ' : ''}${t.title}</div>
+                    ${t.assignee ? `<div style="width:20px;height:20px;border-radius:50%;background:var(--accent);color:white;font-size:0.55rem;display:flex;align-items:center;justify-content:center;font-weight:600;" title="${t.assignee}">${t.assignee.charAt(0)}</div>` : ''}
+                    ${dueStr ? `<span style="font-size:0.7rem;color:var(--text-dim);">${dueStr}</span>` : ''}
+                </div>
+            `;
+        }
+
+        async function addProspectToCurrentProject() {
+            const select = document.getElementById('project-add-prospect');
+            const prospectId = select?.value;
+            if (!prospectId || !currentProjectDetailId) return;
+            try {
+                await supabase.addProspectToProject(currentProjectDetailId, prospectId);
+                await loadDataFromSupabase();
+                switchProjectTab('prospects');
+                showToast('Prospect lie au projet!');
+            } catch (err) {
+                console.error('Erreur ajout prospect:', err);
+                showToast('Erreur ajout prospect', 'error');
+            }
+        }
+
+        async function removeProspectFromCurrentProject(prospectId) {
+            if (!currentProjectDetailId) return;
+            try {
+                await supabase.removeProspectFromProject(currentProjectDetailId, prospectId);
+                await loadDataFromSupabase();
+                switchProjectTab('prospects');
+                showToast('Prospect retire du projet');
+            } catch (err) {
+                console.error('Erreur retrait prospect:', err);
+                showToast('Erreur retrait prospect', 'error');
+            }
+        }
+
+        function openProjectModal(projectId = null) {
+            const modal = document.getElementById('project-modal');
+            const titleEl = document.getElementById('project-modal-title');
+
+            // Peupler dropdown assignee avec team members
+            const assigneeSelect = document.getElementById('project-assignee');
+            assigneeSelect.innerHTML = '<option value="">Non assigne</option>' +
+                teamMembers.map(m => `<option value="${m.id}">${m.display_name}</option>`).join('');
+
+            if (projectId) {
+                const project = allProjects.find(p => p.id === projectId);
+                if (!project) return;
+                titleEl.textContent = 'Modifier le projet';
+                document.getElementById('project-edit-id').value = projectId;
+                document.getElementById('project-name').value = project.name;
+                document.getElementById('project-description').value = project.description || '';
+                document.getElementById('project-status').value = project.status;
+                document.getElementById('project-color').value = project.color || '#5E6AD2';
+                document.getElementById('project-priority').value = project.priority || 'medium';
+                assigneeSelect.value = project.assigned_to || '';
+                document.getElementById('project-start-date').value = project.start_date || '';
+                document.getElementById('project-target-date').value = project.target_date || '';
+            } else {
+                titleEl.textContent = 'Nouveau Projet';
+                document.getElementById('project-edit-id').value = '';
+                document.getElementById('project-name').value = '';
+                document.getElementById('project-description').value = '';
+                document.getElementById('project-status').value = 'active';
+                document.getElementById('project-color').value = '#5E6AD2';
+                document.getElementById('project-priority').value = 'medium';
+                assigneeSelect.value = '';
+                document.getElementById('project-start-date').value = '';
+                document.getElementById('project-target-date').value = '';
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeProjectModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('project-modal').style.display = 'none';
+        }
+
+        async function saveProject(event) {
+            event.preventDefault();
+            const id = document.getElementById('project-edit-id').value;
+            const name = document.getElementById('project-name').value.trim();
+            if (!name) { showToast('Le nom est obligatoire'); return; }
+
+            const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const assigneeVal = document.getElementById('project-assignee').value;
+            const data = {
+                name,
+                slug,
+                description: document.getElementById('project-description').value.trim(),
+                status: document.getElementById('project-status').value,
+                color: document.getElementById('project-color').value,
+                priority: document.getElementById('project-priority').value,
+                assigned_to: assigneeVal || null,
+                start_date: document.getElementById('project-start-date').value || null,
+                target_date: document.getElementById('project-target-date').value || null
+            };
+
+            try {
+                if (id) {
+                    await supabase.updateProject(id, data);
+                    showToast('Projet mis a jour!');
+                } else {
+                    await supabase.createProject(data);
+                    showToast('Projet cree!');
+                }
+                closeProjectModal();
+                await loadDataFromSupabase();
+                if (document.getElementById('view-projects').classList.contains('active')) renderProjectsView();
+                if (currentProjectDetailId) renderProjectDetail(currentProjectDetailId);
+            } catch (err) {
+                console.error('Erreur save project:', err);
+                showToast('Erreur sauvegarde projet', 'error');
+            }
+        }
+
+        function archiveProject(projectId) {
+            if (!projectId) return;
+            const project = allProjects.find(p => p.id === projectId);
+            showConfirmModal(
+                'Archiver le projet',
+                `Archiver le projet "${project?.name}" ? Il ne sera plus visible dans les vues actives.`,
+                'Archiver',
+                async () => {
+                    try {
+                        await supabase.updateProject(projectId, { status: 'archived' });
+                        showToast('Projet archive');
+                        await loadDataFromSupabase();
+                        showView('projects');
+                    } catch (err) {
+                        console.error('Erreur archivage:', err);
+                        showToast('Erreur archivage', 'error');
+                    }
+                }
+            );
+        }
+
+        function deleteProjectPermanently(projectId) {
+            if (!projectId) return;
+            const project = allProjects.find(p => p.id === projectId);
+            showConfirmModal(
+                'Supprimer definitivement',
+                `Supprimer le projet "${project?.name}" ? Cette action est irreversible. Les liens avec les prospects et taches seront aussi supprimes.`,
+                'Supprimer',
+                async () => {
+                    try {
+                        await supabase.deleteProject(projectId);
+                        showToast('Projet supprime');
+                        await loadDataFromSupabase();
+                        showView('projects');
+                    } catch (err) {
+                        console.error('Erreur suppression:', err);
+                        showToast('Erreur suppression projet', 'error');
+                    }
+                }
+            );
         }
 
         function filterTasks() {
@@ -11216,8 +12218,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         function getFilteredTasks() {
             let tasks = airtableTasks.filter(t => {
                 const projectMatch = currentTaskProjectFilter === 'all' ||
-                    (currentTaskProjectFilter === 'other' && !['ATN', 'PACIFIKAI', 'HVC', 'COWAN'].includes(t.project)) ||
-                    t.project === currentTaskProjectFilter;
+                    (currentTaskProjectFilter === 'other' && (!t.projectIds || t.projectIds.length === 0)) ||
+                    (t.projectIds && t.projectIds.includes(currentTaskProjectFilter));
                 const priorityMatch = currentTaskPriorityFilter === 'all' || t.priority === currentTaskPriorityFilter;
                 const assigneeMatch = currentTaskAssigneeFilter === 'all' ||
                     (currentTaskAssigneeFilter === 'unassigned' && !t.assignee) ||
@@ -11247,7 +12249,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                     tasks.sort((a, b) => (a.assignee || 'ZZZ').localeCompare(b.assignee || 'ZZZ'));
                     break;
                 case 'project':
-                    tasks.sort((a, b) => (a.project || 'ZZZ').localeCompare(b.project || 'ZZZ'));
+                    tasks.sort((a, b) => (a.projectName || 'ZZZ').localeCompare(b.projectName || 'ZZZ'));
                     break;
                 case 'created':
                     tasks.sort((a, b) => (b.id || '').localeCompare(a.id || ''));
@@ -11337,13 +12339,14 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             return `
                 <div class="pipeline-card task-card ${isOverdue ? 'task-kanban-overdue' : ''}" data-task-id="${t.id}" draggable="true" onclick="openTaskModal('${t.id}')" style="cursor: pointer;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
-                        <div class="pipeline-card-name" style="flex: 1;">${t.title.replace(/^\[[^\]]+\]\s*/, '')}</div>
+                        <div class="pipeline-card-name" style="flex: 1;">${t.title}</div>
                         ${t.assignee ? `<div style="width: 24px; height: 24px; border-radius: 50%; background: ${assigneeColor}; color: white; font-size: 0.625rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0;" title="${t.assignee}">${assigneeInitial}</div>` : ''}
                     </div>
                     ${t.description ? `<div class="pipeline-card-company" style="font-size: 0.7rem; opacity: 0.7; margin-top: 0.25rem;">${t.description.substring(0, 60)}${t.description.length > 60 ? '...' : ''}</div>` : ''}
                     <div class="pipeline-card-footer" style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.25rem; align-items: center;">
-                        ${t.project !== 'other' ? `<span class="badge" style="background: var(--purple); font-size: 0.6rem; padding: 0.1rem 0.3rem;">${t.project}</span>` : ''}
+                        ${t.projects && t.projects.length > 0 ? t.projects.map(p => `<span class="badge" style="background:${p.color}22;color:${p.color};font-size:0.6rem;padding:0.1rem 0.3rem;">${p.name}</span>`).join('') : ''}
                         ${dueStr ? `<span style="font-size: 0.65rem; color: ${isOverdue ? 'var(--red)' : 'var(--text-muted)'};">${isOverdue ? '⚠ ' : ''}${dueStr}</span>` : ''}
+                        ${t.isMilestone ? `<span class="badge" style="background: rgba(245,158,11,0.2); color: #f59e0b; font-size: 0.6rem; padding: 0.1rem 0.3rem;">Milestone</span>` : ''}
                         ${t.priority === 'Urgent' ? `<span class="badge" style="background: rgba(239, 68, 68, 0.2); color: var(--red); font-size: 0.6rem; padding: 0.1rem 0.3rem;">Urgent</span>` : ''}
                         ${t.hours ? `<span style="font-size: 0.6rem; color: var(--text-dim);">${t.hours}h</span>` : ''}
                     </div>
@@ -11383,14 +12386,14 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                         </div>
                     </td>
                     <td style="cursor:pointer;${isDone ? 'text-decoration:line-through;' : ''}" onclick="openTaskModal('${t.id}')">
-                        <div style="font-weight:500;">${t.title.replace(/^\[[^\]]+\]\s*/, '')}</div>
+                        <div style="font-weight:500;">${t.title}</div>
                         ${t.description ? `<div style="font-size:0.7rem;color:var(--text-dim);margin-top:2px;">${t.description.substring(0, 80)}${t.description.length > 80 ? '...' : ''}</div>` : ''}
                     </td>
                     <td><span style="font-size:0.7rem;color:${statusColors[t.status] || 'var(--text-muted)'};font-weight:500;">${t.status}</span></td>
                     <td><span class="quick-priority ${t.priority}" onclick="event.stopPropagation(); quickChangePriority('${t.id}', '${nextPriority[t.priority] || 'Normal'}')">${t.priority}</span></td>
                     <td style="font-size:0.75rem;color:${dueColor};font-weight:${isOverdue ? '600' : '400'};">${isOverdue ? '⚠ ' : ''}${dueStr}</td>
                     <td>${t.assignee ? `<div style="width:22px;height:22px;border-radius:50%;background:${assigneeColor};color:white;font-size:0.6rem;font-weight:600;display:flex;align-items:center;justify-content:center;" title="${t.assignee}">${assigneeInitial}</div>` : ''}</td>
-                    <td>${t.project !== 'other' ? `<span class="badge" style="background:var(--purple);font-size:0.6rem;padding:0.1rem 0.3rem;">${t.project}</span>` : '-'}</td>
+                    <td>${t.projects && t.projects.length > 0 ? t.projects.map(p => `<span class="badge" style="background:${p.color}22;color:${p.color};font-size:0.6rem;padding:0.1rem 0.3rem;">${p.name}</span>`).join(' ') : '-'}</td>
                     <td style="text-align:center;">
                         <button class="btn btn-ghost" onclick="event.stopPropagation(); openTaskModal('${t.id}')" style="padding:2px 6px;font-size:0.7rem;" title="Modifier">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -11458,8 +12461,9 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
                 // Fill form
                 document.getElementById('task-edit-id').value = taskId;
-                document.getElementById('task-title').value = task.title.replace(/^\[[^\]]+\]\s*/, '');
-                document.getElementById('task-project').value = task.project !== 'other' ? task.project : '';
+                document.getElementById('task-title').value = task.title;
+                taskModalSelectedProjects = [...(task.projectIds || [])];
+                renderTaskProjectChips();
                 document.getElementById('task-priority').value = task.priority;
                 document.getElementById('task-assignee').value = task.assignee || '';
                 document.getElementById('task-due-date').value = task.dueDate || '';
@@ -11484,6 +12488,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 form.reset();
                 document.getElementById('task-status').value = 'À faire';
                 document.getElementById('task-priority').value = 'Normal';
+                taskModalSelectedProjects = [];
+                renderTaskProjectChips();
             }
 
             modal.style.display = 'flex';
@@ -11508,7 +12514,6 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
             const taskId = document.getElementById('task-edit-id').value;
             const title = document.getElementById('task-title').value.trim();
-            const project = document.getElementById('task-project').value;
             const priority = document.getElementById('task-priority').value;
             const assignee = document.getElementById('task-assignee').value;
             const dueDate = document.getElementById('task-due-date').value;
@@ -11521,9 +12526,6 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 showToast('Le titre est obligatoire');
                 return;
             }
-
-            // Build full title with project prefix
-            const fullTitle = project ? `[${project}] ${title}` : title;
 
             // Map status and priority to Supabase format
             const statusMap = {
@@ -11539,7 +12541,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             };
 
             const taskData = {
-                titre: fullTitle,
+                titre: title,
+                project_id: taskModalSelectedProjects[0] || null,
                 description: description,
                 status: statusMap[status] || 'todo',
                 priorite: priorityMap[priority] || 'medium',
@@ -11550,16 +12553,19 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             };
 
             try {
+                let savedTaskId;
                 if (taskId) {
-                    // Update existing task
                     await supabase.updateTask(taskId, taskData);
-                    showToast('Tache mise a jour!');
+                    savedTaskId = taskId;
                 } else {
-                    // Create new task
-                    await supabase.createTask(taskData);
-                    showToast('Tache creee!');
+                    const result = await supabase.createTask(taskData);
+                    savedTaskId = result.id;
                 }
 
+                // Update junction table (many-to-many)
+                await supabase.setTaskProjects(savedTaskId, taskModalSelectedProjects);
+
+                showToast(taskId ? 'Tache mise a jour!' : 'Tache creee!');
                 closeTaskModal();
                 await loadDataFromSupabase();
                 renderTasks();
@@ -11797,10 +12803,11 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
         // Créer une tâche avec tous les détails (utilisé par MANA)
         async function createTaskInAirtableWithDetails(taskData) {
             try {
-                // Build title with project prefix if provided
-                let title = taskData.title;
-                if (taskData.project && !title.startsWith('[')) {
-                    title = `[${taskData.project}] ${title}`;
+                // Resolve project_id from project slug/name if provided
+                let projectId = null;
+                if (taskData.project) {
+                    const p = allProjects.find(pr => pr.slug === taskData.project || pr.name === taskData.project);
+                    projectId = p ? p.id : null;
                 }
 
                 // Map priority values
@@ -11813,7 +12820,8 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 };
 
                 const newTask = {
-                    titre: title,
+                    titre: taskData.title,
+                    project_id: projectId,
                     description: taskData.description || '',
                     status: 'todo',
                     priorite: priorityMap[taskData.priority?.toLowerCase()] || 'medium',
@@ -11826,6 +12834,12 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
                 const result = await supabase.createTask(newTask);
                 console.log('[Tasks] Task created successfully:', result);
+
+                // Write to junction table
+                if (projectId && result?.id) {
+                    await supabase.addTaskToProject(result.id, projectId);
+                }
+
                 showToast('Tâche créée!');
 
                 // Reload tasks
@@ -12195,11 +13209,39 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             if (menu) menu.style.display = 'none';
         }
 
-        async function deleteProspectFromMenu(prospectId) {
-            closeContextMenu();
+        // === Confirm Modal (reusable) ===
+        let confirmModalCallback = null;
+
+        function showConfirmModal(title, message, actionLabel, callback) {
+            document.getElementById('confirm-modal-title').textContent = title;
+            document.getElementById('confirm-modal-message').textContent = message;
+            const actionBtn = document.getElementById('confirm-modal-action');
+            actionBtn.textContent = actionLabel || 'Supprimer';
+            confirmModalCallback = callback;
+            actionBtn.onclick = async () => {
+                actionBtn.disabled = true;
+                actionBtn.textContent = '...';
+                try {
+                    await callback();
+                } finally {
+                    actionBtn.disabled = false;
+                    actionBtn.textContent = actionLabel || 'Supprimer';
+                    closeConfirmModal();
+                }
+            };
+            document.getElementById('confirm-modal').style.display = 'flex';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').style.display = 'none';
+            confirmModalCallback = null;
+        }
+
+        // === Delete Prospect ===
+        async function executeDeleteProspect(prospectId) {
             const prospect = prospects.find(p => p.id === prospectId);
             if (!prospect) return;
-            if (!confirm(`Supprimer "${prospect.company || prospect.name}" ?`)) return;
+            showToast('Suppression en cours...');
             try {
                 const deleteId = prospect.supabaseId || prospect.id;
                 if (prospect.source === 'messenger') {
@@ -12211,11 +13253,37 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
                 renderProspectsViews();
                 renderPipeline();
                 renderStats();
-                showToast('Prospect supprime');
+                showToast('Prospect supprime!');
             } catch (err) {
-                console.error('[Delete] Error:', err);
-                showToast('Erreur suppression');
+                console.error('Erreur suppression prospect:', err);
+                showToast('Erreur suppression prospect', 'error');
             }
+        }
+
+        function deleteProspectFromMenu(prospectId) {
+            closeContextMenu();
+            const prospect = prospects.find(p => p.id === prospectId);
+            if (!prospect) return;
+            showConfirmModal(
+                'Supprimer ce prospect',
+                `"${prospect.company || prospect.name}" sera definitivement supprime, ainsi que ses taches et liens projet associes.`,
+                'Supprimer',
+                () => executeDeleteProspect(prospectId)
+            );
+        }
+
+        function confirmDeleteProspect() {
+            if (!currentProspectId) return;
+            const prospectId = currentProspectId;
+            const prospect = prospects.find(p => p.id === prospectId);
+            if (!prospect) return;
+            closeProspectModal();
+            showConfirmModal(
+                'Supprimer ce prospect',
+                `"${prospect.company || prospect.name}" sera definitivement supprime, ainsi que ses taches et liens projet associes.`,
+                'Supprimer',
+                () => executeDeleteProspect(prospectId)
+            );
         }
 
         async function quickAssignProspect(prospectId, memberId) {
@@ -12429,6 +13497,14 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             // Source filter
             if (currentSourceFilter !== 'all') {
                 filtered = filtered.filter(p => (p.source || 'manual') === currentSourceFilter);
+            }
+
+            // Global project filter
+            if (currentGlobalProjectFilter) {
+                filtered = filtered.filter(p => {
+                    const pProjects = prospectProjectMap[p.id] || [];
+                    return pProjects.includes(currentGlobalProjectFilter);
+                });
             }
 
             // Assets filter
@@ -13131,6 +14207,32 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             // Activity Timeline
             document.getElementById('modal-timeline').innerHTML = renderProspectTimeline(id);
 
+            // Populate prospect projects
+            const prospectProjects = (prospectProjectMap[id] || []).map(pid => allProjects.find(p => p.id === pid)).filter(Boolean);
+            const projectsListEl = document.getElementById('prospect-projects-list');
+            const addProjectSelect = document.getElementById('prospect-add-project');
+            if (projectsListEl) {
+                if (prospectProjects.length > 0) {
+                    projectsListEl.innerHTML = prospectProjects.map(p => `
+                        <span class="badge" style="background:${p.color}22;color:${p.color};font-size:0.75rem;padding:0.25rem 0.625rem;display:inline-flex;align-items:center;gap:0.375rem;cursor:pointer;" onclick="openProjectDetail('${p.id}')">
+                            <span style="width:8px;height:8px;border-radius:2px;background:${p.color};display:inline-block;"></span>
+                            ${p.name}
+                            <span onclick="event.stopPropagation(); removeProjectFromCurrentProspect('${p.id}')" style="cursor:pointer;font-size:0.9rem;opacity:0.6;line-height:1;" title="Retirer">&times;</span>
+                        </span>
+                    `).join('');
+                } else {
+                    projectsListEl.innerHTML = '<span style="font-size:0.75rem;color:var(--text-dim);">Aucun projet lie</span>';
+                }
+            }
+            if (addProjectSelect) {
+                const availableProjects = allProjects.filter(p => !(prospectProjectMap[id] || []).includes(p.id));
+                addProjectSelect.innerHTML = '<option value="">+ Lier un projet</option>' + availableProjects.map(p =>
+                    `<option value="${p.id}">${p.name}</option>`).join('');
+            }
+
+            // Prospect tasks
+            renderProspectTasks();
+
             // Reset to first tab
             switchProspectTab('info');
 
@@ -13150,6 +14252,64 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
 
             // Reset chat suggestions to default
             updateChatSuggestions();
+        }
+
+        function renderProspectTasks() {
+            const listEl = document.getElementById('prospect-tasks-list');
+            const badgeEl = document.getElementById('tab-badge-tasks');
+            if (!listEl || !currentProspectId) return;
+
+            const prospect = prospects.find(p => p.id === currentProspectId);
+            if (!prospect) return;
+
+            const prospectTasks = airtableTasks.filter(t =>
+                t.prospectId === currentProspectId ||
+                (t.prospectName && prospect.company && t.prospectName.toLowerCase() === prospect.company.toLowerCase())
+            );
+
+            if (badgeEl) badgeEl.textContent = prospectTasks.length;
+
+            if (prospectTasks.length === 0) {
+                listEl.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:2rem;font-size:0.8rem;">Aucune tache liee a ce prospect</div>';
+                return;
+            }
+
+            const groups = { 'A faire': [], 'En cours': [], 'Terminé': [] };
+            prospectTasks.forEach(t => {
+                const key = t.status === 'Terminé' ? 'Terminé' : (t.status === 'En cours' ? 'En cours' : 'A faire');
+                groups[key].push(t);
+            });
+
+            const priorityColors = { Urgent: '#ef4444', Normal: '#5E6AD2', Faible: '#6b7280' };
+            const statusIcons = { 'A faire': '○', 'En cours': '◐', 'Terminé': '●' };
+
+            listEl.innerHTML = Object.entries(groups).filter(([_, tasks]) => tasks.length > 0).map(([group, tasks]) => `
+                <div style="margin-bottom:1rem;">
+                    <div style="font-size:0.7rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;margin-bottom:0.375rem;">${group} (${tasks.length})</div>
+                    ${tasks.map(t => `
+                        <div onclick="openTaskModal('${t.supabaseId || t.id}')" style="cursor:pointer;display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border-radius:6px;border:1px solid var(--border);margin-bottom:0.25rem;transition:background 0.15s;" onmouseenter="this.style.background='rgba(255,255,255,0.03)'" onmouseleave="this.style.background=''">
+                            <span style="font-size:0.875rem;color:var(--text-dim);">${statusIcons[group] || '○'}</span>
+                            <span style="flex:1;font-size:0.8rem;${t.status === 'Terminé' ? 'text-decoration:line-through;opacity:0.6;' : ''}">${t.title}</span>
+                            <span style="width:8px;height:8px;border-radius:50%;background:${priorityColors[t.priority] || '#6b7280'};flex-shrink:0;" title="${t.priority || ''}"></span>
+                            ${t.dueDate ? `<span style="font-size:0.65rem;color:var(--text-dim);">${new Date(t.dueDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        function openTaskModalForProspect() {
+            if (!currentProspectId) return;
+            const prospect = prospects.find(p => p.id === currentProspectId);
+            closeProspectModal();
+            openTaskModal(null);
+            // Pre-fill prospect after modal opens
+            setTimeout(() => {
+                const prospectSelect = document.getElementById('task-prospect');
+                if (prospectSelect && prospect) {
+                    prospectSelect.value = currentProspectId;
+                }
+            }, 100);
         }
 
         function switchProspectTab(tabName) {
@@ -16679,7 +17839,7 @@ IMPORTANT: JSON uniquement, pas de texte autour.`
             const tasksList = airtableTasks.map(t => {
                 const dueStr = t.dueDate ? ` (due: ${t.dueDate})` : '';
                 const assignStr = t.assignee ? ` [${t.assignee}]` : '';
-                const projectStr = t.project && t.project !== 'other' ? ` {${t.project}}` : '';
+                const projectStr = t.projects && t.projects.length > 0 ? ` {${t.projects.map(p => p.name).join(', ')}}` : '';
                 return `- [${t.status}] ${t.title}${dueStr}${assignStr}${projectStr} - ${t.priority}`;
             }).join('\n');
 
@@ -18713,24 +19873,12 @@ Reponds UNIQUEMENT avec le texte du post.`;
                     openProspectDetail(prospect.id);
                     break;
                 case 'delete-prospect':
-                    if (confirm(`Supprimer "${prospect.company || prospect.name}" ? Cette action est irreversible.`)) {
-                        try {
-                            const deleteId = prospect.supabaseId || prospect.id;
-                            if (prospect.source === 'messenger') {
-                                await supabase.delete('messenger_prospects', deleteId);
-                            } else {
-                                await supabase.deleteProspect(deleteId);
-                            }
-                            prospects = prospects.filter(p => p.id !== prospect.id);
-                            renderProspectsViews();
-                            renderPipeline();
-                            renderStats();
-                            showToast(`"${prospect.company || prospect.name}" supprime`);
-                        } catch (err) {
-                            console.error('[Delete] Error:', err);
-                            showToast('Erreur: ' + (err.message || 'Suppression echouee'));
-                        }
-                    }
+                    showConfirmModal(
+                        'Supprimer ce prospect',
+                        `"${prospect.company || prospect.name}" sera definitivement supprime, ainsi que ses taches et liens projet associes.`,
+                        'Supprimer',
+                        () => executeDeleteProspect(prospect.id)
+                    );
                     break;
             }
         }
@@ -18895,7 +20043,7 @@ Reponds UNIQUEMENT avec le texte du post.`;
                         </div>
                         <div class="focus-task-content">
                             <div class="focus-task-title">${t.title}</div>
-                            <div class="focus-task-meta">${t.project || 'PACIFIKAI'}${t.dueDate ? ' • Echeance: ' + t.dueDate : ''}</div>
+                            <div class="focus-task-meta">${t.projects && t.projects.length > 0 ? t.projects.map(p => p.name).join(', ') : 'Sans projet'}${t.dueDate ? ' • Echeance: ' + t.dueDate : ''}</div>
                         </div>
                         <span class="focus-task-priority urgent">Urgent</span>
                     </div>

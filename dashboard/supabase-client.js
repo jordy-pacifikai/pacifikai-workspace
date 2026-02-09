@@ -711,6 +711,120 @@ class SupabaseClient {
         return await this.update('veille_appels_offres', id, { ai_pacifikai_analysis: analysis });
     }
 
+    // === PROJECTS ===
+
+    async getProjects() {
+        return await this.select('projects', {}, {
+            order: 'name.asc',
+            select: '*,assignee:team_members!projects_assigned_to_fkey(id,display_name,avatar_color)'
+        });
+    }
+
+    async getProject(id) {
+        const results = await this.select('projects', { id: `eq.${id}` });
+        return results[0];
+    }
+
+    async createProject(data) {
+        const result = await this.insert('projects', {
+            ...data,
+            owner_id: this.user?.id
+        });
+        await this.logActivity('create', 'project', result[0].id, data.name);
+        return result[0];
+    }
+
+    async updateProject(id, data) {
+        const project = await this.getProject(id);
+        const result = await this.update('projects', id, data);
+        await this.logActivity('update', 'project', id, project?.name, { changes: data });
+        return result[0];
+    }
+
+    async deleteProject(id) {
+        const project = await this.getProject(id);
+        await this.delete('projects', id);
+        await this.logActivity('delete', 'project', id, project?.name);
+    }
+
+    // === PROJECT-PROSPECT LINKS ===
+
+    async getProjectProspects(projectId) {
+        return await this.select('project_prospects', { project_id: `eq.${projectId}` }, {
+            select: '*,prospect:prospects(id,entreprise,secteur,status,priorite,valeur_estimee,assigned_to,email,telephone,contact)'
+        });
+    }
+
+    async getProspectProjects(prospectId) {
+        return await this.select('project_prospects', { prospect_id: `eq.${prospectId}` }, {
+            select: '*,project:projects(id,name,slug,color,status)'
+        });
+    }
+
+    async addProspectToProject(projectId, prospectId) {
+        const result = await this.insert('project_prospects', { project_id: projectId, prospect_id: prospectId });
+        return result[0];
+    }
+
+    async removeProspectFromProject(projectId, prospectId) {
+        const response = await fetch(
+            `${this.url}/rest/v1/project_prospects?project_id=eq.${projectId}&prospect_id=eq.${prospectId}`,
+            { method: 'DELETE', headers: this.getHeaders() }
+        );
+        if (!response.ok) throw new Error('Erreur suppression lien projet-prospect');
+        return true;
+    }
+
+    // === PROJECT TASKS ===
+
+    async getProjectTasks(projectId) {
+        const links = await this.select('task_projects', { project_id: `eq.${projectId}` }, { select: 'task_id' });
+        if (links.length === 0) return [];
+        const ids = links.map(l => l.task_id);
+        return await this.select('tasks', { id: `in.(${ids.join(',')})` }, {
+            order: 'due_date.asc.nullslast',
+            select: '*,prospect:prospects(id,entreprise),assignee:team_members!tasks_assigned_to_fkey(id,display_name,avatar_color)'
+        });
+    }
+
+    // === PROJECT-PROSPECT BULK ===
+
+    async getAllProjectProspectLinks() {
+        return await this.select('project_prospects', {}, { select: 'project_id,prospect_id' });
+    }
+
+    // === TASK-PROJECT LINKS (many-to-many) ===
+
+    async getAllTaskProjectLinks() {
+        return await this.select('task_projects', {}, { select: 'task_id,project_id' });
+    }
+
+    async getTaskProjects(taskId) {
+        return await this.select('task_projects', { task_id: `eq.${taskId}` }, {
+            select: '*,project:projects(id,name,slug,color,status)'
+        });
+    }
+
+    async addTaskToProject(taskId, projectId) {
+        return (await this.insert('task_projects', { task_id: taskId, project_id: projectId }))[0];
+    }
+
+    async removeTaskFromProject(taskId, projectId) {
+        const response = await fetch(
+            `${this.url}/rest/v1/task_projects?task_id=eq.${taskId}&project_id=eq.${projectId}`,
+            { method: 'DELETE', headers: this.getHeaders() }
+        );
+        if (!response.ok) throw new Error('Erreur suppression lien tache-projet');
+    }
+
+    async setTaskProjects(taskId, projectIds) {
+        await fetch(`${this.url}/rest/v1/task_projects?task_id=eq.${taskId}`,
+            { method: 'DELETE', headers: this.getHeaders() });
+        if (projectIds.length > 0) {
+            await this.insert('task_projects', projectIds.map(pid => ({ task_id: taskId, project_id: pid })));
+        }
+    }
+
     // === CLIENT INFRASTRUCTURES ===
 
     async getClientInfrastructures() {

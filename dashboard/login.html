@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PACIFIK'AI | Connexion</title>
+    <link rel="icon" type="image/png" href="https://pacifikai.com/assets/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f8f6f3;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+        }
+        .login-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 32px;
+            border: 1px solid #e8e5e0;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a3a3a;
+            letter-spacing: -0.5px;
+        }
+        .logo-text span {
+            color: #4a7c7c;
+        }
+        .logo-sub {
+            font-size: 13px;
+            color: #8a8a8a;
+            margin-top: 4px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #4a4a4a;
+            margin-bottom: 6px;
+        }
+        input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e8e5e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: #1a1a1a;
+            background: #f8f6f3;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+        input:focus {
+            border-color: #4a7c7c;
+            box-shadow: 0 0 0 3px rgba(26, 58, 58, 0.1);
+        }
+        input::placeholder {
+            color: #b0b0b0;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 11px 0;
+            background: linear-gradient(135deg, #1a3a3a 0%, #4a7c7c 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            margin-top: 8px;
+        }
+        .btn-login:hover {
+            opacity: 0.9;
+        }
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+        .btn-login:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .error-msg {
+            display: none;
+            background: rgba(196, 90, 90, 0.1);
+            color: #c45a5a;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(196, 90, 90, 0.2);
+        }
+        .error-msg.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <div class="logo-text">PACIFIK<span>'AI</span></div>
+                <div class="logo-sub">Dashboard CRM</div>
+            </div>
+
+            <div class="error-msg" id="error-msg"></div>
+
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="votre@email.com" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" placeholder="Mot de passe" required>
+                </div>
+                <button type="submit" class="btn-login" id="btn-login">Se connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://ogsimsfqwibcmotaeevb.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nc2ltc2Zxd2liY21vdGFlZXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyMzY3NDYsImV4cCI6MjA4NDgxMjc0Nn0.3UdAzq1GQYOlZRlZ7-pXVMVJMEjDmTd68jUjoJWeAEI';
+
+        // Check if already logged in
+        const stored = localStorage.getItem('supabase_session');
+        if (stored) {
+            try {
+                const session = JSON.parse(stored);
+                if (session.access_token) {
+                    window.location.href = 'index.html';
+                }
+            } catch(e) {}
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            const errorEl = document.getElementById('error-msg');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            btn.disabled = true;
+            btn.textContent = 'Connexion...';
+            errorEl.classList.remove('visible');
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error_description || error.message || 'Email ou mot de passe incorrect');
+                }
+
+                const data = await response.json();
+                localStorage.setItem('supabase_session', JSON.stringify(data));
+                window.location.href = 'index.html';
+            } catch (err) {
+                errorEl.textContent = err.message;
+                errorEl.classList.add('visible');
+                btn.disabled = false;
+                btn.textContent = 'Se connecter';
+            }
+        }
+    </script>
+</body>
+</html>
