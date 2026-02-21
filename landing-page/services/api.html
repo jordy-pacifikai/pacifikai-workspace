@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intégrations API | PACIFIK'AI</title>
+    <meta name="description" content="Connectez tous vos outils : CRM, facturation, calendrier, messaging. Un écosystème unifié.">
+    <link rel="canonical" href="https://pacifikai.com/services/api">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="PACIFIK'AI">
+    <meta property="og:title" content="Intégrations API | PACIFIK'AI">
+    <meta property="og:description" content="Connectez tous vos outils : CRM, facturation, calendrier, messaging. Un écosystème unifié.">
+    <meta property="og:url" content="https://pacifikai.com/services/api">
+    <meta property="og:image" content="https://pacifikai.com/assets/og-image.png">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Intégrations API | PACIFIK'AI">
+    <meta name="twitter:description" content="Connectez tous vos outils : CRM, facturation, calendrier, messaging. Un écosystème unifié.">
+    <meta name="twitter:image" content="https://pacifikai.com/assets/og-image.png">
+
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a0a12;
+            --bg-card: #0f1020;
+            --bg-card-hover: #151630;
+            --border: #1a1a2e;
+            --border-light: #252540;
+            --text: #ffffff;
+            --text-secondary: #8888aa;
+            --text-dim: #555570;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.4);
+            --accent-soft: rgba(59, 130, 246, 0.1);
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* ========== Animated Background ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%);
+        }
+
+        .bg-canvas {
+            position: absolute;
+            inset: 0;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            top: -200px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #f59e0b;
+            top: 40%;
+            right: -100px;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            bottom: 10%;
+            left: 20%;
+            animation-delay: -14s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 10px) scale(1.02); }
+        }
+
+        /* ========== Z-index layer ========== */
+        nav, .hero, .section, .cta-section, footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== Nav ========== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 42px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-cta {
+            padding: 0.6rem 1.2rem;
+            background: var(--text);
+            color: var(--bg);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent);
+            color: var(--text);
+        }
+
+        /* ========== Hero ========== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 60%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 600;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 .highlight {
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .hero-stat {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.2rem;
+            background: var(--accent-soft);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            animation: statPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes statPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.2); }
+            50% { box-shadow: 0 0 20px 4px rgba(59, 130, 246, 0.15); }
+        }
+
+        .hero-stat svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.8rem;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        /* ========== API Hero Animation ========== */
+        .api-visual {
+            width: 100%;
+            max-width: 520px;
+            height: 300px;
+            margin: 0 auto 2.5rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Central hub node */
+        .api-hub {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-card);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            box-shadow: 0 0 30px var(--accent-glow);
+            animation: hubPulse 3s ease-in-out infinite;
+        }
+
+        .api-hub svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        @keyframes hubPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+        }
+
+        /* Satellite app nodes */
+        .api-node {
+            width: 90px;
+            height: 90px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: absolute;
+            z-index: 2;
+        }
+
+        .api-node-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .api-node-icon svg {
+            width: 26px;
+            height: 26px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .api-node-label {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .api-node-status {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 7px;
+            height: 7px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 0.4; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            50% { opacity: 1; box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.3); }
+        }
+
+        /* Triangle positions: top, bottom-left, bottom-right */
+        .api-node:nth-child(1) {
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: nodePopLoop 6s ease infinite 0s;
+        }
+
+        .api-node:nth-child(2) {
+            bottom: 10px;
+            left: 40px;
+            animation: nodePopLoop 6s ease infinite 0.4s;
+        }
+
+        .api-node:nth-child(3) {
+            bottom: 10px;
+            right: 40px;
+            animation: nodePopLoop 6s ease infinite 0.8s;
+        }
+
+        @keyframes nodePopLoop {
+            0%, 100% { opacity: 0.4; transform: scale(0.9); }
+            10% { opacity: 1; transform: scale(1.05); }
+            20%, 65% { opacity: 1; transform: scale(1); }
+            80% { opacity: 0.4; transform: scale(0.9); }
+        }
+
+        .api-node:nth-child(1) {
+            animation-name: nodePopLoopTop;
+        }
+
+        @keyframes nodePopLoopTop {
+            0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(0.9); }
+            10% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+            20%, 65% { opacity: 1; transform: translateX(-50%) scale(1); }
+            80% { opacity: 0.4; transform: translateX(-50%) scale(0.9); }
+        }
+
+        /* Dashed connection lines */
+        .api-line {
+            position: absolute;
+            z-index: 1;
+            overflow: visible;
+        }
+
+        .api-line line {
+            stroke: var(--border-light);
+            stroke-width: 2;
+            stroke-dasharray: 8 6;
+            stroke-dashoffset: 0;
+            animation: dashFlow 2s linear infinite;
+        }
+
+        @keyframes dashFlow {
+            to { stroke-dashoffset: -28; }
+        }
+
+        /* Particles traveling along lines */
+        .api-line circle {
+            fill: var(--accent);
+            filter: drop-shadow(0 0 4px var(--accent-glow));
+        }
+
+        .api-particle-1 { animation: particleTravel1 3s ease-in-out infinite; }
+        .api-particle-2 { animation: particleTravel2 3s ease-in-out infinite 1s; }
+        .api-particle-3 { animation: particleTravel3 3s ease-in-out infinite 2s; }
+
+        /* Particle paths defined in JS via SVG — fallback CSS animations */
+        @keyframes particleTravel1 {
+            0%, 100% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+        }
+
+        @keyframes particleTravel2 {
+            0%, 100% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+        }
+
+        @keyframes particleTravel3 {
+            0%, 100% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+        }
+
+        /* ========== Sections ========== */
+        .section {
+            padding: 5rem 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            justify-content: center;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .section-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* ========== Steps (Comment ca marche) ========== */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .step-card.is-visible { opacity: 1; transform: translateY(0); }
+        .step-card.is-visible {
+            opacity: 1; transform: translateY(0);
+            animation: fadeInUpLoop 7s ease infinite;
+        }
+
+        .step-card:nth-child(1).is-visible { animation-delay: 0s; }
+        .step-card:nth-child(2).is-visible { animation-delay: 0.1s; }
+        .step-card:nth-child(3).is-visible { animation-delay: 0.2s; }
+
+        @keyframes fadeInUpLoop {
+            0%, 100% { opacity: 0.85; transform: translateY(2px); }
+            50% { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-light);
+        }
+
+        .step-number {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .step-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--accent-soft);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+        }
+
+        .step-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .step-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ========== ROI Metrics ========== */
+        .roi-section {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .metric-card.is-visible {
+            animation: fadeInUpLoop 7s ease infinite;
+        }
+
+        .metric-card:nth-child(1).is-visible { animation-delay: 0s; }
+        .metric-card:nth-child(2).is-visible { animation-delay: 0.15s; }
+        .metric-card:nth-child(3).is-visible { animation-delay: 0.3s; }
+        .metric-card:nth-child(4).is-visible { animation-delay: 0.45s; }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .metric-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 0.75rem;
+            overflow: hidden;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 1.5s ease;
+        }
+
+        .metric-card.is-visible .metric-bar-fill {
+            animation: barFillLoop 6s ease infinite;
+        }
+
+        @keyframes barFillLoop {
+            0%, 100% { width: calc(var(--fill) * 0.85); }
+            50% { width: var(--fill); }
+        }
+
+        /* ========== Use Cases ========== */
+        .usecases-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .usecase-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .usecase-card.is-visible { opacity: 1; transform: translateY(0); }
+        .usecase-card.is-visible {
+            opacity: 1; transform: translateY(0);
+            animation: fadeInUpLoop 7s ease infinite;
+        }
+
+        .usecase-card:nth-child(1).is-visible { animation-delay: 0s; }
+        .usecase-card:nth-child(2).is-visible { animation-delay: 0.1s; }
+        .usecase-card:nth-child(3).is-visible { animation-delay: 0.2s; }
+
+        .usecase-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent);
+        }
+
+        .usecase-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-soft);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .usecase-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .usecase-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .usecase-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ========== FAQ ========== */
+        .faq-list {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--border-light);
+        }
+
+        .faq-item.open {
+            border-color: var(--accent);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text);
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font);
+            transition: color 0.2s;
+        }
+
+        .faq-question:hover {
+            color: var(--accent);
+        }
+
+        .faq-chevron {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 2;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+
+        .faq-item.open .faq-chevron {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 300px;
+        }
+
+        .faq-answer-inner {
+            padding: 0 1.5rem 1.25rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ========== CTA Section ========== */
+        .cta-section {
+            padding: 6rem 3rem;
+            text-align: center;
+        }
+
+        .cta-box {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 4rem 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-glow {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 200px;
+            background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0.3;
+        }
+
+        .cta-box h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .cta-box p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .cta-box .btn-primary {
+            position: relative;
+        }
+
+        /* ========== Footer ========== */
+        footer {
+            padding: 2rem 3rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 1024px) {
+            nav { padding: 1rem 1.5rem; }
+            .nav-links { display: none; }
+            .section { padding: 3rem 1.5rem; }
+            .steps-grid { grid-template-columns: 1fr; max-width: 400px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .usecases-grid { grid-template-columns: 1fr; max-width: 400px; }
+            .cta-section { padding: 3rem 1.5rem; }
+            .cta-box { padding: 2.5rem 1.5rem; }
+            footer { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+            .api-visual { height: 240px; max-width: 340px; }
+            .api-node { width: 72px; height: 72px; border-radius: 12px; }
+            .api-node-icon svg { width: 20px; height: 20px; }
+            .api-node-label { font-size: 0.5rem; }
+            .api-hub { width: 60px; height: 60px; }
+            .api-hub svg { width: 24px; height: 24px; }
+            .api-node:nth-child(2) { left: 10px; }
+            .api-node:nth-child(3) { right: 10px; }
+        }
+
+        /* ========== Animations ========== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pricing */
+        .pricing-section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .pricing-section .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .pricing-section .section-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 0.8rem;
+        }
+
+        .pricing-section .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-section .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+        }
+
+        .pricing-card.popular {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+        }
+
+        .pricing-card.popular::before {
+            content: 'Populaire';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #fff;
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pricing-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            padding: 0.5rem 0;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pricing-features li::before {
+            content: '\2713';
+            color: var(--accent);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.6rem;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-soft);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-grid"></div>
+        <canvas class="bg-canvas" id="neuralCanvas"></canvas>
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav>
+        <a href="/" class="logo"><img src="../assets/logo.png" alt="PACIFIK'AI" class="logo-img"></a>
+        <ul class="nav-links">
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#process">Processus</a></li>
+            <li><a href="/#automatisations">Automatisations</a></li>
+            <li><a href="/blog/">Blog</a></li>
+            <li><a href="/#contact">Contact</a></li>
+        </ul>
+        <a href="/#contact" class="nav-cta">Nous contacter</a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+
+            <!-- API Integration Animation -->
+            <div class="api-visual">
+                <!-- Node 1: Screen/Computer (top) -->
+                <div class="api-node">
+                    <span class="api-node-status"></span>
+                    <div class="api-node-icon">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <span class="api-node-label">CRM</span>
+                </div>
+
+                <!-- Node 2: Email (bottom-left) -->
+                <div class="api-node">
+                    <span class="api-node-status"></span>
+                    <div class="api-node-icon">
+                        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+                    </div>
+                    <span class="api-node-label">Email</span>
+                </div>
+
+                <!-- Node 3: Database/Layers (bottom-right) -->
+                <div class="api-node">
+                    <span class="api-node-status"></span>
+                    <div class="api-node-icon">
+                        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                    </div>
+                    <span class="api-node-label">Database</span>
+                </div>
+
+                <!-- Central hub: Link/Chain -->
+                <div class="api-hub">
+                    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </div>
+
+                <!-- SVG lines connecting nodes to hub -->
+                <svg class="api-line" style="position:absolute; inset:0; width:100%; height:100%;" viewBox="0 0 520 300" preserveAspectRatio="xMidYMid meet">
+                    <!-- Line: top node to center -->
+                    <line x1="260" y1="100" x2="260" y2="130" />
+                    <!-- Line: bottom-left node to center -->
+                    <line x1="130" y1="210" x2="230" y2="160" />
+                    <!-- Line: bottom-right node to center -->
+                    <line x1="390" y1="210" x2="290" y2="160" />
+
+                    <!-- Particles -->
+                    <circle r="4" class="api-particle-1">
+                        <animateMotion dur="3s" repeatCount="indefinite" keyTimes="0;1" keySplines="0.4 0 0.6 1">
+                            <mpath href="#path1"/>
+                        </animateMotion>
+                    </circle>
+                    <circle r="4" class="api-particle-2">
+                        <animateMotion dur="3s" repeatCount="indefinite" begin="1s" keyTimes="0;1" keySplines="0.4 0 0.6 1">
+                            <mpath href="#path2"/>
+                        </animateMotion>
+                    </circle>
+                    <circle r="4" class="api-particle-3">
+                        <animateMotion dur="3s" repeatCount="indefinite" begin="2s" keyTimes="0;1" keySplines="0.4 0 0.6 1">
+                            <mpath href="#path3"/>
+                        </animateMotion>
+                    </circle>
+
+                    <!-- Paths for particles -->
+                    <defs>
+                        <path id="path1" d="M260,100 L260,130 L260,150 L260,130 L260,100" fill="none"/>
+                        <path id="path2" d="M130,210 L180,185 L230,160 L180,185 L130,210" fill="none"/>
+                        <path id="path3" d="M390,210 L340,185 L290,160 L340,185 L390,210" fill="none"/>
+                    </defs>
+                </svg>
+            </div>
+
+            <h1>Intégrations <span class="highlight">API</span></h1>
+            <p class="hero-sub">Connexion de tous vos outils : CRM, facturation, calendrier, messaging — un écosystème unifié où tout communique automatiquement.</p>
+
+            <div class="hero-stat">
+                <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                0 saisie manuelle
+            </div>
+
+            <div>
+                <a href="/#contact" class="btn-primary">
+                    Demander un devis
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comment ça marche -->
+    <section class="section">
+        <div class="section-header">
+            <div class="section-dot"></div>
+            <h2 class="section-title">Comment ça marche</h2>
+        </div>
+
+        <div class="steps-grid">
+            <!-- Step 1: Cartographie -->
+            <div class="step-card">
+                <div class="step-number">ÉTAPE 01</div>
+                <div class="step-icon">
+                    <!-- Network/map icon -->
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg>
+                </div>
+                <h3>Cartographie</h3>
+                <p>On identifie tous vos outils et les flux de données entre eux</p>
+            </div>
+
+            <!-- Step 2: Connexion -->
+            <div class="step-card">
+                <div class="step-number">ÉTAPE 02</div>
+                <div class="step-icon">
+                    <!-- Chain/link icon -->
+                    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </div>
+                <h3>Connexion</h3>
+                <p>On connecte vos APIs : CRM ↔ Facturation ↔ Email ↔ Calendrier</p>
+            </div>
+
+            <!-- Step 3: Synchronisation -->
+            <div class="step-card">
+                <div class="step-number">ÉTAPE 03</div>
+                <div class="step-icon">
+                    <!-- Sync/refresh icon -->
+                    <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
+                </div>
+                <h3>Synchronisation</h3>
+                <p>Vos données circulent en temps réel entre tous vos outils, sans intervention</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI / Chiffres clés -->
+    <section class="section roi-section">
+        <div class="section-header">
+            <div class="section-dot"></div>
+            <h2 class="section-title">Chiffres clés</h2>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value" data-text="0">0</div>
+                <div class="metric-label">Saisie manuelle</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="--fill: 100%"></div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-value" data-target="500" data-prefix="+" data-suffix="">0</div>
+                <div class="metric-label">Applications connectables</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="--fill: 90%"></div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-value" data-text="< 1s">< 1s</div>
+                <div class="metric-label">Temps de sync entre outils</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="--fill: 95%"></div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-value" data-text="-90%">-90%</div>
+                <div class="metric-label">Erreurs de double saisie</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="--fill: 90%"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cas d'Usage -->
+    <section class="section">
+        <div class="section-header">
+            <div class="section-dot"></div>
+            <h2 class="section-title">Cas d'usage</h2>
+        </div>
+
+        <div class="usecases-grid">
+            <!-- Use case 1 -->
+            <div class="usecase-card">
+                <div class="usecase-icon">
+                    <!-- CRM / Receipt icon -->
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <h3>CRM ↔ Facturation</h3>
+                <p>Un nouveau client dans votre CRM ? La facture est générée automatiquement dans QuickBooks. Le paiement reçu met à jour le statut du deal.</p>
+            </div>
+
+            <!-- Use case 2 -->
+            <div class="usecase-card">
+                <div class="usecase-icon">
+                    <!-- Calendar / Email icon -->
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <h3>Calendrier ↔ Email</h3>
+                <p>Un rendez-vous pris en ligne ? Confirmation email envoyée, rappel SMS J-1, compte-rendu post-meeting automatique.</p>
+            </div>
+
+            <!-- Use case 3 -->
+            <div class="usecase-card">
+                <div class="usecase-icon">
+                    <!-- Hotel / Building icon -->
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <h3>PMS ↔ Channel Manager</h3>
+                <p>Vos réservations hôtelières synchronisées en temps réel entre booking.com, Expedia et votre PMS. Zéro overbooking.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+        <div class="section-header">
+            <div class="section-dot"></div>
+            <h2 class="section-title">Questions fréquentes</h2>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Quels outils pouvez-vous connecter ?
+                    <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Plus de 500 : HubSpot, Pipedrive, QuickBooks, Xero, Gmail, Outlook, Google Calendar, WhatsApp, Messenger, Slack, Airtable, Notion, et tout outil avec une API.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Que se passe-t-il si un outil n'a pas d'API ?
+                    <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        On trouve toujours une solution : scraping intelligent, webhook personnalisé, ou intégration via email/fichier. Aucun outil n'est laissé de côté.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Les données sont-elles sécurisées ?
+                    <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Oui, toutes les connexions sont chiffrées (HTTPS/TLS). On ne stocke pas vos données — elles transitent directement d'un outil à l'autre.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Combien de temps pour une intégration ?
+                    <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Une connexion simple (2 outils) prend 1-2 jours. Un écosystème complet (5+ outils) prend 1-2 semaines.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <div class="cta-glow"></div>
+            <h2>Prêt à connecter tous vos outils ?</h2>
+            <p>Demandez un audit technique gratuit de votre écosystème applicatif.</p>
+            <div class="cta-buttons">
+                <a href="/#contact" class="btn-primary">Demander un audit technique <span>&rarr;</span></a>
+                <a href="/#contact" class="btn-outline">Nous contacter</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">&copy; 2026 PACIFIK'AI — Tahiti, Polynésie française</div>
+        <div class="footer-links">
+            <a href="/">Accueil</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // ========== Neural Network Canvas Animation ==========
+        const canvas = document.getElementById('neuralCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.density = Math.random() * 30 + 1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+                if (mouse.x && mouse.y) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        let force = (mouse.radius - distance) / mouse.radius;
+                        let dirX = dx / distance;
+                        let dirY = dy / distance;
+                        this.x -= dirX * force * 2;
+                        this.y -= dirY * force * 2;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = 'rgba(59, 130, 246, 0.6)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            let numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000);
+            numberOfParticles = Math.min(numberOfParticles, 100);
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+        window.addEventListener('resize', initParticles);
+
+        function connectParticles() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a + 1; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        let opacity = 1 - distance / 120;
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${opacity * 0.15})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let particle of particles) {
+                particle.update();
+                particle.draw();
+            }
+            connectParticles();
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // ========== IntersectionObserver - .is-visible ==========
+        const animObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    animObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.step-card, .metric-card, .usecase-card, .cta-box').forEach(el => {
+            animObserver.observe(el);
+        });
+
+        // ========== Counter Animation for ROI metrics ==========
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const valueEl = el.querySelector('.metric-value');
+                    if (!valueEl) return;
+
+                    const target = parseInt(valueEl.dataset.target);
+                    const prefix = valueEl.dataset.prefix || '';
+                    const suffix = valueEl.dataset.suffix || '';
+                    const textVal = valueEl.dataset.text;
+
+                    if (textVal) {
+                        // Static text like "0", "< 1s", "-90%" - just show it
+                        valueEl.textContent = textVal;
+                        counterObserver.unobserve(el);
+                        return;
+                    }
+
+                    if (isNaN(target)) return;
+
+                    let current = 0;
+                    const step = Math.max(1, Math.floor(target / 40));
+                    const duration = 1500;
+                    const interval = duration / (target / step);
+
+                    function countUp() {
+                        current += step;
+                        if (current >= target) {
+                            current = target;
+                            valueEl.textContent = prefix + current + suffix;
+                            return;
+                        }
+                        valueEl.textContent = prefix + current + suffix;
+                        setTimeout(countUp, interval);
+                    }
+
+                    countUp();
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.metric-card').forEach(el => {
+            counterObserver.observe(el);
+        });
+
+        // ========== FAQ Accordion ==========
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            const wasOpen = item.classList.contains('open');
+
+            // Close all
+            document.querySelectorAll('.faq-item.open').forEach(i => {
+                i.classList.remove('open');
+            });
+
+            // Toggle clicked
+            if (!wasOpen) {
+                item.classList.add('open');
+            }
+        }
+    </script>
+
+</body>
+</html>

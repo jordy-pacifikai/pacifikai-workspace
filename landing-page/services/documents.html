@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extraction de Documents IA | PACIFIK'AI</title>
+    <meta name="description" content="L'IA lit vos factures, bons de commande et relevés bancaires. Extraction automatique des données.">
+    <link rel="canonical" href="https://pacifikai.com/services/documents">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="PACIFIK'AI">
+    <meta property="og:title" content="Extraction de Documents IA | PACIFIK'AI">
+    <meta property="og:description" content="L'IA lit vos factures, bons de commande et relevés bancaires. Extraction automatique des données.">
+    <meta property="og:url" content="https://pacifikai.com/services/documents">
+    <meta property="og:image" content="https://pacifikai.com/assets/og-image.png">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Extraction de Documents IA | PACIFIK'AI">
+    <meta name="twitter:description" content="L'IA lit vos factures, bons de commande et relevés bancaires. Extraction automatique des données.">
+    <meta name="twitter:image" content="https://pacifikai.com/assets/og-image.png">
+
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a0a12;
+            --bg-card: #0f1020;
+            --bg-card-hover: #151630;
+            --border: #1a1a2e;
+            --border-light: #252540;
+            --text: #ffffff;
+            --text-secondary: #8888aa;
+            --text-dim: #555570;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.4);
+            --accent-soft: rgba(59, 130, 246, 0.1);
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* ===== Animated Background ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%);
+        }
+
+        .bg-canvas {
+            position: absolute;
+            inset: 0;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            top: -200px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #f59e0b;
+            top: 40%;
+            right: -100px;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            bottom: 10%;
+            left: 20%;
+            animation-delay: -14s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 10px) scale(1.02); }
+        }
+
+        /* ===== Content z-index ===== */
+        nav, .hero, .section, .cta-section, footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== Nav ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 42px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-cta {
+            padding: 0.6rem 1.2rem;
+            background: var(--text);
+            color: var(--bg);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent);
+            color: var(--text);
+        }
+
+        /* ===== Buttons ===== */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.8rem;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        /* ===== Hero ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 60%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .hero-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-text h1 .highlight {
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 520px;
+            line-height: 1.7;
+        }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--accent-soft);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-badge svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .hero-visual {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        /* ===== Document Scan Animation ===== */
+        .scan-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .doc-page {
+            width: 180px;
+            min-width: 180px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-header {
+            width: 60%;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .doc-line {
+            width: 100%;
+            height: 5px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-line:nth-child(3) { width: 90%; }
+        .doc-line:nth-child(5) { width: 75%; }
+        .doc-line:nth-child(7) { width: 95%; }
+        .doc-line:nth-child(8) { width: 60%; }
+        .doc-line:nth-child(9) { width: 85%; }
+        .doc-line:nth-child(10) { width: 70%; }
+
+        .scan-beam {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            box-shadow: 0 0 15px var(--accent-glow), 0 0 30px var(--accent-glow);
+            animation: scanBeam 7s ease-in-out infinite;
+        }
+
+        @keyframes scanBeam {
+            0% { top: -3px; opacity: 0.8; }
+            48% { top: 100%; opacity: 1; }
+            50% { top: -3px; opacity: 0; }
+            52% { top: -3px; opacity: 0.8; }
+            100% { top: 100%; opacity: 1; }
+        }
+            5% { top: 0; opacity: 1; }
+            45% { top: 100%; opacity: 1; }
+            50% { top: 100%; opacity: 0; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .scan-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .scan-arrow svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--accent);
+            animation: arrowPulse 7s ease-in-out infinite;
+        }
+
+        @keyframes arrowPulse {
+            0%, 40% { opacity: 0.2; }
+            50% { opacity: 1; }
+            60% { opacity: 1; }
+            75% { opacity: 0.2; }
+            100% { opacity: 0.2; }
+        }
+
+        .extracted-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            min-width: 200px;
+        }
+
+        .extracted-field {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.9rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            opacity: 0;
+        }
+
+        .extracted-field .field-label {
+            color: var(--text-dim);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .extracted-field .field-value {
+            color: var(--accent);
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .extracted-field .field-check {
+            width: 16px;
+            height: 16px;
+            background: rgba(34, 197, 94, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .extracted-field .field-check svg {
+            width: 10px;
+            height: 10px;
+            stroke: #22c55e;
+        }
+
+        .extracted-field:nth-child(1) { animation: fieldAppear 7s ease infinite; }
+        .extracted-field:nth-child(2) { animation: fieldAppear 7s ease 0.5s infinite; }
+        .extracted-field:nth-child(3) { animation: fieldAppear 7s ease 1s infinite; }
+
+        @keyframes fieldAppear {
+            0%, 100% { opacity: 0.8; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(0); }
+        }
+            50% { opacity: 1; transform: translateX(0); box-shadow: 0 0 20px var(--accent-glow); }
+            55% { box-shadow: 0 0 5px transparent; }
+            70% { opacity: 1; transform: translateX(0); }
+            82% { opacity: 0; transform: translateX(10px); }
+            100% { opacity: 0; transform: translateX(-10px); }
+        }
+
+        /* ===== Sections ===== */
+        .section {
+            padding: 5rem 2rem;
+        }
+
+        .section-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ===== Steps / How It Works ===== */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .step-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.08);
+        }
+
+        .step-card.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step-card:nth-child(1) { transition-delay: 0s; }
+        .step-card:nth-child(2) { transition-delay: 0.1s; }
+        .step-card:nth-child(3) { transition-delay: 0.2s; }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--accent-soft);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+        }
+
+        .step-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-soft);
+            border-radius: 14px;
+        }
+
+        .step-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .step-card h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }
+
+        .step-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ===== ROI / Metrics ===== */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .metric-card.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .metric-card:nth-child(1) { transition-delay: 0s; }
+        .metric-card:nth-child(2) { transition-delay: 0.1s; }
+        .metric-card:nth-child(3) { transition-delay: 0.15s; }
+        .metric-card:nth-child(4) { transition-delay: 0.2s; }
+
+        .metric-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .metric-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            width: 0;
+        }
+
+        .metric-card.is-visible .metric-bar-fill {
+            animation: metricBarGrow 6s ease infinite;
+        }
+
+        .metric-card:nth-child(1).is-visible .metric-bar-fill { animation-delay: 0s; }
+        .metric-card:nth-child(2).is-visible .metric-bar-fill { animation-delay: 0.3s; }
+        .metric-card:nth-child(3).is-visible .metric-bar-fill { animation-delay: 0.6s; }
+        .metric-card:nth-child(4).is-visible .metric-bar-fill { animation-delay: 0.9s; }
+
+        @keyframes metricBarGrow {
+            0% { width: 0; }
+            15% { width: var(--bar-target, 80%); }
+            60% { width: var(--bar-target, 80%); }
+            75% { width: 0; }
+            100% { width: 0; }
+        }
+
+        .metric-card.is-visible .counter-anim {
+            animation: counterPulse 6s ease infinite;
+        }
+
+        @keyframes counterPulse {
+            0%, 100% { opacity: 0.7; transform: scale(0.97); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+            10% { opacity: 1; transform: scale(1); }
+            60% { opacity: 1; transform: scale(1); }
+            75% { opacity: 0.3; transform: scale(0.9); }
+            100% { opacity: 0.3; transform: scale(0.9); }
+        }
+
+        /* ===== Use Cases ===== */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .case-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .case-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.08);
+        }
+
+        .case-card.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .case-card:nth-child(1) { transition-delay: 0s; }
+        .case-card:nth-child(2) { transition-delay: 0.1s; }
+        .case-card:nth-child(3) { transition-delay: 0.2s; }
+
+        .case-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-soft);
+            border-radius: 12px;
+            margin-bottom: 1.2rem;
+        }
+
+        .case-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .case-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        .case-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* ===== FAQ ===== */
+        .faq-list {
+            max-width: 750px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .faq-item.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .faq-item:nth-child(1) { transition-delay: 0s; }
+        .faq-item:nth-child(2) { transition-delay: 0.08s; }
+        .faq-item:nth-child(3) { transition-delay: 0.16s; }
+        .faq-item:nth-child(4) { transition-delay: 0.24s; }
+
+        .faq-question {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            user-select: none;
+            transition: color 0.2s;
+        }
+
+        .faq-question:hover {
+            color: var(--accent);
+        }
+
+        .faq-chevron {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-secondary);
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+
+        .faq-item.open .faq-chevron {
+            transform: rotate(180deg);
+            stroke: var(--accent);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 300px;
+        }
+
+        .faq-answer-inner {
+            padding: 0 1.5rem 1.2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* ===== CTA Section ===== */
+        .cta-section {
+            padding: 5rem 2rem;
+        }
+
+        .cta-box {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .cta-box h2 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .cta-box p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .cta-box .btn-primary {
+            position: relative;
+        }
+
+        /* ===== Footer ===== */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        /* ===== Scroll Animation Base ===== */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 7rem 1.5rem 3rem;
+            }
+
+            .hero-inner {
+                flex-direction: column;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .hero-sub {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .scan-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 1.5rem;
+            }
+
+            .scan-arrow {
+                transform: rotate(90deg);
+            }
+
+            .extracted-fields {
+                min-width: auto;
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .steps-grid,
+            .cases-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .section {
+                padding: 3.5rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-value {
+                font-size: 2.2rem;
+            }
+
+            .doc-page {
+                width: 150px;
+                min-width: 150px;
+            }
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+        }
+
+        .pricing-card.popular {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+        }
+
+        .pricing-card.popular::before {
+            content: 'Populaire';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #fff;
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pricing-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            padding: 0.5rem 0;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pricing-features li::before {
+            content: '\2713';
+            color: var(--accent);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.6rem;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-soft);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="bg-grid"></div>
+        <canvas class="bg-canvas" id="neuralCanvas"></canvas>
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav>
+        <a href="/" class="logo"><img src="/assets/logo.png" alt="PACIFIK'AI" class="logo-img"></a>
+        <ul class="nav-links">
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#process">Processus</a></li>
+            <li><a href="/#automatisations">Automatisations</a></li>
+            <li><a href="/blog/">Blog</a></li>
+            <li><a href="/#contact">Contact</a></li>
+        </ul>
+        <a href="/#contact" class="nav-cta">Nous contacter</a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-inner">
+            <div class="hero-text">
+                <div class="stat-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    10x plus rapide que la saisie manuelle
+                </div>
+                <h1>Extraction de <span class="highlight">Documents</span></h1>
+                <p class="hero-sub">L'IA lit vos factures, bons de commande et releves bancaires. Elle extrait les donnees automatiquement — plus de saisie manuelle.</p>
+                <a href="/#contact" class="btn-primary">
+                    Demander un devis
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+            <div class="hero-visual">
+                <div class="scan-container">
+                    <!-- PDF Document -->
+                    <div class="doc-page">
+                        <div class="doc-header"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line"></div>
+                        <div class="doc-line"></div>
+                        <div class="scan-beam"></div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="scan-arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                    <!-- Extracted Fields -->
+                    <div class="extracted-fields">
+                        <div class="extracted-field">
+                            <span class="field-label">Montant:</span>
+                            <span class="field-value">156 800 F</span>
+                            <span class="field-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
+                        </div>
+                        <div class="extracted-field">
+                            <span class="field-label">Date:</span>
+                            <span class="field-value">15/01/2026</span>
+                            <span class="field-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
+                        </div>
+                        <div class="extracted-field">
+                            <span class="field-label">Fournisseur:</span>
+                            <span class="field-value">SAS Exemple</span>
+                            <span class="field-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comment ca marche -->
+    <section class="section" id="process">
+        <div class="section-inner">
+            <h2 class="section-title">Comment ca marche</h2>
+            <p class="section-subtitle">3 etapes simples pour automatiser l'extraction de vos documents.</p>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                    </div>
+                    <h3>Upload</h3>
+                    <p>Envoyez vos documents (PDF, images, emails) — par email, drive ou upload direct.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                    </div>
+                    <h3>Analyse IA</h3>
+                    <p>L'IA identifie le type de document et extrait les donnees cles automatiquement.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+                    </div>
+                    <h3>Export</h3>
+                    <p>Les donnees sont envoyees dans votre logiciel de compta, votre CRM ou votre tableur.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI / Chiffres cles -->
+    <section class="section" id="roi">
+        <div class="section-inner">
+            <h2 class="section-title">Chiffres cles</h2>
+            <p class="section-subtitle">Des resultats mesurables des le premier mois.</p>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value counter-anim">10x</div>
+                    <div class="metric-label">Plus rapide que la saisie manuelle</div>
+                    <div class="metric-bar-wrap">
+                        <div class="metric-bar-fill" style="--bar-target: 95%;"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value counter-anim">99.5%</div>
+                    <div class="metric-label">Precision de l'extraction</div>
+                    <div class="metric-bar-wrap">
+                        <div class="metric-bar-fill" style="--bar-target: 99%;"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value counter-anim">0</div>
+                    <div class="metric-label">Erreurs de saisie humaine</div>
+                    <div class="metric-bar-wrap">
+                        <div class="metric-bar-fill" style="--bar-target: 100%;"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value counter-anim">-80%</div>
+                    <div class="metric-label">Reduction du temps de traitement</div>
+                    <div class="metric-bar-wrap">
+                        <div class="metric-bar-fill" style="--bar-target: 80%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cas d'usage -->
+    <section class="section" id="usecases">
+        <div class="section-inner">
+            <h2 class="section-title">Cas d'usage en Polynesie</h2>
+            <p class="section-subtitle">Des solutions concretes pour les entreprises polynesiennes.</p>
+            <div class="cases-grid">
+                <div class="case-card">
+                    <div class="case-icon">
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </div>
+                    <h3>Factures fournisseurs</h3>
+                    <p>Recevez une facture par email, l'IA l'analyse et envoie les donnees dans votre compta. Montant, date, TVA, fournisseur — tout extrait en 5 secondes.</p>
+                </div>
+                <div class="case-card">
+                    <div class="case-icon">
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+                    </div>
+                    <h3>Bons de commande</h3>
+                    <p>Vos bons de commande sont scannes et les lignes produits, quantites et prix sont extraits pour votre ERP automatiquement.</p>
+                </div>
+                <div class="case-card">
+                    <div class="case-icon">
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="7" y1="15" x2="7" y2="15.01"/><line x1="11" y1="15" x2="13" y2="15"/></svg>
+                    </div>
+                    <h3>Releves bancaires</h3>
+                    <p>Importez vos releves bancaires, l'IA categorise chaque transaction et prepare le rapprochement bancaire.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+        <div class="section-inner">
+            <h2 class="section-title">Questions frequentes</h2>
+            <p class="section-subtitle">Tout ce que vous devez savoir sur l'extraction de documents.</p>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Quels types de documents pouvez-vous traiter ?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Factures, bons de commande, releves bancaires, contrats, devis, bons de livraison, fiches de paie. En PDF, image (photo, scan) ou email.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>L'extraction est-elle fiable ?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Oui, notre IA atteint 99.5% de precision. Pour les cas ambigus, une validation humaine est proposee avant export.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Vers quels logiciels exportez-vous ?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">QuickBooks, Xero, Sage, Excel, Google Sheets, votre CRM, ou tout systeme via API. On s'adapte a votre stack.</div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Faut-il scanner les documents ?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Non, une simple photo avec votre telephone suffit. L'IA fonctionne aussi bien avec des PDFs propres qu'avec des photos de documents.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tarifs -->
+    <section class="section" id="pricing" style="padding: 6rem 2rem;">
+        <div class="section-inner">
+            <h2 class="section-title">Nos formules extraction</h2>
+            <p class="section-subtitle">Un plan adapt&eacute; &agrave; chaque besoin.</p>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-name">Starter</div>
+                    <div class="pricing-price">&Agrave; partir de 60&nbsp;000 XPF/mois</div>
+                    <ul class="pricing-features">
+                        <li>1 type de document</li>
+                        <li>Extraction donn&eacute;es cl&eacute;s</li>
+                        <li>Export Excel/CSV</li>
+                        <li>Support email</li>
+                    </ul>
+                    <a href="/#contact" target="_blank" class="btn-primary">Choisir</a>
+                </div>
+                <div class="pricing-card popular">
+                    <div class="pricing-name">Pro</div>
+                    <div class="pricing-price">&Agrave; partir de 150&nbsp;000 XPF/mois</div>
+                    <ul class="pricing-features">
+                        <li>5 types de documents</li>
+                        <li>Validation IA</li>
+                        <li>Archivage automatique</li>
+                        <li>Connexion ERP</li>
+                        <li>Dashboard suivi</li>
+                    </ul>
+                    <a href="/#contact" target="_blank" class="btn-primary">Choisir</a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-name">Sur-mesure</div>
+                    <div class="pricing-price">Nous contacter</div>
+                    <ul class="pricing-features">
+                        <li>Volume illimit&eacute;</li>
+                        <li>Multi-langues</li>
+                        <li>Conformit&eacute; comptable</li>
+                        <li>Audit trail complet</li>
+                        <li>SLA garanti</li>
+                    </ul>
+                    <a href="/#contact" class="btn-outline">Nous contacter</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <h2>Pr&ecirc;t &agrave; &eacute;liminer la saisie manuelle&nbsp;?</h2>
+            <p>Faites-nous parvenir un exemple de document pour une d&eacute;mo.</p>
+            <div class="cta-buttons">
+                <a href="/#contact" target="_blank" class="btn-primary">R&eacute;server un appel gratuit <span>&rarr;</span></a>
+                <a href="/#contact" class="btn-outline">Nous contacter</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2026 PACIFIK'AI — Tahiti, Polynesie francaise
+    </footer>
+
+    <!-- JS -->
+    <script>
+    (function() {
+        // ===== Neural Canvas =====
+        const canvas = document.getElementById('neuralCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let w, h;
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.r = Math.random() * 1.5 + 0.5;
+                this.alpha = Math.random() * 0.3 + 0.1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0) this.x = w;
+                if (this.x > w) this.x = 0;
+                if (this.y < 0) this.y = h;
+                if (this.y > h) this.y = 0;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(59, 130, 246, ${this.alpha})`;
+                ctx.fill();
+            }
+        }
+
+        const count = Math.min(80, Math.floor(w * h / 15000));
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle());
+        }
+
+        function drawConnections() {
+            const maxDist = 120;
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < maxDist) {
+                        const alpha = (1 - dist / maxDist) * 0.15;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${alpha})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            drawConnections();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // ===== IntersectionObserver for .is-visible =====
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.step-card, .metric-card, .case-card, .faq-item, .fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // ===== Counter Animation =====
+        const counterData = [
+            { el: null, target: '10x', type: 'suffix', num: 10, suffix: 'x' },
+            { el: null, target: '99.5%', type: 'suffix', num: 99.5, suffix: '%', decimal: 1 },
+            { el: null, target: '0', type: 'plain', num: 0 },
+            { el: null, target: '-80%', type: 'prefix', num: 80, prefix: '-', suffix: '%' }
+        ];
+
+        const counterEls = document.querySelectorAll('.counter-anim');
+        counterEls.forEach((el, i) => {
+            if (counterData[i]) counterData[i].el = el;
+        });
+
+        function animateCounters() {
+            counterData.forEach((data) => {
+                if (!data.el || !data.el.closest('.is-visible')) return;
+
+                const duration = 2000;
+                const startTime = performance.now();
+
+                function step(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    let val = data.num * eased;
+
+                    if (data.decimal) {
+                        val = val.toFixed(data.decimal);
+                    } else {
+                        val = Math.round(val);
+                    }
+
+                    let display = '';
+                    if (data.prefix) display += data.prefix;
+                    display += val;
+                    if (data.suffix) display += data.suffix;
+
+                    data.el.textContent = display;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    }
+                }
+
+                requestAnimationFrame(step);
+            });
+        }
+
+        // Trigger counter animation when metrics section is visible
+        const metricsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    // Re-trigger periodically for the infinite loop feel
+                    setInterval(animateCounters, 6000);
+                    metricsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const metricsSection = document.getElementById('roi');
+        if (metricsSection) metricsObserver.observe(metricsSection);
+    })();
+
+    // ===== FAQ Accordion =====
+    function toggleFaq(el) {
+        const item = el.parentElement;
+        const wasOpen = item.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.faq-item').forEach(faq => faq.classList.remove('open'));
+        // Toggle clicked
+        if (!wasOpen) {
+            item.classList.add('open');
+        }
+    }
+    </script>
+</body>
+</html>

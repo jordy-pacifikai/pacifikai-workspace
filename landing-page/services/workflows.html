@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatisation de Workflows | PACIFIK'AI</title>
+    <meta name="description" content="Automatisez vos processus avec l'IA : reservations, facturation, relances. Connectez vos applications et gagnez 85% de temps.">
+    <link rel="canonical" href="https://pacifikai.com/services/workflows">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="PACIFIK'AI">
+    <meta property="og:title" content="Automatisation de Workflows | PACIFIK'AI">
+    <meta property="og:description" content="Automatisez vos processus avec l'IA : reservations, facturation, relances. Connectez vos applications et gagnez 85% de temps.">
+    <meta property="og:url" content="https://pacifikai.com/services/workflows">
+    <meta property="og:image" content="https://pacifikai.com/assets/og-image.png">
+    <meta property="og:locale" content="fr_FR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Automatisation de Workflows | PACIFIK'AI">
+    <meta name="twitter:description" content="Automatisez vos processus avec l'IA : reservations, facturation, relances. Connectez vos applications et gagnez 85% de temps.">
+    <meta name="twitter:image" content="https://pacifikai.com/assets/og-image.png">
+
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a0a12;
+            --bg-card: #0f1020;
+            --bg-card-hover: #151630;
+            --border: #1a1a2e;
+            --border-light: #252540;
+            --text: #ffffff;
+            --text-secondary: #8888aa;
+            --text-dim: #555570;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.4);
+            --accent-soft: rgba(59, 130, 246, 0.1);
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* ========== Animated Background ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%);
+        }
+
+        .bg-canvas {
+            position: absolute;
+            inset: 0;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            top: -200px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #f59e0b;
+            top: 40%;
+            right: -100px;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            bottom: 10%;
+            left: 20%;
+            animation-delay: -14s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 10px) scale(1.02); }
+        }
+
+        /* ========== Z-index layer ========== */
+        nav, .hero, .section, .cta-section, footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== Nav ========== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 42px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-cta {
+            padding: 0.6rem 1.2rem;
+            background: var(--text);
+            color: var(--bg);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent);
+            color: var(--text);
+        }
+
+        /* ========== Hero ========== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 60%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 600;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 .highlight {
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .hero-stat {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.2rem;
+            background: var(--accent-soft);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            animation: statPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes statPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.2); }
+            50% { box-shadow: 0 0 20px 4px rgba(59, 130, 246, 0.15); }
+        }
+
+        .hero-stat svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.8rem;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        /* ========== Workflow Hero Animation ========== */
+        .workflow-visual {
+            width: 100%;
+            max-width: 600px;
+            height: 250px;
+            margin: 0 auto 2.5rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wf-node {
+            width: 100px;
+            height: 100px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: absolute;
+            animation: nodePopLoop 6s ease infinite;
+        }
+
+        .wf-node:nth-child(1) {
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .wf-node:nth-child(2) {
+            left: 50%;
+            transform: translateX(-50%);
+            animation-delay: 0.3s;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .wf-node:nth-child(3) {
+            right: 5%;
+            animation-delay: 0.6s;
+        }
+
+        @keyframes nodePopLoop {
+            0%, 100% { opacity: 0.85; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+
+        .wf-node:nth-child(2) {
+            animation-name: nodePopLoopCenter;
+        }
+
+        @keyframes nodePopLoopCenter {
+            0%, 100% { opacity: 0.85; transform: translateX(-50%) scale(0.95); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.02); }
+        }
+
+        .wf-node-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wf-node-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .wf-node-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .wf-node-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 0.4; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            50% { opacity: 1; box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.3); }
+        }
+
+        /* Wires connecting nodes */
+        .wf-wire {
+            position: absolute;
+            top: 50%;
+            height: 2px;
+            background: var(--border-light);
+            transform: translateY(-50%);
+        }
+
+        .wf-wire-1 {
+            left: calc(5% + 100px);
+            width: calc(50% - 5% - 100px - 50px);
+        }
+
+        .wf-wire-2 {
+            left: calc(50% + 50px);
+            width: calc(95% - 50% - 50px - 100px);
+        }
+
+        .wf-wire-particle {
+            position: absolute;
+            top: -3px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-glow);
+            animation: wireFlow 2.5s ease-in-out infinite;
+        }
+
+        .wf-wire-2 .wf-wire-particle {
+            animation-delay: 1.2s;
+        }
+
+        @keyframes wireFlow {
+            0% { left: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: calc(100% - 8px); opacity: 0; }
+        }
+
+        /* ========== Sections ========== */
+        .section {
+            padding: 5rem 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            justify-content: center;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .section-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* ========== Steps (Comment ca marche) ========== */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .step-card.is-visible {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .step-card:nth-child(1).is-visible { animation-delay: 0s; }
+        .step-card:nth-child(2).is-visible { animation-delay: 0.1s; }
+        .step-card:nth-child(3).is-visible { animation-delay: 0.2s; }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-light);
+        }
+
+        .step-number {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .step-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--accent-soft);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+        }
+
+        .step-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .step-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ========== ROI Metrics ========== */
+        .roi-section {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .metric-card.is-visible {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .metric-card:nth-child(1).is-visible { animation-delay: 0s; }
+        .metric-card:nth-child(2).is-visible { animation-delay: 0.15s; }
+        .metric-card:nth-child(3).is-visible { animation-delay: 0.3s; }
+        .metric-card:nth-child(4).is-visible { animation-delay: 0.45s; }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .metric-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 0.75rem;
+            overflow: hidden;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            width: calc(var(--fill) * 0.85);
+        }
+
+        .metric-card.is-visible .metric-bar-fill {
+            animation: barFillLoop 6s ease infinite;
+        }
+
+        @keyframes barFillLoop {
+            0%, 100% { width: calc(var(--fill) * 0.85); }
+            50% { width: var(--fill); }
+        }
+
+        /* ========== Use Cases ========== */
+        .usecases-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .usecase-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .usecase-card.is-visible {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .usecase-card:nth-child(1).is-visible { animation-delay: 0s; }
+        .usecase-card:nth-child(2).is-visible { animation-delay: 0.1s; }
+        .usecase-card:nth-child(3).is-visible { animation-delay: 0.2s; }
+
+        .usecase-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent);
+        }
+
+        .usecase-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-soft);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .usecase-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .usecase-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .usecase-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ========== FAQ ========== */
+        .faq-list {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--border-light);
+        }
+
+        .faq-item.open {
+            border-color: var(--accent);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text);
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font);
+            transition: color 0.2s;
+        }
+
+        .faq-question:hover {
+            color: var(--accent);
+        }
+
+        .faq-chevron {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 2;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+
+        .faq-item.open .faq-chevron {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 300px;
+        }
+
+        .faq-answer-inner {
+            padding: 0 1.5rem 1.25rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ========== CTA Section ========== */
+        .cta-section {
+            padding: 6rem 3rem;
+            text-align: center;
+        }
+
+        .cta-box {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 4rem 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-glow {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 200px;
+            background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0.3;
+        }
+
+        .cta-box h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .cta-box p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .cta-box .btn-primary {
+            position: relative;
+        }
+
+        /* ========== Footer ========== */
+        footer {
+            padding: 2rem 3rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 1024px) {
+            nav { padding: 1rem 1.5rem; }
+            .nav-links { display: none; }
+            .section { padding: 3rem 1.5rem; }
+            .steps-grid { grid-template-columns: 1fr; max-width: 400px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .usecases-grid { grid-template-columns: 1fr; max-width: 400px; }
+            .cta-section { padding: 3rem 1.5rem; }
+            .cta-box { padding: 2.5rem 1.5rem; }
+            footer { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+            .workflow-visual { height: 180px; }
+            .wf-node { width: 80px; height: 80px; border-radius: 12px; }
+            .wf-node-icon svg { width: 22px; height: 22px; }
+            .wf-node-label { font-size: 0.55rem; }
+        }
+
+        /* ========== Pricing ========== */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+        }
+
+        .pricing-card.popular {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+        }
+
+        .pricing-card.popular::before {
+            content: 'Populaire';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #fff;
+            padding: 0.25rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pricing-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            padding: 0.5rem 0;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pricing-features li::before {
+            content: '\2713';
+            color: var(--accent);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.6rem;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-soft);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ========== Animations ========== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-grid"></div>
+        <canvas class="bg-canvas" id="neuralCanvas"></canvas>
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav>
+        <a href="/" class="logo"><img src="/assets/logo.png" alt="PACIFIK'AI" class="logo-img"></a>
+        <ul class="nav-links">
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#process">Processus</a></li>
+            <li><a href="/#automatisations">Automatisations</a></li>
+            <li><a href="/blog/">Blog</a></li>
+            <li><a href="/#contact">Contact</a></li>
+        </ul>
+        <a href="/#contact" class="nav-cta">Nous contacter</a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+
+            <!-- Workflow Animation -->
+            <div class="workflow-visual">
+                <!-- Node 1: Input -->
+                <div class="wf-node">
+                    <span class="wf-node-status"></span>
+                    <div class="wf-node-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <span class="wf-node-label">Input</span>
+                </div>
+
+                <!-- Wire 1 -->
+                <div class="wf-wire wf-wire-1">
+                    <div class="wf-wire-particle"></div>
+                </div>
+
+                <!-- Node 2: Process -->
+                <div class="wf-node">
+                    <span class="wf-node-status"></span>
+                    <div class="wf-node-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </div>
+                    <span class="wf-node-label">Process</span>
+                </div>
+
+                <!-- Wire 2 -->
+                <div class="wf-wire wf-wire-2">
+                    <div class="wf-wire-particle"></div>
+                </div>
+
+                <!-- Node 3: Output -->
+                <div class="wf-node">
+                    <span class="wf-node-status"></span>
+                    <div class="wf-node-icon">
+                        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <span class="wf-node-label">Output</span>
+                </div>
+            </div>
+
+            <h1>Automatisation de <span class="highlight">Workflows</span></h1>
+            <p class="hero-sub">Connectez vos applications, automatisez vos processus. Reservations, commandes, facturation, relances — laissez l'IA faire le travail repetitif.</p>
+
+            <div class="hero-stat">
+                <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                85% de temps gagne en moyenne
+            </div>
+
+            <div>
+                <a href="/#contact" class="btn-primary">
+                    Demander un devis
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comment ca marche -->
+    <section class="section">
+        <div class="section-header">
+            <div class="section-dot"></div>
+            <h2 class="section-title">Comment ca marche</h2>
+        </div>
+
+        <div class="steps-grid">
+            <!-- Step 1: Audit -->
+            <div class="step-card">
+                <div class="step-number">ETAPE 01</div>
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
+                <h3>Audit</h3>
+                <p>On analyse vos processus actuels pour identifier les taches repetitives</p>
+            </div>
+
+            <!-- Step 2: Implementation -->
+            <div class="step-card">
+                <div class="step-number">ETAPE 02</div>
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+                <h3>Implementation</h3>
+                <p>On connecte vos outils (CRM, facturation, email) avec des workflows IA automatises</p>
+            </div>
+
+            <!-- Step 3: Resultats -->
+            <div class="step-card">
+                <div class="step-number">ETAPE 03</div>
+                <div class="step-icon">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+                <h3>Resultats</h3>
+                <p>Vos processus tournent 24/7 sans intervention, avec rapports de performance</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI / Chiffres cles -->
+    <section class="section roi-section">
+        <div class="section-header">
+            <div class="section-dot"></div>
+            <h2 class="section-title">Chiffres cles</h2>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value" data-target="85" data-suffix="%">0%</div>
+                <div class="metric-label">Temps gagne sur les taches repetitives</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="--fill: 85%"></div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-value" data-text="24/7">24/7</div>
+                <div class="metric-label">Fonctionnement continu sans pause</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="--fill: 100%"></div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-value" data-target="10" data-suffix="min">0min</div>
+                <div class="metric-label">Temps moyen de setup d'un workflow</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="--fill: 20%"></div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-value" data-target="300" data-prefix="+" data-suffix="%">0%</div>
+                <div class="metric-label">Productivite des equipes</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="--fill: 75%"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cas d'Usage -->
+    <section class="section">
+        <div class="section-header">
+            <div class="section-dot"></div>
+            <h2 class="section-title">Cas d'usage</h2>
+        </div>
+
+        <div class="usecases-grid">
+            <!-- Use case 1 -->
+            <div class="usecase-card">
+                <div class="usecase-icon">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <h3>Reservations hotelieres</h3>
+                <p>Synchronisation automatique entre booking.com, le PMS et la facturation. Zero double saisie.</p>
+            </div>
+
+            <!-- Use case 2 -->
+            <div class="usecase-card">
+                <div class="usecase-icon">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <h3>Facturation automatique</h3>
+                <p>Generation et envoi automatique des factures a partir des bons de commande recus.</p>
+            </div>
+
+            <!-- Use case 3 -->
+            <div class="usecase-card">
+                <div class="usecase-icon">
+                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+                </div>
+                <h3>Relances clients</h3>
+                <p>Emails et SMS de rappel envoyes automatiquement selon le statut du dossier.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+        <div class="section-header">
+            <div class="section-dot"></div>
+            <h2 class="section-title">Questions frequentes</h2>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Quels outils pouvez-vous connecter ?
+                    <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Nous connectons plus de 500 applications : CRM (HubSpot, Pipedrive), facturation (QuickBooks, Xero), email (Gmail, Outlook), calendrier, messagerie (WhatsApp, Messenger), et bien plus.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Combien de temps pour mettre en place un workflow ?
+                    <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Un workflow simple prend 1 a 3 jours. Une infrastructure complete avec plusieurs workflows connectes prend 1 a 2 semaines.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Est-ce que ca fonctionne avec mes outils existants ?
+                    <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Oui, nous nous adaptons a votre stack technique actuelle. Pas besoin de changer vos outils, on les connecte entre eux.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Que se passe-t-il si un workflow echoue ?
+                    <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        Chaque workflow a des alertes automatiques et des mecanismes de fallback. Vous etes notifie immediatement et on intervient sous 24h.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tarifs -->
+    <section class="section" id="pricing">
+        <div class="section-header">
+            <div class="section-dot"></div>
+            <h2 class="section-title">Nos formules automatisation</h2>
+        </div>
+        <p style="text-align:center; color: var(--text-secondary); margin-bottom: 2rem;">Un plan adapt&eacute; &agrave; chaque besoin.</p>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-name">Starter</div>
+                <div class="pricing-price">&Agrave; partir de 80&nbsp;000 XPF/mois</div>
+                <ul class="pricing-features">
+                    <li>1 workflow</li>
+                    <li>1 int&eacute;gration</li>
+                    <li>Support email</li>
+                    <li>Monitoring basique</li>
+                </ul>
+                <a href="/#contact" target="_blank" class="btn-primary">Choisir</a>
+            </div>
+            <div class="pricing-card popular">
+                <div class="pricing-name">Pro</div>
+                <div class="pricing-price">&Agrave; partir de 200&nbsp;000 XPF/mois</div>
+                <ul class="pricing-features">
+                    <li>5 workflows</li>
+                    <li>Int&eacute;grations illimit&eacute;es</li>
+                    <li>Dashboard monitoring</li>
+                    <li>Support prioritaire</li>
+                    <li>Alertes email/SMS</li>
+                </ul>
+                <a href="/#contact" target="_blank" class="btn-primary">Choisir</a>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-name">Sur-mesure</div>
+                <div class="pricing-price">Nous contacter</div>
+                <ul class="pricing-features">
+                    <li>Architecture multi-syst&egrave;mes</li>
+                    <li>IA d&eacute;cisionnelle</li>
+                    <li>Formation &eacute;quipe</li>
+                    <li>SLA garanti</li>
+                </ul>
+                <a href="/#contact" class="btn-outline">Nous contacter</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <div class="cta-glow"></div>
+            <h2>Pr&ecirc;t &agrave; automatiser vos processus&nbsp;?</h2>
+            <p>R&eacute;servez un appel de 30 min pour analyser vos flux de travail.</p>
+            <div class="cta-buttons">
+                <a href="/#contact" target="_blank" class="btn-primary">R&eacute;server un appel gratuit <span>&rarr;</span></a>
+                <a href="/#contact" class="btn-outline">Nous contacter</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">&copy; 2026 PACIFIK'AI — Tahiti, Polynesie francaise</div>
+        <div class="footer-links">
+            <a href="/">Accueil</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // ========== Neural Network Canvas Animation ==========
+        const canvas = document.getElementById('neuralCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.density = Math.random() * 30 + 1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+                if (mouse.x && mouse.y) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        let force = (mouse.radius - distance) / mouse.radius;
+                        let dirX = dx / distance;
+                        let dirY = dy / distance;
+                        this.x -= dirX * force * 2;
+                        this.y -= dirY * force * 2;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = 'rgba(59, 130, 246, 0.6)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            let numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000);
+            numberOfParticles = Math.min(numberOfParticles, 100);
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+        window.addEventListener('resize', initParticles);
+
+        function connectParticles() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a + 1; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        let opacity = 1 - distance / 120;
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${opacity * 0.15})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let particle of particles) {
+                particle.update();
+                particle.draw();
+            }
+            connectParticles();
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // ========== IntersectionObserver - .is-visible ==========
+        const animObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    animObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.step-card, .metric-card, .usecase-card, .cta-box').forEach(el => {
+            animObserver.observe(el);
+        });
+
+        // ========== Counter Animation for ROI metrics ==========
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const valueEl = el.querySelector('.metric-value');
+                    if (!valueEl) return;
+
+                    const target = parseInt(valueEl.dataset.target);
+                    const prefix = valueEl.dataset.prefix || '';
+                    const suffix = valueEl.dataset.suffix || '';
+                    const textVal = valueEl.dataset.text;
+
+                    if (textVal) {
+                        // Static text like "24/7" - just show it
+                        valueEl.textContent = textVal;
+                        counterObserver.unobserve(el);
+                        return;
+                    }
+
+                    if (isNaN(target)) return;
+
+                    let current = 0;
+                    const step = Math.max(1, Math.floor(target / 40));
+                    const duration = 1500;
+                    const interval = duration / (target / step);
+
+                    function countUp() {
+                        current += step;
+                        if (current >= target) {
+                            current = target;
+                            valueEl.textContent = prefix + current + suffix;
+                            return;
+                        }
+                        valueEl.textContent = prefix + current + suffix;
+                        setTimeout(countUp, interval);
+                    }
+
+                    countUp();
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.metric-card').forEach(el => {
+            counterObserver.observe(el);
+        });
+
+        // ========== FAQ Accordion ==========
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            const wasOpen = item.classList.contains('open');
+
+            // Close all
+            document.querySelectorAll('.faq-item.open').forEach(i => {
+                i.classList.remove('open');
+            });
+
+            // Toggle clicked
+            if (!wasOpen) {
+                item.classList.add('open');
+            }
+        }
+    </script>
+
+</body>
+</html>

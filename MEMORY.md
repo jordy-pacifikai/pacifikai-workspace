@@ -736,4 +736,84 @@ Sender: newsletter@pacifikai.com
 
 ---
 
-*Dernière MAJ: 2026-01-29 (Session 41)*
+---
+
+### Session - Pipeline Blog Research + Generation Quotidienne (2026-02-10)
+
+**Objectif**: Passer de 1 article generique/semaine a 7 articles documentes/semaine avec sources reelles.
+
+**Architecture 2 phases:**
+1. **Dimanche 20h**: Recherche web via Firecrawl → 7 sujets avec sources → Research_Veille
+2. **Quotidien 6h**: 1 article/jour genere a partir des sujets recherches → Blog_Articles
+
+**6 formats editoriaux:**
+- Tendances, Cas Concrets, Education, Focus Polynesie, Guides Pratiques, Comparatifs
+
+**Workflow modifie: `Qdnl6ZeLpmQ8C0Lk`** (Generation Contenu Hebdomadaire)
+- Branche blog (8 nodes) remplacee par branche recherche (6 nodes)
+- 18 nodes total, actif
+- Nouveaux nodes: Recherche Web Firecrawl, Synthetiser Sujets Claude, Parser Sujets, Split Sujets, Creer Sujet Airtable, Recherche Terminee
+
+**Nouveau workflow: `4TmZ8mUSjtzwmunY`** (Article Blog Quotidien)
+- 12 nodes, actif
+- Schedule: tous les jours a 6h
+- Flow: Chercher Sujet → Scraper Sources Firecrawl → Generer Article Claude → Creer dans Blog_Articles → Marquer Sujet Used
+
+**Nouvelle table Airtable: Research_Veille**
+- Table ID: `tblkfDJQet7qEmlGJ`
+- Base: `appF7pltUaQkOlKM5`
+- Champs: Topic, Angle, Format, Category, Source_URLs, Source_Summary, Key_Data, Status (New/Assigned/Used/Skipped), Found_Date, Week_Number
+
+**Modifications Blog_Articles:**
+- Nouveau champ Format (singleSelect): Tendances, Cas Concrets, Education, Focus Polynesie, Guides Pratiques, Comparatifs
+
+**Blog Frontend:**
+- 100% dynamique (charge depuis Airtable via `/api/blog.js`)
+- URL: https://pacifikai.com/blog/
+- Pas de changement frontend necessaire
+
+---
+
+---
+
+### Session - Fix Blog 404 + Skeleton Loaders + Image Optimization (2026-02-21)
+
+**Bug fixe: Articles 404 depuis `/blog`**
+- Cause: URLs relatives (`article.html?slug=...`) resolvent vers `/article?slug=...` quand Vercel sert `/blog` sans trailing slash (cleanUrls:true)
+- Fix: tous liens convertis en chemins absolus (`/blog/article?slug=...`, `/assets/`, `/#contact`)
+- Fichiers: blog/index.html, blog/article.html, blog/articles/*.html (4 statiques)
+- Decouverte: `vercel alias` necessaire pour pointer pacifikai.com vers le dernier deploy CLI
+
+**Skeleton loaders (REGLE #9)**
+- blog/index.html: 4 cartes squelette (1 featured + 3 normales) avec shimmer CSS
+- blog/article.html: squelette complet (breadcrumb, titre, meta, hero image, 10 lignes body)
+- Remplace le texte "Chargement..." et le spinner rotatif
+
+**Image optimization (REGLE #10)**
+- Toutes les images passent par wsrv.nl proxy: `?w=800&q=75&output=webp`
+- Blog cards: w=800, Article hero: w=920
+- Resultat: 1.4MB PNG → 30KB WebP (~98% reduction)
+
+**Nouvelles regles methodology (permanentes)**
+- REGLE #9: JAMAIS de spinner → skeleton loaders
+- REGLE #10: Images via wsrv.nl, lazy loading, width/height
+- REGLE #11: URLs absolues sur Vercel cleanUrls
+
+---
+
+### Growth Strategy Backlog (2026-02-21)
+
+6 chantiers identifies pour scaler pacifikai.com, enregistres dans ClickUp (liste Landing Page):
+
+| # | Chantier | Priorite | ClickUp |
+|---|----------|----------|---------|
+| 1 | **SEO technique** — sitemap.xml, robots.txt, meta OG/Twitter Cards, JSON-LD (Organization + Article), Google Search Console | High | 86d21hjgv |
+| 2 | **Lead Capture** — lead magnet PDF ("10 workflows IA pour gagner 10h/semaine"), popup exit-intent, CTA inline articles, webhook Brevo, table Supabase leads | High | 86d21hjjh |
+| 3 | **Social Proof** — temoignages clients (ATN, COWAN...), logos carousel, compteurs animes, badges certifications | Normal | 86d21hjkr | ⚠️ SECTIONS SUPPRIMEES le 2026-02-21 (temporaire) — les 2 blocs (carousel logos + cards temoignages) etaient en texte brut, a refaire avec vrais logos SVG et vrais temoignages valides par les clients |
+| 4 | **LinkedIn Personal Branding** — adapter blog pipeline → posts LinkedIn auto (hook+valeur+CTA+hashtags), scheduling mardi/jeudi | Normal | 86d21hjn0 |
+| 5 | **Funnel Email** — welcome sequence 7 emails sur 14 jours (bienvenue → cas usage → temoignages → offre decouverte → relance), n8n + Brevo, tracking Supabase | Normal | 86d21hjnv |
+| 6 | **Pages Services enrichies** — page par service (chatbots, workflows, dashboards, scraping), cas usage par secteur, pricing indicatif, Calendly, FAQ | Normal | 86d21hjqh |
+
+**Ordre recommande**: SEO (#1) → Lead Capture (#2) → Social Proof (#3) → Services (#6) → LinkedIn (#4) → Email (#5)
+
+*Derniere MAJ: 2026-02-21*
