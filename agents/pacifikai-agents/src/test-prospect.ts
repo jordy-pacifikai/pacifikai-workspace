@@ -6,7 +6,6 @@ async function testProspector() {
 
   console.log("\n=== TEST 1: Recherche prospect ===\n");
 
-  // Test avec un vrai prospect potentiel en Polynésie
   const response = await agent.generate(
     `Recherche des informations sur "Le Lotus" restaurant a Tahiti.
     Je veux savoir :
@@ -21,14 +20,13 @@ async function testProspector() {
       resourceId: "jordy",
       threadId: "prospection-session-1",
       maxSteps: 10,
-    }
+    } as any
   );
 
   console.log(response.text);
 
   console.log("\n=== TEST 2: Memoire persistante ===\n");
 
-  // Deuxième requête — l'agent devrait se souvenir du contexte
   const response2 = await agent.generate(
     `Qu'est-ce que tu as appris jusqu'ici sur le secteur restauration a Tahiti ?
     Mets a jour ta base de connaissances avec ce que tu as decouvert.`,
@@ -36,7 +34,7 @@ async function testProspector() {
       resourceId: "jordy",
       threadId: "prospection-session-1",
       maxSteps: 5,
-    }
+    } as any
   );
 
   console.log(response2.text);

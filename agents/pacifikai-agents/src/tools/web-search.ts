@@ -1,5 +1,6 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
+import { tavily } from "@tavily/core";
 
 export const webSearchTool = createTool({
   id: "web-search",
@@ -19,35 +20,23 @@ export const webSearchTool = createTool({
     success: z.boolean(),
     error: z.string().optional(),
   }),
-  execute: async ({ inputData }) => {
-    const apiKey = process.env.FIRECRAWL_API_KEY;
-    if (!apiKey || apiKey === "fc-placeholder") {
-      return { results: [], success: false, error: "FIRECRAWL_API_KEY not configured" };
+  execute: async (inputData) => {
+    const apiKey = process.env.TAVILY_API_KEY;
+    if (!apiKey || apiKey === "tvly-placeholder") {
+      return { results: [], success: false, error: "TAVILY_API_KEY not configured" };
     }
 
     try {
-      const response = await fetch("https://api.firecrawl.dev/v1/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          query: inputData.query,
-          limit: 5,
-        }),
+      const client = tavily({ apiKey });
+      const response = await client.search(inputData.query, {
+        maxResults: 5,
+        searchDepth: "basic",
       });
 
-      const data = await response.json();
-
-      if (!data.success) {
-        return { results: [], success: false, error: data.error || "Search failed" };
-      }
-
-      const results = (data.data || []).map((r: any) => ({
+      const results = (response.results || []).map((r) => ({
         title: r.title || "",
         url: r.url || "",
-        snippet: (r.description || r.markdown || "").slice(0, 500),
+        snippet: (r.content || "").slice(0, 500),
       }));
 
       return { results, success: true };

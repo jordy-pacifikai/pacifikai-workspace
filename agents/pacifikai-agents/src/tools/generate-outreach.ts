@@ -22,11 +22,8 @@ export const generateOutreachTool = createTool({
     follow_up_delay_days: z.number(),
     follow_up_angle: z.string(),
   }),
-  execute: async ({ inputData }) => {
-    // This tool doesn't call an external API — the LLM will generate
-    // the content based on the tool's output schema.
-    // We return a structured template that the agent fills in.
-    const contactGreeting = inputData.contact_name
+  execute: async (inputData) => {
+    const contactGreeting = inputData?.contact_name
       ? `Bonjour ${inputData.contact_name}`
       : "Bonjour";
 

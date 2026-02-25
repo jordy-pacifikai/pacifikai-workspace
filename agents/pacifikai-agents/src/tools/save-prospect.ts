@@ -22,7 +22,7 @@ export const saveProspectTool = createTool({
     id: z.string().optional(),
     error: z.string().optional(),
   }),
-  execute: async ({ inputData }) => {
+  execute: async (inputData) => {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_KEY;
 

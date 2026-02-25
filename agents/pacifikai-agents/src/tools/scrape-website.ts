@@ -1,5 +1,6 @@
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
+import { tavily } from "@tavily/core";
 
 export const scrapeWebsiteTool = createTool({
   id: "scrape-website",
@@ -14,44 +15,34 @@ export const scrapeWebsiteTool = createTool({
     success: z.boolean(),
     error: z.string().optional(),
   }),
-  execute: async ({ inputData }) => {
-    const apiKey = process.env.FIRECRAWL_API_KEY;
-    if (!apiKey || apiKey === "fc-placeholder") {
+  execute: async (inputData) => {
+    const apiKey = process.env.TAVILY_API_KEY;
+    if (!apiKey || apiKey === "tvly-placeholder") {
       return {
         title: "",
         content: "",
         success: false,
-        error: "FIRECRAWL_API_KEY not configured",
+        error: "TAVILY_API_KEY not configured",
       };
     }
 
     try {
-      const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          url: inputData.url,
-          formats: ["markdown"],
-        }),
-      });
+      const client = tavily({ apiKey });
+      const response = await client.extract([inputData.url]);
 
-      const data = await response.json();
-
-      if (!data.success) {
+      const result = response.results?.[0];
+      if (!result) {
         return {
           title: "",
           content: "",
           success: false,
-          error: data.error || "Scrape failed",
+          error: "No content extracted",
         };
       }
 
       return {
-        title: data.data?.metadata?.title || "",
-        content: (data.data?.markdown || "").slice(0, 8000),
+        title: result.url || "",
+        content: (result.rawContent || "").slice(0, 8000),
         success: true,
       };
     } catch (err) {
