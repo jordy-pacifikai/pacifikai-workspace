@@ -801,19 +801,156 @@ Sender: newsletter@pacifikai.com
 
 ---
 
-### Growth Strategy Backlog (2026-02-21)
+### Decision - Rollback Migration Next.js (2026-02-21)
+
+**Migration CRM Next.js → ANNULEE**
+- Le dossier `pacifikai-crm/` contenait une tentative de migration du monolithe HTML vers Next.js 14
+- Apres plusieurs iterations de design insatisfaisantes, decision de revenir au monolithe
+- Code Next.js supprime (src/, node_modules/, .next/, .planning/, configs)
+- Monolithe `dashboard-html/` redeploye sur `pacifikai-crm.vercel.app`
+- Le monolithe HTML est la version de reference definitive
+- Login: `jordy@pacifikai.com` / `PacifikAI2024!`
+
+**Architecture actuelle:**
+- `dashboard-html/` = dossier source du CRM (monolithe HTML, ~22K lignes)
+- `pacifikai-crm/` = copie residuelle (meme .vercel link, meme monolithe)
+- Deploiement Vercel: `pacifikai-crm.vercel.app`
+
+---
+
+### Growth Strategy Backlog (2026-02-21, MAJ 2026-02-24)
 
 6 chantiers identifies pour scaler pacifikai.com, enregistres dans ClickUp (liste Landing Page):
 
-| # | Chantier | Priorite | ClickUp |
-|---|----------|----------|---------|
-| 1 | **SEO technique** — sitemap.xml, robots.txt, meta OG/Twitter Cards, JSON-LD (Organization + Article), Google Search Console | High | 86d21hjgv |
-| 2 | **Lead Capture** — lead magnet PDF ("10 workflows IA pour gagner 10h/semaine"), popup exit-intent, CTA inline articles, webhook Brevo, table Supabase leads | High | 86d21hjjh |
-| 3 | **Social Proof** — temoignages clients (ATN, COWAN...), logos carousel, compteurs animes, badges certifications | Normal | 86d21hjkr | ⚠️ SECTIONS SUPPRIMEES le 2026-02-21 (temporaire) — les 2 blocs (carousel logos + cards temoignages) etaient en texte brut, a refaire avec vrais logos SVG et vrais temoignages valides par les clients |
-| 4 | **LinkedIn Personal Branding** — adapter blog pipeline → posts LinkedIn auto (hook+valeur+CTA+hashtags), scheduling mardi/jeudi | Normal | 86d21hjn0 |
-| 5 | **Funnel Email** — welcome sequence 7 emails sur 14 jours (bienvenue → cas usage → temoignages → offre decouverte → relance), n8n + Brevo, tracking Supabase | Normal | 86d21hjnv |
-| 6 | **Pages Services enrichies** — page par service (chatbots, workflows, dashboards, scraping), cas usage par secteur, pricing indicatif, Calendly, FAQ | Normal | 86d21hjqh |
+| # | Chantier | Priorite | Status |
+|---|----------|----------|--------|
+| 1 | **SEO technique** — sitemap.xml, robots.txt, meta OG/Twitter Cards, JSON-LD, Google Search Console | High | ✅ DEPLOYED 2026-02-21 |
+| 2 | **Lead Capture** — lead magnet PDF, popup exit-intent, CTA inline, webhook Brevo, Supabase leads | High | ✅ DEPLOYED 2026-02-21 |
+| 3 | **Social Proof** — temoignages clients, logos carousel, compteurs, badges | Normal | ⚠️ REPORTE (logos SVG + vrais temoignages a refaire) |
+| 4 | **LinkedIn Personal Branding** — blog pipeline → posts LinkedIn auto | Normal | En attente |
+| 5 | **Funnel Email** — **PLAN STRATEGIQUE FAIT** (section 10 strategie-pacifikai.html): 9 emails/60j, segmentation secteur, win-back J+65/72/80. Reste: implementation n8n+Brevo | Normal | PLAN OK |
+| 6 | **Pages Services enrichies** — pricing 3 plans XPF + CTA /#contact | Normal | ✅ DEPLOYED 2026-02-21 |
 
-**Ordre recommande**: SEO (#1) → Lead Capture (#2) → Social Proof (#3) → Services (#6) → LinkedIn (#4) → Email (#5)
+### Strategie Funnel Marketing Inbound (2026-02-24)
+
+**Fichier**: `strategie-pacifikai.html` — Section 10 (lignes 1050-1520)
+**Recherche**: 6 agents (30+ sources web) + synthese Opus
+
+**Resume strategique:**
+- **Contenu "Probleme d'abord"**: JAMAIS dire "IA/automatisation" en headline. Vocabulaire benefice-driven
+- **Facebook organique Reels-first**: 50% feed Meta = non-abonnes depuis jan 2026. Calendrier 7j (3 Reels + 1 Carousel + 1 Engagement + 1 Story + batch dimanche)
+- **Facebook Ads MVP $18-22/jour**: Phase 0 warm pool OBLIGATOIRE ($70-140), puis TOFU 60% / MOFU 25% / BOFU 15%. CPL cible $15-30
+- **4 Lead Magnets**: Calculateur ROI (existant, ajouter gate email), Audit perte de temps, Checklist sectorielle, Scripts WhatsApp
+- **Email nurture 9 emails/60 jours**: E1 J+0 bienvenue → E9 J+60 break-up. Segmentation par secteur. Plain text, sender Jordy, <150 mots
+- **Funnel metrics steady-state**: 5k-15k reach → 200-500 visiteurs → 20-50 leads → 3-8 demos → 1-3 clients/mois
+- **CAC XPF 25k-55k** vs **LTV/an XPF 720k-1.6M** = **LTV/CAC 15-30x**
+- **Plan execution 12 semaines**: Sem 1-2 infra, 3-4 lancement, 5-8 lead capture, 9-12 optimisation
 
 *Derniere MAJ: 2026-02-21*
+
+---
+
+### Landing Page Animations Upgrade (2026-02-21)
+
+**7 upgrades Conexia-style deployes sur pacifikai.com:**
+1. Scroll animation system (spring + stagger + scale) — IntersectionObserver `.is-visible`
+2. Hero word-by-word blur reveal — `.hero-word` with `--i` CSS var delay
+3. Card glow on hover — `::before` radial-gradient, NO overflow:hidden
+4. Button text slide — cloneNode approach (security fix: no innerHTML)
+5. Section heading line draw + dot pop — `::after` width transition
+6. Parallax orbs — wrapper divs `.orb-parallax` with `data-speed`, rAF scroll
+7. Counter section stagger + glow — `counterGlow` keyframe text-shadow
+
+**CSS custom props:** `--ease-spring` (cubic-bezier 0.34,1.56,0.64,1), `--ease-out-expo` (0.16,1,0.3,1)
+
+**Mobile responsive fix:**
+- Root cause: `.docs-visual`, `.chat-visual` etc. had `height: 160px` AFTER media query, overriding `height: auto`
+- Fix: all visual variant selectors in media query with `!important` + `.docs-field-3 { display: none !important }`
+
+**Security:** innerHTML→cloneNode (button slide), innerHTML→createElement (typing dots)
+**Accessibility:** aria-labels on MANA widget, `<main>` wrapper, `aria-hidden` on bg-animation
+
+*Fichier: landing-page/index.html (~2900 lignes, all inline)*
+
+---
+
+### Dashboard Marketing IA — Templateisation & Prospects (2026-02-24)
+
+**Origine**: Dashboard COWAN MOTOR V2 (Next.js 14, 15 pages, 8 workflows n8n)
+**Objectif**: Dupliquer en template neutre PACIFIK'AI, puis instancier par client
+
+#### Architecture Template
+
+Le dashboard COWAN est un **Content Marketing Automation Platform** complet :
+- **15 pages** : Home, Catalogue Produits, Studio Pub IA, Calendrier Editorial, Galerie, Avatars IA, 4x Facebook Pages, Ideas Kanban, Credits, Settings, Generator
+- **8 workflows n8n** : upload produit, generation contenu IA (Claude + FAL.ai), image lab (search Firecrawl + generate FAL), catalogue multi-produits, avatars, credits, alertes
+- **Stack** : Claude Sonnet (copywriting) + FAL.ai (visuels) + Templated.io (compositions) + Airtable (storage) + Supabase (credits) + Facebook Graph API (publication)
+- **21 modales** auditees, Image Lab dual mode, Kanban, version history, system credits
+
+#### Duplication par client — Checklist
+
+Pour chaque nouveau client :
+1. **Fork repo** dashboard-v2 → `dashboard-{client}`
+2. **Modifier `constants.ts`** : pages, webhooks, tables Airtable, branding
+3. **Modifier `studio-constants.ts`** : templates, couleurs, numeros contact
+4. **Renommer routes** Facebook (4 pages) + Sidebar
+5. **Adapter categories** produits (auto → restaurant/beaute/immo/etc.)
+6. **Creer tables Airtable** : `{CLIENT}_Products`, `{CLIENT}_Editorial_Ideas`, `{CLIENT}_Settings`, `{CLIENT}_Featured_Products`, `{CLIENT}_Gallery`
+7. **Dupliquer workflows n8n** : changer webhooks `cowan-*` → `{client}-*`
+8. **Deploy Vercel** : nouveau projet, env vars client
+9. **Effort estime** : 2-3h par client (principalement config, pas dev)
+
+#### Prospects Auto PF (concurrents COWAN)
+
+| Priorite | Entreprise | Marques | Localisation | Digital |
+|----------|-----------|---------|--------------|---------|
+| **HAUTE** | SOPADEP | Peugeot, Hyundai, BMW, Mitsubishi | Tipaerui + Papeete + Punaauia | Active, leader neuf |
+| **HAUTE** | Groupe Sodiva | Renault, Dacia, Jeep, Nissan, 12+ marques | Bd Reine Pomare, Papeete | Active, stock VO en ligne |
+| **HAUTE** | STA | Citroen, Kia, Opel, Mazda | Mamao + Punaauia (Carrefour) | Active, pages FB par marque |
+| **HAUTE** | Fenua Bikers | Royal Enfield, Kymco | Pirae | Active FB/Insta, communaute |
+| MOYENNE | Tahiti Automobiles | Importateur historique 12+ marques | 192 av. Clemenceau, Papeete | Site web, digital faible |
+| MOYENNE | Nippon Automoto | Toyota, Lexus, VW, Audi, Suzuki | Mamao, Papeete | Site basique, marques premium |
+| MOYENNE | Motor Bike Center | KTM, Kawasaki, Trek | Arue PK 3.5 (meme zone COWAN) | Active FB |
+| BASSE | Car Discount Tahiti | Courtier multi-marques | En ligne | Site correct, pas de social |
+| BASSE | Miklus Occasions | VO + SsangYong | Faa'a PK 6 | FB active, petit acteur |
+
+#### Prospects Multi-Secteur PF
+
+| Priorite | Entreprise | Secteur | Localisation | Pourquoi |
+|----------|-----------|---------|--------------|----------|
+| **TRES FORT** | Le Grillardin | Restaurant | Rue Paul Gauguin, Papeete | #1 TripAdvisor, zero site, FB negligee |
+| **TRES FORT** | Roulotte Anita | Roulotte | PK 10.5 Punaauia | Institution locale, zero digital |
+| **FORT** | Senso by Elo | Beaute | Place Cathedrale, Papeete | Deja TikTok, veut communiquer |
+| **FORT** | O'Hina Institut | Beaute/Bien-etre | Fare Ute, Papeete | Offre complete, site date |
+| **FORT** | Poerava Immobilier | Immobilier | Place Cathedrale, Papeete | Marche competitif, FB faible |
+| **FORT** | Le Boudoir Tahiti | Coiffure premium | Centre Puea, Papeete | Zero presence en ligne |
+| MOYEN | Alika Tahiti | Bijoux artisanaux | Taunoa (chez PULP) | Contenu photogenique, artisan solo |
+| MOYEN | Little Missy Tahiti | Mode locale | Papeete | Active Insta, FB a structurer |
+| MOYEN | My Keys Immobilier | Immobilier | Punaauia | Agence recente, locale |
+| MOYEN | Pension Tupuna | Hebergement | Huahine Iti | Cadre paradisiaque, depend OTA |
+
+#### Strategie Commerciale
+
+1. **Concurrents auto** → montrer dashboard COWAN tel quel (meme secteur, meme besoin)
+2. **Autres secteurs** → preparer demo neutre brandee PACIFIK'AI (categories generiques)
+3. **Ne PAS transformer en SaaS** avant 3+ clients payants — dupliquer manuellement par client
+4. **Pricing** : 150-280k XPF/mois selon formule (Starter/Pro/Enterprise)
+
+---
+
+### PACIFIK'AI Agent System — Mastra (2026-02-25)
+
+**Path**: `agents/pacifikai-agents/`
+**Framework**: Mastra (TypeScript, 21k stars, YC W25, Apache 2.0)
+**LLM**: DeepSeek V3 (`deepseek-chat`, $0.14/M input, $0.28/M output)
+**Search**: Tavily SDK (`@tavily/core`) — remplace Firecrawl pour les agents
+**Storage**: LibSQL local (`data/mastra.db`)
+
+**Agent Prospecteur** (premier agent, prototype):
+- 4 tools: web-search (Tavily), scrape-website (Tavily extract), save-prospect, generate-outreach
+- Working memory persistante (LibSQL, scope=resource)
+- Template memoire: sectors, outreach patterns, prospect pipeline, pain points, learnings
+- System prompt en francais, contexte PACIFIK'AI + secteurs PF
+
+**Status**: DeepSeek OK (credits recharges), Tavily integre (besoin cle API), TypeScript zero erreur
+**Next**: Ajouter cle Tavily → test E2E reel → semantic recall → Agent Landing Page → Agent Chatbot → Agent Network
