@@ -1,0 +1,411 @@
+'use client';
+
+import { useState } from 'react';
+import {
+  format,
+  addDays,
+  startOfWeek,
+  endOfWeek,
+  addWeeks,
+  subWeeks,
+  isSameDay,
+  parseISO,
+} from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { ChevronLeft, ChevronRight, X, Clock, User, Scissors, MessageSquare } from 'lucide-react';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { useAppStore } from '@/lib/store';
+import { useAppointments } from '@/hooks/useAppointments';
+import { cn } from '@/lib/utils';
+import type { Appointment } from '@/types/database';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const HOUR_START = 7;
+const HOUR_END = 20;
+const SLOT_HEIGHT = 48; // px per 30-min slot
+const SLOTS_PER_HOUR = 2;
+const TOTAL_SLOTS = (HOUR_END - HOUR_START) * SLOTS_PER_HOUR;
+
+// ─── Status config ─────────────────────────────────────────────────────────────
+
+const STATUS_CONFIG = {
+  pending:   { bg: 'bg-yellow-500/20',  border: 'border-yellow-500',  text: 'text-yellow-400',  dot: 'bg-yellow-500',  label: 'En attente' },
+  confirmed: { bg: 'bg-[#25D366]/20',   border: 'border-[#25D366]',   text: 'text-[#25D366]',   dot: 'bg-[#25D366]',   label: 'Confirmé'   },
+  cancelled: { bg: 'bg-gray-500/20',    border: 'border-gray-500',    text: 'text-gray-400',    dot: 'bg-gray-500',    label: 'Annulé'     },
+  completed: { bg: 'bg-blue-500/20',    border: 'border-blue-500',    text: 'text-blue-400',    dot: 'bg-blue-500',    label: 'Terminé'    },
+  no_show:   { bg: 'bg-red-500/20',     border: 'border-red-500',     text: 'text-red-400',     dot: 'bg-red-500',     label: 'No-show'    },
+} satisfies Record<Appointment['status'], { bg: string; border: string; text: string; dot: string; label: string }>;
+
+const SOURCE_LABELS: Record<Appointment['source'], string> = {
+  app: 'App', web: 'Web', manual: 'Manuel', chatbot: 'Chatbot', guest: 'Invité', whatsapp: 'WhatsApp',
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function timeToSlotOffset(time: string): number {
+  const [h, m] = time.split(':').map(Number);
+  return ((h - HOUR_START) * SLOTS_PER_HOUR + Math.floor(m / 30)) * SLOT_HEIGHT;
+}
+
+function durationToHeight(duration: number): number {
+  // duration is in minutes
+  return (duration / 30) * SLOT_HEIGHT;
+}
+
+// ─── Appointment Block ─────────────────────────────────────────────────────────
+
+interface AppointmentBlockProps {
+  appointment: Appointment;
+  onClick: (a: Appointment) => void;
+}
+
+function AppointmentBlock({ appointment, onClick }: AppointmentBlockProps) {
+  const cfg = STATUS_CONFIG[appointment.status];
+  const top = timeToSlotOffset(appointment.start_time);
+  const height = Math.max(durationToHeight(appointment.duration), SLOT_HEIGHT / 2);
+  const clientName = appointment.client?.name ?? appointment.guest_name ?? 'Inconnu';
+  const serviceName = appointment.service?.name ?? '—';
+
+  return (
+    <button
+      onClick={() => onClick(appointment)}
+      className={cn(
+        'absolute left-1 right-1 rounded-md border-l-2 px-2 py-1 text-left overflow-hidden cursor-pointer transition-opacity hover:opacity-80',
+        cfg.bg,
+        cfg.border,
+        cfg.text,
+      )}
+      style={{ top, height }}
+      title={`${clientName} — ${serviceName}`}
+    >
+      <p className="text-xs font-semibold truncate leading-tight">{clientName}</p>
+      {height >= SLOT_HEIGHT && (
+        <p className="text-[10px] truncate opacity-75 leading-tight">{serviceName}</p>
+      )}
+    </button>
+  );
+}
+
+// ─── Detail Drawer ─────────────────────────────────────────────────────────────
+
+interface DetailDrawerProps {
+  appointment: Appointment | null;
+  onClose: () => void;
+}
+
+function DetailDrawer({ appointment, onClose }: DetailDrawerProps) {
+  if (!appointment) return null;
+  const cfg = STATUS_CONFIG[appointment.status];
+  const clientName = appointment.client?.name ?? appointment.guest_name ?? 'Inconnu';
+  const clientPhone = appointment.client?.phone ?? appointment.guest_phone ?? null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+        onClick={onClose}
+      />
+      {/* Drawer */}
+      <div className="fixed right-0 top-0 bottom-0 w-full max-w-sm bg-gray-900 border-l border-gray-800 z-50 flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
+          <h2 className="text-white font-semibold">Détail du RDV</h2>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-5">
+          {/* Status badge */}
+          <div className="flex items-center gap-2">
+            <span className={cn('inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border', cfg.bg, cfg.border, cfg.text)}>
+              <span className={cn('w-1.5 h-1.5 rounded-full', cfg.dot)} />
+              {cfg.label}
+            </span>
+            <span className="text-xs text-gray-500">{SOURCE_LABELS[appointment.source]}</span>
+          </div>
+
+          {/* Date & Time */}
+          <div className="bg-gray-800 rounded-xl p-4 space-y-2">
+            <div className="flex items-center gap-2 text-gray-300">
+              <Clock size={15} className="text-gray-500" />
+              <span className="text-sm font-medium">
+                {format(parseISO(appointment.date), 'EEEE d MMMM yyyy', { locale: fr })}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-300">
+              <span className="text-xs text-gray-500 ml-[23px]">
+                {appointment.start_time.slice(0, 5)} — {appointment.end_time.slice(0, 5)}
+                {' '}({appointment.duration} min)
+              </span>
+            </div>
+          </div>
+
+          {/* Client */}
+          <div className="bg-gray-800 rounded-xl p-4 space-y-1">
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Client</p>
+            <div className="flex items-center gap-2 text-gray-200">
+              <User size={15} className="text-gray-500 shrink-0" />
+              <span className="text-sm font-medium">{clientName}</span>
+            </div>
+            {clientPhone && (
+              <p className="text-xs text-gray-500 ml-[23px]">{clientPhone}</p>
+            )}
+            {appointment.client?.email && (
+              <p className="text-xs text-gray-500 ml-[23px]">{appointment.client.email}</p>
+            )}
+          </div>
+
+          {/* Service */}
+          {appointment.service && (
+            <div className="bg-gray-800 rounded-xl p-4 space-y-1">
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Service</p>
+              <div className="flex items-center gap-2 text-gray-200">
+                <Scissors size={15} className="text-gray-500 shrink-0" />
+                <span className="text-sm font-medium">{appointment.service.name}</span>
+              </div>
+              {appointment.price != null && (
+                <p className="text-xs text-gray-500 ml-[23px]">
+                  {appointment.price.toLocaleString('fr-FR')} XPF
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Notes */}
+          {appointment.notes && (
+            <div className="bg-gray-800 rounded-xl p-4">
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Notes client</p>
+              <div className="flex gap-2 text-gray-300">
+                <MessageSquare size={15} className="text-gray-500 shrink-0 mt-0.5" />
+                <p className="text-sm">{appointment.notes}</p>
+              </div>
+            </div>
+          )}
+          {appointment.pro_notes && (
+            <div className="bg-gray-800 rounded-xl p-4">
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Notes pro</p>
+              <p className="text-sm text-gray-300">{appointment.pro_notes}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── Calendar Skeleton ─────────────────────────────────────────────────────────
+
+function CalendarSkeleton() {
+  return (
+    <div className="flex gap-px overflow-x-auto">
+      {Array.from({ length: 7 }).map((_, i) => (
+        <div key={i} className="flex-1 min-w-[120px]">
+          <div className="h-12 bg-gray-900 border border-gray-800 rounded-t-lg p-2">
+            <div className="skeleton h-3 w-2/3 rounded mb-1" />
+            <div className="skeleton h-4 w-1/3 rounded" />
+          </div>
+          <div className="bg-gray-900/50 border-x border-b border-gray-800 rounded-b-lg" style={{ height: TOTAL_SLOTS * SLOT_HEIGHT }}>
+            {Array.from({ length: 4 }).map((_, j) => (
+              <div
+                key={j}
+                className="absolute left-1 right-1 skeleton rounded-md"
+                style={{
+                  top: j * SLOT_HEIGHT * 3 + SLOT_HEIGHT,
+                  height: SLOT_HEIGHT * 2,
+                  position: 'relative',
+                  margin: `${SLOT_HEIGHT * 2}px 4px ${SLOT_HEIGHT}px`,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function CalendarPage() {
+  const { businessId, businessName } = useAppStore();
+  const [currentWeek, setCurrentWeek] = useState(() => new Date());
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+
+  const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 }); // Monday
+  const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
+
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+
+  const { data: appointments, isLoading } = useAppointments(businessId, undefined, {
+    dateFrom: format(weekStart, 'yyyy-MM-dd'),
+    dateTo: format(weekEnd, 'yyyy-MM-dd'),
+  });
+
+  const today = new Date();
+  const isCurrentWeek = isSameDay(weekStart, startOfWeek(today, { weekStartsOn: 1 }));
+
+  // Time axis labels (07:00 → 20:00 every 30 min)
+  const timeLabels = Array.from({ length: TOTAL_SLOTS }, (_, i) => {
+    const totalMins = HOUR_START * 60 + i * 30;
+    const h = Math.floor(totalMins / 60);
+    const m = totalMins % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  });
+
+  return (
+    <DashboardLayout title="Calendrier" businessName={businessName ?? undefined}>
+      <div className="flex flex-col gap-4">
+        {/* Navigation */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentWeek(subWeeks(currentWeek, 1))}
+              className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <button
+              onClick={() => setCurrentWeek(addWeeks(currentWeek, 1))}
+              className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors"
+            >
+              <ChevronRight size={16} />
+            </button>
+            <h2 className="text-white font-semibold text-sm ml-1">
+              {format(weekStart, 'd MMM', { locale: fr })} — {format(weekEnd, 'd MMM yyyy', { locale: fr })}
+            </h2>
+          </div>
+          <button
+            onClick={() => setCurrentWeek(new Date())}
+            disabled={isCurrentWeek}
+            className="px-3 py-1.5 text-sm rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Aujourd'hui
+          </button>
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center gap-4 flex-wrap">
+          {(Object.keys(STATUS_CONFIG) as Appointment['status'][]).map((s) => (
+            <div key={s} className="flex items-center gap-1.5">
+              <span className={cn('w-2 h-2 rounded-full', STATUS_CONFIG[s].dot)} />
+              <span className="text-xs text-gray-500">{STATUS_CONFIG[s].label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar grid */}
+        {isLoading ? (
+          <CalendarSkeleton />
+        ) : (
+          <div className="overflow-x-auto">
+            <div className="flex min-w-[700px]">
+              {/* Time axis */}
+              <div className="w-14 shrink-0 pt-12">
+                {timeLabels.map((label, i) => (
+                  <div
+                    key={label}
+                    className="relative"
+                    style={{ height: SLOT_HEIGHT }}
+                  >
+                    {/* Only show hour labels */}
+                    {i % 2 === 0 && (
+                      <span className="absolute -top-2 right-2 text-[10px] text-gray-600 select-none">
+                        {label}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Day columns */}
+              <div className="flex flex-1 gap-px">
+                {weekDays.map((day) => {
+                  const dayStr = format(day, 'yyyy-MM-dd');
+                  const dayAppointments = (appointments ?? []).filter(
+                    (a) => a.date === dayStr,
+                  );
+                  const isToday = isSameDay(day, today);
+
+                  return (
+                    <div key={dayStr} className="flex-1 min-w-[100px] flex flex-col">
+                      {/* Day header */}
+                      <div
+                        className={cn(
+                          'h-12 flex flex-col items-center justify-center rounded-t-lg border-x border-t text-center mb-px',
+                          isToday
+                            ? 'bg-[#25D366]/10 border-[#25D366]/40'
+                            : 'bg-gray-900 border-gray-800',
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            'text-[10px] uppercase tracking-wider',
+                            isToday ? 'text-[#25D366]' : 'text-gray-500',
+                          )}
+                        >
+                          {format(day, 'EEE', { locale: fr })}
+                        </span>
+                        <span
+                          className={cn(
+                            'text-sm font-bold',
+                            isToday ? 'text-[#25D366]' : 'text-gray-200',
+                          )}
+                        >
+                          {format(day, 'd')}
+                        </span>
+                      </div>
+
+                      {/* Time slots container */}
+                      <div
+                        className={cn(
+                          'relative flex-1 border-x border-b rounded-b-lg',
+                          isToday ? 'border-[#25D366]/20 bg-[#25D366]/[0.02]' : 'border-gray-800 bg-gray-900/30',
+                        )}
+                        style={{ height: TOTAL_SLOTS * SLOT_HEIGHT }}
+                      >
+                        {/* Horizontal grid lines (every 30min) */}
+                        {timeLabels.map((label, i) => (
+                          <div
+                            key={label}
+                            className={cn(
+                              'absolute left-0 right-0 border-t',
+                              i % 2 === 0 ? 'border-gray-800' : 'border-gray-800/40',
+                            )}
+                            style={{ top: i * SLOT_HEIGHT }}
+                          />
+                        ))}
+
+                        {/* Appointments */}
+                        {dayAppointments.map((appt) => (
+                          <AppointmentBlock
+                            key={appt.id}
+                            appointment={appt}
+                            onClick={setSelectedAppointment}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Detail Drawer */}
+      <DetailDrawer
+        appointment={selectedAppointment}
+        onClose={() => setSelectedAppointment(null)}
+      />
+    </DashboardLayout>
+  );
+}
