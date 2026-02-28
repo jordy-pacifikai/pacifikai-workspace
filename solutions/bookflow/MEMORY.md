@@ -611,6 +611,44 @@ Un faux chat Messenger integre dans la page de proposition commerciale (`proposi
 
 ---
 
+## WhatsApp Cloud API (Meta)
+
+### Credentials
+- **App Facebook** : "PACIFIKAI Messaging" — ID `854522137595486`
+- **Business ID** : `1097629709192002`
+- **WhatsApp Business Account ID** : `4283213791926528`
+- **Phone Number ID (test)** : `930634866809536` (+1 555 142 0347)
+- **Phone Number ID (prod PF)** : `952486264622885` (+689 88 17 01 97)
+- **Numéro enregistré** : +689 88 17 01 97 (vérifié par SMS, 2026-02-27)
+- **Profil WhatsApp** : Pacifikai | Services professionnels | (GMT-10:00) Pacific/Honolulu | Polynésie française
+- Privacy policy : `proposition-bookbot.vercel.app/privacy`
+- App Review `pages_messaging` : PAS encore soumise (pas bloquant)
+
+### API Endpoints
+- Send message : `POST https://graph.facebook.com/v22.0/952486264622885/messages`
+- Auth : `Authorization: Bearer <access_token>`
+- Token temporaire (24h, 2026-02-27) : `EAAMJLvB2zl4BQ...ZAZDZD` (tronqué)
+- **Token permanent** : a creer via System User dans Business Manager
+
+### Webhook (CONFIGURE 2026-02-27)
+- **URL de rappel** : `https://bookbot-propale.vercel.app/api/webhook`
+- **Verify token** : `bookbot_verify_2026`
+- **Architecture** : Meta → Vercel proxy (GET verification + POST forward) → n8n
+- **Proxy Vercel** : `PACIFIK'AI/propositions/bookbot/api/webhook.js`
+- **n8n workflow** : `BfWMx1k9UWn83VdP` "BookBot — WhatsApp Cloud API v2" (cree via UI, publié)
+- **Webhook n8n** : `POST https://n8n.srv1140766.hstgr.cloud/webhook/bookbot-whatsapp`
+- **Abonnement** : champ `messages` souscrit via Graph API
+- **E2E validé** : Vercel proxy → n8n → parse message → respond 200 (execution 25094 success)
+- **IMPORTANT** : ancien workflow `NOkEggj2YHK2oLz7` (cree via API) = DESACTIVE (webhook jamais enregistre, bug n8n connu)
+
+### Prochaines étapes
+- Créer System User token permanent (remplacer token temporaire 24h)
+- Créer template de message approuvé (business verification nécessaire)
+- Connecter le state machine BookBot v2 au parsing Cloud API
+- Tester réception message réel WhatsApp (Jordy envoie au +689 88 17 01 97)
+
+---
+
 ## Prospection Email
 
 ### App Facebook
@@ -633,4 +671,4 @@ Un faux chat Messenger integre dans la page de proposition commerciale (`proposi
 
 ---
 
-**Derniere MAJ**: 2026-02-26
+**Derniere MAJ**: 2026-02-28
