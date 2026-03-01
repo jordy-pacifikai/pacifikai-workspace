@@ -12,6 +12,8 @@ import {
   BarChart3,
   Bot,
   MessageCircle,
+  BookOpen,
+  Plug,
   Settings,
   LogOut,
 } from 'lucide-react';
@@ -33,7 +35,9 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Clients',        href: '/clients',      icon: Users           },
   { label: 'Statistiques',   href: '/stats',        icon: BarChart3       },
   { label: 'Agent IA',       href: '/agent',        icon: Bot             },
+  { label: 'Connaissances',  href: '/knowledge',    icon: BookOpen        },
   { label: 'Test chatbot',   href: '/chat-test',    icon: MessageCircle   },
+  { label: 'Canaux',         href: '/channels',     icon: Plug            },
   { label: 'Paramètres',     href: '/settings',     icon: Settings        },
 ];
 

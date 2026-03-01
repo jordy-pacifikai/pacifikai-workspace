@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import type { BusinessConfig } from "./config.js";
 import { parseAllServices } from "./config.js";
 import {
@@ -12,92 +12,110 @@ import {
 import { generateAvailableDates, generateTimeSlots } from "../utils/dates.js";
 import type { Session } from "./supabase.js";
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY!;
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY!;
 
-const BOOKBOT_TOOLS: Anthropic.Tool[] = [
+const BOOKBOT_TOOLS: OpenAI.ChatCompletionTool[] = [
   {
-    name: "search_knowledge_base",
-    description:
-      "Cherche dans la base de connaissances du commerce (FAQ, politiques, détails services, informations pratiques). Utilise cet outil pour répondre aux questions spécifiques du client.",
-    input_schema: {
-      type: "object" as const,
-      properties: {
-        query: {
-          type: "string",
-          description: "La question ou le sujet à rechercher",
+    type: "function",
+    function: {
+      name: "search_knowledge_base",
+      description:
+        "Cherche dans la base de connaissances du commerce (FAQ, politiques, détails services, informations pratiques). Utilise cet outil pour répondre aux questions spécifiques du client.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description: "La question ou le sujet à rechercher",
+          },
         },
+        required: ["query"],
       },
-      required: ["query"],
     },
   },
   {
-    name: "list_services",
-    description:
-      "Liste tous les services disponibles avec leurs prix et durées. Appelle cet outil quand le client demande ce qui est proposé.",
-    input_schema: {
-      type: "object" as const,
-      properties: {},
-    },
-  },
-  {
-    name: "check_availability",
-    description:
-      "Vérifie les créneaux disponibles pour un service à une date donnée. Prend en compte les RDV existants pour ne proposer que les créneaux réellement libres.",
-    input_schema: {
-      type: "object" as const,
-      properties: {
-        service_name: {
-          type: "string",
-          description: "Le nom du service demandé",
-        },
-        date: {
-          type: "string",
-          description: "La date au format YYYY-MM-DD",
-        },
+    type: "function",
+    function: {
+      name: "list_services",
+      description:
+        "Liste tous les services disponibles avec leurs prix et durées. Appelle cet outil quand le client demande ce qui est proposé.",
+      parameters: {
+        type: "object",
+        properties: {},
       },
-      required: ["service_name", "date"],
     },
   },
   {
-    name: "book_appointment",
-    description:
-      "Confirme et crée un rendez-vous. IMPORTANT : tu DOIS avoir demandé confirmation au client AVANT d'appeler cet outil.",
-    input_schema: {
-      type: "object" as const,
-      properties: {
-        service: { type: "string", description: "Nom du service" },
-        date: { type: "string", description: "Date au format YYYY-MM-DD" },
-        time: { type: "string", description: "Heure au format HH:MM" },
-        client_name: {
-          type: "string",
-          description: "Prénom ou nom du client",
+    type: "function",
+    function: {
+      name: "check_availability",
+      description:
+        "Vérifie les créneaux disponibles pour un service à une date donnée. Prend en compte les RDV existants pour ne proposer que les créneaux réellement libres.",
+      parameters: {
+        type: "object",
+        properties: {
+          service_name: {
+            type: "string",
+            description: "Le nom du service demandé",
+          },
+          date: {
+            type: "string",
+            description: "La date au format YYYY-MM-DD",
+          },
         },
+        required: ["service_name", "date"],
       },
-      required: ["service", "date", "time", "client_name"],
     },
   },
   {
-    name: "cancel_appointment",
-    description:
-      "Annule le prochain rendez-vous confirmé du client. Demande confirmation avant d'annuler.",
-    input_schema: {
-      type: "object" as const,
-      properties: {},
-    },
-  },
-  {
-    name: "transfer_to_human",
-    description:
-      "Transfère la conversation à un humain quand la demande dépasse tes capacités ou que le client le demande explicitement.",
-    input_schema: {
-      type: "object" as const,
-      properties: {
-        reason: {
-          type: "string",
-          description: "Raison du transfert",
+    type: "function",
+    function: {
+      name: "book_appointment",
+      description:
+        "Confirme et crée un rendez-vous. IMPORTANT : tu DOIS avoir demandé confirmation au client AVANT d'appeler cet outil.",
+      parameters: {
+        type: "object",
+        properties: {
+          service: { type: "string", description: "Nom du service" },
+          date: { type: "string", description: "Date au format YYYY-MM-DD" },
+          time: { type: "string", description: "Heure au format HH:MM" },
+          client_name: {
+            type: "string",
+            description: "Prénom ou nom du client",
+          },
         },
+        required: ["service", "date", "time", "client_name"],
       },
-      required: ["reason"],
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "cancel_appointment",
+      description:
+        "Annule le prochain rendez-vous confirmé du client. Demande confirmation avant d'annuler.",
+      parameters: {
+        type: "object",
+        properties: {},
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "transfer_to_human",
+      description:
+        "Transfère la conversation à un humain quand la demande dépasse tes capacités ou que le client le demande explicitement.",
+      parameters: {
+        type: "object",
+        properties: {
+          reason: {
+            type: "string",
+            description: "Raison du transfert",
+          },
+        },
+        required: ["reason"],
+      },
     },
   },
 ];
@@ -142,12 +160,34 @@ function buildSystemPrompt(config: BusinessConfig, today: string): string {
     .map(([day, h]) => `${dayLabels[day] ?? day}: ${h}`)
     .join("\n");
 
-  return `Tu es l'assistant WhatsApp de ${config.businessName}. Tu parles en français, de manière naturelle et chaleureuse. Tu es basé en Polynésie française.
+  // Tone from chatbot config
+  const cfg = config.chatbotConfig ?? {};
+  const tone =
+    cfg.tone === "formel"
+      ? "formel et professionnel"
+      : cfg.tone === "decontracte"
+        ? "décontracté et amical"
+        : 'chaleureux et accueillant, utilise "Ia ora na" pour saluer';
+
+  // Language preference
+  const langMap: Record<string, string> = {
+    fr: "français",
+    en: "anglais",
+    tah: "tahitien (reo Māʼohi)",
+  };
+  const language = langMap[(cfg.language as string) ?? "fr"] ?? "français";
+
+  // Custom greeting
+  const greeting = (cfg.greeting as string) ?? "";
+  const greetingInstruction = greeting
+    ? `\n- Quand un client te salue, utilise cette formule de bienvenue : "${greeting}"`
+    : "";
+
+  return `Tu es l'assistant WhatsApp de ${config.businessName}. Tu parles en ${language}, ton ${tone}. Tu es basé en Polynésie française.
 
 ## Ton rôle
 - Aider les clients à prendre rendez-vous, répondre à leurs questions, gérer les annulations
-- Tu es un assistant amical, pas un robot. Adapte ton ton au client.
-- Utilise "Ia ora na" pour les salutations si le contexte s'y prête
+- Tu es un assistant amical, pas un robot. Adapte ton ton au client.${greetingInstruction}
 
 ## Services proposés
 ${services}
@@ -167,7 +207,8 @@ ${today} (timezone: ${config.timezone})
 6. Réponses COURTES (2-4 phrases max) — c'est WhatsApp, pas un email
 7. Si le client te salue, présente-toi brièvement et demande comment tu peux aider
 8. NE JAMAIS proposer de dates dans le passé. La date minimale est demain.
-9. Si le client donne une date en texte ("lundi prochain", "demain"), convertis en YYYY-MM-DD avant d'appeler les outils`;
+9. Si le client donne une date en texte ("lundi prochain", "demain"), convertis en YYYY-MM-DD avant d'appeler les outils
+10. Tu DOIS répondre en ${language} — c'est la langue configurée par le commerce`;
 }
 
 async function executeTool(
@@ -291,66 +332,74 @@ export async function runBookingAgent(
   },
   config: BusinessConfig
 ): Promise<string> {
-  const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
+  const client = new OpenAI({
+    apiKey: DEEPSEEK_API_KEY,
+    baseURL: "https://api.deepseek.com",
+  });
 
   // Restore conversation history from session context
   const ctx = session.context as Record<string, unknown>;
-  const history: Anthropic.MessageParam[] =
-    (ctx?.messages as Anthropic.MessageParam[]) ?? [];
+  const history: OpenAI.ChatCompletionMessageParam[] =
+    (ctx?.messages as OpenAI.ChatCompletionMessageParam[]) ?? [];
 
   // Add the user's new message
   const userText = payload.buttonPayload ?? payload.message;
   history.push({ role: "user", content: userText });
 
-  // Build messages for Claude (copy to avoid mutating history mid-loop)
-  const messages: Anthropic.MessageParam[] = [...history];
+  // Build messages for DeepSeek
+  const messages: OpenAI.ChatCompletionMessageParam[] = [
+    { role: "system", content: buildSystemPrompt(config, getTahitiDate()) },
+    ...history,
+  ];
   let finalReply = "";
   const maxIterations = 5;
 
   for (let i = 0; i < maxIterations; i++) {
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
+    const response = await client.chat.completions.create({
+      model: "deepseek-chat",
       max_tokens: 1024,
-      system: buildSystemPrompt(config, getTahitiDate()),
       tools: BOOKBOT_TOOLS,
       messages,
     });
 
-    if (response.stop_reason === "tool_use") {
-      // Execute each tool call
-      const toolResults: Anthropic.ToolResultBlockParam[] = [];
-      for (const block of response.content) {
-        if (block.type === "tool_use") {
-          const result = await executeTool(
-            block.name,
-            block.input as Record<string, unknown>,
-            payload.from,
-            config
-          );
-          toolResults.push({
-            type: "tool_result",
-            tool_use_id: block.id,
-            content: result,
-          });
-        }
+    const choice = response.choices[0];
+    if (!choice) break;
+
+    const msg = choice.message;
+
+    if (choice.finish_reason === "tool_calls" && msg.tool_calls?.length) {
+      // Add assistant message with tool calls to conversation
+      messages.push(msg);
+
+      // Execute each tool call and add results
+      for (const toolCall of msg.tool_calls) {
+        if (toolCall.type !== "function") continue;
+        const args = JSON.parse(toolCall.function.arguments || "{}");
+        const result = await executeTool(
+          toolCall.function.name,
+          args,
+          payload.from,
+          config
+        );
+        messages.push({
+          role: "tool",
+          tool_call_id: toolCall.id,
+          content: result,
+        });
       }
-      messages.push({ role: "assistant", content: response.content });
-      messages.push({ role: "user", content: toolResults });
     } else {
       // Final text response
-      finalReply = response.content
-        .filter((b): b is Anthropic.TextBlock => b.type === "text")
-        .map((b) => b.text)
-        .join("");
+      finalReply = msg.content ?? "";
 
       // Add assistant response to history for persistence
-      messages.push({ role: "assistant", content: response.content });
+      // We store without the system prompt (re-injected each time)
+      history.push({ role: "assistant", content: finalReply });
       break;
     }
   }
 
   // Persist updated conversation history (truncate to last 30 messages to avoid bloat)
-  const trimmedMessages = messages.slice(-30);
+  const trimmedMessages = history.slice(-30);
   await updateSession(payload.from, config.businessId, "active", {
     context: { messages: trimmedMessages },
   });

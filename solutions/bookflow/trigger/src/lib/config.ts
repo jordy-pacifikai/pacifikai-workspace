@@ -16,6 +16,8 @@ export const BusinessConfigSchema = z.object({
   // Meta Cloud API
   metaPhoneNumberId: z.string().optional(),
   metaAccessToken: z.string().optional(),
+  // Business config (tone, language, greeting, etc.)
+  chatbotConfig: z.record(z.unknown()).default({}),
 });
 
 export type BusinessConfig = z.infer<typeof BusinessConfigSchema>;

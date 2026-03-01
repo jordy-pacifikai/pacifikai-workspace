@@ -137,6 +137,7 @@ export async function loadBusinessConfig(
     twilioFrom: b.twilio_from,
     metaPhoneNumberId: b.phone_number_id,
     metaAccessToken: b.meta_access_token,
+    chatbotConfig: b.config ?? {},
   };
 }
 

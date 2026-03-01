@@ -167,6 +167,7 @@ export default function SettingsPage() {
     active: true,
     welcomeMessage: '',
     language: 'fr',
+    tone: 'chaleureux',
   });
   const [chatbotSaving, setChatbotSaving] = useState(false);
   const [chatbotSaved, setChatbotSaved] = useState(false);
@@ -192,6 +193,14 @@ export default function SettingsPage() {
       category: business.category ?? '',
       description: business.description ?? '',
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cfg = (business as any).config ?? {};
+    setChatbot({
+      active: cfg.chatbot_active !== false,
+      welcomeMessage: cfg.greeting ?? '',
+      language: cfg.language ?? 'fr',
+      tone: cfg.tone ?? 'chaleureux',
+    });
   }, [business]);
 
   function flashSaved(setter: (v: boolean) => void) {
@@ -215,10 +224,18 @@ export default function SettingsPage() {
 
   function saveChatbot() {
     setChatbotSaving(true);
-    // Chatbot settings stored in business metadata or dedicated table — fire same update hook
-    // with extended fields once API supports them. For now we save as-is.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const existingConfig = ((business as any)?.config ?? {}) as Record<string, unknown>;
     updateBusiness(
-      {},
+      {
+        config: {
+          ...existingConfig,
+          chatbot_active: chatbot.active,
+          greeting: chatbot.welcomeMessage,
+          language: chatbot.language,
+          tone: chatbot.tone,
+        },
+      } as Record<string, unknown>,
       {
         onSuccess: () => {
           setChatbotSaving(false);
@@ -381,17 +398,30 @@ export default function SettingsPage() {
             />
           </FormField>
 
-          <FormField label="Langue par defaut">
-            <select
-              className={inputClass}
-              value={chatbot.language}
-              onChange={(e) => setChatbot((f) => ({ ...f, language: e.target.value }))}
-            >
-              <option value="fr">Francais</option>
-              <option value="en">Anglais</option>
-              <option value="tah">Tahitien</option>
-            </select>
-          </FormField>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <FormField label="Langue par defaut">
+              <select
+                className={inputClass}
+                value={chatbot.language}
+                onChange={(e) => setChatbot((f) => ({ ...f, language: e.target.value }))}
+              >
+                <option value="fr">Francais</option>
+                <option value="en">Anglais</option>
+                <option value="tah">Tahitien</option>
+              </select>
+            </FormField>
+            <FormField label="Ton du chatbot">
+              <select
+                className={inputClass}
+                value={chatbot.tone}
+                onChange={(e) => setChatbot((f) => ({ ...f, tone: e.target.value }))}
+              >
+                <option value="chaleureux">Chaleureux</option>
+                <option value="formel">Formel</option>
+                <option value="decontracte">Decontracte</option>
+              </select>
+            </FormField>
+          </div>
         </SectionCard>
 
         {/* ─ 3. Notifications ─────────────────────────────────────────────── */}

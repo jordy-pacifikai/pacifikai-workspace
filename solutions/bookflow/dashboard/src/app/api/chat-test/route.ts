@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import OpenAI from 'openai'
 import { createClient } from '@supabase/supabase-js'
 
 function getSupabase() {
@@ -9,8 +9,11 @@ function getSupabase() {
   )
 }
 
-function getAnthropicKey() {
-  return process.env.ANTHROPIC_API_KEY!
+function getDeepSeekClient() {
+  return new OpenAI({
+    apiKey: process.env.DEEPSEEK_API_KEY!,
+    baseURL: 'https://api.deepseek.com',
+  })
 }
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
@@ -23,59 +26,77 @@ interface ChatTestPayload {
 
 // ─── Tools ──────────────────────────────────────────────────────────────────────
 
-const BOOKBOT_TOOLS: Anthropic.Tool[] = [
+const BOOKBOT_TOOLS: OpenAI.ChatCompletionTool[] = [
   {
-    name: 'search_knowledge_base',
-    description: 'Cherche dans la base de connaissances du commerce.',
-    input_schema: {
-      type: 'object' as const,
-      properties: { query: { type: 'string', description: 'La question à rechercher' } },
-      required: ['query'],
-    },
-  },
-  {
-    name: 'list_services',
-    description: 'Liste tous les services disponibles.',
-    input_schema: { type: 'object' as const, properties: {} },
-  },
-  {
-    name: 'check_availability',
-    description: 'Vérifie les créneaux disponibles pour un service à une date.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        service_name: { type: 'string', description: 'Nom du service' },
-        date: { type: 'string', description: 'Date YYYY-MM-DD' },
+    type: 'function',
+    function: {
+      name: 'search_knowledge_base',
+      description: 'Cherche dans la base de connaissances du commerce.',
+      parameters: {
+        type: 'object',
+        properties: { query: { type: 'string', description: 'La question à rechercher' } },
+        required: ['query'],
       },
-      required: ['service_name', 'date'],
     },
   },
   {
-    name: 'book_appointment',
-    description: 'Confirme et crée un rendez-vous.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        service: { type: 'string' },
-        date: { type: 'string' },
-        time: { type: 'string' },
-        client_name: { type: 'string' },
+    type: 'function',
+    function: {
+      name: 'list_services',
+      description: 'Liste tous les services disponibles.',
+      parameters: { type: 'object', properties: {} },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'check_availability',
+      description: 'Vérifie les créneaux disponibles pour un service à une date.',
+      parameters: {
+        type: 'object',
+        properties: {
+          service_name: { type: 'string', description: 'Nom du service' },
+          date: { type: 'string', description: 'Date YYYY-MM-DD' },
+        },
+        required: ['service_name', 'date'],
       },
-      required: ['service', 'date', 'time', 'client_name'],
     },
   },
   {
-    name: 'cancel_appointment',
-    description: 'Annule le prochain rendez-vous confirmé.',
-    input_schema: { type: 'object' as const, properties: {} },
+    type: 'function',
+    function: {
+      name: 'book_appointment',
+      description: 'Confirme et crée un rendez-vous.',
+      parameters: {
+        type: 'object',
+        properties: {
+          service: { type: 'string' },
+          date: { type: 'string' },
+          time: { type: 'string' },
+          client_name: { type: 'string' },
+        },
+        required: ['service', 'date', 'time', 'client_name'],
+      },
+    },
   },
   {
-    name: 'transfer_to_human',
-    description: 'Transfère la conversation à un humain.',
-    input_schema: {
-      type: 'object' as const,
-      properties: { reason: { type: 'string' } },
-      required: ['reason'],
+    type: 'function',
+    function: {
+      name: 'cancel_appointment',
+      description: 'Annule le prochain rendez-vous confirmé.',
+      parameters: { type: 'object', properties: {} },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'transfer_to_human',
+      description: 'Transfère la conversation à un humain.',
+      parameters: {
+        type: 'object',
+        properties: { reason: { type: 'string' } },
+        required: ['reason'],
+      },
     },
   },
 ]
@@ -145,12 +166,25 @@ function buildSystemPrompt(config: BizConfig): string {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   })
 
-  // Custom greeting/tone from config
+  // Custom tone from config
   const tone = config.config?.tone === 'formel' ? 'formel et professionnel' :
     config.config?.tone === 'decontracte' ? 'décontracté et amical' :
       'chaleureux et accueillant, utilise "Ia ora na" pour saluer'
 
-  return `Tu es l'assistant de ${config.businessName}. Tu parles en français, ton ${tone}. Tu es basé en Polynésie française.
+  // Language preference
+  const langMap: Record<string, string> = {
+    fr: 'français', en: 'anglais', tah: 'tahitien (reo Māʼohi)',
+  }
+  const language = langMap[(config.config?.language as string) ?? 'fr'] ?? 'français'
+
+  // Custom greeting
+  const greeting = (config.config?.greeting as string) ?? ''
+  const greetingInstruction = greeting
+    ? `\n- Quand un client te salue, utilise cette formule de bienvenue : "${greeting}"`
+    : ''
+
+  return `Tu es l'assistant de ${config.businessName}. Tu parles en ${language}, ton ${tone}. Tu es basé en Polynésie française.
+${greetingInstruction}
 
 ## Services
 ${servicesList}
@@ -168,7 +202,8 @@ ${today} (timezone: ${config.timezone})
 4. Réponses COURTES (2-4 phrases max)
 5. Si question hors compétences → \`transfer_to_human\`
 6. Utilise \`search_knowledge_base\` pour les questions spécifiques
-7. NE JAMAIS proposer de dates dans le passé`
+7. NE JAMAIS proposer de dates dans le passé
+8. Tu DOIS répondre en ${language} — c'est la langue configurée par le commerce`
 }
 
 // ─── Tool execution ─────────────────────────────────────────────────────────────
@@ -297,52 +332,57 @@ export async function POST(request: NextRequest) {
     .limit(1)
     .single()
 
-  let history: Anthropic.MessageParam[] = []
+  let history: OpenAI.ChatCompletionMessageParam[] = []
   if (existingSession?.context?.messages) {
-    history = existingSession.context.messages as Anthropic.MessageParam[]
+    history = existingSession.context.messages as OpenAI.ChatCompletionMessageParam[]
   }
 
   // Add user message
   history.push({ role: 'user', content: body.message })
 
-  // Run Claude agent loop
-  const anthropic = new Anthropic({ apiKey: getAnthropicKey() })
-  const messages: Anthropic.MessageParam[] = [...history]
+  // Run DeepSeek agent loop
+  const client = getDeepSeekClient()
+  const messages: OpenAI.ChatCompletionMessageParam[] = [
+    { role: 'system', content: buildSystemPrompt(config) },
+    ...history,
+  ]
   let finalReply = ''
   const toolCalls: { name: string; input: Record<string, unknown>; result: string }[] = []
 
   for (let i = 0; i < 5; i++) {
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+    const response = await client.chat.completions.create({
+      model: 'deepseek-chat',
       max_tokens: 1024,
-      system: buildSystemPrompt(config),
       tools: BOOKBOT_TOOLS,
       messages,
     })
 
-    if (response.stop_reason === 'tool_use') {
-      const toolResults: Anthropic.ToolResultBlockParam[] = []
-      for (const block of response.content) {
-        if (block.type === 'tool_use') {
-          const result = await executeTool(block.name, block.input as Record<string, unknown>, config)
-          toolResults.push({ type: 'tool_result', tool_use_id: block.id, content: result })
-          toolCalls.push({ name: block.name, input: block.input as Record<string, unknown>, result })
-        }
+    const choice = response.choices[0]
+    if (!choice) break
+
+    const msg = choice.message
+
+    if (choice.finish_reason === 'tool_calls' && msg.tool_calls?.length) {
+      // Add assistant message with tool calls
+      messages.push(msg)
+
+      // Execute each tool call
+      for (const toolCall of msg.tool_calls) {
+        if (toolCall.type !== 'function') continue
+        const args = JSON.parse(toolCall.function.arguments || '{}')
+        const result = await executeTool(toolCall.function.name, args, config)
+        messages.push({ role: 'tool', tool_call_id: toolCall.id, content: result })
+        toolCalls.push({ name: toolCall.function.name, input: args, result })
       }
-      messages.push({ role: 'assistant', content: response.content })
-      messages.push({ role: 'user', content: toolResults })
     } else {
-      finalReply = response.content
-        .filter((b): b is Anthropic.TextBlock => b.type === 'text')
-        .map(b => b.text)
-        .join('')
-      messages.push({ role: 'assistant', content: response.content })
+      finalReply = msg.content ?? ''
+      history.push({ role: 'assistant', content: finalReply })
       break
     }
   }
 
-  // Save session
-  const trimmed = messages.slice(-30)
+  // Save session (without system prompt — re-injected each time)
+  const trimmed = history.slice(-30)
   if (existingSession) {
     await sb
       .from('bookbot_sessions')
