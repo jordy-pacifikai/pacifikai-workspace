@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'BookBot Dashboard',
+  title: "Ve'a Dashboard",
   description: "Tableau de bord de gestion des rendez-vous pour les entreprises de Polynésie française.",
 };
 

@@ -135,11 +135,10 @@ function SettingsSkeleton() {
 
 // ─── Plan badge ───────────────────────────────────────────────────────────────
 
-const PLAN_LABELS: Record<string, { label: string; color: string; limit: number }> = {
-  free: { label: 'Gratuit', color: 'bg-gray-700 text-gray-300', limit: 50 },
-  starter: { label: 'Starter', color: 'bg-blue-900/50 text-blue-300 border border-blue-700', limit: 50 },
-  pro: { label: 'Pro', color: 'bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/40', limit: 500 },
-  enterprise: { label: 'Enterprise', color: 'bg-violet-900/50 text-violet-300 border border-violet-700', limit: 2000 },
+const PLAN_LABELS: Record<string, { label: string; color: string; limit: number; price?: string; annual?: string }> = {
+  essentiel: { label: 'Essentiel', color: 'bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/40', limit: 200, price: '9 900 XPF/mois', annual: '99 000 XPF/an' },
+  business: { label: 'Business', color: 'bg-blue-900/50 text-blue-300 border border-blue-700', limit: 500, price: '19 900 XPF/mois', annual: '199 000 XPF/an' },
+  premium: { label: 'Premium', color: 'bg-amber-900/50 text-amber-300 border border-amber-700', limit: 999999, price: 'Sur devis' },
 };
 
 // ─── Main page ────────────────────────────────────────────────────────────────
@@ -248,8 +247,17 @@ export default function SettingsPage() {
 
   function saveNotifs() {
     setNotifsSaving(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const existingConfig = ((business as any)?.config ?? {}) as Record<string, unknown>;
     updateBusiness(
-      {},
+      {
+        config: {
+          ...existingConfig,
+          reminder_24h: notifs.reminder24h,
+          reminder_2h: notifs.reminder2h,
+          confirmation_required: notifs.confirmationRequired,
+        },
+      } as Record<string, unknown>,
       {
         onSuccess: () => {
           setNotifsSaving(false);
@@ -266,8 +274,8 @@ export default function SettingsPage() {
     </DashboardLayout>
   );
 
-  const plan = business?.subscription_plan ?? 'free';
-  const planMeta = PLAN_LABELS[plan] ?? PLAN_LABELS['free'];
+  const plan = business?.subscription_plan ?? 'essentiel';
+  const planMeta = PLAN_LABELS[plan] ?? PLAN_LABELS['essentiel'];
 
   // Load conversation usage from bookbot_businesses
   const sb = getSupabaseBrowser();
@@ -286,8 +294,9 @@ export default function SettingsPage() {
   });
 
   const convCount = usage?.conversation_count ?? 0;
-  const convLimit = PLAN_LABELS[usage?.plan ?? plan]?.limit ?? 50;
-  const convPercent = Math.min(100, Math.round((convCount / convLimit) * 100));
+  const convLimit = PLAN_LABELS[usage?.plan ?? plan]?.limit ?? 200;
+  const isUnlimited = convLimit >= 999999;
+  const convPercent = isUnlimited ? 0 : Math.min(100, Math.round((convCount / convLimit) * 100));
 
   return (
     <DashboardLayout title="Parametres" businessName={businessName ?? undefined}>
@@ -373,7 +382,7 @@ export default function SettingsPage() {
         {/* ─ 2. Chatbot ───────────────────────────────────────────────────── */}
         <SectionCard
           icon={Bot}
-          title="Chatbot BookBot"
+          title="Chatbot Ve'a"
           onSave={saveChatbot}
           isSaving={chatbotSaving}
           savedLabel={chatbotSaved}
@@ -475,7 +484,8 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-300 font-medium">Conversations ce mois</p>
               <p className="text-sm text-gray-400">
-                <span className="text-white font-semibold">{convCount}</span> / {convLimit}
+                <span className="text-white font-semibold">{convCount}</span>{isUnlimited ? '' : ` / ${convLimit}`}
+                {isUnlimited && <span className="ml-1 text-amber-400 text-xs font-medium">Illimite</span>}
               </p>
             </div>
             <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -503,7 +513,7 @@ export default function SettingsPage() {
           <div className="border-t border-gray-800 pt-4 mt-2">
             <p className="text-xs text-gray-500">
               Pour modifier votre abonnement ou obtenir une offre personnalisee, contactez notre equipe a{' '}
-              <span className="text-[#25D366]">support@bookflow.pf</span>
+              <span className="text-[#25D366]">jordy@pacifikai.com</span>
             </p>
           </div>
         </SectionCard>

@@ -9,9 +9,9 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY!;
 
 // Plan conversation limits
 const PLAN_LIMITS: Record<string, number> = {
-  starter: 50,
-  pro: 500,
-  business: 2000,
+  essentiel: 200,
+  business: 500,
+  premium: 999999,
 };
 
 function supaHeaders() {
@@ -36,8 +36,8 @@ async function checkAndIncrementConversation(
   }
 
   const biz = data[0];
-  const plan = biz.plan ?? "starter";
-  const limit = PLAN_LIMITS[plan] ?? 50;
+  const plan = biz.plan ?? "essentiel";
+  const limit = PLAN_LIMITS[plan] ?? 200;
   const count = biz.conversation_count ?? 0;
 
   // Check if billing cycle needs reset (monthly)
@@ -96,7 +96,7 @@ export const bookbotHandler = schemaTask({
     maxTimeoutInMs: 15000,
   },
   run: async (payload) => {
-    logger.info("BookBot incoming", {
+    logger.info("Ve'a incoming", {
       from: payload.from,
       message: payload.message.substring(0, 50),
       type: payload.messageType,

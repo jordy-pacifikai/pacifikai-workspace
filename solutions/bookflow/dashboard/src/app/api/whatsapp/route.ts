@@ -87,12 +87,12 @@ export async function POST(req: Request) {
     );
 
     if (!triggerRes.ok) {
-      console.error("[BookBot] Trigger.dev error:", triggerRes.status, await triggerRes.text());
+      console.error("[Ve'a] Trigger.dev error:", triggerRes.status, await triggerRes.text());
     }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[BookBot] Webhook error:", err);
+    console.error("[Ve'a] Webhook error:", err);
     return NextResponse.json({ ok: true });
   }
 }
@@ -106,7 +106,7 @@ export async function GET(req: Request) {
   const token = url.searchParams.get("hub.verify_token");
   const challenge = url.searchParams.get("hub.challenge");
 
-  const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN ?? "bookbot_verify_2026";
+  const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN ?? "vea_verify_2026";
 
   if (mode === "subscribe" && token === VERIFY_TOKEN) {
     return new Response(challenge ?? "", { status: 200 });

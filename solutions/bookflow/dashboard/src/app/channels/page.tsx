@@ -57,7 +57,7 @@ function WhatsAppCard({
   const fields = [
     { key: 'whatsapp_phone_number_id', label: 'Phone Number ID', placeholder: 'Ex: 123456789012345' },
     { key: 'whatsapp_access_token', label: 'Access Token (permanent)', placeholder: 'EAABx...', type: 'password' },
-    { key: 'whatsapp_verify_token', label: 'Verify Token (au choix)', placeholder: 'Ex: bookbot_verify_2026' },
+    { key: 'whatsapp_verify_token', label: 'Verify Token (au choix)', placeholder: 'Ex: vea_verify_2026' },
   ];
 
   return (
@@ -361,7 +361,7 @@ export default function ChannelsPage() {
     );
   }
 
-  const dashboardUrl = typeof window !== 'undefined' ? window.location.origin : 'https://bookbot-dashboard.vercel.app';
+  const dashboardUrl = typeof window !== 'undefined' ? window.location.origin : 'https://vea.pacifikai.com';
 
   return (
     <DashboardLayout title="Canaux de messagerie">

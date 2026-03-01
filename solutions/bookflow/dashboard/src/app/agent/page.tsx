@@ -34,7 +34,7 @@ const FAKE_RESPONSES: Record<string, string> = {
 };
 
 const FALLBACK_RESPONSE =
-  "Je suis l'agent IA BookBot. Cette fonctionnalite sera bientot connectee a votre assistant intelligent. En attendant, vous pouvez me demander d'ajouter un RDV, consulter vos stats, ou modifier vos horaires.";
+  "Je suis l'agent IA Ve'a. Cette fonctionnalite sera bientot connectee a votre assistant intelligent. En attendant, vous pouvez me demander d'ajouter un RDV, consulter vos stats, ou modifier vos horaires.";
 
 function getFakeResponse(userMessage: string): string {
   const lower = userMessage.toLowerCase().trim();
@@ -146,7 +146,7 @@ function ChatSkeleton() {
 const WELCOME_MESSAGE: ChatMessage = {
   id: 'welcome',
   role: 'assistant',
-  content: "Bonjour ! Je suis votre agent IA BookBot. Je peux vous aider a gerer vos rendez-vous, consulter vos statistiques, ou modifier vos parametres. Comment puis-je vous aider ?",
+  content: "Bonjour ! Je suis votre agent IA Ve'a. Je peux vous aider a gerer vos rendez-vous, consulter vos statistiques, ou modifier vos parametres. Comment puis-je vous aider ?",
   created_at: new Date(),
 };
 

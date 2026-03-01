@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 
         if (!messageText) continue;
 
-        // Trigger the same BookBot handler (multi-channel)
+        // Trigger the same Ve'a handler (multi-channel)
         const triggerApiUrl = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev";
         const triggerKey = process.env.TRIGGER_SECRET_KEY!;
         const triggerRes = await fetch(
@@ -115,7 +115,7 @@ export async function GET(req: Request) {
   const token = url.searchParams.get("hub.verify_token");
   const challenge = url.searchParams.get("hub.challenge");
 
-  const verifyToken = process.env.META_VERIFY_TOKEN ?? "bookbot_verify_2026";
+  const verifyToken = process.env.META_VERIFY_TOKEN ?? "vea_verify_2026";
   if (mode === "subscribe" && token === verifyToken) {
     return new Response(challenge ?? "", { status: 200 });
   }
