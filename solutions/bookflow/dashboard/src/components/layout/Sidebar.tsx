@@ -11,10 +11,12 @@ import {
   Users,
   BarChart3,
   Bot,
+  MessageCircle,
   Settings,
   LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 interface NavItem {
   label: string;
@@ -31,6 +33,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Clients',        href: '/clients',      icon: Users           },
   { label: 'Statistiques',   href: '/stats',        icon: BarChart3       },
   { label: 'Agent IA',       href: '/agent',        icon: Bot             },
+  { label: 'Test chatbot',   href: '/chat-test',    icon: MessageCircle   },
   { label: 'Paramètres',     href: '/settings',     icon: Settings        },
 ];
 
@@ -40,6 +43,10 @@ interface SidebarProps {
 
 export function Sidebar({ businessName = 'Mon Business' }: SidebarProps) {
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
+
+  const userEmail = user?.email ?? '';
+  const userInitial = (userEmail.charAt(0) || 'U').toUpperCase();
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -124,22 +131,22 @@ export function Sidebar({ businessName = 'Mon Business' }: SidebarProps) {
             className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 text-white"
             style={{ backgroundColor: '#25D366' }}
           >
-            M
+            {userInitial}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-200 truncate">Mon compte</p>
+            <p className="text-sm font-medium text-gray-200 truncate">{userEmail || 'Mon compte'}</p>
             <p className="text-xs text-gray-500 truncate">Propriétaire</p>
           </div>
         </div>
 
         {/* deconnexion */}
-        <Link
-          href="/logout"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-150"
+        <button
+          onClick={signOut}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-150"
         >
           <LogOut size={16} className="shrink-0" />
           Déconnexion
-        </Link>
+        </button>
       </div>
     </aside>
   );

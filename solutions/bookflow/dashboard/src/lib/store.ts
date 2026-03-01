@@ -14,9 +14,9 @@ interface AppStore {
 }
 
 export const useAppStore = create<AppStore>((set) => ({
-  // Default to demo business
-  businessId: 'a0000000-0000-0000-0000-000000000001',
-  businessName: 'Salon Demo Tahiti',
+  // Set dynamically by useAuth hook after login
+  businessId: null,
+  businessName: '',
 
   setBusinessId: (id: string) => set({ businessId: id }),
   setBusinessName: (name: string) => set({ businessName: name }),

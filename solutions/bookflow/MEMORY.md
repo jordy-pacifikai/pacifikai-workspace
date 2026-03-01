@@ -627,8 +627,16 @@ Un faux chat Messenger integre dans la page de proposition commerciale (`proposi
 ### API Endpoints
 - Send message : `POST https://graph.facebook.com/v22.0/952486264622885/messages`
 - Auth : `Authorization: Bearer <access_token>`
-- Token temporaire (24h, 2026-02-27) : `EAAMJLvB2zl4BQ...ZAZDZD` (tronqué)
-- **Token permanent** : a creer via System User dans Business Manager
+
+### Token Permanent (System User — N'EXPIRE JAMAIS)
+- **System User** : "BookBot API" — ID `61586380192787` (Employee)
+- **Token** : `EAAMJLvB2zl4BQ50xfDLb79QshwkVkkHnF2W8fvmMWy79BSHub0JTknQ6HK7gqM9cwNrRBceusITlKW7O1ERGvCaljdGVkZBsbRjXwB8klveOqCPDjiWggBxpascVMTXNY6ZBIYr28ACXfA1ZBgNZBoBjer9wkGIdmXzkZC6jToJZAViBzF306SecI4oIvQ0AZDZD`
+- **Expiration** : JAMAIS (permanent System User token)
+- **Permissions** : `whatsapp_business_management`, `whatsapp_business_messaging`
+- **Assets assignes** : App "PACIFIKAI Messaging" (full control), Compte WhatsApp "Pacifikai" (full control)
+- **App Secret** : `e15a88433486514bce4f08097a9ba83f`
+- **Cree le** : 2026-02-27
+- **n8n workflow** : `BfWMx1k9UWn83VdP` mis a jour avec ce token
 
 ### Webhook (CONFIGURE 2026-02-27)
 - **URL de rappel** : `https://bookbot-propale.vercel.app/api/webhook`
@@ -642,10 +650,10 @@ Un faux chat Messenger integre dans la page de proposition commerciale (`proposi
 - **IMPORTANT** : ancien workflow `NOkEggj2YHK2oLz7` (cree via API) = DESACTIVE (webhook jamais enregistre, bug n8n connu)
 
 ### Prochaines étapes
-- Créer System User token permanent (remplacer token temporaire 24h)
-- Créer template de message approuvé (business verification nécessaire)
-- Connecter le state machine BookBot v2 au parsing Cloud API
-- Tester réception message réel WhatsApp (Jordy envoie au +689 88 17 01 97)
+- [x] Token permanent System User cree (2026-02-27) — N'EXPIRE JAMAIS
+- [x] E2E valide : message envoye via token permanent (wamid OK)
+- [ ] Créer template de message approuvé (business verification nécessaire)
+- [ ] Tester réception message réel WhatsApp (Jordy envoie au +689 88 17 01 97)
 
 ---
 

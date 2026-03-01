@@ -6,6 +6,8 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton';
 import { useAppStore } from '@/lib/store';
 import { useBusiness, useUpdateBusiness } from '@/hooks/useBusiness';
+import { useQuery } from '@tanstack/react-query';
+import { getSupabaseBrowser } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 
 // ─── Form input primitives ────────────────────────────────────────────────────
@@ -133,11 +135,11 @@ function SettingsSkeleton() {
 
 // ─── Plan badge ───────────────────────────────────────────────────────────────
 
-const PLAN_LABELS: Record<string, { label: string; color: string }> = {
-  free: { label: 'Gratuit', color: 'bg-gray-700 text-gray-300' },
-  starter: { label: 'Starter', color: 'bg-blue-900/50 text-blue-300 border border-blue-700' },
-  pro: { label: 'Pro', color: 'bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/40' },
-  enterprise: { label: 'Enterprise', color: 'bg-violet-900/50 text-violet-300 border border-violet-700' },
+const PLAN_LABELS: Record<string, { label: string; color: string; limit: number }> = {
+  free: { label: 'Gratuit', color: 'bg-gray-700 text-gray-300', limit: 50 },
+  starter: { label: 'Starter', color: 'bg-blue-900/50 text-blue-300 border border-blue-700', limit: 50 },
+  pro: { label: 'Pro', color: 'bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/40', limit: 500 },
+  enterprise: { label: 'Enterprise', color: 'bg-violet-900/50 text-violet-300 border border-violet-700', limit: 2000 },
 };
 
 // ─── Main page ────────────────────────────────────────────────────────────────
@@ -249,6 +251,26 @@ export default function SettingsPage() {
 
   const plan = business?.subscription_plan ?? 'free';
   const planMeta = PLAN_LABELS[plan] ?? PLAN_LABELS['free'];
+
+  // Load conversation usage from bookbot_businesses
+  const sb = getSupabaseBrowser();
+  const { data: usage } = useQuery({
+    queryKey: ['plan-usage', businessId],
+    queryFn: async () => {
+      if (!businessId) return null;
+      const { data } = await sb
+        .from('bookbot_businesses')
+        .select('plan, conversation_count, billing_cycle_start')
+        .eq('id', businessId)
+        .single();
+      return data as { plan: string; conversation_count: number; billing_cycle_start: string } | null;
+    },
+    enabled: Boolean(businessId),
+  });
+
+  const convCount = usage?.conversation_count ?? 0;
+  const convLimit = PLAN_LABELS[usage?.plan ?? plan]?.limit ?? 50;
+  const convPercent = Math.min(100, Math.round((convCount / convLimit) * 100));
 
   return (
     <DashboardLayout title="Parametres" businessName={businessName ?? undefined}>
@@ -416,6 +438,36 @@ export default function SettingsPage() {
               Upgrade
               <ChevronRight className="w-4 h-4" />
             </button>
+          </div>
+
+          {/* Usage conversations */}
+          <div className="border-t border-gray-800 pt-4 mt-2 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-300 font-medium">Conversations ce mois</p>
+              <p className="text-sm text-gray-400">
+                <span className="text-white font-semibold">{convCount}</span> / {convLimit}
+              </p>
+            </div>
+            <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+              <div
+                className={cn(
+                  'h-full rounded-full transition-all duration-500',
+                  convPercent >= 90 ? 'bg-red-500' : convPercent >= 70 ? 'bg-yellow-500' : 'bg-[#25D366]',
+                )}
+                style={{ width: `${convPercent}%` }}
+              />
+            </div>
+            {convPercent >= 90 && (
+              <p className="text-xs text-red-400">
+                Vous approchez de la limite de votre plan. Passez au plan superieur pour continuer sans interruption.
+              </p>
+            )}
+            {usage?.billing_cycle_start && (
+              <p className="text-xs text-gray-500">
+                Cycle de facturation demarre le{' '}
+                {new Date(usage.billing_cycle_start).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </p>
+            )}
           </div>
 
           <div className="border-t border-gray-800 pt-4 mt-2">
