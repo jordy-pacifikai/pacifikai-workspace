@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const TRIGGER_API_URL = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev";
-const TRIGGER_SECRET_KEY = process.env.TRIGGER_SECRET_KEY!;
-const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN ?? "bookbot_verify_2026";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+}
 
 /**
  * Messenger Webhook — multi-tenant.
@@ -37,7 +35,7 @@ export async function POST(req: Request) {
       const pageId = entry.id;
 
       // Lookup business by meta_page_id
-      const { data: business } = await supabase
+      const { data: business } = await getSupabase()
         .from("bookbot_businesses")
         .select("id")
         .eq("meta_page_id", pageId)
@@ -71,12 +69,14 @@ export async function POST(req: Request) {
         if (!messageText) continue;
 
         // Trigger the same BookBot handler (multi-channel)
+        const triggerApiUrl = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev";
+        const triggerKey = process.env.TRIGGER_SECRET_KEY!;
         const triggerRes = await fetch(
-          `${TRIGGER_API_URL}/api/v1/tasks/bookbot-whatsapp-handler/trigger`,
+          `${triggerApiUrl}/api/v1/tasks/bookbot-whatsapp-handler/trigger`,
           {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${TRIGGER_SECRET_KEY}`,
+              Authorization: `Bearer ${triggerKey}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -113,7 +113,8 @@ export async function GET(req: Request) {
   const token = url.searchParams.get("hub.verify_token");
   const challenge = url.searchParams.get("hub.challenge");
 
-  if (mode === "subscribe" && token === VERIFY_TOKEN) {
+  const verifyToken = process.env.META_VERIFY_TOKEN ?? "bookbot_verify_2026";
+  if (mode === "subscribe" && token === verifyToken) {
     return new Response(challenge ?? "", { status: 200 });
   }
 

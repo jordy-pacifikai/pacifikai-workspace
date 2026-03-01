@@ -1,14 +1,20 @@
 import { createClient } from '@supabase/supabase-js'
 import { createBrowserClient } from '@supabase/ssr'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
 
-// Server-side client (for API routes — uses service role, bypasses RLS)
-export const supabaseAdmin = createClient(
-  supabaseUrl,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey,
-)
+// Server-side admin client (lazy — avoids build-time crash when SUPABASE_SERVICE_ROLE_KEY is missing)
+let _adminClient: ReturnType<typeof createClient> | null = null
+export function supabaseAdmin() {
+  if (!_adminClient) {
+    _adminClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    )
+  }
+  return _adminClient
+}
 
 // Client-side singleton (for hooks — uses anon key, respects RLS)
 let browserClient: ReturnType<typeof createBrowserClient> | null = null
@@ -20,4 +26,4 @@ export function getSupabaseBrowser() {
 }
 
 // Legacy export for existing hooks (same as browser client)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = supabaseUrl ? createClient(supabaseUrl, supabaseAnonKey) : (null as never)

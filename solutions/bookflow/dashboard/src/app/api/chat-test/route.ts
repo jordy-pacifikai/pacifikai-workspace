@@ -2,12 +2,16 @@ import { NextResponse, type NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-)
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY!
+function getAnthropicKey() {
+  return process.env.ANTHROPIC_API_KEY!
+}
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -89,7 +93,7 @@ interface BizConfig {
 }
 
 async function loadBizConfig(businessId: string): Promise<BizConfig | null> {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from('bookbot_businesses')
     .select('*')
     .eq('id', businessId)
@@ -177,7 +181,7 @@ async function executeTool(
   switch (name) {
     case 'search_knowledge_base': {
       const query = input.query as string
-      const { data } = await supabase.rpc('bookbot_search', {
+      const { data } = await getSupabase().rpc('bookbot_search', {
         p_business_id: config.businessId,
         p_query: query,
         p_limit: 5,
@@ -223,7 +227,7 @@ async function executeTool(
       }
 
       // Get existing bookings
-      const { data: bookings } = await supabase
+      const { data: bookings } = await getSupabase()
         .from('bookbot_appointments')
         .select('time_slot')
         .eq('business_id', config.businessId)
@@ -243,7 +247,7 @@ async function executeTool(
       const time = input.time as string
       const clientName = input.client_name as string
 
-      await supabase.from('bookbot_appointments').insert({
+      await getSupabase().from('bookbot_appointments').insert({
         business_id: config.businessId,
         client_name: clientName,
         client_phone: 'test_dashboard',
@@ -284,7 +288,8 @@ export async function POST(request: NextRequest) {
 
   // Load or create test session
   const testPhone = `test_${body.sessionId ?? 'default'}`
-  const { data: existingSession } = await supabase
+  const sb = getSupabase()
+  const { data: existingSession } = await sb
     .from('bookbot_sessions')
     .select('*')
     .eq('phone', testPhone)
@@ -301,7 +306,7 @@ export async function POST(request: NextRequest) {
   history.push({ role: 'user', content: body.message })
 
   // Run Claude agent loop
-  const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY })
+  const anthropic = new Anthropic({ apiKey: getAnthropicKey() })
   const messages: Anthropic.MessageParam[] = [...history]
   let finalReply = ''
   const toolCalls: { name: string; input: Record<string, unknown>; result: string }[] = []
@@ -339,12 +344,12 @@ export async function POST(request: NextRequest) {
   // Save session
   const trimmed = messages.slice(-30)
   if (existingSession) {
-    await supabase
+    await sb
       .from('bookbot_sessions')
       .update({ context: { messages: trimmed }, state: 'active', updated_at: new Date().toISOString() })
       .eq('id', existingSession.id)
   } else {
-    await supabase.from('bookbot_sessions').insert({
+    await sb.from('bookbot_sessions').insert({
       phone: testPhone,
       business_id: body.businessId,
       state: 'active',
@@ -369,7 +374,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'businessId required' }, { status: 400 })
   }
 
-  await supabase
+  await getSupabase()
     .from('bookbot_sessions')
     .delete()
     .eq('phone', `test_${sessionId}`)

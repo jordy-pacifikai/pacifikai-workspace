@@ -48,7 +48,8 @@ export async function GET(request: NextRequest) {
       // Check if user has a business already
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        const { data: link } = await supabaseAdmin
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: link } = await (supabaseAdmin() as any)
           .from('bookbot_business_users')
           .select('business_id')
           .eq('user_id', user.id)
@@ -70,8 +71,11 @@ export async function GET(request: NextRequest) {
 }
 
 async function setupNewBusiness(userId: string, businessName: string) {
+  const admin = supabaseAdmin()
+
   // Create a new business
-  const { data: business } = await supabaseAdmin
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: business } = await (admin as any)
     .from('bookbot_businesses')
     .insert({
       name: businessName,
@@ -89,11 +93,12 @@ async function setupNewBusiness(userId: string, businessName: string) {
   if (!business) return
 
   // Link user to business
-  await supabaseAdmin
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin as any)
     .from('bookbot_business_users')
     .insert({
       user_id: userId,
-      business_id: business.id,
+      business_id: (business as { id: string }).id,
       role: 'owner',
     })
 }

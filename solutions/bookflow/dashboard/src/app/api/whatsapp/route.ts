@@ -2,14 +2,12 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { parseWhatsAppMessage } from "./parse";
 
-const TRIGGER_API_URL = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev";
-const TRIGGER_SECRET_KEY = process.env.TRIGGER_SECRET_KEY!;
-const DEFAULT_BUSINESS_ID = process.env.BOOKBOT_BUSINESS_ID!;
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+}
 
 /**
  * Extract phone_number_id from Meta Cloud API webhook payload.
@@ -27,16 +25,17 @@ function extractPhoneNumberId(body: Record<string, unknown>): string | null {
  * Lookup business by phone_number_id. Falls back to DEFAULT_BUSINESS_ID.
  */
 async function resolveBusinessId(phoneNumberId: string | null): Promise<string> {
-  if (!phoneNumberId) return DEFAULT_BUSINESS_ID;
+  const defaultBizId = process.env.BOOKBOT_BUSINESS_ID!;
+  if (!phoneNumberId) return defaultBizId;
 
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from("bookbot_businesses")
     .select("id")
     .eq("phone_number_id", phoneNumberId)
     .limit(1)
     .single();
 
-  return data?.id ?? DEFAULT_BUSINESS_ID;
+  return data?.id ?? defaultBizId;
 }
 
 /**
@@ -65,12 +64,14 @@ export async function POST(req: Request) {
     const businessId = await resolveBusinessId(phoneNumberId);
 
     // Trigger task — must await (Vercel serverless kills unawaited fetches)
+    const triggerApiUrl = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev";
+    const triggerKey = process.env.TRIGGER_SECRET_KEY!;
     const triggerRes = await fetch(
-      `${TRIGGER_API_URL}/api/v1/tasks/bookbot-whatsapp-handler/trigger`,
+      `${triggerApiUrl}/api/v1/tasks/bookbot-whatsapp-handler/trigger`,
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${TRIGGER_SECRET_KEY}`,
+          Authorization: `Bearer ${triggerKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
