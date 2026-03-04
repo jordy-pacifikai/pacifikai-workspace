@@ -5,8 +5,7 @@ import { Save, Building2, Bot, Bell, CreditCard, ChevronRight } from 'lucide-rea
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton';
 import { useAppStore } from '@/lib/store';
-import { useBusiness, useUpdateBusiness } from '@/hooks/useBusiness';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabaseBrowser } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 
@@ -143,10 +142,41 @@ const PLAN_LABELS: Record<string, { label: string; color: string; limit: number;
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type BookbotBusiness = Record<string, any>;
+
 export default function SettingsPage() {
   const { businessId, businessName } = useAppStore();
-  const { data: business, isLoading } = useBusiness(businessId);
-  const { mutate: updateBusiness } = useUpdateBusiness(businessId);
+  const sb = getSupabaseBrowser();
+  const queryClient = useQueryClient();
+
+  // Read from bookbot_businesses (source of truth — onboarding writes here)
+  const { data: business, isLoading } = useQuery<BookbotBusiness | null>({
+    queryKey: ['bookbot-business', businessId],
+    queryFn: async () => {
+      if (!businessId) return null;
+      const { data } = await sb
+        .from('bookbot_businesses')
+        .select('*')
+        .eq('id', businessId)
+        .single();
+      return data;
+    },
+    enabled: Boolean(businessId),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (updates: Record<string, unknown>) => {
+      const { error } = await sb
+        .from('bookbot_businesses')
+        .update(updates)
+        .eq('id', businessId!);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookbot-business', businessId] });
+    },
+  });
 
   // ── Section 1: General info ──────────────────────────────────────────────
   const [general, setGeneral] = useState({
@@ -181,26 +211,30 @@ export default function SettingsPage() {
   const [notifsSaving, setNotifsSaving] = useState(false);
   const [notifsSaved, setNotifsSaved] = useState(false);
 
-  // Sync from API
+  // Sync from API — bookbot_businesses schema
   useEffect(() => {
     if (!business) return;
+    const cfg = business.config ?? {};
     setGeneral({
       name: business.name ?? '',
       phone: business.phone ?? '',
-      email: business.email ?? '',
-      address: business.address ?? '',
-      city: business.city ?? '',
-      category: business.category ?? '',
-      description: business.description ?? '',
+      email: cfg.email ?? '',
+      address: cfg.address ?? '',
+      city: cfg.city ?? '',
+      category: business.sector ?? cfg.category ?? '',
+      description: cfg.description ?? '',
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const cfg = (business as any).config ?? {};
     setChatbot({
       active: cfg.chatbot_active !== false,
       welcomeMessage: cfg.greeting ?? '',
       language: cfg.language ?? 'fr',
       tone: cfg.tone ?? 'chaleureux',
       customInstructions: cfg.custom_instructions ?? '',
+    });
+    setNotifs({
+      reminder24h: cfg.reminder_24h !== false,
+      reminder2h: cfg.reminder_2h !== false,
+      confirmationRequired: cfg.confirmation_required === true,
     });
   }, [business]);
 
@@ -211,8 +245,21 @@ export default function SettingsPage() {
 
   function saveGeneral() {
     setGeneralSaving(true);
-    updateBusiness(
-      { name: general.name, phone: general.phone, email: general.email, address: general.address, city: general.city, category: general.category, description: general.description },
+    const existingConfig = (business?.config ?? {}) as Record<string, unknown>;
+    updateMutation.mutate(
+      {
+        name: general.name,
+        phone: general.phone,
+        sector: general.category,
+        config: {
+          ...existingConfig,
+          email: general.email,
+          address: general.address,
+          city: general.city,
+          category: general.category,
+          description: general.description,
+        },
+      },
       {
         onSuccess: () => {
           setGeneralSaving(false);
@@ -225,9 +272,8 @@ export default function SettingsPage() {
 
   function saveChatbot() {
     setChatbotSaving(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const existingConfig = ((business as any)?.config ?? {}) as Record<string, unknown>;
-    updateBusiness(
+    const existingConfig = (business?.config ?? {}) as Record<string, unknown>;
+    updateMutation.mutate(
       {
         config: {
           ...existingConfig,
@@ -237,7 +283,7 @@ export default function SettingsPage() {
           tone: chatbot.tone,
           custom_instructions: chatbot.customInstructions,
         },
-      } as Record<string, unknown>,
+      },
       {
         onSuccess: () => {
           setChatbotSaving(false);
@@ -250,9 +296,8 @@ export default function SettingsPage() {
 
   function saveNotifs() {
     setNotifsSaving(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const existingConfig = ((business as any)?.config ?? {}) as Record<string, unknown>;
-    updateBusiness(
+    const existingConfig = (business?.config ?? {}) as Record<string, unknown>;
+    updateMutation.mutate(
       {
         config: {
           ...existingConfig,
@@ -260,7 +305,7 @@ export default function SettingsPage() {
           reminder_2h: notifs.reminder2h,
           confirmation_required: notifs.confirmationRequired,
         },
-      } as Record<string, unknown>,
+      },
       {
         onSuccess: () => {
           setNotifsSaving(false);
@@ -271,17 +316,7 @@ export default function SettingsPage() {
     );
   }
 
-  if (isLoading) return (
-    <DashboardLayout title="Parametres" businessName={businessName ?? undefined}>
-      <SettingsSkeleton />
-    </DashboardLayout>
-  );
-
-  const plan = business?.subscription_plan ?? 'essentiel';
-  const planMeta = PLAN_LABELS[plan] ?? PLAN_LABELS['essentiel'];
-
-  // Load conversation usage from bookbot_businesses
-  const sb = getSupabaseBrowser();
+  // Load conversation usage (must be before any early return)
   const { data: usage } = useQuery({
     queryKey: ['plan-usage', businessId],
     queryFn: async () => {
@@ -296,6 +331,14 @@ export default function SettingsPage() {
     enabled: Boolean(businessId),
   });
 
+  if (isLoading) return (
+    <DashboardLayout title="Parametres" businessName={businessName ?? undefined}>
+      <SettingsSkeleton />
+    </DashboardLayout>
+  );
+
+  const plan = business?.plan ?? usage?.plan ?? 'essentiel';
+  const planMeta = PLAN_LABELS[plan] ?? PLAN_LABELS['essentiel'];
   const convCount = usage?.conversation_count ?? 0;
   const convLimit = PLAN_LABELS[usage?.plan ?? plan]?.limit ?? 200;
   const isUnlimited = convLimit >= 999999;
