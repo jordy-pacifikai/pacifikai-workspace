@@ -9,7 +9,6 @@ import {
   Scissors,
   Clock,
   Users,
-  BarChart3,
   Bot,
   MessageCircle,
   BookOpen,
@@ -27,13 +26,12 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard',      href: '/',             icon: LayoutDashboard },
+  { label: 'Dashboard',      href: '/stats',        icon: LayoutDashboard },
   { label: 'Calendrier',     href: '/calendar',     icon: Calendar        },
   { label: 'Rendez-vous',    href: '/appointments', icon: ClipboardList   },
   { label: 'Services',       href: '/services',     icon: Scissors        },
   { label: 'Horaires',       href: '/hours',        icon: Clock           },
   { label: 'Clients',        href: '/clients',      icon: Users           },
-  { label: 'Statistiques',   href: '/stats',        icon: BarChart3       },
   { label: 'Agent IA',       href: '/agent',        icon: Bot             },
   { label: 'Connaissances',  href: '/knowledge',    icon: BookOpen        },
   { label: 'Test chatbot',   href: '/chat-test',    icon: MessageCircle   },
@@ -65,7 +63,7 @@ export function Sidebar({ businessName = 'Mon Business' }: SidebarProps) {
         <div className="flex items-center gap-2.5">
           <div className="relative">
             <span className="text-xl font-bold tracking-tight text-white">
-              Book<span style={{ color: '#25D366' }}>Bot</span>
+              Ve&apos;a
             </span>
             {/* green pulse dot */}
             <span

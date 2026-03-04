@@ -138,6 +138,8 @@ export async function loadBusinessConfig(
     metaPhoneNumberId: b.phone_number_id,
     metaAccessToken: b.meta_access_token,
     chatbotConfig: b.config ?? {},
+    gcalRefreshToken: b.gcal_refresh_token ?? undefined,
+    gcalCalendarId: b.gcal_calendar_id ?? undefined,
   };
 }
 
@@ -147,10 +149,10 @@ export async function createAppointment(params: {
   service: string;
   date: string;
   time: string;
-}): Promise<void> {
-  await fetch(`${SUPABASE_URL}/rest/v1/bookbot_appointments`, {
+}): Promise<string | null> {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/bookbot_appointments`, {
     method: "POST",
-    headers: headers(),
+    headers: { ...headers(), Prefer: "return=representation" },
     body: JSON.stringify({
       business_id: params.businessId,
       client_name: params.clientPhone,
@@ -162,6 +164,23 @@ export async function createAppointment(params: {
       source: "whatsapp",
     }),
   });
+  const data = await res.json();
+  const row = Array.isArray(data) ? data[0] : data;
+  return row?.id ?? null;
+}
+
+export async function updateAppointmentGCalId(
+  appointmentId: string,
+  gcalEventId: string
+): Promise<void> {
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?id=eq.${appointmentId}`,
+    {
+      method: "PATCH",
+      headers: headers(),
+      body: JSON.stringify({ gcal_event_id: gcalEventId }),
+    }
+  );
 }
 
 export async function getBookingsForDate(
@@ -193,12 +212,127 @@ export async function searchKnowledgeBase(
   return Array.isArray(data) ? data : [];
 }
 
+export async function getBlockedSlotsForDate(
+  businessId: string,
+  date: string
+): Promise<{ time_from: string | null; time_to: string | null; all_day: boolean }[]> {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_blocked_slots?business_id=eq.${businessId}&date=eq.${date}&select=time_from,time_to,all_day`,
+    { headers: headers() }
+  );
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
+
+/** Get all dates with all-day blocked slots (next 14 days) for suggestion filtering */
+export async function getAllDayBlockedDates(
+  businessId: string
+): Promise<Set<string>> {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_blocked_slots?business_id=eq.${businessId}&all_day=eq.true&select=date`,
+    { headers: headers() }
+  );
+  const data = await res.json();
+  const dates = new Set<string>();
+  if (Array.isArray(data)) {
+    for (const row of data) {
+      dates.add(row.date);
+    }
+  }
+  return dates;
+}
+
+/** Convert a Date to HH:MM in a given timezone */
+function toLocalTime(date: Date, tz: string): string {
+  const parts = date.toLocaleString("en-US", {
+    timeZone: tz,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const [h = "00", m = "00"] = parts.split(":");
+  return `${h.padStart(2, "0")}:${m.padStart(2, "0")}`;
+}
+
+/**
+ * On-demand refresh of GCal blocked slots for a specific date.
+ * Called during check_availability to get fresh data for near-future dates.
+ */
+export async function refreshGCalBlockedSlots(
+  businessId: string,
+  date: string,
+  events: { id: string; summary: string; start: { dateTime?: string; date?: string }; end: { dateTime?: string; date?: string }; status: string }[],
+  timezone: string
+): Promise<void> {
+  // Get existing gcal blocked slots + appointments for this date
+  const [existingRes, existingApptRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/bookbot_blocked_slots?business_id=eq.${businessId}&date=eq.${date}&source=eq.gcal&select=id,gcal_event_id`, { headers: headers() }),
+    fetch(`${SUPABASE_URL}/rest/v1/bookbot_appointments?business_id=eq.${businessId}&appointment_date=eq.${date}&source=eq.gcal&select=id,gcal_event_id`, { headers: headers() }),
+  ]);
+  const existingSlots = await existingRes.json();
+  const existingAppts = await existingApptRes.json();
+  const existingSlotIds = new Set((Array.isArray(existingSlots) ? existingSlots : []).map((s: { gcal_event_id: string }) => s.gcal_event_id));
+  const existingApptIds = new Set((Array.isArray(existingAppts) ? existingAppts : []).map((a: { gcal_event_id: string }) => a.gcal_event_id));
+
+  const gcalEventIds = new Set<string>();
+
+  for (const event of events) {
+    if (event.status === "cancelled") continue;
+    gcalEventIds.add(event.id);
+
+    const startDT = event.start.dateTime;
+    const startDate = event.start.date;
+    const endDT = event.end.dateTime;
+    let timeFrom: string | null = null;
+    let timeTo: string | null = null;
+    let allDay = false;
+
+    if (startDate && !startDT) {
+      allDay = true;
+    } else if (startDT && endDT) {
+      timeFrom = toLocalTime(new Date(startDT), timezone);
+      timeTo = toLocalTime(new Date(endDT), timezone);
+    } else {
+      continue;
+    }
+
+    if (!existingSlotIds.has(event.id)) {
+      await fetch(`${SUPABASE_URL}/rest/v1/bookbot_blocked_slots`, {
+        method: "POST",
+        headers: { ...headers(), Prefer: "return=minimal" },
+        body: JSON.stringify({ business_id: businessId, date, time_from: timeFrom, time_to: timeTo, all_day: allDay, reason: event.summary ?? "Google Calendar", source: "gcal", gcal_event_id: event.id }),
+      });
+    }
+
+    if (!allDay && timeFrom && !existingApptIds.has(event.id)) {
+      await fetch(`${SUPABASE_URL}/rest/v1/bookbot_appointments`, {
+        method: "POST",
+        headers: { ...headers(), Prefer: "return=minimal" },
+        body: JSON.stringify({ business_id: businessId, client_name: event.summary ?? "Google Calendar", service: "Google Calendar", appointment_date: date, time_slot: timeFrom, end_time: timeTo, status: "confirmed", source: "gcal", gcal_event_id: event.id }),
+      });
+    }
+  }
+
+  // Remove stale gcal blocked slots
+  for (const existing of Array.isArray(existingSlots) ? existingSlots : []) {
+    if (!gcalEventIds.has(existing.gcal_event_id)) {
+      await fetch(`${SUPABASE_URL}/rest/v1/bookbot_blocked_slots?id=eq.${existing.id}`, { method: "DELETE", headers: headers() });
+    }
+  }
+  // Cancel stale gcal appointments
+  for (const existing of Array.isArray(existingAppts) ? existingAppts : []) {
+    if (!gcalEventIds.has(existing.gcal_event_id)) {
+      await fetch(`${SUPABASE_URL}/rest/v1/bookbot_appointments?id=eq.${existing.id}`, { method: "PATCH", headers: headers(), body: JSON.stringify({ status: "cancelled" }) });
+    }
+  }
+}
+
 export async function cancelActiveAppointment(
   phone: string,
   businessId: string
-): Promise<{ found: boolean; details?: string }> {
+): Promise<{ found: boolean; details?: string; gcalEventId?: string }> {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/bookbot_appointments?client_phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&status=eq.confirmed&order=appointment_date.asc&limit=1`,
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?client_phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&status=eq.confirmed&order=appointment_date.asc&limit=1&select=id,appointment_date,time_slot,gcal_event_id`,
     { headers: headers() }
   );
   const data = await res.json();
@@ -220,5 +354,6 @@ export async function cancelActiveAppointment(
   return {
     found: true,
     details: `${appt.appointment_date} a ${appt.time_slot}`,
+    gcalEventId: appt.gcal_event_id ?? undefined,
   };
 }

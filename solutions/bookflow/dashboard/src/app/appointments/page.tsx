@@ -5,7 +5,6 @@ import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
   Plus,
-  X,
   Check,
   CheckCheck,
   XCircle,
@@ -17,9 +16,8 @@ import {
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 import { useAppStore } from '@/lib/store';
-import { useAppointments, useCreateAppointment, useUpdateAppointment } from '@/hooks/useAppointments';
-import { useServices } from '@/hooks/useServices';
-import { useClients } from '@/hooks/useClients';
+import { useAppointments, useUpdateAppointment } from '@/hooks/useAppointments';
+import { CreateAppointmentModal } from '@/components/CreateAppointmentModal';
 import { cn } from '@/lib/utils';
 import type { Appointment } from '@/types/database';
 
@@ -43,6 +41,7 @@ const SOURCE_CONFIG: Record<Source, { label: string; bg: string; text: string }>
   app:      { label: 'App',      bg: 'bg-purple-500/15',text: 'text-purple-400'},
   manual:   { label: 'Manuel',   bg: 'bg-gray-500/15',  text: 'text-gray-400'  },
   guest:    { label: 'Invité',   bg: 'bg-orange-500/15',text: 'text-orange-400'},
+  gcal:     { label: 'Google',   bg: 'bg-sky-500/15',   text: 'text-sky-400'   },
 };
 
 const STATUS_FILTERS: { value: Status | 'all'; label: string }[] = [
@@ -68,210 +67,11 @@ function StatusBadge({ status }: { status: Status }) {
 }
 
 function SourceBadge({ source }: { source: Source }) {
-  const cfg = SOURCE_CONFIG[source];
+  const cfg = SOURCE_CONFIG[source] ?? SOURCE_CONFIG.manual;
   return (
     <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium', cfg.bg, cfg.text)}>
       {cfg.label}
     </span>
-  );
-}
-
-// ─── Creation Modal ─────────────────────────────────────────────────────────────
-
-interface CreateModalProps {
-  businessId: string;
-  onClose: () => void;
-}
-
-function CreateModal({ businessId, onClose }: CreateModalProps) {
-  const { data: services } = useServices(businessId);
-  const { data: clients } = useClients(businessId);
-  const createMutation = useCreateAppointment();
-
-  const [form, setForm] = useState({
-    client_id: '' as string | null,
-    service_id: '' as string | null,
-    date: format(new Date(), 'yyyy-MM-dd'),
-    start_time: '09:00',
-    notes: '',
-    source: 'manual' as Source,
-  });
-  const [error, setError] = useState<string | null>(null);
-
-  const selectedService = services?.find((s) => s.id === form.service_id);
-
-  function calcEndTime(start: string, duration: number): string {
-    const [h, m] = start.split(':').map(Number);
-    const totalMins = h * 60 + m + duration;
-    return `${String(Math.floor(totalMins / 60)).padStart(2, '0')}:${String(totalMins % 60).padStart(2, '0')}`;
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!form.date || !form.start_time || !form.service_id) {
-      setError('Date, heure et service sont requis.');
-      return;
-    }
-    const duration = selectedService?.duration ?? 30;
-    const end_time = calcEndTime(form.start_time, duration);
-
-    try {
-      await createMutation.mutateAsync({
-        business_id: businessId,
-        client_id: form.client_id || null,
-        service_id: form.service_id || null,
-        date: form.date,
-        start_time: form.start_time + ':00',
-        end_time: end_time + ':00',
-        duration,
-        status: 'pending',
-        source: form.source,
-        notes: form.notes || null,
-        pro_notes: null,
-        price: selectedService?.price ?? null,
-        guest_name: null,
-        guest_phone: null,
-      });
-      onClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la création');
-    }
-  }
-
-  const inputCls = 'w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:border-[#25D366] transition-colors';
-  const labelCls = 'block text-xs text-gray-400 mb-1';
-
-  return (
-    <>
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onClose} />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl">
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
-            <h2 className="text-white font-semibold">Nouveau rendez-vous</h2>
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="p-5 space-y-4">
-            {/* Client */}
-            <div>
-              <label className={labelCls}>Client</label>
-              <select
-                value={form.client_id ?? ''}
-                onChange={(e) => setForm((f) => ({ ...f, client_id: e.target.value || null }))}
-                className={inputCls}
-              >
-                <option value="">-- Sans client (invité) --</option>
-                {clients?.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}{c.phone ? ` · ${c.phone}` : ''}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Service */}
-            <div>
-              <label className={labelCls}>Service *</label>
-              <select
-                value={form.service_id ?? ''}
-                onChange={(e) => setForm((f) => ({ ...f, service_id: e.target.value || null }))}
-                required
-                className={inputCls}
-              >
-                <option value="">-- Choisir un service --</option>
-                {services?.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name} ({s.duration} min{s.price ? ` · ${s.price.toLocaleString('fr-FR')} XPF` : ''})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Date + Time */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className={labelCls}>Date *</label>
-                <input
-                  type="date"
-                  value={form.date}
-                  onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                  required
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Heure *</label>
-                <input
-                  type="time"
-                  value={form.start_time}
-                  onChange={(e) => setForm((f) => ({ ...f, start_time: e.target.value }))}
-                  required
-                  className={inputCls}
-                />
-              </div>
-            </div>
-
-            {/* Source */}
-            <div>
-              <label className={labelCls}>Source</label>
-              <select
-                value={form.source}
-                onChange={(e) => setForm((f) => ({ ...f, source: e.target.value as Source }))}
-                className={inputCls}
-              >
-                <option value="manual">Manuel</option>
-                <option value="web">Web</option>
-                <option value="app">App</option>
-                <option value="chatbot">Chatbot</option>
-                <option value="whatsapp">WhatsApp</option>
-              </select>
-            </div>
-
-            {/* Notes */}
-            <div>
-              <label className={labelCls}>Notes</label>
-              <textarea
-                value={form.notes}
-                onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                rows={2}
-                placeholder="Notes pour ce RDV..."
-                className={cn(inputCls, 'resize-none')}
-              />
-            </div>
-
-            {error && (
-              <p className="text-red-400 text-xs bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
-                {error}
-              </p>
-            )}
-
-            {/* Actions */}
-            <div className="flex gap-3 pt-1">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 py-2 rounded-lg bg-gray-800 text-gray-300 text-sm font-medium hover:bg-gray-700 transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                type="submit"
-                disabled={createMutation.isPending}
-                className="flex-1 py-2 rounded-lg text-white text-sm font-medium transition-colors disabled:opacity-60"
-                style={{ backgroundColor: '#25D366' }}
-              >
-                {createMutation.isPending ? 'Création...' : 'Créer le RDV'}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </>
   );
 }
 
@@ -405,8 +205,8 @@ export default function AppointmentsPage() {
           {!isLoading && paginated.length > 0 && (
             <div className="divide-y divide-gray-800">
               {paginated.map((appt) => {
-                const clientName = appt.client?.name ?? appt.guest_name ?? '—';
-                const serviceName = appt.service?.name ?? '—';
+                const clientName = appt.client_name ?? '—';
+                const serviceName = appt.service ?? '—';
                 const isPending = appt.status === 'pending';
                 const isActive = appt.status === 'pending' || appt.status === 'confirmed';
 
@@ -417,26 +217,25 @@ export default function AppointmentsPage() {
                   >
                     {/* Date */}
                     <span className="text-sm text-gray-200">
-                      {format(parseISO(appt.date), 'd MMM yyyy', { locale: fr })}
+                      {format(parseISO(appt.appointment_date), 'd MMM yyyy', { locale: fr })}
                     </span>
 
                     {/* Time */}
                     <span className="text-sm text-gray-400 font-mono">
-                      {appt.start_time.slice(0, 5)}
+                      {appt.time_slot?.slice(0, 5) ?? '—'}
                     </span>
 
                     {/* Client */}
                     <div className="min-w-0">
                       <p className="text-sm text-gray-200 truncate">{clientName}</p>
-                      {appt.client?.phone && (
-                        <p className="text-xs text-gray-600 truncate">{appt.client.phone}</p>
+                      {appt.client_phone && (
+                        <p className="text-xs text-gray-600 truncate">{appt.client_phone}</p>
                       )}
                     </div>
 
                     {/* Service */}
                     <div className="min-w-0">
                       <p className="text-sm text-gray-300 truncate">{serviceName}</p>
-                      <p className="text-xs text-gray-600">{appt.duration} min</p>
                     </div>
 
                     {/* Status */}
@@ -518,7 +317,7 @@ export default function AppointmentsPage() {
 
       {/* Create Modal */}
       {showCreateModal && businessId && (
-        <CreateModal businessId={businessId} onClose={() => setShowCreateModal(false)} />
+        <CreateAppointmentModal businessId={businessId} onClose={() => setShowCreateModal(false)} />
       )}
     </DashboardLayout>
   );

@@ -12,7 +12,8 @@ const DAY_NAMES = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
 
 export function generateAvailableDates(
   openingHours: Record<string, string>,
-  count = 3
+  count = 3,
+  blockedDates?: Set<string>
 ): DateOption[] {
   const now = new Date();
   const dates: DateOption[] = [];
@@ -26,8 +27,12 @@ export function generateAvailableDates(
     // Skip if business closed that day
     if (!dayKey || !openingHours[dayKey]) continue;
 
-    const dayName = DAY_NAMES[date.getDay()];
     const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+    // Skip if entire day is blocked (vacations, all-day GCal events)
+    if (blockedDates?.has(dateStr)) continue;
+
+    const dayName = DAY_NAMES[date.getDay()];
 
     dates.push({
       value: dateStr,

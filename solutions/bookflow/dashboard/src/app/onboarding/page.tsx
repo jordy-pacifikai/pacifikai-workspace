@@ -20,6 +20,9 @@ interface HourSlot {
   isOpen: boolean
   open: string
   close: string
+  hasBreak: boolean
+  breakStart: string
+  breakEnd: string
 }
 
 type Hours = Record<string, HourSlot>
@@ -28,6 +31,7 @@ interface OnboardingData {
   // Step 1 — Business
   businessName: string
   category: 'salon' | 'restaurant' | 'medical' | 'sport' | 'autre'
+  description: string
   address: string
   phone: string
   // Step 2 — Services
@@ -40,7 +44,7 @@ interface OnboardingData {
   paymentMethods: string[]
   // Step 5 — Personality
   tone: 'formel' | 'decontracte' | 'chaleureux'
-  language: 'fr' | 'fr-pf'
+  language: 'fr'
   greeting: string
 }
 
@@ -57,7 +61,7 @@ const DAYS = [
 const DEFAULT_HOURS: Hours = Object.fromEntries(
   DAYS.map(d => [
     d.key,
-    { isOpen: d.key !== 'sun', open: '08:00', close: '17:00' },
+    { isOpen: d.key !== 'sun', open: '08:00', close: '17:00', hasBreak: true, breakStart: '12:00', breakEnd: '13:00' },
   ]),
 )
 
@@ -75,6 +79,14 @@ const TONES = [
   { value: 'chaleureux', label: 'Chaleureux', desc: '"Ia ora na ! Bienvenue, en quoi puis-je t\'aider ?"' },
 ] as const
 
+const DESCRIPTION_PLACEHOLDERS: Record<string, string> = {
+  salon: 'Ex: Salon de coiffure et soins esthétiques à Papeete, spécialisé dans les lissages brésiliens et les balayages. Ambiance détendue, sans rendez-vous le samedi matin.',
+  restaurant: 'Ex: Restaurant de cuisine fusion polynésienne et asiatique, terrasse vue mer à Punaauia. Ouvert midi et soir, brunch le dimanche. Réservation recommandée le week-end.',
+  medical: 'Ex: Cabinet de kinésithérapie et ostéopathie à Pirae. Spécialisé en rééducation sportive et douleurs chroniques. Consultations sur rendez-vous uniquement.',
+  sport: 'Ex: Salle de CrossFit et coaching personnalisé à Faa\'a. Cours collectifs matin et soir, programme débutant disponible. Premier cours d\'essai gratuit.',
+  autre: 'Ex: Décrivez en quelques mots votre activité, vos spécialités, et ce qui vous différencie. Le chatbot utilisera ces infos pour mieux répondre à vos clients.',
+}
+
 // ─── Component ──────────────────────────────────────────────────────────────────
 
 export default function OnboardingPage() {
@@ -89,6 +101,7 @@ export default function OnboardingPage() {
   const [data, setData] = useState<OnboardingData>({
     businessName: '',
     category: 'salon',
+    description: '',
     address: '',
     phone: '',
     services: [{ name: '', duration: 30, price: 3000 }],
@@ -97,7 +110,7 @@ export default function OnboardingPage() {
     lateToleranceMin: 10,
     paymentMethods: ['especes'],
     tone: 'chaleureux',
-    language: 'fr-pf',
+    language: 'fr',
     greeting: 'Ia ora na ! Bienvenue chez {business}. Comment puis-je vous aider ?',
   })
 
@@ -131,8 +144,16 @@ export default function OnboardingPage() {
       // 1. Upsert bookbot_businesses (for the AI agent)
       const openingHoursRecord: Record<string, string> = {}
       for (const [day, slot] of Object.entries(data.hours)) {
-        openingHoursRecord[day] = slot.isOpen ? `${slot.open}-${slot.close}` : 'closed'
+        if (!slot.isOpen) {
+          openingHoursRecord[day] = 'closed'
+        } else if (slot.hasBreak) {
+          openingHoursRecord[day] = `${slot.open}-${slot.breakStart},${slot.breakEnd}-${slot.close}`
+        } else {
+          openingHoursRecord[day] = `${slot.open}-${slot.close}`
+        }
       }
+
+      const resolvedGreeting = data.greeting.replace(/\{business\}/g, data.businessName || 'notre établissement')
 
       const servicesArray = data.services
         .filter(s => s.name.trim())
@@ -146,13 +167,16 @@ export default function OnboardingPage() {
           .from('bookbot_businesses')
           .update({
             name: data.businessName,
+            phone: data.phone || '',
+            sector: data.category,
             services: servicesArray,
             hours: openingHoursRecord,
             timezone: 'Pacific/Tahiti',
             config: {
               tone: data.tone,
               language: data.language,
-              greeting: data.greeting,
+              greeting: resolvedGreeting,
+              description: data.description,
               cancellation_delay_hours: data.cancellationDelay,
               late_tolerance_min: data.lateToleranceMin,
               payment_methods: data.paymentMethods,
@@ -166,6 +190,8 @@ export default function OnboardingPage() {
           .from('bookbot_businesses')
           .insert({
             name: data.businessName,
+            phone: data.phone || '',
+            sector: data.category,
             owner_user_id: user.id,
             plan: 'starter',
             services: servicesArray,
@@ -174,7 +200,8 @@ export default function OnboardingPage() {
             config: {
               tone: data.tone,
               language: data.language,
-              greeting: data.greeting,
+              greeting: resolvedGreeting,
+              description: data.description,
               cancellation_delay_hours: data.cancellationDelay,
               late_tolerance_min: data.lateToleranceMin,
               payment_methods: data.paymentMethods,
@@ -189,87 +216,106 @@ export default function OnboardingPage() {
         bizId = newBiz!.id
 
         // Link user to business
-        await supabase.from('bookbot_business_users').insert({
+        const { error: bizUserError } = await supabase.from('bookbot_business_users').insert({
           user_id: user.id,
           business_id: bizId,
           role: 'owner',
         })
+        if (bizUserError) throw bizUserError
       }
 
-      // 2. Upsert dashboard businesses table
-      const openingHoursObj: Record<string, { open: string | null; close: string | null; is_open: boolean }> = {}
-      for (const [day, slot] of Object.entries(data.hours)) {
-        openingHoursObj[day] = {
-          open: slot.isOpen ? slot.open : null,
-          close: slot.isOpen ? slot.close : null,
-          is_open: slot.isOpen,
+      // 2. Upsert dashboard businesses table (non-blocking — table may not exist)
+      try {
+        const openingHoursObj: Record<string, { open: string | null; close: string | null; is_open: boolean; break_start: string | null; break_end: string | null }> = {}
+        for (const [day, slot] of Object.entries(data.hours)) {
+          openingHoursObj[day] = {
+            open: slot.isOpen ? slot.open : null,
+            close: slot.isOpen ? slot.close : null,
+            is_open: slot.isOpen,
+            break_start: slot.isOpen && slot.hasBreak ? slot.breakStart : null,
+            break_end: slot.isOpen && slot.hasBreak ? slot.breakEnd : null,
+          }
         }
-      }
 
-      const { data: existingDashBiz } = await supabase
-        .from('businesses')
-        .select('id')
-        .eq('id', bizId!)
-        .single()
-
-      if (existingDashBiz) {
-        await supabase
+        const { data: existingDashBiz } = await supabase
           .from('businesses')
-          .update({
+          .select('id')
+          .eq('id', bizId!)
+          .single()
+
+        if (existingDashBiz) {
+          await supabase
+            .from('businesses')
+            .update({
+              name: data.businessName,
+              category: data.category,
+              address: data.address || null,
+              phone: data.phone || null,
+              opening_hours: openingHoursObj,
+              owner_id: user.id,
+            })
+            .eq('id', bizId!)
+        } else {
+          await supabase.from('businesses').insert({
+            id: bizId!,
             name: data.businessName,
+            slug: data.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
             category: data.category,
             address: data.address || null,
             phone: data.phone || null,
             opening_hours: openingHoursObj,
             owner_id: user.id,
+            subscription_plan: 'starter',
+            default_slot_duration: 30,
+            booking_buffer: 0,
+            max_advance_booking_days: 30,
+            rating: 0,
+            review_count: 0,
+            total_bookings: 0,
           })
-          .eq('id', bizId!)
-      } else {
-        await supabase.from('businesses').insert({
-          id: bizId!,
-          name: data.businessName,
-          slug: data.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-          category: data.category,
-          address: data.address || null,
-          phone: data.phone || null,
-          opening_hours: openingHoursObj,
-          owner_id: user.id,
-          subscription_plan: 'starter',
-          default_slot_duration: 30,
-          booking_buffer: 0,
-          max_advance_booking_days: 30,
-          rating: 0,
-          review_count: 0,
-          total_bookings: 0,
-        })
+        }
+
+        // 3. Create services in dashboard services table
+        const validServices = data.services.filter(s => s.name.trim())
+        if (validServices.length > 0) {
+          await supabase.from('services').delete().eq('business_id', bizId!)
+          await supabase.from('services').insert(
+            validServices.map((s, i) => ({
+              business_id: bizId!,
+              name: s.name.trim(),
+              duration: s.duration,
+              price: s.price,
+              is_active: true,
+              display_order: i,
+            })),
+          )
+        }
+      } catch (e) {
+        console.warn('Dashboard tables upsert (non-critical):', e)
       }
 
-      // 3. Create services in dashboard services table
-      const validServices = data.services.filter(s => s.name.trim())
-      if (validServices.length > 0) {
-        // Delete old services for this business
-        await supabase.from('services').delete().eq('business_id', bizId!)
-
-        await supabase.from('services').insert(
-          validServices.map((s, i) => ({
-            business_id: bizId!,
-            name: s.name.trim(),
-            duration: s.duration,
-            price: s.price,
-            is_active: true,
-            display_order: i,
-          })),
-        )
+      // 4. Generate knowledge base documents (non-blocking)
+      try {
+        await generateKnowledgeDocs(bizId!, data)
+      } catch (e) {
+        console.warn('Knowledge docs generation (non-critical):', e)
       }
-
-      // 4. Generate knowledge base documents
-      await generateKnowledgeDocs(bizId!, data)
 
       // Done — redirect to dashboard
-      router.push('/?onboarded=true')
+      router.push('/stats')
     } catch (err: unknown) {
       console.error('Onboarding error:', err)
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue')
+      let msg = ''
+      if (err instanceof Error) {
+        msg = err.message
+      } else if (typeof err === 'object' && err !== null) {
+        const e = err as Record<string, unknown>
+        const parts = [e.message, e.details, e.hint, e.code].filter(Boolean)
+        msg = parts.length > 0 ? parts.join(' — ') : JSON.stringify(err)
+      } else {
+        msg = String(err)
+      }
+      setError(msg || 'Erreur inconnue — voir la console')
       setSaving(false)
     }
   }
@@ -279,7 +325,7 @@ export default function OnboardingPage() {
       {
         title: 'Informations générales',
         category: 'info',
-        content: `${d.businessName} est un(e) ${CATEGORIES.find(c => c.value === d.category)?.label || d.category}.${d.address ? ` Adresse : ${d.address}.` : ''}${d.phone ? ` Téléphone : ${d.phone}.` : ''}`,
+        content: `${d.businessName} est un(e) ${CATEGORIES.find(c => c.value === d.category)?.label || d.category}.${d.description ? ` ${d.description}` : ''}${d.address ? ` Adresse : ${d.address}.` : ''}${d.phone ? ` Téléphone : ${d.phone}.` : ''}`,
       },
       {
         title: 'Services proposés',
@@ -295,7 +341,9 @@ export default function OnboardingPage() {
         content: DAYS
           .map(day => {
             const h = d.hours[day.key]
-            return `- ${day.label} : ${h.isOpen ? `${h.open} - ${h.close}` : 'Fermé'}`
+            if (!h.isOpen) return `- ${day.label} : Fermé`
+            const base = `${h.open} - ${h.close}`
+            return `- ${day.label} : ${base}${h.hasBreak ? ` (pause ${h.breakStart} - ${h.breakEnd})` : ''}`
           })
           .join('\n'),
       },
@@ -337,7 +385,7 @@ export default function OnboardingPage() {
       <div className="border-b border-gray-800 px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <h1 className="text-lg font-bold text-white">
-            Book<span style={{ color: GREEN }}>Bot</span>
+            Ve&apos;a
             <span className="text-gray-500 text-sm font-normal ml-3">Configuration</span>
           </h1>
           <span className="text-sm text-gray-500">{step} / 5</span>
@@ -464,6 +512,17 @@ function Step1Business({
         </div>
       </Field>
 
+      <Field label="Décrivez votre activité">
+        <textarea
+          value={data.description}
+          onChange={e => update('description', e.target.value)}
+          rows={3}
+          placeholder={DESCRIPTION_PLACEHOLDERS[data.category] || DESCRIPTION_PLACEHOLDERS.autre}
+          className="input-field resize-none"
+        />
+        <p className="mt-1.5 text-xs text-gray-600">Optionnel — aide le chatbot à mieux répondre. Modifiable plus tard dans Paramètres.</p>
+      </Field>
+
       <Field label="Adresse">
         <input
           type="text"
@@ -472,6 +531,7 @@ function Step1Business({
           placeholder="Papeete, Tahiti"
           className="input-field"
         />
+        <p className="mt-1 text-xs text-gray-600">Modifiable plus tard</p>
       </Field>
 
       <Field label="Téléphone">
@@ -482,6 +542,7 @@ function Step1Business({
           placeholder="+689 40 XX XX XX"
           className="input-field"
         />
+        <p className="mt-1 text-xs text-gray-600">Modifiable plus tard</p>
       </Field>
     </div>
   )
@@ -589,7 +650,13 @@ function Step3Hours({
     update('hours', h)
   }
 
-  const setTime = (day: string, field: 'open' | 'close', value: string) => {
+  const toggleBreak = (day: string) => {
+    const h = { ...data.hours }
+    h[day] = { ...h[day], hasBreak: !h[day].hasBreak }
+    update('hours', h)
+  }
+
+  const setTime = (day: string, field: 'open' | 'close' | 'breakStart' | 'breakEnd', value: string) => {
     const h = { ...data.hours }
     h[day] = { ...h[day], [field]: value }
     update('hours', h)
@@ -602,46 +669,89 @@ function Step3Hours({
         return (
           <div
             key={d.key}
-            className={`flex items-center gap-4 rounded-lg px-4 py-3 border transition-all ${
+            className={`rounded-lg px-4 py-3 border transition-all ${
               slot.isOpen ? 'border-gray-800 bg-gray-900' : 'border-gray-900 bg-gray-950'
             }`}
           >
-            <button
-              onClick={() => toggleDay(d.key)}
-              className={`w-10 h-6 rounded-full relative transition-colors ${
-                slot.isOpen ? '' : 'bg-gray-800'
-              }`}
-              style={slot.isOpen ? { backgroundColor: GREEN } : undefined}
-            >
-              <span
-                className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${
-                  slot.isOpen ? 'left-[18px]' : 'left-0.5'
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => toggleDay(d.key)}
+                className={`w-10 h-6 rounded-full relative transition-colors shrink-0 ${
+                  slot.isOpen ? '' : 'bg-gray-800'
                 }`}
-              />
-            </button>
-
-            <span className={`w-24 text-sm font-medium ${slot.isOpen ? 'text-gray-200' : 'text-gray-600'}`}>
-              {d.label}
-            </span>
-
-            {slot.isOpen ? (
-              <div className="flex items-center gap-2 flex-1">
-                <input
-                  type="time"
-                  value={slot.open}
-                  onChange={e => setTime(d.key, 'open', e.target.value)}
-                  className="input-field !w-auto !py-1.5 text-sm"
+                style={slot.isOpen ? { backgroundColor: GREEN } : undefined}
+              >
+                <span
+                  className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${
+                    slot.isOpen ? 'left-[18px]' : 'left-0.5'
+                  }`}
                 />
-                <span className="text-gray-600">—</span>
-                <input
-                  type="time"
-                  value={slot.close}
-                  onChange={e => setTime(d.key, 'close', e.target.value)}
-                  className="input-field !w-auto !py-1.5 text-sm"
-                />
+              </button>
+
+              <span className={`w-24 text-sm font-medium ${slot.isOpen ? 'text-gray-200' : 'text-gray-600'}`}>
+                {d.label}
+              </span>
+
+              {slot.isOpen ? (
+                <div className="flex items-center gap-2 flex-1">
+                  <input
+                    type="time"
+                    value={slot.open}
+                    onChange={e => setTime(d.key, 'open', e.target.value)}
+                    className="input-field !w-auto !py-1.5 text-sm"
+                  />
+                  <span className="text-gray-600">—</span>
+                  <input
+                    type="time"
+                    value={slot.close}
+                    onChange={e => setTime(d.key, 'close', e.target.value)}
+                    className="input-field !w-auto !py-1.5 text-sm"
+                  />
+                </div>
+              ) : (
+                <span className="text-sm text-gray-600">Ferme</span>
+              )}
+            </div>
+
+            {slot.isOpen && (
+              <div className="mt-2 ml-14 flex items-center gap-3">
+                <button
+                  onClick={() => toggleBreak(d.key)}
+                  className="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                >
+                  <span
+                    className={`w-7 h-4 rounded-full relative transition-colors ${
+                      slot.hasBreak ? '' : 'bg-gray-800'
+                    }`}
+                    style={slot.hasBreak ? { backgroundColor: 'rgba(37, 211, 102, 0.5)' } : undefined}
+                  >
+                    <span
+                      className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${
+                        slot.hasBreak ? 'left-[13px]' : 'left-0.5'
+                      }`}
+                    />
+                  </span>
+                  Pause
+                </button>
+
+                {slot.hasBreak && (
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="time"
+                      value={slot.breakStart}
+                      onChange={e => setTime(d.key, 'breakStart', e.target.value)}
+                      className="input-field !w-auto !py-1 !px-2 text-xs"
+                    />
+                    <span className="text-gray-600 text-xs">—</span>
+                    <input
+                      type="time"
+                      value={slot.breakEnd}
+                      onChange={e => setTime(d.key, 'breakEnd', e.target.value)}
+                      className="input-field !w-auto !py-1 !px-2 text-xs"
+                    />
+                  </div>
+                )}
               </div>
-            ) : (
-              <span className="text-sm text-gray-600">Fermé</span>
             )}
           </div>
         )
@@ -741,6 +851,8 @@ function Step5Personality({
   data: OnboardingData
   update: <K extends keyof OnboardingData>(key: K, value: OnboardingData[K]) => void
 }) {
+  const bizName = data.businessName || 'votre entreprise'
+
   return (
     <div className="space-y-6">
       <Field label="Ton du chatbot">
@@ -763,28 +875,7 @@ function Step5Personality({
             </button>
           ))}
         </div>
-      </Field>
-
-      <Field label="Langue">
-        <div className="flex gap-2">
-          {[
-            { value: 'fr-pf' as const, label: 'Français (Polynésie)' },
-            { value: 'fr' as const, label: 'Français standard' },
-          ].map(l => (
-            <button
-              key={l.value}
-              onClick={() => update('language', l.value)}
-              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
-                data.language === l.value
-                  ? 'border-green-500/50 text-white'
-                  : 'border-gray-800 text-gray-400 hover:border-gray-700'
-              }`}
-              style={data.language === l.value ? { backgroundColor: 'rgba(37, 211, 102, 0.1)' } : undefined}
-            >
-              {l.label}
-            </button>
-          ))}
-        </div>
+        <p className="mt-1.5 text-xs text-gray-600">Modifiable plus tard dans Agent IA</p>
       </Field>
 
       <Field label="Message d'accueil">
@@ -792,12 +883,16 @@ function Step5Personality({
           value={data.greeting}
           onChange={e => update('greeting', e.target.value)}
           rows={3}
-          placeholder="Ia ora na ! Bienvenue chez {business}..."
+          placeholder={`Ia ora na ! Bienvenue chez ${bizName}...`}
           className="input-field resize-none"
         />
-        <p className="text-xs text-gray-600 mt-1">
-          Utilisez {'{business}'} pour insérer le nom de votre entreprise.
-        </p>
+        <div className="mt-2 rounded-lg bg-gray-800/50 border border-gray-800 px-3 py-2">
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Apercu</p>
+          <p className="text-sm text-gray-300 italic">
+            {data.greeting.replace(/\{business\}/g, bizName)}
+          </p>
+        </div>
+        <p className="mt-1.5 text-xs text-gray-600">Modifiable plus tard dans Agent IA</p>
       </Field>
     </div>
   )

@@ -167,6 +167,7 @@ export default function SettingsPage() {
     welcomeMessage: '',
     language: 'fr',
     tone: 'chaleureux',
+    customInstructions: '',
   });
   const [chatbotSaving, setChatbotSaving] = useState(false);
   const [chatbotSaved, setChatbotSaved] = useState(false);
@@ -199,6 +200,7 @@ export default function SettingsPage() {
       welcomeMessage: cfg.greeting ?? '',
       language: cfg.language ?? 'fr',
       tone: cfg.tone ?? 'chaleureux',
+      customInstructions: cfg.custom_instructions ?? '',
     });
   }, [business]);
 
@@ -233,6 +235,7 @@ export default function SettingsPage() {
           greeting: chatbot.welcomeMessage,
           language: chatbot.language,
           tone: chatbot.tone,
+          custom_instructions: chatbot.customInstructions,
         },
       } as Record<string, unknown>,
       {
@@ -431,6 +434,21 @@ export default function SettingsPage() {
               </select>
             </FormField>
           </div>
+
+          <FormField
+            label="Instructions personnalisees"
+            hint="Consignes specifiques pour le chatbot (ex: pas de coloration le lundi, prix minimum 3000 XPF). Max 500 caracteres."
+          >
+            <textarea
+              className={cn(inputClass, 'resize-none')}
+              rows={4}
+              maxLength={500}
+              placeholder="Ex: On ne prend pas les enfants de moins de 5 ans. Pas de coloration apres 16h. Parking gratuit derriere le salon."
+              value={chatbot.customInstructions}
+              onChange={(e) => setChatbot((f) => ({ ...f, customInstructions: e.target.value }))}
+            />
+            <p className="mt-1 text-xs text-gray-600 text-right">{chatbot.customInstructions.length}/500</p>
+          </FormField>
         </SectionCard>
 
         {/* ─ 3. Notifications ─────────────────────────────────────────────── */}
@@ -513,7 +531,7 @@ export default function SettingsPage() {
           <div className="border-t border-gray-800 pt-4 mt-2">
             <p className="text-xs text-gray-500">
               Pour modifier votre abonnement ou obtenir une offre personnalisee, contactez notre equipe a{' '}
-              <span className="text-[#25D366]">jordy@pacifikai.com</span>
+              <span className="text-[#25D366]">support@vea.pacifikai.com</span>
             </p>
           </div>
         </SectionCard>

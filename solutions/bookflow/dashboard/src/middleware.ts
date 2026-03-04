@@ -30,11 +30,28 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Public routes — no auth required
-  const publicRoutes = ['/login', '/signup', '/auth/callback']
+  const publicRoutes = ['/login', '/signup', '/auth/callback', '/privacy', '/terms', '/data-deletion']
   const isPublic = publicRoutes.some(r => pathname.startsWith(r))
 
   // API routes — handled separately (own auth or public)
   const isWebhook = pathname.startsWith('/api/')
+
+  // Landing page "/" — if authenticated, check onboarding then dashboard
+  if (pathname === '/') {
+    if (user) {
+      const { data: link } = await supabase
+        .from('bookbot_business_users')
+        .select('business_id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .single()
+
+      const url = request.nextUrl.clone()
+      url.pathname = link ? '/stats' : '/onboarding'
+      return NextResponse.redirect(url)
+    }
+    return supabaseResponse
+  }
 
   if (isPublic || isWebhook) {
     return supabaseResponse
@@ -46,6 +63,22 @@ export async function middleware(request: NextRequest) {
     url.pathname = '/login'
     url.searchParams.set('redirect', pathname)
     return NextResponse.redirect(url)
+  }
+
+  // Authenticated — check if onboarding is done (has a business)
+  if (pathname !== '/onboarding') {
+    const { data: link } = await supabase
+      .from('bookbot_business_users')
+      .select('business_id')
+      .eq('user_id', user.id)
+      .limit(1)
+      .single()
+
+    if (!link) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/onboarding'
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse

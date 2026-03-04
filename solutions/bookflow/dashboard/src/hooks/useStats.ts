@@ -29,7 +29,6 @@ export interface DashboardStats {
 
 interface AppointmentSummaryRow {
   status: string;
-  price: number | null;
 }
 
 async function fetchDashboardStats(businessId: string): Promise<DashboardStats> {
@@ -43,30 +42,30 @@ async function fetchDashboardStats(businessId: string): Promise<DashboardStats> 
   const [todayRes, weekRes, monthRes, pendingRes, clientsRes] = await Promise.all([
     // Today's appointment count (head = count only, no rows)
     supabase
-      .from('appointments')
+      .from('bookbot_appointments')
       .select('id', { count: 'exact', head: true })
       .eq('business_id', businessId)
-      .eq('date', today),
+      .eq('appointment_date', today),
 
     // This week's appointment count
     supabase
-      .from('appointments')
+      .from('bookbot_appointments')
       .select('id', { count: 'exact', head: true })
       .eq('business_id', businessId)
-      .gte('date', weekStart)
-      .lte('date', weekEnd),
+      .gte('appointment_date', weekStart)
+      .lte('appointment_date', weekEnd),
 
-    // This month's appointments with status + price for revenue/rate calcs
+    // This month's appointments with status for rate calcs
     supabase
-      .from('appointments')
-      .select('status, price', { count: 'exact' })
+      .from('bookbot_appointments')
+      .select('status', { count: 'exact' })
       .eq('business_id', businessId)
-      .gte('date', monthStart)
-      .lte('date', monthEnd),
+      .gte('appointment_date', monthStart)
+      .lte('appointment_date', monthEnd),
 
     // Pending appointments count
     supabase
-      .from('appointments')
+      .from('bookbot_appointments')
       .select('id', { count: 'exact', head: true })
       .eq('business_id', businessId)
       .eq('status', 'pending'),
@@ -81,9 +80,7 @@ async function fetchDashboardStats(businessId: string): Promise<DashboardStats> 
   const monthData = (monthRes.data ?? []) as AppointmentSummaryRow[];
   const total = monthData.length;
 
-  const monthRevenue = monthData
-    .filter((a) => a.status === 'completed')
-    .reduce((sum, a) => sum + (a.price ?? 0), 0);
+  const monthRevenue = 0; // bookbot_appointments has no price column
 
   const noShows = monthData.filter((a) => a.status === 'no_show').length;
   const completed = monthData.filter((a) => a.status === 'completed').length;

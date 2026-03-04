@@ -21,7 +21,7 @@ export default function DataDeletionPage() {
 
         <div>
           <h2 className="text-xl font-semibold mb-3 text-white">Option 2 : Par email</h2>
-          <p>Envoyez un email a <strong>jordy@pacifikai.com</strong> avec l&apos;objet &quot;Suppression de donnees Ve&apos;a&quot; en precisant :</p>
+          <p>Envoyez un email a <strong>support@vea.pacifikai.com</strong> avec l&apos;objet &quot;Suppression de donnees Ve&apos;a&quot; en precisant :</p>
           <ul className="list-disc pl-6 mt-2 space-y-1">
             <li>Le nom de votre commerce</li>
             <li>L&apos;adresse email associee a votre compte</li>
@@ -52,7 +52,7 @@ export default function DataDeletionPage() {
 
         <div>
           <h2 className="text-xl font-semibold mb-3 text-white">Contact</h2>
-          <p>PACIFIK&apos;AI — jordy@pacifikai.com — +689 89 55 81 89</p>
+          <p>PACIFIK&apos;AI — support@vea.pacifikai.com</p>
         </div>
       </section>
     </main>

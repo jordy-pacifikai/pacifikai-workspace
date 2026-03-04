@@ -20,29 +20,23 @@ async function fetchAppointments(
   filters?: { status?: string; dateFrom?: string; dateTo?: string; date?: string },
 ): Promise<Appointment[]> {
   let query = supabase
-    .from('appointments')
-    .select(
-      `
-      *,
-      client:clients(id, name, phone, email, tags),
-      service:services(id, name, duration, price, category)
-    `,
-    )
+    .from('bookbot_appointments')
+    .select('*')
     .eq('business_id', businessId)
-    .order('date', { ascending: false })
-    .order('start_time', { ascending: true });
+    .order('appointment_date', { ascending: false })
+    .order('time_slot', { ascending: true });
 
   if (filters?.status && filters.status !== 'all') {
     query = query.eq('status', filters.status);
   }
   if (filters?.date) {
-    query = query.eq('date', filters.date);
+    query = query.eq('appointment_date', filters.date);
   }
   if (filters?.dateFrom) {
-    query = query.gte('date', filters.dateFrom);
+    query = query.gte('appointment_date', filters.dateFrom);
   }
   if (filters?.dateTo) {
-    query = query.lte('date', filters.dateTo);
+    query = query.lte('appointment_date', filters.dateTo);
   }
 
   const { data, error } = await query;
@@ -51,18 +45,12 @@ async function fetchAppointments(
 }
 
 async function createAppointment(
-  payload: Omit<Appointment, 'id' | 'created_at' | 'updated_at' | 'client' | 'service'>,
+  payload: Omit<Appointment, 'id' | 'created_at' | 'updated_at'>,
 ): Promise<Appointment> {
   const { data, error } = await supabase
-    .from('appointments')
+    .from('bookbot_appointments')
     .insert(payload as any)
-    .select(
-      `
-      *,
-      client:clients(id, name, phone, email, tags),
-      service:services(id, name, duration, price, category)
-    `,
-    )
+    .select('*')
     .single();
 
   if (error) throw new Error(error.message);
@@ -74,16 +62,10 @@ async function updateAppointmentById(
   updates: Partial<Appointment>,
 ): Promise<Appointment> {
   const { data, error } = await supabase
-    .from('appointments')
+    .from('bookbot_appointments')
     .update({ ...updates, updated_at: new Date().toISOString() } as any)
     .eq('id', id)
-    .select(
-      `
-      *,
-      client:clients(id, name, phone, email, tags),
-      service:services(id, name, duration, price, category)
-    `,
-    )
+    .select('*')
     .single();
 
   if (error) throw new Error(error.message);
@@ -111,9 +93,9 @@ export function useCreateAppointment() {
 
   return useMutation({
     mutationFn: (
-      payload: Omit<Appointment, 'id' | 'created_at' | 'updated_at' | 'client' | 'service'>,
+      payload: Omit<Appointment, 'id' | 'created_at' | 'updated_at'>,
     ) => createAppointment(payload),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
     },
   });

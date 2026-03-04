@@ -71,37 +71,19 @@ export interface Client {
 export interface Appointment {
   id: string
   business_id: string
-  client_id: string | null
-  service_id: string | null
-  date: string
-  start_time: string
-  end_time: string
-  duration: number
+  client_name: string | null
+  client_phone: string | null
+  service: string | null
+  appointment_date: string
+  time_slot: string
+  end_time: string | null
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no_show'
-  source: 'app' | 'web' | 'manual' | 'chatbot' | 'guest' | 'whatsapp'
+  source: 'app' | 'web' | 'manual' | 'chatbot' | 'guest' | 'whatsapp' | 'gcal'
   notes: string | null
-  pro_notes: string | null
-  price: number | null
-  reminder_24h_sent?: boolean
-  reminder_2h_sent?: boolean
-  confirmation_required?: boolean
-  confirmed_at?: string | null
-  points_earned?: number
-  guest_name: string | null
-  guest_phone: string | null
-  guest_token?: string | null
+  reminder_sent: boolean
+  gcal_event_id: string | null
   created_at: string
   updated_at: string
-  cancelled_at?: string | null
-  completed_at?: string | null
-  // Joined relations
-  client?: Client | null
-  service?: Service | null
-}
-
-export type AppointmentWithRelations = Omit<Appointment, 'client' | 'service'> & {
-  client: Pick<Client, 'id' | 'name' | 'phone' | 'email'> | null
-  service: Pick<Service, 'id' | 'name' | 'duration' | 'price'> | null
 }
 
 export interface BlockedSlot {
@@ -140,14 +122,11 @@ export type ClientInsert = Omit<Client, 'id' | 'created_at' | 'updated_at'> & {
   created_at?: string
   updated_at?: string
 }
-export type AppointmentInsert = Omit<Appointment, 'id' | 'created_at' | 'updated_at' | 'client' | 'service'> & {
+export type AppointmentInsert = Omit<Appointment, 'id' | 'created_at' | 'updated_at'> & {
   id?: string
   created_at?: string
   updated_at?: string
 }
-
-// Row type without joined relations (for Supabase insert/update)
-type AppointmentRow = Omit<Appointment, 'client' | 'service'>
 
 // Supabase generic type (minimal — for createClient typing)
 export interface Database {
@@ -156,7 +135,7 @@ export interface Database {
       businesses: { Row: Business; Insert: Partial<Business>; Update: Partial<Business> }
       services: { Row: Service; Insert: Partial<Service>; Update: Partial<Service> }
       clients: { Row: Client; Insert: Partial<Client>; Update: Partial<Client> }
-      appointments: { Row: AppointmentRow; Insert: Partial<AppointmentRow>; Update: Partial<AppointmentRow> }
+      bookbot_appointments: { Row: Appointment; Insert: Partial<Appointment>; Update: Partial<Appointment> }
       blocked_slots: { Row: BlockedSlot; Insert: Partial<BlockedSlot>; Update: Partial<BlockedSlot> }
     }
     Views: Record<string, never>

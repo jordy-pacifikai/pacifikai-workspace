@@ -70,9 +70,9 @@ export default function SignupPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white">
-            Book<span style={{ color: GREEN }}>Bot</span>
+            Ve&apos;a
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Créez votre chatbot IA en 5 minutes</p>
+          <p className="text-sm text-gray-500 mt-1">Votre assistant IA de reservation en 5 minutes</p>
         </div>
 
         {/* Form */}
@@ -117,7 +117,7 @@ export default function SignupPage() {
             className="w-full rounded-lg py-2.5 text-sm font-semibold text-gray-950 transition-all hover:opacity-90 disabled:opacity-50"
             style={{ backgroundColor: GREEN }}
           >
-            {loading ? 'Création...' : 'Créer mon chatbot gratuitement'}
+            {loading ? 'Création...' : 'Commencer gratuitement'}
           </button>
         </form>
 

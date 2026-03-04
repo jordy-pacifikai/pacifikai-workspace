@@ -5,10 +5,15 @@ import {
   loadOrCreateSession,
   updateSession,
   createAppointment,
+  updateAppointmentGCalId,
   cancelActiveAppointment,
   getBookingsForDate,
+  getBlockedSlotsForDate,
+  getAllDayBlockedDates,
   searchKnowledgeBase,
+  refreshGCalBlockedSlots,
 } from "./supabase.js";
+import { createGCalEvent, deleteGCalEvent, listGCalEvents } from "./gcal.js";
 import { generateAvailableDates, generateTimeSlots } from "../utils/dates.js";
 import type { Session } from "./supabase.js";
 
@@ -183,6 +188,12 @@ function buildSystemPrompt(config: BusinessConfig, today: string): string {
     ? `\n- Quand un client te salue, utilise cette formule de bienvenue : "${greeting}"`
     : "";
 
+  // Custom instructions from the business owner
+  const customInstructions = (cfg.custom_instructions as string) ?? '';
+  const customSection = customInstructions
+    ? `\n\n## Instructions spéciales du professionnel\n${customInstructions}`
+    : '';
+
   return `Tu es l'assistant WhatsApp de ${config.businessName}. Tu parles en ${language}, ton ${tone}. Tu es basé en Polynésie française.
 
 ## Ton rôle
@@ -208,7 +219,7 @@ ${today} (timezone: ${config.timezone})
 7. Si le client te salue, présente-toi brièvement et demande comment tu peux aider
 8. NE JAMAIS proposer de dates dans le passé. La date minimale est demain.
 9. Si le client donne une date en texte ("lundi prochain", "demain"), convertis en YYYY-MM-DD avant d'appeler les outils
-10. Tu DOIS répondre en ${language} — c'est la langue configurée par le commerce`;
+10. Tu DOIS répondre en ${language} — c'est la langue configurée par le commerce${customSection}`;
 }
 
 async function executeTool(
@@ -249,6 +260,34 @@ async function executeTool(
         return `La date ${date} est dans le passé ou aujourd'hui. Propose une date à partir de demain.`;
       }
 
+      // On-demand GCal refresh for near-future dates (within 2 days)
+      // This reduces the 15-min stale window for imminent bookings
+      if (config.gcalRefreshToken && config.gcalCalendarId) {
+        try {
+          const requestedDate = new Date(date + "T00:00:00");
+          const twoDaysFromNow = new Date();
+          twoDaysFromNow.setDate(twoDaysFromNow.getDate() + 2);
+          if (requestedDate <= twoDaysFromNow) {
+            const dayStart = `${date}T00:00:00Z`;
+            const dayEnd = `${date}T23:59:59Z`;
+            const freshEvents = await listGCalEvents(
+              config.gcalRefreshToken,
+              config.gcalCalendarId,
+              dayStart,
+              dayEnd
+            );
+            await refreshGCalBlockedSlots(
+              config.businessId,
+              date,
+              freshEvents,
+              config.timezone
+            );
+          }
+        } catch {
+          // GCal refresh is best-effort — fall back to cached blocked slots
+        }
+      }
+
       // Find the service to get duration
       const services = parseAllServices(config.services);
       const service = services.find(
@@ -264,16 +303,48 @@ async function executeTool(
         20
       );
 
-      // Get existing bookings for that date
+      // Get existing bookings + blocked slots for that date
       const bookings = await getBookingsForDate(config.businessId, date);
+      const blockedSlots = await getBlockedSlotsForDate(config.businessId, date);
+
+      // Get all-day blocked dates for suggestions
+      const allDayBlockedDates = await getAllDayBlockedDates(config.businessId);
+
+      // If entire day is blocked, return closed message
+      if (blockedSlots.some((b) => b.all_day)) {
+        const nextDates = generateAvailableDates(config.openingHours, 3, allDayBlockedDates);
+        return `Le commerce est fermé le ${date}.\n\nProchaines dates possibles :\n${nextDates.map((d) => `- ${d.label} (${d.value})`).join("\n")}`;
+      }
+
       const takenTimes = new Set(bookings.map((b) => b.time_slot));
+
+      // Add blocked time ranges to taken set
+      for (const block of blockedSlots) {
+        if (block.time_from && block.time_to) {
+          const fromH = parseInt(block.time_from.split(":")[0] ?? "0");
+          const fromM = parseInt(block.time_from.split(":")[1] ?? "0");
+          const toH = parseInt(block.time_to.split(":")[0] ?? "0");
+          const toM = parseInt(block.time_to.split(":")[1] ?? "0");
+          // Mark all 30-min slots within the blocked range
+          for (let h = fromH; h <= toH; h++) {
+            for (const m of [0, 30]) {
+              const slotMins = h * 60 + m;
+              const blockStart = fromH * 60 + fromM;
+              const blockEnd = toH * 60 + toM;
+              if (slotMins >= blockStart && slotMins < blockEnd) {
+                takenTimes.add(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+              }
+            }
+          }
+        }
+      }
 
       // Filter out taken slots
       const available = allSlots.filter((s) => !takenTimes.has(s.value));
 
       if (available.length === 0) {
-        // Suggest next available dates
-        const nextDates = generateAvailableDates(config.openingHours, 3);
+        // Suggest next available dates (skip all-day blocked dates)
+        const nextDates = generateAvailableDates(config.openingHours, 3, allDayBlockedDates);
         return `Aucun créneau disponible le ${date} pour ${serviceName}.\n\nProchaines dates possibles :\n${nextDates.map((d) => `- ${d.label} (${d.value})`).join("\n")}`;
       }
 
@@ -286,13 +357,44 @@ async function executeTool(
       const time = input.time as string;
       const clientName = input.client_name as string;
 
-      await createAppointment({
+      const appointmentId = await createAppointment({
         businessId: config.businessId,
         clientPhone,
         service,
         date,
         time,
       });
+
+      // Push to Google Calendar if connected
+      if (appointmentId && config.gcalRefreshToken && config.gcalCalendarId) {
+        try {
+          const services = parseAllServices(config.services);
+          const svc = services.find((s) => s.name.toLowerCase() === service.toLowerCase());
+          const duration = svc?.duration ?? 30;
+          const startDT = `${date}T${time}:00`;
+          const timeParts = time.split(":").map(Number);
+          const startH = timeParts[0] ?? 0;
+          const startM = timeParts[1] ?? 0;
+          const endMins = startH * 60 + startM + duration;
+          const endH = Math.floor(endMins / 60);
+          const endM = endMins % 60;
+          const endDT = `${date}T${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}:00`;
+
+          const eventId = await createGCalEvent({
+            refreshToken: config.gcalRefreshToken,
+            calendarId: config.gcalCalendarId,
+            summary: `${service} — ${clientName}`,
+            startDateTime: startDT,
+            endDateTime: endDT,
+            description: `RDV via Ve'a · ${clientPhone}`,
+            timezone: config.timezone,
+          });
+          await updateAppointmentGCalId(appointmentId, eventId);
+        } catch (err) {
+          // GCal push is best-effort — don't fail the booking
+          console.error("[GCal] Push failed:", err);
+        }
+      }
 
       // Update session with client name
       await updateSession(clientPhone, config.businessId, "active", {
@@ -309,6 +411,14 @@ async function executeTool(
       );
       if (!result.found) {
         return "Aucun rendez-vous actif trouvé pour ce numéro.";
+      }
+      // Delete from Google Calendar if connected
+      if (result.gcalEventId && config.gcalRefreshToken && config.gcalCalendarId) {
+        try {
+          await deleteGCalEvent(config.gcalRefreshToken, config.gcalCalendarId, result.gcalEventId);
+        } catch (err) {
+          console.error("[GCal] Delete failed:", err);
+        }
       }
       return `Rendez-vous annulé : ${result.details}`;
     }

@@ -12,11 +12,13 @@ import {
   parseISO,
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, X, Clock, User, Scissors, MessageSquare } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Clock, User, Scissors, MessageSquare, Plus, Ban, Trash2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { CreateAppointmentModal } from '@/components/CreateAppointmentModal';
 import { useAppStore } from '@/lib/store';
 import { useAppointments } from '@/hooks/useAppointments';
+import { useBlockedSlots, useCreateBlockedSlot, useDeleteBlockedSlot } from '@/hooks/useBlockedSlots';
 import { cn } from '@/lib/utils';
 import type { Appointment } from '@/types/database';
 
@@ -39,7 +41,7 @@ const STATUS_CONFIG = {
 } satisfies Record<Appointment['status'], { bg: string; border: string; text: string; dot: string; label: string }>;
 
 const SOURCE_LABELS: Record<Appointment['source'], string> = {
-  app: 'App', web: 'Web', manual: 'Manuel', chatbot: 'Chatbot', guest: 'Invité', whatsapp: 'WhatsApp',
+  app: 'App', web: 'Web', manual: 'Manuel', chatbot: 'Chatbot', guest: 'Invité', whatsapp: 'WhatsApp', gcal: 'Google',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -63,10 +65,18 @@ interface AppointmentBlockProps {
 
 function AppointmentBlock({ appointment, onClick }: AppointmentBlockProps) {
   const cfg = STATUS_CONFIG[appointment.status];
-  const top = timeToSlotOffset(appointment.start_time);
-  const height = Math.max(durationToHeight(appointment.duration), SLOT_HEIGHT / 2);
-  const clientName = appointment.client?.name ?? appointment.guest_name ?? 'Inconnu';
-  const serviceName = appointment.service?.name ?? '—';
+  const top = timeToSlotOffset(appointment.time_slot);
+  // Estimate duration from time_slot → end_time, fallback 30min
+  const durationMin = appointment.end_time
+    ? (() => {
+        const [sh, sm] = appointment.time_slot.split(':').map(Number);
+        const [eh, em] = appointment.end_time.split(':').map(Number);
+        return (eh * 60 + em) - (sh * 60 + sm);
+      })()
+    : 30;
+  const height = Math.max(durationToHeight(durationMin), SLOT_HEIGHT / 2);
+  const clientName = appointment.client_name ?? 'Inconnu';
+  const serviceName = appointment.service ?? '—';
 
   return (
     <button
@@ -98,8 +108,7 @@ interface DetailDrawerProps {
 function DetailDrawer({ appointment, onClose }: DetailDrawerProps) {
   if (!appointment) return null;
   const cfg = STATUS_CONFIG[appointment.status];
-  const clientName = appointment.client?.name ?? appointment.guest_name ?? 'Inconnu';
-  const clientPhone = appointment.client?.phone ?? appointment.guest_phone ?? null;
+  const clientName = appointment.client_name ?? 'Inconnu';
 
   return (
     <>
@@ -137,13 +146,12 @@ function DetailDrawer({ appointment, onClose }: DetailDrawerProps) {
             <div className="flex items-center gap-2 text-gray-300">
               <Clock size={15} className="text-gray-500" />
               <span className="text-sm font-medium">
-                {format(parseISO(appointment.date), 'EEEE d MMMM yyyy', { locale: fr })}
+                {format(parseISO(appointment.appointment_date), 'EEEE d MMMM yyyy', { locale: fr })}
               </span>
             </div>
             <div className="flex items-center gap-2 text-gray-300">
               <span className="text-xs text-gray-500 ml-[23px]">
-                {appointment.start_time.slice(0, 5)} — {appointment.end_time.slice(0, 5)}
-                {' '}({appointment.duration} min)
+                {appointment.time_slot?.slice(0, 5) ?? '—'}{appointment.end_time ? ` — ${appointment.end_time.slice(0, 5)}` : ''}
               </span>
             </div>
           </div>
@@ -155,11 +163,8 @@ function DetailDrawer({ appointment, onClose }: DetailDrawerProps) {
               <User size={15} className="text-gray-500 shrink-0" />
               <span className="text-sm font-medium">{clientName}</span>
             </div>
-            {clientPhone && (
-              <p className="text-xs text-gray-500 ml-[23px]">{clientPhone}</p>
-            )}
-            {appointment.client?.email && (
-              <p className="text-xs text-gray-500 ml-[23px]">{appointment.client.email}</p>
+            {appointment.client_phone && (
+              <p className="text-xs text-gray-500 ml-[23px]">{appointment.client_phone}</p>
             )}
           </div>
 
@@ -169,30 +174,19 @@ function DetailDrawer({ appointment, onClose }: DetailDrawerProps) {
               <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Service</p>
               <div className="flex items-center gap-2 text-gray-200">
                 <Scissors size={15} className="text-gray-500 shrink-0" />
-                <span className="text-sm font-medium">{appointment.service.name}</span>
+                <span className="text-sm font-medium">{appointment.service}</span>
               </div>
-              {appointment.price != null && (
-                <p className="text-xs text-gray-500 ml-[23px]">
-                  {appointment.price.toLocaleString('fr-FR')} XPF
-                </p>
-              )}
             </div>
           )}
 
           {/* Notes */}
           {appointment.notes && (
             <div className="bg-gray-800 rounded-xl p-4">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Notes client</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Notes</p>
               <div className="flex gap-2 text-gray-300">
                 <MessageSquare size={15} className="text-gray-500 shrink-0 mt-0.5" />
                 <p className="text-sm">{appointment.notes}</p>
               </div>
-            </div>
-          )}
-          {appointment.pro_notes && (
-            <div className="bg-gray-800 rounded-xl p-4">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Notes pro</p>
-              <p className="text-sm text-gray-300">{appointment.pro_notes}</p>
             </div>
           )}
         </div>
@@ -238,6 +232,10 @@ export default function CalendarPage() {
   const { businessId, businessName } = useAppStore();
   const [currentWeek, setCurrentWeek] = useState(() => new Date());
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createPrefill, setCreatePrefill] = useState<{ date?: string; time?: string }>({});
+  const [showBlockModal, setShowBlockModal] = useState(false);
+  const [blockForm, setBlockForm] = useState({ date: '', allDay: true, timeFrom: '08:00', timeTo: '17:00', reason: '' });
 
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 }); // Monday
   const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
@@ -248,6 +246,10 @@ export default function CalendarPage() {
     dateFrom: format(weekStart, 'yyyy-MM-dd'),
     dateTo: format(weekEnd, 'yyyy-MM-dd'),
   });
+
+  const { data: blockedSlots } = useBlockedSlots(businessId);
+  const createBlock = useCreateBlockedSlot(businessId);
+  const deleteBlock = useDeleteBlockedSlot(businessId);
 
   const today = new Date();
   const isCurrentWeek = isSameDay(weekStart, startOfWeek(today, { weekStartsOn: 1 }));
@@ -282,13 +284,30 @@ export default function CalendarPage() {
               {format(weekStart, 'd MMM', { locale: fr })} — {format(weekEnd, 'd MMM yyyy', { locale: fr })}
             </h2>
           </div>
-          <button
-            onClick={() => setCurrentWeek(new Date())}
-            disabled={isCurrentWeek}
-            className="px-3 py-1.5 text-sm rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Aujourd'hui
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentWeek(new Date())}
+              disabled={isCurrentWeek}
+              className="px-3 py-1.5 text-sm rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Aujourd'hui
+            </button>
+            <button
+              onClick={() => { setBlockForm({ date: format(new Date(), 'yyyy-MM-dd'), allDay: true, timeFrom: '08:00', timeTo: '17:00', reason: '' }); setShowBlockModal(true); }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-red-400 text-sm font-medium bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors"
+            >
+              <Ban size={15} />
+              Bloquer
+            </button>
+            <button
+              onClick={() => { setCreatePrefill({}); setShowCreateModal(true); }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-white text-sm font-medium transition-opacity hover:opacity-90"
+              style={{ backgroundColor: '#25D366' }}
+            >
+              <Plus size={15} />
+              Nouveau RDV
+            </button>
+          </div>
         </div>
 
         {/* Legend */}
@@ -299,6 +318,10 @@ export default function CalendarPage() {
               <span className="text-xs text-gray-500">{STATUS_CONFIG[s].label}</span>
             </div>
           ))}
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-red-500" />
+            <span className="text-xs text-gray-500">Bloque</span>
+          </div>
         </div>
 
         {/* Calendar grid */}
@@ -330,7 +353,7 @@ export default function CalendarPage() {
                 {weekDays.map((day) => {
                   const dayStr = format(day, 'yyyy-MM-dd');
                   const dayAppointments = (appointments ?? []).filter(
-                    (a) => a.date === dayStr,
+                    (a) => a.appointment_date === dayStr,
                   );
                   const isToday = isSameDay(day, today);
 
@@ -366,10 +389,20 @@ export default function CalendarPage() {
                       {/* Time slots container */}
                       <div
                         className={cn(
-                          'relative flex-1 border-x border-b rounded-b-lg',
+                          'relative flex-1 border-x border-b rounded-b-lg cursor-pointer',
                           isToday ? 'border-[#25D366]/20 bg-[#25D366]/[0.02]' : 'border-gray-800 bg-gray-900/30',
                         )}
                         style={{ height: TOTAL_SLOTS * SLOT_HEIGHT }}
+                        onClick={(e) => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const y = e.clientY - rect.top;
+                          const slotIndex = Math.floor(y / SLOT_HEIGHT);
+                          const hour = HOUR_START + Math.floor(slotIndex / SLOTS_PER_HOUR);
+                          const min = (slotIndex % SLOTS_PER_HOUR) * 30;
+                          const time = `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+                          setCreatePrefill({ date: dayStr, time });
+                          setShowCreateModal(true);
+                        }}
                       >
                         {/* Horizontal grid lines (every 30min) */}
                         {timeLabels.map((label, i) => (
@@ -382,6 +415,42 @@ export default function CalendarPage() {
                             style={{ top: i * SLOT_HEIGHT }}
                           />
                         ))}
+
+                        {/* Blocked slots */}
+                        {(blockedSlots ?? [])
+                          .filter((b) => b.date === dayStr)
+                          .map((block) => {
+                            if (block.all_day) {
+                              return (
+                                <div
+                                  key={block.id}
+                                  className="absolute left-0 right-0 bg-red-500/10 border-l-2 border-red-500 z-[1] pointer-events-none"
+                                  style={{ top: 0, height: TOTAL_SLOTS * SLOT_HEIGHT }}
+                                >
+                                  <span className="absolute top-2 left-2 text-[10px] text-red-400 font-medium">
+                                    {block.source === 'gcal' ? '📅 ' : ''}{block.reason ?? 'Bloque'}
+                                  </span>
+                                </div>
+                              );
+                            }
+                            if (block.time_from && block.time_to) {
+                              const top = timeToSlotOffset(block.time_from);
+                              const endOffset = timeToSlotOffset(block.time_to);
+                              const height = Math.max(endOffset - top, SLOT_HEIGHT / 2);
+                              return (
+                                <div
+                                  key={block.id}
+                                  className="absolute left-1 right-1 bg-red-500/15 border-l-2 border-red-500 rounded-md z-[1] pointer-events-none px-2 py-1"
+                                  style={{ top, height }}
+                                >
+                                  <span className="text-[10px] text-red-400 font-medium truncate">
+                                    {block.reason ?? 'Bloque'}
+                                  </span>
+                                </div>
+                              );
+                            }
+                            return null;
+                          })}
 
                         {/* Appointments */}
                         {dayAppointments.map((appt) => (
@@ -406,6 +475,141 @@ export default function CalendarPage() {
         appointment={selectedAppointment}
         onClose={() => setSelectedAppointment(null)}
       />
+
+      {/* Create Modal */}
+      {showCreateModal && businessId && (
+        <CreateAppointmentModal
+          businessId={businessId}
+          onClose={() => setShowCreateModal(false)}
+          prefillDate={createPrefill.date}
+          prefillTime={createPrefill.time}
+        />
+      )}
+
+      {/* Block Modal */}
+      {showBlockModal && (
+        <>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setShowBlockModal(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
+                <h2 className="text-white font-semibold">Bloquer un creneau</h2>
+                <button onClick={() => setShowBlockModal(false)} className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+                  <X size={18} />
+                </button>
+              </div>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  await createBlock.mutateAsync({
+                    date: blockForm.date,
+                    all_day: blockForm.allDay,
+                    time_from: blockForm.allDay ? null : blockForm.timeFrom,
+                    time_to: blockForm.allDay ? null : blockForm.timeTo,
+                    reason: blockForm.reason || undefined,
+                  });
+                  setShowBlockModal(false);
+                }}
+                className="p-5 space-y-4"
+              >
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Date *</label>
+                  <input
+                    type="date"
+                    value={blockForm.date}
+                    onChange={(e) => setBlockForm((f) => ({ ...f, date: e.target.value }))}
+                    required
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red-500 transition-colors"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <p className="text-sm text-white font-medium">Journee entiere</p>
+                    <p className="text-xs text-gray-500">Bloquer toute la journee (vacances, fermeture)</p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={blockForm.allDay}
+                    onClick={() => setBlockForm((f) => ({ ...f, allDay: !f.allDay }))}
+                    className={cn(
+                      'relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 transition-colors duration-200',
+                      blockForm.allDay ? 'bg-red-500 border-red-500' : 'bg-gray-700 border-gray-700',
+                    )}
+                  >
+                    <span className={cn('inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200', blockForm.allDay ? 'translate-x-5' : 'translate-x-0')} />
+                  </button>
+                </div>
+
+                {!blockForm.allDay && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">De *</label>
+                      <input type="time" value={blockForm.timeFrom} onChange={(e) => setBlockForm((f) => ({ ...f, timeFrom: e.target.value }))} required className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red-500 transition-colors" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">A *</label>
+                      <input type="time" value={blockForm.timeTo} onChange={(e) => setBlockForm((f) => ({ ...f, timeTo: e.target.value }))} required className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red-500 transition-colors" />
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Raison</label>
+                  <input
+                    type="text"
+                    value={blockForm.reason}
+                    onChange={(e) => setBlockForm((f) => ({ ...f, reason: e.target.value }))}
+                    placeholder="Vacances, formation, personnel..."
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:border-red-500 transition-colors"
+                  />
+                </div>
+
+                {/* Active blocks list */}
+                {(blockedSlots ?? []).filter(b => b.source === 'manual').length > 0 && (
+                  <div className="border-t border-gray-800 pt-3">
+                    <p className="text-xs text-gray-500 mb-2">Blocages actifs</p>
+                    <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                      {(blockedSlots ?? []).filter(b => b.source === 'manual').map((b) => (
+                        <div key={b.id} className="flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2">
+                          <div className="min-w-0">
+                            <p className="text-xs text-red-400 font-medium">
+                              {format(parseISO(b.date), 'd MMM yyyy', { locale: fr })}
+                              {b.all_day ? ' — Journee entiere' : ` ${b.time_from?.slice(0, 5)} - ${b.time_to?.slice(0, 5)}`}
+                            </p>
+                            {b.reason && <p className="text-[10px] text-gray-500 truncate">{b.reason}</p>}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => deleteBlock.mutate(b.id)}
+                            className="p-1 text-gray-500 hover:text-red-400 transition-colors shrink-0"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-1">
+                  <button type="button" onClick={() => setShowBlockModal(false)} className="flex-1 py-2 rounded-lg bg-gray-800 text-gray-300 text-sm font-medium hover:bg-gray-700 transition-colors">
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={createBlock.isPending}
+                    className="flex-1 py-2 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-60"
+                  >
+                    {createBlock.isPending ? 'Blocage...' : 'Bloquer'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
+      )}
     </DashboardLayout>
   );
 }

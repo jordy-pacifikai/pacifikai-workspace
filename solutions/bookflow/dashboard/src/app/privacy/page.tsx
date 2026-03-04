@@ -11,9 +11,8 @@ export default function PrivacyPage() {
       <section className="space-y-6 text-gray-300 leading-relaxed">
         <div>
           <h2 className="text-xl font-semibold mb-3 text-white">1. Responsable du traitement</h2>
-          <p>PACIFIK&apos;AI — Jordy TOOFA, Entrepreneur Individuel<br />
-          Patente G67367 — Polynesie francaise<br />
-          Contact : jordy@pacifikai.com | +689 89 55 81 89</p>
+          <p>PACIFIK&apos;AI — Polynesie francaise<br />
+          Contact : support@vea.pacifikai.com</p>
         </div>
 
         <div>
@@ -65,7 +64,7 @@ export default function PrivacyPage() {
 
         <div>
           <h2 className="text-xl font-semibold mb-3 text-white">7. Droits des utilisateurs</h2>
-          <p>Conformement a la reglementation applicable, vous disposez des droits d&apos;acces, de rectification, de suppression et de portabilite de vos donnees. Pour exercer ces droits, contactez : jordy@pacifikai.com</p>
+          <p>Conformement a la reglementation applicable, vous disposez des droits d&apos;acces, de rectification, de suppression et de portabilite de vos donnees. Pour exercer ces droits, contactez : support@vea.pacifikai.com</p>
         </div>
 
         <div>

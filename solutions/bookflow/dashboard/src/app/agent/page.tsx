@@ -83,7 +83,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       <div className={cn('flex flex-col gap-1', isUser ? 'items-end' : 'items-start')}>
         <div
           className={cn(
-            'px-4 py-3 rounded-2xl max-w-[80%] text-sm leading-relaxed whitespace-pre-wrap break-words',
+            'px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words',
             isUser
               ? 'bg-[#25D366] text-white rounded-tr-sm'
               : 'bg-gray-800 text-gray-200 border border-gray-700 rounded-tl-sm',

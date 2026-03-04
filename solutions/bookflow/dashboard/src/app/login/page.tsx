@@ -69,7 +69,7 @@ function LoginForm() {
       {/* Logo */}
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-white">
-          Book<span style={{ color: GREEN }}>Bot</span>
+          Ve&apos;a
         </h1>
         <p className="text-sm text-gray-500 mt-1">Connectez-vous à votre espace</p>
       </div>
@@ -121,7 +121,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
       <Suspense fallback={
         <div className="w-full max-w-sm text-center">
-          <div className="text-2xl font-bold text-white">Book<span style={{ color: GREEN }}>Bot</span></div>
+          <div className="text-2xl font-bold text-white">Ve&apos;a</div>
           <p className="text-sm text-gray-500 mt-2">Chargement...</p>
         </div>
       }>

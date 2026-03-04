@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
   Plug, MessageCircle, Send, Instagram, CheckCircle2, Circle,
-  Copy, Check, LogIn, LogOut, Loader2, AlertCircle,
+  Copy, Check, LogIn, LogOut, Loader2, AlertCircle, Calendar,
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonCard } from '@/components/ui/Skeleton';
@@ -15,6 +15,11 @@ import {
   useSelectPage,
   useDisconnectFacebook,
 } from '@/hooks/useChannels';
+import {
+  useGoogleCalendarStatus,
+  useConnectGoogle,
+  useDisconnectGoogle,
+} from '@/hooks/useGoogleCalendar';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -457,6 +462,107 @@ export default function ChannelsPage() {
           </div>
         </div>
       )}
+
+      {/* ── Google Calendar ─────────────────────────────────────────────── */}
+      <GoogleCalendarSection businessId={businessId} />
     </DashboardLayout>
+  );
+}
+
+// ─── Google Calendar Section ─────────────────────────────────────────────────
+
+function GoogleCalendarSection({ businessId }: { businessId: string | null }) {
+  const { data: gcalStatus, isLoading } = useGoogleCalendarStatus(businessId);
+  const connectGoogle = useConnectGoogle(businessId);
+  const disconnectGoogle = useDisconnectGoogle(businessId);
+
+  const isConnected = Boolean(gcalStatus?.gcal_connected_at);
+
+  // Check URL params for OAuth callback result
+  const [callbackMsg, setCallbackMsg] = useState('');
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('gcal_connected') === 'true') {
+      setCallbackMsg('Google Calendar connecte avec succes !');
+      window.history.replaceState({}, '', '/channels');
+    } else if (params.get('gcal_error')) {
+      setCallbackMsg(`Erreur: ${params.get('gcal_error')}`);
+      window.history.replaceState({}, '', '/channels');
+    }
+  }, []);
+
+  if (isLoading) return null;
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mt-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+          <Calendar size={20} className="text-blue-400" />
+        </div>
+        <div>
+          <h3 className="text-white font-semibold">Google Calendar</h3>
+          <p className="text-xs text-gray-500">Synchroniser les RDV avec votre calendrier Google</p>
+        </div>
+        <div className="ml-auto">
+          {isConnected ? (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#25D366]/15 text-[#25D366] border border-[#25D366]/30">
+              <CheckCircle2 size={12} />
+              Connecte
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-800 text-gray-400 border border-gray-700">
+              <Circle size={12} />
+              Non connecte
+            </span>
+          )}
+        </div>
+      </div>
+
+      {callbackMsg && (
+        <div className={`mb-4 px-4 py-2 rounded-lg text-sm ${callbackMsg.includes('Erreur') ? 'bg-red-500/10 text-red-400 border border-red-500/30' : 'bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/30'}`}>
+          {callbackMsg}
+        </div>
+      )}
+
+      {isConnected ? (
+        <div className="space-y-3">
+          <div className="bg-gray-800 rounded-lg px-4 py-3">
+            <p className="text-xs text-gray-500 mb-1">Calendrier</p>
+            <p className="text-sm text-gray-200">{gcalStatus?.gcal_calendar_id ?? 'Principal'}</p>
+          </div>
+          {gcalStatus?.gcal_connected_at && (
+            <p className="text-xs text-gray-500">
+              Connecte le {new Date(gcalStatus.gcal_connected_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </p>
+          )}
+          <p className="text-xs text-gray-500">
+            Les nouveaux RDV sont automatiquement ajoutes a votre Google Calendar. Les annulations sont aussi synchronisees.
+          </p>
+          <button
+            onClick={() => disconnectGoogle.mutate()}
+            disabled={disconnectGoogle.isPending}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-red-400 text-sm font-medium border border-gray-700 hover:border-red-500/40 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+          >
+            <LogOut size={15} />
+            {disconnectGoogle.isPending ? 'Deconnexion...' : 'Deconnecter'}
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <p className="text-sm text-gray-400">
+            Connecte ton Google Calendar pour que chaque reservation soit automatiquement ajoutee a ton agenda.
+          </p>
+          <button
+            onClick={() => connectGoogle.mutate()}
+            disabled={connectGoogle.isPending}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-opacity hover:opacity-90"
+            style={{ backgroundColor: '#4285F4' }}
+          >
+            <Calendar size={15} />
+            {connectGoogle.isPending ? 'Connexion...' : 'Connecter Google Calendar'}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

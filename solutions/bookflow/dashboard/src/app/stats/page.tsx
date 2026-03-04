@@ -188,7 +188,7 @@ export default function StatsPage() {
     if (!appointments) return [];
     const counts: Record<string, number> = {};
     appointments.forEach((a) => {
-      const svc = a.service?.name ?? 'Service inconnu';
+      const svc = a.service ?? 'Service inconnu';
       counts[svc] = (counts[svc] ?? 0) + 1;
     });
     return Object.entries(counts)

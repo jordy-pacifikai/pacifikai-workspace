@@ -11,7 +11,7 @@ export default function TermsPage() {
       <section className="space-y-6 text-gray-300 leading-relaxed">
         <div>
           <h2 className="text-xl font-semibold mb-3 text-white">1. Objet</h2>
-          <p>Les presentes conditions regissent l&apos;utilisation du service Ve&apos;a, solution d&apos;automatisation de prise de rendez-vous par intelligence artificielle, editee par PACIFIK&apos;AI (Jordy TOOFA, EI, Patente G67367).</p>
+          <p>Les presentes conditions regissent l&apos;utilisation du service Ve&apos;a, solution d&apos;automatisation de prise de rendez-vous par intelligence artificielle, editee par PACIFIK&apos;AI.</p>
         </div>
 
         <div>
@@ -30,10 +30,9 @@ export default function TermsPage() {
           <p>Le service est propose sous forme d&apos;abonnement mensuel ou annuel (2 mois offerts). Les plans disponibles sont :</p>
           <ul className="list-disc pl-6 mt-2 space-y-1">
             <li><strong>Essentiel</strong> : 9 900 XPF/mois — 200 conversations/mois</li>
-            <li><strong>Business</strong> : 19 900 XPF/mois — 500 conversations/mois</li>
-            <li><strong>Premium</strong> : sur devis — conversations illimitees</li>
+            <li><strong>Premium</strong> : 19 900 XPF/mois — 500 conversations/mois</li>
+            <li><strong>Business</strong> : sur devis — conversations illimitees</li>
           </ul>
-          <p className="mt-2">Des frais d&apos;activation uniques s&apos;appliquent selon le plan choisi.</p>
         </div>
 
         <div>
@@ -72,7 +71,7 @@ export default function TermsPage() {
 
         <div>
           <h2 className="text-xl font-semibold mb-3 text-white">10. Contact</h2>
-          <p>PACIFIK&apos;AI — jordy@pacifikai.com — +689 89 55 81 89</p>
+          <p>PACIFIK&apos;AI — support@vea.pacifikai.com</p>
         </div>
       </section>
     </main>

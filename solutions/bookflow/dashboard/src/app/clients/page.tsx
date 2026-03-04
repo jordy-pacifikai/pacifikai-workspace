@@ -38,8 +38,8 @@ function TagBadge({ tag }: { tag: string }) {
 
 // ─── Client row expanded panel ────────────────────────────────────────────────
 
-function ClientExpandedPanel({ clientId }: { clientId: string }) {
-  const { data: history, isLoading } = useClientHistory(clientId);
+function ClientExpandedPanel({ clientPhone }: { clientPhone: string | null }) {
+  const { data: history, isLoading } = useClientHistory(clientPhone);
 
   if (isLoading) {
     return (
@@ -62,7 +62,7 @@ function ClientExpandedPanel({ clientId }: { clientId: string }) {
       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
         Historique des rendez-vous
       </p>
-      {history.map((appt: { id: string; scheduled_at?: string; service_name?: string; status?: string }) => (
+      {history.map((appt) => (
         <div
           key={appt.id}
           className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0"
@@ -70,12 +70,12 @@ function ClientExpandedPanel({ clientId }: { clientId: string }) {
           <div className="flex items-center gap-3">
             <Calendar className="w-4 h-4 text-gray-500 shrink-0" />
             <span className="text-sm text-gray-300">
-              {appt.scheduled_at
-                ? format(new Date(appt.scheduled_at), 'd MMM yyyy - HH:mm', { locale: fr })
+              {appt.appointment_date
+                ? `${format(new Date(appt.appointment_date), 'd MMM yyyy', { locale: fr })}${appt.time_slot ? ` - ${appt.time_slot.slice(0, 5)}` : ''}`
                 : '—'}
             </span>
-            {appt.service_name && (
-              <span className="text-sm text-gray-400">{appt.service_name}</span>
+            {appt.service != null && (
+              <span className="text-sm text-gray-400">{appt.service}</span>
             )}
           </div>
           {appt.status && (
@@ -402,7 +402,7 @@ export default function ClientsPage() {
                       </div>
                     )}
                   </div>
-                  <ClientExpandedPanel clientId={client.id} />
+                  <ClientExpandedPanel clientPhone={client.phone ?? null} />
                 </div>
               )}
             </div>

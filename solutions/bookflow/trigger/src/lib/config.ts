@@ -18,6 +18,9 @@ export const BusinessConfigSchema = z.object({
   metaAccessToken: z.string().optional(),
   // Business config (tone, language, greeting, etc.)
   chatbotConfig: z.record(z.unknown()).default({}),
+  // Google Calendar
+  gcalRefreshToken: z.string().optional(),
+  gcalCalendarId: z.string().optional(),
 });
 
 export type BusinessConfig = z.infer<typeof BusinessConfigSchema>;
