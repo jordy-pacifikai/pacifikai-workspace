@@ -31,6 +31,7 @@
 
     <style>
         :root {
+            --announce-height: 36px;
             --bg: #080c14;
             --bg-card: #0d1424;
             --bg-card-hover: #111b30;
@@ -148,7 +149,7 @@
         /* Nav */
         nav {
             position: fixed;
-            top: 0;
+            top: var(--announce-height, 0px);
             left: 0;
             right: 0;
             z-index: 100;
@@ -2125,6 +2126,11 @@
         <div class="orb-parallax orb-wrap-3" data-speed="0.015"><div class="floating-orb orb-3"></div></div>
     </div>
 
+    <div class="announce-bar" id="announceBar" onclick="window.location.href='/offre-site-web'">
+        <span>Offre limitee : Site internet pro a partir de 100 000 F — <a href="/offre-site-web" onclick="event.stopPropagation()">En savoir plus</a></span>
+        <button class="announce-close" onclick="event.stopPropagation();closeAnnounce()" aria-label="Fermer">&times;</button>
+    </div>
+
     <nav>
         <a href="#" class="logo">
             <img src="assets/logo.png" alt="PACIFIK'AI" class="logo-img">
@@ -2931,6 +2937,47 @@
 
     <!-- MANA Chat Widget -->
     <style>
+        .announce-bar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 101;
+            background: linear-gradient(90deg, var(--accent), #e85d5a, var(--accent));
+            background-size: 200% 100%;
+            animation: announceShimmer 4s ease infinite;
+            padding: 8px 48px 8px 1rem;
+            text-align: center; font-size: 0.82rem; font-weight: 600; color: #fff;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .announce-bar a { color: #fff; text-decoration: underline; }
+        .announce-bar .announce-close {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: rgba(255,255,255,0.7);
+            font-size: 18px; cursor: pointer; padding: 4px;
+        }
+        .announce-bar .announce-close:hover { color: #fff; }
+        .announce-bar.hidden { display: none; }
+        @keyframes announceShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .mana-teaser {
+            position: absolute; bottom: 72px; right: 0;
+            background: var(--accent); color: #fff;
+            padding: 10px 32px 10px 14px; border-radius: 10px;
+            font-size: 13px; font-weight: 600; white-space: nowrap;
+            opacity: 0; transform: translateY(8px); pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 4px 16px rgba(249,112,102,0.3);
+            cursor: pointer;
+        }
+        .mana-teaser.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+        .mana-teaser-close {
+            position: absolute; top: 2px; right: 6px;
+            background: none; border: none; color: rgba(255,255,255,0.7);
+            font-size: 14px; cursor: pointer;
+        }
+        .mana-teaser-arrow {
+            position: absolute; bottom: -6px; right: 22px;
+            width: 12px; height: 12px; background: var(--accent);
+            transform: rotate(45deg);
+        }
+
         .mana-widget { position: fixed; bottom: 24px; right: 24px; z-index: 9999; font-family: var(--font); }
         .mana-bubble { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #e85d5a); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 20px rgba(249,112,102,0.4); transition: transform 0.2s, box-shadow 0.2s; animation: bubblePulse 3s ease-in-out infinite; }
         .mana-bubble:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(249,112,102,0.5); animation: none; }
@@ -3005,6 +3052,11 @@
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                 </button>
             </div>
+        </div>
+        <div class="mana-teaser" id="mana-teaser" onclick="toggleManaChat()">
+            <span>Obtiens ton site internet pro</span>
+            <button class="mana-teaser-close" onclick="event.stopPropagation();dismissTeaser()">&times;</button>
+            <div class="mana-teaser-arrow"></div>
         </div>
         <div class="mana-bubble" id="mana-bubble" onclick="toggleManaChat()" role="button" aria-label="Ouvrir le chat MANA" tabindex="0">
             <span class="mana-badge" id="mana-badge" style="display:none"></span>
@@ -3119,6 +3171,7 @@
             chatOpen = !chatOpen;
             document.getElementById('mana-panel').classList.toggle('open', chatOpen);
             document.getElementById('mana-bubble').classList.toggle('open', chatOpen);
+            if (chatOpen) dismissTeaser();
             document.getElementById('mana-badge').style.display = 'none';
             if (chatOpen && firstOpen) {
                 firstOpen = false;
@@ -3136,6 +3189,34 @@
             }
         }
         window.toggleManaChat = toggleManaChat;
+
+        // Announce bar
+        function closeAnnounce() {
+            document.getElementById('announceBar').classList.add('hidden');
+            document.documentElement.style.setProperty('--announce-height', '0px');
+            sessionStorage.setItem('announce_closed', '1');
+        }
+        if (sessionStorage.getItem('announce_closed') === '1') closeAnnounce();
+
+        // Teaser tooltip
+        let teaserDismissed = false;
+        function showTeaser() {
+            if (teaserDismissed || chatOpen) return;
+            const t = document.getElementById('mana-teaser');
+            if (t) t.classList.add('visible');
+            setTimeout(() => { if (t) t.classList.remove('visible'); }, 15000);
+        }
+        function dismissTeaser() {
+            teaserDismissed = true;
+            const t = document.getElementById('mana-teaser');
+            if (t) t.classList.remove('visible');
+        }
+        setTimeout(showTeaser, 5000);
+        const servicesObs = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !teaserDismissed && !chatOpen) showTeaser();
+        }, { threshold: 0.3 });
+        const svcEl = document.getElementById('services-bento');
+        if (svcEl) servicesObs.observe(svcEl);
 
         function formatMsg(text) {
             return text

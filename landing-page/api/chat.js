@@ -41,7 +41,30 @@ Ne JAMAIS envoyer que des outils sans texte.
 OUTILS CRM (utilise-les NATURELLEMENT):
 - update_prospect: des que tu apprends quelque chose (entreprise, email, nom, secteur, besoin...)
 - set_temperature: quand tu detectes un signal (cold=curieux, warm=interesse, hot=veut agir/RDV)
-- create_task: quand le visiteur demande un appel, un devis, une demo`;
+- create_task: quand le visiteur demande un appel, un devis, une demo
+
+CAMPAGNE EN COURS — "Site Web Pro a 100 000 F" :
+- Offre limitee, 50 places seulement
+- Inclus : design premium sur-mesure, jusqu'a 5 pages, responsive mobile, SEO, formulaire contact, formation 30min, support 3 mois, 1 revision, code source inclus
+- EN OPTION (pas inclus dans le prix) : nom de domaine (.com ~2000 F/an, .pf ~8000 F/an) et hebergement premium (a partir de 2000 F/mois). Hebergement de base gratuit disponible
+- Livraison en 5 jours ouvrables
+- Page de l'offre : pacifikai.com/offre-site-web
+- JAMAIS dire que le domaine ou l'hebergement sont inclus dans l'offre a 100 000 F
+
+DETECTION CAMPAGNE :
+- Si le visiteur mentionne "site web", "site internet", "page web", "vitrine", "landing page", "creer un site", ou s'il vient de la page offre-site-web → mentionne cette offre naturellement
+- NE force PAS l'offre si le visiteur parle d'autre chose (chatbot, automatisation, etc.)
+- Dis que notre equipe peut livrer un site en 1 semaine
+
+QUALIFICATION SITE WEB (poser 1-2 questions a la fois, naturellement) :
+1. Type de site (vitrine, e-commerce, reservation, portfolio, blog...)
+2. Secteur d'activite / type d'entreprise
+3. Nombre de pages souhaitees
+4. Contenu existant (logo, textes, photos, charte graphique)
+5. Site actuel ? (URL si oui)
+6. Deadline souhaitee
+
+Utilise update_prospect avec les champs site_type, site_pages_count, existing_content, existing_site_url, project_deadline, project_notes pour stocker ces infos.`;
 
 const TOOLS = [
   {
@@ -61,7 +84,14 @@ const TOOLS = [
         budget_range: { type: 'string' },
         timeline: { type: 'string' },
         decision_maker: { type: 'boolean' },
-        conversation_stage: { type: 'string', enum: ['discovery', 'qualification', 'proposal', 'negotiation', 'won', 'lost'] }
+        conversation_stage: { type: 'string', enum: ['discovery', 'qualification', 'proposal', 'negotiation', 'won', 'lost'] },
+        campaign_source: { type: 'string', description: 'Source campagne (campagne-site-web, facebook-ads, etc.)' },
+        site_type: { type: 'string', description: 'Type de site souhaite (vitrine, e-commerce, booking, portfolio, blog)' },
+        site_pages_count: { type: 'string', description: 'Nombre de pages souhaitees' },
+        existing_content: { type: 'string', description: 'Contenu existant: logo, textes, photos, charte graphique' },
+        existing_site_url: { type: 'string', description: 'URL du site actuel si existant' },
+        project_deadline: { type: 'string', description: 'Deadline souhaitee pour le projet' },
+        project_notes: { type: 'string', description: 'Notes supplementaires sur le projet' }
       }
     }
   },
@@ -110,16 +140,19 @@ async function supabaseRequest(method, path, body, headers = {}) {
   return resp;
 }
 
-async function upsertProspect(sessionId) {
+async function upsertProspect(sessionId, pageUrl) {
   // Don't include name here — /api/contact.js handles name+email separately.
   // Including name:'' would overwrite an already-collected name due to merge-duplicates.
+  const isCampaign = pageUrl && (pageUrl.includes('offre-site-web') || pageUrl.includes('utm_campaign=site-web'));
+  const source = isCampaign ? 'campagne-site-web' : 'landing-page';
   await supabaseRequest('POST', 'messenger_prospects', {
     sender_id: sessionId,
     last_contact_at: new Date().toISOString(),
     temperature: 'cold',
     conversation_stage: 'discovery',
-    source: 'landing-page'
+    source
   }, { 'Prefer': 'resolution=merge-duplicates,return=minimal' });
+  return source;
 }
 
 async function getHistory(sessionId) {
@@ -165,13 +198,13 @@ async function executeCrmActions(sessionId, toolUseBlocks) {
     if (tool.name === 'update_prospect') {
       const updates = { ...tool.input, last_contact_at: new Date().toISOString() };
       await supabaseRequest('PATCH',
-        `messenger_prospects?sender_id=eq.${sessionId}&source=eq.landing-page`,
+        `messenger_prospects?sender_id=eq.${sessionId}`,
         updates, { 'Prefer': 'return=minimal' }
       );
       results.push({ action: 'update_prospect', fields: Object.keys(updates) });
     } else if (tool.name === 'set_temperature') {
       await supabaseRequest('PATCH',
-        `messenger_prospects?sender_id=eq.${sessionId}&source=eq.landing-page`,
+        `messenger_prospects?sender_id=eq.${sessionId}`,
         { temperature: tool.input.temperature, last_contact_at: new Date().toISOString() },
         { 'Prefer': 'return=minimal' }
       );
@@ -216,11 +249,17 @@ export default async function handler(req, res) {
     }
 
     // 1. Upsert prospect
-    await upsertProspect(session_id);
+    const source = await upsertProspect(session_id, page_url);
 
     // 2. Get conversation history
     const history = await getHistory(session_id);
     const messages = [...history, { role: 'user', content: message }];
+
+    // 2b. Inject campaign context if visitor comes from offre-site-web
+    if (page_url && page_url.includes('offre-site-web')) {
+      messages.unshift({ role: 'user', content: '[CONTEXTE SYSTEME: Ce visiteur vient de la page offre-site-web. Il cherche probablement un site internet. Qualifie-le pour la campagne Site Web Pro a 100 000 F.]' });
+      messages.splice(1, 0, { role: 'assistant', content: 'Compris.' });
+    }
 
     // 3. Call Claude
     const claudeResponse = await callClaude(messages);
