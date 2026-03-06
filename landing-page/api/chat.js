@@ -15,10 +15,9 @@ Tu parles au visiteur du site web pacifikai.com. Ton role:
 6. Des que tu apprends quelque chose sur le prospect, utilise update_prospect immediatement
 
 PACIFIK'AI:
-- Fondateur: Jordy Banks (jordy@pacifikai.com, +689 89 55 81 89)
+- Equipe basee a Tahiti, Polynesie francaise (contact@pacifikai.com, +689 89 55 81 89)
 - Services: Chatbots & Agents IA, Automatisation de workflows, Applications web & mobile (dashboards, portails clients, apps metier), Landing pages & sites web, Integrations API, Extraction de documents, Conseil & Formation IA
 - Clients: Air Tahiti Nui, Intercontinental, banques, PME locales
-- Basee a Tahiti, Polynesie francaise
 
 APPROCHE:
 - Pose des questions ouvertes pour comprendre le besoin reel ('Tu geres ca comment aujourd'hui ?', 'T'as deja un site ou une app ?', 'C'est quoi ton plus gros casse-tete au quotidien ?')
@@ -29,7 +28,8 @@ REGLES:
 - Tutoie TOUJOURS
 - Reponses COURTES (2-4 phrases max)
 - Chaleureux mais professionnel
-- JAMAIS de prix precis ('ca depend du projet, on en discute avec Jordy')
+- JAMAIS de prix precis ('ca depend du projet, on en discute ensemble')
+- JAMAIS mentionner le prenom du fondateur. Dis toujours 'notre equipe' ou 'on' — jamais 'Jordy'
 - 1-2 emojis max par message
 
 REGLE ABSOLUE SUR LES OUTILS:
@@ -79,7 +79,7 @@ const TOOLS = [
   },
   {
     name: 'create_task',
-    description: 'Cree une tache pour Jordy.',
+    description: 'Cree une tache de suivi pour l equipe.',
     input_schema: {
       type: 'object',
       properties: {
@@ -110,10 +110,11 @@ async function supabaseRequest(method, path, body, headers = {}) {
   return resp;
 }
 
-async function upsertProspect(sessionId, visitorName) {
+async function upsertProspect(sessionId) {
+  // Don't include name here — /api/contact.js handles name+email separately.
+  // Including name:'' would overwrite an already-collected name due to merge-duplicates.
   await supabaseRequest('POST', 'messenger_prospects', {
     sender_id: sessionId,
-    name: visitorName || '',
     last_contact_at: new Date().toISOString(),
     temperature: 'cold',
     conversation_stage: 'discovery',
@@ -141,7 +142,7 @@ async function callClaude(messages) {
       'content-type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-5-20250929',
+      model: 'claude-sonnet-4-6',
       max_tokens: 800,
       system: SYSTEM_PROMPT,
       tools: TOOLS,
@@ -223,6 +224,14 @@ export default async function handler(req, res) {
 
     // 3. Call Claude
     const claudeResponse = await callClaude(messages);
+    if (claudeResponse.error) {
+      console.error('Claude API error:', claudeResponse.error);
+      return res.status(200).json({
+        success: false,
+        response: "Desole, petit souci technique. Ecris a contact@pacifikai.com en attendant !",
+        session_id
+      });
+    }
     const content = claudeResponse.content || [];
 
     // 4. Parse response
@@ -235,11 +244,11 @@ export default async function handler(req, res) {
     if (!responseText && toolUseBlocks.length > 0) {
       const hasTask = toolUseBlocks.some(t => t.name === 'create_task');
       responseText = hasTask
-        ? "Merci pour ces infos ! Je transmets a Jordy, il te recontacte tres vite."
+        ? "Merci pour ces infos ! Je transmets a notre equipe, on te recontacte tres vite."
         : "Merci pour ces details ! N'hesite pas si tu as d'autres questions.";
     }
     if (!responseText) {
-      responseText = "Desole, petit souci technique. Ecris a jordy@pacifikai.com en attendant !";
+      responseText = "Desole, petit souci technique. Ecris a contact@pacifikai.com en attendant !";
     }
     if (responseText.length > 2000) {
       responseText = responseText.substring(0, 2000) + '...';
@@ -269,10 +278,10 @@ export default async function handler(req, res) {
       session_id
     });
   } catch (error) {
-    console.error('Chat API error:', error);
+    console.error('Chat API error:', error?.message || error);
     return res.status(500).json({
       success: false,
-      response: "Desole, petit souci technique. Ecris a jordy@pacifikai.com !",
+      response: "Desole, petit souci technique. Ecris a contact@pacifikai.com !",
       session_id: req.body?.session_id
     });
   }
