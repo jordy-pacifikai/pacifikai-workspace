@@ -1611,21 +1611,27 @@
             background: var(--border-light); border-radius: 10px; border-bottom-left-radius: 3px; opacity: 0;
         }
         .chat-typing span { width: 5px; height: 5px; background: var(--text-dim); border-radius: 50%; }
-        .svc-chatbot.is-visible .chat-user { animation: chatMsgLoop 6s ease infinite; opacity: 0.8; }
-        .svc-chatbot.is-visible .chat-typing { animation: chatTypingLoop 6s ease 0.5s infinite; opacity: 0.5; }
-        .svc-chatbot.is-visible .chat-ai { animation: chatMsgLoop 6s ease 1.8s infinite; opacity: 0.8; }
-        @keyframes chatMsgLoop {
-            0%, 100% { opacity: 0.8; transform: translateY(1px); }
-            50% { opacity: 1; transform: translateY(0); }
+        .svc-chatbot.is-visible .chat-user { animation: chatSlideIn 6s ease infinite; }
+        .svc-chatbot.is-visible .chat-typing { animation: chatTypingCycle 6s ease infinite; }
+        .svc-chatbot.is-visible .chat-ai { animation: chatSlideIn 6s ease 2.5s infinite; }
+        @keyframes chatSlideIn {
+            0% { opacity: 0; transform: translateY(12px) scale(0.9); }
+            10% { opacity: 1; transform: translateY(0) scale(1); }
+            85% { opacity: 1; transform: translateY(0) scale(1); }
+            95% { opacity: 0; transform: translateY(-6px) scale(0.95); }
+            100% { opacity: 0; transform: translateY(12px) scale(0.9); }
         }
-        @keyframes chatTypingLoop {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+        @keyframes chatTypingCycle {
+            0%, 15% { opacity: 0; transform: scale(0.8); }
+            20% { opacity: 1; transform: scale(1); }
+            38% { opacity: 1; transform: scale(1); }
+            42% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 0; }
         }
-        .svc-chatbot.is-visible .chat-typing span:nth-child(1) { animation: dotBounce 1s ease 0.7s infinite; }
-        .svc-chatbot.is-visible .chat-typing span:nth-child(2) { animation: dotBounce 1s ease 0.85s infinite; }
-        .svc-chatbot.is-visible .chat-typing span:nth-child(3) { animation: dotBounce 1s ease 1.0s infinite; }
-        @keyframes dotBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        .svc-chatbot.is-visible .chat-typing span:nth-child(1) { animation: dotBounce 0.6s ease infinite; }
+        .svc-chatbot.is-visible .chat-typing span:nth-child(2) { animation: dotBounce 0.6s ease 0.1s infinite; }
+        .svc-chatbot.is-visible .chat-typing span:nth-child(3) { animation: dotBounce 0.6s ease 0.2s infinite; }
+        @keyframes dotBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
         /* --- Service: Document Extraction --- */
         .docs-visual { height: 160px; padding: 1rem; display: flex; align-items: center; justify-content: center; }
@@ -1850,11 +1856,31 @@
         .api-line-bottom { bottom: 32px; height: 16px; }
         .api-line-right { right: 32px; width: 24px; }
         .api-line-left { left: 32px; width: 24px; }
-        .svc-api.is-visible .api-node { animation: nodePopLoop 6s ease infinite; opacity: 1; }
-        .svc-api.is-visible .api-node-2 { animation-delay: 0.15s; }
-        .svc-api.is-visible .api-node-3 { animation-delay: 0.3s; }
-        .svc-api.is-visible .api-node-4 { animation-delay: 0.45s; }
-        .svc-api.is-visible .api-line { animation: lpBlockIn 6s ease 0.2s infinite; }
+        .svc-api.is-visible .api-center { animation: apiCenterPulse 4s ease infinite; }
+        .svc-api.is-visible .api-node { opacity: 1; animation: apiNodePing 4s ease infinite; }
+        .svc-api.is-visible .api-node-1 { animation-delay: 0s; }
+        .svc-api.is-visible .api-node-2 { animation-delay: 0.5s; }
+        .svc-api.is-visible .api-node-3 { animation-delay: 1s; }
+        .svc-api.is-visible .api-node-4 { animation-delay: 1.5s; }
+        .svc-api.is-visible .api-line { opacity: 0.5; animation: apiLinePulse 4s ease infinite; }
+        .svc-api.is-visible .api-line-top { animation-delay: 0s; }
+        .svc-api.is-visible .api-line-right { animation-delay: 0.5s; }
+        .svc-api.is-visible .api-line-bottom { animation-delay: 1s; }
+        .svc-api.is-visible .api-line-left { animation-delay: 1.5s; }
+        @keyframes apiCenterPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(20,184,166,0.3); border-color: var(--lagoon); }
+            50% { box-shadow: 0 0 15px 4px rgba(20,184,166,0.2); border-color: var(--accent); }
+        }
+        @keyframes apiNodePing {
+            0%, 100% { transform: inherit; border-color: var(--border-light); box-shadow: none; }
+            25% { border-color: var(--lagoon); box-shadow: 0 0 10px rgba(20,184,166,0.4); }
+            50% { border-color: var(--lagoon); box-shadow: none; }
+        }
+        @keyframes apiLinePulse {
+            0%, 100% { opacity: 0.3; background: var(--border-light); }
+            25% { opacity: 1; background: var(--lagoon); }
+            50% { opacity: 0.5; background: var(--border-light); }
+        }
 
         /* --- CTA: Glow + Pulse --- */
         .cta-box .cta-glow {
