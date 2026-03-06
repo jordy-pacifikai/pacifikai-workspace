@@ -817,20 +817,12 @@
         }
         .card-stack-item {
             position: absolute;
-            width: 150px;
-            height: 95px;
+            width: 160px;
+            height: 100px;
             background: var(--bg);
             border: 1px solid var(--border-light);
             border-radius: 10px;
-            padding: 10px 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 500;
+            overflow: hidden;
             left: 50%;
             top: 50%;
             transform-origin: center center;
@@ -838,17 +830,72 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             z-index: 1;
         }
-        .card-stack-item .cs-icon {
-            font-size: 1.4rem;
-            line-height: 1;
+        /* Screenshot thumbnail mode (Tile 1) */
+        .card-stack-item.cs-thumb {
+            background-size: cover;
+            background-position: top center;
         }
-        .card-stack-item .cs-label {
+        .card-stack-item.cs-thumb .cs-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 3px 8px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 600;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
             text-align: center;
+            letter-spacing: 0.02em;
         }
+        /* Mini visual mode (Tile 2 & 3) */
+        .card-stack-item.cs-visual {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+        .card-stack-item.cs-visual .cs-mini-vis {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        .card-stack-item.cs-visual .cs-label {
+            padding: 3px 8px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 0.62rem;
+            font-weight: 600;
+            white-space: nowrap;
+            text-align: center;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        /* Mini visual internals */
+        .mv-nodes { display: flex; align-items: center; justify-content: center; gap: 4px; height: 100%; padding: 6px; }
+        .mv-node { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--accent); background: rgba(249,112,102,0.15); }
+        .mv-arrow { width: 12px; height: 2px; background: var(--accent); opacity: 0.6; }
+        .mv-chat { padding: 8px 6px; display: flex; flex-direction: column; gap: 3px; height: 100%; justify-content: center; }
+        .mv-bubble { height: 8px; border-radius: 4px; opacity: 0.8; }
+        .mv-bubble-l { background: var(--lagoon); width: 70%; }
+        .mv-bubble-r { background: var(--accent); width: 55%; align-self: flex-end; }
+        .mv-bars { display: flex; align-items: flex-end; gap: 3px; height: 100%; padding: 8px 10px 6px; }
+        .mv-bar { width: 8px; border-radius: 2px 2px 0 0; background: var(--accent); opacity: 0.7; }
+        .mv-bar-t { background: var(--lagoon); }
+        .mv-scan { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 8px 10px; justify-content: center; }
+        .mv-scan-line { height: 3px; border-radius: 2px; background: linear-gradient(90deg, var(--lagoon), var(--accent)); opacity: 0.6; }
+        .mv-check { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 8px 10px; justify-content: center; }
+        .mv-check-row { display: flex; align-items: center; gap: 5px; }
+        .mv-check-box { width: 10px; height: 10px; border-radius: 2px; border: 1.5px solid var(--lagoon); flex-shrink: 0; }
+        .mv-check-box.done { background: var(--lagoon); }
+        .mv-check-line { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.15); flex: 1; }
+        .mv-timeline { display: flex; align-items: center; height: 100%; padding: 0 10px; gap: 0; }
+        .mv-tl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+        .mv-tl-line { height: 2px; flex: 1; background: rgba(245,197,66,0.4); }
+        .mv-graph { display: flex; flex-direction: column; gap: 3px; height: 100%; padding: 8px 10px; justify-content: center; }
+        .mv-graph-row { display: flex; align-items: center; gap: 4px; }
+        .mv-graph-label { width: 16px; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; flex-shrink: 0; }
+        .mv-graph-fill { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--accent)); }
+        .mv-team { display: flex; gap: 6px; height: 100%; align-items: center; justify-content: center; padding: 8px; }
+        .mv-avatar { width: 18px; height: 18px; border-radius: 50%; background: var(--lagoon); opacity: 0.6; border: 1.5px solid rgba(255,255,255,0.2); }
 
         /* Default: stacked with slight offsets */
         .card-stack-item:nth-child(1)  { transform: translate(-50%, -50%) rotate(-2deg) translate(0px, 0px); z-index: 10; }
@@ -1916,14 +1963,14 @@
                     <h3 class="bento-title">Sites & Applications</h3>
                     <p class="bento-desc">Sites vitrines, landing pages, dashboards, apps métier et portails clients sur-mesure.</p>
                     <div class="card-stack">
-                        <div class="card-stack-item"><span class="cs-icon">🏝️</span><span class="cs-label">Tapiri</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">📅</span><span class="cs-label">Ve'a Booking</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">🚗</span><span class="cs-label">COWAN Motor</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">💇</span><span class="cs-label">Studio Belleza</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">⚖️</span><span class="cs-label">DroitPF</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">📊</span><span class="cs-label">Mission Control</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">✈️</span><span class="cs-label">Air Tahiti Nui</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">🎯</span><span class="cs-label">HVC Community</span></div>
+                        <div class="card-stack-item cs-thumb" style="background-image:url(assets/screenshots/tapiri.jpg)"><span class="cs-label">Tapiri</span></div>
+                        <div class="card-stack-item cs-thumb" style="background-image:url(assets/screenshots/vea.jpg)"><span class="cs-label">Ve'a</span></div>
+                        <div class="card-stack-item cs-thumb" style="background-image:url(assets/screenshots/cowan.jpg)"><span class="cs-label">COWAN Motor</span></div>
+                        <div class="card-stack-item cs-thumb" style="background-image:url(assets/screenshots/belleza.jpg)"><span class="cs-label">Studio Belleza</span></div>
+                        <div class="card-stack-item cs-thumb" style="background-image:url(assets/screenshots/droitpf.jpg)"><span class="cs-label">DroitPF</span></div>
+                        <div class="card-stack-item cs-thumb" style="background-image:url(assets/screenshots/mission-control.jpg)"><span class="cs-label">Mission Control</span></div>
+                        <div class="card-stack-item cs-thumb" style="background-image:linear-gradient(135deg,#0c1426,#162040)"><span class="cs-label">Air Tahiti Nui</span></div>
+                        <div class="card-stack-item cs-thumb" style="background-image:linear-gradient(135deg,#121215,#1b1b1f)"><span class="cs-label">HVC Community</span></div>
                     </div>
                 </div>
                 <div class="bento-detail">
@@ -1948,14 +1995,14 @@
                     <h3 class="bento-title">Solutions IA</h3>
                     <p class="bento-desc">Chatbots, agents IA, automatisation des process, marketing IA et extraction de documents.</p>
                     <div class="card-stack">
-                        <div class="card-stack-item"><span class="cs-icon">💬</span><span class="cs-label">Ve'a Chatbot WhatsApp</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">📊</span><span class="cs-label">HVC Scanner Forex</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">🕷️</span><span class="cs-label">SpiderClaw Bot</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">✈️</span><span class="cs-label">15 workflows ATN</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">⚖️</span><span class="cs-label">DroitPF 5 agents IA</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">📄</span><span class="cs-label">OCR factures DICP</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">📧</span><span class="cs-label">Drip campaign Brevo</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">🔔</span><span class="cs-label">Push notifs HVC</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-chat"><div class="mv-bubble mv-bubble-l"></div><div class="mv-bubble mv-bubble-r"></div><div class="mv-bubble mv-bubble-l" style="width:50%"></div></div></div><span class="cs-label">Chatbot WhatsApp</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-bars"><div class="mv-bar" style="height:60%"></div><div class="mv-bar mv-bar-t" style="height:85%"></div><div class="mv-bar" style="height:45%"></div><div class="mv-bar mv-bar-t" style="height:70%"></div><div class="mv-bar" style="height:90%"></div><div class="mv-bar mv-bar-t" style="height:55%"></div></div></div><span class="cs-label">Scanner Forex</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-nodes"><div class="mv-node"></div><div class="mv-arrow"></div><div class="mv-node" style="border-color:var(--lagoon)"></div><div class="mv-arrow" style="background:var(--lagoon)"></div><div class="mv-node" style="border-color:var(--gold)"></div></div></div><span class="cs-label">SpiderClaw Bot</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-nodes"><div class="mv-node" style="border-color:var(--lagoon);width:22px;height:22px"></div><div class="mv-arrow" style="background:var(--lagoon)"></div><div class="mv-node" style="width:14px;height:14px"></div><div class="mv-arrow"></div><div class="mv-node" style="border-color:var(--gold);width:14px;height:14px"></div></div></div><span class="cs-label">15 workflows ATN</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-scan"><div class="mv-scan-line" style="width:90%"></div><div class="mv-scan-line" style="width:65%"></div><div class="mv-scan-line" style="width:80%"></div><div class="mv-scan-line" style="width:50%"></div></div></div><span class="cs-label">5 agents IA DroitPF</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-scan"><div class="mv-scan-line" style="width:100%;background:var(--gold)"></div><div class="mv-scan-line" style="width:75%;background:var(--gold)"></div><div class="mv-scan-line" style="width:85%;background:var(--gold)"></div></div></div><span class="cs-label">OCR Factures</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-chat"><div class="mv-bubble mv-bubble-r" style="width:65%"></div><div class="mv-bubble mv-bubble-l" style="width:45%"></div><div class="mv-bubble mv-bubble-r" style="width:55%"></div><div class="mv-bubble mv-bubble-l" style="width:35%"></div></div></div><span class="cs-label">Drip Email Brevo</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-bars"><div class="mv-bar mv-bar-t" style="height:50%"></div><div class="mv-bar" style="height:75%"></div><div class="mv-bar mv-bar-t" style="height:90%"></div><div class="mv-bar" style="height:60%"></div><div class="mv-bar mv-bar-t" style="height:80%"></div></div></div><span class="cs-label">Push Notifs HVC</span></div>
                     </div>
                 </div>
                 <div class="bento-detail">
@@ -1983,11 +2030,11 @@
                     <h3 class="bento-title">Conseil & Formation</h3>
                     <p class="bento-desc">Audit de vos process, stratégie IA personnalisée, formation de vos équipes et accompagnement continu.</p>
                     <div class="card-stack">
-                        <div class="card-stack-item"><span class="cs-icon">🔍</span><span class="cs-label">Audit process COWAN</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">🗺️</span><span class="cs-label">Roadmap IA 12 mois ATN</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">👥</span><span class="cs-label">Formation equipes OPT</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">🔗</span><span class="cs-label">Migration Supabase multi-projet</span></div>
-                        <div class="card-stack-item"><span class="cs-icon">🛡️</span><span class="cs-label">Support continu 24/7</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-check"><div class="mv-check-row"><div class="mv-check-box done"></div><div class="mv-check-line" style="width:80%"></div></div><div class="mv-check-row"><div class="mv-check-box done"></div><div class="mv-check-line" style="width:65%"></div></div><div class="mv-check-row"><div class="mv-check-box"></div><div class="mv-check-line" style="width:90%"></div></div><div class="mv-check-row"><div class="mv-check-box"></div><div class="mv-check-line" style="width:55%"></div></div></div></div><span class="cs-label">Audit COWAN</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-timeline"><div class="mv-tl-dot"></div><div class="mv-tl-line"></div><div class="mv-tl-dot" style="background:var(--accent)"></div><div class="mv-tl-line"></div><div class="mv-tl-dot" style="background:var(--lagoon)"></div><div class="mv-tl-line"></div><div class="mv-tl-dot" style="opacity:0.4"></div></div></div><span class="cs-label">Roadmap IA 12 mois</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-team"><div class="mv-avatar"></div><div class="mv-avatar" style="background:var(--accent)"></div><div class="mv-avatar" style="background:var(--gold)"></div><div class="mv-avatar"></div></div></div><span class="cs-label">Formation equipes</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-graph"><div class="mv-graph-row"><div class="mv-graph-label"></div><div class="mv-graph-fill" style="width:80%"></div></div><div class="mv-graph-row"><div class="mv-graph-label"></div><div class="mv-graph-fill" style="width:55%"></div></div><div class="mv-graph-row"><div class="mv-graph-label"></div><div class="mv-graph-fill" style="width:95%"></div></div></div></div><span class="cs-label">Integration API</span></div>
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-bars"><div class="mv-bar mv-bar-t" style="height:65%"></div><div class="mv-bar" style="height:80%"></div><div class="mv-bar mv-bar-t" style="height:50%"></div><div class="mv-bar" style="height:90%"></div><div class="mv-bar mv-bar-t" style="height:70%"></div></div></div><span class="cs-label">Support continu</span></div>
                     </div>
                 </div>
                 <div class="bento-detail">
