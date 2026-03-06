@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3 Solutions IA pour la Polynesie - PACIFIK'AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a25;
+    --border: #2a2a3a;
+    --text: #e4e4ef;
+    --muted: #8888a0;
+    --accent-blue: #4f8fff;
+    --accent-green: #34d399;
+    --accent-purple: #a78bfa;
+    --accent-orange: #fb923c;
+    --accent-red: #f87171;
+    --accent-cyan: #22d3ee;
+    --accent-yellow: #fbbf24;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .hero {
+    padding: 80px 24px 60px;
+    text-align: center;
+    background: linear-gradient(180deg, #0f1029 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-cyan);
+    background: rgba(34,211,238,0.1);
+    border: 1px solid rgba(34,211,238,0.2);
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 30%, var(--accent-cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p { font-size: 18px; color: var(--muted); max-width: 700px; margin: 0 auto; }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+  .intro { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  .intro h2 { font-size: 28px; font-weight: 800; margin-bottom: 20px; color: #fff; }
+  .intro p { font-size: 16px; color: var(--muted); margin-bottom: 16px; }
+  .intro strong { color: var(--text); }
+
+  .highlight-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .highlight-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--accent-cyan); }
+  .highlight-box p, .highlight-box li { font-size: 15px; color: var(--muted); }
+  .highlight-box ul { list-style: none; padding: 0; }
+  .highlight-box li { padding: 6px 0; padding-left: 20px; position: relative; }
+  .highlight-box li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 14px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+  }
+
+  .project { padding: 80px 0; border-bottom: 1px solid var(--border); }
+  .project-number { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .project h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 900; line-height: 1.15; margin-bottom: 8px; color: #fff; }
+  .project .subtitle { font-size: 18px; color: var(--muted); margin-bottom: 32px; }
+
+  .explain { margin-bottom: 40px; }
+  .explain h3 {
+    font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #fff;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .explain h3 .icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .explain p { font-size: 15px; color: var(--muted); margin-bottom: 12px; }
+  .explain strong { color: var(--text); }
+  .explain em { color: var(--accent-cyan); font-style: normal; font-weight: 600; }
+
+  .scenario {
+    background: var(--surface);
+    border-left: 3px solid;
+    border-radius: 0 12px 12px 0;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .scenario p { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+  .scenario .speaker { font-weight: 600; color: var(--text); }
+  .scenario .bot { color: var(--accent-green); font-weight: 600; }
+
+  .revenue-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+  .revenue-table th {
+    text-align: left; padding: 12px 16px; font-weight: 600; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+    background: var(--surface); border-bottom: 1px solid var(--border);
+  }
+  .revenue-table td { padding: 12px 16px; border-bottom: 1px solid rgba(42,42,58,0.5); color: var(--text); }
+  .revenue-table tr:last-child td { border-bottom: none; font-weight: 700; }
+  .revenue-table .money { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .timeline { position: relative; padding-left: 32px; margin: 24px 0; }
+  .timeline::before {
+    content: ''; position: absolute; left: 7px; top: 4px; bottom: 4px;
+    width: 2px; background: var(--border);
+  }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -29px; top: 6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid; background: var(--bg);
+  }
+  .timeline-item .time { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .timeline-item h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .timeline-item p { font-size: 13px; color: var(--muted); }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 24px 0; }
+  .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+  .kpi .value { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .kpi .label { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+  .flow-step {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap;
+  }
+  .flow-arrow { color: var(--muted); font-size: 18px; }
+
+  .impact-box { border: 1px solid; border-radius: 12px; padding: 24px; margin: 24px 0; }
+  .impact-box h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .impact-box p { font-size: 14px; margin-bottom: 0; }
+
+  /* Warning box */
+  .warning-box {
+    background: rgba(251,191,36,0.06);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .warning-box h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--accent-yellow); }
+  .warning-box p { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+  .warning-box p:last-child { margin-bottom: 0; }
+  .warning-box strong { color: var(--text); }
+
+  /* App screens mockup */
+  .app-screens {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .app-screen {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .app-screen-header {
+    padding: 10px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .app-screen-body {
+    padding: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .app-screen-body p { margin-bottom: 8px; }
+  .app-screen-body strong { color: var(--text); }
+  .app-screen-body .screen-item {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(42,42,58,0.3);
+    font-size: 12px;
+  }
+  .app-screen-body .screen-item:last-child { border-bottom: none; }
+
+  /* User journey */
+  .journey {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .journey h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 16px; }
+  .journey-step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .journey-step:last-child { margin-bottom: 0; }
+  .journey-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .journey-content { flex: 1; }
+  .journey-content strong { color: var(--text); font-size: 14px; }
+  .journey-content p { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+
+  /* Color themes */
+  .project-1 .project-number { color: var(--accent-blue); }
+  .project-1 .scenario { border-color: var(--accent-blue); }
+  .project-1 .timeline-item::before { border-color: var(--accent-blue); }
+  .project-1 .timeline-item .time { color: var(--accent-blue); }
+  .project-1 .kpi .value { color: var(--accent-blue); }
+  .project-1 .impact-box { border-color: rgba(79,143,255,0.3); background: rgba(79,143,255,0.05); }
+  .project-1 .impact-box h4 { color: var(--accent-blue); }
+  .project-1 .journey-num { background: var(--accent-blue); }
+  .project-1 .app-screen-header { color: var(--accent-blue); background: rgba(79,143,255,0.08); }
+
+  .project-2 .project-number { color: var(--accent-green); }
+  .project-2 .scenario { border-color: var(--accent-green); }
+  .project-2 .timeline-item::before { border-color: var(--accent-green); }
+  .project-2 .timeline-item .time { color: var(--accent-green); }
+  .project-2 .kpi .value { color: var(--accent-green); }
+  .project-2 .impact-box { border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.05); }
+  .project-2 .impact-box h4 { color: var(--accent-green); }
+  .project-2 .journey-num { background: var(--accent-green); }
+  .project-2 .app-screen-header { color: var(--accent-green); background: rgba(52,211,153,0.08); }
+
+  .project-3 .project-number { color: var(--accent-purple); }
+  .project-3 .scenario { border-color: var(--accent-purple); }
+  .project-3 .timeline-item::before { border-color: var(--accent-purple); }
+  .project-3 .timeline-item .time { color: var(--accent-purple); }
+  .project-3 .kpi .value { color: var(--accent-purple); }
+  .project-3 .impact-box { border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.05); }
+  .project-3 .impact-box h4 { color: var(--accent-purple); }
+  .project-3 .journey-num { background: var(--accent-purple); }
+  .project-3 .app-screen-header { color: var(--accent-purple); background: rgba(167,139,250,0.08); }
+
+  .comparison { padding: 80px 0; border-bottom: 1px solid var(--border); }
+  .comparison h2 { font-size: 32px; font-weight: 900; margin-bottom: 32px; color: #fff; text-align: center; }
+  .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 768px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px 24px; text-align: center;
+    transition: border-color 0.2s;
+  }
+  .compare-card:hover { border-color: rgba(255,255,255,0.15); }
+  .compare-card .card-emoji { font-size: 40px; margin-bottom: 16px; }
+  .compare-card h3 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .compare-card .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .compare-row {
+    display: flex; justify-content: space-between; padding: 8px 0;
+    border-bottom: 1px solid rgba(42,42,58,0.5); font-size: 13px;
+  }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row .label { color: var(--muted); }
+  .compare-row .val { font-weight: 700; color: var(--text); }
+
+  .footer { padding: 40px 0; text-align: center; font-size: 13px; color: var(--muted); }
+  .footer strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="hero-badge">PACIFIK'AI - Recherche strategique Mars 2026</div>
+  <h1>3 Solutions IA pour la Polynesie francaise</h1>
+  <p>Ce que je build concretement, comment les gens y accedent, et comment ca rapporte. Zero bullshit.</p>
+</div>
+
+<!-- ==================== INTRO ==================== -->
+<div class="container">
+<section class="intro">
+  <h2>Ce qu.on a construit (prototypes — zero client pour l.instant)</h2>
+
+  <div class="highlight-box">
+    <h3>3 prototypes techniques fonctionnels (pas encore lances)</h3>
+    <ul>
+      <li><strong>DroitPF</strong> (droitpf.vercel.app) — 11 300 textes de loi polynesiens dans une base IA. 5 agents specialises (droit des affaires, fiscal, travail, immobilier + coordinateur). L'utilisateur pose une question juridique, l'IA repond avec les citations exactes.</li>
+      <li><strong>Tapiri</strong> (tapiri.vercel.app) — 3 568 entreprises polynesiennes avec coordonnees GPS, carte interactive, systeme de reservation en ligne, dashboard pro. 37 pages, PWA installable sur telephone.</li>
+      <li><strong>Ve'a</strong> (vea.pacifikai.com) — Bot WhatsApp + dashboard pour les commerces : il repond automatiquement aux clients et prend les RDV. 29 pages de dashboard, 5 automatisations Trigger.dev.</li>
+    </ul>
+  </div>
+
+  <p>Les 3 projets detailles ci-dessous <strong>reutilisent ces briques</strong>. C'est pour ca que c'est rapide a lancer.</p>
+
+  <h2 style="margin-top:40px;">Les 10 idees identifiees</h2>
+  <p>On a brainstorme 10 solutions IA a impact pour la PF. Les 3 premieres sont celles qui leveragent nos outils existants. Les 7 autres sont des pistes futures.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:24px 0;">
+
+    <div style="background:var(--card);border:1px solid var(--accent-green);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">PRIORITE 1 — ON LANCE</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">Tourisme Responsable IA</div>
+      <div style="font-size:13px;color:var(--muted);">Fusion Tapiri + Ve'a. Booking polynesien, concierge WhatsApp multilingue, score "Mana" redistribution iles.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--accent-blue);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-blue);margin-bottom:4px;">PRIORITE 2 — ON LANCE</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">MANA Gov — Assistant Admin</div>
+      <div style="font-size:13px;color:var(--muted);">Chatbot Messenger pour demarches CPS/impots/emploi. Extension de DroitPF. Risque RUMIA a gerer.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--accent-purple);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-purple);margin-bottom:4px;">PRIORITE 3 — ON LANCE (fond)</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">Reo AI — Preservation linguistique</div>
+      <div style="font-size:13px;color:var(--muted);">Traducteur + appli apprentissage reo tahiti. Blue ocean total. D'abord financement, puis dev.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-orange);margin-bottom:4px;">IDEE 4 — FUTUR</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">Telemedecine IA iles eloignees</div>
+      <div style="font-size:13px;color:var(--muted);">Pre-diagnostic IA avant EVASAN (500K-2M XPF/vol). Triage intelligent. Assistant infirmiers dispensaires isoles (Tuamotu, Gambier). Analyse images medicales smartphone.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-orange);margin-bottom:4px;">IDEE 5 — FUTUR</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">Cadastre + Foncier IA</div>
+      <div style="font-size:13px;color:var(--muted);">Numerisation titres fonciers manuscrits (19e siecle). Arbre genealogique automatise pour resoudre indivisions (80% des terres). Le foncier BLOQUE le developpement depuis 50 ans.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-orange);margin-bottom:4px;">IDEE 6 — FUTUR</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">Surveillance Lagon + Recifs</div>
+      <div style="font-size:13px;color:var(--muted);">Monitoring coraux drone + vision IA (blanchissement, especes invasives). Prediction ciguatera. Suivi stocks halieutiques peche durable. Alertes pollution.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-orange);margin-bottom:4px;">IDEE 7 — FUTUR</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">Prevention Cyclones + Risques</div>
+      <div style="font-size:13px;color:var(--muted);">Modele predictif houle/submersion par atoll. Alertes personnalisees WhatsApp/SMS. Cartographie zones risque tsunami. Atolls Tuamotu a 2-3m au-dessus du niveau de la mer.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-orange);margin-bottom:4px;">IDEE 8 — FUTUR</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">Smart Grid Solaire</div>
+      <div style="font-size:13px;color:var(--muted);">Prediction production solaire / demande electrique par ile. Gestion intelligente batteries. Reduction dependance diesel (cout x3-5 tarif metropole). Energie = goulot des iles.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-orange);margin-bottom:4px;">IDEE 9 — FUTUR</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">IA Educative — "Te Parau"</div>
+      <div style="font-size:13px;color:var(--muted);">Contenus scolaires adaptes au contexte polynesien. Tuteur IA personnalise par eleve. Formation pro adultes (reconversion pecheurs). Preparation concours admin PF.</div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-orange);margin-bottom:4px;">IDEE 10 — FUTUR</div>
+      <div style="font-weight:700;color:#fff;margin-bottom:6px;">Logistique Maritime Intelligente</div>
+      <div style="font-size:13px;color:var(--muted);">Optimisation rotations Taporo/Aranui/goelettes. Prediction demande cargo par ile (eviter penuries). Suivi temps reel marchandises. Ravitaillement iles chaotique et couteux.</div>
+    </div>
+
+  </div>
+
+  <p style="font-size:13px;color:var(--muted);">Les idees 4 a 10 sont des pistes futures. On s'y attaque quand les 3 premiers projets generent du cash et qu'on a prouve notre credibilite aupres du gouvernement.</p>
+</section>
+
+<!-- ============================================================ -->
+<!--              PROJET 1 : TOURISME RESPONSABLE                 -->
+<!-- ============================================================ -->
+<section class="project project-2">
+  <div class="project-number">Projet 1 — Le plus gros potentiel + le moins risque</div>
+  <h2>Tapiri + Ve'a = Plateforme Tourisme IA</h2>
+  <p class="subtitle">Le "Booking.com polynesien" — par les Polynesiens, pour les Polynesiens</p>
+
+  <!-- C'est quoi -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">?</span> C'est quoi CONCRETEMENT ?</h3>
+    <p>C'est <strong>une seule application web</strong> (installable sur telephone comme une appli) qui fait 3 choses :</p>
+    <p>1. <strong>Cote touriste</strong> : tu cherches un hebergement, une excursion, un restaurant → tu trouves, tu reserves, tu payes. Tout en ligne, en 5 langues (FR/EN/JP/CN/ES).<br>
+    2. <strong>Cote professionnel</strong> (pension, guide, restau) : tu geres tes reservations, ton calendrier, tes clients, tes stats. C'est ton dashboard de gestion.<br>
+    3. <strong>Cote gouvernement</strong> : un dashboard avec les donnees en temps reel — combien de touristes ou, quel taux de remplissage par ile, etc.</p>
+    <p>Le touriste peut aussi envoyer un <strong>message WhatsApp</strong> au lieu d'aller sur le site : "Je cherche 3 nuits a Rangiroa" et le bot repond avec des suggestions personnalisees dans sa langue.</p>
+  </div>
+
+  <!-- CE QUE JE BUILD -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">&#x1F6E0;</span> Ce que je build (les ecrans)</h3>
+
+    <p><strong>URL d'acces :</strong> tapiri.pf (ou tapiri.vercel.app) — c'est un site web responsive qui s'installe comme une appli (PWA).</p>
+
+    <div class="app-screens">
+      <div class="app-screen">
+        <div class="app-screen-header">Cote Touriste (Public)</div>
+        <div class="app-screen-body">
+          <div class="screen-item"><strong>/</strong> — Accueil avec carte interactive + barre de recherche IA</div>
+          <div class="screen-item"><strong>/explore</strong> — Explorer par categorie (hebergement, excursion, restaurant, spa...)</div>
+          <div class="screen-item"><strong>/business/[id]</strong> — Fiche du commerce (photos, avis, horaires, prix, bouton Reserver)</div>
+          <div class="screen-item"><strong>/book</strong> — Formulaire de reservation (date, nombre de personnes, paiement)</div>
+          <div class="screen-item"><strong>/mes-rdv</strong> — Mes reservations (historique + a venir)</div>
+          <div class="screen-item"><strong>/favorites</strong> — Mes favoris (coeur)</div>
+          <div class="screen-item"><strong>/deals</strong> — Offres flash et derniere minute</div>
+          <div class="screen-item"><strong>/planifier</strong> — Itineraires preset (1 jour, 3 jours, 1 semaine)</div>
+          <div class="screen-item"><strong>/experiences</strong> — Activites curatees par theme (plongee, culture, gastronomie...)</div>
+        </div>
+      </div>
+
+      <div class="app-screen">
+        <div class="app-screen-header">Cote Pro (Dashboard pension/guide)</div>
+        <div class="app-screen-body">
+          <div class="screen-item"><strong>/pro/dashboard</strong> — Vue d'ensemble (RDV aujourd'hui, revenus, taux de remplissage)</div>
+          <div class="screen-item"><strong>/pro/appointments</strong> — Calendrier des reservations (jour/semaine/mois)</div>
+          <div class="screen-item"><strong>/pro/services</strong> — Gerer les chambres/excursions (prix, dispo, photos)</div>
+          <div class="screen-item"><strong>/pro/staff</strong> — Gerer les employes (horaires, conges)</div>
+          <div class="screen-item"><strong>/pro/clients</strong> — CRM : historique clients, fidelite, tags</div>
+          <div class="screen-item"><strong>/pro/messages</strong> — Inbox unifiee (WhatsApp + web + email)</div>
+          <div class="screen-item"><strong>/pro/stats</strong> — Analytics (revenus, sources, tendances)</div>
+          <div class="screen-item"><strong>/pro/deals</strong> — Creer des offres flash / derniere minute</div>
+          <div class="screen-item"><strong>/pro/portfolio</strong> — Photos avant/apres, galerie</div>
+        </div>
+      </div>
+
+      <div class="app-screen">
+        <div class="app-screen-header">Concierge IA (WhatsApp / Web)</div>
+        <div class="app-screen-body">
+          <div class="screen-item"><strong>WhatsApp</strong> — Le touriste ecrit en japonais, chinois, anglais, francais. Le bot comprend, repond dans sa langue, propose des options, et prend la reservation</div>
+          <div class="screen-item"><strong>Recherche IA</strong> — "Un truc romantique pas cher loin de Bora" → l'IA comprend et filtre</div>
+          <div class="screen-item"><strong>Score "Mana"</strong> — L'algorithme favorise les iles sous-visitees (Maupiti plutot que Bora). Plus une ile est sous-visitee, plus elle remonte dans les resultats</div>
+          <div class="screen-item"><strong>Multi-langue auto</strong> — Detection automatique de la langue du touriste, reponse dans la meme langue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARCOURS UTILISATEUR -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">&#x1F6B6;</span> Parcours utilisateur concret</h3>
+
+    <div class="journey">
+      <h4>Touriste (ex: Yuki, japonaise, a Tokyo)</h4>
+      <div class="journey-step">
+        <div class="journey-num">1</div>
+        <div class="journey-content">
+          <strong>Decouverte</strong>
+          <p>Yuki tape "Polynesia booking" sur Google ou trouve le numero WhatsApp sur un flyer a l'aeroport de Tahiti</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">2</div>
+        <div class="journey-content">
+          <strong>Recherche</strong>
+          <p>Elle ecrit en japonais sur WhatsApp : "3 nuits, lagon turquoise, budget 50 000 XPF". Ou bien elle va sur tapiri.pf et utilise la barre de recherche</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">3</div>
+        <div class="journey-content">
+          <strong>Suggestion IA</strong>
+          <p>Le bot repond en japonais avec 3 options. Il suggere Maupiti (sous-visitee, -70% vs Bora). Chaque option a prix, photos, note, lien de reservation</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">4</div>
+        <div class="journey-content">
+          <strong>Reservation</strong>
+          <p>Yuki clique sur le lien → page de la pension → choisit les dates → paye en ligne (carte bancaire)</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">5</div>
+        <div class="journey-content">
+          <strong>Confirmation</strong>
+          <p>La pension recoit une notif sur son dashboard + WhatsApp. Yuki recoit sa confirmation par WhatsApp + email</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="journey">
+      <h4>Professionnel (ex: Raina, pension de famille a Maupiti)</h4>
+      <div class="journey-step">
+        <div class="journey-num">1</div>
+        <div class="journey-content">
+          <strong>Inscription</strong>
+          <p>Raina va sur tapiri.pf/for-pros, elle "claim" sa fiche (on a deja sa pension dans la base avec les infos de base). Elle ajoute ses photos, ses prix, ses dispos</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">2</div>
+        <div class="journey-content">
+          <strong>Gestion quotidienne</strong>
+          <p>Chaque matin elle ouvre son dashboard (/pro/dashboard) : elle voit les RDV du jour, les demandes en attente, son taux de remplissage</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">3</div>
+        <div class="journey-content">
+          <strong>Le bot travaille pour elle</strong>
+          <p>Un touriste japonais ecrit sur WhatsApp a 3h du matin (heure Tahiti). Le bot repond en japonais, verifie les dispos, et prend la reservation. Raina se reveille, la reservation est deja la</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">4</div>
+        <div class="journey-content">
+          <strong>Elle gagne plus</strong>
+          <p>Avant : 0 touriste japonais (elle parle pas japonais). Maintenant : le bot parle 5 langues pour elle. Et on prend 5% de commission au lieu de 15% (Booking)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scenario -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">&#x1F4AC;</span> Exemple de conversation WhatsApp</h3>
+    <div class="scenario">
+      <p><span class="speaker">Yuki (touriste japonaise) :</span> "3 nuits, beau lagon, pas trop cher"</p>
+      <p><span class="bot">Concierge IA :</span> "Bonjour Yuki ! Voici 3 options :<br><br>
+      <strong>1. Pension Terii - Maupiti</strong> — 15 000 XPF/nuit<br>
+      Meme lagon que Bora Bora, 10x moins de touristes. Petit-dej polynesien inclus. Note 4.8/5<br><br>
+      <strong>2. Pension Chez Raina - Bora Bora</strong> — 25 000 XPF/nuit<br>
+      Vue sur le Mont Otemanu. Transfert bateau inclus. Note 4.5/5<br><br>
+      <strong>3. Chez Moana - Fakarava</strong> — 12 000 XPF/nuit<br>
+      Plongee passe sud a 5 min. Pension familiale authentique. Note 4.9/5<br><br>
+      Voulez-vous reserver ? Je peux aussi ajouter une excursion plongee."</p>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">Note : toute cette conversation se fait en japonais. Le bot detecte automatiquement la langue et repond dedans.</p>
+  </div>
+
+  <!-- COMMENT LES TOURISTES NOUS TROUVENT — AVANT D'ARRIVER -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">&#x1F50D;</span> Le vrai sujet : comment les touristes nous trouvent AVANT d'arriver ?</h3>
+    <p>Les touristes reservent <strong>avant de monter dans l'avion</strong>, pas a l'aeroport. On se concentre sur les <strong>7 marches a lignes directes avec Tahiti</strong> — pas la peine de viser des pays sans vol direct.</p>
+
+    <!-- CARTE VISUELLE LIGNES DIRECTES -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0;text-align:center;">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:12px;">LIGNES AERIENNES DIRECTES VERS PAPEETE (PPT)</div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;">
+        <span style="background:rgba(59,130,246,0.1);color:#3b82f6;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">LAX Los Angeles</span>
+        <span style="background:rgba(139,92,246,0.1);color:#8b5cf6;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">CDG Paris</span>
+        <span style="background:rgba(220,38,38,0.1);color:#dc2626;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">NRT Tokyo</span>
+        <span style="background:rgba(16,185,129,0.1);color:#10b981;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">AKL Auckland</span>
+        <span style="background:rgba(245,158,11,0.1);color:#f59e0b;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">SYD Sydney <em style="font-size:10px;">(bientot)</em></span>
+        <span style="background:rgba(236,72,153,0.1);color:#ec4899;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">HNL Hawaii</span>
+        <span style="background:rgba(14,165,233,0.1);color:#0ea5e9;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">NOU Noumea</span>
+      </div>
+    </div>
+
+    <!-- USA (LAX) -->
+    <div style="background:var(--surface);border:2px solid #3b82f6;border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:22px;">&#x1F1FA;&#x1F1F8;</span>
+        <div style="font-size:14px;font-weight:700;color:#3b82f6;">USA (Los Angeles) — ~30% des touristes, premier marche</div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px;"><strong>Vol :</strong> ATN PPT↔LAX direct (8h). Seul vol international longue distance.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:rgba(59,130,246,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#3b82f6;margin-bottom:4px;">SEO LONGUE TRAINE (gratuit)</div>
+          <p style="font-size:12px;color:var(--muted);">
+            Booking gagne "Bora Bora hotel". On cible ce qu'il ignore :<br>
+            <strong style="color:var(--text)">"family pension Fakarava reviews"</strong><br>
+            <strong style="color:var(--text)">"budget diving Rangiroa"</strong><br>
+            <strong style="color:var(--text)">"Marquesas islands itinerary"</strong><br>
+            <strong style="color:var(--text)">"authentic Polynesian experience"</strong><br>
+            3 568 fiches = 3 568 pages indexables
+          </p>
+        </div>
+        <div style="background:rgba(59,130,246,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#3b82f6;margin-bottom:4px;">CANAUX AMERICAINS</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text)">TripAdvisor</strong> — 77K avis sur Bora Bora. Etre reference la-bas<br>
+            <strong style="color:var(--text)">Travel + Leisure / Conde Nast</strong> — Magazines voyage US premium<br>
+            <strong style="color:var(--text)">Reddit r/travel</strong> — Les Americains planifient la. Repondre aux questions PF<br>
+            <strong style="color:var(--text)">Google AI / ChatGPT</strong> — GEO (voir plus bas)
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRANCE (CDG) -->
+    <div style="background:var(--surface);border:2px solid #8b5cf6;border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:22px;">&#x1F1EB;&#x1F1F7;</span>
+        <div style="font-size:14px;font-weight:700;color:#8b5cf6;">FRANCE (Paris) — ~25% des touristes + diaspora</div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px;"><strong>Vol :</strong> ATN PPT↔CDG direct (22h). Beaucoup de Polynesiens en metropole qui rentrent en vacances.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:rgba(139,92,246,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#8b5cf6;margin-bottom:4px;">AGENCES SPECIALISEES</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text)">E-Tahiti Travel</strong> — Specialiste PF en France, partenariat prioritaire<br>
+            <strong style="color:var(--text)">Easyvoyage / Promovacances</strong> — Comparateurs<br>
+            <strong style="color:var(--text)">Routard / Lonely Planet FR</strong> — Etre reference dans les guides
+          </p>
+        </div>
+        <div style="background:rgba(139,92,246,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#8b5cf6;margin-bottom:4px;">SEO FRANCAIS</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text)">"pension familiale Polynesie pas cher"</strong><br>
+            <strong style="color:var(--text)">"voyage Marquises itineraire"</strong><br>
+            <strong style="color:var(--text)">"plongee Tuamotu meilleure saison"</strong><br>
+            Blog FR + fiches SEO. Les Francais lisent beaucoup avant de reserver
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- JAPON (NRT) -->
+    <div style="background:var(--surface);border:2px solid #dc2626;border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:22px;">&#x1F1EF;&#x1F1F5;</span>
+        <div style="font-size:14px;font-weight:700;color:#dc2626;">JAPON (Tokyo) — ~12%, marche historique mariage/lune de miel</div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px;"><strong>Vol :</strong> ATN PPT↔NRT direct (11h). Tahiti = destination mariage #1 pour les Japonais.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:rgba(220,38,38,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:4px;">AGENCES JAPONAISES</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text)">Toho Travel</strong> — Specialiste Tahiti #1 au Japon. Partenariat prioritaire<br>
+            <strong style="color:var(--text)">JTB / HIS</strong> — Top 2 agences japonaises<br>
+            <strong style="color:var(--text)">Rakuten Travel</strong> — OTA japonais (alternative a Booking)
+          </p>
+        </div>
+        <div style="background:rgba(220,38,38,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:4px;">DIGITAL JAPON</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text)">Yahoo Japan</strong> — 9.66% du search (pas que Google)<br>
+            <strong style="color:var(--text)">Instagram #タヒチ</strong> — Les Japonais planifient sur IG<br>
+            <strong style="color:var(--text)">YouTube Travel JP</strong> — Un YouTuber qui teste le concierge IA = milliers de leads
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOUVELLE-ZELANDE (AKL) -->
+    <div style="background:var(--surface);border:2px solid #10b981;border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:22px;">&#x1F1F3;&#x1F1FF;</span>
+        <div style="font-size:14px;font-weight:700;color:#10b981;">NOUVELLE-ZELANDE (Auckland) — marche Pacifique, famille polynesienne</div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px;"><strong>Vol :</strong> ATN PPT↔AKL direct (5h30). Grosse communaute polynesienne a Auckland. Touristes aventuriers.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:rgba(16,185,129,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#10b981;margin-bottom:4px;">CANAUX NZ</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text)">Flight Centre NZ</strong> — Plus grosse agence NZ, lister nos pensions<br>
+            <strong style="color:var(--text)">House of Travel</strong> — Agence premium NZ<br>
+            <strong style="color:var(--text)">Communaute polynesienne Auckland</strong> — Diaspora tahitienne, Cook, Samoa. Bouche-a-oreille + Facebook groups
+          </p>
+        </div>
+        <div style="background:rgba(16,185,129,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#10b981;margin-bottom:4px;">ANGLE MARKETING</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text)">Aventure + plongee + surf</strong> — Les Kiwis sont aventuriers. Cibler Fakarava, Marquises, Tuamotu<br>
+            <strong style="color:var(--text)">SEO anglophone NZ</strong> — "Tahiti from Auckland", "French Polynesia budget travel"<br>
+            <strong style="color:var(--text)">Retour aux racines</strong> — Polynesiens NZ qui visitent Tahiti
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUSTRALIE (SYD) — bientot -->
+    <div style="background:var(--surface);border:2px dashed #f59e0b;border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:22px;">&#x1F1E6;&#x1F1FA;</span>
+        <div style="font-size:14px;font-weight:700;color:#f59e0b;">AUSTRALIE (Sydney) — ligne directe bientot, gros potentiel</div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px;"><strong>Vol :</strong> Ligne directe PPT↔SYD en cours d'ouverture. Marche premium a preparer des maintenant.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:rgba(245,158,11,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#f59e0b;margin-bottom:4px;">CANAUX AUSTRALIENS</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text)">Flight Centre AU</strong> — Plus grosse agence australienne<br>
+            <strong style="color:var(--text)">Webjet / Wotif</strong> — OTAs australiens<br>
+            <strong style="color:var(--text)">Qantas Holidays</strong> — Packages vols + hebergement (si partenariat ATN-Qantas)
+          </p>
+        </div>
+        <div style="background:rgba(245,158,11,0.05);border-radius:8px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:#f59e0b;margin-bottom:4px;">ANGLE MARKETING</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong style="color:var(--text)">Alternative aux Fidji/Vanuatu</strong> — Les Australiens connaissent mal Tahiti. Positionner comme "le Pacifique premium"<br>
+            <strong style="color:var(--text)">Lune de miel premium</strong> — Bora Bora en premium, iles cachees en budget<br>
+            <strong style="color:var(--text)">Plongee / surf</strong> — Communautes australiennes massives
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- HAWAII (HNL) -->
+    <div style="background:var(--surface);border:2px solid #ec4899;border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:22px;">&#x1F1FA;&#x1F1F8;</span>
+        <div style="font-size:14px;font-weight:700;color:#ec4899;">HAWAII (Honolulu) — connexion polynesienne, niche culturelle</div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px;"><strong>Vol :</strong> ATN PPT↔HNL direct (5h30). Lien culturel polynesien fort. Diaspora tahitienne a Hawaii.</p>
+      <div style="background:rgba(236,72,153,0.05);border-radius:8px;padding:12px;">
+        <p style="font-size:12px;color:var(--muted);">
+          <strong style="color:var(--text)">Communaute polynesienne Hawaii</strong> — Festival Heiva a Hawaii, associations culturelles. Bouche-a-oreille direct<br>
+          <strong style="color:var(--text)">Touristes hawaiiens curieux</strong> — "Decouvrir la Polynesie originelle". Angle culturel, pas resort<br>
+          <strong style="color:var(--text)">Hub transit</strong> — Les Americains du continent s'arretent a Hawaii avant Tahiti. QR code a HNL gate
+        </p>
+      </div>
+    </div>
+
+    <!-- NOUVELLE-CALEDONIE (NOU) -->
+    <div style="background:var(--surface);border:2px solid #0ea5e9;border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:22px;">&#x1F1F3;&#x1F1E8;</span>
+        <div style="font-size:14px;font-weight:700;color:#0ea5e9;">NOUVELLE-CALEDONIE (Noumea) — voisins du Pacifique</div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px;"><strong>Vol :</strong> Aircalin PPT↔NOU direct (5h30). Relations familiales fortes entre PF et NC.</p>
+      <div style="background:rgba(14,165,233,0.05);border-radius:8px;padding:12px;">
+        <p style="font-size:12px;color:var(--muted);">
+          <strong style="color:var(--text)">Facebook / groupes caledoniens</strong> — La communaute NC utilise beaucoup Facebook. Groupes "Voyage Tahiti depuis Noumea"<br>
+          <strong style="color:var(--text)">Agences locales NC</strong> — Arc en Ciel Voyages, Caledonie Voyages. Proposer un partenariat pensions<br>
+          <strong style="color:var(--text)">Liens familiaux</strong> — Beaucoup de Caledoniens ont de la famille en PF. Proposer des packages "retour aux sources"
+        </p>
+      </div>
+    </div>
+
+    <!-- GEO — Generative Engine Optimization -->
+    <div style="background:var(--surface);border:2px solid var(--accent-green);border-radius:12px;padding:20px;margin:20px 0;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:24px;">&#x1F916;</span>
+        <div style="font-size:14px;font-weight:700;color:var(--accent-green);">GEO — Etre visible dans ChatGPT, Perplexity, Google AI (tous marches)</div>
+      </div>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:12px;">En 2025, <strong>+357% de trafic via les reponses IA</strong> (BrightEdge). Quand un touriste demande a ChatGPT "where to stay in Tahiti on a budget", il faut qu'on apparaisse.</p>
+      <div style="background:rgba(52,211,153,0.05);border-radius:8px;padding:16px;">
+        <p style="font-size:13px;color:var(--muted);">
+          <strong style="color:var(--text)">1. Schema.org JSON-LD</strong> — Chaque fiche pension avec LocalBusiness, LodgingBusiness, TouristAttraction. Les LLMs adorent le contenu structure<br><br>
+          <strong style="color:var(--text)">2. FAQ riches par ile</strong> — "Combien coute une semaine a Fakarava ?" avec reponse detaillee et sources<br><br>
+          <strong style="color:var(--text)">3. Citations croisees</strong> — Se faire citer par TripAdvisor, blogs voyage, guides. Les LLMs privilegient les sources citees par d'autres<br><br>
+          <strong style="color:var(--text)">4. Statistiques uniques</strong> — Publier des donnees exclusives : prix moyens par ile, comparatifs, taux d'occupation. Les LLMs citent les sources de donnees originales<br><br>
+          <strong style="color:var(--text)">5. Multi-langue</strong> — Pages en JP, EN, FR = on apparait dans les reponses IA dans CHAQUE langue
+        </p>
+      </div>
+    </div>
+
+    <!-- SUR PLACE (complement) -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0;">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;">EN COMPLEMENT — DANS L'AVION + SUR PLACE</div>
+      <p style="font-size:13px;color:var(--muted);">
+        <strong style="color:var(--text)">Vol ATN (8-22h)</strong> — QR code magazine de bord + ecrans sieges. Le touriste reserve pendant le vol<br>
+        <strong style="color:var(--text)">Aeroport Faa'a</strong> — Stand ou panneau QR code hall d'arrivee<br>
+        <strong style="color:var(--text)">Pensions partenaires</strong> — QR code reception pour "quoi faire demain"<br>
+        <strong style="color:var(--text)">Google Maps</strong> — Bouton "Reserver via Tapiri" sur les 3 568 fiches
+      </p>
+    </div>
+
+    <div class="warning-box" style="margin-top:16px;">
+      <h4>Priorites par semaine</h4>
+      <p>
+        <strong>Semaines 1-4 :</strong> SEO longue traine EN + FR (3 568 pages) + Schema.org JSON-LD = GEO ready<br>
+        <strong>Semaines 5-8 :</strong> Partenariat Toho Travel (Japon) + Flight Centre (NZ/AU) + E-Tahiti Travel (France)<br>
+        <strong>Semaines 9-12 :</strong> Blog multi-langue + FAQ par ile + contenu Instagram JP/EN/FR<br>
+        <strong>En continu :</strong> Approche ATN pour QR codes dans l'avion + Tahiti Tourisme (FM27)
+      </p>
+    </div>
+  </div>
+
+  <!-- REALITE FINANCIERE — PEUT-ON VRAIMENT LE FAIRE ? -->
+  <div class="explain" style="border:2px solid #ef4444;">
+    <h3><span class="icon" style="background:rgba(239,68,68,0.15);color:#ef4444">&#x1F4A2;</span> Soyons honnetes : peut-on vraiment se positionner a l'international ?</h3>
+
+    <div style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:20px;margin:16px 0;">
+      <p style="font-size:15px;font-weight:700;color:#ef4444;margin-bottom:8px;">NON, on ne peut PAS rivaliser avec Booking a budget zero.</p>
+      <p style="font-size:14px;color:var(--muted);">Booking a 7 milliards d'euros de chiffre d'affaires et 10 000 employes. Ce serait du mensonge de pretendre qu'on peut les battre "avec du SEO et de la volonte". Voici la realite :</p>
+    </div>
+
+    <!-- Ce qu'on PEUT faire gratuitement -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent-green);margin-bottom:10px;">CE QU'ON PEUT FAIRE A 0 XPF (des maintenant)</div>
+      <table class="revenue-table">
+        <tr><th>Action</th><th>Cout</th><th>Delai</th><th>Impact</th></tr>
+        <tr><td>SEO longue traine (3 568 pages indexables)</td><td style="color:var(--accent-green)">0 XPF</td><td>6-12 mois</td><td>Trafic organique sur requetes niche</td></tr>
+        <tr><td>GEO — Schema.org + FAQ structurees</td><td style="color:var(--accent-green)">0 XPF</td><td>3-6 mois</td><td>Apparaitre dans ChatGPT/Perplexity</td></tr>
+        <tr><td>Google Maps — bouton reserver sur 3 568 fiches</td><td style="color:var(--accent-green)">0 XPF</td><td>1-2 mois</td><td>Visibilite gratuite massive</td></tr>
+        <tr><td>Instagram/TikTok contenu iles</td><td style="color:var(--accent-green)">0 XPF</td><td>Continu</td><td>Notoriete progressive</td></tr>
+      </table>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px;">Ca ne fait PAS de nous un leader, mais ca cree une presence et une preuve de concept pour aller chercher du financement.</p>
+    </div>
+
+    <!-- Ce qui NECESSITE un capital -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="font-size:12px;font-weight:700;color:#ef4444;margin-bottom:10px;">CE QUI NECESSITE UN CAPITAL (impossible sans financement)</div>
+      <table class="revenue-table">
+        <tr><th>Action</th><th>Budget estime</th><th>Pourquoi c'est indispensable</th></tr>
+        <tr><td>Partenariat Toho Travel / JTB (Japon)</td><td class="money">2 - 4M XPF</td><td>Deplacement Tokyo, integration, salons pro, traductions japonaises</td></tr>
+        <tr><td>Partenariat Flight Centre (NZ/AU)</td><td class="money">500K - 1.5M XPF</td><td>Listing, integration, marketing co-brande pour marche Pacifique</td></tr>
+        <tr><td>Production video multi-langue (JP/EN/FR)</td><td class="money">1 - 3M XPF</td><td>Tournage dans les iles + montage + sous-titres pro</td></tr>
+        <tr><td>Stand aeroport Faa'a + QR codes ATN</td><td class="money">500K - 2M XPF</td><td>Location espace, impression, negociation commerciale ATN</td></tr>
+        <tr><td>Traductions pro japonais + SEO multi-langue</td><td class="money">500K - 1M XPF</td><td>Traducteur natif japonais pour fiches, FAQ, contenu marketing</td></tr>
+      </table>
+      <p style="font-size:15px;font-weight:700;color:var(--text);margin-top:16px;text-align:center;">Budget total realiste : 5 - 10M XPF (42K - 84K EUR)</p>
+    </div>
+
+    <!-- LES AIDES DISPONIBLES -->
+    <div style="background:var(--surface);border:2px solid var(--accent-green);border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="font-size:14px;font-weight:700;color:var(--accent-green);margin-bottom:12px;">LES AIDES DISPONIBLES EN POLYNESIE FRANCAISE</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">DAD — Direction Affaires Digitales</div>
+          <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;">jusqu'a 7M XPF</div>
+          <p style="font-size:12px;color:var(--muted);">Appels a projets numeriques du Pays. Projet IA + tourisme + redistribution iles eloignees = <strong>pile dans leur mandat</strong>. C'est l'aide la plus adaptee. Subvention (pas un pret).</p>
+        </div>
+        <div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">SOFIDEP — Programme PACE</div>
+          <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;">jusqu'a 5M XPF</div>
+          <p style="font-size:12px;color:var(--muted);">Pret d'honneur a <strong>taux zero, sans garantie</strong>. Pret d'Accompagnement a la Creation d'Entreprise. Combine avec d'autres aides pour effet levier.</p>
+        </div>
+        <div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">Initiative Polynesie francaise</div>
+          <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;">1 - 5M XPF</div>
+          <p style="font-size:12px;color:var(--muted);">Pret d'honneur taux 0. Reseau Initiative France. Necessite un dossier business plan solide + presentation devant un jury.</p>
+        </div>
+        <div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">France 2030 / BPI</div>
+          <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;">jusqu'a 500K EUR</div>
+          <p style="font-size:12px;color:var(--muted);">Volet innovation IA, applicable Outre-mer. Tres competitif (6-12 mois). Mais gros montants. Argument : "souverainete numerique tourisme Pacifique".</p>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">ADIE</div>
+          <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;">jusqu'a 1.5M XPF</div>
+          <p style="font-size:12px;color:var(--muted);">Micro-credit rapide. Petit montant mais deblocage en quelques semaines. Utile pour demarrer pendant qu'on attend les grosses aides.</p>
+        </div>
+        <div style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">FEDER / FSE (fonds europeens)</div>
+          <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;">variable (gros)</div>
+          <p style="font-size:12px;color:var(--muted);">Programmes specifiques Outre-mer via l'Etat. Long (12+ mois) mais montants importants. Innovation numerique + inclusion iles eloignees = eligible.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STRATEGIE EN 3 PHASES -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px;">STRATEGIE REALISTE EN 3 PHASES</div>
+
+      <div style="display:flex;gap:12px;">
+        <div style="flex:1;background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:16px;">
+          <div style="font-size:11px;font-weight:700;color:#3b82f6;margin-bottom:4px;">PHASE 1 — MAINTENANT (0 XPF)</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;">Creer la preuve de concept</div>
+          <p style="font-size:12px;color:var(--muted);">
+            SEO longue traine<br>
+            Schema.org sur 3 568 fiches<br>
+            Google Maps integration<br>
+            Contenu Instagram/YouTube<br>
+            Inscrire 20-50 premieres pensions<br><br>
+            <strong>Objectif :</strong> avoir des metriques reelles (trafic, inscriptions, premieres reservations) pour credibiliser les dossiers de financement
+          </p>
+        </div>
+        <div style="flex:1;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:16px;">
+          <div style="font-size:11px;font-weight:700;color:#f59e0b;margin-bottom:4px;">PHASE 2 — MOIS 3-4</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;">Deposer les dossiers d'aide</div>
+          <p style="font-size:12px;color:var(--muted);">
+            <strong>DAD</strong> : demande 7M XPF<br>
+            <strong>SOFIDEP PACE</strong> : demande 5M XPF<br>
+            <strong>ADIE</strong> : micro-credit 1.5M XPF (rapide, en attendant)<br><br>
+            <strong>Argument :</strong> "On a deja la base de donnees la plus complete de PF (3 568 businesses), un prototype fonctionnel, et des premieres metriques. On a besoin du capital pour passer a l'international."
+          </p>
+        </div>
+        <div style="flex:1;background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:16px;">
+          <div style="font-size:11px;font-weight:700;color:var(--accent-green);margin-bottom:4px;">PHASE 3 — MOIS 6-12 (avec financement)</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;">Deploiement international</div>
+          <p style="font-size:12px;color:var(--muted);">
+            Partenariat Toho Travel (Japon)<br>
+            Partenariat Flight Centre (NZ/AU)<br>
+            Partenariat E-Tahiti Travel (France)<br>
+            Video multi-langue (JP/EN/FR)<br>
+            Stand aeroport Faa'a<br>
+            QR codes dans les vols ATN<br><br>
+            <strong>Objectif :</strong> capter les touristes AVANT leur depart sur les 7 lignes directes
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:14px;color:var(--muted);"><strong style="color:var(--text);">En resume :</strong> On ne sera JAMAIS "numero 1 mondial". Mais on peut etre <strong>le numero 1 local</strong> — la plateforme de reference pour reserver des experiences authentiques en Polynesie francaise. C'est un marche de niche (263 766 touristes/an, 100 milliards XPF) que Booking traite mal. C'est la qu'on gagne.</p>
+  </div>
+
+  <!-- Pourquoi c'est different -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">&#x26A1;</span> Pourquoi c'est different de Booking.com ?</h3>
+
+    <table class="revenue-table">
+      <tr><th>Critere</th><th>Booking.com</th><th>Tapiri</th></tr>
+      <tr><td>Commission</td><td>15%</td><td class="money" style="color:var(--accent-green)">5-8%</td></tr>
+      <tr><td>Canal principal</td><td>Site web / appli</td><td>WhatsApp + Web (la ou sont les gens)</td></tr>
+      <tr><td>Langues IA</td><td>Pas d'IA conversationnelle</td><td>FR / EN / JP / CN / ES (IA auto-detect)</td></tr>
+      <tr><td>Algorithme</td><td>Favorise ceux qui payent le plus</td><td>Score "Mana" : favorise les iles sous-visitees</td></tr>
+      <tr><td>Scope</td><td>Hotels seulement</td><td>Hotels + pensions + excursions + restos + spas</td></tr>
+      <tr><td>Pensions de famille</td><td>Ignorees (trop petites pour Booking)</td><td>C'est le coeur de la plateforme</td></tr>
+      <tr><td>Donnees</td><td>Privees (Booking garde tout a Amsterdam)</td><td>Partagees avec le gouvernement PF</td></tr>
+    </table>
+  </div>
+
+  <!-- Comment ca rapporte -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">&#x1F4B0;</span> Business model — comment ca rapporte ?</h3>
+
+    <table class="revenue-table">
+      <tr><th>Source de revenus</th><th>Comment ca marche</th><th>Estimation / an</th></tr>
+      <tr>
+        <td><strong>Commission reservations</strong></td>
+        <td>5-8% sur chaque reservation faite via la plateforme. Les touristes depensent 100 milliards XPF/an en PF. Si on capte 5% des reservations :</td>
+        <td class="money" style="color:var(--accent-green)">250M XPF/an (a 5% de part de marche)</td>
+      </tr>
+      <tr>
+        <td><strong>Abonnement Pro</strong></td>
+        <td>Les pensions/guides payent 5 000 XPF/mois pour le dashboard, le concierge IA, les stats. 200 abonnes :</td>
+        <td class="money">12M XPF/an</td>
+      </tr>
+      <tr>
+        <td><strong>Contrat B2G Tahiti Tourisme</strong></td>
+        <td>On vend le dashboard "redistribution touristique" au gouvernement. Donnees en temps reel pour piloter la strategie FM27</td>
+        <td class="money">5 - 15M XPF/an</td>
+      </tr>
+      <tr>
+        <td><strong>Listings sponsorises</strong></td>
+        <td>Les gros hotels payent pour apparaitre en haut (comme Google Ads). Les petites pensions restent visibles grace au score Mana</td>
+        <td class="money">5 - 10M XPF/an</td>
+      </tr>
+    </table>
+
+    <p><strong>Total realiste an 2-3 :</strong> entre 50 et 350M XPF/an selon la vitesse d'adoption. Le tourisme PF fait 100 milliards/an — il suffit de capter une toute petite part.</p>
+  </div>
+
+  <!-- Alignement gouvernement -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">&#x1F3DB;</span> Pourquoi le gouvernement va adorer</h3>
+    <p>Le gouvernement a un plan officiel : <strong>FM27 (Fari'ira'a Manihini 2027)</strong>. Ses objectifs :</p>
+    <p>- Redistribuer les touristes vers les iles sous-visitees (Tuamotu, Marquises, Australes)<br>
+    - Limiter la pression sur Bora Bora<br>
+    - Developper le tourisme durable et authentique</p>
+    <p><strong>On fait exactement ca.</strong> On se positionne comme <em>"l'infrastructure digitale du FM27"</em>. Pas un concurrent de Booking — un outil au service de la strategie du Pays.</p>
+  </div>
+
+  <!-- Notre avance -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">&#x1F680;</span> Notre avance technique (prototypes)</h3>
+    <p>- <strong>3 568 entreprises</strong> avec GPS, horaires, services, photos → base de donnees la plus complete de PF<br>
+    - <strong>16 374 services</strong> deja indexes (chambres, excursions, soins, repas...)<br>
+    - <strong>Bot WhatsApp</strong> qui sait prendre des RDV automatiquement (Ve'a, teste et deploye)<br>
+    - <strong>37 routes</strong> deja buildees (8 phases : notifs, paiements, staff, CRM, messaging, deals, admin, PWA)<br>
+    - <strong>Google OAuth + admin</strong> configures et testes</p>
+    <p>Il reste a : fusionner Tapiri + Ve'a en une seule app, ajouter le paiement en ligne, et brancher le concierge IA multilingue sur le catalogue.</p>
+  </div>
+
+  <!-- Timeline -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(52,211,153,0.15);color:var(--accent-green)">&#x1F4C5;</span> Planning</h3>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="time">Mois 1-2</div>
+        <h4>Fusion Tapiri + Ve'a + Paiement en ligne</h4>
+        <p>Merger les deux apps. Ajouter SystemPay (Banque de Tahiti, XPF natif). Concierge IA WhatsApp branche sur le catalogue Tapiri.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 2-3</div>
+        <h4>Onboarding 20-50 pensions pilotes</h4>
+        <p>Contacter les pensions de Moorea, Huahine, Rangiroa. Elles "claim" leur fiche, ajoutent photos/prix. Service gratuit pendant le pilote.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 3-6</div>
+        <h4>Lancement public + concierge IA multilingue</h4>
+        <p>Le concierge WhatsApp parle japonais, chinois, anglais, francais, espagnol. Marketing avec Tahiti Tourisme et les compagnies aeriennes.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 6-12</div>
+        <h4>Premiers revenus + contrat gouvernement</h4>
+        <p>Commissions sur les reservations. Abonnements Pro. Pitch du dashboard redistribution a Tahiti Tourisme (FM27).</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 12+</div>
+        <h4>Scale : Pacifique</h4>
+        <p>Nouvelle-Caledonie, Fiji, Cook Islands — meme probleme (tourisme concentre, pensions ignorees par Booking). On duplique le modele.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="impact-box">
+    <h4>Impact sur la societe polynesienne</h4>
+    <p>- Les <strong>311 pensions de famille</strong> gardent plus d'argent (5% vs 15% Booking = 10% de marge en plus)<br>
+    - Les <strong>iles sous-visitees</strong> (Maupiti, Fakarava, Marquises, Australes) recoivent enfin des touristes<br>
+    - Les touristes asiatiques (+90% en 2024) sont enfin servis dans leur langue<br>
+    - Le gouvernement a des <strong>donnees en temps reel</strong> pour piloter sa strategie (au lieu de deviner)<br>
+    - L'argent du tourisme reste en Polynesie au lieu de partir a Amsterdam (siege de Booking)</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="value">100B</div><div class="label">XPF / an de tourisme en PF</div></div>
+    <div class="kpi"><div class="value">326K</div><div class="label">Visiteurs 2024 (record)</div></div>
+    <div class="kpi"><div class="value">3 568</div><div class="label">Businesses deja dans la base</div></div>
+    <div class="kpi"><div class="value">5%</div><div class="label">Notre commission (vs 15% Booking)</div></div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--                    PROJET 2 : MANA GOV                       -->
+<!-- ============================================================ -->
+<section class="project project-1">
+  <div class="project-number">Projet 2 — Rapide a lancer MAIS risque RUMIA</div>
+  <h2>MANA Gov</h2>
+  <p class="subtitle">Assistant IA pour les demarches administratives — sur Messenger</p>
+
+  <!-- WARNING RUMIA -->
+  <div class="warning-box">
+    <h4>ATTENTION : RUMIA existe deja</h4>
+    <p>Le gouvernement a lance <strong>RUMIA</strong> (rumia.gov.pf) en novembre 2025. C'est un portail web pour les demarches administratives qui inclut deja :</p>
+    <p>- Une <strong>recherche IA en langage naturel</strong> (LLM) pour trouver les demarches<br>
+    - Un <strong>agent conversationnel 24/7</strong> (chatbot)<br>
+    - L'<strong>identite numerique Tatou</strong> de la CPS (130 000 comptes)<br>
+    - Un coffre-fort numerique pour les documents<br>
+    - ~30 procedures digitalisees (objectif 200+)</p>
+    <p><strong>Budget RUMIA : 20 millions XPF</strong> (licence perpetuelle). Editeur non divulgue.</p>
+    <p><strong>Le risque :</strong> si le gouvernement decide d'upgrader RUMIA avec un vrai chatbot Messenger... on est grille. On serait en competition directe avec l'Etat, et l'Etat a les donnees, le budget, et le monopole.</p>
+    <p><strong>MAIS :</strong> RUMIA est un portail web uniquement. Pas de Messenger. Pas de WhatsApp. Pas d'app mobile (prevu "plus tard"). Et leur IA semble basique (recherche semantique, pas un vrai agent conversationnel multi-tours). Seulement 30 procedures sur 240+.</p>
+    <p><strong>Notre angle :</strong> pas "concurrencer RUMIA" mais <strong>"completer RUMIA"</strong> en ajoutant le canal Messenger (152K utilisateurs en PF) que RUMIA ne couvre pas. Se positionner comme prestataire du gouvernement, pas comme concurrent.</p>
+  </div>
+
+  <!-- C'est quoi -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(79,143,255,0.15);color:var(--accent-blue)">?</span> C'est quoi CONCRETEMENT ?</h3>
+    <p>C'est un <strong>chatbot sur Messenger</strong> (pas un site web — RUMIA c'est le site web). L'habitant ouvre Messenger, ecrit sa question en francais ou en tahitien, et le bot repond avec les infos administratives exactes + les demarches a suivre.</p>
+    <p><strong>Pourquoi Messenger et pas un site ?</strong> Parce que 152 000 Polynesiens sont deja sur Messenger (70% des adultes). Ils savent l'utiliser. Pas besoin de les envoyer sur un nouveau site.</p>
+  </div>
+
+  <!-- CE QUE JE BUILD -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(79,143,255,0.15);color:var(--accent-blue)">&#x1F6E0;</span> Ce que je build</h3>
+
+    <div class="app-screens">
+      <div class="app-screen">
+        <div class="app-screen-header">Chatbot Messenger (Public)</div>
+        <div class="app-screen-body">
+          <div class="screen-item"><strong>Page Facebook "MANA Gov"</strong> — Le citoyen clique sur "Envoyer un message" et pose sa question</div>
+          <div class="screen-item"><strong>Detection de sujet</strong> — L'IA detecte si c'est CPS, impots, emploi, logement, etat civil... et route vers le bon agent specialise</div>
+          <div class="screen-item"><strong>Reponse sourcee</strong> — Repond avec les textes de loi exacts (via la base DroitPF de 11 300 documents)</div>
+          <div class="screen-item"><strong>Guide pas a pas</strong> — "Voici les 4 etapes pour ta demande, voici les papiers a preparer"</div>
+          <div class="screen-item"><strong>Lien vers RUMIA</strong> — Pour les demarches en ligne, redirige vers le bon formulaire sur rumia.gov.pf</div>
+        </div>
+      </div>
+
+      <div class="app-screen">
+        <div class="app-screen-header">Dashboard Admin (Pour nous)</div>
+        <div class="app-screen-body">
+          <div class="screen-item"><strong>Stats d'usage</strong> — Combien de questions, quels sujets, satisfaction</div>
+          <div class="screen-item"><strong>Questions sans reponse</strong> — Les questions ou le bot n'a pas su repondre → on ameliore</div>
+          <div class="screen-item"><strong>Rapport mensuel</strong> — PDF automatique pour le client gouvernemental</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parcours utilisateur -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(79,143,255,0.15);color:var(--accent-blue)">&#x1F6B6;</span> Parcours utilisateur</h3>
+
+    <div class="journey">
+      <h4>Tane (habitant de Rangiroa, vient de perdre son travail)</h4>
+      <div class="journey-step">
+        <div class="journey-num">1</div>
+        <div class="journey-content">
+          <strong>Il ouvre Messenger</strong>
+          <p>Il cherche "MANA Gov" sur Facebook, ou scanne un QR code dans la mairie</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">2</div>
+        <div class="journey-content">
+          <strong>Il pose sa question</strong>
+          <p>"Ia ora na, je viens de perdre mon travail, j'ai droit a quoi ?"</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">3</div>
+        <div class="journey-content">
+          <strong>Le bot repond en detail</strong>
+          <p>Allocation chomage SEFI (conditions, demarches), regime CPS qui change (RSPF), aide logement OPH si baisse de revenus. Avec les numeros de telephone et les liens</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">4</div>
+        <div class="journey-content">
+          <strong>Le bot le guide</strong>
+          <p>"Voici les 3 papiers a preparer pour le SEFI : attestation employeur, CNI, RIB. Tu peux commencer la demarche en ligne ici : [lien RUMIA]"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comment ca rapporte -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(79,143,255,0.15);color:var(--accent-blue)">&#x1F4B0;</span> Business model</h3>
+    <p><strong>B2G (Business to Government)</strong> — On vend aux institutions publiques :</p>
+
+    <table class="revenue-table">
+      <tr><th>Client gouvernemental</th><th>Ce qu'on leur vend</th><th>Prix / an</th></tr>
+      <tr><td>CPS (securite sociale)</td><td>Assistant IA Messenger pour les assures</td><td class="money">5 - 15M XPF</td></tr>
+      <tr><td>DICP (impots)</td><td>Guide fiscal conversationnel (saisonnier)</td><td class="money">5 - 15M XPF</td></tr>
+      <tr><td>SEFI (emploi)</td><td>Guide inscription, droits, formations</td><td class="money">3 - 8M XPF</td></tr>
+      <tr><td>48 communes</td><td>Etat civil, permis, demarches locales (mutualise)</td><td class="money">2 - 5M XPF</td></tr>
+      <tr><td><strong>TOTAL</strong></td><td></td><td class="money" style="color:var(--accent-blue)">18 - 51M XPF/an</td></tr>
+    </table>
+
+    <p><strong>Strategie :</strong> On lance un pilote GRATUIT pour la CPS pendant 3 mois. On accumule les stats. Puis on va les voir avec les chiffres : "On a aide X milliers de personnes, voici le taux de satisfaction, voici combien d'appels on vous a evites." Et on propose un contrat annuel.</p>
+  </div>
+
+  <!-- Timeline -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(79,143,255,0.15);color:var(--accent-blue)">&#x1F4C5;</span> Planning</h3>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="time">Mois 1-3</div>
+        <h4>Pilote CPS gratuit sur Messenger</h4>
+        <p>Bot Messenger + base DroitPF + donnees CPS publiques. Gratuit, on accumule les stats et les retours. Ca coute quasi rien (infra DroitPF existe).</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 3-4</div>
+        <h4>Demande financement DAD (7M XPF)</h4>
+        <p>Avec les resultats du pilote : taux d'usage, satisfaction, nombre de questions resolues. La DGEN finance 50%.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 4-6</div>
+        <h4>MANA Impots (saisonnier)</h4>
+        <p>Assistant DICP pendant la periode fiscale. Grosse visibilite, tout le monde fait ses impots en meme temps.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 7-12</div>
+        <h4>Premiers contrats payants</h4>
+        <p>On negocie des contrats annuels avec la CPS et la DICP. 5-15M XPF par institution.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="impact-box">
+    <h4>Impact societal</h4>
+    <p>- Les gens de <strong>Rangiroa, Hiva Oa, Rurutu</strong> n'ont plus besoin de prendre l'avion pour comprendre leurs droits<br>
+    - Les <strong>26% sous le seuil de pauvrete</strong> ont acces gratuit a l'info sur leurs aides<br>
+    - Les fonctionnaires passent moins de temps sur les questions basiques → plus de temps sur les dossiers complexes<br>
+    - Reduction des dossiers incomplets (le bot dit exactement quels papiers preparer)</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="value">152K</div><div class="label">Users Messenger en PF</div></div>
+    <div class="kpi"><div class="value">~170K</div><div class="label">Demarches admin / an</div></div>
+    <div class="kpi"><div class="value">20M</div><div class="label">XPF budget RUMIA (reference)</div></div>
+    <div class="kpi"><div class="value">3 mois</div><div class="label">Pour lancer le pilote</div></div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--              PROJET 3 : REO TAHITI IA                        -->
+<!-- ============================================================ -->
+<section class="project project-3">
+  <div class="project-number">Projet 3 — Le plus impactant culturellement</div>
+  <h2>Reo AI</h2>
+  <p class="subtitle">Premier outil IA au monde pour la langue tahitienne</p>
+
+  <!-- C'est quoi -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(167,139,250,0.15);color:var(--accent-purple)">?</span> C'est quoi CONCRETEMENT ?</h3>
+    <p>C'est <strong>une application mobile + web</strong> qui fait 4 choses :</p>
+    <p>1. <strong>Traduction</strong> : tu tapes ou tu parles en francais, ca traduit en tahitien (et inversement). Comme Google Translate, mais pour le reo tahiti — qui n'existe pas sur Google Translate<br>
+    2. <strong>Apprentissage</strong> : des lecons interactives pour apprendre le reo tahiti (comme Duolingo). Niveaux debutant a avance<br>
+    3. <strong>Dictionnaire augmente</strong> : chaque mot avec sa prononciation audio (voix IA, pas un robot)<br>
+    4. <strong>Transcription</strong> : on enregistre les anciens qui parlent les langues rares (rapa, mangarevan) et l'IA transcrit automatiquement pour preserver ces langues avant qu'elles disparaissent</p>
+    <p><strong>Pourquoi ca n'existe pas encore ?</strong> Parce que le tahitien est une "langue a faibles ressources" : il n'y a pas assez de donnees numeriques (textes, audio) pour entrainer une IA. Google, Meta, DeepL n'investiront jamais la-dessus — trop peu de locuteurs. C'est un <strong>blue ocean total</strong>.</p>
+  </div>
+
+  <!-- CE QUE JE BUILD -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(167,139,250,0.15);color:var(--accent-purple)">&#x1F6E0;</span> Ce que je build (les ecrans)</h3>
+
+    <p><strong>URL d'acces :</strong> reo.ai (ou reo.pacifikai.com) — appli web PWA + potentiellement App Store / Google Play plus tard.</p>
+
+    <div class="app-screens">
+      <div class="app-screen">
+        <div class="app-screen-header">Appli Grand Public</div>
+        <div class="app-screen-body">
+          <div class="screen-item"><strong>/traduire</strong> — Zone de texte, tu tapes en francais ou en tahitien, la traduction apparait instantanement. Bouton micro pour parler</div>
+          <div class="screen-item"><strong>/dictionnaire</strong> — Recherche de mots. Chaque mot a : definition, prononciation audio IA, exemples d'utilisation, etymologie</div>
+          <div class="screen-item"><strong>/apprendre</strong> — Lecons par theme (salutations, famille, nature, nourriture, nombres...). Quiz, exercices, progression</div>
+          <div class="screen-item"><strong>/defi-du-jour</strong> — 1 mot ou expression par jour avec prononciation et contexte culturel</div>
+          <div class="screen-item"><strong>/profil</strong> — Ma progression, mes mots appris, mon streak</div>
+        </div>
+      </div>
+
+      <div class="app-screen">
+        <div class="app-screen-header">Module Ecoles (B2B)</div>
+        <div class="app-screen-body">
+          <div class="screen-item"><strong>Dashboard professeur</strong> — Creer des exercices, suivre la progression des eleves, assigner des devoirs</div>
+          <div class="screen-item"><strong>Mode classe</strong> — Exercices collectifs sur ecran, quiz en direct, prononciation commune</div>
+          <div class="screen-item"><strong>Niveaux adaptes</strong> — Primaire (jeux, chansons), college/lycee (grammaire, conjugaison), adultes (conversation)</div>
+        </div>
+      </div>
+
+      <div class="app-screen">
+        <div class="app-screen-header">Module Preservation (Archives)</div>
+        <div class="app-screen-body">
+          <div class="screen-item"><strong>Appli de collecte</strong> — Les benevoles enregistrent les anciens qui parlent. L'IA transcrit automatiquement en texte</div>
+          <div class="screen-item"><strong>Base de donnees langues</strong> — Tahitien, marquesien, paumotu, mangarevan, rapa, tuamotu... chaque langue separee</div>
+          <div class="screen-item"><strong>API publique</strong> — Les chercheurs et linguistes peuvent acceder aux donnees pour leurs travaux</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parcours utilisateur -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(167,139,250,0.15);color:var(--accent-purple)">&#x1F6B6;</span> Parcours utilisateur</h3>
+
+    <div class="journey">
+      <h4>Hina (16 ans, lycee a Papeete, veut reapprendre le reo de sa grand-mere)</h4>
+      <div class="journey-step">
+        <div class="journey-num">1</div>
+        <div class="journey-content">
+          <strong>Elle installe l'appli</strong>
+          <p>Elle va sur reo.ai depuis son telephone, l'appli s'installe en 1 clic (PWA)</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">2</div>
+        <div class="journey-content">
+          <strong>Elle commence par "Salutations"</strong>
+          <p>Lecon interactive : Ia ora na, Nana, Mauru'uru. Chaque mot avec la prononciation IA. Elle repete et l'appli lui dit si c'est correct</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">3</div>
+        <div class="journey-content">
+          <strong>Le defi du jour</strong>
+          <p>Chaque matin, une notification : "Aujourd'hui : 'Haere mai ta'u here' (Viens mon amour)". Elle apprend 1 expression/jour</p>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">4</div>
+        <div class="journey-content">
+          <strong>Elle utilise le traducteur avec sa grand-mere</strong>
+          <p>Sa grand-mere dit un mot en tahitien qu'elle ne connait pas. Elle ouvre le dictionnaire, tape le mot, entend la prononciation, voit la definition</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comment c'est faisable -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(167,139,250,0.15);color:var(--accent-purple)">&#x1F52C;</span> Pourquoi c'est faisable (precedent Te Hiku Media)</h3>
+    <p>En Nouvelle-Zelande, <strong>Te Hiku Media</strong> a fait exactement ca pour le maori :</p>
+
+    <table class="revenue-table">
+      <tr><th>Ce qu'ils ont fait pour le maori</th><th>Resultats</th></tr>
+      <tr><td>Reconnaissance vocale (parler → texte)</td><td class="money" style="color:var(--accent-purple)">92% de precision</td></tr>
+      <tr><td>Collecte de donnees audio par la communaute</td><td>310 heures en 10 jours (2 500 benevoles)</td></tr>
+      <tr><td>Financement du gouvernement NZ</td><td class="money" style="color:var(--accent-purple)">13 millions NZD (~7.2M EUR)</td></tr>
+    </table>
+
+    <p><strong>L'astuce :</strong> le maori et le tahitien partagent ~70% du vocabulaire (meme famille austronesienne). On peut reutiliser les modeles IA maori et hawaien comme base, puis les affiner avec des donnees tahitiennes. On ne part pas de zero.</p>
+  </div>
+
+  <!-- Business model -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(167,139,250,0.15);color:var(--accent-purple)">&#x1F4B0;</span> Business model</h3>
+
+    <table class="revenue-table">
+      <tr><th>Source</th><th>Comment</th><th>Revenue</th></tr>
+      <tr>
+        <td><strong>Appli freemium (B2C)</strong></td>
+        <td>Traducteur + 5 lecons gratuites. Premium 990-1 990 XPF/mois pour les cours avances + mode hors-ligne</td>
+        <td class="money">Variable (marche language apps = 21B USD mondial)</td>
+      </tr>
+      <tr>
+        <td><strong>Licences ecoles (B2B)</strong></td>
+        <td>Vente aux ecoles PF (primaire, college, lycee), UPF, centres culturels</td>
+        <td class="money">5 - 20M XPF/an</td>
+      </tr>
+      <tr>
+        <td><strong>Services gouvernement (B2G)</strong></td>
+        <td>Traduction documents officiels, sous-titrage Polynesie La 1ere (TV), transcription archives</td>
+        <td class="money">5 - 15M XPF/an</td>
+      </tr>
+      <tr>
+        <td><strong>Widget tourisme (B2B)</strong></td>
+        <td>Mini-cours "5 mots tahitiens" pour les hotels et les sites touristiques</td>
+        <td class="money">2 - 5M XPF/an</td>
+      </tr>
+    </table>
+
+    <p><strong>Subventions :</strong> France 2030 (500K EUR max), UNESCO IDIL 2022-2032, DGLFLF (Culture France), Ministere Education PF. Budget Phase 1-2 : ~83K EUR. Avec subventions 50% : <strong>~41 500 EUR de notre poche.</strong></p>
+  </div>
+
+  <!-- Timeline -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(167,139,250,0.15);color:var(--accent-purple)">&#x1F4C5;</span> Planning</h3>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="time">Mois 1-2</div>
+        <h4>Partenariats + candidature financement</h4>
+        <p>Contacter Te Hiku Media (NZ) pour mentorat. Accord avec la Fare Vana'a (Academie Tahitienne) pour les donnees du dictionnaire. Dossier France 2030.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 3-8</div>
+        <h4>Collecte audio communautaire</h4>
+        <p>Appli mobile de collecte : les gens enregistrent des phrases en tahitien. Campagne ecoles + radios + associations. Objectif : 50 heures minimum.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 6-12</div>
+        <h4>Construction des modeles IA</h4>
+        <p>Fine-tune Whisper (reconnaissance vocale), NLLB-200 (traduction), EveryVoice (synthese vocale avec 30 min d'audio studio).</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 10-15</div>
+        <h4>Lancement appli Reo AI</h4>
+        <p>Dictionnaire augmente + traduction + prononciation + cours. Beta test avec ecoles PF.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Mois 15+</div>
+        <h4>Extension autres langues PF</h4>
+        <p>Marquesien, paumotu, mangarevan, rapa... puis Pacifique (tongien, samoan, fidjien).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="impact-box">
+    <h4>Impact culturel</h4>
+    <p>- <strong>Preservation</strong> : le reo tahiti (et les 6 autres langues PF) ne disparaissent pas avec les anciens<br>
+    - Les <strong>68 000 eleves</strong> de PF ont un outil d'apprentissage moderne<br>
+    - La <strong>diaspora</strong> (30-50K Polynesiens en France/NZ/USA) peut reconnecter avec sa langue<br>
+    - Les <strong>traditions orales</strong> (genealogies, chants, legendes) sont transcrites et preservees<br>
+    - <strong>URGENCE</strong> : les ~45 derniers locuteurs fluents du vieux rapa ont 60+ ans — si on n'agit pas maintenant, cette langue meurt dans 10-15 ans</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="value">0</div><div class="label">Concurrent (blue ocean total)</div></div>
+    <div class="kpi"><div class="value">~83K</div><div class="label">EUR budget Phase 1-2</div></div>
+    <div class="kpi"><div class="value">70%</div><div class="label">Vocabulaire partage maori/tahitien</div></div>
+    <div class="kpi"><div class="value">45</div><div class="label">Derniers locuteurs du vieux rapa</div></div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--                     COMPARAISON FINALE                       -->
+<!-- ============================================================ -->
+<section class="comparison">
+  <h2>Comparaison des 3 projets</h2>
+  <div class="compare-grid">
+
+    <div class="compare-card" style="border-top: 3px solid var(--accent-green);">
+      <div class="card-emoji">&#x1F334;</div>
+      <h3>Tourisme IA</h3>
+      <p class="card-sub">Tapiri + Ve'a fusionnes</p>
+      <div class="compare-row"><span class="label">Revenue an 2-3</span><span class="val" style="color:var(--accent-green)">50 - 350M XPF</span></div>
+      <div class="compare-row"><span class="label">Investissement</span><span class="val">~5M XPF (fusion + multilingue)</span></div>
+      <div class="compare-row"><span class="label">Time to revenue</span><span class="val">9-18 mois</span></div>
+      <div class="compare-row"><span class="label">Risque RUMIA</span><span class="val" style="color:var(--accent-green)">Aucun rapport</span></div>
+      <div class="compare-row"><span class="label">Concurrence</span><span class="val">Booking (mais pas local)</span></div>
+      <div class="compare-row"><span class="label">Impact social</span><span class="val">Haut (redistribution iles)</span></div>
+      <div class="compare-row"><span class="label">Avance technique</span><span class="val">3 568 businesses + bot WhatsApp</span></div>
+      <div class="compare-row"><span class="label">Scalabilite</span><span class="val">Pacifique entier</span></div>
+    </div>
+
+    <div class="compare-card" style="border-top: 3px solid var(--accent-blue);">
+      <div class="card-emoji">&#x1F3DB;</div>
+      <h3>MANA Gov</h3>
+      <p class="card-sub">Assistant admin Messenger</p>
+      <div class="compare-row"><span class="label">Revenue an 1</span><span class="val" style="color:var(--accent-blue)">18 - 51M XPF</span></div>
+      <div class="compare-row"><span class="label">Investissement</span><span class="val">Quasi 0 (DroitPF existe)</span></div>
+      <div class="compare-row"><span class="label">Time to revenue</span><span class="val">6-12 mois</span></div>
+      <div class="compare-row"><span class="label">Risque RUMIA</span><span class="val" style="color:var(--accent-yellow)">MOYEN — si upgrade Messenger</span></div>
+      <div class="compare-row"><span class="label">Concurrence</span><span class="val">RUMIA (portail web gov)</span></div>
+      <div class="compare-row"><span class="label">Impact social</span><span class="val">Tres haut (acces iles)</span></div>
+      <div class="compare-row"><span class="label">Avance technique</span><span class="val">11 300 docs juridiques IA</span></div>
+      <div class="compare-row"><span class="label">Scalabilite</span><span class="val">DOM-TOM, Pacifique</span></div>
+    </div>
+
+    <div class="compare-card" style="border-top: 3px solid var(--accent-purple);">
+      <div class="card-emoji">&#x1F5E3;</div>
+      <h3>Reo AI</h3>
+      <p class="card-sub">Preservation du reo tahiti</p>
+      <div class="compare-row"><span class="label">Revenue an 1-2</span><span class="val" style="color:var(--accent-purple)">12 - 40M XPF</span></div>
+      <div class="compare-row"><span class="label">Investissement</span><span class="val">~10M XPF (subventions 50%)</span></div>
+      <div class="compare-row"><span class="label">Time to revenue</span><span class="val">12-18 mois</span></div>
+      <div class="compare-row"><span class="label">Risque RUMIA</span><span class="val" style="color:var(--accent-green)">Aucun rapport</span></div>
+      <div class="compare-row"><span class="label">Concurrence</span><span class="val">Zero (blue ocean)</span></div>
+      <div class="compare-row"><span class="label">Impact social</span><span class="val">Enorme (culturel)</span></div>
+      <div class="compare-row"><span class="label">Avance technique</span><span class="val">A construire (mais modeles maori existent)</span></div>
+      <div class="compare-row"><span class="label">Scalabilite</span><span class="val">7 langues PF + Pacifique</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--                       MA RECOMMANDATION                      -->
+<!-- ============================================================ -->
+<section class="project" style="border-bottom:none;">
+  <div class="project-number" style="color:var(--accent-orange)">Recommandation mise a jour</div>
+  <h2 style="font-size:32px;">Tourisme d'abord, MANA Gov en complement, Reo AI en fond</h2>
+
+  <div class="explain">
+    <p><strong>Priorite 1 — Tourisme IA (Tapiri + Ve'a)</strong><br>
+    Le plus gros potentiel financier, le moins de risque (RUMIA n'a rien a voir), et les prototypes couvrent deja une bonne partie du code. La fusion prend 1-2 mois. C'est le projet qui finance tout le reste.</p>
+
+    <p><strong>Priorite 2 — MANA Gov</strong><br>
+    Rapide a lancer (infra DroitPF existe), mais garder en tete le risque RUMIA. Strategie : se positionner comme <em>complement</em> de RUMIA (canal Messenger) et non comme concurrent. Si RUMIA ajoute Messenger un jour, pivoter vers B2B (aider les institutions a configurer leur propre chatbot IA).</p>
+
+    <p><strong>Priorite 3 — Reo AI (en fond)</strong><br>
+    Candidature France 2030 + premiers contacts Fare Vana'a / Te Hiku Media. Pas de dev avant d'avoir le financement. L'urgence est reelle (les anciens meurent), mais financierement ca peut pas payer les factures tout de suite.</p>
+  </div>
+
+  <div class="highlight-box" style="border-color:rgba(251,146,60,0.3);">
+    <h3 style="color:var(--accent-orange)">Revenue combinee estimee a 24 mois</h3>
+    <table class="revenue-table">
+      <tr><th>Projet</th><th>An 1</th><th>An 2</th></tr>
+      <tr>
+        <td>Tourisme IA (commissions + SaaS + B2G)</td>
+        <td class="money">5 - 20M XPF</td>
+        <td class="money">50 - 350M XPF</td>
+      </tr>
+      <tr>
+        <td>MANA Gov (B2G)</td>
+        <td class="money">5 - 15M XPF</td>
+        <td class="money">18 - 51M XPF</td>
+      </tr>
+      <tr>
+        <td>Reo AI (subventions + licences)</td>
+        <td class="money">5 - 10M XPF (subventions)</td>
+        <td class="money">12 - 40M XPF</td>
+      </tr>
+      <tr style="border-top:2px solid var(--border);">
+        <td><strong>TOTAL</strong></td>
+        <td class="money" style="color:var(--accent-orange)">15 - 45M XPF</td>
+        <td class="money" style="color:var(--accent-orange)">80 - 441M XPF</td>
+      </tr>
+    </table>
+    <p style="font-size:13px;color:var(--muted);margin-top:12px;">Le tourisme porte l'essentiel. MANA Gov et Reo AI sont des bonus qui renforcent le positionnement "IA pour la Polynesie".</p>
+  </div>
+</section>
+
+</div>
+
+<!-- ============================================================ -->
+<!--                   ROADMAP ACTIONNABLE                        -->
+<!-- ============================================================ -->
+<section class="project" style="border-bottom:1px solid var(--border);">
+  <div class="project-number" style="color:var(--accent-cyan)">Plan d'action</div>
+  <h2 style="font-size:32px;">Roadmap actionnable — semaine par semaine</h2>
+  <p class="subtitle">Ce qu'on fait concretement, dans quel ordre, et pourquoi</p>
+
+  <!-- POURQUOI CET ORDRE -->
+  <div class="explain">
+    <h3><span class="icon" style="background:rgba(34,211,238,0.15);color:var(--accent-cyan)">&#x1F9E0;</span> La logique derriere l'ordre</h3>
+    <p>On ne lance pas les 3 en meme temps avec la meme intensite. La strategie :</p>
+    <p>1. <strong>Tourisme IA</strong> d'abord — c'est le plus gros cash et zero risque RUMIA. Ca finance tout.<br>
+    2. <strong>MANA Gov</strong> en parallele "light" — pilote gratuit qui coute quasi rien (DroitPF existe). Ca construit notre credibilite gouvernementale.<br>
+    3. <strong>Reo AI</strong> en mode "positionnement" — zero dev, juste les contacts + dossier subvention. L'argent viendra des subventions, pas de notre poche.<br>
+    4. <strong>Les subventions</strong> levier tout — DAD (7M XPF, 50% paye par l'Etat), France 2030 (500K EUR, 50% Etat). Ca divise nos couts par 2.</p>
+  </div>
+
+  <!-- SEMAINE 1-2 -->
+  <div class="highlight-box" style="border-color:rgba(34,211,238,0.4);">
+    <h3 style="color:var(--accent-cyan);">SEMAINES 1-2 : Setup + Demarches administratives</h3>
+    <p><strong>Objectif :</strong> Lancer les demarches qui prennent du temps (subventions, contacts) pendant qu'on code.</p>
+    <ul>
+      <li><strong>Creer le dossier DAD (DGEN)</strong> — Aide au digital, jusqu'a 7M XPF, l'Etat paye 50%. C'est la subvention la plus accessible en PF. Formulaire a remplir avec : description projet, budget previsionnel, planning. On le soumet pour le projet Tourisme IA.
+        <br><span style="color:var(--accent-cyan);font-weight:600;">Action : je prepare le dossier, tu le relis et tu le deposes a la DGEN.</span></li>
+      <li><strong>Contacter Tahiti Tourisme</strong> — Envoyer un email de presentation : "On a 3 568 businesses polynesiens indexes avec GPS, on veut construire l'outil digital du FM27." Demander un RDV.
+        <br><span style="color:var(--accent-cyan);font-weight:600;">Action : je redige l'email, tu l'envoies depuis jordy@pacifikai.com.</span></li>
+      <li><strong>Contacter la Fare Vana'a</strong> (Academie Tahitienne) — Pour Reo AI. Juste un premier contact : "On veut construire le premier traducteur IA tahitien, on aimerait utiliser vos donnees du dictionnaire."
+        <br><span style="color:var(--accent-cyan);font-weight:600;">Action : je redige l'email, tu l'envoies.</span></li>
+      <li><strong>Rechercher Te Hiku Media</strong> (Nouvelle-Zelande) — Contact pour mentorat. Ils ont fait exactement la meme chose pour le maori.
+        <br><span style="color:var(--accent-cyan);font-weight:600;">Action : je trouve le bon contact et redige l'email en anglais.</span></li>
+    </ul>
+  </div>
+
+  <!-- SEMAINE 2-4 -->
+  <div class="highlight-box" style="border-color:rgba(52,211,153,0.4);">
+    <h3 style="color:var(--accent-green);">SEMAINES 2-4 : Build Tourisme IA (fusion Tapiri + Ve'a)</h3>
+    <p><strong>Objectif :</strong> Fusionner Tapiri et Ve'a en une seule app. C'est le gros morceau technique.</p>
+    <ul>
+      <li><strong>Fusion codebase</strong> — Merger le bot WhatsApp de Ve'a (prise de RDV auto) avec le catalogue Tapiri (3 568 businesses). Le bot WhatsApp interroge la base Tapiri pour les suggestions.</li>
+      <li><strong>Paiement en ligne</strong> — Integrer SystemPay (Banque de Tahiti, XPF natif) pour que les touristes puissent payer leur reservation en ligne.</li>
+      <li><strong>Concierge IA multilingue</strong> — Le bot WhatsApp repond en japonais, chinois, anglais, francais, espagnol. Detection automatique de la langue.</li>
+      <li><strong>Score "Mana"</strong> — L'algorithme qui favorise les iles sous-visitees dans les resultats de recherche.</li>
+      <li><strong>Dashboard gouvernement</strong> — Page /admin/redistribution avec les stats en temps reel par ile (taux remplissage, flux, tendances).</li>
+    </ul>
+    <p style="font-size:13px;color:var(--muted);margin-top:8px;">Tout ca, c'est moi (Claude) qui le build. Toi tu testes sur ton telephone et tu valides.</p>
+  </div>
+
+  <!-- SEMAINE 2-3 en parallele -->
+  <div class="highlight-box" style="border-color:rgba(79,143,255,0.4);">
+    <h3 style="color:var(--accent-blue);">SEMAINES 2-3 (en parallele) : Pilote MANA Gov</h3>
+    <p><strong>Objectif :</strong> Lancer le chatbot CPS sur Messenger. Ca coute presque rien car DroitPF existe deja.</p>
+    <ul>
+      <li><strong>Creer la page Facebook "MANA Gov"</strong> — Page publique, logo, description. Connecter le Messenger a notre bot.</li>
+      <li><strong>Ajouter les donnees CPS</strong> — Scraper les infos publiques de la CPS (droits, demarches, formulaires) et les injecter dans la base DroitPF.</li>
+      <li><strong>Brancher le bot Messenger</strong> — On a deja l'app Facebook PACIFIKAI Messaging (ID 854522137595486). On branche le bot DroitPF dessus.</li>
+      <li><strong>QR code pour les mairies</strong> — Generer des QR codes "Scannez pour poser votre question admin" a distribuer dans les mairies et la CPS.</li>
+    </ul>
+    <p style="font-size:13px;color:var(--muted);margin-top:8px;">Strategie : <strong>gratuit pendant 3 mois</strong>. On accumule les stats pour aller vendre ensuite.</p>
+  </div>
+
+  <!-- SEMAINE 4-6 -->
+  <div class="highlight-box" style="border-color:rgba(52,211,153,0.4);">
+    <h3 style="color:var(--accent-green);">SEMAINES 4-8 : Onboarding premieres pensions</h3>
+    <p><strong>Objectif :</strong> Faire adopter la plateforme par 20-50 pensions de famille.</p>
+    <ul>
+      <li><strong>Selectionner les iles pilotes</strong> — Moorea (proche, facile), Huahine (sous-visitee, motivee), Rangiroa (Tuamotu, fort besoin). Pas Bora Bora au debut (les gros hotels n'en ont pas besoin).</li>
+      <li><strong>Contacter les pensions</strong> — Elles sont deja dans notre base Tapiri. On les appelle : "On a deja votre fiche, venez la completer gratuitement. On vous amene des touristes japonais."
+        <br><span style="color:var(--accent-green);font-weight:600;">Action : je prepare la liste des 50 meilleures pensions a contacter (note, completude fiche, ile). Tu appelles les 10 premieres.</span></li>
+      <li><strong>Service GRATUIT pendant le pilote</strong> — Pas de commission, pas d'abonnement. Objectif : prouver que ca marche. Les premieres reservations = nos meilleurs arguments de vente.</li>
+      <li><strong>Tester le concierge IA</strong> — Simuler des conversations en japonais, chinois, anglais. Verifier que les suggestions sont pertinentes.</li>
+    </ul>
+  </div>
+
+  <!-- SEMAINE 6-8 : Subventions -->
+  <div class="highlight-box" style="border-color:rgba(167,139,250,0.4);">
+    <h3 style="color:var(--accent-purple);">SEMAINES 6-8 : Candidature France 2030 (Reo AI)</h3>
+    <p><strong>Objectif :</strong> Deposer le dossier France 2030 pour financer Reo AI. Jusqu'a 500K EUR (59M XPF), l'Etat paye 50%.</p>
+    <ul>
+      <li><strong>Preparer le dossier</strong> — Description du projet, budget (83K EUR Phase 1-2), equipe, planning, partenaires (Fare Vana'a, UPF, Te Hiku Media). Innovation : premier outil IA au monde pour le tahitien.
+        <br><span style="color:var(--accent-purple);font-weight:600;">Action : je redige le dossier technique. Tu ajoutes les pieces administratives (patente, RIB, etc.).</span></li>
+      <li><strong>Lettre de soutien Fare Vana'a</strong> — Si le premier contact (semaine 1) a marche, demander une lettre de soutien officielle pour le dossier.</li>
+      <li><strong>Lettre de soutien Ministere Education PF</strong> — L'outil beneficie aux 68 000 eleves. Demander un courrier de soutien.</li>
+      <li><strong>Deposer le dossier</strong> — Aupres de la Prefecture (France 2030 en PF). Prochain comite de selection : T1 ou T2 2026.</li>
+    </ul>
+    <p style="font-size:13px;color:var(--muted);margin-top:8px;">On ne commence AUCUN dev Reo AI avant d'avoir le financement. Pas la peine de payer de notre poche ce que l'Etat peut financer a 50%.</p>
+  </div>
+
+  <!-- MOIS 3-6 -->
+  <div class="highlight-box" style="border-color:rgba(251,146,60,0.4);">
+    <h3 style="color:var(--accent-orange);">MOIS 3-6 : Premiers revenus + Scale</h3>
+    <p><strong>Objectif :</strong> Les premiers euros rentrent.</p>
+    <ul>
+      <li><strong>Tourisme IA — Premieres commissions</strong>
+        <br>Les pensions pilotes ont fait leurs premieres reservations. On active la commission (5%). On commence les abonnements Pro (5 000 XPF/mois) pour le dashboard + concierge IA.</li>
+      <li><strong>MANA Gov — Pitch CPS avec les stats</strong>
+        <br>On a 3 mois de donnees du pilote gratuit : nombre de questions, sujets les plus demandes, satisfaction. On va voir la CPS : "On a aide X milliers de personnes gratuitement. Voici un contrat annuel a 5-15M XPF."
+        <br><span style="color:var(--accent-orange);font-weight:600;">Action : je genere le rapport PDF automatique. Tu prends RDV avec le directeur CPS.</span></li>
+      <li><strong>MANA Impots (saisonnier)</strong>
+        <br>Pendant la periode fiscale, on lance l'assistant DICP : "Comment remplir ma declaration ? Quels formulaires ?" Grosse visibilite car tout le monde fait ses impots en meme temps.</li>
+      <li><strong>Tourisme — Pitch Tahiti Tourisme</strong>
+        <br>Avec les premieres reservations et le dashboard redistribution, on pitch le contrat B2G FM27. "Voila, on redirige deja X% des touristes vers les iles sous-visitees. Voici le dashboard."</li>
+    </ul>
+  </div>
+
+  <!-- MOIS 6-12 -->
+  <div class="highlight-box" style="border-color:rgba(251,146,60,0.4);">
+    <h3 style="color:var(--accent-orange);">MOIS 6-12 : Consolidation</h3>
+    <p><strong>Objectif :</strong> Les 3 projets tournent. Le tourisme finance le reste.</p>
+    <ul>
+      <li><strong>Tourisme IA — 100+ pensions, marketing airlines</strong>
+        <br>Partenariat Air Tahiti Nui et Air Tahiti pour distribuer le lien/QR aux passagers. Concierge IA dans 5 langues. Listings sponsorises pour les gros hotels (revenus supplementaires sans toucher les pensions).</li>
+      <li><strong>MANA Gov — Contrats CPS + DICP signes</strong>
+        <br>15-30M XPF/an de contrats gouvernementaux. Extension SEFI (emploi) et OPH (logement).</li>
+      <li><strong>Reo AI — Dev commence (si financement OK)</strong>
+        <br>France 2030 accorde ? On lance la collecte audio communautaire (campagne ecoles, radios, associations). Objectif : 50h d'audio tahitien. En parallele, fine-tuning Whisper sur les donnees maori (transfert linguistique).</li>
+      <li><strong>Credibilite = Nouveaux projets</strong>
+        <br>Avec les resultats concrets des 3 projets, on peut commencer a pitcher les idees 4-10 (telemedecine, foncier, surveillance lagon...). Le gouvernement nous connait, on a prouve qu'on delivre.</li>
+    </ul>
+  </div>
+
+  <!-- MOIS 12-24 -->
+  <div class="highlight-box" style="border-color:rgba(251,146,60,0.4);">
+    <h3 style="color:var(--accent-orange);">MOIS 12-24 : Scale Pacifique</h3>
+    <ul>
+      <li><strong>Tourisme IA</strong> — Nouvelle-Caledonie, Fiji, Cook Islands. Meme probleme (tourisme concentre, pensions ignorees par Booking). On duplique le modele.</li>
+      <li><strong>MANA Gov</strong> — DOM-TOM (Nouvelle-Caledonie, Wallis-et-Futuna, Mayotte). Memes besoins admin, meme eloignement.</li>
+      <li><strong>Reo AI</strong> — Extension aux 6 autres langues PF (marquesien, paumotu, mangarevan, rapa, tuamotu, pa'umotu). Puis langues Pacifique (tongien, samoan, fidjien).</li>
+      <li><strong>Revenue cible</strong> — 80 a 441M XPF/an (670K - 3.7M EUR). Le tourisme porte l'essentiel.</li>
+    </ul>
+  </div>
+
+  <!-- RESUME VISUEL TIMELINE -->
+  <div class="explain" style="margin-top:40px;">
+    <h3><span class="icon" style="background:rgba(34,211,238,0.15);color:var(--accent-cyan)">&#x1F4CA;</span> Resume : qui fait quoi, quand</h3>
+    <table class="revenue-table" style="font-size:13px;">
+      <tr>
+        <th>Quand</th>
+        <th>Tourisme IA</th>
+        <th>MANA Gov</th>
+        <th>Reo AI</th>
+        <th>Subventions</th>
+      </tr>
+      <tr>
+        <td><strong>Sem 1-2</strong></td>
+        <td>-</td>
+        <td>-</td>
+        <td>Email Fare Vana'a + Te Hiku</td>
+        <td style="color:var(--accent-cyan)">Dossier DAD (7M XPF)</td>
+      </tr>
+      <tr>
+        <td><strong>Sem 2-4</strong></td>
+        <td style="color:var(--accent-green)">Fusion Tapiri+Ve'a, paiement, IA multilingue</td>
+        <td style="color:var(--accent-blue)">Page FB + bot CPS Messenger</td>
+        <td>-</td>
+        <td>Email Tahiti Tourisme</td>
+      </tr>
+      <tr>
+        <td><strong>Sem 4-8</strong></td>
+        <td style="color:var(--accent-green)">Onboarding 20-50 pensions</td>
+        <td style="color:var(--accent-blue)">Pilote gratuit (accumule stats)</td>
+        <td>-</td>
+        <td style="color:var(--accent-purple)">Dossier France 2030 (500K EUR)</td>
+      </tr>
+      <tr>
+        <td><strong>Mois 3-6</strong></td>
+        <td style="color:var(--accent-green)">Premieres commissions + abonnements Pro</td>
+        <td style="color:var(--accent-blue)">Pitch CPS avec stats</td>
+        <td>-</td>
+        <td>Pitch Tahiti Tourisme B2G</td>
+      </tr>
+      <tr>
+        <td><strong>Mois 6-12</strong></td>
+        <td style="color:var(--accent-green)">100+ pensions, partenariat airlines</td>
+        <td style="color:var(--accent-blue)">Contrats CPS+DICP (15-30M)</td>
+        <td style="color:var(--accent-purple)">Dev commence (si financement OK)</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><strong>An 2</strong></td>
+        <td style="color:var(--accent-green)">50-350M XPF, scale Pacifique</td>
+        <td style="color:var(--accent-blue)">18-51M XPF, scale DOM-TOM</td>
+        <td style="color:var(--accent-purple)">Lancement appli, 12-40M XPF</td>
+        <td>-</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- CE QUE JE FAIS vs CE QUE TU FAIS -->
+  <div class="explain" style="margin-top:40px;">
+    <h3><span class="icon" style="background:rgba(34,211,238,0.15);color:var(--accent-cyan)">&#x1F91D;</span> Qui fait quoi (toi vs moi)</h3>
+    <table class="revenue-table" style="font-size:13px;">
+      <tr>
+        <th>Toi (Jordy)</th>
+        <th>Moi (Claude / PACIFIK'AI)</th>
+      </tr>
+      <tr>
+        <td>Envoyer les emails (contacts, subventions)</td>
+        <td>Rediger tous les emails, dossiers, pitchs</td>
+      </tr>
+      <tr>
+        <td>Appeler les pensions pour l'onboarding</td>
+        <td>Preparer la liste + script d'appel</td>
+      </tr>
+      <tr>
+        <td>Deposer les dossiers subvention (DGEN, Prefecture)</td>
+        <td>Rediger les dossiers techniques complets</td>
+      </tr>
+      <tr>
+        <td>Prendre RDV avec CPS, Tahiti Tourisme, DICP</td>
+        <td>Preparer les presentations + rapports</td>
+      </tr>
+      <tr>
+        <td>Tester les apps sur ton telephone</td>
+        <td>Builder toutes les apps, bots, dashboards, IA</td>
+      </tr>
+      <tr>
+        <td>Valider les contenus avant publication</td>
+        <td>Generer tout le contenu, les maquettes, le code</td>
+      </tr>
+      <tr>
+        <td>Signer les contrats</td>
+        <td>Rediger les propositions commerciales</td>
+      </tr>
+    </table>
+  </div>
+
+</section>
+
+<div class="footer">
+  <p><strong>PACIFIK'AI</strong> — Recherche strategique Mars 2026<br>
+  Basee sur 132 sources web, 3 recherches approfondies paralleles<br>
+  Donnees : DataReportal 2025, Tahiti Tourisme, France 2030 PF, Te Hiku Media, UNESCO, ISPF, FM27, RUMIA (rumia.gov.pf)<br>
+  <strong>Mise a jour :</strong> Verification RUMIA factuelle (17 sources officielles)</p>
+</div>
+
+</body>
+</html>
