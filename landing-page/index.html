@@ -468,7 +468,7 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 1.5rem;
-            transition: all 0.3s var(--ease-out-expo);
+            transition: background 0.3s var(--ease-out-expo), border-color 0.3s, box-shadow 0.3s;
             position: relative;
             overflow: hidden;
         }
@@ -479,7 +479,7 @@
             border-radius: 12px;
             transition: transform 0.3s var(--ease-out-expo);
         }
-        a.card-link:hover { transform: translateY(-4px); }
+        a.card-link:hover { transform: none; }
         a.card-link:hover .card { border-color: var(--accent); }
         .card-cta {
             display: inline-flex;
@@ -497,7 +497,7 @@
             position: absolute;
             inset: -1px;
             border-radius: 12px;
-            background: radial-gradient(circle at 50% 50%, rgba(249,112,102,0.15), transparent 70%);
+            background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(249,112,102,0.15), transparent 40%);
             opacity: 0;
             transition: opacity 0.4s ease;
             pointer-events: none;
@@ -507,7 +507,6 @@
         .card:hover {
             background: var(--bg-card-hover);
             border-color: rgba(249,112,102,0.3);
-            transform: translateY(-4px);
             box-shadow: 0 8px 30px rgba(249,112,102,0.1);
         }
 
@@ -2895,35 +2894,35 @@
     <!-- Bento Services JS -->
     <script>
     (function() {
-        // Mouse-tracking glow for bento tiles
-        document.querySelectorAll('.bento-tile').forEach(tile => {
-            tile.addEventListener('mousemove', e => {
-                const rect = tile.getBoundingClientRect();
-                tile.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
-                tile.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
+        // Mouse-tracking glow for bento tiles + service cards
+        document.querySelectorAll('.bento-tile, .card').forEach(el => {
+            el.addEventListener('mousemove', e => {
+                const rect = el.getBoundingClientRect();
+                el.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+                el.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
             });
         });
 
-        // 3D tilt for bento tiles (subtle)
-        document.querySelectorAll('.bento-tile').forEach(tile => {
-            const maxTilt = 4;
+        // 3D tilt for bento tiles + service cards
+        document.querySelectorAll('.bento-tile, .card').forEach(el => {
+            const maxTilt = el.classList.contains('bento-tile') ? 4 : 6;
             const perspective = 1200;
-            const scale = 1.01;
+            const scale = 1.02;
             let raf;
-            tile.addEventListener('mousemove', e => {
+            el.addEventListener('mousemove', e => {
                 if (raf) cancelAnimationFrame(raf);
                 raf = requestAnimationFrame(() => {
-                    const rect = tile.getBoundingClientRect();
+                    const rect = el.getBoundingClientRect();
                     const x = (e.clientX - rect.left) / rect.width;
                     const y = (e.clientY - rect.top) / rect.height;
                     const tiltX = (maxTilt * (0.5 - y)).toFixed(2);
                     const tiltY = (maxTilt * (x - 0.5)).toFixed(2);
-                    tile.style.transform = `perspective(${perspective}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(${scale},${scale},${scale})`;
+                    el.style.transform = `perspective(${perspective}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(${scale},${scale},${scale})`;
                 });
             });
-            tile.addEventListener('mouseleave', () => {
+            el.addEventListener('mouseleave', () => {
                 if (raf) cancelAnimationFrame(raf);
-                tile.style.transform = '';
+                el.style.transform = '';
             });
         });
     })();
