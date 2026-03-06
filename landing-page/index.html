@@ -1611,27 +1611,24 @@
             background: var(--border-light); border-radius: 10px; border-bottom-left-radius: 3px; opacity: 0;
         }
         .chat-typing span { width: 5px; height: 5px; background: var(--text-dim); border-radius: 50%; }
-        .svc-chatbot.is-visible .chat-user { animation: chatSlideIn 6s ease infinite; }
-        .svc-chatbot.is-visible .chat-typing { animation: chatTypingCycle 6s ease infinite; }
-        .svc-chatbot.is-visible .chat-ai { animation: chatSlideIn 6s ease 2.5s infinite; }
-        @keyframes chatSlideIn {
-            0% { opacity: 0; transform: translateY(12px) scale(0.9); }
-            10% { opacity: 1; transform: translateY(0) scale(1); }
-            85% { opacity: 1; transform: translateY(0) scale(1); }
-            95% { opacity: 0; transform: translateY(-6px) scale(0.95); }
-            100% { opacity: 0; transform: translateY(12px) scale(0.9); }
+        .svc-chatbot.is-visible .chat-msg { opacity: 1; }
+        .svc-chatbot.is-visible .chat-user { animation: chatBubblePulse 3s ease infinite; }
+        .svc-chatbot.is-visible .chat-ai { animation: chatBubblePulse 3s ease 0.4s infinite; }
+        .svc-chatbot.is-visible .chat-typing { opacity: 1; animation: chatTypingPulse 2s ease infinite; }
+        @keyframes chatBubblePulse {
+            0%, 100% { transform: scale(1); box-shadow: none; }
+            50% { transform: scale(1.03); box-shadow: 0 2px 12px rgba(249,112,102,0.2); }
         }
-        @keyframes chatTypingCycle {
-            0%, 15% { opacity: 0; transform: scale(0.8); }
-            20% { opacity: 1; transform: scale(1); }
-            38% { opacity: 1; transform: scale(1); }
-            42% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 0; }
+        @keyframes chatTypingPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
         }
-        .svc-chatbot.is-visible .chat-typing span:nth-child(1) { animation: dotBounce 0.6s ease infinite; }
-        .svc-chatbot.is-visible .chat-typing span:nth-child(2) { animation: dotBounce 0.6s ease 0.1s infinite; }
-        .svc-chatbot.is-visible .chat-typing span:nth-child(3) { animation: dotBounce 0.6s ease 0.2s infinite; }
+        .svc-chatbot.is-visible .chat-typing span:nth-child(1) { animation: dotBounce 0.8s ease infinite; }
+        .svc-chatbot.is-visible .chat-typing span:nth-child(2) { animation: dotBounce 0.8s ease 0.15s infinite; }
+        .svc-chatbot.is-visible .chat-typing span:nth-child(3) { animation: dotBounce 0.8s ease 0.3s infinite; }
         @keyframes dotBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .svc-chatbot.is-visible .chat-online-dot { animation: onlinePulse 1.5s ease infinite; }
+        @keyframes onlinePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); } 50% { box-shadow: 0 0 6px 3px rgba(34,197,94,0.2); } }
 
         /* --- Service: Document Extraction --- */
         .docs-visual { height: 160px; padding: 1rem; display: flex; align-items: center; justify-content: center; }
@@ -1705,33 +1702,33 @@
             padding-bottom: 4px; border-bottom: 1px solid var(--border);
         }
         .mkt-bar { flex: 1; background: var(--accent); border-radius: 3px 3px 0 0; height: 0; opacity: 0.7; }
-        .svc-marketing.is-visible .mkt-bar-1 { animation: barGrowLoop 6s ease infinite; --bar-h: 25%; }
-        .svc-marketing.is-visible .mkt-bar-2 { animation: barGrowLoop 6s ease 0.1s infinite; --bar-h: 35%; }
-        .svc-marketing.is-visible .mkt-bar-3 { animation: barGrowLoop 6s ease 0.2s infinite; --bar-h: 30%; }
-        .svc-marketing.is-visible .mkt-bar-4 { animation: barGrowLoop 6s ease 0.3s infinite; --bar-h: 50%; }
-        .svc-marketing.is-visible .mkt-bar-5 { animation: barGrowLoop 6s ease 0.4s infinite; --bar-h: 45%; }
-        .svc-marketing.is-visible .mkt-bar-6 { animation: barGrowLoop 6s ease 0.5s infinite; --bar-h: 65%; }
-        .svc-marketing.is-visible .mkt-bar-7 { animation: barGrowLoop 6s ease 0.6s infinite; --bar-h: 85%; }
+        .svc-marketing.is-visible .mkt-bar-1 { animation: barGrowLoop 4s ease infinite; --bar-h: 25%; --bar-low: 10%; }
+        .svc-marketing.is-visible .mkt-bar-2 { animation: barGrowLoop 4s ease 0.2s infinite; --bar-h: 40%; --bar-low: 15%; }
+        .svc-marketing.is-visible .mkt-bar-3 { animation: barGrowLoop 4s ease 0.4s infinite; --bar-h: 30%; --bar-low: 12%; }
+        .svc-marketing.is-visible .mkt-bar-4 { animation: barGrowLoop 4s ease 0.6s infinite; --bar-h: 55%; --bar-low: 20%; }
+        .svc-marketing.is-visible .mkt-bar-5 { animation: barGrowLoop 4s ease 0.8s infinite; --bar-h: 50%; --bar-low: 18%; }
+        .svc-marketing.is-visible .mkt-bar-6 { animation: barGrowLoop 4s ease 1.0s infinite; --bar-h: 70%; --bar-low: 25%; }
+        .svc-marketing.is-visible .mkt-bar-7 { animation: barGrowLoop 4s ease 1.2s infinite; --bar-h: 90%; --bar-low: 35%; }
         @keyframes barGrowLoop {
-            0%, 100% { height: calc(var(--bar-h) * 0.85); opacity: 0.7; }
-            50% { height: var(--bar-h); opacity: 0.9; }
+            0%, 100% { height: var(--bar-low); opacity: 0.5; }
+            50% { height: var(--bar-h); opacity: 1; }
         }
         .mkt-metrics { display: flex; flex-direction: column; gap: 10px; align-items: center; }
         .mkt-metric { display: flex; flex-direction: column; align-items: center; gap: 2px; opacity: 0; }
-        .svc-marketing.is-visible .mkt-metric { opacity: 0.7; }
-        .svc-marketing.is-visible .mkt-metric-1 { animation: metricLoop 6s ease infinite; }
-        .svc-marketing.is-visible .mkt-metric-2 { animation: metricLoop 6s ease 0.2s infinite; }
-        @keyframes metricLoop {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        .svc-marketing.is-visible .mkt-metric { opacity: 1; }
+        .svc-marketing.is-visible .mkt-metric-1 { animation: metricGlow 3s ease infinite; }
+        .svc-marketing.is-visible .mkt-metric-2 { animation: metricGlow 3s ease 0.5s infinite; }
+        @keyframes metricGlow {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
         }
         .mkt-ring-wrap { position: relative; width: 44px; height: 44px; }
         .mkt-ring { width: 44px; height: 44px; display: block; }
         .mkt-ring-progress { stroke-dasharray: 100.5; stroke-dashoffset: 100.5; }
-        .svc-marketing.is-visible .mkt-ring-progress { animation: ringDrawLoop 6s ease infinite; }
+        .svc-marketing.is-visible .mkt-ring-progress { animation: ringDrawLoop 4s ease infinite; }
         @keyframes ringDrawLoop {
-            0%, 100% { stroke-dashoffset: 30; }
-            50% { stroke-dashoffset: 22; }
+            0%, 100% { stroke-dashoffset: 60; }
+            50% { stroke-dashoffset: 15; }
         }
         .mkt-metric-value { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.7rem; font-weight: 700; color: var(--text); }
         .mkt-metric-label { font-size: 0.5rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.03em; }
@@ -1741,7 +1738,7 @@
             padding: 4px 10px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
             border-radius: 20px; opacity: 0;
         }
-        .svc-marketing.is-visible .mkt-badge { animation: metricLoop 6s ease 0.4s infinite; opacity: 0.7; }
+        .svc-marketing.is-visible .mkt-badge { animation: metricGlow 3s ease 0.4s infinite; opacity: 1; }
         .mkt-badge-dot { width: 5px; height: 5px; background: #22c55e; border-radius: 50%; animation: statusPulse 2s ease infinite; }
 
         /* --- Service: Conseil --- */
@@ -1764,14 +1761,26 @@
             background: rgba(245,197,66,0.08); border: 1px solid rgba(245,197,66,0.2);
             border-radius: 20px; opacity: 0;
         }
-        .svc-conseil.is-visible .conseil-step { animation: nodePopLoop 5s ease infinite; opacity: 1; transform: scale(1); }
-        .svc-conseil.is-visible .conseil-step:nth-child(3) { animation-delay: 0.2s; }
-        .svc-conseil.is-visible .conseil-step:nth-child(5) { animation-delay: 0.4s; }
-        .svc-conseil.is-visible .conseil-wire { animation: conseilFadeIn 5s ease 0.2s infinite; }
-        .svc-conseil.is-visible .conseil-label { animation: metricLoop 5s ease 0.5s infinite; }
-        @keyframes conseilFadeIn {
-            0%, 100% { opacity: 0.6; transform: translateY(2px); }
-            50% { opacity: 1; transform: translateY(0); }
+        .svc-conseil.is-visible .conseil-step { opacity: 1; transform: scale(1); }
+        .svc-conseil.is-visible .conseil-step:nth-child(1) { animation: conseilStepGlow 4s ease infinite; }
+        .svc-conseil.is-visible .conseil-step:nth-child(3) { animation: conseilStepGlow 4s ease 0.8s infinite; }
+        .svc-conseil.is-visible .conseil-step:nth-child(5) { animation: conseilStepGlow 4s ease 1.6s infinite; }
+        .svc-conseil.is-visible .conseil-wire { opacity: 0.6; animation: conseilWirePulse 4s ease infinite; }
+        .svc-conseil.is-visible .conseil-steps > .conseil-wire:nth-child(4) { animation-delay: 0.8s; }
+        .svc-conseil.is-visible .conseil-label { opacity: 1; animation: conseilLabelPulse 3s ease infinite; }
+        @keyframes conseilStepGlow {
+            0%, 100% { border-color: var(--border-light); box-shadow: none; }
+            30% { border-color: var(--gold); box-shadow: 0 0 12px rgba(245,197,66,0.3); }
+            60% { border-color: var(--gold); box-shadow: none; }
+        }
+        @keyframes conseilWirePulse {
+            0%, 100% { opacity: 0.4; background: var(--border-light); }
+            30% { opacity: 1; background: var(--gold); }
+            60% { opacity: 0.6; background: var(--border-light); }
+        }
+        @keyframes conseilLabelPulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); border-color: rgba(245,197,66,0.4); }
         }
 
         /* --- Service: Sites & Landing Pages --- */
@@ -1793,14 +1802,23 @@
         .lp-hero-block { height: 28px; border-radius: 4px; background: linear-gradient(135deg, var(--accent-soft), var(--lagoon-soft)); opacity: 0; }
         .lp-text-block { height: 4px; border-radius: 2px; background: var(--border-light); opacity: 0; }
         .lp-cta-block { width: 50px; height: 14px; border-radius: 3px; background: var(--accent); opacity: 0; margin-top: 2px; }
-        .svc-landing.is-visible .lp-hero-block { animation: lpBlockIn 5s ease infinite; }
-        .svc-landing.is-visible .lp-text-block:nth-child(2) { animation: lpBlockIn 5s ease 0.15s infinite; }
-        .svc-landing.is-visible .lp-text-block:nth-child(3) { animation: lpBlockIn 5s ease 0.25s infinite; }
-        .svc-landing.is-visible .lp-text-block:nth-child(4) { animation: lpBlockIn 5s ease 0.35s infinite; }
-        .svc-landing.is-visible .lp-cta-block { animation: lpBlockIn 5s ease 0.45s infinite; }
-        @keyframes lpBlockIn {
-            0%, 100% { opacity: 0.6; transform: translateY(2px); }
-            50% { opacity: 1; transform: translateY(0); }
+        .svc-landing.is-visible .lp-hero-block { animation: lpHeroShimmer 4s ease infinite; opacity: 1; }
+        .svc-landing.is-visible .lp-text-block { opacity: 1; }
+        .svc-landing.is-visible .lp-text-block:nth-child(2) { animation: lpLineSlide 3s ease infinite; }
+        .svc-landing.is-visible .lp-text-block:nth-child(3) { animation: lpLineSlide 3s ease 0.3s infinite; }
+        .svc-landing.is-visible .lp-text-block:nth-child(4) { animation: lpLineSlide 3s ease 0.6s infinite; }
+        .svc-landing.is-visible .lp-cta-block { opacity: 1; animation: lpCtaPulse 2s ease infinite; }
+        @keyframes lpHeroShimmer {
+            0%, 100% { background: linear-gradient(135deg, var(--accent-soft), var(--lagoon-soft)); }
+            50% { background: linear-gradient(135deg, var(--lagoon-soft), var(--accent-soft)); box-shadow: 0 2px 12px rgba(249,112,102,0.15); }
+        }
+        @keyframes lpLineSlide {
+            0%, 100% { width: 70%; opacity: 0.6; }
+            50% { width: 95%; opacity: 1; }
+        }
+        @keyframes lpCtaPulse {
+            0%, 100% { transform: scale(1); box-shadow: none; }
+            50% { transform: scale(1.08); box-shadow: 0 2px 8px rgba(249,112,102,0.3); }
         }
 
         /* --- Service: Applications --- */
@@ -1820,15 +1838,29 @@
         .app-sidebar-item { height: 8px; border-radius: 2px; background: var(--border-light); opacity: 0; }
         .app-sidebar-active { background: var(--lagoon); }
         .app-arrow { font-size: 0.7rem; color: var(--text-dim); opacity: 0; }
-        .svc-apps.is-visible .app-row:nth-child(1) { animation: lpBlockIn 6s ease infinite; }
-        .svc-apps.is-visible .app-row:nth-child(2) { animation: lpBlockIn 6s ease 0.1s infinite; }
-        .svc-apps.is-visible .app-row:nth-child(3) { animation: lpBlockIn 6s ease 0.2s infinite; }
-        .svc-apps.is-visible .app-row:nth-child(4) { animation: lpBlockIn 6s ease 0.3s infinite; }
-        .svc-apps.is-visible .app-sidebar-item:nth-child(1) { animation: lpBlockIn 6s ease 0.1s infinite; }
-        .svc-apps.is-visible .app-sidebar-item:nth-child(2) { animation: lpBlockIn 6s ease 0.2s infinite; }
-        .svc-apps.is-visible .app-sidebar-item:nth-child(3) { animation: lpBlockIn 6s ease 0.3s infinite; }
-        .svc-apps.is-visible .app-sidebar-item:nth-child(4) { animation: lpBlockIn 6s ease 0.4s infinite; }
-        .svc-apps.is-visible .app-arrow { animation: lpBlockIn 6s ease 0.2s infinite; }
+        .svc-apps.is-visible .app-row { opacity: 1; }
+        .svc-apps.is-visible .app-row:nth-child(1) { animation: appRowLoad 3s ease infinite; }
+        .svc-apps.is-visible .app-row:nth-child(2) { animation: appRowLoad 3s ease 0.2s infinite; }
+        .svc-apps.is-visible .app-row:nth-child(3) { animation: appRowLoad 3s ease 0.4s infinite; }
+        .svc-apps.is-visible .app-row:nth-child(4) { animation: appRowLoad 3s ease 0.6s infinite; }
+        .svc-apps.is-visible .app-sidebar-item { opacity: 1; }
+        .svc-apps.is-visible .app-sidebar-item:nth-child(1) { animation: appSidebarPing 4s ease infinite; }
+        .svc-apps.is-visible .app-sidebar-item:nth-child(2) { animation: appSidebarPing 4s ease 0.3s infinite; }
+        .svc-apps.is-visible .app-sidebar-item:nth-child(3) { animation: appSidebarPing 4s ease 0.6s infinite; }
+        .svc-apps.is-visible .app-sidebar-item:nth-child(4) { animation: appSidebarPing 4s ease 0.9s infinite; }
+        .svc-apps.is-visible .app-arrow { opacity: 1; animation: appArrowBounce 2s ease infinite; }
+        @keyframes appRowLoad {
+            0%, 100% { opacity: 0.5; transform: scaleX(0.7); transform-origin: left; }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+        @keyframes appSidebarPing {
+            0%, 100% { opacity: 0.5; border-left: 2px solid transparent; }
+            50% { opacity: 1; border-left: 2px solid var(--lagoon); }
+        }
+        @keyframes appArrowBounce {
+            0%, 100% { transform: translateX(0); opacity: 0.6; }
+            50% { transform: translateX(4px); opacity: 1; }
+        }
 
         /* --- Service: Intégrations API --- */
         .api-visual { height: 100%; padding: 1rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
