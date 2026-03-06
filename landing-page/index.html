@@ -906,123 +906,287 @@
             text-overflow: ellipsis;
             overflow: hidden;
         }
-        /* ===== ANIMATED MINI VISUALS ===== */
-        .mv { width: 100%; height: 100%; position: relative; overflow: hidden; }
+        /* ===== REALISTIC MINI SITE VISUALS ===== */
+        /* Shared base for all fake sites */
+        .fk { width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; font-size: 5px; line-height: 1.3; }
+        .fk * { box-sizing: border-box; }
 
-        /* --- TILE 1: Animated fake sites --- */
-        /* Dashboard with animated bars */
-        .mv-dash { display: flex; flex-direction: column; height: 100%; padding: 10px 14px; gap: 6px; background: linear-gradient(180deg, #0d1117, #161b22); }
-        .mv-dash-top { display: flex; gap: 8px; }
-        .mv-dash-stat { flex: 1; height: 28px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); position: relative; overflow: hidden; }
-        .mv-dash-stat::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; border-radius: 0 0 6px 6px; animation: mvPulseBar 2s ease infinite; }
-        .mv-dash-stat:nth-child(1)::after { background: var(--accent); }
-        .mv-dash-stat:nth-child(2)::after { background: var(--lagoon); animation-delay: 0.3s; }
-        .mv-dash-stat:nth-child(3)::after { background: var(--gold); animation-delay: 0.6s; }
-        .mv-dash-bars { display: flex; align-items: flex-end; gap: 4px; flex: 1; padding-top: 4px; }
-        .mv-dash-bar { flex: 1; border-radius: 3px 3px 0 0; animation: mvGrowBar 1.5s ease-out forwards; transform-origin: bottom; }
-        @keyframes mvGrowBar { 0% { transform: scaleY(0); } 100% { transform: scaleY(1); } }
-        @keyframes mvPulseBar { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+        /* --- Fake site topbar --- */
+        .fk-nav { display: flex; align-items: center; padding: 4px 8px; gap: 6px; background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
+        .fk-logo { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+        .fk-nav-links { display: flex; gap: 6px; margin-left: auto; }
+        .fk-nav-link { width: 16px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.2); }
+        .fk-nav-btn { width: 22px; height: 8px; border-radius: 4px; margin-left: 6px; flex-shrink: 0; }
 
-        /* Landing page with floating elements */
-        .mv-landing { display: flex; flex-direction: column; height: 100%; background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 12px; gap: 6px; }
-        .mv-landing-hero { height: 14px; width: 70%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), #ff6b9d); animation: mvShimmer 2s ease infinite; background-size: 200% 100%; }
-        .mv-landing-sub { height: 6px; width: 50%; border-radius: 3px; background: rgba(255,255,255,0.12); }
-        .mv-landing-btn { width: 50px; height: 16px; border-radius: 8px; background: var(--accent); margin-top: 4px; animation: mvFloat 3s ease-in-out infinite; }
-        .mv-landing-cards { display: flex; gap: 6px; margin-top: auto; }
-        .mv-landing-card { flex: 1; height: 30px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); animation: mvFadeUp 0.8s ease-out forwards; opacity: 0; }
-        .mv-landing-card:nth-child(1) { animation-delay: 0.2s; }
-        .mv-landing-card:nth-child(2) { animation-delay: 0.5s; }
-        .mv-landing-card:nth-child(3) { animation-delay: 0.8s; }
-        @keyframes mvFadeUp { to { opacity: 1; transform: translateY(0); } from { opacity: 0; transform: translateY(8px); } }
-        @keyframes mvShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        @keyframes mvFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+        /* --- Sidebar layout --- */
+        .fk-body { display: flex; flex: 1; overflow: hidden; }
+        .fk-side { width: 36px; flex-shrink: 0; padding: 6px 4px; display: flex; flex-direction: column; gap: 4px; background: rgba(0,0,0,0.3); border-right: 1px solid rgba(255,255,255,0.05); }
+        .fk-side-item { height: 5px; border-radius: 2px; background: rgba(255,255,255,0.1); }
+        .fk-side-item.active { background: rgba(255,255,255,0.25); }
+        .fk-main { flex: 1; padding: 6px 8px; display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
 
-        /* E-commerce / booking */
-        .mv-booking { display: flex; flex-direction: column; height: 100%; background: linear-gradient(180deg, #0f172a, #1e293b); padding: 10px 14px; gap: 5px; }
-        .mv-booking-header { height: 8px; width: 45%; border-radius: 4px; background: var(--lagoon); }
-        .mv-booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; flex: 1; }
-        .mv-booking-slot { border-radius: 5px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.03); position: relative; overflow: hidden; }
-        .mv-booking-slot.booked::after { content: ''; position: absolute; inset: 3px; border-radius: 3px; background: rgba(20,184,166,0.2); border: 1px solid rgba(20,184,166,0.4); animation: mvPulse 2s ease infinite; }
-        @keyframes mvPulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+        /* --- Content elements --- */
+        .fk-title { height: 6px; width: 55%; border-radius: 2px; background: rgba(255,255,255,0.35); }
+        .fk-text { height: 3px; border-radius: 1px; background: rgba(255,255,255,0.1); }
+        .fk-btn { height: 8px; border-radius: 4px; display: inline-block; }
+        .fk-card { border-radius: 4px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.03); padding: 5px; display: flex; flex-direction: column; gap: 3px; }
+        .fk-card-img { height: 18px; border-radius: 3px; background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08)); }
+        .fk-stat { border-radius: 5px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); padding: 4px 5px; display: flex; flex-direction: column; gap: 2px; }
+        .fk-stat-val { height: 7px; width: 40%; border-radius: 2px; }
+        .fk-stat-label { height: 3px; width: 70%; border-radius: 1px; background: rgba(255,255,255,0.12); }
+        .fk-bar-wrap { display: flex; align-items: flex-end; gap: 2px; flex: 1; }
+        .fk-bar { flex: 1; border-radius: 2px 2px 0 0; transform-origin: bottom; animation: fkGrow 1.5s ease-out forwards; }
+        .fk-table { display: flex; flex-direction: column; gap: 2px; }
+        .fk-row { display: flex; gap: 4px; align-items: center; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .fk-cell { height: 3px; border-radius: 1px; background: rgba(255,255,255,0.1); }
+        .fk-badge { height: 5px; width: 14px; border-radius: 3px; }
+        .fk-input { height: 8px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
+        .fk-avatar { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .fk-dots { display: flex; gap: 2px; }
+        .fk-dot { width: 3px; height: 3px; border-radius: 50%; }
 
-        /* Map interactive */
-        .mv-map { height: 100%; background: linear-gradient(180deg, #0c1222, #1a2332); position: relative; overflow: hidden; }
-        .mv-map-pin { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: mvPing 2s ease infinite; }
-        .mv-map-pin::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--accent); animation: mvPing 2s ease infinite; }
-        @keyframes mvPing { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+        /* --- Animations --- */
+        @keyframes fkGrow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+        @keyframes fkPulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+        @keyframes fkSlide { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+        @keyframes fkFadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fkShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes fkFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+        @keyframes fkBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes fkCountUp { from { width: 20%; } to { width: 100%; } }
+        @keyframes fkScanLine { 0% { top: 0; } 100% { top: 90%; } }
+        @keyframes fkTypeIn { from { width: 0; } to { width: 80%; } }
+        @keyframes fkNodePop { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fkDrawArrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+        @keyframes fkCheckmark { from { stroke-dashoffset: 12; } to { stroke-dashoffset: 0; } }
 
-        /* --- TILE 2: Animated automations --- */
-        /* Chatbot conversation */
-        .mv-chat { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 12px; justify-content: center; background: linear-gradient(180deg, #0d1117, #1a1f2e); }
-        .mv-bubble { height: 14px; border-radius: 8px; animation: mvSlideIn 0.5s ease forwards; opacity: 0; }
-        .mv-bubble-l { background: linear-gradient(90deg, var(--lagoon), #2dd4bf); width: 65%; }
-        .mv-bubble-r { background: linear-gradient(90deg, var(--accent), #ff8a80); width: 50%; align-self: flex-end; }
-        .mv-bubble:nth-child(1) { animation-delay: 0.2s; }
-        .mv-bubble:nth-child(2) { animation-delay: 0.8s; }
-        .mv-bubble:nth-child(3) { animation-delay: 1.4s; }
-        .mv-bubble:nth-child(4) { animation-delay: 2s; }
-        @keyframes mvSlideIn { to { opacity: 0.9; transform: translateX(0); } from { opacity: 0; transform: translateX(-10px); } }
+        /* ============ TILE 1: FAKE WEBSITES ============ */
+        /* --- Dashboard Analytics --- */
+        .fk-dashboard { background: linear-gradient(180deg, #0d1117, #161b22); }
+        .fk-dashboard .fk-logo { background: var(--accent); }
+        .fk-dashboard .fk-nav-btn { background: var(--accent); }
+        .fk-dashboard .fk-side-item:nth-child(1) { background: var(--accent); }
+        .fk-dashboard .fk-stats-row { display: flex; gap: 4px; }
+        .fk-dashboard .fk-stat-val { background: var(--accent); }
+        .fk-dashboard .fk-stat:nth-child(2) .fk-stat-val { background: var(--lagoon); }
+        .fk-dashboard .fk-stat:nth-child(3) .fk-stat-val { background: var(--gold); }
+        .fk-dashboard .fk-chart { flex: 1; display: flex; align-items: flex-end; gap: 2px; padding-top: 4px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .fk-dashboard .fk-bar:nth-child(odd) { background: var(--accent); }
+        .fk-dashboard .fk-bar:nth-child(even) { background: rgba(249,112,102,0.3); }
 
-        /* Workflow pipeline nodes */
-        .mv-flow { display: flex; align-items: center; justify-content: center; gap: 6px; height: 100%; padding: 12px; background: linear-gradient(180deg, #0d1117, #161b22); }
-        .mv-flow-node { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; animation: mvNodePop 0.4s ease forwards; opacity: 0; transform: scale(0); }
-        .mv-flow-node:nth-child(1) { background: rgba(249,112,102,0.2); border: 2px solid var(--accent); animation-delay: 0.2s; }
-        .mv-flow-node:nth-child(3) { background: rgba(20,184,166,0.2); border: 2px solid var(--lagoon); animation-delay: 0.6s; }
-        .mv-flow-node:nth-child(5) { background: rgba(245,197,66,0.2); border: 2px solid var(--gold); animation-delay: 1s; }
-        .mv-flow-arrow { width: 20px; height: 2px; background: linear-gradient(90deg, transparent, var(--lagoon)); animation: mvArrowDraw 0.3s ease forwards; transform: scaleX(0); transform-origin: left; }
-        .mv-flow-arrow:nth-child(2) { animation-delay: 0.4s; }
-        .mv-flow-arrow:nth-child(4) { animation-delay: 0.8s; }
-        @keyframes mvNodePop { to { opacity: 1; transform: scale(1); } }
-        @keyframes mvArrowDraw { to { transform: scaleX(1); } }
+        /* --- Landing Page --- */
+        .fk-landingpage { background: linear-gradient(180deg, #0a0a1a, #141428); }
+        .fk-landingpage .fk-logo { background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 50%; }
+        .fk-landingpage .fk-nav-btn { background: linear-gradient(90deg, #6366f1, #a855f7); }
+        .fk-landingpage .fk-hero { padding: 10px 12px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .fk-landingpage .fk-hero-title { height: 8px; width: 75%; border-radius: 3px; background: linear-gradient(90deg, #fff, #c4b5fd); animation: fkShimmer 3s ease infinite; background-size: 200% 100%; }
+        .fk-landingpage .fk-hero-sub { height: 3px; width: 60%; border-radius: 2px; background: rgba(255,255,255,0.15); }
+        .fk-landingpage .fk-hero-cta { width: 40px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #6366f1, #a855f7); animation: fkFloat 3s ease-in-out infinite; }
+        .fk-landingpage .fk-features { display: flex; gap: 5px; padding: 0 12px; margin-top: auto; padding-bottom: 8px; }
+        .fk-landingpage .fk-feat-card { flex: 1; border-radius: 5px; padding: 5px; border: 1px solid rgba(99,102,241,0.2); background: rgba(99,102,241,0.05); display: flex; flex-direction: column; gap: 3px; animation: fkFadeUp 0.6s ease forwards; opacity: 0; }
+        .fk-landingpage .fk-feat-card:nth-child(1) { animation-delay: 0.2s; }
+        .fk-landingpage .fk-feat-card:nth-child(2) { animation-delay: 0.5s; }
+        .fk-landingpage .fk-feat-card:nth-child(3) { animation-delay: 0.8s; }
+        .fk-landingpage .fk-feat-icon { width: 10px; height: 10px; border-radius: 4px; }
+        .fk-landingpage .fk-feat-card:nth-child(1) .fk-feat-icon { background: rgba(99,102,241,0.4); }
+        .fk-landingpage .fk-feat-card:nth-child(2) .fk-feat-icon { background: rgba(168,85,247,0.4); }
+        .fk-landingpage .fk-feat-card:nth-child(3) .fk-feat-icon { background: rgba(236,72,153,0.4); }
 
-        /* Data extraction / scan */
-        .mv-extract { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 14px; justify-content: center; background: linear-gradient(180deg, #0d1117, #1a1520); }
-        .mv-extract-line { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--accent)); animation: mvScanSlide 2s ease infinite; background-size: 200% 100%; }
-        @keyframes mvScanSlide { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+        /* --- E-commerce / Marketplace --- */
+        .fk-ecommerce { background: linear-gradient(180deg, #0f172a, #1e293b); }
+        .fk-ecommerce .fk-logo { background: var(--lagoon); border-radius: 50%; }
+        .fk-ecommerce .fk-nav-btn { background: var(--lagoon); }
+        .fk-ecommerce .fk-search { height: 9px; border-radius: 5px; border: 1px solid rgba(20,184,166,0.3); background: rgba(0,0,0,0.3); margin-bottom: 3px; position: relative; overflow: hidden; }
+        .fk-ecommerce .fk-search::after { content: ''; position: absolute; left: 6px; top: 50%; transform: translateY(-50%); width: 0; height: 3px; border-radius: 1px; background: rgba(255,255,255,0.25); animation: fkTypeIn 3s ease infinite; }
+        .fk-ecommerce .fk-products { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; flex: 1; }
+        .fk-ecommerce .fk-product { border-radius: 4px; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; display: flex; flex-direction: column; }
+        .fk-ecommerce .fk-prod-img { flex: 1; background: linear-gradient(135deg, rgba(20,184,166,0.1), rgba(20,184,166,0.02)); }
+        .fk-ecommerce .fk-prod-info { padding: 2px 3px; }
+        .fk-ecommerce .fk-prod-price { height: 3px; width: 60%; border-radius: 1px; background: var(--lagoon); }
+        .fk-ecommerce .fk-product:nth-child(2) .fk-prod-img { background: linear-gradient(135deg, rgba(249,112,102,0.1), rgba(249,112,102,0.02)); }
+        .fk-ecommerce .fk-product:nth-child(3) .fk-prod-img { background: linear-gradient(135deg, rgba(245,197,66,0.1), rgba(245,197,66,0.02)); }
+        .fk-ecommerce .fk-product:nth-child(4) .fk-prod-img { background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(99,102,241,0.02)); }
+        .fk-ecommerce .fk-product:nth-child(5) .fk-prod-img { background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(168,85,247,0.02)); }
+        .fk-ecommerce .fk-product:nth-child(6) .fk-prod-img { background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(236,72,153,0.02)); }
 
-        /* Analytics bars */
-        .mv-analytics { display: flex; align-items: flex-end; gap: 6px; height: 100%; padding: 14px 18px 10px; background: linear-gradient(180deg, #0d1117, #111827); }
-        .mv-abar { flex: 1; border-radius: 4px 4px 0 0; animation: mvGrowBar 1.2s ease-out forwards; transform-origin: bottom; transform: scaleY(0); }
+        /* --- Booking App --- */
+        .fk-bookingapp { background: linear-gradient(180deg, #0d1117, #1a1f2e); }
+        .fk-bookingapp .fk-logo { background: #25D366; border-radius: 50%; }
+        .fk-bookingapp .fk-nav-btn { background: #25D366; }
+        .fk-bookingapp .fk-calendar { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .fk-bookingapp .fk-cal-header { display: flex; justify-content: space-between; align-items: center; }
+        .fk-bookingapp .fk-cal-month { height: 5px; width: 30px; border-radius: 2px; background: rgba(255,255,255,0.3); }
+        .fk-bookingapp .fk-cal-arrows { display: flex; gap: 3px; }
+        .fk-bookingapp .fk-cal-arr { width: 6px; height: 6px; border-radius: 2px; background: rgba(255,255,255,0.1); }
+        .fk-bookingapp .fk-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; flex: 1; }
+        .fk-bookingapp .fk-cal-day { border-radius: 2px; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: center; position: relative; }
+        .fk-bookingapp .fk-cal-day.booked::after { content: ''; position: absolute; inset: 1px; border-radius: 2px; background: rgba(37,211,102,0.2); border: 1px solid rgba(37,211,102,0.4); animation: fkPulse 2.5s ease infinite; }
+        .fk-bookingapp .fk-cal-day.today { border: 1px solid #25D366; }
+        .fk-bookingapp .fk-cal-day.selected { background: #25D366; }
 
-        /* --- TILE 3: Animated conseil --- */
-        /* Checklist animated */
-        .mv-check { display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 14px 18px; justify-content: center; background: linear-gradient(180deg, #0d1117, #0f1a12); }
-        .mv-check-row { display: flex; align-items: center; gap: 8px; animation: mvFadeUp 0.5s ease forwards; opacity: 0; }
-        .mv-check-row:nth-child(1) { animation-delay: 0.3s; }
-        .mv-check-row:nth-child(2) { animation-delay: 0.8s; }
-        .mv-check-row:nth-child(3) { animation-delay: 1.3s; }
-        .mv-check-row:nth-child(4) { animation-delay: 1.8s; }
-        .mv-check-box { width: 14px; height: 14px; border-radius: 3px; border: 2px solid var(--lagoon); flex-shrink: 0; transition: background 0.3s; }
-        .mv-check-box.done { background: var(--lagoon); }
-        .mv-check-line { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.15); flex: 1; }
+        /* --- Map App --- */
+        .fk-mapapp { background: #0c1222; position: relative; }
+        .fk-mapapp .fk-nav { position: absolute; top: 0; left: 0; right: 0; z-index: 2; background: rgba(12,18,34,0.85); backdrop-filter: blur(4px); }
+        .fk-mapapp .fk-logo { background: var(--accent); }
+        .fk-mapapp .fk-nav-btn { background: var(--accent); }
+        .fk-mapapp .fk-map-bg { position: absolute; inset: 0; background:
+            radial-gradient(ellipse 60% 40% at 30% 40%, rgba(20,184,166,0.08), transparent),
+            radial-gradient(ellipse 50% 50% at 70% 60%, rgba(99,102,241,0.06), transparent),
+            linear-gradient(180deg, #0c1222 0%, #1a2332 100%); }
+        .fk-mapapp .fk-map-roads { position: absolute; inset: 0; }
+        .fk-mapapp .fk-road { position: absolute; background: rgba(255,255,255,0.04); border-radius: 1px; }
+        .fk-mapapp .fk-pin { position: absolute; width: 8px; height: 8px; border-radius: 50%; z-index: 1; }
+        .fk-mapapp .fk-pin::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid; animation: fkPing 2s ease infinite; opacity: 0; }
+        .fk-mapapp .fk-pin.coral { background: var(--accent); }
+        .fk-mapapp .fk-pin.coral::before { border-color: var(--accent); }
+        .fk-mapapp .fk-pin.teal { background: var(--lagoon); }
+        .fk-mapapp .fk-pin.teal::before { border-color: var(--lagoon); }
+        .fk-mapapp .fk-pin.gold { background: var(--gold); }
+        .fk-mapapp .fk-pin.gold::before { border-color: var(--gold); }
+        .fk-mapapp .fk-map-card { position: absolute; bottom: 8px; left: 8px; right: 8px; z-index: 2; background: rgba(13,17,23,0.9); border: 1px solid rgba(255,255,255,0.08); border-radius: 5px; padding: 5px 6px; display: flex; gap: 5px; align-items: center; animation: fkFadeUp 0.6s ease forwards; }
+        .fk-mapapp .fk-map-card-img { width: 18px; height: 18px; border-radius: 3px; background: linear-gradient(135deg, rgba(20,184,166,0.15), rgba(20,184,166,0.05)); flex-shrink: 0; }
+        .fk-mapapp .fk-map-card-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        @keyframes fkPing { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.5); opacity: 0; } }
 
-        /* Timeline animated */
-        .mv-timeline { display: flex; align-items: center; height: 100%; padding: 0 18px; gap: 0; background: linear-gradient(180deg, #0d1117, #1a1520); }
-        .mv-tl-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; animation: mvNodePop 0.4s ease forwards; opacity: 0; transform: scale(0); }
-        .mv-tl-dot:nth-child(1) { background: var(--gold); animation-delay: 0.2s; }
-        .mv-tl-dot:nth-child(3) { background: var(--accent); animation-delay: 0.6s; }
-        .mv-tl-dot:nth-child(5) { background: var(--lagoon); animation-delay: 1s; }
-        .mv-tl-dot:nth-child(7) { background: rgba(255,255,255,0.2); animation-delay: 1.4s; }
-        .mv-tl-line { height: 2px; flex: 1; background: rgba(245,197,66,0.3); animation: mvArrowDraw 0.3s ease forwards; transform: scaleX(0); transform-origin: left; }
-        .mv-tl-line:nth-child(2) { animation-delay: 0.4s; }
-        .mv-tl-line:nth-child(4) { animation-delay: 0.8s; }
-        .mv-tl-line:nth-child(6) { animation-delay: 1.2s; }
+        /* ============ TILE 2: FAKE AUTOMATION UIs ============ */
+        /* --- WhatsApp Chat --- */
+        .fk-whatsapp { background: linear-gradient(180deg, #0b1014, #111b21); }
+        .fk-whatsapp .fk-wa-header { display: flex; align-items: center; gap: 4px; padding: 4px 6px; background: #1f2c33; border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
+        .fk-whatsapp .fk-wa-avatar { width: 12px; height: 12px; border-radius: 50%; background: #25D366; }
+        .fk-whatsapp .fk-wa-name { height: 4px; width: 28px; border-radius: 2px; background: rgba(255,255,255,0.3); }
+        .fk-whatsapp .fk-wa-status { height: 2px; width: 16px; border-radius: 1px; background: #25D366; }
+        .fk-whatsapp .fk-wa-chat { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 6px; justify-content: flex-end; }
+        .fk-whatsapp .fk-wa-msg { max-width: 75%; padding: 3px 5px; border-radius: 4px; display: flex; flex-direction: column; gap: 1px; }
+        .fk-whatsapp .fk-wa-msg.them { background: #1f2c33; align-self: flex-start; border-top-left-radius: 0; }
+        .fk-whatsapp .fk-wa-msg.me { background: #005c4b; align-self: flex-end; border-top-right-radius: 0; }
+        .fk-whatsapp .fk-wa-msg-text { height: 3px; border-radius: 1px; background: rgba(255,255,255,0.2); }
+        .fk-whatsapp .fk-wa-msg.me .fk-wa-msg-text { background: rgba(255,255,255,0.25); }
+        .fk-whatsapp .fk-wa-typing { display: flex; gap: 2px; padding: 4px 6px; align-self: flex-start; background: #1f2c33; border-radius: 4px; }
+        .fk-whatsapp .fk-wa-typing-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.3); animation: fkBlink 1.4s infinite; }
+        .fk-whatsapp .fk-wa-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .fk-whatsapp .fk-wa-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        .fk-whatsapp .fk-wa-input { display: flex; gap: 3px; padding: 4px 6px; background: #1f2c33; align-items: center; flex-shrink: 0; }
+        .fk-whatsapp .fk-wa-inputbox { flex: 1; height: 10px; border-radius: 5px; background: #2a3942; }
+        .fk-whatsapp .fk-wa-send { width: 10px; height: 10px; border-radius: 50%; background: #25D366; }
 
-        /* Growth graph */
-        .mv-growth { height: 100%; padding: 14px; background: linear-gradient(180deg, #0d1117, #111827); position: relative; overflow: hidden; }
-        .mv-growth-line { position: absolute; bottom: 20px; left: 14px; right: 14px; height: 60px; }
-        .mv-growth-path { fill: none; stroke: var(--lagoon); stroke-width: 2; stroke-dasharray: 200; stroke-dashoffset: 200; animation: mvDrawLine 2s ease forwards; }
-        .mv-growth-fill { fill: url(#growthGrad); opacity: 0; animation: mvFadeIn 1s ease forwards 1.5s; }
-        @keyframes mvDrawLine { to { stroke-dashoffset: 0; } }
-        @keyframes mvFadeIn { to { opacity: 0.3; } }
+        /* --- Workflow Builder --- */
+        .fk-workflow { background: linear-gradient(180deg, #0d1117, #161b22); display: flex; flex-direction: column; width: 100%; height: 100%; }
+        .fk-workflow .fk-wf-toolbar { display: flex; align-items: center; gap: 4px; padding: 3px 6px; background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
+        .fk-workflow .fk-wf-toolbar-btn { width: 8px; height: 6px; border-radius: 2px; background: rgba(255,255,255,0.1); }
+        .fk-workflow .fk-wf-canvas { flex: 1; position: relative; background: radial-gradient(circle at 50% 50%, rgba(99,102,241,0.03), transparent); overflow: hidden; }
+        .fk-wf-node { position: absolute; width: 36px; height: 18px; border-radius: 4px; display: flex; align-items: center; gap: 3px; padding: 0 4px; animation: fkNodePop 0.5s ease forwards; opacity: 0; }
+        .fk-wf-node-icon { width: 8px; height: 8px; border-radius: 3px; flex-shrink: 0; }
+        .fk-wf-node-label { flex: 1; height: 3px; border-radius: 1px; background: rgba(255,255,255,0.2); }
+        .fk-wf-connector { position: absolute; height: 2px; transform-origin: left; animation: fkDrawArrow 0.4s ease forwards; transform: scaleX(0); }
 
-        /* Team collaboration */
-        .mv-team { display: flex; gap: 10px; height: 100%; align-items: center; justify-content: center; padding: 14px; background: linear-gradient(180deg, #0d1117, #1a1520); }
-        .mv-avatar { width: 28px; height: 28px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); animation: mvFloat 3s ease-in-out infinite; }
-        .mv-avatar:nth-child(1) { background: var(--lagoon); animation-delay: 0s; }
-        .mv-avatar:nth-child(2) { background: var(--accent); animation-delay: 0.5s; }
-        .mv-avatar:nth-child(3) { background: var(--gold); animation-delay: 1s; }
-        .mv-avatar:nth-child(4) { background: #a78bfa; animation-delay: 1.5s; }
+        /* --- Email Automation --- */
+        .fk-emailauto { background: linear-gradient(180deg, #0d1117, #1a1520); }
+        .fk-emailauto .fk-logo { background: #ea580c; }
+        .fk-emailauto .fk-nav-btn { background: #ea580c; }
+        .fk-emailauto .fk-email-list { flex: 1; display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+        .fk-emailauto .fk-email-item { display: flex; gap: 4px; align-items: center; padding: 3px 4px; border-radius: 3px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); animation: fkFadeUp 0.4s ease forwards; opacity: 0; }
+        .fk-emailauto .fk-email-item:nth-child(1) { animation-delay: 0.1s; }
+        .fk-emailauto .fk-email-item:nth-child(2) { animation-delay: 0.3s; }
+        .fk-emailauto .fk-email-item:nth-child(3) { animation-delay: 0.5s; }
+        .fk-emailauto .fk-email-item:nth-child(4) { animation-delay: 0.7s; }
+        .fk-emailauto .fk-email-icon { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+        .fk-emailauto .fk-email-item:nth-child(1) .fk-email-icon { background: rgba(234,88,12,0.3); border: 1px solid #ea580c; }
+        .fk-emailauto .fk-email-item:nth-child(2) .fk-email-icon { background: rgba(20,184,166,0.3); border: 1px solid var(--lagoon); }
+        .fk-emailauto .fk-email-item:nth-child(3) .fk-email-icon { background: rgba(99,102,241,0.3); border: 1px solid #6366f1; }
+        .fk-emailauto .fk-email-item:nth-child(4) .fk-email-icon { background: rgba(245,197,66,0.3); border: 1px solid var(--gold); }
+        .fk-emailauto .fk-email-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .fk-emailauto .fk-email-subj { height: 3px; width: 70%; border-radius: 1px; background: rgba(255,255,255,0.2); }
+        .fk-emailauto .fk-email-preview { height: 2px; width: 90%; border-radius: 1px; background: rgba(255,255,255,0.08); }
+        .fk-emailauto .fk-email-badge { height: 5px; width: 12px; border-radius: 3px; background: #25D366; flex-shrink: 0; }
+
+        /* --- Analytics Dashboard --- */
+        .fk-analyticsdash { background: linear-gradient(180deg, #0d1117, #111827); }
+        .fk-analyticsdash .fk-logo { background: #6366f1; }
+        .fk-analyticsdash .fk-nav-btn { background: #6366f1; }
+        .fk-analyticsdash .fk-an-top { display: flex; gap: 4px; margin-bottom: 3px; }
+        .fk-analyticsdash .fk-an-metric { flex: 1; border-radius: 4px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); padding: 3px 4px; display: flex; flex-direction: column; gap: 2px; }
+        .fk-analyticsdash .fk-an-val { height: 5px; width: 50%; border-radius: 2px; }
+        .fk-analyticsdash .fk-an-metric:nth-child(1) .fk-an-val { background: #6366f1; }
+        .fk-analyticsdash .fk-an-metric:nth-child(2) .fk-an-val { background: var(--lagoon); }
+        .fk-analyticsdash .fk-an-metric:nth-child(3) .fk-an-val { background: var(--accent); }
+        .fk-analyticsdash .fk-an-chart { flex: 1; display: flex; align-items: flex-end; gap: 2px; padding-top: 3px; }
+        .fk-analyticsdash .fk-an-bar { flex: 1; border-radius: 2px 2px 0 0; animation: fkGrow 1.2s ease-out forwards; transform-origin: bottom; }
+
+        /* ============ TILE 3: FAKE CONSEIL UIs ============ */
+        /* --- Audit Report --- */
+        .fk-audit { background: linear-gradient(180deg, #0d1117, #0f1a12); }
+        .fk-audit .fk-logo { background: var(--gold); }
+        .fk-audit .fk-nav-btn { background: var(--gold); }
+        .fk-audit .fk-audit-score { display: flex; align-items: center; gap: 6px; padding: 4px 0; }
+        .fk-audit .fk-score-ring { width: 24px; height: 24px; border-radius: 50%; border: 3px solid; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .fk-audit .fk-score-ring.good { border-color: var(--lagoon); }
+        .fk-audit .fk-score-ring.warn { border-color: var(--gold); }
+        .fk-audit .fk-score-text { height: 4px; width: 8px; border-radius: 1px; background: rgba(255,255,255,0.4); }
+        .fk-audit .fk-score-details { display: flex; flex-direction: column; gap: 2px; }
+        .fk-audit .fk-audit-items { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+        .fk-audit .fk-audit-row { display: flex; gap: 4px; align-items: center; animation: fkFadeUp 0.4s ease forwards; opacity: 0; }
+        .fk-audit .fk-audit-row:nth-child(1) { animation-delay: 0.2s; }
+        .fk-audit .fk-audit-row:nth-child(2) { animation-delay: 0.5s; }
+        .fk-audit .fk-audit-row:nth-child(3) { animation-delay: 0.8s; }
+        .fk-audit .fk-audit-row:nth-child(4) { animation-delay: 1.1s; }
+        .fk-audit .fk-audit-check { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .fk-audit .fk-audit-check.pass { background: var(--lagoon); }
+        .fk-audit .fk-audit-check.warn { background: var(--gold); }
+        .fk-audit .fk-audit-check.fail { background: var(--accent); }
+        .fk-audit .fk-audit-bar { flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden; position: relative; }
+        .fk-audit .fk-audit-fill { height: 100%; border-radius: 2px; animation: fkGrow 1s ease forwards; transform-origin: left; }
+
+        /* --- Roadmap Timeline --- */
+        .fk-roadmap { background: linear-gradient(180deg, #0d1117, #1a1520); }
+        .fk-roadmap .fk-logo { background: var(--accent); }
+        .fk-roadmap .fk-nav-btn { background: var(--accent); }
+        .fk-roadmap .fk-rm-timeline { flex: 1; display: flex; flex-direction: column; gap: 2px; position: relative; padding-left: 10px; }
+        .fk-roadmap .fk-rm-timeline::before { content: ''; position: absolute; left: 3px; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.08); }
+        .fk-roadmap .fk-rm-item { display: flex; gap: 6px; align-items: flex-start; position: relative; animation: fkFadeUp 0.5s ease forwards; opacity: 0; padding: 2px 0; }
+        .fk-roadmap .fk-rm-item:nth-child(1) { animation-delay: 0.2s; }
+        .fk-roadmap .fk-rm-item:nth-child(2) { animation-delay: 0.5s; }
+        .fk-roadmap .fk-rm-item:nth-child(3) { animation-delay: 0.8s; }
+        .fk-roadmap .fk-rm-item:nth-child(4) { animation-delay: 1.1s; }
+        .fk-roadmap .fk-rm-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; position: absolute; left: -10px; top: 3px; z-index: 1; }
+        .fk-roadmap .fk-rm-card { flex: 1; border-radius: 3px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); padding: 3px 5px; display: flex; flex-direction: column; gap: 2px; }
+
+        /* --- Growth KPI --- */
+        .fk-kpi { background: linear-gradient(180deg, #0d1117, #111827); }
+        .fk-kpi .fk-logo { background: var(--lagoon); }
+        .fk-kpi .fk-nav-btn { background: var(--lagoon); }
+        .fk-kpi .fk-kpi-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+        .fk-kpi .fk-kpi-card { border-radius: 4px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); padding: 4px 5px; display: flex; flex-direction: column; gap: 3px; }
+        .fk-kpi .fk-kpi-val { height: 6px; width: 55%; border-radius: 2px; }
+        .fk-kpi .fk-kpi-card:nth-child(1) .fk-kpi-val { background: var(--lagoon); }
+        .fk-kpi .fk-kpi-card:nth-child(2) .fk-kpi-val { background: var(--accent); }
+        .fk-kpi .fk-kpi-card:nth-child(3) .fk-kpi-val { background: var(--gold); }
+        .fk-kpi .fk-kpi-card:nth-child(4) .fk-kpi-val { background: #6366f1; }
+        .fk-kpi .fk-kpi-trend { height: 3px; width: 20px; border-radius: 1px; background: #25D366; }
+        .fk-kpi .fk-kpi-chart { flex: 1; position: relative; overflow: hidden; margin-top: 4px; }
+        .fk-kpi .fk-kpi-line { position: absolute; inset: 0; }
+        .fk-kpi .fk-kpi-path { fill: none; stroke: var(--lagoon); stroke-width: 2; stroke-dasharray: 200; stroke-dashoffset: 200; animation: fkDrawLine 2s ease forwards; }
+        .fk-kpi .fk-kpi-fill { fill: url(#kpiGrad); opacity: 0; animation: fkFadeIn 1s ease forwards 1.5s; }
+        @keyframes fkDrawLine { to { stroke-dashoffset: 0; } }
+        @keyframes fkFadeIn { to { opacity: 0.3; } }
+
+        /* --- Team Formation --- */
+        .fk-formation { background: linear-gradient(180deg, #0d1117, #1a1520); }
+        .fk-formation .fk-logo { background: #a855f7; }
+        .fk-formation .fk-nav-btn { background: #a855f7; }
+        .fk-formation .fk-fm-modules { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+        .fk-formation .fk-fm-module { display: flex; gap: 4px; align-items: center; padding: 3px 4px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); animation: fkFadeUp 0.4s ease forwards; opacity: 0; }
+        .fk-formation .fk-fm-module:nth-child(1) { animation-delay: 0.1s; }
+        .fk-formation .fk-fm-module:nth-child(2) { animation-delay: 0.3s; }
+        .fk-formation .fk-fm-module:nth-child(3) { animation-delay: 0.5s; }
+        .fk-formation .fk-fm-module:nth-child(4) { animation-delay: 0.7s; }
+        .fk-formation .fk-fm-icon { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+        .fk-formation .fk-fm-module:nth-child(1) .fk-fm-icon { background: rgba(168,85,247,0.3); border: 1px solid #a855f7; }
+        .fk-formation .fk-fm-module:nth-child(2) .fk-fm-icon { background: rgba(99,102,241,0.3); border: 1px solid #6366f1; }
+        .fk-formation .fk-fm-module:nth-child(3) .fk-fm-icon { background: rgba(20,184,166,0.3); border: 1px solid var(--lagoon); }
+        .fk-formation .fk-fm-module:nth-child(4) .fk-fm-icon { background: rgba(245,197,66,0.3); border: 1px solid var(--gold); }
+        .fk-formation .fk-fm-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .fk-formation .fk-fm-progress { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden; }
+        .fk-formation .fk-fm-progress-fill { height: 100%; border-radius: 2px; animation: fkGrow 1.2s ease forwards; transform-origin: left; }
 
         /* Detail panel (always visible below card-stack, no overlay) */
         .bento-detail {
@@ -1590,26 +1754,6 @@
             0%, 100% { opacity: 0.6; transform: translateY(2px); }
             50% { opacity: 1; transform: translateY(0); }
         }
-        /* Make CSS visuals work inside showcase cards (no .svc-*.is-visible parent) */
-        .showcase-visual-wrap .conseil-step { opacity: 1; transform: scale(1); }
-        .showcase-visual-wrap .conseil-wire { opacity: 1; }
-        .showcase-visual-wrap .conseil-label { opacity: 1; }
-        .showcase-card.is-visible .showcase-visual-wrap .wf-node { opacity: 1; transform: scale(1); }
-        .showcase-card.is-visible .showcase-visual-wrap .wf-node-1 { animation: nodePopLoop 4s ease infinite; }
-        .showcase-card.is-visible .showcase-visual-wrap .wf-node-2 { animation: nodePopLoop 4s ease 0.25s infinite; }
-        .showcase-card.is-visible .showcase-visual-wrap .wf-node-3 { animation: nodePopLoop 4s ease 0.5s infinite; }
-        .showcase-card.is-visible .showcase-visual-wrap .wf-wire { opacity: 0.6; }
-        .showcase-card.is-visible .showcase-visual-wrap .wf-wire-1 .wf-particle { animation: particleTravel 1.5s ease 0.8s infinite; }
-        .showcase-card.is-visible .showcase-visual-wrap .wf-wire-2 .wf-particle { animation: particleTravel 1.5s ease 1.3s infinite; }
-        .showcase-card.is-visible .showcase-visual-wrap .wf-status { opacity: 0.7; }
-        .showcase-card.is-visible .showcase-visual-wrap .chat-msg { opacity: 0.8; }
-        .showcase-card.is-visible .showcase-visual-wrap .chat-user { animation: chatMsgLoop 6s ease infinite; }
-        .showcase-card.is-visible .showcase-visual-wrap .chat-typing { animation: chatTypingLoop 6s ease 0.5s infinite; opacity: 0.5; }
-        .showcase-card.is-visible .showcase-visual-wrap .chat-ai { animation: chatMsgLoop 6s ease 1.8s infinite; }
-        .showcase-card.is-visible .showcase-visual-wrap .chat-typing span:nth-child(1) { animation: dotBounce 1s ease 0.7s infinite; }
-        .showcase-card.is-visible .showcase-visual-wrap .chat-typing span:nth-child(2) { animation: dotBounce 1s ease 0.85s infinite; }
-        .showcase-card.is-visible .showcase-visual-wrap .chat-typing span:nth-child(3) { animation: dotBounce 1s ease 1.0s infinite; }
-
         /* --- CTA: Glow + Pulse --- */
         .cta-box .cta-glow {
             opacity: 0.1;
@@ -1771,165 +1915,7 @@
             }
         }
 
-        /* ===== SHOWCASE SECTION ===== */
-        .showcase-filters {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 2.5rem;
-            flex-wrap: wrap;
-        }
-        .showcase-filter-btn {
-            padding: 8px 20px;
-            border-radius: 100px;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-dim);
-            font-family: var(--font-body);
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .showcase-filter-btn:hover {
-            border-color: var(--accent);
-            color: var(--text-secondary);
-        }
-        .showcase-filter-btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #fff;
-        }
-        .showcase-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-        @media (max-width: 1023px) {
-            .showcase-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 640px) {
-            .showcase-grid { grid-template-columns: 1fr; }
-        }
-        .showcase-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: transform 0.4s var(--ease-out-expo), border-color 0.3s, box-shadow 0.4s;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        .showcase-card.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .showcase-card:hover {
-            transform: translateY(-6px);
-            border-color: var(--accent);
-            box-shadow: 0 12px 40px rgba(249, 112, 102, 0.12);
-        }
-        .showcase-card.hidden {
-            display: none;
-        }
-        .showcase-browser {
-            border-bottom: 1px solid var(--border);
-            background: var(--bg);
-        }
-        .showcase-toolbar {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--border);
-        }
-        .showcase-toolbar .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .showcase-toolbar .dot:nth-child(1) { background: #ff5f57; }
-        .showcase-toolbar .dot:nth-child(2) { background: #febc2e; }
-        .showcase-toolbar .dot:nth-child(3) { background: #28c840; }
-        .showcase-url {
-            margin-left: 10px;
-            padding: 4px 12px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 6px;
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            font-family: monospace;
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .showcase-screenshot-wrap {
-            height: 340px;
-            overflow: hidden;
-            position: relative;
-        }
-        .showcase-screenshot-wrap img {
-            width: 100%;
-            display: block;
-            transition: transform 8s ease;
-        }
-        .showcase-card:hover .showcase-screenshot-wrap img {
-            transform: translateY(-15%);
-        }
-        /* For cards using CSS visuals instead of screenshots */
-        .showcase-visual-wrap {
-            height: 340px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .showcase-visual-wrap .chat-visual,
-        .showcase-visual-wrap .wf-visual,
-        .showcase-visual-wrap .conseil-visual {
-            height: 100%;
-            width: 100%;
-            padding: 1.5rem;
-        }
-        .showcase-info {
-            padding: 1.25rem;
-        }
-        .showcase-info h3 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: var(--text);
-        }
-        .showcase-info .showcase-desc {
-            font-size: 0.82rem;
-            color: var(--text-dim);
-            line-height: 1.5;
-            margin-bottom: 10px;
-        }
-        .showcase-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-        .showcase-tag {
-            padding: 3px 10px;
-            border-radius: 100px;
-            font-size: 0.7rem;
-            background: rgba(249, 112, 102, 0.08);
-            color: var(--accent);
-            border: 1px solid rgba(249, 112, 102, 0.15);
-        }
-        .showcase-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--accent);
-            text-decoration: none;
-            transition: gap 0.3s;
-        }
-        .showcase-link:hover { gap: 10px; }
+        /* Showcase section CSS removed */
     </style>
 
     <!-- JSON-LD Organization -->
@@ -2031,11 +2017,16 @@
                     <h3 class="bento-title">Sites & Applications</h3>
                     <p class="bento-desc">Sites vitrines, landing pages, dashboards, apps métier et portails clients sur-mesure.</p>
                     <div class="card-stack">
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-dash"><div class="mv-dash-top"><div class="mv-dash-stat"></div><div class="mv-dash-stat"></div><div class="mv-dash-stat"></div></div><div class="mv-dash-bars"><div class="mv-dash-bar" style="height:55%;background:var(--accent);animation-delay:0.1s"></div><div class="mv-dash-bar" style="height:80%;background:var(--lagoon);animation-delay:0.3s"></div><div class="mv-dash-bar" style="height:45%;background:var(--accent);animation-delay:0.5s"></div><div class="mv-dash-bar" style="height:70%;background:var(--gold);animation-delay:0.7s"></div><div class="mv-dash-bar" style="height:90%;background:var(--lagoon);animation-delay:0.9s"></div><div class="mv-dash-bar" style="height:60%;background:var(--accent);animation-delay:1.1s"></div></div></div></div><span class="cs-label">Dashboard Analytics</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-landing"><div class="mv-landing-hero"></div><div class="mv-landing-sub"></div><div class="mv-landing-btn"></div><div class="mv-landing-cards"><div class="mv-landing-card"></div><div class="mv-landing-card"></div><div class="mv-landing-card"></div></div></div></div><span class="cs-label">Landing Page</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-booking"><div class="mv-booking-header"></div><div class="mv-booking-grid"><div class="mv-booking-slot booked"></div><div class="mv-booking-slot"></div><div class="mv-booking-slot"></div><div class="mv-booking-slot booked"></div><div class="mv-booking-slot"></div><div class="mv-booking-slot booked"></div></div></div></div><span class="cs-label">App Reservation</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-map"><div class="mv-map-pin" style="top:25%;left:30%"></div><div class="mv-map-pin" style="top:45%;left:60%;animation-delay:0.5s"></div><div class="mv-map-pin" style="top:65%;left:40%;animation-delay:1s"></div><div class="mv-map-pin" style="top:35%;left:75%;animation-delay:1.5s"></div></div></div><span class="cs-label">Carte Interactive</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-analytics"><div class="mv-abar" style="height:40%;background:var(--accent);animation-delay:0.1s"></div><div class="mv-abar" style="height:65%;background:var(--lagoon);animation-delay:0.3s"></div><div class="mv-abar" style="height:85%;background:var(--accent);animation-delay:0.5s"></div><div class="mv-abar" style="height:50%;background:var(--gold);animation-delay:0.7s"></div><div class="mv-abar" style="height:75%;background:var(--lagoon);animation-delay:0.9s"></div></div></div><span class="cs-label">Portail Client</span></div>
+                        <!-- Dashboard Analytics -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-dashboard"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-body"><div class="fk-side"><div class="fk-side-item active"></div><div class="fk-side-item"></div><div class="fk-side-item"></div><div class="fk-side-item"></div><div class="fk-side-item"></div></div><div class="fk-main"><div class="fk-stats-row" style="display:flex;gap:4px"><div class="fk-stat"><div class="fk-stat-val"></div><div class="fk-stat-label"></div></div><div class="fk-stat"><div class="fk-stat-val"></div><div class="fk-stat-label"></div></div><div class="fk-stat"><div class="fk-stat-val"></div><div class="fk-stat-label"></div></div></div><div class="fk-chart"><div class="fk-bar" style="height:45%;animation-delay:0.1s"></div><div class="fk-bar" style="height:70%;animation-delay:0.2s"></div><div class="fk-bar" style="height:55%;animation-delay:0.3s"></div><div class="fk-bar" style="height:85%;animation-delay:0.4s"></div><div class="fk-bar" style="height:60%;animation-delay:0.5s"></div><div class="fk-bar" style="height:90%;animation-delay:0.6s"></div><div class="fk-bar" style="height:50%;animation-delay:0.7s"></div><div class="fk-bar" style="height:75%;animation-delay:0.8s"></div></div></div></div></div></div><span class="cs-label">Dashboard Analytics</span></div>
+                        <!-- Landing Page -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-landingpage"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-hero"><div class="fk-hero-title"></div><div class="fk-hero-sub"></div><div class="fk-hero-cta"></div></div><div class="fk-features"><div class="fk-feat-card"><div class="fk-feat-icon"></div><div class="fk-text" style="width:80%"></div><div class="fk-text" style="width:60%"></div></div><div class="fk-feat-card"><div class="fk-feat-icon"></div><div class="fk-text" style="width:70%"></div><div class="fk-text" style="width:55%"></div></div><div class="fk-feat-card"><div class="fk-feat-icon"></div><div class="fk-text" style="width:85%"></div><div class="fk-text" style="width:65%"></div></div></div></div></div><span class="cs-label">Landing Page</span></div>
+                        <!-- E-commerce Marketplace -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-ecommerce"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-main" style="padding:6px"><div class="fk-search"></div><div class="fk-products"><div class="fk-product"><div class="fk-prod-img"></div><div class="fk-prod-info"><div class="fk-text" style="width:70%;margin-bottom:1px"></div><div class="fk-prod-price"></div></div></div><div class="fk-product"><div class="fk-prod-img"></div><div class="fk-prod-info"><div class="fk-text" style="width:60%;margin-bottom:1px"></div><div class="fk-prod-price"></div></div></div><div class="fk-product"><div class="fk-prod-img"></div><div class="fk-prod-info"><div class="fk-text" style="width:75%;margin-bottom:1px"></div><div class="fk-prod-price"></div></div></div><div class="fk-product"><div class="fk-prod-img"></div><div class="fk-prod-info"><div class="fk-text" style="width:65%;margin-bottom:1px"></div><div class="fk-prod-price"></div></div></div><div class="fk-product"><div class="fk-prod-img"></div><div class="fk-prod-info"><div class="fk-text" style="width:80%;margin-bottom:1px"></div><div class="fk-prod-price"></div></div></div><div class="fk-product"><div class="fk-prod-img"></div><div class="fk-prod-info"><div class="fk-text" style="width:55%;margin-bottom:1px"></div><div class="fk-prod-price"></div></div></div></div></div></div></div><span class="cs-label">Marketplace</span></div>
+                        <!-- Booking App -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-bookingapp"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-main"><div class="fk-calendar"><div class="fk-cal-header"><div class="fk-cal-month"></div><div class="fk-cal-arrows"><div class="fk-cal-arr"></div><div class="fk-cal-arr"></div></div></div><div class="fk-cal-grid"><div class="fk-cal-day"></div><div class="fk-cal-day"></div><div class="fk-cal-day booked"></div><div class="fk-cal-day"></div><div class="fk-cal-day"></div><div class="fk-cal-day booked"></div><div class="fk-cal-day"></div><div class="fk-cal-day"></div><div class="fk-cal-day today"></div><div class="fk-cal-day"></div><div class="fk-cal-day booked"></div><div class="fk-cal-day"></div><div class="fk-cal-day"></div><div class="fk-cal-day"></div><div class="fk-cal-day selected"></div><div class="fk-cal-day"></div><div class="fk-cal-day"></div><div class="fk-cal-day booked"></div><div class="fk-cal-day"></div><div class="fk-cal-day"></div><div class="fk-cal-day"></div></div></div></div></div></div><span class="cs-label">App Reservation</span></div>
+                        <!-- Map Interactive -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-mapapp"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-map-bg"></div><div class="fk-map-roads"><div class="fk-road" style="top:30%;left:10%;width:60%;height:1px;transform:rotate(-8deg)"></div><div class="fk-road" style="top:50%;left:20%;width:50%;height:1px;transform:rotate(12deg)"></div><div class="fk-road" style="top:45%;left:35%;width:1px;height:40%"></div><div class="fk-road" style="top:25%;left:60%;width:1px;height:35%"></div></div><div class="fk-pin coral" style="top:32%;left:28%"></div><div class="fk-pin teal" style="top:48%;left:55%;animation-delay:0.5s"></div><div class="fk-pin gold" style="top:60%;left:38%;animation-delay:1s"></div><div class="fk-pin coral" style="top:38%;left:72%;animation-delay:1.5s"></div><div class="fk-pin teal" style="top:55%;left:65%;animation-delay:2s"></div><div class="fk-map-card"><div class="fk-map-card-img"></div><div class="fk-map-card-info"><div class="fk-text" style="width:60%;background:rgba(255,255,255,0.3);height:4px"></div><div class="fk-text" style="width:80%"></div><div class="fk-dots"><div class="fk-dot" style="background:var(--gold)"></div><div class="fk-dot" style="background:var(--gold)"></div><div class="fk-dot" style="background:var(--gold)"></div><div class="fk-dot" style="background:var(--gold)"></div><div class="fk-dot" style="background:rgba(255,255,255,0.15)"></div></div></div></div></div></div><span class="cs-label">Carte Interactive</span></div>
                     </div>
                 </div>
                 <div class="bento-detail">
@@ -2060,11 +2051,16 @@
                     <h3 class="bento-title">Solutions IA</h3>
                     <p class="bento-desc">Chatbots, agents IA, automatisation des process, marketing IA et extraction de documents.</p>
                     <div class="card-stack">
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-chat"><div class="mv-bubble mv-bubble-l"></div><div class="mv-bubble mv-bubble-r"></div><div class="mv-bubble mv-bubble-l" style="width:45%"></div><div class="mv-bubble mv-bubble-r" style="width:55%"></div></div></div><span class="cs-label">Chatbot WhatsApp 24/7</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-flow"><div class="mv-flow-node"></div><div class="mv-flow-arrow"></div><div class="mv-flow-node"></div><div class="mv-flow-arrow"></div><div class="mv-flow-node"></div></div></div><span class="cs-label">Automatisation Workflows</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-extract"><div class="mv-extract-line" style="width:90%"></div><div class="mv-extract-line" style="width:65%;animation-delay:0.5s"></div><div class="mv-extract-line" style="width:80%;animation-delay:1s"></div><div class="mv-extract-line" style="width:50%;animation-delay:1.5s"></div></div></div><span class="cs-label">Extraction Documents</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-analytics"><div class="mv-abar" style="height:50%;background:var(--lagoon);animation-delay:0.1s"></div><div class="mv-abar" style="height:75%;background:var(--accent);animation-delay:0.3s"></div><div class="mv-abar" style="height:90%;background:var(--lagoon);animation-delay:0.5s"></div><div class="mv-abar" style="height:60%;background:var(--gold);animation-delay:0.7s"></div><div class="mv-abar" style="height:80%;background:var(--lagoon);animation-delay:0.9s"></div></div></div><span class="cs-label">Analytics Temps Reel</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-chat"><div class="mv-bubble mv-bubble-r" style="width:60%"></div><div class="mv-bubble mv-bubble-l" style="width:40%"></div><div class="mv-bubble mv-bubble-r" style="width:50%"></div></div></div><span class="cs-label">Email Automatique</span></div>
+                        <!-- WhatsApp Chat -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-whatsapp"><div class="fk-wa-header"><div class="fk-wa-avatar"></div><div style="display:flex;flex-direction:column;gap:1px"><div class="fk-wa-name"></div><div class="fk-wa-status"></div></div></div><div class="fk-wa-chat"><div class="fk-wa-msg them"><div class="fk-wa-msg-text" style="width:80%"></div><div class="fk-wa-msg-text" style="width:55%"></div></div><div class="fk-wa-msg me"><div class="fk-wa-msg-text" style="width:70%"></div></div><div class="fk-wa-msg them"><div class="fk-wa-msg-text" style="width:60%"></div><div class="fk-wa-msg-text" style="width:45%"></div></div><div class="fk-wa-msg me"><div class="fk-wa-msg-text" style="width:85%"></div><div class="fk-wa-msg-text" style="width:40%"></div></div><div class="fk-wa-typing"><div class="fk-wa-typing-dot"></div><div class="fk-wa-typing-dot"></div><div class="fk-wa-typing-dot"></div></div></div><div class="fk-wa-input"><div class="fk-wa-inputbox"></div><div class="fk-wa-send"></div></div></div></div><span class="cs-label">Chatbot WhatsApp 24/7</span></div>
+                        <!-- Workflow Builder -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-workflow"><div class="fk-wf-toolbar"><div class="fk-wf-toolbar-btn"></div><div class="fk-wf-toolbar-btn"></div><div class="fk-wf-toolbar-btn"></div><div style="flex:1"></div><div class="fk-wf-toolbar-btn" style="width:16px;background:var(--lagoon)"></div></div><div class="fk-wf-canvas"><div class="fk-wf-node" style="top:15%;left:8%;background:rgba(249,112,102,0.15);border:1.5px solid var(--accent);animation-delay:0.2s"><div class="fk-wf-node-icon" style="background:var(--accent)"></div><div class="fk-wf-node-label"></div></div><div class="fk-wf-connector" style="top:23%;left:46%;width:18px;background:linear-gradient(90deg,var(--accent),var(--lagoon));animation-delay:0.5s"></div><div class="fk-wf-node" style="top:15%;left:58%;background:rgba(20,184,166,0.15);border:1.5px solid var(--lagoon);animation-delay:0.6s"><div class="fk-wf-node-icon" style="background:var(--lagoon)"></div><div class="fk-wf-node-label"></div></div><div class="fk-wf-connector" style="top:37%;left:30%;width:14px;background:var(--gold);transform:rotate(35deg);animation-delay:0.8s"></div><div class="fk-wf-node" style="top:50%;left:25%;background:rgba(245,197,66,0.15);border:1.5px solid var(--gold);animation-delay:0.9s"><div class="fk-wf-node-icon" style="background:var(--gold)"></div><div class="fk-wf-node-label"></div></div><div class="fk-wf-connector" style="top:58%;left:62%;width:18px;background:linear-gradient(90deg,var(--gold),#6366f1);animation-delay:1.1s"></div><div class="fk-wf-node" style="top:50%;left:58%;background:rgba(99,102,241,0.15);border:1.5px solid #6366f1;animation-delay:1.2s"><div class="fk-wf-node-icon" style="background:#6366f1"></div><div class="fk-wf-node-label"></div></div><div class="fk-wf-connector" style="top:72%;left:45%;width:20px;background:var(--lagoon);animation-delay:1.4s"></div><div class="fk-wf-node" style="top:75%;left:35%;background:rgba(37,211,102,0.15);border:1.5px solid #25D366;animation-delay:1.5s"><div class="fk-wf-node-icon" style="background:#25D366"></div><div class="fk-wf-node-label"></div></div></div></div></div><span class="cs-label">Automatisation Workflows</span></div>
+                        <!-- Email Automation -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-emailauto"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-main"><div class="fk-title" style="width:40%;margin-bottom:3px"></div><div class="fk-email-list"><div class="fk-email-item"><div class="fk-email-icon"></div><div class="fk-email-info"><div class="fk-email-subj"></div><div class="fk-email-preview"></div></div><div class="fk-email-badge"></div></div><div class="fk-email-item"><div class="fk-email-icon"></div><div class="fk-email-info"><div class="fk-email-subj" style="width:55%"></div><div class="fk-email-preview" style="width:75%"></div></div><div class="fk-email-badge" style="background:var(--gold)"></div></div><div class="fk-email-item"><div class="fk-email-icon"></div><div class="fk-email-info"><div class="fk-email-subj" style="width:65%"></div><div class="fk-email-preview" style="width:85%"></div></div><div class="fk-email-badge"></div></div><div class="fk-email-item"><div class="fk-email-icon"></div><div class="fk-email-info"><div class="fk-email-subj" style="width:50%"></div><div class="fk-email-preview" style="width:70%"></div></div><div class="fk-email-badge" style="background:#6366f1"></div></div></div></div></div></div><span class="cs-label">Email Automatique</span></div>
+                        <!-- Analytics Dashboard -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-analyticsdash"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-main"><div class="fk-an-top"><div class="fk-an-metric"><div class="fk-an-val"></div><div class="fk-text" style="width:70%"></div></div><div class="fk-an-metric"><div class="fk-an-val"></div><div class="fk-text" style="width:60%"></div></div><div class="fk-an-metric"><div class="fk-an-val"></div><div class="fk-text" style="width:75%"></div></div></div><div class="fk-an-chart"><div class="fk-an-bar" style="height:40%;background:#6366f1;animation-delay:0.1s"></div><div class="fk-an-bar" style="height:65%;background:rgba(99,102,241,0.5);animation-delay:0.2s"></div><div class="fk-an-bar" style="height:55%;background:#6366f1;animation-delay:0.3s"></div><div class="fk-an-bar" style="height:80%;background:rgba(99,102,241,0.5);animation-delay:0.4s"></div><div class="fk-an-bar" style="height:45%;background:#6366f1;animation-delay:0.5s"></div><div class="fk-an-bar" style="height:90%;background:rgba(99,102,241,0.5);animation-delay:0.6s"></div><div class="fk-an-bar" style="height:70%;background:#6366f1;animation-delay:0.7s"></div><div class="fk-an-bar" style="height:60%;background:rgba(99,102,241,0.5);animation-delay:0.8s"></div><div class="fk-an-bar" style="height:85%;background:#6366f1;animation-delay:0.9s"></div><div class="fk-an-bar" style="height:50%;background:rgba(99,102,241,0.5);animation-delay:1s"></div></div></div></div></div><span class="cs-label">Analytics Temps Reel</span></div>
+                        <!-- Extraction Documents -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-dashboard" style="background:linear-gradient(180deg,#0d1117,#1a1520)"><div class="fk-nav"><div class="fk-logo" style="background:var(--gold)"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn" style="background:var(--gold)"></div></div><div class="fk-body"><div class="fk-side"><div class="fk-side-item active" style="background:var(--gold)"></div><div class="fk-side-item"></div><div class="fk-side-item"></div></div><div class="fk-main"><div class="fk-table"><div class="fk-row"><div class="fk-cell" style="width:25%"></div><div class="fk-cell" style="flex:1"></div><div class="fk-badge" style="background:#25D366"></div></div><div class="fk-row"><div class="fk-cell" style="width:25%"></div><div class="fk-cell" style="flex:1"></div><div class="fk-badge" style="background:var(--gold)"></div></div><div class="fk-row"><div class="fk-cell" style="width:25%"></div><div class="fk-cell" style="flex:1"></div><div class="fk-badge" style="background:#25D366"></div></div><div class="fk-row"><div class="fk-cell" style="width:25%"></div><div class="fk-cell" style="flex:1"></div><div class="fk-badge" style="background:var(--accent)"></div></div><div class="fk-row"><div class="fk-cell" style="width:25%"></div><div class="fk-cell" style="flex:1"></div><div class="fk-badge" style="background:#25D366"></div></div></div></div></div></div></div><span class="cs-label">Extraction Documents</span></div>
                     </div>
                 </div>
                 <div class="bento-detail">
@@ -2092,11 +2088,14 @@
                     <h3 class="bento-title">Conseil & Formation</h3>
                     <p class="bento-desc">Audit de vos process, stratégie IA personnalisée, formation de vos équipes et accompagnement continu.</p>
                     <div class="card-stack">
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-check"><div class="mv-check-row"><div class="mv-check-box done"></div><div class="mv-check-line" style="width:80%"></div></div><div class="mv-check-row"><div class="mv-check-box done"></div><div class="mv-check-line" style="width:65%"></div></div><div class="mv-check-row"><div class="mv-check-box"></div><div class="mv-check-line" style="width:90%"></div></div><div class="mv-check-row"><div class="mv-check-box"></div><div class="mv-check-line" style="width:55%"></div></div></div></div><span class="cs-label">Audit de Process</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-timeline"><div class="mv-tl-dot"></div><div class="mv-tl-line"></div><div class="mv-tl-dot"></div><div class="mv-tl-line"></div><div class="mv-tl-dot"></div><div class="mv-tl-line"></div><div class="mv-tl-dot"></div></div></div><span class="cs-label">Roadmap IA 12 Mois</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-growth"><svg class="mv-growth-line" viewBox="0 0 200 60"><defs><linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--lagoon)" stop-opacity="0.4"/><stop offset="100%" stop-color="var(--lagoon)" stop-opacity="0"/></linearGradient></defs><path class="mv-growth-fill" d="M0,55 L30,45 L70,40 L100,25 L140,15 L170,8 L200,3 L200,60 L0,60Z"/><path class="mv-growth-path" d="M0,55 L30,45 L70,40 L100,25 L140,15 L170,8 L200,3"/></svg></div></div><span class="cs-label">Croissance Mesurable</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-team"><div class="mv-avatar"></div><div class="mv-avatar"></div><div class="mv-avatar"></div><div class="mv-avatar"></div></div></div><span class="cs-label">Formation Equipes</span></div>
-                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="mv-flow"><div class="mv-flow-node"></div><div class="mv-flow-arrow"></div><div class="mv-flow-node"></div><div class="mv-flow-arrow"></div><div class="mv-flow-node"></div></div></div><span class="cs-label">Integrations API</span></div>
+                        <!-- Audit Report -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-audit"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-main"><div class="fk-audit-score"><div class="fk-score-ring good"><div class="fk-score-text"></div></div><div class="fk-score-details"><div class="fk-text" style="width:50px;background:rgba(255,255,255,0.25);height:4px"></div><div class="fk-text" style="width:35px"></div></div></div><div class="fk-audit-items"><div class="fk-audit-row"><div class="fk-audit-check pass"></div><div class="fk-audit-bar"><div class="fk-audit-fill" style="width:90%;background:var(--lagoon);animation-delay:0.3s"></div></div></div><div class="fk-audit-row"><div class="fk-audit-check pass"></div><div class="fk-audit-bar"><div class="fk-audit-fill" style="width:75%;background:var(--lagoon);animation-delay:0.6s"></div></div></div><div class="fk-audit-row"><div class="fk-audit-check warn"></div><div class="fk-audit-bar"><div class="fk-audit-fill" style="width:55%;background:var(--gold);animation-delay:0.9s"></div></div></div><div class="fk-audit-row"><div class="fk-audit-check fail"></div><div class="fk-audit-bar"><div class="fk-audit-fill" style="width:30%;background:var(--accent);animation-delay:1.2s"></div></div></div></div></div></div></div><span class="cs-label">Audit de Process</span></div>
+                        <!-- Roadmap Timeline -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-roadmap"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-main"><div class="fk-title" style="width:45%;margin-bottom:4px"></div><div class="fk-rm-timeline"><div class="fk-rm-item"><div class="fk-rm-dot" style="background:var(--lagoon)"></div><div class="fk-rm-card"><div class="fk-text" style="width:60%;background:rgba(255,255,255,0.25)"></div><div class="fk-text" style="width:80%"></div></div></div><div class="fk-rm-item"><div class="fk-rm-dot" style="background:var(--accent)"></div><div class="fk-rm-card"><div class="fk-text" style="width:50%;background:rgba(255,255,255,0.25)"></div><div class="fk-text" style="width:70%"></div></div></div><div class="fk-rm-item"><div class="fk-rm-dot" style="background:var(--gold)"></div><div class="fk-rm-card"><div class="fk-text" style="width:55%;background:rgba(255,255,255,0.25)"></div><div class="fk-text" style="width:75%"></div></div></div><div class="fk-rm-item"><div class="fk-rm-dot" style="background:rgba(255,255,255,0.2)"></div><div class="fk-rm-card"><div class="fk-text" style="width:45%;background:rgba(255,255,255,0.15)"></div><div class="fk-text" style="width:65%"></div></div></div></div></div></div></div><span class="cs-label">Roadmap IA 12 Mois</span></div>
+                        <!-- KPI Growth -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-kpi"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-main"><div class="fk-kpi-cards"><div class="fk-kpi-card"><div class="fk-kpi-val"></div><div class="fk-text" style="width:60%"></div><div class="fk-kpi-trend"></div></div><div class="fk-kpi-card"><div class="fk-kpi-val"></div><div class="fk-text" style="width:55%"></div><div class="fk-kpi-trend" style="background:var(--accent)"></div></div><div class="fk-kpi-card"><div class="fk-kpi-val"></div><div class="fk-text" style="width:65%"></div><div class="fk-kpi-trend"></div></div><div class="fk-kpi-card"><div class="fk-kpi-val"></div><div class="fk-text" style="width:50%"></div><div class="fk-kpi-trend" style="background:#6366f1"></div></div></div><div class="fk-kpi-chart"><svg class="fk-kpi-line" viewBox="0 0 200 50" preserveAspectRatio="none"><defs><linearGradient id="kpiGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--lagoon)" stop-opacity="0.4"/><stop offset="100%" stop-color="var(--lagoon)" stop-opacity="0"/></linearGradient></defs><path class="fk-kpi-fill" d="M0,45 L25,38 L50,35 L75,28 L100,22 L125,18 L150,12 L175,8 L200,3 L200,50 L0,50Z"/><path class="fk-kpi-path" d="M0,45 L25,38 L50,35 L75,28 L100,22 L125,18 L150,12 L175,8 L200,3"/></svg></div></div></div></div><span class="cs-label">Croissance Mesurable</span></div>
+                        <!-- Formation -->
+                        <div class="card-stack-item cs-visual"><div class="cs-mini-vis"><div class="fk fk-formation"><div class="fk-nav"><div class="fk-logo"></div><div class="fk-nav-links"><div class="fk-nav-link"></div><div class="fk-nav-link"></div></div><div class="fk-nav-btn"></div></div><div class="fk-main"><div class="fk-title" style="width:50%;margin-bottom:3px"></div><div class="fk-fm-modules"><div class="fk-fm-module"><div class="fk-fm-icon"></div><div class="fk-fm-info"><div class="fk-text" style="width:65%;background:rgba(255,255,255,0.2)"></div><div class="fk-fm-progress"><div class="fk-fm-progress-fill" style="width:95%;background:#a855f7;animation-delay:0.2s"></div></div></div></div><div class="fk-fm-module"><div class="fk-fm-icon"></div><div class="fk-fm-info"><div class="fk-text" style="width:55%;background:rgba(255,255,255,0.2)"></div><div class="fk-fm-progress"><div class="fk-fm-progress-fill" style="width:70%;background:#6366f1;animation-delay:0.4s"></div></div></div></div><div class="fk-fm-module"><div class="fk-fm-icon"></div><div class="fk-fm-info"><div class="fk-text" style="width:75%;background:rgba(255,255,255,0.2)"></div><div class="fk-fm-progress"><div class="fk-fm-progress-fill" style="width:40%;background:var(--lagoon);animation-delay:0.6s"></div></div></div></div><div class="fk-fm-module"><div class="fk-fm-icon"></div><div class="fk-fm-info"><div class="fk-text" style="width:60%;background:rgba(255,255,255,0.2)"></div><div class="fk-fm-progress"><div class="fk-fm-progress-fill" style="width:15%;background:var(--gold);animation-delay:0.8s"></div></div></div></div></div></div></div></div><span class="cs-label">Formation Equipes</span></div>
                     </div>
                 </div>
                 <div class="bento-detail">
@@ -2217,283 +2216,7 @@
         </div>
     </section>
 
-    <!-- Services Detail Cards -->
-    <section class="section" id="showcase">
-        <div class="section-header">
-            <h2 class="section-title">Nos réalisations</h2>
-            <span class="section-dot"></span>
-        </div>
-
-        <div class="showcase-filters">
-            <button class="showcase-filter-btn active" data-filter="all">Tous</button>
-            <button class="showcase-filter-btn" data-filter="sites">Sites & Apps</button>
-            <button class="showcase-filter-btn" data-filter="ia">Solutions IA</button>
-            <button class="showcase-filter-btn" data-filter="conseil">Conseil</button>
-        </div>
-
-        <div class="showcase-grid">
-
-            <!-- 1. Tapiri -->
-            <div class="showcase-card" data-category="sites">
-                <div class="showcase-browser">
-                    <div class="showcase-toolbar">
-                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                        <span class="showcase-url">tapiri.vercel.app</span>
-                    </div>
-                    <div class="showcase-screenshot-wrap">
-                        <img src="/assets/screenshots/tapiri.jpg" alt="Tapiri - Marketplace de réservation" loading="lazy" width="480" height="300">
-                    </div>
-                </div>
-                <div class="showcase-info">
-                    <h3>Tapiri</h3>
-                    <p class="showcase-desc">Marketplace de réservation pour la Polynésie française. 3 500+ prestataires, carte interactive, booking en ligne.</p>
-                    <div class="showcase-tags">
-                        <span class="showcase-tag">Next.js</span>
-                        <span class="showcase-tag">Supabase</span>
-                        <span class="showcase-tag">PWA</span>
-                        <span class="showcase-tag">Maps</span>
-                    </div>
-                    <a href="https://tapiri.vercel.app" target="_blank" rel="noopener" class="showcase-link">Voir le site <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-                </div>
-            </div>
-
-            <!-- 2. Ve'a -->
-            <div class="showcase-card" data-category="sites">
-                <div class="showcase-browser">
-                    <div class="showcase-toolbar">
-                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                        <span class="showcase-url">vea.pacifikai.com</span>
-                    </div>
-                    <div class="showcase-screenshot-wrap">
-                        <img src="/assets/screenshots/vea.jpg" alt="Ve'a - Plateforme booking IA" loading="lazy" width="480" height="300">
-                    </div>
-                </div>
-                <div class="showcase-info">
-                    <h3>Ve'a</h3>
-                    <p class="showcase-desc">Plateforme de réservation IA avec chatbot WhatsApp, Google Calendar sync et dashboard client complet.</p>
-                    <div class="showcase-tags">
-                        <span class="showcase-tag">Next.js</span>
-                        <span class="showcase-tag">WhatsApp</span>
-                        <span class="showcase-tag">IA</span>
-                        <span class="showcase-tag">Trigger.dev</span>
-                    </div>
-                    <a href="https://vea.pacifikai.com" target="_blank" rel="noopener" class="showcase-link">Voir le site <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-                </div>
-            </div>
-
-            <!-- 3. COWAN Dashboard -->
-            <div class="showcase-card" data-category="sites">
-                <div class="showcase-browser">
-                    <div class="showcase-toolbar">
-                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                        <span class="showcase-url">cowan-dashboard-v2.vercel.app</span>
-                    </div>
-                    <div class="showcase-screenshot-wrap">
-                        <img src="/assets/screenshots/cowan.jpg" alt="COWAN Motor - Dashboard marketing" loading="lazy" width="480" height="300">
-                    </div>
-                </div>
-                <div class="showcase-info">
-                    <h3>COWAN Motor</h3>
-                    <p class="showcase-desc">Dashboard marketing automobile avec génération IA de contenu, analytics temps réel et gestion de crédits.</p>
-                    <div class="showcase-tags">
-                        <span class="showcase-tag">Next.js</span>
-                        <span class="showcase-tag">Airtable</span>
-                        <span class="showcase-tag">FAL.ai</span>
-                    </div>
-                    <a href="https://cowan-dashboard-v2.vercel.app" target="_blank" rel="noopener" class="showcase-link">Voir le site <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-                </div>
-            </div>
-
-            <!-- 4. Studio Belleza -->
-            <div class="showcase-card" data-category="sites">
-                <div class="showcase-browser">
-                    <div class="showcase-toolbar">
-                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                        <span class="showcase-url">studio-belleza.vercel.app</span>
-                    </div>
-                    <div class="showcase-screenshot-wrap">
-                        <img src="/assets/screenshots/belleza.jpg" alt="Studio Belleza - Booking salon beauté" loading="lazy" width="480" height="300">
-                    </div>
-                </div>
-                <div class="showcase-info">
-                    <h3>Studio Belleza</h3>
-                    <p class="showcase-desc">Plateforme de booking en ligne pour salon de beauté. Chatbot IA intégré, messagerie unifiée, PWA.</p>
-                    <div class="showcase-tags">
-                        <span class="showcase-tag">Next.js</span>
-                        <span class="showcase-tag">Supabase</span>
-                        <span class="showcase-tag">Chatbot</span>
-                    </div>
-                    <a href="https://studio-belleza.vercel.app" target="_blank" rel="noopener" class="showcase-link">Voir le site <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-                </div>
-            </div>
-
-            <!-- 5. DroitPF -->
-            <div class="showcase-card" data-category="sites">
-                <div class="showcase-browser">
-                    <div class="showcase-toolbar">
-                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                        <span class="showcase-url">droitpf.vercel.app</span>
-                    </div>
-                    <div class="showcase-screenshot-wrap">
-                        <img src="/assets/screenshots/droitpf.jpg" alt="DroitPF - Plateforme juridique IA" loading="lazy" width="480" height="300">
-                    </div>
-                </div>
-                <div class="showcase-info">
-                    <h3>DroitPF</h3>
-                    <p class="showcase-desc">Plateforme juridique IA pour la Polynésie. 11 000+ textes de loi indexés, agents multi-spécialités, RAG avancé.</p>
-                    <div class="showcase-tags">
-                        <span class="showcase-tag">Next.js</span>
-                        <span class="showcase-tag">Mastra</span>
-                        <span class="showcase-tag">RAG</span>
-                        <span class="showcase-tag">pgvector</span>
-                    </div>
-                    <a href="https://droitpf.vercel.app" target="_blank" rel="noopener" class="showcase-link">Voir le site <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-                </div>
-            </div>
-
-            <!-- 6. Mission Control -->
-            <div class="showcase-card" data-category="sites">
-                <div class="showcase-browser">
-                    <div class="showcase-toolbar">
-                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                        <span class="showcase-url">mission-control-pacifikai.vercel.app</span>
-                    </div>
-                    <div class="showcase-screenshot-wrap">
-                        <img src="/assets/screenshots/mission-control.jpg" alt="Mission Control - Dashboard ops" loading="lazy" width="480" height="300">
-                    </div>
-                </div>
-                <div class="showcase-info">
-                    <h3>Mission Control</h3>
-                    <p class="showcase-desc">Dashboard opérationnel temps réel. Monitoring multi-projet, KPIs, alertes et vue d'ensemble de l'activité.</p>
-                    <div class="showcase-tags">
-                        <span class="showcase-tag">Next.js</span>
-                        <span class="showcase-tag">Supabase</span>
-                        <span class="showcase-tag">Realtime</span>
-                    </div>
-                    <a href="https://mission-control-pacifikai.vercel.app" target="_blank" rel="noopener" class="showcase-link">Voir le site <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-                </div>
-            </div>
-
-            <!-- 7. Ve'a Chatbot (CSS visual) -->
-            <div class="showcase-card" data-category="ia">
-                <div class="showcase-browser">
-                    <div class="showcase-toolbar">
-                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                        <span class="showcase-url">Chatbot WhatsApp IA</span>
-                    </div>
-                    <div class="showcase-visual-wrap">
-                        <div class="chat-visual">
-                            <div class="chat-window">
-                                <div class="chat-header-bar">
-                                    <div class="chat-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-                                    <div class="chat-header-info"><span class="chat-header-name">Ve'a Bot</span><span class="chat-header-status"><span class="chat-online-dot"></span>En ligne</span></div>
-                                </div>
-                                <div class="chat-messages">
-                                    <div class="chat-msg chat-user">Je veux réserver pour samedi</div>
-                                    <div class="chat-typing"><span></span><span></span><span></span></div>
-                                    <div class="chat-msg chat-ai">Bien sûr ! Samedi 14h, ça vous va ?</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase-info">
-                    <h3>Ve'a Chatbot</h3>
-                    <p class="showcase-desc">Assistant WhatsApp 24/7 pour prise de RDV automatique. Détection de langue FR/EN/TAH, rappels J-1 et H-2.</p>
-                    <div class="showcase-tags">
-                        <span class="showcase-tag">WhatsApp</span>
-                        <span class="showcase-tag">Claude IA</span>
-                        <span class="showcase-tag">n8n</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 8. ATN Workflows (CSS visual) -->
-            <div class="showcase-card" data-category="ia">
-                <div class="showcase-browser">
-                    <div class="showcase-toolbar">
-                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                        <span class="showcase-url">15 workflows Air Tahiti Nui</span>
-                    </div>
-                    <div class="showcase-visual-wrap">
-                        <div class="wf-visual">
-                            <div class="wf-pipeline">
-                                <div class="wf-node wf-node-1">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                                    <span>Trigger</span>
-                                </div>
-                                <svg class="wf-wire wf-wire-1" viewBox="0 0 60 20"><line x1="0" y1="10" x2="60" y2="10" stroke="var(--border-light)" stroke-width="1.5" stroke-dasharray="4 4"/><circle class="wf-particle" cx="0" cy="10" r="3" fill="var(--accent)"/></svg>
-                                <div class="wf-node wf-node-2">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-                                    <span>IA</span>
-                                </div>
-                                <svg class="wf-wire wf-wire-2" viewBox="0 0 60 20"><line x1="0" y1="10" x2="60" y2="10" stroke="var(--border-light)" stroke-width="1.5" stroke-dasharray="4 4"/><circle class="wf-particle" cx="0" cy="10" r="3" fill="var(--accent)"/></svg>
-                                <div class="wf-node wf-node-3">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                                    <span>Action</span>
-                                </div>
-                            </div>
-                            <div class="wf-status">
-                                <span class="wf-status-dot"></span>
-                                <span>15 workflows actifs</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase-info">
-                    <h3>ATN Workflows</h3>
-                    <p class="showcase-desc">15 workflows automatisés pour Air Tahiti Nui. Emails, reporting, dashboards, SEO et social media pilotés par IA.</p>
-                    <div class="showcase-tags">
-                        <span class="showcase-tag">Trigger.dev</span>
-                        <span class="showcase-tag">Claude IA</span>
-                        <span class="showcase-tag">Aviation</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 9. Audit & Formation (CSS visual) -->
-            <div class="showcase-card" data-category="conseil">
-                <div class="showcase-browser">
-                    <div class="showcase-toolbar">
-                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                        <span class="showcase-url">Accompagnement IA entreprises</span>
-                    </div>
-                    <div class="showcase-visual-wrap">
-                        <div class="conseil-visual">
-                            <div class="conseil-steps">
-                                <div class="conseil-step conseil-step-active">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                                    <span>Audit</span>
-                                </div>
-                                <div class="conseil-wire"></div>
-                                <div class="conseil-step">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-                                    <span>Forme</span>
-                                </div>
-                                <div class="conseil-wire"></div>
-                                <div class="conseil-step">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                                    <span>Suivi</span>
-                                </div>
-                            </div>
-                            <div class="conseil-label">Accompagnement continu</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="showcase-info">
-                    <h3>Audit & Formation</h3>
-                    <p class="showcase-desc">Accompagnement IA pour entreprises polynésiennes. Audit de process, stratégie 12 mois, formation équipes, support continu.</p>
-                    <div class="showcase-tags">
-                        <span class="showcase-tag">Audit</span>
-                        <span class="showcase-tag">Stratégie IA</span>
-                        <span class="showcase-tag">Formation</span>
-                    </div>
-                    <a href="/services/conseil.html" class="showcase-link">En savoir plus <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-                </div>
-            </div>
-
-        </div>
-    </section>
+    <!-- Showcase section removed per Jordy's request -->
 
     <section class="cta-section" id="contact">
         <div class="cta-box">
@@ -2652,25 +2375,8 @@
             });
         }, { threshold: 0.15 });
 
-        document.querySelectorAll('.card, .bento-tile, .infrastructure-hero, .cta-box, .section-header, .showcase-card').forEach(el => {
+        document.querySelectorAll('.card, .bento-tile, .infrastructure-hero, .cta-box, .section-header').forEach(el => {
             animObserver.observe(el);
-        });
-
-        // Showcase tab filters
-        document.querySelectorAll('.showcase-filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.showcase-filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const filter = btn.dataset.filter;
-                document.querySelectorAll('.showcase-card').forEach(card => {
-                    if (filter === 'all' || card.dataset.category === filter) {
-                        card.classList.remove('hidden');
-                        card.classList.add('is-visible');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
-            });
         });
 
         // Card-stack auto-carousel
