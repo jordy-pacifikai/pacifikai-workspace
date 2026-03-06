@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Lotus — Gastronomie sur pilotis | InterContinental Tahiti</title>
+  <meta name="description" content="Le Lotus, restaurant gastronomique sur pilotis au-dessus du lagon. Cuisine francaise fusion polynesienne au coeur de l'InterContinental Tahiti Resort & Spa.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Instrument+Serif:ital@0;1&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --burgundy: #5c1a1a;
+      --burgundy-deep: #3a0f0f;
+      --gold: #c9a84c;
+      --gold-light: #d4ba6a;
+      --gold-dim: rgba(201, 168, 76, 0.15);
+      --cream: #faf5ef;
+      --cream-soft: #f0e8dc;
+      --charcoal: #1c1c1c;
+      --charcoal-light: #2a2a2a;
+      --text-muted: #a89f94;
+      --font-display: 'Instrument Serif', serif;
+      --font-menu: 'EB Garamond', serif;
+      --font-body: 'Source Sans 3', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--charcoal);
+      color: var(--cream);
+      font-family: var(--font-body);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Utility ── */
+    .gold-line {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 0 auto;
+      transform: scaleX(0);
+      transition: transform 1.2s cubic-bezier(0.25, 0, 0.15, 1);
+    }
+    .gold-line.visible { transform: scaleX(1); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.25, 0, 0.15, 1), transform 0.8s cubic-bezier(0.25, 0, 0.15, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    section { padding: 120px 24px; }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--cream);
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      font-family: var(--font-menu);
+      font-size: 17px;
+      font-style: italic;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 60px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ══════════════════════════════════════
+       1. HERO
+    ══════════════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+      overflow: hidden;
+      background: radial-gradient(ellipse 50% 50% at 50% 55%, rgba(201, 168, 76, 0.06) 0%, transparent 70%),
+                  var(--charcoal);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201, 168, 76, 0.12) 0%, rgba(201, 168, 76, 0.03) 40%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: glowPulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.85; transform: translate(-50%, -50%) scale(1.05); }
+    }
+
+    .hero-lotus {
+      font-family: var(--font-menu);
+      font-size: 14px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: heroFadeIn 1.2s 0.3s ease forwards;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(56px, 10vw, 120px);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      color: var(--cream);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: heroFadeIn 1.2s 0.6s ease forwards;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-menu);
+      font-size: clamp(16px, 2.5vw, 22px);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 56px;
+      opacity: 0;
+      animation: heroFadeIn 1.2s 0.9s ease forwards;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid var(--gold);
+      padding: 16px 48px;
+      transition: background 0.6s ease, color 0.6s ease;
+      opacity: 0;
+      animation: heroFadeIn 1.2s 1.2s ease forwards;
+    }
+    .hero-cta:hover {
+      background: var(--gold);
+      color: var(--charcoal);
+    }
+
+    @keyframes heroFadeIn {
+      to { opacity: 1; }
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: heroFadeIn 1.2s 1.6s ease forwards;
+    }
+    .hero-scroll span {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .hero-scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ══════════════════════════════════════
+       2. LA CARTE
+    ══════════════════════════════════════ */
+    .carte {
+      background: var(--charcoal);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .course {
+      padding: 48px 0;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+    }
+    .course:last-child { border-bottom: none; }
+
+    .course-number {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-style: italic;
+      color: rgba(201, 168, 76, 0.2);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .course-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .course-name {
+      font-family: var(--font-menu);
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .course-desc {
+      font-family: var(--font-menu);
+      font-size: 15px;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .course-price {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--gold-light);
+      letter-spacing: 0.1em;
+    }
+
+    .carte-note {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(201, 168, 76, 0.1);
+    }
+    .carte-note p {
+      font-family: var(--font-menu);
+      font-style: italic;
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+    .carte-note strong {
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    /* ══════════════════════════════════════
+       3. L'EXPERIENCE
+    ══════════════════════════════════════ */
+    .experience {
+      background: linear-gradient(180deg, var(--charcoal) 0%, var(--charcoal-light) 50%, var(--charcoal) 100%);
+    }
+
+    .exp-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 64px;
+    }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .exp-icon {
+      width: 64px;
+      height: 64px;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      transition: border-color 0.6s ease, box-shadow 0.6s ease;
+    }
+    .exp-item:hover .exp-icon {
+      border-color: var(--gold);
+      box-shadow: 0 0 30px rgba(201, 168, 76, 0.15);
+    }
+
+    .exp-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: var(--cream);
+      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    .exp-text {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ══════════════════════════════════════
+       4. AVIS
+    ══════════════════════════════════════ */
+    .avis {
+      background: var(--charcoal);
+    }
+
+    .avis-grid {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 48px;
+    }
+
+    .avis-card {
+      background: rgba(201, 168, 76, 0.03);
+      border: 1px solid rgba(201, 168, 76, 0.08);
+      padding: 48px 36px;
+      text-align: center;
+      transition: border-color 0.6s ease, box-shadow 0.6s ease;
+    }
+    .avis-card:hover {
+      border-color: rgba(201, 168, 76, 0.2);
+      box-shadow: 0 0 60px rgba(201, 168, 76, 0.06);
+    }
+
+    .avis-stars {
+      color: var(--gold);
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      margin-bottom: 24px;
+    }
+
+    .avis-quote {
+      font-family: var(--font-menu);
+      font-size: 18px;
+      font-style: italic;
+      color: var(--cream);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .avis-author {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ══════════════════════════════════════
+       5. FOOTER / RESERVATION
+    ══════════════════════════════════════ */
+    .footer {
+      background: linear-gradient(180deg, var(--charcoal) 0%, var(--burgundy-deep) 100%);
+      padding: 120px 24px 60px;
+      text-align: center;
+    }
+
+    .footer-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 52px);
+      color: var(--cream);
+      margin-bottom: 12px;
+    }
+
+    .footer-sub {
+      font-family: var(--font-menu);
+      font-size: 17px;
+      font-style: italic;
+      color: var(--gold);
+      margin-bottom: 60px;
+    }
+
+    .footer-grid {
+      max-width: 800px;
+      margin: 0 auto 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 48px;
+      text-align: center;
+    }
+
+    .footer-block h4 {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .footer-block p {
+      font-size: 15px;
+      color: var(--cream-soft);
+      line-height: 1.8;
+    }
+
+    .footer-cta {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      background: var(--gold);
+      text-decoration: none;
+      padding: 18px 56px;
+      margin-bottom: 80px;
+      transition: background 0.6s ease, transform 0.3s ease;
+    }
+    .footer-cta:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+    }
+
+    .footer-line {
+      width: 100%;
+      max-width: 800px;
+      height: 1px;
+      background: rgba(201, 168, 76, 0.15);
+      margin: 0 auto 40px;
+    }
+
+    .footer-bottom {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+    .footer-bottom a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* ── Responsive ── */
+    @media (min-width: 768px) {
+      .exp-grid { grid-template-columns: 1fr 1fr; }
+      .course { padding: 56px 0; }
+    }
+
+    @media (max-width: 600px) {
+      section { padding: 80px 20px; }
+      .exp-item { grid-template-columns: 1fr; gap: 16px; text-align: center; }
+      .exp-icon { margin: 0 auto; }
+      .avis-card { padding: 36px 24px; }
+      .footer { padding: 80px 20px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════ HERO ════ -->
+  <section class="hero">
+    <p class="hero-lotus">InterContinental Tahiti Resort & Spa</p>
+    <h1 class="hero-title">Le Lotus</h1>
+    <p class="hero-tagline">Gastronomie sur pilotis &mdash; Vue sur le lagon</p>
+    <a href="#reservation" class="hero-cta">R&eacute;server une table</a>
+    <div class="hero-scroll">
+      <span>D&eacute;couvrir</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ════ LA CARTE ════ -->
+  <section id="carte">
+    <h2 class="section-title reveal">La Carte</h2>
+    <p class="section-subtitle reveal">Menu d&eacute;gustation en cinq actes</p>
+    <div class="gold-line reveal"></div>
+
+    <div class="carte" style="margin-top: 48px;">
+
+      <div class="course reveal">
+        <div class="course-number">I</div>
+        <div class="course-label">Amuse-bouche</div>
+        <div class="course-name">Perle du Lagon</div>
+        <div class="course-desc">Huitre de Mangareva, gel&eacute;e yuzu, &eacute;cume de lait de coco &amp; caviar de citron</div>
+        <div class="course-price">2 800 XPF</div>
+      </div>
+
+      <div class="course reveal">
+        <div class="course-number">II</div>
+        <div class="course-label">Entr&eacute;e</div>
+        <div class="course-name">Tartare de Thon Rouge des Marquises</div>
+        <div class="course-desc">Avocat cr&eacute;meux, s&eacute;same noir torr&eacute;fi&eacute;, vinaigrette ponzu &amp; chips de taro</div>
+        <div class="course-price">3 600 XPF</div>
+      </div>
+
+      <div class="course reveal">
+        <div class="course-number">III</div>
+        <div class="course-label">Poisson</div>
+        <div class="course-name">Mahi-Mahi en Cro&ucirc;te de Macadamia</div>
+        <div class="course-desc">Beurre blanc au fruit de la passion, pur&eacute;e de patate douce violette, l&eacute;gumes du jardin</div>
+        <div class="course-price">4 800 XPF</div>
+      </div>
+
+      <div class="course reveal">
+        <div class="course-number">IV</div>
+        <div class="course-label">Viande</div>
+        <div class="course-name">Filet de B&oelig;uf, R&eacute;duction Passion</div>
+        <div class="course-desc">B&oelig;uf de Nouvelle-Z&eacute;lande matur&eacute;, jus de passion cors&eacute;, gratin dauphinois au lait de coco</div>
+        <div class="course-price">5 200 XPF</div>
+      </div>
+
+      <div class="course reveal">
+        <div class="course-number">V</div>
+        <div class="course-label">Dessert</div>
+        <div class="course-name">Moelleux Chocolat Tahiti, Sorbet Coco</div>
+        <div class="course-desc">Grand cru de cacao de Tahiti, c&oelig;ur coulant vanille de Tahaa, sorbet noix de coco fra&icirc;che</div>
+        <div class="course-price">3 200 XPF</div>
+      </div>
+
+      <div class="carte-note reveal">
+        <p>Menu d&eacute;gustation 5 services &mdash; <strong>15 800 XPF</strong><br>
+        Accord mets &amp; vins disponible &mdash; <strong>8 500 XPF</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ L'EXPERIENCE ════ -->
+  <section class="experience" id="experience">
+    <h2 class="section-title reveal">L'Exp&eacute;rience</h2>
+    <p class="section-subtitle reveal">Bien plus qu'un d&icirc;ner, un voyage sensoriel</p>
+    <div class="gold-line reveal" style="margin-bottom: 72px;"></div>
+
+    <div class="exp-grid">
+
+      <div class="exp-item reveal">
+        <div class="exp-icon">&#9830;</div>
+        <div>
+          <h3 class="exp-title">Sur Pilotis</h3>
+          <p class="exp-text">Suspendu au-dessus des eaux cristallines du lagon, chaque table offre une intimit&eacute; rare. Le murmure des vagues accompagne chaque bouch&eacute;e.</p>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-icon">&#9788;</div>
+        <div>
+          <h3 class="exp-title">Coucher de Soleil</h3>
+          <p class="exp-text">Moorea se dessine &agrave; l'horizon tandis que le ciel s'embrase. Un spectacle in&eacute;dit chaque soir, offert avec votre ap&eacute;ritif.</p>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div>
+          <div class="exp-icon">&#10047;</div>
+        </div>
+        <div>
+          <h3 class="exp-title">Produits Locaux</h3>
+          <p class="exp-text">Thon rouge des Marquises, vanille de Tahaa, cacao de Tahiti. Notre chef sublime les tr&eacute;sors de la Polyn&eacute;sie fran&ccedil;aise dans chaque assiette.</p>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-icon">&#9733;</div>
+        <div>
+          <h3 class="exp-title">Service d'Exception</h3>
+          <p class="exp-text">Un service attentionn&eacute;, discret et pr&eacute;venant. Notre &eacute;quipe anticipe vos d&eacute;sirs pour une soir&eacute;e sans la moindre fausse note.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════ AVIS ════ -->
+  <section class="avis" id="avis">
+    <h2 class="section-title reveal">Ils en parlent</h2>
+    <p class="section-subtitle reveal">Moments pr&eacute;cieux, souvenirs &eacute;ternels</p>
+    <div class="gold-line reveal" style="margin-bottom: 72px;"></div>
+
+    <div class="avis-grid">
+
+      <div class="avis-card reveal">
+        <div class="avis-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="avis-quote">&laquo;&nbsp;Un moment magique. Le tartare de thon &eacute;tait une r&eacute;v&eacute;lation, et le coucher de soleil sur Moorea restera grav&eacute; dans notre m&eacute;moire.&nbsp;&raquo;</p>
+        <p class="avis-author">Sophie &amp; Laurent &mdash; Paris</p>
+      </div>
+
+      <div class="avis-card reveal">
+        <div class="avis-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="avis-quote">&laquo;&nbsp;L'exp&eacute;rience la plus romantique de notre voyage. Le service est impeccable, les saveurs sublimes. On a l'impression de flotter sur le lagon.&nbsp;&raquo;</p>
+        <p class="avis-author">Claire &amp; Thomas &mdash; Lyon</p>
+      </div>
+
+      <div class="avis-card reveal">
+        <div class="avis-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="avis-quote">&laquo;&nbsp;Chaque plat raconte une histoire, celle de la Polyn&eacute;sie dans ce qu'elle a de plus noble. Le moelleux au chocolat de Tahiti est inoubliable.&nbsp;&raquo;</p>
+        <p class="avis-author">Jean-Marc &mdash; Gen&egrave;ve</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════ FOOTER / RESERVATION ════ -->
+  <footer class="footer" id="reservation">
+    <h2 class="footer-title reveal">R&eacute;servation</h2>
+    <p class="footer-sub reveal">Votre table vous attend au-dessus du lagon</p>
+
+    <a href="tel:+68986515110" class="footer-cta reveal">Appeler pour r&eacute;server</a>
+
+    <div class="footer-grid reveal">
+
+      <div class="footer-block">
+        <h4>Horaires</h4>
+        <p>D&icirc;ner uniquement<br>19h00 &mdash; 22h00<br>Ouvert 7j/7</p>
+      </div>
+
+      <div class="footer-block">
+        <h4>Dresscode</h4>
+        <p>Tenue &eacute;l&eacute;gante exig&eacute;e<br>Chemise &amp; pantalon pour messieurs<br>Pas de tongs ni maillots</p>
+      </div>
+
+      <div class="footer-block">
+        <h4>Contact</h4>
+        <p>+689 86 51 51 10<br>InterContinental Tahiti<br>Faa'a, Tahiti</p>
+      </div>
+
+    </div>
+
+    <div class="footer-line"></div>
+    <p class="footer-bottom">
+      Le Lotus &mdash; InterContinental Tahiti Resort &amp; Spa<br>
+      Page r&eacute;alis&eacute;e par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a>
+    </p>
+  </footer>
+
+  <!-- ════ SCROLL REVEAL ════ -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const els = document.querySelectorAll('.reveal, .gold-line');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            const delay = entry.target.dataset.delay || 0;
+            setTimeout(() => entry.target.classList.add('visible'), delay);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+      // Stagger courses and cards
+      let groupIndex = 0;
+      let lastParent = null;
+      els.forEach(el => {
+        const parent = el.closest('section') || el.closest('footer');
+        if (parent !== lastParent) { groupIndex = 0; lastParent = parent; }
+        el.dataset.delay = groupIndex * 120;
+        groupIndex++;
+        observer.observe(el);
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Air Tahiti Nui — La compagnie du bout du monde</title>
+  <meta name="description" content="Air Tahiti Nui, compagnie aerienne internationale de la Polynesie francaise. Vols vers Paris, Los Angeles, Tokyo, Auckland, Seattle.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy: #0a1628;
+      --navy-light: #111f3a;
+      --navy-mid: #0e1a30;
+      --gold: #c8a45a;
+      --gold-light: #dfc07a;
+      --gold-dark: #a8863a;
+      --white: #ffffff;
+      --white-90: rgba(255,255,255,0.9);
+      --white-70: rgba(255,255,255,0.7);
+      --white-50: rgba(255,255,255,0.5);
+      --white-20: rgba(255,255,255,0.2);
+      --white-10: rgba(255,255,255,0.1);
+      --white-05: rgba(255,255,255,0.05);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--white-90);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 60px;
+      background: transparent;
+      transition: background 0.4s ease, box-shadow 0.4s ease, padding 0.3s ease;
+    }
+    nav.scrolled {
+      background: rgba(10,22,40,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 2px 40px rgba(0,0,0,0.3);
+      padding: 14px 60px;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 700; color: var(--white);
+      letter-spacing: 1px; text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      color: var(--white-70); text-decoration: none;
+      font-size: 14px; font-weight: 400; letter-spacing: 0.5px;
+      transition: color 0.3s ease; text-transform: uppercase;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: transparent; border: 1px solid var(--gold);
+      color: var(--gold); padding: 10px 28px; font-size: 13px;
+      font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.4s ease; text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+    .nav-cta:hover {
+      background: var(--gold); color: var(--navy);
+      box-shadow: 0 0 30px rgba(200,164,90,0.3);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(135deg, #060e1a 0%, #0a1628 25%, #0f1d35 50%, #0a1628 75%, #060e1a 100%);
+      background-size: 400% 400%;
+      animation: heroGradient 12s ease infinite;
+    }
+    @keyframes heroGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .hero-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(200,164,90,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 20% 80%, rgba(200,164,90,0.03) 0%, transparent 50%);
+    }
+    .hero-geometric {
+      position: absolute; inset: 0; z-index: 1; overflow: hidden; opacity: 0.15;
+    }
+    .hero-geometric .line {
+      position: absolute; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      height: 1px;
+    }
+    .hero-geometric .line:nth-child(1) { top: 20%; left: -10%; width: 40%; transform: rotate(-5deg); }
+    .hero-geometric .line:nth-child(2) { top: 70%; right: -10%; width: 35%; transform: rotate(3deg); }
+    .hero-geometric .line:nth-child(3) { top: 45%; left: 60%; width: 50%; transform: rotate(-15deg); opacity: 0.5; }
+    .hero-geometric .diamond {
+      position: absolute; width: 80px; height: 80px;
+      border: 1px solid var(--gold); transform: rotate(45deg);
+      opacity: 0.3;
+    }
+    .hero-geometric .diamond:nth-child(4) { top: 15%; right: 12%; }
+    .hero-geometric .diamond:nth-child(5) { bottom: 20%; left: 8%; width: 50px; height: 50px; }
+
+    .hero-content { position: relative; z-index: 2; max-width: 900px; padding: 0 24px; }
+    .hero-airline {
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--gold); letter-spacing: 6px; text-transform: uppercase;
+      margin-bottom: 28px; opacity: 0.9;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 8vw, 96px); font-weight: 700;
+      line-height: 1.05; color: var(--white);
+      margin-bottom: 10px;
+    }
+    .hero-title span { color: var(--gold); }
+    .hero-tagline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px, 2.5vw, 28px); font-weight: 400;
+      color: var(--white-50); font-style: italic;
+      margin-bottom: 48px;
+    }
+    .hero-cta {
+      display: inline-block; position: relative;
+      background: var(--gold); color: var(--navy);
+      padding: 18px 56px; font-size: 14px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      text-decoration: none; overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hero-cta::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.6s ease;
+    }
+    .hero-cta:hover::before { left: 100%; }
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(200,164,90,0.35);
+    }
+    .hero-scroll {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      z-index: 2; display: flex; flex-direction: column; align-items: center;
+      gap: 8px; color: var(--white-50); font-size: 11px;
+      letter-spacing: 3px; text-transform: uppercase;
+    }
+    .hero-scroll .arrow {
+      width: 20px; height: 20px; border-right: 1px solid var(--white-50);
+      border-bottom: 1px solid var(--white-50);
+      transform: rotate(45deg); animation: scrollBounce 2s ease infinite;
+    }
+    @keyframes scrollBounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); opacity: 1; }
+      50% { transform: rotate(45deg) translateY(6px); opacity: 0.4; }
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      background: var(--navy-light); border-top: 1px solid var(--white-10);
+      border-bottom: 1px solid var(--white-10);
+    }
+    .stat-item {
+      padding: 40px 20px; text-align: center;
+      border-right: 1px solid var(--white-05);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px; font-weight: 700; color: var(--gold);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 12px; color: var(--white-50); letter-spacing: 2px;
+      text-transform: uppercase; margin-top: 10px;
+    }
+
+    /* ── SECTION COMMON ── */
+    .section { padding: 120px 60px; position: relative; }
+    .section-label {
+      font-size: 12px; color: var(--gold); letter-spacing: 5px;
+      text-transform: uppercase; margin-bottom: 16px; font-weight: 500;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 4vw, 52px); font-weight: 600;
+      color: var(--white); line-height: 1.15; margin-bottom: 20px;
+    }
+    .section-subtitle {
+      font-size: 16px; color: var(--white-50); max-width: 560px;
+      line-height: 1.7; margin-bottom: 60px;
+    }
+    .gold-line {
+      width: 60px; height: 2px; background: var(--gold); margin-bottom: 24px;
+    }
+
+    /* ── FADE ANIMATIONS ── */
+    .fade-up {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up.delay-1 { transition-delay: 0.1s; }
+    .fade-up.delay-2 { transition-delay: 0.2s; }
+    .fade-up.delay-3 { transition-delay: 0.3s; }
+    .fade-up.delay-4 { transition-delay: 0.4s; }
+
+    /* ── DESTINATIONS ── */
+    .destinations { background: var(--navy); }
+    .dest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px; max-width: 1400px; margin: 0 auto;
+    }
+    .dest-card {
+      position: relative; background: var(--navy-light);
+      border: 1px solid var(--white-10); padding: 40px 32px;
+      overflow: hidden; cursor: pointer;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      transform-style: preserve-3d; perspective: 800px;
+    }
+    .dest-card:hover {
+      border-color: var(--gold-dark);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 30px rgba(200,164,90,0.08);
+    }
+    .dest-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .dest-card:hover::before { opacity: 1; }
+    .dest-icon {
+      font-size: 32px; margin-bottom: 20px; display: block;
+    }
+    .dest-city {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px; font-weight: 600; color: var(--white);
+      margin-bottom: 4px;
+    }
+    .dest-country {
+      font-size: 13px; color: var(--white-50); letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 24px;
+    }
+    .dest-info { display: flex; justify-content: space-between; align-items: flex-end; }
+    .dest-detail-label {
+      font-size: 11px; color: var(--white-50); letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .dest-flight-time { font-size: 15px; color: var(--white-70); font-weight: 400; }
+    .dest-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 600; color: var(--gold);
+    }
+    .dest-price-unit { font-size: 11px; color: var(--white-50); font-weight: 400; }
+
+    /* ── CLASSES ── */
+    .classes { background: var(--navy-mid); }
+    .classes-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 28px; max-width: 1200px; margin: 0 auto;
+    }
+    .class-card {
+      position: relative; background: var(--navy);
+      border: 1px solid var(--white-10); padding: 48px 36px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transform-style: preserve-3d; perspective: 800px;
+    }
+    .class-card.featured {
+      border-color: var(--gold-dark);
+      background: linear-gradient(160deg, rgba(200,164,90,0.06) 0%, var(--navy) 40%);
+    }
+    .class-card.featured::before {
+      content: 'SIGNATURE'; position: absolute; top: 20px; right: 20px;
+      font-size: 10px; letter-spacing: 2px; color: var(--gold);
+      border: 1px solid var(--gold-dark); padding: 4px 12px;
+    }
+    .class-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+    .class-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px; font-weight: 600; margin-bottom: 6px;
+    }
+    .class-card.featured .class-name { color: var(--gold); }
+    .class-type {
+      font-size: 12px; color: var(--white-50); letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 28px;
+    }
+    .class-divider {
+      width: 40px; height: 1px; margin-bottom: 28px;
+    }
+    .class-card.featured .class-divider { background: var(--gold); }
+    .class-card:not(.featured) .class-divider { background: var(--white-20); }
+    .class-features { list-style: none; }
+    .class-features li {
+      padding: 10px 0; font-size: 14px; color: var(--white-70);
+      border-bottom: 1px solid var(--white-05);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .class-features li::before {
+      content: ''; width: 6px; height: 6px; flex-shrink: 0;
+      border-radius: 50%;
+    }
+    .class-card.featured .class-features li::before { background: var(--gold); }
+    .class-card:not(.featured) .class-features li::before { background: var(--white-20); }
+
+    /* ── EXPERIENCE ── */
+    .experience { background: var(--navy); }
+    .exp-layout {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; max-width: 1200px; margin: 0 auto; align-items: center;
+    }
+    .exp-visual {
+      position: relative; height: 500px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .exp-plane {
+      width: 320px; height: 320px;
+      border: 1px solid var(--white-10); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .exp-plane::before {
+      content: ''; position: absolute; inset: -20px;
+      border: 1px solid var(--white-05); border-radius: 50%;
+    }
+    .exp-plane::after {
+      content: ''; position: absolute; inset: -40px;
+      border: 1px dashed var(--white-05); border-radius: 50%;
+      animation: rotateOrbit 30s linear infinite;
+    }
+    @keyframes rotateOrbit { to { transform: rotate(360deg); } }
+    .exp-plane-icon { font-size: 72px; opacity: 0.9; }
+    .exp-float-tag {
+      position: absolute; background: var(--navy-light);
+      border: 1px solid var(--white-10); padding: 12px 20px;
+      font-size: 12px; letter-spacing: 1px; color: var(--white-70);
+    }
+    .exp-float-tag:nth-child(2) { top: 30px; right: 0; }
+    .exp-float-tag:nth-child(3) { bottom: 60px; left: 0; }
+    .exp-float-tag:nth-child(4) { top: 50%; right: -20px; }
+    .exp-float-tag .tag-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; color: var(--gold); display: block; margin-top: 4px;
+    }
+
+    .exp-text .exp-item { margin-bottom: 36px; }
+    .exp-item-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 600; color: var(--white);
+      margin-bottom: 8px;
+    }
+    .exp-item-desc {
+      font-size: 14px; color: var(--white-50); line-height: 1.7;
+    }
+
+    /* ── BOOKING CTA ── */
+    .booking-cta {
+      padding: 100px 60px; text-align: center;
+      background: linear-gradient(160deg, var(--navy-light) 0%, var(--navy) 50%, var(--navy-mid) 100%);
+      position: relative; overflow: hidden;
+    }
+    .booking-cta::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(200,164,90,0.04) 0%, transparent 70%);
+    }
+    .booking-cta .section-title { margin-bottom: 16px; }
+    .booking-cta .section-subtitle { margin: 0 auto 48px; text-align: center; }
+    .booking-btn {
+      display: inline-block; position: relative;
+      background: transparent; border: 2px solid var(--gold);
+      color: var(--gold); padding: 20px 64px; font-size: 14px;
+      font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
+      text-decoration: none; overflow: hidden;
+      transition: all 0.4s ease;
+    }
+    .booking-btn::before {
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%; background: var(--gold);
+      transition: left 0.4s ease; z-index: -1;
+    }
+    .booking-btn:hover::before { left: 0; }
+    .booking-btn:hover {
+      color: var(--navy);
+      box-shadow: 0 0 50px rgba(200,164,90,0.25);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #060c18; padding: 80px 60px 40px;
+      border-top: 1px solid var(--white-05);
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px; max-width: 1200px; margin: 0 auto 60px;
+    }
+    .footer-brand .nav-logo { font-size: 20px; display: inline-block; margin-bottom: 16px; }
+    .footer-brand p { font-size: 14px; color: var(--white-50); line-height: 1.7; max-width: 300px; }
+    .footer-col h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px; font-weight: 600; color: var(--white);
+      margin-bottom: 20px;
+    }
+    .footer-col a {
+      display: block; font-size: 13px; color: var(--white-50);
+      text-decoration: none; margin-bottom: 12px;
+      transition: color 0.3s ease;
+    }
+    .footer-col a:hover { color: var(--gold); }
+    .footer-social { display: flex; gap: 16px; margin-top: 24px; }
+    .footer-social a {
+      width: 40px; height: 40px; border: 1px solid var(--white-10);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--white-50); font-size: 14px; margin: 0;
+      transition: all 0.3s ease;
+    }
+    .footer-social a:hover {
+      border-color: var(--gold); color: var(--gold);
+      background: rgba(200,164,90,0.05);
+    }
+    .footer-bottom {
+      border-top: 1px solid var(--white-05);
+      padding-top: 30px; text-align: center;
+      font-size: 12px; color: var(--white-50);
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-bottom a { color: var(--white-50); text-decoration: none; margin-left: 20px; }
+    .footer-bottom a:hover { color: var(--gold); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .exp-layout { grid-template-columns: 1fr; gap: 40px; }
+      .exp-visual { height: 380px; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      nav.scrolled { padding: 12px 24px; }
+      .nav-links { display: none; }
+      .section { padding: 80px 24px; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .dest-grid { grid-template-columns: 1fr; }
+      .classes-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .footer-bottom { flex-direction: column; gap: 12px; }
+      .booking-cta { padding: 80px 24px; }
+      .exp-visual { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">AIR TAHITI <span>NUI</span></a>
+    <ul class="nav-links">
+      <li><a href="#destinations">Destinations</a></li>
+      <li><a href="#classes">Nos Classes</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#booking" class="nav-cta">Reserver</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-geometric">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="diamond"></div>
+      <div class="diamond"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-airline fade-up">Compagnie aerienne internationale</p>
+      <h1 class="hero-title fade-up delay-1">Air Tahiti <span>Nui</span></h1>
+      <p class="hero-tagline fade-up delay-2">La compagnie du bout du monde</p>
+      <a href="#booking" class="hero-cta fade-up delay-3">Reserver votre vol</a>
+    </div>
+    <div class="hero-scroll">
+      <span>Explorer</span>
+      <div class="arrow"></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-item fade-up">
+      <div class="stat-number" data-target="25">0</div>
+      <div class="stat-label">Annees d'excellence</div>
+    </div>
+    <div class="stat-item fade-up delay-1">
+      <div class="stat-number" data-target="5">0</div>
+      <div class="stat-label">Destinations internationales</div>
+    </div>
+    <div class="stat-item fade-up delay-2">
+      <div class="stat-number" data-target="787">0</div>
+      <div class="stat-label">Dreamliner — Flotte moderne</div>
+    </div>
+    <div class="stat-item fade-up delay-3">
+      <div class="stat-number special" data-target="100" data-suffix="%">0</div>
+      <div class="stat-label">Hospitalite polynesienne</div>
+    </div>
+  </div>
+
+  <!-- DESTINATIONS -->
+  <section class="section destinations" id="destinations">
+    <div class="section-label fade-up">Destinations</div>
+    <div class="gold-line fade-up"></div>
+    <h2 class="section-title fade-up">Connecter la Polynesie <br>au reste du monde</h2>
+    <p class="section-subtitle fade-up">De Papeete vers cinq continents, decouvrez nos liaisons directes a bord du Boeing 787 Dreamliner.</p>
+
+    <div class="dest-grid">
+      <div class="dest-card fade-up">
+        <span class="dest-icon">&#9829;</span>
+        <div class="dest-city">Paris</div>
+        <div class="dest-country">France</div>
+        <div class="dest-info">
+          <div>
+            <div class="dest-detail-label">Duree du vol</div>
+            <div class="dest-flight-time">22h via LAX</div>
+          </div>
+          <div style="text-align:right">
+            <div class="dest-detail-label">A partir de</div>
+            <div class="dest-price">158 000 <span class="dest-price-unit">XPF</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dest-card fade-up delay-1">
+        <span class="dest-icon">&#9733;</span>
+        <div class="dest-city">Los Angeles</div>
+        <div class="dest-country">Etats-Unis</div>
+        <div class="dest-info">
+          <div>
+            <div class="dest-detail-label">Duree du vol</div>
+            <div class="dest-flight-time">8h30 direct</div>
+          </div>
+          <div style="text-align:right">
+            <div class="dest-detail-label">A partir de</div>
+            <div class="dest-price">89 000 <span class="dest-price-unit">XPF</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dest-card fade-up delay-2">
+        <span class="dest-icon">&#9673;</span>
+        <div class="dest-city">Tokyo</div>
+        <div class="dest-country">Japon</div>
+        <div class="dest-info">
+          <div>
+            <div class="dest-detail-label">Duree du vol</div>
+            <div class="dest-flight-time">11h direct</div>
+          </div>
+          <div style="text-align:right">
+            <div class="dest-detail-label">A partir de</div>
+            <div class="dest-price">112 000 <span class="dest-price-unit">XPF</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dest-card fade-up delay-3">
+        <span class="dest-icon">&#9670;</span>
+        <div class="dest-city">Auckland</div>
+        <div class="dest-country">Nouvelle-Zelande</div>
+        <div class="dest-info">
+          <div>
+            <div class="dest-detail-label">Duree du vol</div>
+            <div class="dest-flight-time">5h30 direct</div>
+          </div>
+          <div style="text-align:right">
+            <div class="dest-detail-label">A partir de</div>
+            <div class="dest-price">72 000 <span class="dest-price-unit">XPF</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dest-card fade-up delay-4">
+        <span class="dest-icon">&#9651;</span>
+        <div class="dest-city">Seattle</div>
+        <div class="dest-country">Etats-Unis</div>
+        <div class="dest-info">
+          <div>
+            <div class="dest-detail-label">Duree du vol</div>
+            <div class="dest-flight-time">9h30 direct</div>
+          </div>
+          <div style="text-align:right">
+            <div class="dest-detail-label">A partir de</div>
+            <div class="dest-price">95 000 <span class="dest-price-unit">XPF</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLASSES -->
+  <section class="section classes" id="classes">
+    <div style="text-align:center; margin-bottom:60px;">
+      <div class="section-label fade-up" style="text-align:center">Nos Classes</div>
+      <div class="gold-line fade-up" style="margin:0 auto 24px"></div>
+      <h2 class="section-title fade-up" style="text-align:center">Une experience a chaque niveau</h2>
+      <p class="section-subtitle fade-up" style="margin:0 auto; text-align:center">Du confort essentiel au luxe absolu, chaque siege est une promesse de voyage inoubliable.</p>
+    </div>
+
+    <div class="classes-grid">
+      <div class="class-card featured fade-up">
+        <div class="class-name">Poerava</div>
+        <div class="class-type">Classe Affaires</div>
+        <div class="class-divider"></div>
+        <ul class="class-features">
+          <li>Siege full-flat 180&deg; — 2m de long</li>
+          <li>Acces salon VIP Poerava</li>
+          <li>Menu gastronomique du Chef</li>
+          <li>Champagne et vins premiums</li>
+          <li>Trousse de confort Clarins</li>
+          <li>Ecran tactile 18 pouces</li>
+          <li>Wi-Fi haut debit offert</li>
+          <li>Franchise bagages 3 x 32 kg</li>
+        </ul>
+      </div>
+
+      <div class="class-card fade-up delay-1">
+        <div class="class-name">Moana</div>
+        <div class="class-type">Economie Premium</div>
+        <div class="class-divider"></div>
+        <ul class="class-features">
+          <li>Siege inclinable avec repose-jambes</li>
+          <li>Espacement genereux 97 cm</li>
+          <li>Repas ameliore et boissons incluses</li>
+          <li>Ecran tactile 13.3 pouces</li>
+          <li>Prise USB et electrique</li>
+          <li>Kit confort voyage</li>
+          <li>Embarquement prioritaire</li>
+          <li>Franchise bagages 2 x 23 kg</li>
+        </ul>
+      </div>
+
+      <div class="class-card fade-up delay-2">
+        <div class="class-name">Economy</div>
+        <div class="class-type">Classe Economique</div>
+        <div class="class-divider"></div>
+        <ul class="class-features">
+          <li>Siege ergonomique Dreamliner</li>
+          <li>Espacement confortable 79 cm</li>
+          <li>Repas chaud polynesien inclus</li>
+          <li>Ecran tactile 12 pouces</li>
+          <li>Prise USB personnelle</li>
+          <li>200+ films et series</li>
+          <li>Couverture et oreiller</li>
+          <li>Franchise bagages 1 x 23 kg</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="section experience" id="experience">
+    <div class="exp-layout">
+      <div class="exp-visual fade-up">
+        <div class="exp-plane">
+          <div class="exp-plane-icon">&#9992;</div>
+        </div>
+        <div class="exp-float-tag">
+          Flotte
+          <span class="tag-value">787-9</span>
+        </div>
+        <div class="exp-float-tag">
+          Confort
+          <span class="tag-value">Dreamliner</span>
+        </div>
+        <div class="exp-float-tag">
+          Cabine
+          <span class="tag-value">294 sieges</span>
+        </div>
+      </div>
+
+      <div class="exp-text">
+        <div class="section-label fade-up">L'Experience</div>
+        <div class="gold-line fade-up"></div>
+        <h2 class="section-title fade-up">Voyager a la <br>polynesienne</h2>
+        <p class="section-subtitle fade-up">Bien plus qu'un vol, une immersion dans l'art de vivre des iles, des la passerelle d'embarquement.</p>
+
+        <div class="exp-item fade-up">
+          <div class="exp-item-title">Hospitalite Maohi</div>
+          <div class="exp-item-desc">Un accueil floral au depart de Papeete, le sourire sincere de notre equipage polynesien et la chaleur du tiare qui parfume la cabine.</div>
+        </div>
+        <div class="exp-item fade-up delay-1">
+          <div class="exp-item-title">Boeing 787 Dreamliner</div>
+          <div class="exp-item-desc">Flotte derniere generation : air plus pur, pression cabine optimisee, hublots electrochromiques et eclairage d'ambiance.</div>
+        </div>
+        <div class="exp-item fade-up delay-2">
+          <div class="exp-item-title">Gastronomie du Pacifique</div>
+          <div class="exp-item-desc">Poisson cru au lait de coco, mahi-mahi grille, desserts au fruit de la passion — des saveurs authentiques a 10 000 metres.</div>
+        </div>
+        <div class="exp-item fade-up delay-3">
+          <div class="exp-item-title">Divertissement a bord</div>
+          <div class="exp-item-desc">Plus de 200 films, series, documentaires sur la Polynesie, musique locale et jeux — sur ecran tactile HD individuel.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING CTA -->
+  <section class="booking-cta" id="booking">
+    <div class="section-label fade-up" style="text-align:center">Reservez maintenant</div>
+    <div class="gold-line fade-up" style="margin:0 auto 24px"></div>
+    <h2 class="section-title fade-up">Votre prochaine escale <br>commence ici</h2>
+    <p class="section-subtitle fade-up">Tarifs preferentiels en ligne. Paiement securise. Modification gratuite jusqu'a 72h avant le depart.</p>
+    <a href="#" class="booking-btn fade-up">Rechercher un vol</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">AIR TAHITI <span>NUI</span></a>
+        <p>Compagnie aerienne internationale de la Polynesie francaise. Depuis 1998, nous connectons Tahiti au monde avec fierte et hospitalite.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">in</a>
+          <a href="#" aria-label="Twitter">X</a>
+          <a href="#" aria-label="YouTube">YT</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Destinations</h4>
+        <a href="#">Papeete — Paris</a>
+        <a href="#">Papeete — Los Angeles</a>
+        <a href="#">Papeete — Tokyo</a>
+        <a href="#">Papeete — Auckland</a>
+        <a href="#">Papeete — Seattle</a>
+      </div>
+      <div class="footer-col">
+        <h4>Compagnie</h4>
+        <a href="#">A propos</a>
+        <a href="#">Notre flotte</a>
+        <a href="#">Carrieres</a>
+        <a href="#">Developpement durable</a>
+        <a href="#">Presse</a>
+      </div>
+      <div class="footer-col">
+        <h4>Assistance</h4>
+        <a href="#">Centre d'aide</a>
+        <a href="#">Bagages</a>
+        <a href="#">Reclamations</a>
+        <a href="#">Conditions generales</a>
+        <a href="#">+689 40 46 03 03</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Air Tahiti Nui — Tous droits reserves</span>
+      <div>
+        <a href="#">Mentions legales</a>
+        <a href="#">Confidentialite</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── NAV SCROLL ── */
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ── INTERSECTION OBSERVER — FADE UP ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    /* ── COUNTER ANIMATION ── */
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.target);
+          const suffix = el.dataset.suffix || '';
+          const duration = 2000;
+          const start = performance.now();
+
+          function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(eased * target) + suffix;
+            if (progress < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+          counterObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
+
+    /* ── 3D TILT ON CARDS ── */
+    document.querySelectorAll('.dest-card, .class-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `perspective(800px) rotateY(${x * 8}deg) rotateX(${-y * 6}deg) scale3d(1.02,1.02,1.02)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.transition = 'transform 0.5s ease';
+        setTimeout(() => { card.style.transition = ''; }, 500);
+      });
+    });
+
+    /* ── SMOOTH SCROLL ── */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

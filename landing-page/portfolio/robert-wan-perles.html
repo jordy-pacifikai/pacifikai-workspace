@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robert Wan — L'Art de la Perle Noire de Tahiti</title>
+    <meta name="description" content="Robert Wan, L'Empereur de la Perle Noire. Maison de joaillerie de luxe, leader mondial de la perle noire de culture de Tahiti depuis 1973.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --black: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --gold: #c9a94e;
+            --gold-dim: rgba(201, 169, 78, 0.3);
+            --gold-glow: rgba(201, 169, 78, 0.15);
+            --pearl-white: #f0ece4;
+            --text-muted: #8a8578;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--black);
+            color: var(--pearl-white);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── Golden Particles ─── */
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatUp linear infinite;
+        }
+
+        .particle:nth-child(1)  { left: 8%;  animation-duration: 18s; animation-delay: 0s; }
+        .particle:nth-child(2)  { left: 15%; animation-duration: 22s; animation-delay: 3s; }
+        .particle:nth-child(3)  { left: 28%; animation-duration: 16s; animation-delay: 7s; }
+        .particle:nth-child(4)  { left: 42%; animation-duration: 24s; animation-delay: 2s; }
+        .particle:nth-child(5)  { left: 55%; animation-duration: 19s; animation-delay: 5s; }
+        .particle:nth-child(6)  { left: 68%; animation-duration: 21s; animation-delay: 1s; }
+        .particle:nth-child(7)  { left: 78%; animation-duration: 17s; animation-delay: 8s; }
+        .particle:nth-child(8)  { left: 88%; animation-duration: 23s; animation-delay: 4s; }
+        .particle:nth-child(9)  { left: 35%; animation-duration: 20s; animation-delay: 6s; }
+        .particle:nth-child(10) { left: 92%; animation-duration: 15s; animation-delay: 9s; }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%  { opacity: 0.6; }
+            90%  { opacity: 0.3; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* ─── Fade-in on scroll ─── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ─── Navigation ─── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 60px;
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(201, 169, 78, 0.08);
+            transition: padding 0.4s ease;
+        }
+
+        nav.scrolled { padding: 16px 60px; }
+
+        .nav-logo {
+            font-family: 'Cormorant', serif;
+            font-weight: 300;
+            font-size: 22px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover { color: var(--gold); }
+
+        /* ─── HERO ─── */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 40px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 800px; height: 800px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(201,169,78,0.04) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .pearl-orb {
+            position: relative;
+            width: 280px; height: 280px;
+            margin-bottom: 60px;
+            border-radius: 50%;
+            animation: orbRotate 20s linear infinite;
+        }
+
+        .pearl-orb::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #f0ece4, #e8c4d0, #c4d8c0, #d0e0f0,
+                #f0ece4, #dbb8c8, #b8d4b0, #c8dce8,
+                #f0ece4
+            );
+            animation: orbRotate 20s linear infinite;
+        }
+
+        .pearl-orb::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            background: radial-gradient(
+                ellipse at 35% 30%,
+                rgba(255,255,255,0.9) 0%,
+                rgba(240,236,228,0.7) 20%,
+                rgba(220,200,210,0.5) 40%,
+                rgba(180,200,180,0.4) 60%,
+                rgba(160,170,180,0.6) 80%,
+                rgba(100,100,110,0.8) 100%
+            );
+            box-shadow:
+                inset -30px -30px 60px rgba(0,0,0,0.3),
+                inset 20px 20px 40px rgba(255,255,255,0.2),
+                0 0 80px rgba(201,169,78,0.1),
+                0 0 160px rgba(201,169,78,0.05);
+        }
+
+        @keyframes orbRotate {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        .hero-subtitle-top {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-family: 'Cormorant', serif;
+            font-weight: 300;
+            font-size: clamp(48px, 8vw, 96px);
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            color: var(--pearl-white);
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero-tagline {
+            font-family: 'Cormorant', serif;
+            font-weight: 300;
+            font-style: italic;
+            font-size: clamp(18px, 2.5vw, 26px);
+            color: var(--text-muted);
+            margin-bottom: 50px;
+            letter-spacing: 2px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 52px;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gold);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover {
+            color: var(--black);
+        }
+
+        .cta-button:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-scroll span {
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--gold), transparent);
+            animation: scrollPulse 2s ease infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; }
+            50%      { opacity: 1; }
+        }
+
+        /* ─── Sections Common ─── */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 120px 60px;
+        }
+
+        .section-label {
+            font-size: 10px;
+            font-weight: 400;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Cormorant', serif;
+            font-weight: 300;
+            font-size: clamp(32px, 4vw, 52px);
+            color: var(--pearl-white);
+            margin-bottom: 16px;
+            letter-spacing: 4px;
+        }
+
+        .section-desc {
+            max-width: 600px;
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 60px;
+        }
+
+        .gold-divider {
+            width: 60px;
+            height: 1px;
+            background: var(--gold);
+            margin: 24px 0;
+        }
+
+        /* ─── COLLECTIONS ─── */
+        .collections {
+            background: var(--charcoal);
+        }
+
+        .collections-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .collections-header .gold-divider {
+            margin: 24px auto;
+        }
+
+        .collections-header .section-desc {
+            margin: 0 auto;
+        }
+
+        .collections-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .collection-card {
+            background: rgba(10, 10, 10, 0.6);
+            border: 1px solid rgba(201, 169, 78, 0.1);
+            padding: 48px 32px;
+            text-align: center;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .collection-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid transparent;
+            transition: border-color 0.5s ease;
+        }
+
+        .collection-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(201, 169, 78, 0.08);
+        }
+
+        .collection-card:hover::before {
+            border-color: var(--gold-dim);
+        }
+
+        .card-pearl {
+            width: 100px; height: 100px;
+            margin: 0 auto 32px;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .card-pearl::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #2a2a2e, #3a2a30, #2a3028, #2a2e34,
+                #2a2a2e, #382832, #28322a, #2a3034,
+                #2a2a2e
+            );
+            animation: orbRotate 15s linear infinite;
+        }
+
+        .card-pearl::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border-radius: 50%;
+            background: radial-gradient(
+                ellipse at 35% 30%,
+                rgba(80, 80, 85, 0.9) 0%,
+                rgba(50, 50, 55, 0.8) 30%,
+                rgba(40, 35, 42, 0.7) 50%,
+                rgba(30, 35, 32, 0.8) 70%,
+                rgba(20, 20, 22, 0.95) 100%
+            );
+            box-shadow:
+                inset -10px -10px 30px rgba(0,0,0,0.5),
+                inset 8px 8px 20px rgba(255,255,255,0.08),
+                0 0 30px rgba(201,169,78,0.08);
+        }
+
+        .card-pearl.pink::before {
+            background: conic-gradient(from 90deg, #3a2a30, #2a2a2e, #382832, #2a2a2e, #3a2a30);
+        }
+
+        .card-pearl.green::before {
+            background: conic-gradient(from 180deg, #2a3028, #2a2a2e, #28322a, #2a2a2e, #2a3028);
+        }
+
+        .card-pearl.blue::before {
+            background: conic-gradient(from 270deg, #2a2e34, #2a2a2e, #2a3034, #2a2a2e, #2a2e34);
+        }
+
+        .collection-card h3 {
+            font-family: 'Cormorant', serif;
+            font-weight: 400;
+            font-size: 22px;
+            letter-spacing: 3px;
+            color: var(--pearl-white);
+            margin-bottom: 12px;
+        }
+
+        .collection-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-price {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        /* ─── L'ART DE LA PERLE ─── */
+        .art-section {
+            background: var(--black);
+        }
+
+        .art-header {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .art-header .gold-divider { margin: 24px auto; }
+        .art-header .section-desc { margin: 0 auto; }
+
+        .timeline {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: var(--gold-dim);
+            transform: translateX(-50%);
+            transform-origin: top;
+            transition: background 0.6s ease;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .timeline-item:last-child { margin-bottom: 0; }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+            padding-right: calc(50% + 50px);
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+            padding-left: calc(50% + 50px);
+            text-align: left;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 8px;
+            width: 12px; height: 12px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            background: var(--black);
+        }
+
+        .timeline-dot::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .timeline-item:hover .timeline-dot::after { opacity: 1; }
+
+        .timeline-step {
+            font-family: 'Cormorant', serif;
+            font-size: 13px;
+            color: var(--gold);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .timeline-title {
+            font-family: 'Cormorant', serif;
+            font-weight: 400;
+            font-size: 28px;
+            color: var(--pearl-white);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+
+        .timeline-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        /* ─── LE MUSEE ─── */
+        .musee {
+            background: var(--charcoal);
+            overflow: hidden;
+        }
+
+        .musee-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            max-width: 1100px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .musee-visual {
+            position: relative;
+            height: 500px;
+            border: 1px solid rgba(201, 169, 78, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .musee-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(201,169,78,0.03), transparent, rgba(201,169,78,0.03));
+        }
+
+        .musee-pearl-display {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            padding: 40px;
+        }
+
+        .mini-pearl {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(
+                ellipse at 35% 30%,
+                rgba(80,80,85,0.9) 0%,
+                rgba(40,40,45,0.8) 50%,
+                rgba(20,20,22,0.95) 100%
+            );
+            box-shadow: 0 0 20px rgba(201,169,78,0.08),
+                inset -6px -6px 16px rgba(0,0,0,0.4),
+                inset 4px 4px 10px rgba(255,255,255,0.06);
+        }
+
+        .mini-pearl:nth-child(2) {
+            background: radial-gradient(ellipse at 35% 30%, rgba(90,75,80,0.9), rgba(50,35,42,0.8), rgba(25,18,22,0.95));
+        }
+        .mini-pearl:nth-child(3) {
+            background: radial-gradient(ellipse at 35% 30%, rgba(75,85,80,0.9), rgba(35,45,38,0.8), rgba(18,22,20,0.95));
+        }
+        .mini-pearl:nth-child(4) {
+            background: radial-gradient(ellipse at 35% 30%, rgba(75,80,90,0.9), rgba(35,40,52,0.8), rgba(18,20,28,0.95));
+        }
+        .mini-pearl:nth-child(5) {
+            width: 80px; height: 80px;
+            background: radial-gradient(ellipse at 35% 30%, rgba(100,95,100,0.9), rgba(60,55,62,0.8), rgba(30,28,32,0.95));
+            justify-self: center;
+        }
+        .mini-pearl:nth-child(6) {
+            background: radial-gradient(ellipse at 35% 30%, rgba(85,80,75,0.9), rgba(48,42,38,0.8), rgba(22,20,18,0.95));
+        }
+        .mini-pearl:nth-child(7) {
+            background: radial-gradient(ellipse at 35% 30%, rgba(70,75,80,0.9), rgba(32,38,42,0.8), rgba(15,18,20,0.95));
+        }
+        .mini-pearl:nth-child(8) {
+            background: radial-gradient(ellipse at 35% 30%, rgba(85,80,85,0.9), rgba(45,40,48,0.8), rgba(22,20,25,0.95));
+        }
+        .mini-pearl:nth-child(9) {
+            background: radial-gradient(ellipse at 35% 30%, rgba(90,85,80,0.9), rgba(52,45,40,0.8), rgba(28,22,20,0.95));
+        }
+
+        .musee-content .section-desc { margin-bottom: 40px; }
+
+        .musee-details {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .musee-details li {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(201, 169, 78, 0.08);
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .musee-details li strong {
+            font-weight: 400;
+            color: var(--pearl-white);
+            min-width: 120px;
+        }
+
+        .detail-gold {
+            color: var(--gold);
+            font-weight: 400;
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            position: relative;
+            z-index: 1;
+            background: var(--black);
+            border-top: 1px solid rgba(201, 169, 78, 0.1);
+            padding: 100px 60px 40px;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto 80px;
+        }
+
+        .footer-brand .nav-logo {
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-brand p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .footer-boutiques {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .boutique h4 {
+            font-family: 'Cormorant', serif;
+            font-weight: 400;
+            font-size: 18px;
+            color: var(--pearl-white);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+
+        .boutique p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .footer-cta {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-start;
+        }
+
+        .footer-cta .section-label { margin-bottom: 20px; }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(201, 169, 78, 0.08);
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-bottom p {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+        }
+
+        .footer-bottom a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 1024px) {
+            .collections-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-top { grid-template-columns: 1fr; }
+            .footer-boutiques { grid-template-columns: repeat(3, 1fr); }
+            .footer-cta { align-items: flex-start; text-align: left; }
+            .musee-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 16px 24px; }
+            nav.scrolled { padding: 12px 24px; }
+            .nav-links { display: none; }
+            section { padding: 80px 24px; }
+            .hero { padding: 0 24px; }
+            .pearl-orb { width: 180px; height: 180px; margin-bottom: 40px; }
+            .collections-grid { grid-template-columns: 1fr; max-width: 400px; }
+            .timeline-item:nth-child(odd),
+            .timeline-item:nth-child(even) {
+                flex-direction: column;
+                padding: 0 0 0 40px;
+                text-align: left;
+            }
+            .timeline::before { left: 6px; }
+            .timeline-dot { left: 6px; }
+            .footer-boutiques { grid-template-columns: 1fr; }
+            footer { padding: 60px 24px 30px; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Golden Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="nav-logo">Robert Wan</a>
+        <ul class="nav-links">
+            <li><a href="#collections">Collections</a></li>
+            <li><a href="#art">L'Art</a></li>
+            <li><a href="#musee">Le Musee</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="pearl-orb"></div>
+        <p class="hero-subtitle-top reveal">Depuis 1973</p>
+        <h1 class="hero-title reveal">Robert Wan</h1>
+        <p class="hero-tagline reveal">L'Art de la Perle Noire de Tahiti</p>
+        <a href="#collections" class="cta-button reveal">Decouvrir la Collection</a>
+        <div class="hero-scroll">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- COLLECTIONS -->
+    <section class="collections" id="collections">
+        <div class="collections-header reveal">
+            <p class="section-label">Collections</p>
+            <h2 class="section-title">Pieces d'Exception</h2>
+            <div class="gold-divider"></div>
+            <p class="section-desc">
+                Chaque creation Robert Wan est le fruit d'une selection rigoureuse
+                parmi les plus belles perles de culture de Tahiti, montees par nos
+                artisans joailliers dans notre atelier de Papeete.
+            </p>
+        </div>
+
+        <div class="collections-grid">
+            <div class="collection-card reveal">
+                <div class="card-pearl"></div>
+                <h3>Colliers</h3>
+                <p>Rangs de perles noires de Tahiti, choix unique, lustre exceptionnel.</p>
+                <span class="card-price">A partir de 50 000 XPF</span>
+            </div>
+            <div class="collection-card reveal">
+                <div class="card-pearl pink"></div>
+                <h3>Bagues</h3>
+                <p>Perle solitaire sur or 18 carats, elegance intemporelle.</p>
+                <span class="card-price">A partir de 50 000 XPF</span>
+            </div>
+            <div class="collection-card reveal">
+                <div class="card-pearl green"></div>
+                <h3>Boucles d'Oreilles</h3>
+                <p>Paires assorties, pendantes ou clips, eclat irise unique.</p>
+                <span class="card-price">A partir de 50 000 XPF</span>
+            </div>
+            <div class="collection-card reveal">
+                <div class="card-pearl blue"></div>
+                <h3>Bracelets</h3>
+                <p>Lignes de perles et or, fermoir signature Robert Wan.</p>
+                <span class="card-price">A partir de 50 000 XPF</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- L'ART DE LA PERLE -->
+    <section class="art-section" id="art">
+        <div class="art-header reveal">
+            <p class="section-label">Savoir-Faire</p>
+            <h2 class="section-title">L'Art de la Perle</h2>
+            <div class="gold-divider"></div>
+            <p class="section-desc">
+                De la greffe a l'ecrin, chaque perle de Tahiti parcourt un chemin
+                unique dans les lagons de Polynesie francaise. Un processus qui
+                exige patience, expertise et respect de la nature.
+            </p>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div>
+                    <p class="timeline-step">Etape 01</p>
+                    <h3 class="timeline-title">La Greffe</h3>
+                    <p class="timeline-text">
+                        Un nucleon de nacre et un greffon de manteau sont delicatement
+                        inseres dans l'huitre perliere Pinctada margaritifera par un
+                        technicien expert. Un geste de precision millimetrique.
+                    </p>
+                </div>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div>
+                    <p class="timeline-step">Etape 02</p>
+                    <h3 class="timeline-title">La Culture</h3>
+                    <p class="timeline-text">
+                        Pendant 18 mois, l'huitre depose couche apres couche de nacre
+                        autour du nucleon, dans les eaux cristallines des atolls.
+                        La nature fait son oeuvre, lentement, magnifiquement.
+                    </p>
+                </div>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div>
+                    <p class="timeline-step">Etape 03</p>
+                    <h3 class="timeline-title">La Recolte</h3>
+                    <p class="timeline-text">
+                        Chaque perle est extraite a la main avec une attention infinie.
+                        Seulement 5% des perles recoltees atteindront la qualite gemme
+                        exigee par la Maison Robert Wan.
+                    </p>
+                </div>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-dot"></div>
+                <div>
+                    <p class="timeline-step">Etape 04</p>
+                    <h3 class="timeline-title">La Selection</h3>
+                    <p class="timeline-text">
+                        Lustre, forme, taille, couleur, surface — chaque perle est
+                        evaluee selon cinq criteres. Seules les plus exceptionnelles
+                        porteront le nom Robert Wan.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LE MUSEE -->
+    <section class="musee" id="musee">
+        <div class="musee-grid">
+            <div class="musee-visual reveal">
+                <div class="musee-pearl-display">
+                    <div class="mini-pearl"></div>
+                    <div class="mini-pearl"></div>
+                    <div class="mini-pearl"></div>
+                    <div class="mini-pearl"></div>
+                    <div class="mini-pearl"></div>
+                    <div class="mini-pearl"></div>
+                    <div class="mini-pearl"></div>
+                    <div class="mini-pearl"></div>
+                    <div class="mini-pearl"></div>
+                </div>
+            </div>
+            <div class="musee-content reveal">
+                <p class="section-label">Papeete, Tahiti</p>
+                <h2 class="section-title">Le Musee de la Perle</h2>
+                <div class="gold-divider"></div>
+                <p class="section-desc">
+                    Fonde par Robert Wan, le Musee de la Perle est le seul espace au
+                    monde entierement consacre a la perle de culture. Decouvrez l'histoire
+                    millenaire de la perle, de l'Antiquite aux lagons de Polynesie.
+                </p>
+                <ul class="musee-details">
+                    <li>
+                        <strong>Horaires</strong>
+                        Lundi au Samedi — 9h a 17h
+                    </li>
+                    <li>
+                        <strong>Entree</strong>
+                        <span class="detail-gold">Gratuite</span>
+                    </li>
+                    <li>
+                        <strong>A decouvrir</strong>
+                        Collection historique, perles rares, bijoux d'exception
+                    </li>
+                    <li>
+                        <strong>Adresse</strong>
+                        Boulevard Pomare, Papeete, Tahiti
+                    </li>
+                </ul>
+                <a href="#contact" class="cta-button">Planifier une Visite</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a href="#" class="nav-logo">Robert Wan</a>
+                <p>
+                    L'Empereur de la Perle Noire.<br>
+                    Leader mondial de la perle de culture<br>
+                    de Tahiti depuis 1973.
+                </p>
+            </div>
+            <div class="footer-boutiques">
+                <div class="boutique">
+                    <h4>Papeete</h4>
+                    <p>
+                        Musee de la Perle<br>
+                        Boulevard Pomare<br>
+                        98713 Papeete, Tahiti<br>
+                        +689 40 46 15 55
+                    </p>
+                </div>
+                <div class="boutique">
+                    <h4>Bora Bora</h4>
+                    <p>
+                        Boutique Robert Wan<br>
+                        Centre Commercial<br>
+                        Vaitape, Bora Bora<br>
+                        +689 40 67 71 31
+                    </p>
+                </div>
+                <div class="boutique">
+                    <h4>Paris</h4>
+                    <p>
+                        Showroom Robert Wan<br>
+                        Place Vendome<br>
+                        75001 Paris, France<br>
+                        +33 1 42 60 80 80
+                    </p>
+                </div>
+            </div>
+            <div class="footer-cta">
+                <p class="section-label">Rendez-vous</p>
+                <a href="mailto:contact@robertwan.com" class="cta-button">Prendre Rendez-Vous</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Robert Wan — Tous droits reserves</p>
+            <p>Conception par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a></p>
+        </div>
+    </footer>
+
+    <!-- Scroll Reveal + Nav Scroll -->
+    <script>
+        // Intersection Observer for reveal animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Nav scroll effect
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 60);
+        }, { passive: true });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
