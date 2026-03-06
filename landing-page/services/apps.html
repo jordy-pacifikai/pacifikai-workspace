@@ -197,6 +197,58 @@
             background: #14b8a6;
             transform: translateY(-2px);
         }
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 32px;
+            height: 24px;
+            position: relative;
+            z-index: 102;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            position: absolute;
+            left: 0;
+            transition: all 0.3s ease;
+        }
+        .nav-hamburger span:nth-child(1) { top: 0; }
+        .nav-hamburger span:nth-child(2) { top: 11px; }
+        .nav-hamburger span:nth-child(3) { top: 22px; }
+        .nav-hamburger.open span:nth-child(1) { top: 11px; transform: rotate(45deg); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 99;
+            background: rgba(8, 12, 20, 0.95);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 2rem;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .mobile-menu a:hover { color: var(--text); }
+
 
         /* ==================== SECTIONS COMMON ==================== */
         section {
@@ -987,6 +1039,8 @@
             .nav-links {
                 display: none;
             }
+            .nav-hamburger { display: block; }
+            .nav-cta { display: none; }
 
             .hero .container {
                 grid-template-columns: 1fr;
@@ -1082,16 +1136,26 @@
 
     <!-- ==================== NAV ==================== -->
     <nav>
-        <a href="/" class="logo"><img src="../assets/logo.png" alt="PACIFIK'AI" class="logo-img"></a>
+        <a href="/" class="logo"><img src="/assets/logo.png" alt="PACIFIK'AI" class="logo-img"></a>
         <ul class="nav-links">
-            <li><a href="/#services">Services</a></li>
+            <li><a href="/#services-bento">Services</a></li>
             <li><a href="/#process">Processus</a></li>
-            <li><a href="/#automatisations">Automatisations</a></li>
-            <li><a href="/blog/">Blog</a></li>
+            <li><a href="/#infrastructure">Infrastructure</a></li>
+            <li><a href="/blog/index.html">Blog</a></li>
             <li><a href="/#contact">Contact</a></li>
         </ul>
         <a href="/#contact" class="nav-cta">Nous contacter</a>
+        <button class="nav-hamburger" aria-label="Menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="/#services-bento">Services</a>
+        <a href="/#process">Processus</a>
+        <a href="/#infrastructure">Infrastructure</a>
+        <a href="/blog/index.html">Blog</a>
+        <a href="/#contact">Contact</a>
+    </div>
 
     <!-- ==================== HERO ==================== -->
     <section class="hero">
@@ -1557,5 +1621,28 @@
             }
         })();
     </script>
+
+    <script>
+    (function() {
+        const hamburger = document.querySelector('.nav-hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (!hamburger || !mobileMenu) return;
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('open');
+            mobileMenu.classList.toggle('open');
+            hamburger.setAttribute('aria-expanded', hamburger.classList.contains('open'));
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+        });
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('open');
+                mobileMenu.classList.remove('open');
+                hamburger.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
+    })();
+    </script>
+
 </body>
 </html>
