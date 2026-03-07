@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hei Pua Beauty — Salon de beauté à Punaauia, Tahiti</title>
+    <meta name="description" content="Hei Pua Beauty, votre salon de beauté à Punaauia. Soins visage polynésiens, manucure, coiffure et balayage. Prenez rendez-vous avec Hinatea.">
+    <meta property="og:title" content="Hei Pua Beauty — Votre éclat naturel, sublimé">
+    <meta property="og:image" content="images/hei-pua/hero.jpg">
+    <meta property="og:locale" content="fr_PF">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        :root {
+            --pink-soft: #FFF0F3;
+            --rose: #B76E79;
+            --rose-dark: #8a4f5a;
+            --mauve: #6B3A5B;
+            --cream: #FFF8F5;
+            --text: #2D2D2D;
+            --text-light: #7A6068;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Nunito', -apple-system, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--cream);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ===== CURSOR ===== */
+        #cursor-dot {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            width: 8px;
+            height: 8px;
+            background: var(--rose);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+
+        /* ===== SPARKLES ===== */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: sparkle-fade 0.7s forwards;
+        }
+        @keyframes sparkle-fade {
+            0%   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%,-50%) scale(0) translateY(-12px); }
+        }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.4s, padding 0.4s;
+        }
+        nav.scrolled {
+            background: rgba(255, 248, 245, 0.96);
+            backdrop-filter: blur(20px);
+            padding: 14px 40px;
+            box-shadow: 0 2px 20px rgba(183, 110, 121, 0.08);
+        }
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--mauve);
+            letter-spacing: 0.06em;
+            font-weight: 600;
+        }
+        .nav-logo span { color: var(--rose); font-style: italic; font-weight: 400; }
+        .nav-links { display: flex; gap: 28px; list-style: none; }
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--rose); }
+        .hamburger { display: none; background: none; border: none; cursor: none; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--rose); margin: 5px 0; }
+
+        /* ===== HERO — Gradient mesh ===== */
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 40px;
+            padding: 120px 80px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        .gradient-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(-45deg, #FFF0F3, #F5E6E8, #E8D5D0, #F0E0E8);
+            background-size: 400% 400%;
+            animation: gradientShift 12s ease infinite;
+            z-index: 0;
+        }
+        @keyframes gradientShift {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .hero-text { position: relative; z-index: 1; }
+        .hero-label {
+            display: inline-block;
+            font-size: 0.72rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--rose);
+            background: rgba(183, 110, 121, 0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+            font-weight: 600;
+            color: var(--mauve);
+            line-height: 1.1;
+            margin-bottom: 18px;
+        }
+        .hero-title em { color: var(--rose); font-style: italic; font-weight: 400; }
+        .hero-sub {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            font-weight: 300;
+            margin-bottom: 36px;
+            max-width: 380px;
+        }
+        .btn-rose {
+            display: inline-block;
+            background: var(--rose);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            cursor: none;
+            transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-rose:hover {
+            background: var(--mauve);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(183, 110, 121, 0.35);
+        }
+        .hero-visual {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+        }
+        .hero-blob {
+            width: 420px;
+            height: 460px;
+            object-fit: cover;
+            border-radius: 48% 52% 68% 32% / 42% 38% 62% 58%;
+            box-shadow: 0 20px 60px rgba(183, 110, 121, 0.2);
+            transition: box-shadow 0.4s, transform 0.4s;
+            display: block;
+        }
+        .hero-blob:hover {
+            box-shadow: 0 28px 80px rgba(183, 110, 121, 0.35);
+            transform: translateY(-6px);
+        }
+        .hero-badge {
+            position: absolute;
+            bottom: 30px;
+            left: -10px;
+            background: white;
+            border-radius: 16px;
+            padding: 12px 20px;
+            box-shadow: 0 8px 32px rgba(183, 110, 121, 0.18);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .hero-badge span { font-size: 1.4rem; }
+        .hero-badge p { font-size: 0.8rem; font-weight: 600; color: var(--mauve); line-height: 1.3; }
+        .hero-badge small { color: var(--text-light); font-weight: 400; font-size: 0.72rem; }
+
+        /* ===== SHARED ===== */
+        section { padding: 90px 0; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+        .section-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            color: var(--rose);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 600;
+            color: var(--mauve);
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+        .rose-line {
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--rose), var(--mauve));
+            border-radius: 2px;
+            margin: 18px 0 36px;
+        }
+
+        /* ===== SERVICES ===== */
+        .services-section { background: white; }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 28px;
+            margin-top: 8px;
+        }
+        .service-card {
+            background: var(--cream);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            cursor: none;
+        }
+        .service-card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease, box-shadow 0.4s;
+        }
+        .service-card:hover img {
+            transform: scale(1.04);
+            box-shadow: 0 8px 40px rgba(183, 110, 121, 0.3);
+        }
+        .service-card-body { padding: 24px 28px 28px; }
+        .service-card-body h3 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--mauve);
+            margin-bottom: 8px;
+        }
+        .service-card-body p {
+            font-size: 0.88rem;
+            color: var(--text-light);
+            font-weight: 300;
+            line-height: 1.7;
+        }
+        .ribbon {
+            position: absolute;
+            top: 18px;
+            right: -6px;
+            background: var(--rose);
+            color: white;
+            padding: 5px 18px 5px 14px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            font-family: var(--font-body);
+            border-radius: 4px 0 0 4px;
+            letter-spacing: 0.02em;
+        }
+        .ribbon::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 0;
+            border: 4px solid transparent;
+            border-top-color: var(--rose-dark);
+            border-left-color: var(--rose-dark);
+        }
+        .ribbon.free { background: var(--mauve); }
+        .ribbon.free::after { border-top-color: #472645; border-left-color: #472645; }
+
+        /* Slide animations */
+        .slide-left  { opacity: 0; transform: translateX(-60px); }
+        .slide-right { opacity: 0; transform: translateX(60px); }
+        .slide-left.visible, .slide-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        /* ===== ABOUT ===== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 70px;
+            align-items: center;
+        }
+        .about-img-wrap { position: relative; }
+        .about-img {
+            width: 100%;
+            height: 480px;
+            object-fit: cover;
+            border-radius: 32px 8px 32px 8px;
+            display: block;
+            transition: box-shadow 0.4s, transform 0.4s;
+        }
+        .about-img:hover {
+            box-shadow: 0 8px 40px rgba(183, 110, 121, 0.3);
+            transform: translateY(-4px);
+        }
+        .about-deco {
+            position: absolute;
+            top: -18px;
+            left: -18px;
+            width: 80px;
+            height: 80px;
+            border: 3px solid var(--rose);
+            border-radius: 50%;
+            opacity: 0.25;
+        }
+        .about-text p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-weight: 300;
+            margin-bottom: 18px;
+            line-height: 1.8;
+        }
+        .about-stat {
+            display: flex;
+            gap: 32px;
+            margin-top: 28px;
+        }
+        .stat-block { text-align: center; }
+        .stat-block strong {
+            display: block;
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--rose);
+            line-height: 1;
+        }
+        .stat-block span { font-size: 0.8rem; color: var(--text-light); font-weight: 400; }
+
+        /* ===== TESTIMONIAL ===== */
+        .testimonial-section {
+            background: linear-gradient(135deg, #FFF0F3 0%, #F5E0E8 100%);
+        }
+        .testimonial-wrap {
+            max-width: 720px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .quote-mark {
+            font-family: var(--font-display);
+            font-size: 7rem;
+            color: var(--rose);
+            opacity: 0.2;
+            line-height: 0.6;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .testimonial-text {
+            font-family: var(--font-display);
+            font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+            font-style: italic;
+            color: var(--mauve);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            font-weight: 400;
+        }
+        .testimonial-author {
+            font-size: 0.85rem;
+            color: var(--rose);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .stars { color: var(--rose); font-size: 1.1rem; margin-bottom: 20px; }
+
+        /* ===== BOOKING ===== */
+        .booking-section {
+            background: linear-gradient(135deg, var(--mauve) 0%, #4a2840 100%);
+            padding: 80px 0;
+        }
+        .booking-inner { text-align: center; }
+        .booking-inner .section-label { color: rgba(255,255,255,0.6); }
+        .booking-inner .section-title { color: white; }
+        .booking-inner .rose-line { background: linear-gradient(90deg, rgba(255,255,255,0.5), var(--rose)); margin: 18px auto 28px; }
+        .booking-inner p { color: rgba(255,255,255,0.75); font-size: 0.95rem; font-weight: 300; margin-bottom: 8px; }
+        .booking-inner p strong { color: white; font-weight: 600; }
+        .btn-white {
+            display: inline-block;
+            background: white;
+            color: var(--mauve);
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            cursor: none;
+            margin-top: 28px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            padding: 36px 0;
+            background: #2D2D2D;
+            text-align: center;
+        }
+        footer p {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.35);
+            font-weight: 300;
+        }
+        footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+        footer a:hover { color: var(--rose); }
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: var(--rose);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* ===== REVEAL ===== */
+        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; padding: 110px 32px 60px; text-align: center; gap: 40px; }
+            .hero-sub { margin: 0 auto 36px; }
+            .hero-blob { width: 300px; height: 330px; }
+            .about-grid { grid-template-columns: 1fr; gap: 36px; }
+            .about-img { height: 320px; }
+            .about-stat { justify-content: center; }
+        }
+        @media (max-width: 700px) {
+            nav { padding: 16px 20px; }
+            .nav-links { display: none; }
+            .hamburger { display: block; }
+            .services-grid { grid-template-columns: 1fr; }
+            section { padding: 60px 0; }
+            body { cursor: auto; }
+            #cursor-dot { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- CURSOR DOT -->
+    <div id="cursor-dot"></div>
+
+    <!-- NAV -->
+    <nav id="navbar">
+        <div class="nav-logo">Hei Pua <span>Beauty</span></div>
+        <ul class="nav-links">
+            <li><a href="#services">Soins</a></li>
+            <li><a href="#about">À propos</a></li>
+            <li><a href="#booking">Réserver</a></li>
+        </ul>
+        <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('show')" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="gradient-bg"></div>
+        <div class="hero-text">
+            <span class="hero-label">Salon de beauté — Punaauia</span>
+            <h1 class="hero-title">Hei Pua<br><em>Beauty</em></h1>
+            <p class="hero-sub">Votre éclat naturel, sublimé. Soins visage, coiffure et ongles au cœur de Punaauia.</p>
+            <a href="#booking" class="btn-rose">Prendre rendez-vous</a>
+        </div>
+        <div class="hero-visual">
+            <img src="images/hei-pua/hero.jpg" alt="Hinatea, fondatrice de Hei Pua Beauty" class="hero-blob">
+            <div class="hero-badge">
+                <span>🌸</span>
+                <div>
+                    <p>Hinatea<br><small>Fondatrice & Artiste beauté</small></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <p class="section-label reveal">Nos soins</p>
+            <h2 class="section-title reveal">Ce que nous faisons pour vous</h2>
+            <div class="rose-line reveal"></div>
+            <div class="services-grid">
+                <div class="service-card slide-left">
+                    <img src="images/hei-pua/facial.jpg" alt="Soin visage polynésien">
+                    <span class="ribbon">8 500 XPF</span>
+                    <div class="service-card-body">
+                        <h3>Soin Visage Polynésien</h3>
+                        <p>Un soin profond alliant huiles végétales de Polynésie et techniques de massage pour une peau lumineuse et hydratée.</p>
+                    </div>
+                </div>
+                <div class="service-card slide-right">
+                    <img src="images/hei-pua/nails.jpg" alt="Manucure et nail art">
+                    <span class="ribbon">4 500 XPF</span>
+                    <div class="service-card-body">
+                        <h3>Manucure & Nail Art</h3>
+                        <p>Pose de gel, vernis semi-permanent et nail art sur mesure. Des mains soignées qui reflètent votre personnalité.</p>
+                    </div>
+                </div>
+                <div class="service-card slide-left">
+                    <img src="images/hei-pua/hair.jpg" alt="Coiffure et balayage">
+                    <span class="ribbon">12 000 XPF</span>
+                    <div class="service-card-body">
+                        <h3>Coiffure & Balayage</h3>
+                        <p>Coupe, brushing, balayage et colorations douces. Sublimez vos cheveux avec des techniques adaptées aux cheveux polynésiens.</p>
+                    </div>
+                </div>
+                <div class="service-card slide-right">
+                    <img src="images/hei-pua/products.jpg" alt="Conseil beauté personnalisé">
+                    <span class="ribbon free">Gratuit</span>
+                    <div class="service-card-body">
+                        <h3>Conseil Beauté</h3>
+                        <p>Hinatea vous guide vers les soins et produits qui correspondent à votre type de peau, votre style et vos besoins.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-img-wrap reveal">
+                    <div class="about-deco"></div>
+                    <img src="images/hei-pua/salon.jpg" alt="Intérieur du salon Hei Pua Beauty à Punaauia" class="about-img">
+                </div>
+                <div class="reveal">
+                    <p class="section-label">Notre histoire</p>
+                    <h2 class="section-title">Un havre de beauté à Punaauia</h2>
+                    <div class="rose-line"></div>
+                    <p>Fondé en 2019 par Hinatea, Hei Pua est un havre de beauté au cœur de Punaauia. Hei Pua — "couronne de fleurs" en tahitien — incarne notre philosophie : mettre en valeur la beauté naturelle de chaque femme.</p>
+                    <p>Nous utilisons des produits soigneusement sélectionnés, enrichis aux huiles et extraits polynésiens, pour des soins qui respectent votre peau et la planète.</p>
+                    <div class="about-stat">
+                        <div class="stat-block">
+                            <strong>+500</strong>
+                            <span>clientes fidèles</span>
+                        </div>
+                        <div class="stat-block">
+                            <strong>6 ans</strong>
+                            <span>d'expertise</span>
+                        </div>
+                        <div class="stat-block">
+                            <strong>4.9★</strong>
+                            <span>sur Google</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIAL -->
+    <section class="testimonial-section">
+        <div class="container">
+            <div class="testimonial-wrap reveal">
+                <span class="quote-mark">"</span>
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">Le meilleur salon de Punaauia ! Hinatea est une véritable artiste. Je repars à chaque fois rayonnante, mes amies me demandent toujours où je me fais coiffer.</p>
+                <p class="testimonial-author">— Vaiana M., cliente depuis 2020</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKING -->
+    <section id="booking" class="booking-section">
+        <div class="container">
+            <div class="booking-inner reveal">
+                <p class="section-label">Rendez-vous</p>
+                <h2 class="section-title">Prenez soin de vous</h2>
+                <div class="rose-line"></div>
+                <p><strong>📞 +689 87 23 45 67</strong></p>
+                <p>📍 PK 11, Route de la Punaauia — Punaauia, Tahiti</p>
+                <p>Lundi – Samedi · 9h00 – 18h00</p>
+                <a href="tel:+68987234567" class="btn-white">Appeler maintenant</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <span class="footer-logo">Hei Pua Beauty</span>
+            <p>Punaauia, Tahiti — Polynésie française</p>
+            <p style="margin-top: 10px;">Site réalisé par <a href="https://pacifikai.com">PACIFIK'AI</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll
+        const nav = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 60);
+        });
+
+        // Reveal + slide on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal, .slide-left, .slide-right').forEach(el => observer.observe(el));
+
+        // Sparkle cursor (desktop only)
+        const dot = document.getElementById('cursor-dot');
+        const COLORS = ['#B76E79', '#E8A0AA', '#6B3A5B', '#F5C6CF', '#D4A0B0'];
+        let lastSparkle = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            dot.style.left = e.clientX + 'px';
+            dot.style.top  = e.clientY + 'px';
+
+            const now = Date.now();
+            if (now - lastSparkle < 40) return;
+            lastSparkle = now;
+
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            s.style.left  = e.clientX + 'px';
+            s.style.top   = e.clientY + 'px';
+            s.style.background = COLORS[Math.floor(Math.random() * COLORS.length)];
+            const size = 4 + Math.random() * 5;
+            s.style.width  = size + 'px';
+            s.style.height = size + 'px';
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 700);
+        });
+    </script>
+</body>
+</html>

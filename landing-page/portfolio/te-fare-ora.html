@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Te Fare Ora — Bien-être traditionnel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Karla:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --off-white: #FAFAF7;
+    --sage: #8B9D77;
+    --earth: #6B5B4E;
+    --sand: #D4C5A9;
+    --dark: #2D2D2D;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--off-white);
+    color: var(--dark);
+    font-family: 'Karla', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .breathe-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .breathe {
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,157,119,.18), transparent 70%);
+    animation: breathe 6s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: .35; }
+    50%       { transform: scale(1.35); opacity: .65; }
+  }
+  .hero-inner { position: relative; z-index: 1; }
+  .hero-eyebrow {
+    font-family: 'Karla', sans-serif;
+    font-size: 11px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 36px;
+  }
+  .hero-title {
+    font-family: 'Cormorant', serif;
+    font-size: clamp(60px, 10vw, 110px);
+    font-weight: 300;
+    color: var(--dark);
+    line-height: 1;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .hero-sub {
+    font-family: 'Cormorant', serif;
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--earth);
+    max-width: 440px;
+    margin: 0 auto 80px;
+  }
+  .hero-strip {
+    width: 100%;
+    height: 40vh;
+    overflow: hidden;
+    position: relative;
+  }
+  .hero-strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .scroll-hint {
+    margin-top: 48px;
+    color: var(--sand);
+    font-size: 12px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    animation: fade-down 3s ease-in-out infinite;
+  }
+  .scroll-hint span { width: 1px; height: 40px; background: var(--sand); }
+  @keyframes fade-down { 0%,100%{opacity:.3;transform:translateY(-4px)} 50%{opacity:.8;transform:translateY(4px)} }
+
+  /* WORD FADE */
+  .word { display: inline-block; opacity: 0; transform: translateY(10px); transition: opacity .6s ease, transform .6s ease; }
+  .word.visible { opacity: 1; transform: translateY(0); }
+
+  /* LINE GROW */
+  .line-grow {
+    width: 0;
+    height: 1px;
+    background: var(--sage);
+    margin: 56px auto;
+    transition: width 1.4s cubic-bezier(.4,0,.2,1);
+  }
+  .line-grow.visible { width: 100px; }
+
+  /* PHILOSOPHY */
+  .philosophy {
+    padding: 200px 24px;
+    text-align: center;
+  }
+  .philosophy-quote {
+    font-family: 'Cormorant', serif;
+    font-size: clamp(22px, 3.5vw, 34px);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--earth);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  .philosophy-body {
+    max-width: 480px;
+    margin: 0 auto;
+    font-size: 15px;
+    color: #6B6B6B;
+    line-height: 2;
+  }
+
+  /* SERVICES */
+  .services {
+    padding: 160px 24px 200px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .services-label {
+    font-size: 11px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--sage);
+    text-align: center;
+    margin-bottom: 100px;
+  }
+  .service-item { padding: 0 0 80px; }
+  .service-top-line { width: 100%; height: 1px; background: var(--sand); margin-bottom: 40px; }
+  .service-name {
+    font-family: 'Cormorant', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 300;
+    color: var(--dark);
+    margin-bottom: 16px;
+  }
+  .service-desc {
+    font-size: 14px;
+    color: #7A7A7A;
+    max-width: 440px;
+    line-height: 2;
+    margin-bottom: 20px;
+  }
+  .service-price {
+    font-family: 'Cormorant', serif;
+    font-size: 18px;
+    color: var(--sage);
+  }
+  .service-img {
+    width: 100%;
+    height: 260px;
+    overflow: hidden;
+    margin: 60px 0;
+  }
+  .service-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform .6s ease;
+  }
+  .service-img:hover img { transform: scale(1.02); }
+
+  /* NATURE */
+  .nature-section {
+    width: 100%;
+    height: 65vh;
+    overflow: hidden;
+    position: relative;
+  }
+  .nature-section img {
+    width: 100%;
+    height: 120%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* SUNSET CTA */
+  .cta-section {
+    position: relative;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+  }
+  .cta-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .cta-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .cta-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(45,45,45,.52);
+    z-index: 1;
+  }
+  .cta-inner {
+    position: relative;
+    z-index: 2;
+    padding: 80px 24px;
+  }
+  .cta-title {
+    font-family: 'Cormorant', serif;
+    font-size: clamp(26px, 4vw, 44px);
+    font-weight: 300;
+    color: var(--off-white);
+    margin-bottom: 24px;
+    line-height: 1.4;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cta-sub {
+    font-size: 14px;
+    color: rgba(250,250,247,.7);
+    letter-spacing: .05em;
+    margin-bottom: 40px;
+  }
+  .cta-link {
+    font-family: 'Cormorant', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--off-white);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(250,250,247,.4);
+    padding-bottom: 4px;
+    transition: border-color .3s;
+  }
+  .cta-link:hover { border-color: var(--off-white); }
+
+  /* FOOTER */
+  footer {
+    background: var(--off-white);
+    padding: 80px 24px;
+    text-align: center;
+    border-top: 1px solid var(--sand);
+  }
+  .footer-name {
+    font-family: 'Cormorant', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--sage);
+    margin-bottom: 16px;
+  }
+  .footer-info {
+    font-size: 13px;
+    color: #ABABAB;
+    line-height: 2;
+  }
+  .footer-info a { color: var(--sage); text-decoration: none; }
+  .footer-credit {
+    margin-top: 48px;
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #C8C8C8;
+  }
+  .footer-credit a { color: var(--sage); text-decoration: none; }
+
+  /* FADE IN */
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 600px) {
+    .breathe { width: 220px; height: 220px; }
+    .philosophy { padding: 120px 24px; }
+    .services { padding: 100px 24px 140px; }
+    .service-img { height: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="breathe-wrap"><div class="breathe"></div></div>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Bien-être — Polynésie</p>
+    <h1 class="hero-title" id="hero-title">Te Fare Ora</h1>
+    <p class="hero-sub">Retrouver l'équilibre.<br>Naturellement.</p>
+  </div>
+</section>
+
+<div class="hero-strip">
+  <img src="images/te-fare-ora/hero.jpg" alt="Paysage zen de Polynésie" loading="lazy">
+</div>
+
+<div style="display:flex;justify-content:center;padding:56px 0 0;">
+  <div class="scroll-hint"><span></span>Descendre</div>
+</div>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy">
+  <p class="philosophy-quote fade-in">
+    "Le bien-être n'est pas une destination,<br>c'est un chemin quotidien."
+  </p>
+  <div class="line-grow"></div>
+  <p class="philosophy-body fade-in">
+    Ancrée dans la tradition polynésienne, Te Fare Ora — la maison de la vie — est un espace de soin profond. Chaque soin puise dans le savoir ancestral du taurumi, l'art du massage traditionnel tahitien transmis de génération en génération. Ici, le temps ralentit.
+  </p>
+</section>
+
+<!-- SERVICES -->
+<section class="services">
+  <p class="services-label fade-in">Soins & Thérapies</p>
+
+  <div class="service-item fade-in">
+    <div class="service-top-line"></div>
+    <h2 class="service-name">Taurumi Traditionnel</h2>
+    <p class="service-desc">Le massage polynésien ancestral. Longues pressions profondes, huiles de monoï et de tamanu, pour libérer les tensions accumulées et restaurer la circulation d'énergie.</p>
+    <p class="service-price">6 000 XPF — 60 min</p>
+  </div>
+
+  <div class="service-img fade-in">
+    <img src="images/te-fare-ora/massage.jpg" alt="Soin Taurumi" loading="lazy">
+  </div>
+
+  <div class="service-item fade-in">
+    <div class="service-top-line"></div>
+    <h2 class="service-name">Rituel aux Pierres Chaudes</h2>
+    <p class="service-desc">Des pierres volcaniques basaltiques chauffées, posées sur les méridiens d'énergie. La chaleur pénètre en profondeur, fondant les nœuds de tension et invitant à une détente totale.</p>
+    <p class="service-price">8 500 XPF — 75 min</p>
+  </div>
+
+  <div class="service-img fade-in">
+    <img src="images/te-fare-ora/stones.jpg" alt="Pierres chaudes" loading="lazy">
+  </div>
+
+  <div class="service-item fade-in">
+    <div class="service-top-line"></div>
+    <h2 class="service-name">Séance Bien-être Globale</h2>
+    <p class="service-desc">Un parcours complet : consultation initiale, soin corps, travail sur la respiration consciente, et intégration en silence. Pour les moments où l'on a besoin de revenir à soi.</p>
+    <p class="service-price">14 000 XPF — 2h</p>
+  </div>
+
+  <div class="service-img fade-in">
+    <img src="images/te-fare-ora/session.jpg" alt="Séance complète" loading="lazy">
+  </div>
+</section>
+
+<!-- NATURE -->
+<div class="nature-section">
+  <img src="images/te-fare-ora/nature.jpg" alt="Nature polynésienne" class="gentle-parallax" data-speed="0.08" loading="lazy">
+</div>
+
+<!-- SUNSET CTA -->
+<section class="cta-section">
+  <div class="cta-bg">
+    <img src="images/te-fare-ora/sunset.jpg" alt="Coucher de soleil Tahiti" loading="lazy">
+  </div>
+  <div class="cta-overlay"></div>
+  <div class="cta-inner">
+    <h2 class="cta-title">Prêt à commencer<br>votre voyage intérieur ?</h2>
+    <p class="cta-sub">Chaque soin est unique. Chaque rencontre, un nouveau départ.</p>
+    <a href="mailto:contact@tefaraora.pf" class="cta-link">Prendre rendez-vous</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-name">Te Fare Ora</p>
+  <div class="footer-info">
+    <p>Punaauia, Tahiti — Polynésie française</p>
+    <p><a href="mailto:contact@tefaraora.pf">contact@tefaraora.pf</a></p>
+  </div>
+  <p class="footer-credit">Site créé par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a></p>
+</footer>
+
+<script>
+  // ── Scroll observer ──────────────────────────────────────────
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.fade-in, .line-grow').forEach(el => io.observe(el));
+
+  // ── Gentle parallax ──────────────────────────────────────────
+  function onScroll() {
+    document.querySelectorAll('.gentle-parallax').forEach(el => {
+      const speed = parseFloat(el.dataset.speed) || 0.1;
+      el.style.transform = `translateY(${window.scrollY * speed}px)`;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ── Hero title word fade ──────────────────────────────────────
+  const titleEl = document.getElementById('hero-title');
+  const words = titleEl.textContent.split(' ');
+  titleEl.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(' ');
+  titleEl.querySelectorAll('.word').forEach((w, i) => {
+    setTimeout(() => w.classList.add('visible'), 300 + i * 220);
+  });
+</script>
+</body>
+</html>

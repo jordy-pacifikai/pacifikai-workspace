@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chez Mama Roti — Roulotte Papeete, Tahiti</title>
+  <meta name="description" content="Chez Mama Roti — Le meilleur poisson cru de Papeete depuis 1998. Place Vaiete, ouvert 7j/7 dès 18h.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --chalk:    #F0EBE0;
+      --board:    #2A2A2A;
+      --board-mid:#333333;
+      --orange:   #FF8C42;
+      --mustard:  #FFD166;
+      --coral:    #EE6C4D;
+      --hand:     'Caveat', cursive;
+      --body:     'Poppins', -apple-system, sans-serif;
+    }
+
+    body {
+      font-family: var(--body);
+      background: var(--board);
+      color: var(--chalk);
+      overflow-x: hidden;
+    }
+
+    /* ─── CHALKBOARD TEXTURE ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,.015) 3px, rgba(255,255,255,.015) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,.01) 3px, rgba(255,255,255,.01) 4px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── FLOATING EMOJIS ─── */
+    .float-emojis { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .emoji {
+      position: absolute;
+      font-size: 24px;
+      opacity: 0;
+      animation: float 10s ease-in infinite;
+    }
+    @keyframes float {
+      0%   { transform: translateY(100vh) rotate(0deg);   opacity: 0; }
+      10%  { opacity: .28; }
+      90%  { opacity: .28; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ─── CHALK DIVIDER ─── */
+    .chalk-divider {
+      width: 100%;
+      height: 24px;
+      margin: 8px 0;
+      opacity: .4;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+      background: rgba(30,30,30,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(240,235,224,.08);
+    }
+    .nav-brand {
+      font-family: var(--hand);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: .5px;
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--chalk);
+      text-decoration: none;
+      opacity: .75;
+      transition: opacity .2s, color .2s;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--orange); }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 48px 80px;
+      overflow: hidden;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      max-width: 560px;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-family: var(--hand);
+      font-size: 18px;
+      color: var(--mustard);
+      margin-bottom: 16px;
+      border: 1.5px dashed rgba(255,209,102,.4);
+      padding: 4px 14px;
+      border-radius: 40px;
+    }
+    .hero h1 {
+      font-family: var(--hand);
+      font-size: clamp(52px, 8vw, 88px);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--chalk);
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--orange); }
+    .hero-sub {
+      font-family: var(--hand);
+      font-size: 22px;
+      color: var(--chalk);
+      opacity: .85;
+      min-height: 32px;
+      margin-bottom: 36px;
+    }
+    .hero-sub::after {
+      content: '|';
+      animation: blink .8s step-end infinite;
+      margin-left: 2px;
+      color: var(--orange);
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .btn-primary {
+      display: inline-block;
+      font-family: var(--hand);
+      font-size: 22px;
+      font-weight: 700;
+      background: var(--orange);
+      color: #fff;
+      padding: 14px 36px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(255,140,66,.35);
+    }
+    .btn-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 8px 32px rgba(255,140,66,.5); }
+
+    .hero-img-wrap {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+      margin-left: 60px;
+    }
+    .hero-img-ring {
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      border: 4px dashed rgba(255,209,102,.5);
+      padding: 8px;
+      animation: spin-slow 20s linear infinite;
+    }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+    .hero-img-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      animation: spin-slow 20s linear infinite reverse;
+    }
+
+    /* ─── SECTION BASE ─── */
+    section { position: relative; z-index: 1; padding: 80px 48px; }
+    .section-title {
+      font-family: var(--hand);
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 700;
+      color: var(--chalk);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      text-align: center;
+      font-size: 14px;
+      color: var(--chalk);
+      opacity: .5;
+      margin-bottom: 48px;
+      font-style: italic;
+    }
+
+    /* ─── MENU SCROLL ─── */
+    .menu-section { padding: 80px 0; }
+    .menu-section .section-title,
+    .menu-section .section-sub { padding: 0 48px; }
+    .menu-scroll {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 20px 48px 32px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .menu-scroll::-webkit-scrollbar { height: 4px; }
+    .menu-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 4px; }
+    .menu-scroll::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 4px; }
+    .menu-card {
+      min-width: 280px;
+      scroll-snap-align: start;
+      flex-shrink: 0;
+      background: #333;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(240,235,224,.1);
+      transition: box-shadow .3s;
+      cursor: default;
+    }
+    .menu-card:hover {
+      animation: wobble .5s ease;
+      box-shadow: 0 12px 40px rgba(255,140,66,.2);
+    }
+    @keyframes wobble {
+      0%   { transform: rotate(0deg); }
+      25%  { transform: rotate(-2deg); }
+      50%  { transform: rotate(2deg); }
+      75%  { transform: rotate(-1deg); }
+      100% { transform: rotate(0deg); }
+    }
+    .menu-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+    .menu-card-body { padding: 18px 20px 20px; }
+    .menu-card-name {
+      font-family: var(--hand);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--chalk);
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+    .menu-card-desc {
+      font-size: 12px;
+      color: var(--chalk);
+      opacity: .55;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .menu-card-price {
+      font-family: var(--hand);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--orange);
+    }
+    .menu-card-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      background: var(--coral);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 20px;
+      margin-left: 10px;
+      vertical-align: middle;
+      position: relative;
+      top: -2px;
+    }
+
+    /* ─── AMBIANCE ─── */
+    .ambiance-section {
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .ambiance-img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      display: block;
+    }
+    .ambiance-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(30,30,30,.55), rgba(30,30,30,.75));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    .ambiance-quote {
+      font-family: var(--hand);
+      font-size: clamp(22px, 4vw, 40px);
+      font-weight: 600;
+      color: var(--chalk);
+      text-align: center;
+      max-width: 760px;
+      line-height: 1.35;
+      text-shadow: 0 2px 20px rgba(0,0,0,.5);
+    }
+    .ambiance-quote::before { content: '\201C'; color: var(--orange); margin-right: 4px; }
+    .ambiance-quote::after  { content: '\201D'; color: var(--orange); margin-left: 4px; }
+
+    /* ─── INFO GRID ─── */
+    .info-section { background: #2e2e2e; }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .info-card {
+      text-align: center;
+      padding: 36px 24px;
+      background: rgba(255,255,255,.04);
+      border-radius: 16px;
+      border: 1px solid rgba(240,235,224,.08);
+      transition: background .25s;
+    }
+    .info-card:hover { background: rgba(255,140,66,.08); }
+    .info-icon { font-size: 40px; margin-bottom: 16px; display: block; }
+    .info-label {
+      font-family: var(--hand);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--mustard);
+      margin-bottom: 10px;
+    }
+    .info-text {
+      font-size: 14px;
+      color: var(--chalk);
+      opacity: .7;
+      line-height: 1.7;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #1e1e1e;
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-top: 1px solid rgba(240,235,224,.06);
+    }
+    .footer-brand {
+      font-family: var(--hand);
+      font-size: 22px;
+      color: var(--orange);
+    }
+    .footer-address {
+      font-size: 13px;
+      color: var(--chalk);
+      opacity: .5;
+    }
+    .footer-credit {
+      font-size: 11px;
+      color: var(--chalk);
+      opacity: .3;
+    }
+    .footer-credit a { color: var(--orange); opacity: 1; text-decoration: none; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 12px 20px; }
+      .nav-links { display: none; }
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 100px 24px 64px;
+        gap: 40px;
+      }
+      .hero-img-wrap { margin-left: 0; }
+      .hero-img-ring { width: 220px; height: 220px; }
+      section { padding: 60px 24px; }
+      .menu-section .section-title,
+      .menu-section .section-sub { padding: 0 24px; }
+      .menu-scroll { padding: 20px 24px 28px; }
+      .info-grid { grid-template-columns: 1fr; gap: 16px; }
+      .ambiance-img { height: 300px; }
+      footer { flex-direction: column; text-align: center; padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-brand">🍽️ Mama Roti</div>
+    <ul class="nav-links">
+      <li><a href="#menu">Le Menu</a></li>
+      <li><a href="#ambiance">Ambiance</a></li>
+      <li><a href="#infos">Infos</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="float-emojis" id="emojis"></div>
+
+    <div class="hero-content">
+      <div class="hero-tag">✨ Roulotte familiale depuis 1998</div>
+      <h1>Chez <span>Mama</span><br>Roti</h1>
+      <p class="hero-sub" id="hero-sub"></p>
+      <a href="#menu" class="btn-primary">Voir le Menu 🍴</a>
+    </div>
+
+    <div class="hero-img-wrap">
+      <div class="hero-img-ring">
+        <img src="images/mama-roti/hero.jpg" alt="Mama Roti et sa roulotte" onerror="this.style.background='linear-gradient(135deg,#FF8C42,#EE6C4D)';this.removeAttribute('onerror')">
+      </div>
+    </div>
+  </section>
+
+  <!-- CHALK DIVIDER -->
+  <svg class="chalk-divider" viewBox="0 0 1200 24" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,12 C80,4 160,20 240,12 C320,4 400,20 480,12 C560,4 640,20 720,12 C800,4 880,20 960,12 C1040,4 1120,20 1200,12" stroke="#F0EBE0" stroke-width="2" fill="none" stroke-dasharray="6,4" opacity=".35"/>
+  </svg>
+
+  <!-- MENU -->
+  <div class="menu-section" id="menu">
+    <h2 class="section-title">Notre Carte 🍜</h2>
+    <p class="section-sub">Tout est fait maison — comme à la maison</p>
+
+    <div class="menu-scroll">
+
+      <div class="menu-card">
+        <img src="images/mama-roti/food1.jpg" alt="Poisson Cru au Lait de Coco" onerror="this.style.background='linear-gradient(135deg,#2A4A3A,#1A3A2A)';this.style.height='180px';this.removeAttribute('onerror')">
+        <div class="menu-card-body">
+          <div class="menu-card-name">Poisson Cru au Lait de Coco</div>
+          <div class="menu-card-desc">Thon frais du jour, lait de coco maison, citron vert, légumes croquants</div>
+          <div class="menu-card-price">1 200 XPF</div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="images/mama-roti/food2.jpg" alt="Brochettes de Thon Grillé" onerror="this.style.background='linear-gradient(135deg,#4A2A1A,#3A1A0A)';this.style.height='180px';this.removeAttribute('onerror')">
+        <div class="menu-card-body">
+          <div class="menu-card-name">Brochettes de Thon Grillé</div>
+          <div class="menu-card-desc">Marinées sauce tamarin & gingembre, servies avec riz blanc et salade</div>
+          <div class="menu-card-price">1 500 XPF</div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="images/mama-roti/food3.jpg" alt="Salade de Fruits Tropicaux" onerror="this.style.background='linear-gradient(135deg,#3A4A1A,#2A3A0A)';this.style.height='180px';this.removeAttribute('onerror')">
+        <div class="menu-card-body">
+          <div class="menu-card-name">Salade de Fruits Tropicaux</div>
+          <div class="menu-card-desc">Mangue, papaye, ananas, fruits du dragon — fraîcheur garantie</div>
+          <div class="menu-card-price">800 XPF</div>
+        </div>
+      </div>
+
+      <div class="menu-card">
+        <img src="images/mama-roti/cook.jpg" alt="Le Plat du Jour" onerror="this.style.background='linear-gradient(135deg,#4A3A1A,#3A2A0A)';this.style.height='180px';this.removeAttribute('onerror')">
+        <div class="menu-card-body">
+          <div class="menu-card-name">Le Plat du Jour <span class="menu-card-badge">Spécial</span></div>
+          <div class="menu-card-desc">Selon l'arrivage du matin — demandez à Mama ce qu'il reste !</div>
+          <div class="menu-card-price">1 400 XPF</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CHALK DIVIDER -->
+  <svg class="chalk-divider" viewBox="0 0 1200 24" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,14 C100,6 200,18 300,10 C400,2 500,18 600,14 C700,8 800,18 900,10 C1000,4 1100,18 1200,14" stroke="#F0EBE0" stroke-width="1.5" fill="none" stroke-dasharray="8,5" opacity=".3"/>
+  </svg>
+
+  <!-- AMBIANCE -->
+  <div class="ambiance-section" id="ambiance">
+    <img class="ambiance-img" src="images/mama-roti/ambiance.jpg" alt="Ambiance Chez Mama Roti" onerror="this.style.background='linear-gradient(135deg,#1A1A1A,#2A2A2A)';this.removeAttribute('onerror')">
+    <div class="ambiance-overlay">
+      <p class="ambiance-quote">Venez comme vous êtes, repartez le ventre plein et le sourire aux lèvres</p>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <section class="info-section" id="infos">
+    <h2 class="section-title">Tout ce qu'il faut savoir 📋</h2>
+    <p class="section-sub">On est là tous les soirs — sans exception</p>
+
+    <div class="info-grid">
+
+      <div class="info-card">
+        <span class="info-icon">🕐</span>
+        <div class="info-label">Horaires</div>
+        <div class="info-text">
+          Tous les jours<br>
+          <strong style="color:var(--mustard)">18h → 2h du matin</strong><br>
+          7j/7, 365j/an
+        </div>
+      </div>
+
+      <div class="info-card">
+        <span class="info-icon">📍</span>
+        <div class="info-label">Où nous trouver</div>
+        <div class="info-text">
+          Place Vaiete<br>
+          <strong style="color:var(--mustard)">Papeete, Tahiti</strong><br>
+          Face au port de plaisance
+        </div>
+      </div>
+
+      <div class="info-card">
+        <span class="info-icon">💳</span>
+        <div class="info-label">Comment payer</div>
+        <div class="info-text">
+          Espèces (XPF)<br>
+          <strong style="color:var(--mustard)">Carte bancaire</strong><br>
+          CB acceptée dès 500 XPF
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <div class="footer-brand">🍽️ Chez Mama Roti</div>
+      <div class="footer-address">Place Vaiete, Papeete, Tahiti — Polynésie française</div>
+    </div>
+    <div class="footer-credit">
+      Site réalisé par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a>
+    </div>
+  </footer>
+
+  <script>
+    // ─── FLOATING EMOJIS
+    const items = ['🍍','🥥','🐟','🌺','🍋','🌴','🦞','🌶️'];
+    const container = document.getElementById('emojis');
+    items.forEach((em, i) => {
+      const el = document.createElement('span');
+      el.className = 'emoji';
+      el.textContent = em;
+      el.style.left = (8 + i * 12) + '%';
+      el.style.animationDelay = (i * 1.3) + 's';
+      el.style.animationDuration = (8 + (i % 3) * 2.5) + 's';
+      el.style.fontSize = (18 + (i % 3) * 8) + 'px';
+      container.appendChild(el);
+    });
+
+    // ─── TYPEWRITER
+    function typewriter(el, text, speed = 55) {
+      let i = 0;
+      el.textContent = '';
+      function type() {
+        if (i < text.length) {
+          el.textContent += text[i];
+          i++;
+          setTimeout(type, speed + Math.random() * 30);
+        }
+      }
+      type();
+    }
+
+    const subEl = document.getElementById('hero-sub');
+    setTimeout(() => {
+      typewriter(subEl, 'Le meilleur poisson cru de Papeete depuis 1998');
+    }, 400);
+
+    // ─── SMOOTH ANCHOR SCROLL
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

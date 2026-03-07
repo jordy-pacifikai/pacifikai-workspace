@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lagon Bleu Plongée — Centre Familial | Moorea</title>
+<meta name="description" content="Lagon Bleu Plongée — centre de plongée familial à Moorea. Baptêmes, snorkeling, rencontres avec les requins et raies dans les eaux cristallines.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* DEPTH PROGRESSION — bg color shifts from surface to abyss as you scroll */
+:root{
+  --surface:#C8F0F8;
+  --shallow:#7BD4E8;
+  --mid:#2A9DC6;
+  --deep:#0B5E8A;
+  --abyss:#031D30;
+  --white:#FFFFFF;
+  --sand:#FFF8F0;
+  --coral:#FF6B5A;
+  --w80:rgba(255,255,255,.8);
+  --w50:rgba(255,255,255,.5);
+  --w20:rgba(255,255,255,.2);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Sora',sans-serif;color:var(--white);font-weight:300;line-height:1.7;overflow-x:hidden}
+
+/* DEPTH SECTIONS — each section has a deeper color */
+.depth-1{background:linear-gradient(180deg,var(--surface) 0%,var(--shallow) 100%);color:#031D30}
+.depth-2{background:linear-gradient(180deg,var(--shallow) 0%,var(--mid) 100%);color:var(--white)}
+.depth-3{background:linear-gradient(180deg,var(--mid) 0%,var(--deep) 100%)}
+.depth-4{background:linear-gradient(180deg,var(--deep) 0%,var(--abyss) 100%)}
+.depth-5{background:var(--abyss)}
+
+/* BUBBLES — CSS only, random floating */
+.bubbles{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.bubble{position:absolute;bottom:-80px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);animation:rise linear infinite}
+.bubble:nth-child(1){width:20px;height:20px;left:10%;animation-duration:12s;animation-delay:0s}
+.bubble:nth-child(2){width:35px;height:35px;left:25%;animation-duration:16s;animation-delay:2s}
+.bubble:nth-child(3){width:14px;height:14px;left:45%;animation-duration:10s;animation-delay:4s}
+.bubble:nth-child(4){width:28px;height:28px;left:60%;animation-duration:14s;animation-delay:1s}
+.bubble:nth-child(5){width:18px;height:18px;left:75%;animation-duration:11s;animation-delay:3s}
+.bubble:nth-child(6){width:40px;height:40px;left:88%;animation-duration:18s;animation-delay:5s}
+.bubble:nth-child(7){width:12px;height:12px;left:35%;animation-duration:9s;animation-delay:7s}
+.bubble:nth-child(8){width:24px;height:24px;left:55%;animation-duration:13s;animation-delay:6s}
+@keyframes rise{
+  0%{transform:translateY(0) scale(1);opacity:.6}
+  50%{opacity:.3}
+  100%{transform:translateY(-110vh) scale(.6);opacity:0}
+}
+
+/* DEPTH INDICATOR — side bar */
+.depth-indicator{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;align-items:center;gap:12px}
+.depth-indicator .dot{width:8px;height:8px;border-radius:50%;background:var(--w20);transition:all .4s}
+.depth-indicator .dot.active{background:var(--coral);width:10px;height:10px;box-shadow:0 0 12px var(--coral)}
+.depth-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;writing-mode:vertical-rl;color:var(--w50);margin-top:12px}
+
+/* NAV — transparent, blends with depth */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;transition:all .4s}
+nav.scrolled{background:rgba(3,29,48,.9);backdrop-filter:blur(12px)}
+.nav-brand{font-family:'Instrument Serif',serif;font-size:22px;color:var(--white);text-decoration:none}
+.nav-brand span{color:var(--coral);font-weight:400}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--w50);text-decoration:none;font-size:13px;font-weight:400;letter-spacing:1px;transition:color .3s}
+.nav-links a:hover{color:var(--white)}
+.nav-cta{padding:10px 24px;background:var(--coral);color:var(--white);text-decoration:none;border-radius:24px;font-size:12px;font-weight:600;letter-spacing:1px;transition:transform .2s,box-shadow .2s}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,90,.4)}
+
+/* HERO — SURFACE LEVEL */
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden;padding:0 48px}
+.hero-img{position:absolute;inset:0}
+.hero-img img{width:100%;height:100%;object-fit:cover}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,240,248,.7) 0%,rgba(42,157,198,.5) 50%,rgba(11,94,138,.6) 100%)}
+/* Water caustics effect */
+.hero-caustics{position:absolute;inset:0;background:
+  radial-gradient(ellipse 100px 80px at 20% 30%,rgba(255,255,255,.15),transparent),
+  radial-gradient(ellipse 120px 60px at 70% 50%,rgba(255,255,255,.1),transparent),
+  radial-gradient(ellipse 80px 100px at 50% 80%,rgba(255,255,255,.12),transparent);
+  animation:caustics 8s ease-in-out infinite alternate}
+@keyframes caustics{
+  0%{transform:scale(1) rotate(0deg);opacity:.6}
+  100%{transform:scale(1.1) rotate(3deg);opacity:.3}
+}
+.hero-content{position:relative;z-index:2;max-width:600px}
+.hero-depth-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;background:rgba(255,255,255,.15);backdrop-filter:blur(4px);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:24px;font-weight:500}
+.hero-depth-tag svg{width:14px;height:14px}
+.hero-title{font-family:'Instrument Serif',serif;font-size:clamp(40px,6vw,72px);line-height:1.05;margin-bottom:20px;color:var(--white)}
+.hero-title em{font-style:normal;color:var(--sand)}
+.hero-sub{color:var(--w80);font-size:17px;margin-bottom:36px;max-width:480px}
+.btn-dive{display:inline-block;padding:16px 40px;background:var(--coral);color:var(--white);text-decoration:none;border-radius:28px;font-size:14px;font-weight:600;letter-spacing:1px;transition:all .3s;position:relative;overflow:hidden}
+.btn-dive:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,107,90,.4)}
+.btn-dive::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,.2);border-radius:50%;transform:translate(-50%,-50%);transition:width .5s,height .5s}
+.btn-dive:hover::after{width:300px;height:300px}
+
+/* WAVE DIVIDER */
+.wave-divider{position:relative;margin-top:-2px}
+.wave-divider svg{display:block;width:100%}
+
+/* SECTION COMMON */
+section{padding:120px 48px;position:relative;z-index:2}
+.label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--coral);margin-bottom:12px;font-weight:500}
+.stitle{font-family:'Instrument Serif',serif;font-size:clamp(28px,3.5vw,44px);margin-bottom:48px;line-height:1.2}
+
+/* EXPERIENCES — Cards with depth meter */
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.exp-card{background:rgba(255,255,255,.06);border:1px solid var(--w20);border-radius:16px;overflow:hidden;transition:all .5s;position:relative}
+.exp-card:hover{transform:translateY(-6px);border-color:var(--coral);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.exp-card img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .6s}
+.exp-card:hover img{transform:scale(1.05)}
+.exp-body{padding:24px}
+.exp-body h3{font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:8px}
+.exp-body p{color:var(--w50);font-size:14px;margin-bottom:16px}
+/* Depth meter bar */
+.depth-meter{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--w50)}
+.depth-bar{flex:1;height:4px;background:var(--w20);border-radius:2px;position:relative;overflow:hidden}
+.depth-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--shallow),var(--deep));transition:width 1s cubic-bezier(.25,.46,.45,.94)}
+.exp-price{font-weight:600;color:var(--coral);font-size:15px;margin-top:12px}
+
+/* GALLERY — Underwater immersive */
+.uw-gallery{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:300px 300px;gap:8px}
+.uw-gallery img{width:100%;height:100%;object-fit:cover;border-radius:12px;display:block;transition:all .6s;filter:brightness(.9)}
+.uw-gallery img:hover{filter:brightness(1);transform:scale(1.02)}
+.uw-gallery img:first-child{grid-row:1/3}
+
+/* EQUIPE — Split */
+.equipe-split{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.equipe-img{position:relative}
+.equipe-img img{width:100%;border-radius:16px;display:block}
+/* Sonar ring animation */
+.sonar-ring{position:absolute;top:50%;left:50%;width:60px;height:60px;border-radius:50%;border:2px solid var(--coral);transform:translate(-50%,-50%);animation:sonar 3s ease-out infinite}
+.sonar-ring:nth-child(2){animation-delay:1s}
+.sonar-ring:nth-child(3){animation-delay:2s}
+@keyframes sonar{
+  0%{width:60px;height:60px;opacity:.8}
+  100%{width:300px;height:300px;opacity:0}
+}
+.equipe-text p{color:var(--w50);font-size:16px;margin-bottom:16px}
+.stats-row{display:flex;gap:40px;margin-top:32px}
+.stat-item{text-align:center}
+.stat-num{font-family:'Instrument Serif',serif;font-size:40px;color:var(--coral)}
+.stat-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--w50);margin-top:4px}
+
+/* CTA — deepest level */
+.cta-deep{text-align:center;padding:160px 48px;position:relative}
+.cta-deep .stitle{color:var(--white);margin-bottom:16px}
+.cta-deep p{color:var(--w50);margin-bottom:40px;font-size:16px}
+/* Bioluminescence dots */
+.biolum{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.biolum span{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--coral);animation:glow 4s ease-in-out infinite alternate}
+.biolum span:nth-child(1){top:20%;left:15%;animation-delay:0s;opacity:.4}
+.biolum span:nth-child(2){top:60%;left:30%;animation-delay:1s;opacity:.6;width:6px;height:6px}
+.biolum span:nth-child(3){top:40%;left:70%;animation-delay:2s;opacity:.3}
+.biolum span:nth-child(4){top:80%;left:85%;animation-delay:.5s;opacity:.5;width:5px;height:5px}
+.biolum span:nth-child(5){top:30%;left:50%;animation-delay:1.5s;opacity:.4;width:3px;height:3px}
+.biolum span:nth-child(6){top:70%;left:10%;animation-delay:3s;opacity:.5}
+.biolum span:nth-child(7){top:15%;left:80%;animation-delay:2.5s;opacity:.3;width:7px;height:7px}
+@keyframes glow{0%{opacity:.1;transform:scale(1)}100%{opacity:.7;transform:scale(1.5)}}
+
+/* FOOTER */
+footer{background:var(--abyss);border-top:1px solid var(--w20);padding:48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;position:relative;z-index:2}
+footer p{color:var(--w50);font-size:13px}
+footer a{color:var(--w50);text-decoration:none}
+footer a:hover{color:var(--coral)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .8s,transform .8s}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+
+@media(max-width:768px){
+  nav{padding:16px 24px}
+  .nav-links,.nav-cta{display:none}
+  .depth-indicator{display:none}
+  section{padding:80px 24px}
+  .hero{padding:0 24px}
+  .exp-grid{grid-template-columns:1fr}
+  .uw-gallery{grid-template-columns:1fr;grid-template-rows:auto}
+  .uw-gallery img:first-child{grid-row:auto}
+  .uw-gallery img{height:220px}
+  .equipe-split{grid-template-columns:1fr;gap:32px}
+  .stats-row{gap:24px}
+  .cta-deep{padding:100px 24px}
+  footer{padding:32px 24px;flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- BUBBLES -->
+<div class="bubbles">
+  <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+  <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+  <div class="bubble"></div><div class="bubble"></div>
+</div>
+
+<!-- DEPTH INDICATOR -->
+<div class="depth-indicator" id="depthNav">
+  <div class="dot active" data-depth="0"></div>
+  <div class="dot" data-depth="1"></div>
+  <div class="dot" data-depth="2"></div>
+  <div class="dot" data-depth="3"></div>
+  <div class="dot" data-depth="4"></div>
+  <span class="depth-label">Profondeur</span>
+</div>
+
+<nav id="nav">
+  <a href="#" class="nav-brand">Lagon <span>Bleu</span></a>
+  <ul class="nav-links">
+    <li><a href="#plongees">Plongées</a></li>
+    <li><a href="#galerie">Galerie</a></li>
+    <li><a href="#equipe">L'Équipe</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Réserver</a>
+</nav>
+
+<!-- HERO — SURFACE 0m -->
+<section class="hero depth-1" data-section="0">
+  <div class="hero-img"><img src="images/lagon-bleu/hero.jpg" alt="Lagon cristallin de Moorea"></div>
+  <div class="hero-ov"></div>
+  <div class="hero-caustics"></div>
+  <div class="hero-content reveal">
+    <div class="hero-depth-tag">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
+      Surface — 0m
+    </div>
+    <h1 class="hero-title">Plongez dans<br>le <em>Lagon Bleu</em></h1>
+    <p class="hero-sub">Centre familial de plongée à Moorea. Des baptêmes aux explorations — vivez l'océan en toute sécurité.</p>
+    <a href="#contact" class="btn-dive">Réserver une Plongée</a>
+  </div>
+</section>
+
+<!-- EXPERIENCES — SHALLOW 5-15m -->
+<section class="depth-2" id="plongees" data-section="1">
+  <div class="label reveal">Nos Plongées</div>
+  <h2 class="stitle reveal">Chaque Niveau,<br>Son Aventure</h2>
+  <div class="exp-grid">
+    <div class="exp-card reveal">
+      <img src="images/lagon-bleu/coral.jpg" alt="Baptême snorkeling Moorea" loading="lazy">
+      <div class="exp-body">
+        <h3>Baptême Lagon</h3>
+        <p>Première rencontre avec le monde sous-marin. Masque, palmes et tuba dans les eaux calmes du lagon.</p>
+        <div class="depth-meter">
+          <span>0m</span>
+          <div class="depth-bar"><div class="depth-fill" style="width:15%"></div></div>
+          <span>3m</span>
+        </div>
+        <div class="exp-price">6 500 XPF</div>
+      </div>
+    </div>
+    <div class="exp-card reveal">
+      <img src="images/lagon-bleu/shark.jpg" alt="Plongée récif Moorea" loading="lazy">
+      <div class="exp-body">
+        <h3>Récif & Requins</h3>
+        <p>Face-à-face avec les requins pointe noire et les tortues sur le récif extérieur.</p>
+        <div class="depth-meter">
+          <span>0m</span>
+          <div class="depth-bar"><div class="depth-fill" style="width:50%"></div></div>
+          <span>15m</span>
+        </div>
+        <div class="exp-price">11 000 XPF</div>
+      </div>
+    </div>
+    <div class="exp-card reveal">
+      <img src="images/lagon-bleu/manta.jpg" alt="Plongée profonde raies manta" loading="lazy">
+      <div class="exp-body">
+        <h3>Grand Bleu</h3>
+        <p>Plongée dérivante en plein océan. Raies manta, requins gris, pélagiques. Niveau 2 requis.</p>
+        <div class="depth-meter">
+          <span>0m</span>
+          <div class="depth-bar"><div class="depth-fill" style="width:85%"></div></div>
+          <span>30m</span>
+        </div>
+        <div class="exp-price">14 500 XPF</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY — MID DEPTH 15-25m -->
+<section class="depth-3" id="galerie" data-section="2">
+  <div class="label reveal">Galerie</div>
+  <h2 class="stitle reveal">Sous la Surface</h2>
+  <div class="uw-gallery reveal">
+    <img src="images/lagon-bleu/diver.jpg" alt="Plongeur sous-marin Moorea" loading="lazy">
+    <img src="images/lagon-bleu/shark.jpg" alt="Requin pointe noire" loading="lazy">
+    <img src="images/lagon-bleu/coral.jpg" alt="Jardin de corail" loading="lazy">
+    <img src="images/lagon-bleu/manta.jpg" alt="Raie manta" loading="lazy">
+  </div>
+</section>
+
+<!-- EQUIPE — DEEP 25-40m -->
+<section class="depth-4" id="equipe" data-section="3">
+  <div class="equipe-split">
+    <div class="equipe-img reveal-left">
+      <img src="images/lagon-bleu/boat.jpg" alt="L'équipe Lagon Bleu" loading="lazy">
+      <div class="sonar-ring"></div>
+      <div class="sonar-ring"></div>
+      <div class="sonar-ring"></div>
+    </div>
+    <div class="equipe-text reveal">
+      <div class="label">L'Équipe</div>
+      <h2 class="stitle">Une Famille<br>Sous l'Eau</h2>
+      <p>Tama et Hina, couple de moniteurs PADI, ont fondé Lagon Bleu en 2018 avec une conviction : la plongée est un sport de famille. Ici, on accueille les enfants dès 8 ans.</p>
+      <p>Un bateau de 8 places, du matériel enfant adapté, et une connaissance intime de chaque site de Moorea.</p>
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-num" data-target="7">0</div>
+          <div class="stat-label">Années</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-target="4">0</div>
+          <div class="stat-label">Moniteurs</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-target="3200">0</div>
+          <div class="stat-label">Plongées</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA — ABYSS -->
+<section class="cta-deep depth-5" id="contact" data-section="4">
+  <div class="biolum">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+  </div>
+  <div class="reveal">
+    <div class="label">Réservation</div>
+    <h2 class="stitle">Prêt à Descendre ?</h2>
+    <p>Réservez votre plongée par message. Consultation gratuite pour les débutants.</p>
+    <a href="mailto:hello@lagonbleu.pf" class="btn-dive">Nous Contacter</a>
+  </div>
+</section>
+
+<footer>
+  <p>Lagon Bleu Plongée — Moorea, Polynésie française</p>
+  <p>Tous les jours 7h30–16h · Réservation 24h à l'avance</p>
+  <p>Site réalisé par <a href="https://pacifikai.com">PACIFIK'AI</a></p>
+</footer>
+
+<script>
+// Nav scroll
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>80)});
+
+// Reveal
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.15});
+document.querySelectorAll('.reveal,.reveal-left').forEach(el=>obs.observe(el));
+
+// Depth indicator — update active dot based on scroll
+const sections=document.querySelectorAll('[data-section]');
+const dots=document.querySelectorAll('.depth-indicator .dot');
+const depthObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const idx=e.target.dataset.section;
+      dots.forEach(d=>d.classList.remove('active'));
+      dots[idx].classList.add('active');
+    }
+  })
+},{threshold:.3});
+sections.forEach(s=>depthObs.observe(s));
+
+// Counter animation
+const counterObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target;
+      const target=parseInt(el.dataset.target);
+      let current=0;
+      const step=target/40;
+      const interval=setInterval(()=>{
+        current+=step;
+        if(current>=target){current=target;clearInterval(interval)}
+        el.textContent=Math.round(current).toLocaleString('fr-FR');
+      },40);
+      counterObs.unobserve(el);
+    }
+  })
+},{threshold:.5});
+document.querySelectorAll('[data-target]').forEach(el=>counterObs.observe(el));
+</script>
+</body>
+</html>

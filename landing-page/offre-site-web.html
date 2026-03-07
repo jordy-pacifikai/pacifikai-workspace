@@ -137,19 +137,42 @@ section { position: relative; z-index: 1; }
 .include-item.option-item .option-badge { display: inline-block; font-size: 0.65rem; background: var(--lagoon-soft); color: var(--lagoon); padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-left: 6px; vertical-align: middle; }
 
 /* PORTFOLIO */
-.portfolio-section { padding: 80px 0; }
-.portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-.portfolio-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: transform 0.4s, border-color 0.3s, box-shadow 0.3s; cursor: pointer; text-decoration: none; color: inherit; display: block; }
-.portfolio-card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 12px 40px rgba(249,112,102,0.15); }
-.portfolio-iframe-wrap { position: relative; aspect-ratio: 16/10; overflow: hidden; border-bottom: 1px solid var(--border); pointer-events: none; }
+.portfolio-section { padding: 80px 0; overflow: hidden; }
+.portfolio-carousel-wrap { position: relative; }
+.portfolio-carousel { display: flex; gap: 28px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 20px 0 40px; -ms-overflow-style: none; scrollbar-width: none; cursor: grab; }
+.portfolio-carousel::-webkit-scrollbar { display: none; }
+.portfolio-carousel.dragging { cursor: grabbing; scroll-behavior: auto; scroll-snap-type: none; }
+.portfolio-card { flex: 0 0 360px; min-height: 580px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; transition: transform 0.5s cubic-bezier(.25,.46,.45,.94), border-color 0.3s, box-shadow 0.4s; cursor: pointer; text-decoration: none; color: inherit; display: flex; flex-direction: column; scroll-snap-align: center; }
+.portfolio-card:hover { transform: translateY(-10px) scale(1.02); border-color: var(--accent); box-shadow: 0 20px 60px rgba(249,112,102,0.2), 0 0 0 1px rgba(249,112,102,0.1); }
+.portfolio-card.active { border-color: var(--lagoon); box-shadow: 0 20px 60px rgba(20,184,166,0.15); }
+.portfolio-iframe-wrap { position: relative; flex: 1; min-height: 420px; overflow: hidden; border-bottom: 1px solid var(--border); pointer-events: none; }
 .portfolio-iframe-wrap iframe { width: 200%; height: 200%; transform: scale(0.5); transform-origin: top left; border: none; pointer-events: none; }
-.portfolio-card-info { padding: 16px 20px; }
-.portfolio-card-info h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
-.portfolio-card-info p { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px; }
+.portfolio-iframe-wrap::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, var(--bg-card)); pointer-events: none; }
+.portfolio-card-info { padding: 20px 24px; }
+.portfolio-card-info h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+.portfolio-card-info p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5; }
 .portfolio-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.portfolio-tag { font-size: 0.68rem; padding: 3px 8px; border-radius: 4px; background: rgba(20,184,166,0.1); color: var(--lagoon); border: 1px solid rgba(20,184,166,0.2); font-weight: 500; }
+.portfolio-tag { font-size: 0.72rem; padding: 4px 10px; border-radius: 6px; background: rgba(20,184,166,0.1); color: var(--lagoon); border: 1px solid rgba(20,184,166,0.2); font-weight: 500; }
 .portfolio-tag--accent { background: rgba(249,112,102,0.1); color: var(--accent); border-color: rgba(249,112,102,0.2); }
-@media (max-width: 768px) { .portfolio-grid { grid-template-columns: 1fr; } }
+/* Carousel nav arrows */
+.carousel-btn { position: absolute; top: 50%; transform: translateY(-60%); z-index: 10; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--border-light); background: rgba(13,20,36,0.9); backdrop-filter: blur(12px); color: var(--text); font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.carousel-btn:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 24px var(--accent-glow); color: #fff; }
+.carousel-btn--prev { left: -26px; }
+.carousel-btn--next { right: -26px; }
+.carousel-btn:disabled { opacity: 0.3; pointer-events: none; }
+/* Dots */
+.carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 8px; }
+.carousel-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border-light); border: none; cursor: pointer; transition: all 0.3s; padding: 0; }
+.carousel-dot.active { background: var(--accent); box-shadow: 0 0 10px var(--accent-glow); width: 28px; border-radius: 5px; }
+/* Counter */
+.carousel-counter { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--text-dim); font-weight: 500; }
+.carousel-counter span { color: var(--accent); font-weight: 700; font-size: 1rem; }
+@media (max-width: 768px) {
+    .portfolio-card { flex: 0 0 88vw; min-height: 480px; }
+    .portfolio-iframe-wrap { min-height: 320px; }
+    .carousel-btn { display: none; }
+    .portfolio-carousel { padding: 10px 6vw 30px; gap: 16px; }
+}
 
 /* MOCKUP PREVIEW */
 .preview-section { padding: 80px 0; }
@@ -438,147 +461,153 @@ footer a:hover { color: var(--text); }
         <h2>10 exemples de sites qu'on peut creer pour vous</h2>
         <p>Chaque site est unique. Cliquez pour voir la demo interactive.</p>
     </div>
-    <div class="portfolio-grid">
-        <a href="/portfolio/air-tahiti-nui.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/air-tahiti-nui.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>Air Tahiti Nui</h3>
-                <p>Compagnie aerienne internationale — Design premium dark &amp; gold</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Aviation</span>
-                    <span class="portfolio-tag">Parallax</span>
-                    <span class="portfolio-tag">3D Tilt</span>
+    <div class="portfolio-carousel-wrap">
+        <button class="carousel-btn carousel-btn--prev" aria-label="Precedent">&#8592;</button>
+        <button class="carousel-btn carousel-btn--next" aria-label="Suivant">&#8594;</button>
+        <div class="portfolio-carousel" id="portfolioCarousel">
+            <a href="/portfolio/air-tahiti-nui.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/air-tahiti-nui.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
                 </div>
-            </div>
-        </a>
-        <a href="/portfolio/brasserie-de-tahiti.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/brasserie-de-tahiti.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>Brasserie de Tahiti</h3>
-                <p>Brasserie historique Hinano — Theme tropical chaleureux</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Boissons</span>
-                    <span class="portfolio-tag">Timeline</span>
-                    <span class="portfolio-tag">Waves</span>
+                <div class="portfolio-card-info">
+                    <h3>Air Tahiti Nui</h3>
+                    <p>Compagnie aerienne internationale — Design premium dark &amp; gold</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">Aviation</span>
+                        <span class="portfolio-tag">Parallax</span>
+                        <span class="portfolio-tag">3D Tilt</span>
+                    </div>
                 </div>
-            </div>
-        </a>
-        <a href="/portfolio/roulotte-chez-mama.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/roulotte-chez-mama.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>Chez Mama Tama</h3>
-                <p>Roulotte traditionnelle — Neon sign &amp; chalkboard menu</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Restauration</span>
-                    <span class="portfolio-tag">Neon Effect</span>
-                    <span class="portfolio-tag">Street Food</span>
+            </a>
+            <a href="/portfolio/hinano.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/hinano.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
                 </div>
-            </div>
-        </a>
-        <a href="/portfolio/manava-resort.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/manava-resort.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>Manava Suite Resort</h3>
-                <p>Hotel 4 etoiles face au lagon — Serene &amp; luxueux</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Hotellerie</span>
-                    <span class="portfolio-tag">Parallax</span>
-                    <span class="portfolio-tag">Water Ripple</span>
+                <div class="portfolio-card-info">
+                    <h3>Hinano / Brasserie de Tahiti</h3>
+                    <p>Biere iconique depuis 1955 — Split hero, marquee infini &amp; scroll-snap galerie</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">Brasserie</span>
+                        <span class="portfolio-tag">Marquee</span>
+                        <span class="portfolio-tag">Ken Burns</span>
+                    </div>
                 </div>
-            </div>
-        </a>
-        <a href="/portfolio/robert-wan-perles.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/robert-wan-perles.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>Robert Wan</h3>
-                <p>Perles noires de Tahiti — Ultra luxe noir &amp; or</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Bijouterie</span>
-                    <span class="portfolio-tag">Particules</span>
-                    <span class="portfolio-tag--accent portfolio-tag">Premium</span>
+            </a>
+            <a href="/portfolio/the-brando.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/the-brando.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
                 </div>
-            </div>
-        </a>
-        <a href="/portfolio/moorea-dolphin-center.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/moorea-dolphin-center.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>Moorea Dolphin Center</h3>
-                <p>Centre d'interaction avec les dauphins — Fun &amp; vibrant</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Activites</span>
-                    <span class="portfolio-tag">Bubbles CSS</span>
-                    <span class="portfolio-tag">Waves</span>
+                <div class="portfolio-card-info">
+                    <h3>The Brando</h3>
+                    <p>Resort eco-luxe Tetiaroa — Parallax multi-couche, progress bar &amp; zoom scroll</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">Resort</span>
+                        <span class="portfolio-tag">Parallax</span>
+                        <span class="portfolio-tag--accent portfolio-tag">Magazine</span>
+                    </div>
                 </div>
-            </div>
-        </a>
-        <a href="/portfolio/tahiti-nui-travel.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/tahiti-nui-travel.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>Tahiti Nui Travel</h3>
-                <p>Agence de voyage #1 — Carrousel destinations &amp; compass</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Voyage</span>
-                    <span class="portfolio-tag">Carousel</span>
-                    <span class="portfolio-tag">Polaroid</span>
+            </a>
+            <a href="/portfolio/robert-wan.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/robert-wan.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
                 </div>
-            </div>
-        </a>
-        <a href="/portfolio/le-lotus.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/le-lotus.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>Le Lotus</h3>
-                <p>Restaurant gastronomique sur pilotis — Fine dining</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Gastronomie</span>
-                    <span class="portfolio-tag">Menu Degustation</span>
-                    <span class="portfolio-tag--accent portfolio-tag">Elegant</span>
+                <div class="portfolio-card-info">
+                    <h3>Robert Wan Perles</h3>
+                    <p>L'Empereur des Perles — Cursor glow dore, clip-path reveal &amp; typo editorial</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">Joaillerie</span>
+                        <span class="portfolio-tag">Cursor Glow</span>
+                        <span class="portfolio-tag--accent portfolio-tag">Ultra Luxe</span>
+                    </div>
                 </div>
-            </div>
-        </a>
-        <a href="/portfolio/the-brando.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/the-brando.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>The Brando</h3>
-                <p>Resort ultra-luxe Tetiaroa — Minimalisme absolu</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Resort</span>
-                    <span class="portfolio-tag">Minimal</span>
-                    <span class="portfolio-tag--accent portfolio-tag">Ultra Premium</span>
+            </a>
+            <a href="/portfolio/tahiti-nui-travel.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/tahiti-nui-travel.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
                 </div>
-            </div>
-        </a>
-        <a href="/portfolio/mana-tattoo.html" target="_blank" class="portfolio-card fade-in">
-            <div class="portfolio-iframe-wrap">
-                <iframe src="/portfolio/mana-tattoo.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-            </div>
-            <div class="portfolio-card-info">
-                <h3>Mana Tattoo Studio</h3>
-                <p>Tatouage polynesien — Dark tribal &amp; motifs sacres</p>
-                <div class="portfolio-tags">
-                    <span class="portfolio-tag">Tatoueur</span>
-                    <span class="portfolio-tag">Tribal CSS</span>
-                    <span class="portfolio-tag">Grain Texture</span>
+                <div class="portfolio-card-info">
+                    <h3>Tahiti Nui Travel</h3>
+                    <p>Agence de voyage majeure — Bento grid, 3D tilt cards &amp; counter anime</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">Voyage</span>
+                        <span class="portfolio-tag">Bento Grid</span>
+                        <span class="portfolio-tag">3D Tilt</span>
+                    </div>
                 </div>
-            </div>
-        </a>
+            </a>
+            <a href="/portfolio/mama-roti.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/mama-roti.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                </div>
+                <div class="portfolio-card-info">
+                    <h3>Chez Mama Roti</h3>
+                    <p>Roulotte familiale a Punaauia — Style ardoise &amp; typewriter anime</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">TPE</span>
+                        <span class="portfolio-tag">Chalkboard</span>
+                        <span class="portfolio-tag">Typewriter</span>
+                    </div>
+                </div>
+            </a>
+            <a href="/portfolio/moana-ink.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/moana-ink.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                </div>
+                <div class="portfolio-card-info">
+                    <h3>Moana Ink</h3>
+                    <p>Tatoueur artisan a Papeete — Curseur encre &amp; masonry gallery</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">TPE</span>
+                        <span class="portfolio-tag">Custom Cursor</span>
+                        <span class="portfolio-tag">Masonry</span>
+                    </div>
+                </div>
+            </a>
+            <a href="/portfolio/lagon-bleu.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/lagon-bleu.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                </div>
+                <div class="portfolio-card-info">
+                    <h3>Lagon Bleu Plongee</h3>
+                    <p>Centre plongee familial Moorea — Depth progression &amp; bulles CSS</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">TPE</span>
+                        <span class="portfolio-tag">Depth Scroll</span>
+                        <span class="portfolio-tag">Bubbles</span>
+                    </div>
+                </div>
+            </a>
+            <a href="/portfolio/hei-pua.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/hei-pua.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                </div>
+                <div class="portfolio-card-info">
+                    <h3>Hei Pua Beauty</h3>
+                    <p>Salon de beaute a Faa'a — Gradient mesh anime &amp; cards glissantes</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">TPE</span>
+                        <span class="portfolio-tag">Gradient Mesh</span>
+                        <span class="portfolio-tag">Slide-in</span>
+                    </div>
+                </div>
+            </a>
+            <a href="/portfolio/te-fare-ora.html" target="_blank" class="portfolio-card">
+                <div class="portfolio-iframe-wrap">
+                    <iframe src="/portfolio/te-fare-ora.html" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                </div>
+                <div class="portfolio-card-info">
+                    <h3>Te Fare Ora</h3>
+                    <p>Coach bien-etre a Tahiti — Zen minimaliste &amp; cercle respirant</p>
+                    <div class="portfolio-tags">
+                        <span class="portfolio-tag">TPE</span>
+                        <span class="portfolio-tag">Breathing</span>
+                        <span class="portfolio-tag">Zen</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="carousel-dots" id="carouselDots"></div>
+        <div class="carousel-counter"><span id="carouselCurrent">1</span> / 10</div>
     </div>
 </div>
 </section>
@@ -820,6 +849,103 @@ const fadeObs = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); fadeObs.unobserve(e.target); } });
 }, { threshold: 0.15 });
 fadeEls.forEach(el => fadeObs.observe(el));
+
+// Portfolio Carousel
+(function() {
+    const carousel = document.getElementById('portfolioCarousel');
+    if (!carousel) return;
+    const cards = carousel.querySelectorAll('.portfolio-card');
+    const prevBtn = carousel.parentElement.querySelector('.carousel-btn--prev');
+    const nextBtn = carousel.parentElement.querySelector('.carousel-btn--next');
+    const dotsWrap = document.getElementById('carouselDots');
+    const counterEl = document.getElementById('carouselCurrent');
+    const total = cards.length;
+    let currentIndex = 0;
+
+    // Build dots
+    for (let i = 0; i < total; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+        dot.addEventListener('click', function() { scrollToCard(i); });
+        dotsWrap.appendChild(dot);
+    }
+    const dots = dotsWrap.querySelectorAll('.carousel-dot');
+
+    function scrollToCard(idx) {
+        if (idx < 0) idx = 0;
+        if (idx >= total) idx = total - 1;
+        currentIndex = idx;
+        cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        updateUI();
+    }
+
+    function updateUI() {
+        dots.forEach(function(d, i) { d.classList.toggle('active', i === currentIndex); });
+        counterEl.textContent = currentIndex + 1;
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === total - 1;
+        cards.forEach(function(c, i) { c.classList.toggle('active', i === currentIndex); });
+    }
+
+    prevBtn.addEventListener('click', function() { scrollToCard(currentIndex - 1); });
+    nextBtn.addEventListener('click', function() { scrollToCard(currentIndex + 1); });
+
+    // Detect scroll position to update current index
+    var scrollTimer;
+    carousel.addEventListener('scroll', function() {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function() {
+            var carouselRect = carousel.getBoundingClientRect();
+            var center = carouselRect.left + carouselRect.width / 2;
+            var closest = 0;
+            var closestDist = Infinity;
+            cards.forEach(function(card, i) {
+                var rect = card.getBoundingClientRect();
+                var cardCenter = rect.left + rect.width / 2;
+                var dist = Math.abs(cardCenter - center);
+                if (dist < closestDist) { closestDist = dist; closest = i; }
+            });
+            currentIndex = closest;
+            updateUI();
+        }, 80);
+    });
+
+    // Drag to scroll (mouse)
+    var isDragging = false, startX, scrollLeft;
+    carousel.addEventListener('mousedown', function(e) {
+        if (e.target.closest('a')) e.preventDefault();
+        isDragging = true;
+        carousel.classList.add('dragging');
+        startX = e.pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+    });
+    carousel.addEventListener('mouseleave', function() { isDragging = false; carousel.classList.remove('dragging'); });
+    carousel.addEventListener('mouseup', function() { isDragging = false; carousel.classList.remove('dragging'); });
+    carousel.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        var x = e.pageX - carousel.offsetLeft;
+        carousel.scrollLeft = scrollLeft - (x - startX) * 1.5;
+    });
+
+    // Prevent click after drag
+    var dragDist = 0;
+    carousel.addEventListener('mousedown', function(e) { dragDist = 0; });
+    carousel.addEventListener('mousemove', function() { if (isDragging) dragDist++; });
+    carousel.addEventListener('click', function(e) {
+        if (dragDist > 5) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+
+    // Keyboard arrows
+    carousel.setAttribute('tabindex', '0');
+    carousel.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft') { scrollToCard(currentIndex - 1); e.preventDefault(); }
+        if (e.key === 'ArrowRight') { scrollToCard(currentIndex + 1); e.preventDefault(); }
+    });
+
+    updateUI();
+})();
 </script>
 </body>
 </html>
