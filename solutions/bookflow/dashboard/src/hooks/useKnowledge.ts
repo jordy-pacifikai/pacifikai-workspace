@@ -27,6 +27,21 @@ export const knowledgeKeys = {
   list: (businessId: string) => [...knowledgeKeys.all, 'list', businessId] as const,
 };
 
+// ─── Embedding trigger ────────────────────────────────────────────────────────
+
+async function triggerEmbeddings(knowledgeId: string, businessId: string, action: 'upsert' | 'delete' = 'upsert') {
+  try {
+    await fetch('/api/embeddings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ knowledgeId, businessId, action }),
+    });
+  } catch {
+    // Non-blocking — embeddings generation is async
+    console.warn('Failed to trigger embeddings for', knowledgeId);
+  }
+}
+
 // ─── Fetch ────────────────────────────────────────────────────────────────────
 
 async function fetchKnowledge(businessId: string): Promise<KnowledgeDoc[]> {
@@ -56,11 +71,12 @@ async function createKnowledgeDoc(businessId: string, input: KnowledgeInput): Pr
   return data as KnowledgeDoc;
 }
 
-async function updateKnowledgeDoc(id: string, input: Partial<KnowledgeInput>): Promise<KnowledgeDoc> {
+async function updateKnowledgeDoc(id: string, businessId: string, input: Partial<KnowledgeInput>): Promise<KnowledgeDoc> {
   const { data, error } = await supabase
     .from('bookbot_knowledge')
     .update(input)
     .eq('id', id)
+    .eq('business_id', businessId)
     .select()
     .single();
 
@@ -68,11 +84,12 @@ async function updateKnowledgeDoc(id: string, input: Partial<KnowledgeInput>): P
   return data as KnowledgeDoc;
 }
 
-async function deleteKnowledgeDoc(id: string): Promise<void> {
+async function deleteKnowledgeDoc(id: string, businessId: string): Promise<void> {
   const { error } = await supabase
     .from('bookbot_knowledge')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .eq('business_id', businessId);
 
   if (error) throw new Error(error.message);
 }
@@ -93,8 +110,9 @@ export function useCreateKnowledge(businessId: string | null) {
 
   return useMutation({
     mutationFn: (input: KnowledgeInput) => createKnowledgeDoc(id, input),
-    onSuccess: () => {
+    onSuccess: (doc) => {
       queryClient.invalidateQueries({ queryKey: knowledgeKeys.list(id) });
+      triggerEmbeddings(doc.id, id, 'upsert');
     },
   });
 }
@@ -105,9 +123,10 @@ export function useUpdateKnowledge(businessId: string | null) {
 
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: Partial<KnowledgeInput> }) =>
-      updateKnowledgeDoc(id, input),
-    onSuccess: () => {
+      updateKnowledgeDoc(id, bid, input),
+    onSuccess: (doc) => {
       queryClient.invalidateQueries({ queryKey: knowledgeKeys.list(bid) });
+      triggerEmbeddings(doc.id, bid, 'upsert');
     },
   });
 }
@@ -117,9 +136,10 @@ export function useDeleteKnowledge(businessId: string | null) {
   const bid = businessId ?? '';
 
   return useMutation({
-    mutationFn: (id: string) => deleteKnowledgeDoc(id),
-    onSuccess: () => {
+    mutationFn: (id: string) => deleteKnowledgeDoc(id, bid).then(() => id),
+    onSuccess: (deletedId) => {
       queryClient.invalidateQueries({ queryKey: knowledgeKeys.list(bid) });
+      triggerEmbeddings(deletedId, bid, 'delete');
     },
   });
 }

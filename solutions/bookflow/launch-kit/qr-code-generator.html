@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ve'a — Generateur QR Code</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card: #141414;
+            --border: #262626;
+            --text: #fafafa;
+            --muted: #a3a3a3;
+            --accent: #25D366;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--text), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+        .form-group {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: var(--accent);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: 700;
+            font-size: 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,211,102,0.3); }
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid rgba(37,211,102,0.3);
+        }
+        .btn-outline:hover { background: rgba(37,211,102,0.1); }
+        .preview {
+            margin-top: 40px;
+            text-align: center;
+        }
+        #qr-canvas {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            display: inline-block;
+        }
+        .link-preview {
+            margin-top: 16px;
+            padding: 12px 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--accent);
+            word-break: break-all;
+            max-width: 500px;
+        }
+        .sizes {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .help {
+            margin-top: 40px;
+            max-width: 500px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .help h3 { font-size: 15px; margin-bottom: 12px; }
+        .help ul { padding-left: 20px; }
+        .help li { font-size: 13px; color: var(--muted); margin-bottom: 6px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <h1>Ve'a QR Code Generator</h1>
+    <p class="subtitle">Generez des QR codes WhatsApp pour vos clients</p>
+
+    <div class="form-group">
+        <label>Numero WhatsApp (format international)</label>
+        <input type="tel" id="phone" placeholder="+68989558189" value="+689">
+    </div>
+
+    <div class="form-group">
+        <label>Message pre-rempli</label>
+        <input type="text" id="message" placeholder="Bonjour, je souhaite reserver" value="Bonjour, je souhaite reserver">
+    </div>
+
+    <div class="form-group">
+        <label>Nom du business (optionnel, pour le titre)</label>
+        <input type="text" id="business" placeholder="Salon Moana">
+    </div>
+
+    <button class="btn" onclick="generateQR()">Generer le QR Code</button>
+
+    <div class="preview" id="preview" style="display:none;">
+        <div id="qr-canvas"></div>
+        <div class="link-preview" id="link-display"></div>
+
+        <div class="sizes">
+            <button class="btn btn-outline" onclick="downloadQR(200)">Petit (3x3cm)</button>
+            <button class="btn btn-outline" onclick="downloadQR(400)">Moyen (10x10cm)</button>
+            <button class="btn btn-outline" onclick="downloadQR(800)">Grand (20x20cm)</button>
+            <button class="btn" onclick="downloadSVG()">Telecharger SVG</button>
+        </div>
+    </div>
+
+    <div class="help">
+        <h3>Ou placer le QR code ?</h3>
+        <ul>
+            <li><strong>Salon / Beaute :</strong> carte de prix, miroir, comptoir, carte de visite</li>
+            <li><strong>Restaurant :</strong> menu, table tent, addition, vitrine</li>
+            <li><strong>Medical :</strong> salle d'attente, ordonnance, comptoir accueil</li>
+            <li><strong>Tous :</strong> vitrine, carte de visite, flyers, site web, signature email</li>
+        </ul>
+    </div>
+
+    <!-- QR Code library (lightweight, no dependency) -->
+    <script>
+    // Minimal QR code generator (qrcode-generator by Kazuhiko Arase, MIT license)
+    // Using CDN for simplicity
+    var qrScript = document.createElement('script');
+    qrScript.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js';
+    document.head.appendChild(qrScript);
+
+    var currentUrl = '';
+
+    function generateQR() {
+        var phone = document.getElementById('phone').value.replace(/[^0-9+]/g, '');
+        var message = document.getElementById('message').value;
+        var business = document.getElementById('business').value;
+
+        if (!phone || phone.length < 8) {
+            alert('Entrez un numero de telephone valide');
+            return;
+        }
+
+        currentUrl = 'https://wa.me/' + phone.replace('+', '') + '?text=' + encodeURIComponent(message);
+
+        // Generate QR
+        var qr = qrcode(0, 'M');
+        qr.addData(currentUrl);
+        qr.make();
+
+        var container = document.getElementById('qr-canvas');
+        container.innerHTML = '';
+
+        // Create canvas
+        var canvas = document.createElement('canvas');
+        var size = 300;
+        var moduleCount = qr.getModuleCount();
+        var cellSize = Math.floor(size / moduleCount);
+        canvas.width = cellSize * moduleCount + 40;
+        canvas.height = cellSize * moduleCount + 40;
+        var ctx = canvas.getContext('2d');
+
+        // White background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // QR modules
+        ctx.fillStyle = '#000000';
+        for (var r = 0; r < moduleCount; r++) {
+            for (var c = 0; c < moduleCount; c++) {
+                if (qr.isDark(r, c)) {
+                    ctx.fillRect(c * cellSize + 20, r * cellSize + 20, cellSize, cellSize);
+                }
+            }
+        }
+
+        canvas.id = 'qr-output';
+        container.appendChild(canvas);
+
+        // Show link
+        document.getElementById('link-display').textContent = currentUrl;
+        document.getElementById('preview').style.display = 'block';
+    }
+
+    function downloadQR(targetSize) {
+        var source = document.getElementById('qr-output');
+        if (!source) return;
+
+        var canvas = document.createElement('canvas');
+        canvas.width = targetSize;
+        canvas.height = targetSize;
+        var ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(source, 0, 0, targetSize, targetSize);
+
+        var link = document.createElement('a');
+        var business = document.getElementById('business').value || 'vea';
+        link.download = 'qr-' + business.toLowerCase().replace(/\s+/g, '-') + '-' + targetSize + 'px.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }
+
+    function downloadSVG() {
+        var phone = document.getElementById('phone').value.replace(/[^0-9+]/g, '');
+        var message = document.getElementById('message').value;
+        var url = 'https://wa.me/' + phone.replace('+', '') + '?text=' + encodeURIComponent(message);
+
+        var qr = qrcode(0, 'M');
+        qr.addData(url);
+        qr.make();
+
+        var moduleCount = qr.getModuleCount();
+        var cellSize = 10;
+        var margin = 20;
+        var svgSize = moduleCount * cellSize + margin * 2;
+
+        var svg = '<?xml version="1.0" encoding="UTF-8"?>\n';
+        svg += '<svg xmlns="http://www.w3.org/2000/svg" width="' + svgSize + '" height="' + svgSize + '" viewBox="0 0 ' + svgSize + ' ' + svgSize + '">\n';
+        svg += '<rect width="100%" height="100%" fill="white"/>\n';
+
+        for (var r = 0; r < moduleCount; r++) {
+            for (var c = 0; c < moduleCount; c++) {
+                if (qr.isDark(r, c)) {
+                    svg += '<rect x="' + (c * cellSize + margin) + '" y="' + (r * cellSize + margin) + '" width="' + cellSize + '" height="' + cellSize + '" fill="black"/>\n';
+                }
+            }
+        }
+
+        svg += '</svg>';
+
+        var blob = new Blob([svg], { type: 'image/svg+xml' });
+        var link = document.createElement('a');
+        var business = document.getElementById('business').value || 'vea';
+        link.download = 'qr-' + business.toLowerCase().replace(/\s+/g, '-') + '.svg';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+    }
+    </script>
+</body>
+</html>

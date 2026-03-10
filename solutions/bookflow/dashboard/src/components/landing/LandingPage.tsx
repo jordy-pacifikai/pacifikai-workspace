@@ -81,7 +81,7 @@ function Nav() {
         <div className="hidden sm:flex items-center gap-6 text-sm text-gray-400">
           <a href="#features" className="hover:text-white transition-colors">Fonctionnalites</a>
           <a href="#pricing" className="hover:text-white transition-colors">Tarifs</a>
-          <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+          <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/login" className="text-sm text-gray-400 hover:text-white transition-colors hidden sm:block">Connexion</Link>
@@ -502,7 +502,7 @@ function Footer() {
             <div className="space-y-2">
               <a href="#features" className="block text-sm text-gray-500 hover:text-gray-300 transition-colors">Fonctionnalites</a>
               <a href="#pricing" className="block text-sm text-gray-500 hover:text-gray-300 transition-colors">Tarifs</a>
-              <a href="#faq" className="block text-sm text-gray-500 hover:text-gray-300 transition-colors">FAQ</a>
+              <Link href="/faq" className="block text-sm text-gray-500 hover:text-gray-300 transition-colors">FAQ</Link>
             </div>
           </div>
           <div>

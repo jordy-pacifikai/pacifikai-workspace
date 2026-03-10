@@ -53,3 +53,13 @@ Detailed credential setup available in:
 | Publer | Configured | Social media posting |
 | Fal.ai | Configured | Image generation |
 | Telegram | Configured | Bot notifications |
+| Tavus | Configured | Avatar AI conversationnel |
+
+---
+
+## Tavus API (Sales Coach)
+
+- **API Key**: `086f0eddd8ec45d69b3088aa6f9102e9`
+- **Base URL**: `https://api.tavus.io`
+- **Docs**: https://docs.tavus.io
+- **Usage**: Agent avatar pour formation vente PACIFIK'AI

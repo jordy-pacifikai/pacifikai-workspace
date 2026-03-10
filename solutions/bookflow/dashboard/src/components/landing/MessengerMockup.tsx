@@ -11,11 +11,11 @@ interface Message {
 }
 
 interface Booking {
-  day: string;        // e.g. "Mar 4"
-  weekday: string;    // e.g. "Mar."
-  time: string;       // e.g. "14h30"
-  service: string;    // e.g. "Coupe"
-  client: string;     // e.g. "Hina M."
+  day: string;
+  weekday: string;
+  time: string;
+  service: string;
+  client: string;
 }
 
 interface Scenario {
@@ -93,7 +93,6 @@ const SCENARIOS: Scenario[] = [
     ],
     booking: { day: 'Mar 8', weekday: 'Sam.', time: '18h00', service: 'Coupe + Barbe', client: 'Tama K.' },
   },
-  // 6. Client indecis qui change 3 fois d'avis
   {
     name: 'Nails Factory',
     initials: 'NF',
@@ -107,7 +106,6 @@ const SCENARIOS: Scenario[] = [
     ],
     booking: { day: 'Mar 7', weekday: 'Ven.', time: '14h00', service: 'Pose gel', client: 'Leilani H.' },
   },
-  // 7. Client en colere qui a eu un probleme
   {
     name: 'Garage Taina',
     initials: 'GT',
@@ -121,7 +119,6 @@ const SCENARIOS: Scenario[] = [
     ],
     booking: { day: 'Mar 4', weekday: 'Mar.', time: '08h00', service: 'Diagnostic prioritaire', client: 'Raita F.' },
   },
-  // 8. Plusieurs personnes differentes pour un meme creneaux
   {
     name: 'Yoga Mahana',
     initials: 'YM',
@@ -136,7 +133,6 @@ const SCENARIOS: Scenario[] = [
     ],
     booking: { day: 'Mar 6', weekday: 'Jeu.', time: '18h00', service: 'Yoga (x3 places)', client: 'Moea L. +2' },
   },
-  // 9. Client qui veut un RDV pour quelqu'un d'autre
   {
     name: 'Dr Faatomo',
     initials: 'DF',
@@ -151,7 +147,6 @@ const SCENARIOS: Scenario[] = [
     ],
     booking: { day: 'Mar 3', weekday: 'Lun.', time: '15h30', service: 'Consultation pediatrie', client: 'Tehau P. (8 ans)' },
   },
-  // 10. Client qui demande un devis avant de reserver
   {
     name: 'Motu Clean',
     initials: 'MC',
@@ -175,26 +170,21 @@ interface CalendarProps {
   activeGradient: string;
 }
 
-function MiniCalendar({ bookings, activeGradient }: CalendarProps) {
-  // Current month grid (March 2026)
+const MiniCalendar = ({ bookings, activeGradient }: CalendarProps) => {
   const MONTH = 'Mars 2026';
   const DAYS_HEADER = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-  // March 2026 starts on Sunday (offset 6), 31 days
   const START_OFFSET = 6;
   const TOTAL_DAYS = 31;
 
-  // Highlighted days (days that have bookings)
   const bookedDays = new Set(bookings.map(b => parseInt(b.day.replace('Mar ', ''))));
 
   const cells: (number | null)[] = [];
   for (let i = 0; i < START_OFFSET; i++) cells.push(null);
   for (let d = 1; d <= TOTAL_DAYS; d++) cells.push(d);
-  // Fill rest of last week
   while (cells.length % 7 !== 0) cells.push(null);
 
   return (
     <div className="w-full">
-      {/* Calendar header */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-white">{MONTH}</h3>
         <div className="flex items-center gap-1">
@@ -203,18 +193,16 @@ function MiniCalendar({ bookings, activeGradient }: CalendarProps) {
         </div>
       </div>
 
-      {/* Days header */}
       <div className="grid grid-cols-7 gap-0.5 mb-1">
         {DAYS_HEADER.map((d, i) => (
           <div key={i} className="text-center text-[9px] font-medium text-gray-600 py-0.5">{d}</div>
         ))}
       </div>
 
-      {/* Days grid */}
       <div className="grid grid-cols-7 gap-0.5">
         {cells.map((day, i) => {
           const isBooked = day !== null && bookedDays.has(day);
-          const isToday = day === 3; // March 3 = today
+          const isToday = day === 3;
 
           return (
             <div
@@ -239,7 +227,6 @@ function MiniCalendar({ bookings, activeGradient }: CalendarProps) {
         })}
       </div>
 
-      {/* Booking list */}
       <div className="mt-3 space-y-1.5 min-h-[100px]">
         {bookings.length === 0 && (
           <div className="text-center text-[10px] text-gray-600 py-4">
@@ -251,7 +238,6 @@ function MiniCalendar({ bookings, activeGradient }: CalendarProps) {
             key={`${b.day}-${b.time}-${i}`}
             className="calBookingAppear flex items-center gap-2 rounded-lg bg-gray-800/60 border border-gray-700/50 px-2.5 py-2"
           >
-            {/* Date badge */}
             <div
               className="shrink-0 w-[36px] h-[36px] rounded-lg flex flex-col items-center justify-center"
               style={{ background: `${activeGradient}`, opacity: 0.85 }}
@@ -259,7 +245,6 @@ function MiniCalendar({ bookings, activeGradient }: CalendarProps) {
               <span className="text-[8px] font-medium text-white/80 leading-none">{b.weekday}</span>
               <span className="text-[12px] font-bold text-white leading-tight">{b.day.split(' ')[1]}</span>
             </div>
-            {/* Details */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-white truncate">{b.service}</span>
@@ -267,7 +252,6 @@ function MiniCalendar({ bookings, activeGradient }: CalendarProps) {
               </div>
               <span className="text-[10px] text-gray-500">{b.client}</span>
             </div>
-            {/* Check icon */}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0">
               <circle cx="12" cy="12" r="10" fill="#22c55e" opacity="0.2"/>
               <path d="M9 12l2 2 4-4" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -277,9 +261,11 @@ function MiniCalendar({ bookings, activeGradient }: CalendarProps) {
       </div>
     </div>
   );
-}
+};
 
 // ─── Messenger Phone Mockup ──────────────────────────────────────────────────
+// iPhone 15 proportions: 280×572, bezel 8px, border-radius 44px outer / 36px screen
+// Messenger 2025 colors: sent #0084FF, received #E4E6EB, bg white
 
 interface PhoneProps {
   scenario: Scenario;
@@ -289,34 +275,57 @@ interface PhoneProps {
   chatRef: React.RefObject<HTMLDivElement | null>;
 }
 
-function MessengerPhone({ scenario, scenarioIdx, visibleCount, isTyping, chatRef }: PhoneProps) {
+const PHONE_W = 280;
+const PHONE_H = 572;
+const BEZEL = 8;
+const SCREEN_R = 36;
+
+const MessengerPhone = ({ scenario, scenarioIdx, visibleCount, isTyping, chatRef }: PhoneProps) => {
   const messages = scenario.messages;
 
   return (
-    <div className="relative w-[260px] h-[530px] shrink-0">
-      {/* iPhone Frame */}
+    <div className="relative shrink-0" style={{ width: PHONE_W, height: PHONE_H }}>
+      {/* iPhone outer shell — bezel color showing through padding */}
       <div
-        className="w-full h-full rounded-[42px] p-2 relative"
+        className="w-full h-full relative"
         style={{
-          background: '#1a1a1a',
-          boxShadow: '0 0 0 1px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.4)',
+          borderRadius: 44,
+          padding: BEZEL,
+          background: 'linear-gradient(145deg, #2a2a2e 0%, #1a1a1d 100%)',
+          boxShadow: '0 25px 70px rgba(0,0,0,0.45), 0 0 0 0.5px rgba(255,255,255,0.06) inset',
         }}
       >
         {/* Screen */}
-        <div className="w-full h-full rounded-[34px] overflow-hidden bg-white relative flex flex-col">
+        <div
+          className="w-full h-full overflow-hidden relative flex flex-col"
+          style={{ borderRadius: SCREEN_R, background: '#FFFFFF' }}
+        >
           {/* Dynamic Island */}
-          <div className="absolute top-[8px] left-1/2 -translate-x-1/2 w-[80px] h-[20px] rounded-full bg-black z-20" />
+          <div
+            className="absolute z-20"
+            style={{
+              top: 10,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: 90,
+              height: 22,
+              borderRadius: 11,
+              background: '#000',
+            }}
+          />
 
           {/* Status bar */}
-          <div className="h-[40px] bg-white shrink-0 flex items-end justify-between px-5 pb-1 relative z-10">
-            <span className="text-[10px] font-semibold text-black">9:41</span>
-            <div className="flex items-center gap-[4px]">
-              <svg width="12" height="8" viewBox="0 0 13 9" fill="black">
+          <div className="h-[42px] shrink-0 flex items-end justify-between px-6 pb-1 relative z-10 bg-white">
+            <span className="text-[10px] font-semibold text-black" style={{ fontFeatureSettings: '"tnum"' }}>9:41</span>
+            <div className="flex items-center gap-1">
+              {/* Signal bars */}
+              <svg width="13" height="9" viewBox="0 0 13 9" fill="black">
                 <rect x="0" y="5.5" width="2.2" height="3.5" rx="0.5"/>
                 <rect x="3.2" y="3.5" width="2.2" height="5.5" rx="0.5"/>
                 <rect x="6.4" y="1.5" width="2.2" height="7.5" rx="0.5"/>
                 <rect x="9.6" y="0" width="2.2" height="9" rx="0.5"/>
               </svg>
+              {/* Battery */}
               <svg width="18" height="8" viewBox="0 0 25 12">
                 <rect x="0.5" y="1" width="20" height="10" rx="2" fill="none" stroke="black" strokeWidth="1"/>
                 <rect x="2" y="2.5" width="17" height="7" rx="1" fill="black"/>
@@ -325,34 +334,49 @@ function MessengerPhone({ scenario, scenarioIdx, visibleCount, isTyping, chatRef
             </div>
           </div>
 
-          {/* Messenger Header */}
-          <div className="h-[44px] bg-white shrink-0 flex items-center gap-2 px-3 border-b border-[#E4E6EB]">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          {/* Messenger Header — fidele 2025 */}
+          <div className="h-[48px] bg-white shrink-0 flex items-center gap-2.5 px-3 border-b border-[#E4E6EB]">
+            {/* Back chevron */}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0">
               <path d="M15 18l-6-6 6-6" stroke="#0084FF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <div className="relative">
-              <div className="w-[28px] h-[28px] rounded-full" style={{ background: scenario.gradient }}>
-                <div className="w-full h-full flex items-center justify-center text-[8px] font-bold text-white rounded-full">{scenario.initials}</div>
+            {/* Avatar + online dot */}
+            <div className="relative shrink-0">
+              <div
+                className="w-[32px] h-[32px] rounded-full flex items-center justify-center text-[9px] font-bold text-white"
+                style={{ background: scenario.gradient }}
+              >
+                {scenario.initials}
               </div>
-              <div className="absolute -bottom-[1px] -right-[1px] w-[9px] h-[9px] rounded-full bg-[#31a24c] border-[2px] border-white" />
+              <div
+                className="absolute -bottom-[1px] -right-[1px] w-[10px] h-[10px] rounded-full border-[2px] border-white"
+                style={{ background: '#31a24c' }}
+              />
             </div>
+            {/* Name + status */}
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-black leading-tight truncate">{scenario.name}</p>
+              <p className="text-[13px] font-bold text-black leading-tight truncate">{scenario.name}</p>
               <p className="text-[10px] text-[#65676B] leading-tight">Active now</p>
             </div>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#0084FF">
+            {/* Phone icon */}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#0084FF" className="shrink-0">
               <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
             </svg>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#0084FF">
+            {/* Video icon */}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#0084FF" className="shrink-0">
               <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
             </svg>
           </div>
 
-          {/* Chat Area */}
+          {/* Chat Area — FIXED HEIGHT, messages start at bottom */}
           <div
             ref={chatRef}
-            className="flex-1 overflow-y-auto flex flex-col justify-end px-2 py-2"
-            style={{ scrollBehavior: 'smooth' }}
+            className="overflow-y-auto flex flex-col justify-end px-2.5 py-2"
+            style={{
+              height: PHONE_H - BEZEL * 2 - 42 - 48 - 44 - 22,
+              scrollBehavior: 'smooth',
+              background: '#FFFFFF',
+            }}
           >
             {messages.slice(0, visibleCount).map((msg, i) => {
               const isBot = msg.from === 'bot';
@@ -363,23 +387,31 @@ function MessengerPhone({ scenario, scenarioIdx, visibleCount, isTyping, chatRef
               return (
                 <div
                   key={`${scenarioIdx}-${i}`}
-                  className="msgrAppear flex items-end gap-[5px]"
+                  className="msgrAppear flex items-end gap-[6px]"
                   style={{
                     justifyContent: isBot ? 'flex-start' : 'flex-end',
-                    marginTop: prevSame ? 2 : 6,
+                    marginTop: prevSame ? 2 : 8,
                   }}
                 >
+                  {/* Bot avatar — only on last message of consecutive group */}
                   {isBot && (
-                    <div className={`shrink-0 w-[22px] ${isLastInGroup ? '' : 'invisible'}`}>
-                      <div className="w-[22px] h-[22px] rounded-full" style={{ background: scenario.gradient }}>
-                        <div className="w-full h-full flex items-center justify-center text-[6px] font-bold text-white rounded-full">{scenario.initials}</div>
+                    <div className={`shrink-0 w-[24px] ${isLastInGroup ? '' : 'invisible'}`}>
+                      <div
+                        className="w-[24px] h-[24px] rounded-full flex items-center justify-center text-[7px] font-bold text-white"
+                        style={{ background: scenario.gradient }}
+                      >
+                        {scenario.initials}
                       </div>
                     </div>
                   )}
+                  {/* Message bubble */}
                   <div
-                    className="max-w-[80%] px-2.5 py-[5px] text-[12px] leading-[1.35]"
+                    className="max-w-[78%]"
                     style={{
-                      borderRadius: 16,
+                      borderRadius: 18,
+                      padding: '6px 12px',
+                      fontSize: 13,
+                      lineHeight: 1.35,
                       whiteSpace: 'pre-line',
                       ...(isBot
                         ? { backgroundColor: '#E4E6EB', color: '#050505' }
@@ -392,59 +424,83 @@ function MessengerPhone({ scenario, scenarioIdx, visibleCount, isTyping, chatRef
               );
             })}
 
+            {/* Typing indicator */}
             {isTyping && (
-              <div className="msgrAppear flex items-end gap-[5px]" style={{ marginTop: 2 }}>
-                <div className="shrink-0 w-[22px]">
-                  <div className="w-[22px] h-[22px] rounded-full" style={{ background: scenario.gradient }}>
-                    <div className="w-full h-full flex items-center justify-center text-[6px] font-bold text-white rounded-full">{scenario.initials}</div>
+              <div className="msgrAppear flex items-end gap-[6px]" style={{ marginTop: 2 }}>
+                <div className="shrink-0 w-[24px]">
+                  <div
+                    className="w-[24px] h-[24px] rounded-full flex items-center justify-center text-[7px] font-bold text-white"
+                    style={{ background: scenario.gradient }}
+                  >
+                    {scenario.initials}
                   </div>
                 </div>
-                <div className="flex items-center gap-[3px] px-3 py-[8px]" style={{ borderRadius: 16, backgroundColor: '#E4E6EB' }}>
-                  <span className="msgrDot1 w-[4px] h-[4px] rounded-full bg-[#65676B]" />
-                  <span className="msgrDot2 w-[4px] h-[4px] rounded-full bg-[#65676B]" />
-                  <span className="msgrDot3 w-[4px] h-[4px] rounded-full bg-[#65676B]" />
+                <div
+                  className="flex items-center gap-[3px]"
+                  style={{ borderRadius: 18, backgroundColor: '#E4E6EB', padding: '8px 14px' }}
+                >
+                  <span className="msgrDot1 w-[5px] h-[5px] rounded-full bg-[#65676B]" />
+                  <span className="msgrDot2 w-[5px] h-[5px] rounded-full bg-[#65676B]" />
+                  <span className="msgrDot3 w-[5px] h-[5px] rounded-full bg-[#65676B]" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Input Bar */}
-          <div className="h-[40px] bg-white shrink-0 flex items-center gap-[5px] px-2 border-t border-[#E4E6EB]">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          {/* Input Bar — Messenger 2025 style */}
+          <div className="h-[44px] bg-white shrink-0 flex items-center gap-[6px] px-2.5 border-t border-[#E4E6EB]">
+            {/* Circle plus button */}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0">
               <circle cx="12" cy="12" r="10" stroke="#0084FF" strokeWidth="2"/>
               <path d="M12 8v8M8 12h8" stroke="#0084FF" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="#0084FF">
+            {/* Camera */}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#0084FF" className="shrink-0">
               <circle cx="12" cy="13" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z"/>
             </svg>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="#0084FF">
+            {/* Image */}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#0084FF" className="shrink-0">
               <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
             </svg>
-            <div className="flex-1 bg-[#F0F2F5] rounded-full px-2.5 py-[4px] text-[11px] text-[#65676B]">Aa</div>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#0084FF">
+            {/* Mic */}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#0084FF" className="shrink-0">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+              <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            </svg>
+            {/* Text field */}
+            <div
+              className="flex-1 rounded-full flex items-center"
+              style={{ background: '#F0F2F5', padding: '5px 12px', fontSize: 12, color: '#65676B' }}
+            >
+              Aa
+            </div>
+            {/* Thumbs up */}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#0084FF" className="shrink-0">
               <path d="M2 20h2V10H2v10zm20-9c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L13.17 2 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
             </svg>
           </div>
 
           {/* Home Indicator */}
-          <div className="h-[18px] bg-white shrink-0 flex items-center justify-center">
-            <div className="w-[90px] h-[4px] bg-black/20 rounded-full" />
+          <div className="h-[22px] bg-white shrink-0 flex items-center justify-center">
+            <div className="w-[100px] h-[4px] rounded-full" style={{ background: 'rgba(0,0,0,0.15)' }} />
           </div>
         </div>
       </div>
 
-      {/* Glow */}
+      {/* Glow behind phone */}
       <div
-        className="absolute -inset-4 -z-10 rounded-[48px] animate-pulse opacity-15"
-        style={{ background: 'radial-gradient(circle, #0084FF50 0%, transparent 70%)' }}
+        className="absolute -inset-5 -z-10 rounded-[52px] animate-pulse"
+        style={{
+          background: 'radial-gradient(circle, rgba(0,132,255,0.12) 0%, transparent 70%)',
+        }}
       />
     </div>
   );
-}
+};
 
 // ─── Main Export: DemoShowcase ────────────────────────────────────────────────
 
-export default function MessengerMockup() {
+const MessengerMockup = () => {
   const [scenarioIdx, setScenarioIdx] = useState(0);
   const [visibleCount, setVisibleCount] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
@@ -462,8 +518,6 @@ export default function MessengerMockup() {
     setScenarioIdx(idx);
     setVisibleCount(0);
     setIsTyping(false);
-
-    // Each scenario = fresh calendar, only its own booking
     setConfirmedBookings([]);
 
     const scenario = SCENARIOS[idx];
@@ -481,8 +535,6 @@ export default function MessengerMockup() {
         if (scenarioRef.current === idx) {
           setIsTyping(false);
           setVisibleCount(i + 1);
-
-          // When last message appears (= confirmation), add booking to calendar
           if (i === lastMsgIdx) {
             setConfirmedBookings(prev => [...prev, scenario.booking]);
           }
@@ -491,7 +543,6 @@ export default function MessengerMockup() {
       timeoutIds.current.push(tid2);
     });
 
-    // After last message, wait 3.5s then play next scenario
     const lastDelay = scenario.messages[lastMsgIdx].delay;
     const tid3 = setTimeout(() => {
       const next = (idx + 1) % SCENARIOS.length;
@@ -500,14 +551,14 @@ export default function MessengerMockup() {
     timeoutIds.current.push(tid3);
   }, []);
 
-  // Auto-scroll chat
+  // Auto-scroll chat to bottom
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
   }, [visibleCount, isTyping]);
 
-  // Start on intersection
+  // Start animation on intersection
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -539,9 +590,7 @@ export default function MessengerMockup() {
 
       {/* Right: Calendar Panel */}
       <div className="hidden sm:block w-[200px] pt-4">
-        {/* Calendar card */}
         <div className="rounded-2xl bg-gray-900/70 border border-gray-800/60 backdrop-blur-sm p-3">
-          {/* Title */}
           <div className="flex items-center gap-2 mb-3">
             <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0084FF 0%, #00C6FF 100%)' }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
@@ -550,18 +599,16 @@ export default function MessengerMockup() {
             </div>
             <span className="text-[12px] font-semibold text-white">Agenda en direct</span>
           </div>
-
           <MiniCalendar bookings={confirmedBookings} activeGradient={scenario.gradient} />
         </div>
 
-        {/* Live indicator */}
         <div className="flex items-center justify-center gap-1.5 mt-3">
           <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
           <span className="text-[10px] text-gray-500">Synchronisation en direct</span>
         </div>
       </div>
 
-      {/* Styles */}
+      {/* Animations */}
       <style jsx>{`
         @keyframes msgrAppearKf {
           from { opacity: 0; transform: translateY(6px); }
@@ -589,4 +636,6 @@ export default function MessengerMockup() {
       `}</style>
     </div>
   );
-}
+};
+
+export default MessengerMockup;

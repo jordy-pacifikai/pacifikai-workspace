@@ -199,17 +199,83 @@ export async function searchKnowledgeBase(
   businessId: string,
   query: string
 ): Promise<{ chunk_text: string; title: string; category: string; score: number }[]> {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/bookbot_search`, {
-    method: "POST",
-    headers: headers(),
-    body: JSON.stringify({
-      p_business_id: businessId,
-      p_query: query,
-      p_limit: 5,
-    }),
-  });
+  const mistralKey = process.env.MISTRAL_API_KEY;
+
+  // If we have a Mistral key, do vector search (proper RAG)
+  if (mistralKey) {
+    try {
+      // Generate embedding for the query
+      const embRes = await fetch("https://api.mistral.ai/v1/embeddings", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${mistralKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "mistral-embed",
+          input: query,
+        }),
+      });
+      const embData = await embRes.json();
+      const queryEmbedding = embData?.data?.[0]?.embedding;
+
+      if (queryEmbedding) {
+        // Call bookbot_search RPC with the vector
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/bookbot_search`, {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify({
+            query_embedding: queryEmbedding,
+            p_business_id: businessId,
+            match_threshold: 0.3,
+            match_count: 5,
+          }),
+        });
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          return data.map((r: { id: string; content: string; similarity: number }) => ({
+            chunk_text: r.content,
+            title: "",
+            category: "",
+            score: r.similarity,
+          }));
+        }
+      }
+    } catch (err) {
+      console.warn("[RAG] Vector search failed, falling back to FTS:", String(err));
+    }
+  }
+
+  // Fallback: full-text search on bookbot_embeddings.fts
+  const ftsQuery = query.split(/\s+/).filter(Boolean).join(" & ");
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_embeddings?business_id=eq.${businessId}&fts=fts.${encodeURIComponent(ftsQuery)}&select=chunk_text&limit=5`,
+    { headers: headers() }
+  );
   const data = await res.json();
-  return Array.isArray(data) ? data : [];
+  if (Array.isArray(data) && data.length > 0) {
+    return data.map((r: { chunk_text: string }) => ({
+      chunk_text: r.chunk_text,
+      title: "",
+      category: "",
+      score: 0.5,
+    }));
+  }
+
+  // Last fallback: direct text search on bookbot_knowledge
+  const kRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_knowledge?business_id=eq.${businessId}&content=ilike.*${encodeURIComponent(query.slice(0, 50))}*&select=title,content,category&limit=5`,
+    { headers: headers() }
+  );
+  const kData = await kRes.json();
+  return Array.isArray(kData)
+    ? kData.map((r: { title: string; content: string; category: string }) => ({
+        chunk_text: r.content,
+        title: r.title,
+        category: r.category,
+        score: 0.3,
+      }))
+    : [];
 }
 
 export async function getBlockedSlotsForDate(
