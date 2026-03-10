@@ -26,7 +26,10 @@
             --cream:   #F2EDE4;
         }
 
-        html { scroll-behavior: smooth; }
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: clip; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -51,11 +54,26 @@
         .scroll-progress {
             position: fixed;
             top: 0; left: 0;
+            width: 100%;
             height: 3px;
-            width: 0%;
-            background: var(--green);
-            z-index: 9999;
-            transition: width 0.1s linear;
+            z-index: 10000;
+        }
+        .scroll-progress-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #2D5016, #8B7355);
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+
+        /* ===== WORD REVEAL ===== */
+        .word-reveal .word {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: top;
+        }
+        .word-reveal .word-inner {
+            display: inline-block;
         }
 
         /* ===== NAVBAR ===== */
@@ -200,7 +218,6 @@
             text-transform: uppercase;
             color: var(--sand);
             margin-bottom: 18px;
-            opacity: 0;
             animation: fadeUp 1s 0.5s ease forwards;
         }
         .hero__title {
@@ -208,7 +225,6 @@
             color: #fff;
             letter-spacing: 0.04em;
             line-height: 0.9;
-            opacity: 0;
             animation: fadeUp 1.2s 0.75s ease forwards;
         }
         .hero__subtitle {
@@ -217,7 +233,6 @@
             font-size: clamp(1rem, 2vw, 1.45rem);
             color: var(--sand);
             margin-top: 20px;
-            opacity: 0;
             animation: fadeUp 1s 1.05s ease forwards;
         }
 
@@ -280,7 +295,7 @@
         @keyframes drip { 0%,100%{top:-100%} 60%{top:100%} }
 
         /* ===== SECTION SCALE TRANSITIONS ===== */
-        .section-reveal {
+        .section-reveal.js-reveal {
             opacity: 0;
             transform: scale(0.96) translateY(32px);
             transition: opacity 0.95s cubic-bezier(0.22,1,0.36,1),
@@ -288,15 +303,15 @@
         }
         .section-reveal.visible {
             opacity: 1;
-            transform: scale(1) translateY(0);
+            transform: scale(1) translateY(0) !important;
         }
-        .reveal {
+        .reveal.js-reveal {
             opacity: 0;
             transform: translateY(36px);
             transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1),
                         transform 0.85s cubic-bezier(0.22,1,0.36,1);
         }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal.visible { opacity: 1; transform: translateY(0) !important; }
         .d1 { transition-delay: 0.12s; }
         .d2 { transition-delay: 0.24s; }
         .d3 { transition-delay: 0.36s; }
@@ -574,6 +589,14 @@
             opacity: 0.6;
         }
 
+        /* ===== HORIZONTAL SCROLL SHOWCASE ===== */
+        .horizontal-scroll{position:relative;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        .horizontal-scroll .scroll-track{display:flex;gap:20px;width:max-content;padding:40px 0}
+        .horizontal-scroll .scroll-item{flex-shrink:0;width:70vw;max-width:500px;overflow:hidden;border-radius:8px}
+        .horizontal-scroll .scroll-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+        .horizontal-scroll .scroll-item:hover img{transform:scale(1.05)}
+        @media (max-width: 768px) { .horizontal-scroll .scroll-item{width:85vw} }
+
         /* ===== FOOTER ===== */
         .footer {
             background: var(--white);
@@ -614,6 +637,10 @@
         }
         .footer__credit a { color: var(--green); }
 
+        /* ===== CUSTOM CURSOR ===== */
+        .cursor-dot{position:fixed;width:12px;height:12px;background:var(--green);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s;mix-blend-mode:difference}
+        .cursor-dot.hover{width:48px;height:48px;background:var(--sand)}
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .mag { grid-template-columns: 1fr; min-height: auto; }
@@ -642,13 +669,30 @@
             .banner__quote { font-size: 1.35rem; }
             .mag__text { padding: 48px 24px; }
             .exp-section__header { padding: 0 24px 52px; }
+            .cursor-dot{display:none}
         }
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* ===== PREMIUM ANIMATIONS — Marquee, Circle Reveal ===== */
+        .marquee{overflow:hidden;padding:40px 0;border-top:1px solid rgba(45,90,61,.1);border-bottom:1px solid rgba(45,90,61,.1)}
+        .marquee-track{display:flex;gap:60px;white-space:nowrap;will-change:transform}
+        .marquee-text{font-size:clamp(14px,2vw,20px);letter-spacing:.15em;text-transform:uppercase;opacity:.25;flex-shrink:0;color:var(--green)}
+        .circle-reveal{clip-path:circle(0% at 50% 50%);transition:clip-path 1.2s cubic-bezier(.25,.46,.45,.94)}
+        .circle-reveal.revealed{clip-path:circle(75% at 50% 50%)}
     </style>
 </head>
 <body>
+    <div class="cursor-dot" id="cursor"></div>
 
     <!-- SCROLL PROGRESS -->
-    <div class="scroll-progress" id="progress"></div>
+    <div class="scroll-progress"><div class="scroll-progress-bar" id="scrollProgress"></div></div>
 
     <!-- NAVBAR -->
     <nav class="nav" id="nav">
@@ -679,7 +723,7 @@
 
         <!-- Layer BG — slowest scroll -->
         <div class="layer-bg" id="layerBg">
-            <img src="images/the-brando/hero.jpg" alt="Tetiaroa — vue aerienne de l'atoll depuis le ciel">
+            <img class="scale-scroll" data-parallax="0.2" src="images/the-brando/hero.jpg" alt="Tetiaroa — vue aerienne de l'atoll depuis le ciel">
         </div>
 
         <!-- Veil -->
@@ -692,15 +736,7 @@
             <p class="hero__subtitle">L'ile de Marlon Brando, preservee pour l'eternite</p>
         </div>
 
-        <!-- Layer FG — fastest scroll (palm silhouette) -->
-        <div class="layer-fg" id="layerFg">
-            <!-- Inline palm leaf SVG -->
-            <svg viewBox="0 0 480 820" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M240 820 C240 820 200 650 160 520 C120 390 20 300 10 180 C0 60 80 10 140 40 C200 70 220 200 240 320 C260 200 280 70 340 40 C400 10 480 60 470 180 C460 300 360 390 320 520 C280 650 240 820 240 820Z" fill="white"/>
-                <path d="M240 820 C240 820 180 700 130 580 C80 460 -20 400 -30 280 C-40 160 50 120 100 150 C150 180 190 280 220 380 L240 820Z" fill="white"/>
-                <path d="M240 820 C240 820 300 700 350 580 C400 460 500 400 510 280 C520 160 430 120 380 150 C330 180 290 280 260 380 L240 820Z" fill="white"/>
-            </svg>
-        </div>
+        <div class="layer-fg" id="layerFg"></div>
 
         <!-- Scroll cue -->
         <div class="hero__cue">
@@ -714,14 +750,14 @@
     <!-- ============================================================ -->
     <section class="mag section-reveal" id="spread">
         <div class="mag__img-wrap">
-            <img class="zoom-img" src="images/the-brando/villa.webp" alt="Villa The Brando — plage privee et lagon turquoise">
+            <img class="zoom-img scale-scroll" src="images/the-brando/villa.webp" alt="Villa The Brando — plage privee et lagon turquoise">
         </div>
         <div class="mag__text">
             <div class="mag__label reveal">L'Ile</div>
-            <h2 class="mag__heading reveal">Un sanctuaire<br>au bout<br><em>du monde</em></h2>
-            <p class="mag__body reveal d1">Tetiaroa est un atoll compose de treize motus — ilots de sable blanc immacule — ceinturant un lagon aux eaux d'une transparence presque irreelle. C'est en 1967, lors du tournage des Revoltes du Bounty, que Marlon Brando decouvre ce paradis perdu et acquiert un bail de 99 ans sur l'ensemble de l'ile.</p>
+            <h2 class="mag__heading reveal word-reveal">Un sanctuaire<br>au bout<br><em>du monde</em></h2>
+            <p class="mag__body reveal d1 line-reveal">Tetiaroa est un atoll compose de treize motus — ilots de sable blanc immacule — ceinturant un lagon aux eaux d'une transparence presque irreelle. C'est en 1967, lors du tournage des Revoltes du Bounty, que Marlon Brando decouvre ce paradis perdu et acquiert un bail de 99 ans sur l'ensemble de l'ile.</p>
             <p class="mag__body reveal d2">Son reve etait simple : prouver que le luxe absolu et le respect de la nature ne sont pas incompatibles — ils sont inseparables. Premier resort au monde certifie LEED Platinum, alimente a 100% par les energies renouvelables, The Brando est cet acte de foi devenu realite.</p>
-            <div class="mag__stats reveal d2">
+            <div class="mag__stats reveal d2 stagger-grid">
                 <div>
                     <div class="mag__stat-n">35</div>
                     <div class="mag__stat-l">Villas sur plage</div>
@@ -744,46 +780,46 @@
     <section class="exp-section" id="experiences">
         <div class="exp-section__header section-reveal">
             <div class="exp-section__label">Experiences</div>
-            <h2 class="exp-section__title">Des moments<br><em>hors du temps</em></h2>
+            <h2 class="exp-section__title word-reveal">Des moments<br><em>hors du temps</em></h2>
             <p class="exp-section__sub">Entre ciel et lagon, chaque instant devient un souvenir que l'on n'oublie pas.</p>
         </div>
 
         <!-- EXP 1 — Image left -->
         <div class="exp-row section-reveal">
             <div class="exp-row__img">
-                <img class="zoom-img" src="images/the-brando/beach.webp" alt="Plage de sable blanc et lagon turquoise de Tetiaroa">
+                <img class="zoom-img circle-reveal" src="images/the-brando/beach.webp" alt="Plage de sable blanc et lagon turquoise de Tetiaroa">
             </div>
             <div class="exp-row__copy">
                 <div class="exp-row__num">01</div>
                 <div class="exp-row__label reveal">Plage &amp; Lagon</div>
                 <h3 class="exp-row__title reveal">La Plage Privee</h3>
-                <p class="exp-row__desc reveal d1">Sable blanc immacule, lagon aux mille nuances de turquoise. Kayak, paddle, plongee libre au milieu des raies manta et des requins pointe noire. Le Pacifique dans sa forme la plus pure, la plus sauvage — votre seul horizon.</p>
+                <p class="exp-row__desc reveal d1 line-reveal">Sable blanc immacule, lagon aux mille nuances de turquoise. Kayak, paddle, plongee libre au milieu des raies manta et des requins pointe noire. Le Pacifique dans sa forme la plus pure, la plus sauvage — votre seul horizon.</p>
             </div>
         </div>
 
         <!-- EXP 2 — Image right (flip) -->
         <div class="exp-row flip section-reveal">
             <div class="exp-row__img">
-                <img class="zoom-img" src="images/the-brando/dining.webp" alt="Gastronomie au restaurant de The Brando, Tetiaroa">
+                <img class="zoom-img circle-reveal" src="images/the-brando/dining.webp" alt="Gastronomie au restaurant de The Brando, Tetiaroa">
             </div>
             <div class="exp-row__copy">
                 <div class="exp-row__num">02</div>
                 <div class="exp-row__label reveal">Gastronomie</div>
                 <h3 class="exp-row__title reveal">Gastronomie Responsable</h3>
-                <p class="exp-row__desc reveal d1">Cuisine francaise reinventee avec les produits du jardin biologique. Poissons peches le matin meme, herbes cueillies a l'aube. Deux restaurants, un bar ouvert sur le lagon, et des diners prives pieds dans le sable sous les etoiles australes.</p>
+                <p class="exp-row__desc reveal d1 line-reveal">Cuisine francaise reinventee avec les produits du jardin biologique. Poissons peches le matin meme, herbes cueillies a l'aube. Deux restaurants, un bar ouvert sur le lagon, et des diners prives pieds dans le sable sous les etoiles australes.</p>
             </div>
         </div>
 
         <!-- EXP 3 — Image left -->
         <div class="exp-row section-reveal">
             <div class="exp-row__img">
-                <img class="zoom-img" src="images/the-brando/spa.webp" alt="Le Spa Varua de The Brando, soins polynésiens traditionnels">
+                <img class="zoom-img circle-reveal" src="images/the-brando/spa.webp" alt="Le Spa Varua de The Brando, soins polynésiens traditionnels">
             </div>
             <div class="exp-row__copy">
                 <div class="exp-row__num">03</div>
                 <div class="exp-row__label reveal">Bien-etre</div>
                 <h3 class="exp-row__title reveal">Le Varua<br>Polynesian Spa</h3>
-                <p class="exp-row__desc reveal d1">Au coeur de la foret tropicale, le Varua Spa propose des soins bases sur les traditions polynesiennes ancestrales. Massages Taurumi, enveloppements aux huiles de monoï, rituels de purification inspires des anciens navigateurs du Pacifique.</p>
+                <p class="exp-row__desc reveal d1 line-reveal">Au coeur de la foret tropicale, le Varua Spa propose des soins bases sur les traditions polynesiennes ancestrales. Massages Taurumi, enveloppements aux huiles de monoï, rituels de purification inspires des anciens navigateurs du Pacifique.</p>
             </div>
         </div>
     </section>
@@ -793,7 +829,7 @@
     <!-- ============================================================ -->
     <section class="banner section-reveal">
         <div class="banner__img">
-            <img class="zoom-img" src="images/the-brando/turtles.jpg" alt="Tortues vertes dans le lagon de Tetiaroa">
+            <img class="zoom-img scale-scroll" src="images/the-brando/turtles.jpg" alt="Tortues vertes dans le lagon de Tetiaroa">
         </div>
         <div class="banner__overlay"></div>
         <div class="banner__content">
@@ -801,6 +837,26 @@
             <p class="banner__attr reveal d1">La vision fondatrice de Tetiaroa</p>
         </div>
     </section>
+
+    <!-- Marquee Ticker -->
+    <div class="marquee">
+        <div class="marquee-track">
+            <span class="marquee-text">THE BRANDO</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">TETIAROA</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">ECO-LUXE</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">SANCTUAIRE</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">POLYNESIE</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">LEED PLATINUM</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">ILE PRIVEE</span>
+            <span class="marquee-text">—</span>
+        </div>
+    </div>
 
     <!-- ============================================================ -->
     <!-- 5. NIGHT — STATS                                             -->
@@ -811,14 +867,14 @@
         </div>
         <div class="night__content section-reveal">
             <div class="night__label">Le Resort</div>
-            <h2 class="night__heading">L'exclusivite dans sa forme la plus absolue</h2>
-            <div class="night__stats">
+            <h2 class="night__heading word-reveal">L'exclusivite dans sa forme la plus absolue</h2>
+            <div class="night__stats stagger-grid">
                 <div>
-                    <div class="night__stat-n counter" data-target="35">0</div>
+                    <div class="night__stat-n counter" data-target="35" data-count="35">0</div>
                     <div class="night__stat-l">Villas de luxe</div>
                 </div>
                 <div>
-                    <div class="night__stat-n counter" data-target="3">0</div>
+                    <div class="night__stat-n counter" data-target="3" data-count="3">0</div>
                     <div class="night__stat-l">Restaurants</div>
                 </div>
                 <div>
@@ -831,6 +887,18 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- HORIZONTAL SCROLL SHOWCASE -->
+    <section class="horizontal-scroll">
+      <div class="scroll-track">
+        <div class="scroll-item"><img src="images/the-brando/villa.webp" alt="Villa sur pilotis Tetiaroa"></div>
+        <div class="scroll-item"><img src="images/the-brando/beach.webp" alt="Plage privee de Tetiaroa"></div>
+        <div class="scroll-item"><img src="images/the-brando/spa.webp" alt="Varua Te Ora Polynesian Spa"></div>
+        <div class="scroll-item"><img src="images/the-brando/dining.webp" alt="Restaurant gastronomique"></div>
+        <div class="scroll-item"><img src="images/the-brando/aerial.webp" alt="Vue aerienne atoll Tetiaroa"></div>
+        <div class="scroll-item"><img src="images/the-brando/night.webp" alt="Ambiance nocturne Tetiaroa"></div>
+      </div>
     </section>
 
     <!-- ============================================================ -->
@@ -851,133 +919,354 @@
     <!-- ============================================================ -->
     <!-- SCRIPTS                                                      -->
     <!-- ============================================================ -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+
     <script>
     (function () {
         'use strict';
 
-        /* ---- Scroll progress bar ---- */
-        var progress = document.getElementById('progress');
-        function updateProgress() {
-            var h = document.documentElement.scrollHeight - window.innerHeight;
-            var p = h > 0 ? (window.scrollY / h * 100) : 0;
-            progress.style.width = p + '%';
+        var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        /* ========================================
+           LENIS SMOOTH SCROLL (duration 1.5 for resort feel)
+           ======================================== */
+        var lenis;
+        if (!prefersReduced) {
+            lenis = new Lenis({
+                duration: 1.5,
+                easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+                orientation: 'vertical',
+                smoothWheel: true
+            });
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+            gsap.ticker.lagSmoothing(0);
         }
 
-        /* ---- Navbar ---- */
+        /* ========================================
+           SCROLL PROGRESS BAR
+           ======================================== */
+        gsap.to('#scrollProgress', {
+            scaleX: 1,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: document.documentElement,
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.3
+            }
+        });
+
+        /* ========================================
+           NAV HIDE/SHOW ON SCROLL DIRECTION
+           ======================================== */
         var nav = document.getElementById('nav');
+        var lastScrollY = 0;
+        var navHidden = false;
+
         function updateNav() {
             if (window.scrollY > 80) nav.classList.add('scrolled');
             else nav.classList.remove('scrolled');
         }
 
-        /* ---- Parallax hero ---- */
-        var layerBg   = document.getElementById('layerBg');
-        var layerText = document.getElementById('layerText');
-        var layerFg   = document.getElementById('layerFg');
-        var heroEl    = document.getElementById('hero');
+        ScrollTrigger.create({
+            start: 'top top',
+            end: 'max',
+            onUpdate: function (self) {
+                updateNav();
+                var direction = self.direction;
+                var scrollY = self.scroll();
+                if (scrollY < 200) {
+                    if (navHidden) {
+                        gsap.to(nav, { y: 0, duration: 0.4, ease: 'power2.out' });
+                        navHidden = false;
+                    }
+                    return;
+                }
+                if (direction === 1 && !navHidden) {
+                    gsap.to(nav, { y: -120, duration: 0.4, ease: 'power2.in' });
+                    navHidden = true;
+                } else if (direction === -1 && navHidden) {
+                    gsap.to(nav, { y: 0, duration: 0.4, ease: 'power2.out' });
+                    navHidden = false;
+                }
+                lastScrollY = scrollY;
+            }
+        });
 
-        function updateParallax() {
-            var y = window.scrollY;
-            var hh = heroEl ? heroEl.offsetHeight : window.innerHeight;
-            // Only apply when hero is visible
-            if (y < hh + 200) {
-                layerBg.style.transform   = 'translateY(' + (y * 0.28) + 'px)';
-                layerText.style.transform = 'translateY(' + (y * 0.48) + 'px)';
-                layerFg.style.transform   = 'translateY(' + (y * 0.1)  + 'px)';
+        // === MAGNETIC CURSOR ===
+        const cursor = document.getElementById('cursor');
+        if (cursor && window.matchMedia('(pointer: fine)').matches) {
+          let mx = 0, my = 0, cx = 0, cy = 0;
+          document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+          (function loop() {
+            cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
+            cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+            requestAnimationFrame(loop);
+          })();
+          document.querySelectorAll('a, button, .cta-btn, .villa-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+          });
+        }
+
+        /* ========================================
+           HERO ENTRANCE ANIMATION (word split)
+           ======================================== */
+        if (!prefersReduced) {
+            var heroTitle = document.querySelector('.hero__title');
+            if (heroTitle) {
+                var heroSplit = new SplitType(heroTitle, { types: 'words,chars' });
+                gsap.set(heroSplit.chars, { y: 80, opacity: 0 });
+
+                gsap.to(heroSplit.chars, {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: 'power3.out',
+                    stagger: 0.04,
+                    delay: 0.6
+                });
+            }
+
+            // Eyebrow + subtitle
+            gsap.from('.hero__eyebrow', { y: 28, opacity: 0, duration: 1, ease: 'power2.out', delay: 0.4 });
+            gsap.from('.hero__subtitle', { y: 28, opacity: 0, duration: 1, ease: 'power2.out', delay: 1 });
+            gsap.from('.hero__cue', { y: 28, opacity: 0, duration: 1, ease: 'power2.out', delay: 1.4 });
+
+            // Remove CSS animation classes so GSAP handles it
+            document.querySelectorAll('.hero__eyebrow, .hero__title, .hero__subtitle, .hero__cue').forEach(function (el) {
+                el.style.animation = 'none';
+                el.style.opacity = '';
+            });
+        }
+
+        /* ========================================
+           SCALE-ON-SCROLL HERO (zoom out effect)
+           ======================================== */
+        if (!prefersReduced) {
+            var heroBgImg = document.querySelector('.layer-bg img');
+            if (heroBgImg) {
+                heroBgImg.style.animation = 'none';
+                gsap.fromTo(heroBgImg,
+                    { scale: 1.15 },
+                    {
+                        scale: 1,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: '.hero',
+                            start: 'top top',
+                            end: 'bottom top',
+                            scrub: 1
+                        }
+                    }
+                );
             }
         }
 
-        /* ---- Zoom on scroll ---- */
-        var zoomImgs = document.querySelectorAll('.zoom-img');
-        var zoomData = [];
-
-        function initZoom() {
-            zoomImgs.forEach(function (img) {
-                zoomData.push({ el: img, top: 0 });
+        /* ========================================
+           PARALLAX HERO LAYERS
+           ======================================== */
+        if (!prefersReduced) {
+            gsap.to('#layerBg', {
+                y: function () { return window.innerHeight * 0.3; },
+                ease: 'none',
+                scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
             });
-            recalcZoom();
-        }
-
-        function recalcZoom() {
-            zoomData.forEach(function (d) {
-                d.top = d.el.closest('[class]').getBoundingClientRect().top + window.scrollY;
+            gsap.to('#layerText', {
+                y: function () { return window.innerHeight * 0.5; },
+                ease: 'none',
+                scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
             });
-        }
-
-        function updateZoom() {
-            var vh = window.innerHeight;
-            zoomData.forEach(function (d) {
-                var rect = d.el.getBoundingClientRect();
-                var center = rect.top + rect.height / 2;
-                var progress = 1 - (center / vh);
-                // progress: -0.5 (above) → 0 (center) → 1.5 (below)
-                var scale = 1 + Math.max(0, progress * 0.12);
-                d.el.style.transform = 'scale(' + Math.min(scale, 1.14) + ')';
+            gsap.to('#layerFg', {
+                y: function () { return window.innerHeight * 0.1; },
+                ease: 'none',
+                scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
             });
         }
 
-        /* ---- Section + element reveal (IntersectionObserver) ---- */
-        function initReveal() {
-            var opts = { threshold: 0.08, rootMargin: '0px 0px -40px 0px' };
-            var obs = new IntersectionObserver(function (entries) {
-                entries.forEach(function (e) {
-                    if (e.isIntersecting) {
-                        e.target.classList.add('visible');
-                        obs.unobserve(e.target);
+        /* ========================================
+           PARALLAX ON [data-parallax] IMAGES
+           ======================================== */
+        if (!prefersReduced) {
+            document.querySelectorAll('[data-parallax]').forEach(function (img) {
+                var speed = parseFloat(img.getAttribute('data-parallax')) || 0.2;
+                gsap.to(img, {
+                    yPercent: speed * 100,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: img.closest('section') || img.parentElement,
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 1
                     }
                 });
-            }, opts);
-
-            document.querySelectorAll('.section-reveal, .reveal').forEach(function (el) {
-                obs.observe(el);
             });
         }
 
-        /* ---- Counter animation ---- */
-        var countersRun = false;
-        function initCounters() {
-            var obs = new IntersectionObserver(function (entries) {
-                entries.forEach(function (e) {
-                    if (e.isIntersecting && !countersRun) {
-                        countersRun = true;
-                        runCounters();
-                    }
-                });
-            }, { threshold: 0.4 });
-
-            var nightEl = document.querySelector('.night__stats');
-            if (nightEl) obs.observe(nightEl);
-        }
-
-        function runCounters() {
-            // Numeric counters
-            document.querySelectorAll('.counter').forEach(function (el) {
-                var target = parseInt(el.getAttribute('data-target'), 10);
-                var dur = 1600;
-                var start = performance.now();
-                function tick(now) {
-                    var t = Math.min((now - start) / dur, 1);
-                    var ease = 1 - Math.pow(1 - t, 3);
-                    el.textContent = Math.round(ease * target);
-                    if (t < 1) requestAnimationFrame(tick);
-                    else el.textContent = target;
+        /* ========================================
+           WORD REVEAL ON .word-reveal ELEMENTS
+           ======================================== */
+        if (!prefersReduced) {
+            document.querySelectorAll('.word-reveal').forEach(function (el) {
+                var split = new SplitType(el, { types: 'words' });
+                if (split.words) {
+                    gsap.set(split.words, { y: 40, opacity: 0 });
+                    ScrollTrigger.create({
+                        trigger: el,
+                        start: 'top 85%',
+                        once: true,
+                        onEnter: function () {
+                            gsap.to(split.words, {
+                                y: 0,
+                                opacity: 1,
+                                duration: 0.8,
+                                ease: 'power3.out',
+                                stagger: 0.06
+                            });
+                        }
+                    });
                 }
-                requestAnimationFrame(tick);
-            });
-            // Text counters (type-on)
-            document.querySelectorAll('.counter-text').forEach(function (el) {
-                var text = el.getAttribute('data-text');
-                var i = 0;
-                el.textContent = '';
-                var iv = setInterval(function () {
-                    el.textContent += text[i];
-                    i++;
-                    if (i >= text.length) clearInterval(iv);
-                }, 60);
             });
         }
 
-        /* ---- Mobile menu ---- */
+        /* ========================================
+           SECTION REVEALS — IntersectionObserver (no GSAP pin dependency)
+           ======================================== */
+        var allRevealEls = document.querySelectorAll('.section-reveal, .reveal');
+        if (prefersReduced) {
+            allRevealEls.forEach(function(el) { el.classList.add('visible'); });
+        } else {
+            allRevealEls.forEach(function(el) { el.classList.add('js-reveal'); });
+            var revealObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            allRevealEls.forEach(function(el) { revealObserver.observe(el); });
+            // Safety: reveal all after 1.5s if observer never fires
+            setTimeout(function() { allRevealEls.forEach(function(el) { el.classList.add('visible'); el.classList.remove('js-reveal'); }); }, 1500);
+        }
+
+        /* ========================================
+           GALLERY IMAGE SCALE ON SCROLL (zoom-img)
+           ======================================== */
+        if (!prefersReduced) {
+            document.querySelectorAll('.zoom-img').forEach(function (img) {
+                gsap.fromTo(img,
+                    { scale: 1 },
+                    {
+                        scale: 1.14,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: img.closest('.mag__img-wrap, .exp-row__img, .banner__img, .banner') || img.parentElement,
+                            start: 'top bottom',
+                            end: 'bottom top',
+                            scrub: 1
+                        }
+                    }
+                );
+            });
+        }
+
+        /* ========================================
+           STAGGER CARDS / ROOMS (exp-row)
+           ======================================== */
+        if (!prefersReduced) {
+            document.querySelectorAll('.exp-row').forEach(function (row, i) {
+                var copy = row.querySelector('.exp-row__copy');
+                var imgWrap = row.querySelector('.exp-row__img');
+                if (copy && imgWrap) {
+                    gsap.from(imgWrap, {
+                        xPercent: row.classList.contains('flip') ? 8 : -8,
+                        opacity: 0,
+                        duration: 1,
+                        ease: 'power2.out',
+                        scrollTrigger: { trigger: row, start: 'top 80%', once: true }
+                    });
+                    gsap.from(copy, {
+                        xPercent: row.classList.contains('flip') ? -8 : 8,
+                        opacity: 0,
+                        duration: 1,
+                        delay: 0.15,
+                        ease: 'power2.out',
+                        scrollTrigger: { trigger: row, start: 'top 80%', once: true }
+                    });
+                }
+            });
+        }
+
+        /* ========================================
+           COUNTER ANIMATION FOR STATS
+           ======================================== */
+        var countersRun = false;
+        ScrollTrigger.create({
+            trigger: '.night__stats',
+            start: 'top 80%',
+            once: true,
+            onEnter: function () {
+                if (countersRun) return;
+                countersRun = true;
+
+                // Numeric counters
+                document.querySelectorAll('.counter').forEach(function (el) {
+                    var target = parseInt(el.getAttribute('data-target'), 10);
+                    var obj = { val: 0 };
+                    gsap.to(obj, {
+                        val: target,
+                        duration: 1.8,
+                        ease: 'power2.out',
+                        onUpdate: function () {
+                            el.textContent = Math.round(obj.val);
+                        },
+                        onComplete: function () {
+                            el.textContent = target;
+                        }
+                    });
+                });
+
+                // Text counters (type-on)
+                document.querySelectorAll('.counter-text').forEach(function (el) {
+                    var text = el.getAttribute('data-text');
+                    var i = 0;
+                    el.textContent = '';
+                    var iv = setInterval(function () {
+                        el.textContent += text[i];
+                        i++;
+                        if (i >= text.length) clearInterval(iv);
+                    }, 60);
+                });
+            }
+        });
+
+        /* ========================================
+           MAG STATS STAGGER
+           ======================================== */
+        if (!prefersReduced) {
+            var magStats = document.querySelectorAll('.mag__stats > div');
+            if (magStats.length) {
+                gsap.from(magStats, {
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.7,
+                    stagger: 0.12,
+                    ease: 'power2.out',
+                    scrollTrigger: { trigger: '.mag__stats', start: 'top 85%', once: true }
+                });
+            }
+        }
+
+        /* ========================================
+           MOBILE MENU (preserved)
+           ======================================== */
         var burger  = document.getElementById('burger');
         var mobMenu = document.getElementById('mobMenu');
 
@@ -994,44 +1283,165 @@
         }
         window.closeMob = closeMob;
 
-        /* ---- Smooth anchor scroll ---- */
+        /* ========================================
+           SMOOTH ANCHOR SCROLL (via Lenis)
+           ======================================== */
         document.querySelectorAll('a[href^="#"]').forEach(function (a) {
             a.addEventListener('click', function (e) {
-                var target = document.querySelector(this.getAttribute('href'));
+                var href = this.getAttribute('href');
+                var target = document.querySelector(href);
                 if (target) {
                     e.preventDefault();
                     closeMob();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (lenis) {
+                        lenis.scrollTo(target, { offset: 0 });
+                    } else {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }
             });
         });
 
-        /* ---- Master scroll handler (rAF throttle) ---- */
-        var ticking = false;
-        window.addEventListener('scroll', function () {
-            if (!ticking) {
-                requestAnimationFrame(function () {
-                    updateProgress();
-                    updateNav();
-                    updateParallax();
-                    updateZoom();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        }, { passive: true });
-
-        window.addEventListener('resize', recalcZoom, { passive: true });
-
         /* ---- Init ---- */
         updateNav();
-        updateProgress();
-        initReveal();
-        initZoom();
-        initCounters();
-        updateZoom();
+
+        /* ========================================
+           PREMIUM: Marquee Infinite Ticker
+           ======================================== */
+        document.querySelectorAll('.marquee-track').forEach(function (track) {
+            var items = track.innerHTML;
+            track.innerHTML += items + items;
+            gsap.to(track, { x: '-50%', duration: 30, ease: 'none', repeat: -1 });
+        });
+
+        /* ========================================
+           PREMIUM: Image Scale-on-Scroll
+           ======================================== */
+        gsap.utils.toArray('.scale-scroll').forEach(function (img) {
+            gsap.from(img, {
+                scale: 1.15, ease: 'none',
+                scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1 }
+            });
+        });
+
+        /* ========================================
+           PREMIUM: Circle Reveal
+           ======================================== */
+        document.querySelectorAll('.circle-reveal').forEach(function (el) {
+            ScrollTrigger.create({ trigger: el, start: 'top 80%', onEnter: function () { el.classList.add('revealed'); } });
+        });
+
+        /* ========================================
+           PREMIUM: Counter Animation
+           ======================================== */
+        document.querySelectorAll('[data-count]').forEach(function (el) {
+            var target = parseInt(el.dataset.count);
+            var suffix = el.dataset.suffix || '';
+            ScrollTrigger.create({
+                trigger: el, start: 'top 85%',
+                onEnter: function () {
+                    gsap.to({ val: 0 }, {
+                        val: target, duration: 2, ease: 'power2.out',
+                        onUpdate: function () { el.textContent = Math.round(this.targets()[0].val) + suffix; }
+                    });
+                }, once: true
+            });
+        });
+
+        /* ========================================
+           PREMIUM: Line-by-Line Text Reveal
+           ======================================== */
+        document.querySelectorAll('.line-reveal').forEach(function (el) {
+            var split = new SplitType(el, { types: 'lines' });
+            split.lines.forEach(function (line) { line.style.overflow = 'hidden'; });
+            gsap.from(split.lines, {
+                yPercent: 100, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power3.out',
+                scrollTrigger: { trigger: el, start: 'top 85%' }
+            });
+        });
+
+        /* ========================================
+           PREMIUM: Stagger Grid
+           ======================================== */
+        document.querySelectorAll('.stagger-grid').forEach(function (grid) {
+            gsap.from(grid.children, {
+                y: 60, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power3.out',
+                scrollTrigger: { trigger: grid, start: 'top 85%' }
+            });
+        });
+
     })();
+
+    // === HORIZONTAL SCROLL GALLERY — CSS overflow, no GSAP pin (no blank space) ===
+
+    // === TEXT SCRAMBLE EFFECT ===
+    class TextScramble {
+      constructor(el) { this.el = el; this.chars = '!<>-_\\/[]{}—=+*^?#'; this.update = this.update.bind(this); }
+      setText(newText) {
+        const oldText = this.el.innerText;
+        const length = Math.max(oldText.length, newText.length);
+        const promise = new Promise(resolve => this.resolve = resolve);
+        this.queue = [];
+        for (let i = 0; i < length; i++) {
+          const from = oldText[i] || '';
+          const to = newText[i] || '';
+          const start = Math.floor(Math.random() * 40);
+          const end = start + Math.floor(Math.random() * 40);
+          this.queue.push({ from, to, start, end });
+        }
+        cancelAnimationFrame(this.frameRequest);
+        this.frame = 0;
+        this.update();
+        return promise;
+      }
+      update() {
+        let output = '';
+        let complete = 0;
+        for (let i = 0, n = this.queue.length; i < n; i++) {
+          let { from, to, start, end, char } = this.queue[i];
+          if (this.frame >= end) { complete++; output += to; }
+          else if (this.frame >= start) {
+            if (!char || Math.random() < 0.28) { char = this.chars[Math.floor(Math.random() * this.chars.length)]; this.queue[i].char = char; }
+            output += '<span style="opacity:.4">' + char + '</span>';
+          } else { output += from; }
+        }
+        this.el.innerHTML = output;
+        if (complete === this.queue.length) { this.resolve(); }
+        else { this.frameRequest = requestAnimationFrame(this.update); this.frame++; }
+      }
+    }
+    setTimeout(() => {
+      const heroP = document.querySelector('.hero-content p, .hero p, .hero-text p');
+      if (heroP) { const fx = new TextScramble(heroP); fx.setText(heroP.textContent); }
+    }, 1200);
     </script>
 
+
+
+<!-- SAFETY: Force all content visible after 2s (kills GSAP ticker to prevent re-override) -->
+<script>
+setTimeout(function(){
+  // Kill ALL GSAP ScrollTrigger-based animations
+  if(typeof ScrollTrigger!=="undefined"){
+    ScrollTrigger.getAll().forEach(function(st){st.kill()});
+  }
+  if(typeof gsap!=="undefined"){
+    gsap.globalTimeline.getChildren(true,true,true).forEach(function(t){
+      try{t.progress(1);t.kill()}catch(e){}
+    });
+  }
+  // Force everything visible
+  var all=document.querySelectorAll("*");
+  for(var i=0;i<all.length;i++){
+    var el=all[i];
+    var s=window.getComputedStyle(el);
+    if(parseFloat(s.opacity)<0.15&&el.offsetHeight>50&&s.display!=="none"){
+      var c=el.className||"";
+      if(c.indexOf("bubble")>-1||c.indexOf("cursor")>-1||c.indexOf("scroll-progress")>-1||c.indexOf("modal")>-1||c.indexOf("overlay")>-1)continue;
+      el.style.cssText+="opacity:1!important;transform:none!important;";
+    }
+  }
+},2000);
+</script>
 </body>
 </html>

@@ -8,14 +8,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--blue:#0066CC;--orange:#E94E1B;--dark:#1A1A1A;--gray:#F7F8FA;--white:#fff;--text:#333}
-html{scroll-behavior:smooth}
+/* ===== CUSTOM CURSOR ===== */
+.cursor-dot{position:fixed;width:12px;height:12px;background:var(--teal, #008B8B);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s;mix-blend-mode:difference}
+.cursor-dot.hover{width:48px;height:48px;background:var(--sand, #E8DCC8)}
+@media (max-width: 768px) { .cursor-dot{display:none} }
+.scroll-progress{position:fixed;top:0;left:0;height:3px;z-index:9999;background:var(--orange);transform-origin:left;transform:scaleX(0);will-change:transform}
 body{font-family:'Source Sans 3',sans-serif;color:var(--dark);background:var(--white);font-weight:400;line-height:1.7}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.06);transition:all .3s}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.06);transition:all .3s,transform .35s ease}
+nav.nav-hidden{transform:translateY(-100%)}
 .nav-brand{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:20px;color:var(--blue);text-decoration:none}
 .nav-links{display:flex;gap:28px;list-style:none;align-items:center}
 .nav-links a{color:var(--text);text-decoration:none;font-size:14px;font-weight:500;transition:color .3s}
@@ -102,8 +108,8 @@ footer a:hover{color:var(--orange)}
 .footer-bottom p{color:rgba(255,255,255,.3);font-size:13px}
 
 /* REVEAL */
-.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.25,.46,.45,.94),transform .8s cubic-bezier(.25,.46,.45,.94)}
-.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal.js-reveal{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.25,.46,.45,.94),transform .8s cubic-bezier(.25,.46,.45,.94)}
+.reveal.visible{opacity:1;transform:translateY(0) !important}
 
 /* MOBILE */
 @media(max-width:768px){
@@ -121,9 +127,31 @@ footer a:hover{color:var(--orange)}
   footer{padding:48px 20px 24px}
   .footer-bottom{flex-direction:column;text-align:center}
 }
+/* MARQUEE */
+.marquee{overflow:hidden;padding:40px 0;border-top:1px solid rgba(0,0,0,.06);border-bottom:1px solid rgba(0,0,0,.06)}
+.marquee-track{display:flex;gap:60px;white-space:nowrap;will-change:transform}
+.marquee-text{font-size:clamp(14px,2vw,20px);letter-spacing:.15em;text-transform:uppercase;opacity:.25;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600}
+
+/* CIRCLE REVEAL */
+.circle-reveal{clip-path:circle(0% at 50% 50%);transition:clip-path 1.2s cubic-bezier(.25,.46,.45,.94)}
+.circle-reveal.revealed{clip-path:circle(75% at 50% 50%)}
+
+/* ===== HORIZONTAL SCROLL SHOWCASE ===== */
+.horizontal-scroll{position:relative;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.horizontal-scroll .scroll-track{display:flex;gap:20px;width:max-content;padding:40px 0}
+.horizontal-scroll .scroll-item{flex-shrink:0;width:70vw;max-width:500px;overflow:hidden;border-radius:8px}
+.horizontal-scroll .scroll-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.horizontal-scroll .scroll-item:hover img{transform:scale(1.05)}
+@media (max-width: 768px) { .horizontal-scroll .scroll-item{width:85vw} }
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
 </style>
 </head>
 <body>
+<div class="cursor-dot" id="cursor"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <nav>
   <a href="#" class="nav-brand">Tahiti Nui Travel</a>
@@ -136,9 +164,9 @@ footer a:hover{color:var(--orange)}
 </nav>
 
 <section class="hero">
-  <div class="hero-bg"><img src="images/tahiti-nui-travel/hero.jpg" alt="Polynésie française vue aérienne"></div>
+  <div class="hero-bg"><img src="images/tahiti-nui-travel/hero.jpg" alt="Polynésie française vue aérienne" class="scale-scroll"></div>
   <div class="hero-ov"></div>
-  <div class="hero-content reveal">
+  <div class="hero-content">
     <div class="hero-tag">Agence N°1 en Polynésie</div>
     <h1 class="hero-title">Votre Voyage<br>Commence <span>Ici</span></h1>
     <p class="hero-sub">50 ans d'expertise locale. Des circuits sur mesure dans les plus beaux archipels du Pacifique Sud.</p>
@@ -147,39 +175,58 @@ footer a:hover{color:var(--orange)}
   <div class="scroll-hint">Découvrir ↓</div>
 </section>
 
+<div class="marquee">
+  <div class="marquee-track">
+    <span class="marquee-text">Voyages</span>
+    <span class="marquee-text">—</span>
+    <span class="marquee-text">Polynésie</span>
+    <span class="marquee-text">—</span>
+    <span class="marquee-text">Aventure</span>
+    <span class="marquee-text">—</span>
+    <span class="marquee-text">Découverte</span>
+    <span class="marquee-text">—</span>
+    <span class="marquee-text">Bora Bora</span>
+    <span class="marquee-text">—</span>
+    <span class="marquee-text">Moorea</span>
+    <span class="marquee-text">—</span>
+    <span class="marquee-text">Sur Mesure</span>
+    <span class="marquee-text">—</span>
+  </div>
+</div>
+
 <section class="destinations" id="destinations">
   <div class="section-head">
     <div class="section-label">Destinations</div>
-    <h2 class="section-title">Les Perles du Pacifique</h2>
+    <h2 class="section-title word-reveal">Les Perles du Pacifique</h2>
   </div>
   <div class="bento">
     <div class="bento-item reveal">
-      <img src="images/tahiti-nui-travel/bora-bora.jpg" alt="Bora Bora" loading="lazy">
+      <img src="images/tahiti-nui-travel/bora-bora.jpg" alt="Bora Bora">
       <div class="bento-ov"></div>
       <div class="bento-info"><h3>Bora Bora</h3><p>L'île mythique aux eaux turquoise</p></div>
     </div>
     <div class="bento-item reveal">
-      <img src="images/tahiti-nui-travel/moorea.jpg" alt="Moorea" loading="lazy">
+      <img src="images/tahiti-nui-travel/moorea.jpg" alt="Moorea">
       <div class="bento-ov"></div>
       <div class="bento-info"><h3>Moorea</h3><p>L'île sœur, à 30 min de Tahiti</p></div>
     </div>
     <div class="bento-item reveal">
-      <img src="images/tahiti-nui-travel/marquises.jpg" alt="Les Marquises" loading="lazy">
+      <img src="images/tahiti-nui-travel/marquises.jpg" alt="Les Marquises">
       <div class="bento-ov"></div>
       <div class="bento-info"><h3>Les Marquises</h3><p>Terres sauvages et mystiques</p></div>
     </div>
     <div class="bento-item reveal">
-      <img src="images/tahiti-nui-travel/tuamotu.jpg" alt="Les Tuamotu" loading="lazy">
+      <img src="images/tahiti-nui-travel/tuamotu.jpg" alt="Les Tuamotu">
       <div class="bento-ov"></div>
       <div class="bento-info"><h3>Les Tuamotu</h3><p>Atolls et fonds marins uniques</p></div>
     </div>
     <div class="bento-item reveal">
-      <img src="images/tahiti-nui-travel/couple.jpg" alt="Voyage de noces Polynésie" loading="lazy">
+      <img src="images/tahiti-nui-travel/couple.jpg" alt="Voyage de noces Polynésie">
       <div class="bento-ov"></div>
       <div class="bento-info"><h3>Voyages de Noces</h3><p>La destination romantique par excellence</p></div>
     </div>
     <div class="bento-item reveal">
-      <img src="images/tahiti-nui-travel/office.jpg" alt="Notre équipe" loading="lazy">
+      <img src="images/tahiti-nui-travel/office.jpg" alt="Notre équipe">
       <div class="bento-ov"></div>
       <div class="bento-info"><h3>Notre Équipe</h3><p>Des experts locaux à votre service</p></div>
     </div>
@@ -188,19 +235,19 @@ footer a:hover{color:var(--orange)}
 
 <div class="stats-band">
   <div class="stats-row">
-    <div class="stat reveal"><div class="num" data-target="50">0</div><div class="label">Années d'expérience</div></div>
-    <div class="stat reveal"><div class="num" data-target="20000">0</div><div class="label">Voyageurs accompagnés</div></div>
-    <div class="stat reveal"><div class="num" data-target="118">0</div><div class="label">Îles accessibles</div></div>
-    <div class="stat reveal"><div class="num" data-target="98">0</div><div class="label">% de satisfaction</div></div>
+    <div class="stat reveal"><div class="num" data-count="50">0</div><div class="label">Années d'expérience</div></div>
+    <div class="stat reveal"><div class="num" data-count="20000" data-suffix="+">0</div><div class="label">Voyageurs accompagnés</div></div>
+    <div class="stat reveal"><div class="num" data-count="118">0</div><div class="label">Îles accessibles</div></div>
+    <div class="stat reveal"><div class="num" data-count="98" data-suffix="%">0</div><div class="label">% de satisfaction</div></div>
   </div>
 </div>
 
 <section class="why-us" id="pourquoi">
   <div class="section-head">
     <div class="section-label">Pourquoi nous</div>
-    <h2 class="section-title">L'Avantage Local</h2>
+    <h2 class="section-title word-reveal">L'Avantage Local</h2>
   </div>
-  <div class="tilt-grid">
+  <div class="tilt-grid stagger-grid">
     <div class="tilt-card reveal">
       <div class="tilt-icon">✦</div>
       <h3>Expertise Locale</h3>
@@ -223,7 +270,7 @@ footer a:hover{color:var(--orange)}
 </section>
 
 <div class="cta" id="contact">
-  <img src="images/tahiti-nui-travel/couple.jpg" alt="Voyage Polynésie" loading="lazy">
+  <img src="images/tahiti-nui-travel/couple.jpg" alt="Voyage Polynésie" class="scale-scroll">
   <div class="cta-ov"></div>
   <div class="cta-content reveal">
     <h2 class="section-title">Prêt à Découvrir la Polynésie ?</h2>
@@ -231,6 +278,18 @@ footer a:hover{color:var(--orange)}
     <a href="mailto:info@tahitinuitravel.com" class="hero-btn">Obtenir un Devis Gratuit</a>
   </div>
 </div>
+
+<!-- HORIZONTAL SCROLL SHOWCASE -->
+<section class="horizontal-scroll">
+  <div class="scroll-track">
+    <div class="scroll-item"><img src="images/tahiti-nui-travel/bora-bora.jpg" alt="Bora Bora lagon turquoise"></div>
+    <div class="scroll-item"><img src="images/tahiti-nui-travel/moorea.jpg" alt="Moorea vue aerienne"></div>
+    <div class="scroll-item"><img src="images/tahiti-nui-travel/marquises.jpg" alt="Iles Marquises"></div>
+    <div class="scroll-item"><img src="images/tahiti-nui-travel/tuamotu.jpg" alt="Archipel des Tuamotu"></div>
+    <div class="scroll-item"><img src="images/tahiti-nui-travel/couple.jpg" alt="Voyage de reve en Polynesie"></div>
+    <div class="scroll-item"><img src="images/tahiti-nui-travel/office.jpg" alt="Agence Tahiti Nui Travel"></div>
+  </div>
+</section>
 
 <footer>
   <div class="footer-grid">
@@ -260,53 +319,237 @@ footer a:hover{color:var(--orange)}
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
 <script>
-// Reveal
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach((e,i)=>{
-    if(e.isIntersecting){
-      e.target.style.transitionDelay=`${i*100}ms`;
-      e.target.classList.add('visible');
-      obs.unobserve(e.target);
-    }
-  });
-},{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+// === LENIS SMOOTH SCROLL ===
+const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
 
-// Counter animation
-const counterObs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      const el=e.target;
-      const target=parseInt(el.dataset.target);
-      let current=0;
-      const duration=2000;
-      const step=target/(duration/16);
-      const timer=setInterval(()=>{
-        current+=step;
-        if(current>=target){el.textContent=target.toLocaleString('fr-FR');clearInterval(timer)}
-        else el.textContent=Math.floor(current).toLocaleString('fr-FR');
-      },16);
-      counterObs.unobserve(el);
-    }
-  });
-},{threshold:.5});
-document.querySelectorAll('[data-target]').forEach(el=>counterObs.observe(el));
-
-// 3D Tilt cards
-document.querySelectorAll('.tilt-card').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
-    const rect=card.getBoundingClientRect();
-    const x=(e.clientX-rect.left)/rect.width-.5;
-    const y=(e.clientY-rect.top)/rect.height-.5;
-    card.style.transform=`perspective(800px) rotateY(${x*10}deg) rotateX(${-y*10}deg) scale3d(1.02,1.02,1.02)`;
-  });
-  card.addEventListener('mouseleave',()=>{
-    card.style.transform='perspective(800px) rotateY(0) rotateX(0) scale3d(1,1,1)';
-    card.style.transition='transform .6s';
-  });
-  card.addEventListener('mouseenter',()=>{card.style.transition='transform .1s'});
+// === SCROLL PROGRESS BAR ===
+gsap.to('#scrollProgress', {
+  scaleX: 1, ease: 'none',
+  scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0.3 }
 });
+
+// === NAV HIDE/SHOW ===
+let lastScroll = 0;
+const nav = document.querySelector('nav');
+ScrollTrigger.create({
+  onUpdate: (self) => {
+    const scroll = self.scroll();
+    if (scroll > lastScroll && scroll > 80) nav.classList.add('nav-hidden');
+    else nav.classList.remove('nav-hidden');
+    lastScroll = scroll;
+  }
+});
+
+// === MAGNETIC CURSOR ===
+const cursor = document.getElementById('cursor');
+if (cursor && window.matchMedia('(pointer: fine)').matches) {
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function loop() {
+    cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
+    cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a, button, .cta-btn, .destination-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+}
+
+// === WORD REVEAL ===
+document.querySelectorAll('.word-reveal').forEach(el => {
+  const split = new SplitType(el, { types: 'words' });
+  gsap.from(split.words, {
+    yPercent: 100, opacity: 0, stagger: 0.05, duration: 0.8,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%' }
+  });
+});
+
+// === PARALLAX HERO ===
+const heroImg = document.querySelector('.hero-bg img');
+if (heroImg) {
+  gsap.to(heroImg, {
+    yPercent: 15, ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 }
+  });
+}
+
+// === STAGGER BENTO GRID — IntersectionObserver ===
+const bentoItems = document.querySelectorAll('.bento-item');
+if (bentoItems.length) {
+  bentoItems.forEach((item, i) => {
+    item.style.opacity = '0';
+    item.style.transform = 'translateY(40px)';
+    item.style.transition = `opacity 0.8s ease ${i * 0.12}s, transform 0.8s ease ${i * 0.12}s`;
+  });
+  const bentoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        bentoObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+  bentoItems.forEach(item => bentoObserver.observe(item));
+  // Safety: reveal all cards after 1.5s
+  setTimeout(() => { bentoItems.forEach(c => { c.style.opacity='1'; c.style.transform='none'; }); }, 1500);
+}
+
+// === REVEAL SECTIONS — IntersectionObserver (no GSAP pin dependency) ===
+const revealEls = document.querySelectorAll('.reveal');
+revealEls.forEach(el => el.classList.add('js-reveal'));
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+revealEls.forEach(el => revealObserver.observe(el));
+// Safety: reveal all after 1.5s if observer never fires
+setTimeout(() => { revealEls.forEach(el => { el.classList.add('visible'); el.classList.remove('js-reveal'); }); }, 1500);
+
+// === COUNTER ANIMATION (data-count) ===
+document.querySelectorAll('[data-count]').forEach(el => {
+  const target = parseInt(el.dataset.count);
+  const suffix = el.dataset.suffix || '';
+  ScrollTrigger.create({
+    trigger: el, start: 'top 85%',
+    onEnter: () => {
+      gsap.to({ val: 0 }, {
+        val: target, duration: 2, ease: 'power2.out',
+        onUpdate: function() { el.textContent = Math.round(this.targets()[0].val).toLocaleString('fr-FR') + suffix; }
+      });
+    }, once: true
+  });
+});
+
+// === MARQUEE INFINITE ===
+document.querySelectorAll('.marquee-track').forEach(track => {
+  const items = track.innerHTML;
+  track.innerHTML += items + items;
+  gsap.to(track, { x: '-50%', duration: 30, ease: 'none', repeat: -1 });
+});
+
+// === IMAGE SCALE-ON-SCROLL ===
+gsap.utils.toArray('.scale-scroll').forEach(img => {
+  gsap.from(img, {
+    scale: 1.15, ease: 'none',
+    scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1 }
+  });
+});
+
+// === CIRCLE REVEAL ===
+document.querySelectorAll('.circle-reveal').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el, start: 'top 80%',
+    onEnter: () => el.classList.add('revealed')
+  });
+});
+
+// === STAGGER GRID ===
+document.querySelectorAll('.stagger-grid').forEach(grid => {
+  gsap.from(grid.children, {
+    y: 60, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power3.out',
+    scrollTrigger: { trigger: grid, start: 'top 85%' }
+  });
+});
+
+// === 3D TILT CARDS (preserved from original) ===
+document.querySelectorAll('.tilt-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - .5;
+    const y = (e.clientY - rect.top) / rect.height - .5;
+    card.style.transform = `perspective(800px) rotateY(${x*10}deg) rotateX(${-y*10}deg) scale3d(1.02,1.02,1.02)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = 'perspective(800px) rotateY(0) rotateX(0) scale3d(1,1,1)';
+    card.style.transition = 'transform .6s';
+  });
+  card.addEventListener('mouseenter', () => { card.style.transition = 'transform .1s'; });
+});
+
+// === HORIZONTAL SCROLL GALLERY — CSS overflow, no GSAP pin (no blank space) ===
+
+// === TEXT SCRAMBLE EFFECT ===
+class TextScramble {
+  constructor(el) { this.el = el; this.chars = '!<>-_\\/[]{}—=+*^?#'; this.update = this.update.bind(this); }
+  setText(newText) {
+    const oldText = this.el.innerText;
+    const length = Math.max(oldText.length, newText.length);
+    const promise = new Promise(resolve => this.resolve = resolve);
+    this.queue = [];
+    for (let i = 0; i < length; i++) {
+      const from = oldText[i] || '';
+      const to = newText[i] || '';
+      const start = Math.floor(Math.random() * 40);
+      const end = start + Math.floor(Math.random() * 40);
+      this.queue.push({ from, to, start, end });
+    }
+    cancelAnimationFrame(this.frameRequest);
+    this.frame = 0;
+    this.update();
+    return promise;
+  }
+  update() {
+    let output = '';
+    let complete = 0;
+    for (let i = 0, n = this.queue.length; i < n; i++) {
+      let { from, to, start, end, char } = this.queue[i];
+      if (this.frame >= end) { complete++; output += to; }
+      else if (this.frame >= start) {
+        if (!char || Math.random() < 0.28) { char = this.chars[Math.floor(Math.random() * this.chars.length)]; this.queue[i].char = char; }
+        output += '<span style="opacity:.4">' + char + '</span>';
+      } else { output += from; }
+    }
+    this.el.innerHTML = output;
+    if (complete === this.queue.length) { this.resolve(); }
+    else { this.frameRequest = requestAnimationFrame(this.update); this.frame++; }
+  }
+}
+setTimeout(() => {
+  const heroP = document.querySelector('.hero-content p, .hero p, .hero-text p');
+  if (heroP) { const fx = new TextScramble(heroP); fx.setText(heroP.textContent); }
+}, 1200);
+</script>
+
+
+<!-- SAFETY: Force all content visible after 2s (kills GSAP ticker to prevent re-override) -->
+<script>
+setTimeout(function(){
+  // Kill ALL GSAP ScrollTrigger-based animations
+  if(typeof ScrollTrigger!=="undefined"){
+    ScrollTrigger.getAll().forEach(function(st){st.kill()});
+  }
+  if(typeof gsap!=="undefined"){
+    gsap.globalTimeline.getChildren(true,true,true).forEach(function(t){
+      try{t.progress(1);t.kill()}catch(e){}
+    });
+  }
+  // Force everything visible
+  var all=document.querySelectorAll("*");
+  for(var i=0;i<all.length;i++){
+    var el=all[i];
+    var s=window.getComputedStyle(el);
+    if(parseFloat(s.opacity)<0.15&&el.offsetHeight>50&&s.display!=="none"){
+      var c=el.className||"";
+      if(c.indexOf("bubble")>-1||c.indexOf("cursor")>-1||c.indexOf("scroll-progress")>-1||c.indexOf("modal")>-1||c.indexOf("overlay")>-1)continue;
+      el.style.cssText+="opacity:1!important;transform:none!important;";
+    }
+  }
+},2000);
 </script>
 </body>
 </html>

@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        html { }
 
         :root {
             --pink-soft: #FFF0F3;
@@ -110,7 +110,7 @@
             grid-template-columns: 1fr 1fr;
             align-items: center;
             gap: 40px;
-            padding: 120px 80px 80px;
+            padding: 60px 48px 48px;
             position: relative;
             overflow: hidden;
         }
@@ -301,14 +301,7 @@
         .ribbon.free { background: var(--mauve); }
         .ribbon.free::after { border-top-color: #472645; border-left-color: #472645; }
 
-        /* Slide animations */
-        .slide-left  { opacity: 0; transform: translateX(-60px); }
-        .slide-right { opacity: 0; transform: translateX(60px); }
-        .slide-left.visible, .slide-right.visible {
-            opacity: 1;
-            transform: translateX(0);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
+        /* Slide animations — handled by GSAP */
 
         /* ===== ABOUT ===== */
         .about-grid {
@@ -450,13 +443,44 @@
             display: block;
         }
 
+        /* ===== HORIZONTAL SCROLL SHOWCASE ===== */
+        .horizontal-scroll{position:relative;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        .horizontal-scroll .scroll-track{display:flex;gap:20px;width:max-content;padding:40px 0}
+        .horizontal-scroll .scroll-item{flex-shrink:0;width:70vw;max-width:500px;overflow:hidden;border-radius:8px}
+        .horizontal-scroll .scroll-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+        .horizontal-scroll .scroll-item:hover img{transform:scale(1.05)}
+        @media (max-width: 768px) { .horizontal-scroll .scroll-item{width:85vw} }
+
         /* ===== REVEAL ===== */
-        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal.js-reveal { opacity: 0; transform: translateY(20px); transition: opacity 1s ease, transform 1s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0) !important; }
+        /* ===== LENIS ===== */
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: clip; }
+
+        /* ===== SCROLL PROGRESS ===== */
+        .scroll-progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 10000; }
+        .scroll-progress-bar { height: 100%; width: 100%; background: linear-gradient(90deg, var(--rose), var(--mauve)); transform-origin: left; transform: scaleX(0); }
+
+        /* ===== MARQUEE ===== */
+        .marquee{overflow:hidden;padding:40px 0;border-top:1px solid rgba(183,110,121,.1);border-bottom:1px solid rgba(183,110,121,.1)}
+        .marquee-track{display:flex;gap:60px;white-space:nowrap;will-change:transform}
+        .marquee-text{font-family:var(--font-display);font-size:clamp(14px,2vw,20px);letter-spacing:.15em;text-transform:uppercase;opacity:.25;flex-shrink:0;color:var(--mauve)}
+
+        /* ===== CIRCLE REVEAL ===== */
+        .circle-reveal{clip-path:circle(0% at 50% 50%);transition:clip-path 1.2s cubic-bezier(.25,.46,.45,.94)}
+        .circle-reveal.revealed{clip-path:circle(75% at 50% 50%)}
+
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+        }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
-            .hero { grid-template-columns: 1fr; padding: 110px 32px 60px; text-align: center; gap: 40px; }
+            .hero { grid-template-columns: 1fr; padding: 60px 32px 48px; text-align: center; gap: 40px; }
             .hero-sub { margin: 0 auto 36px; }
             .hero-blob { width: 300px; height: 330px; }
             .about-grid { grid-template-columns: 1fr; gap: 36px; }
@@ -475,6 +499,9 @@
     </style>
 </head>
 <body>
+    <!-- SCROLL PROGRESS -->
+    <div class="scroll-progress"><div class="scroll-progress-bar" id="scrollProgress"></div></div>
+
     <!-- CURSOR DOT -->
     <div id="cursor-dot"></div>
 
@@ -515,11 +542,11 @@
     <section id="services" class="services-section">
         <div class="container">
             <p class="section-label reveal">Nos soins</p>
-            <h2 class="section-title reveal">Ce que nous faisons pour vous</h2>
+            <h2 class="section-title word-reveal">Ce que nous faisons pour vous</h2>
             <div class="rose-line reveal"></div>
             <div class="services-grid">
                 <div class="service-card slide-left">
-                    <img src="images/hei-pua/facial.jpg" alt="Soin visage polynésien">
+                    <img src="images/hei-pua/facial.jpg" alt="Soin visage polynésien" class="scale-scroll">
                     <span class="ribbon">8 500 XPF</span>
                     <div class="service-card-body">
                         <h3>Soin Visage Polynésien</h3>
@@ -527,7 +554,7 @@
                     </div>
                 </div>
                 <div class="service-card slide-right">
-                    <img src="images/hei-pua/nails.jpg" alt="Manucure et nail art">
+                    <img src="images/hei-pua/nails.jpg" alt="Manucure et nail art" class="scale-scroll">
                     <span class="ribbon">4 500 XPF</span>
                     <div class="service-card-body">
                         <h3>Manucure & Nail Art</h3>
@@ -535,7 +562,7 @@
                     </div>
                 </div>
                 <div class="service-card slide-left">
-                    <img src="images/hei-pua/hair.jpg" alt="Coiffure et balayage">
+                    <img src="images/hei-pua/hair.jpg" alt="Coiffure et balayage" class="scale-scroll">
                     <span class="ribbon">12 000 XPF</span>
                     <div class="service-card-body">
                         <h3>Coiffure & Balayage</h3>
@@ -543,7 +570,7 @@
                     </div>
                 </div>
                 <div class="service-card slide-right">
-                    <img src="images/hei-pua/products.jpg" alt="Conseil beauté personnalisé">
+                    <img src="images/hei-pua/products.jpg" alt="Conseil beauté personnalisé" class="scale-scroll">
                     <span class="ribbon free">Gratuit</span>
                     <div class="service-card-body">
                         <h3>Conseil Beauté</h3>
@@ -554,32 +581,50 @@
         </div>
     </section>
 
+    <!-- MARQUEE -->
+    <div class="marquee">
+      <div class="marquee-track">
+        <span class="marquee-text">BEAUTE</span>
+        <span class="marquee-text">—</span>
+        <span class="marquee-text">SOINS</span>
+        <span class="marquee-text">—</span>
+        <span class="marquee-text">BIEN-ETRE</span>
+        <span class="marquee-text">—</span>
+        <span class="marquee-text">POLYNESIE</span>
+        <span class="marquee-text">—</span>
+        <span class="marquee-text">HEI PUA</span>
+        <span class="marquee-text">—</span>
+        <span class="marquee-text">PUNAAUIA</span>
+        <span class="marquee-text">—</span>
+      </div>
+    </div>
+
     <!-- ABOUT -->
     <section id="about">
         <div class="container">
             <div class="about-grid">
                 <div class="about-img-wrap reveal">
                     <div class="about-deco"></div>
-                    <img src="images/hei-pua/salon.jpg" alt="Intérieur du salon Hei Pua Beauty à Punaauia" class="about-img">
+                    <img src="images/hei-pua/salon.jpg" alt="Intérieur du salon Hei Pua Beauty à Punaauia" class="about-img scale-scroll circle-reveal">
                 </div>
                 <div class="reveal">
                     <p class="section-label">Notre histoire</p>
-                    <h2 class="section-title">Un havre de beauté à Punaauia</h2>
+                    <h2 class="section-title word-reveal">Un havre de beauté à Punaauia</h2>
                     <div class="rose-line"></div>
-                    <p>Fondé en 2019 par Hinatea, Hei Pua est un havre de beauté au cœur de Punaauia. Hei Pua — "couronne de fleurs" en tahitien — incarne notre philosophie : mettre en valeur la beauté naturelle de chaque femme.</p>
-                    <p>Nous utilisons des produits soigneusement sélectionnés, enrichis aux huiles et extraits polynésiens, pour des soins qui respectent votre peau et la planète.</p>
+                    <p class="line-reveal">Fondé en 2019 par Hinatea, Hei Pua est un havre de beauté au cœur de Punaauia. Hei Pua — "couronne de fleurs" en tahitien — incarne notre philosophie : mettre en valeur la beauté naturelle de chaque femme.</p>
+                    <p class="line-reveal">Nous utilisons des produits soigneusement sélectionnés, enrichis aux huiles et extraits polynésiens, pour des soins qui respectent votre peau et la planète.</p>
                     <div class="about-stat">
                         <div class="stat-block">
-                            <strong>+500</strong>
+                            <strong data-count="500" data-suffix="+">0</strong>
                             <span>clientes fidèles</span>
                         </div>
                         <div class="stat-block">
-                            <strong>6 ans</strong>
+                            <strong data-count="6" data-suffix=" ans">0</strong>
                             <span>d'expertise</span>
                         </div>
                         <div class="stat-block">
-                            <strong>4.9★</strong>
-                            <span>sur Google</span>
+                            <strong data-count="15" data-suffix=" soins">0</strong>
+                            <span>au catalogue</span>
                         </div>
                     </div>
                 </div>
@@ -593,7 +638,7 @@
             <div class="testimonial-wrap reveal">
                 <span class="quote-mark">"</span>
                 <div class="stars">★★★★★</div>
-                <p class="testimonial-text">Le meilleur salon de Punaauia ! Hinatea est une véritable artiste. Je repars à chaque fois rayonnante, mes amies me demandent toujours où je me fais coiffer.</p>
+                <p class="testimonial-text line-reveal">Le meilleur salon de Punaauia ! Hinatea est une véritable artiste. Je repars à chaque fois rayonnante, mes amies me demandent toujours où je me fais coiffer.</p>
                 <p class="testimonial-author">— Vaiana M., cliente depuis 2020</p>
             </div>
         </div>
@@ -604,7 +649,7 @@
         <div class="container">
             <div class="booking-inner reveal">
                 <p class="section-label">Rendez-vous</p>
-                <h2 class="section-title">Prenez soin de vous</h2>
+                <h2 class="section-title word-reveal">Prenez soin de vous</h2>
                 <div class="rose-line"></div>
                 <p><strong>📞 +689 87 23 45 67</strong></p>
                 <p>📍 PK 11, Route de la Punaauia — Punaauia, Tahiti</p>
@@ -612,6 +657,18 @@
                 <a href="tel:+68987234567" class="btn-white">Appeler maintenant</a>
             </div>
         </div>
+    </section>
+
+    <!-- HORIZONTAL SCROLL SHOWCASE -->
+    <section class="horizontal-scroll">
+      <div class="scroll-track">
+        <div class="scroll-item"><img src="images/hei-pua/salon.jpg" alt="Salon de beaute Hei Pua"></div>
+        <div class="scroll-item"><img src="images/hei-pua/facial.jpg" alt="Soins du visage naturels"></div>
+        <div class="scroll-item"><img src="images/hei-pua/hair.jpg" alt="Coiffure et soins capillaires"></div>
+        <div class="scroll-item"><img src="images/hei-pua/nails.jpg" alt="Manucure et beaute des ongles"></div>
+        <div class="scroll-item"><img src="images/hei-pua/products.jpg" alt="Produits cosmetiques naturels"></div>
+        <div class="scroll-item"><img src="images/hei-pua/hero.jpg" alt="Ambiance Hei Pua Beauty"></div>
+      </div>
     </section>
 
     <!-- FOOTER -->
@@ -623,25 +680,14 @@
         </div>
     </footer>
 
+    <!-- GSAP + Lenis + SplitType CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+
     <script>
-        // Navbar scroll
-        const nav = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            nav.classList.toggle('scrolled', window.scrollY > 60);
-        });
-
-        // Reveal + slide on scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-        document.querySelectorAll('.reveal, .slide-left, .slide-right').forEach(el => observer.observe(el));
-
-        // Sparkle cursor (desktop only)
+        // === SPARKLE CURSOR (preserved) ===
         const dot = document.getElementById('cursor-dot');
         const COLORS = ['#B76E79', '#E8A0AA', '#6B3A5B', '#F5C6CF', '#D4A0B0'];
         let lastSparkle = 0;
@@ -665,6 +711,279 @@
             document.body.appendChild(s);
             setTimeout(() => s.remove(), 700);
         });
+
+        // === REDUCED MOTION CHECK ===
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (!prefersReducedMotion) {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // === LENIS SMOOTH SCROLL ===
+            const lenis = new Lenis({ duration: 1.4, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => lenis.raf(time * 1000));
+            gsap.ticker.lagSmoothing(0);
+
+            // === NAVBAR SCROLL ===
+            const nav = document.getElementById('navbar');
+            ScrollTrigger.create({
+                start: 60,
+                onUpdate: (self) => {
+                    nav.classList.toggle('scrolled', self.scroll() > 60);
+                }
+            });
+
+            // === SCROLL PROGRESS BAR ===
+            gsap.to('#scrollProgress', {
+                scaleX: 1, ease: 'none',
+                scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0.3 }
+            });
+
+            // === WORD REVEAL ===
+            document.querySelectorAll('.word-reveal').forEach(el => {
+                const split = new SplitType(el, { types: 'words' });
+                gsap.from(split.words, {
+                    yPercent: 100, opacity: 0, stagger: 0.05, duration: 0.8,
+                    ease: 'power3.out',
+                    scrollTrigger: { trigger: el, start: 'top 85%' }
+                });
+            });
+
+            // === GENTLE PARALLAX ===
+            document.querySelectorAll('[data-parallax]').forEach(img => {
+                const speed = parseFloat(img.dataset.parallax);
+                gsap.to(img, {
+                    yPercent: speed * 20, ease: 'none',
+                    scrollTrigger: { trigger: img.parentElement, start: 'top top', end: 'bottom top', scrub: 1 }
+                });
+            });
+
+            // === REVEAL SECTIONS — IntersectionObserver (no GSAP pin dependency) ===
+            const revealEls = document.querySelectorAll('.reveal');
+            revealEls.forEach(el => el.classList.add('js-reveal'));
+            const revealObserver = new IntersectionObserver((entries) => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('visible');
+                  revealObserver.unobserve(entry.target);
+                }
+              });
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            revealEls.forEach(el => revealObserver.observe(el));
+            // Safety: reveal all after 1.5s if observer never fires
+            setTimeout(() => { revealEls.forEach(el => { el.classList.add('visible'); el.classList.remove('js-reveal'); }); }, 1500);
+
+            // === STAGGER SERVICE CARDS — IntersectionObserver ===
+            const cards = document.querySelectorAll('.service-card');
+            if (cards.length) {
+                cards.forEach((card, i) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    card.style.transition = `opacity 0.8s ease ${i * 0.1}s, transform 0.8s ease ${i * 0.1}s`;
+                });
+                const cardObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                            cardObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+                cards.forEach(card => cardObserver.observe(card));
+                // Safety: reveal all cards after 1.5s
+                setTimeout(() => { cards.forEach(c => { c.style.opacity='1'; c.style.transform='none'; }); }, 1500);
+            }
+
+            // === HERO ENTRANCE ===
+            const heroTitle = document.querySelector('.hero-title');
+            if (heroTitle) {
+                gsap.from(heroTitle, { y: 30, opacity: 0, duration: 1, ease: 'power2.out', delay: 0.2 });
+            }
+            const heroSub = document.querySelector('.hero-sub');
+            if (heroSub) {
+                gsap.from(heroSub, { y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', delay: 0.5 });
+            }
+            const heroLabel = document.querySelector('.hero-label');
+            if (heroLabel) {
+                gsap.from(heroLabel, { y: 15, opacity: 0, duration: 0.6, ease: 'power2.out', delay: 0.1 });
+            }
+            const heroBtn = document.querySelector('.hero .btn-rose');
+            if (heroBtn) {
+                gsap.from(heroBtn, { y: 20, opacity: 0, duration: 0.8, ease: 'power2.out', delay: 0.7 });
+            }
+            const heroBlob = document.querySelector('.hero-blob');
+            if (heroBlob) {
+                gsap.from(heroBlob, { scale: 0.9, opacity: 0, duration: 1.2, ease: 'power2.out', delay: 0.3 });
+            }
+            const heroBadge = document.querySelector('.hero-badge');
+            if (heroBadge) {
+                gsap.from(heroBadge, { x: -30, opacity: 0, duration: 0.8, ease: 'power2.out', delay: 0.9 });
+            }
+
+            // === COUNTER ANIMATION ===
+            document.querySelectorAll('[data-target]').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                if (!target) return;
+                const obj = { val: 0 };
+                ScrollTrigger.create({
+                    trigger: el, start: 'top 85%',
+                    onEnter: () => {
+                        gsap.to(obj, {
+                            val: target, duration: 2, ease: 'power2.out',
+                            onUpdate: () => { el.textContent = Math.round(obj.val).toLocaleString('fr-FR'); }
+                        });
+                    }, once: true
+                });
+            });
+
+            // === SLIDE ANIMATIONS (left/right) — IntersectionObserver ===
+            const slideEls = document.querySelectorAll('.slide-left:not(.service-card), .slide-right:not(.service-card)');
+            slideEls.forEach(el => {
+                const isLeft = el.classList.contains('slide-left');
+                el.style.opacity = '0';
+                el.style.transform = isLeft ? 'translateX(-60px)' : 'translateX(60px)';
+                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            });
+            setTimeout(() => { slideEls.forEach(el => { el.style.opacity='1'; el.style.transform='none'; }); }, 1500);
+            const slideObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'none';
+                        slideObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            slideEls.forEach(el => slideObserver.observe(el));
+
+            // === MARQUEE INFINITE ===
+            document.querySelectorAll('.marquee-track').forEach(track => {
+                const items = track.innerHTML;
+                track.innerHTML += items + items;
+                gsap.to(track, { x: '-50%', duration: 30, ease: 'none', repeat: -1 });
+            });
+
+            // === IMAGE SCALE-ON-SCROLL ===
+            gsap.utils.toArray('.scale-scroll').forEach(img => {
+                gsap.from(img, {
+                    scale: 1.15, ease: 'none',
+                    scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1 }
+                });
+            });
+
+            // === CIRCLE REVEAL ===
+            document.querySelectorAll('.circle-reveal').forEach(el => {
+                ScrollTrigger.create({ trigger: el, start: 'top 80%', onEnter: () => el.classList.add('revealed') });
+            });
+
+            // === COUNTER ANIMATION (data-count) ===
+            document.querySelectorAll('[data-count]').forEach(el => {
+                const target = parseInt(el.dataset.count);
+                const suffix = el.dataset.suffix || '';
+                ScrollTrigger.create({
+                    trigger: el, start: 'top 85%',
+                    onEnter: () => {
+                        gsap.to({ val: 0 }, {
+                            val: target, duration: 2, ease: 'power2.out',
+                            onUpdate: function() { el.textContent = Math.round(this.targets()[0].val) + suffix; }
+                        });
+                    }, once: true
+                });
+            });
+
+            // === LINE-BY-LINE TEXT REVEAL ===
+            document.querySelectorAll('.line-reveal').forEach(el => {
+                const split = new SplitType(el, { types: 'lines' });
+                split.lines.forEach(line => { line.style.overflow = 'hidden'; });
+                gsap.from(split.lines, {
+                    yPercent: 100, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power3.out',
+                    scrollTrigger: { trigger: el, start: 'top 85%' }
+                });
+            });
+
+        } else {
+            // Reduced motion fallback — just show everything
+            document.querySelectorAll('.reveal, .slide-left, .slide-right').forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+            // Navbar scroll without animation
+            const nav = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                nav.classList.toggle('scrolled', window.scrollY > 60);
+            });
+        }
+
+        // === HORIZONTAL SCROLL GALLERY — CSS overflow, no GSAP pin (no blank space) ===
+
+        // === TEXT SCRAMBLE EFFECT ===
+        class TextScramble {
+          constructor(el) { this.el = el; this.chars = '!<>-_\\/[]{}—=+*^?#'; this.update = this.update.bind(this); }
+          setText(newText) {
+            const oldText = this.el.innerText;
+            const length = Math.max(oldText.length, newText.length);
+            const promise = new Promise(resolve => this.resolve = resolve);
+            this.queue = [];
+            for (let i = 0; i < length; i++) {
+              const from = oldText[i] || '';
+              const to = newText[i] || '';
+              const start = Math.floor(Math.random() * 40);
+              const end = start + Math.floor(Math.random() * 40);
+              this.queue.push({ from, to, start, end });
+            }
+            cancelAnimationFrame(this.frameRequest);
+            this.frame = 0;
+            this.update();
+            return promise;
+          }
+          update() {
+            let output = '';
+            let complete = 0;
+            for (let i = 0, n = this.queue.length; i < n; i++) {
+              let { from, to, start, end, char } = this.queue[i];
+              if (this.frame >= end) { complete++; output += to; }
+              else if (this.frame >= start) {
+                if (!char || Math.random() < 0.28) { char = this.chars[Math.floor(Math.random() * this.chars.length)]; this.queue[i].char = char; }
+                output += '<span style="opacity:.4">' + char + '</span>';
+              } else { output += from; }
+            }
+            this.el.innerHTML = output;
+            if (complete === this.queue.length) { this.resolve(); }
+            else { this.frameRequest = requestAnimationFrame(this.update); this.frame++; }
+          }
+        }
+        setTimeout(() => {
+          const heroP = document.querySelector('.hero-content p, .hero p, .hero-text p');
+          if (heroP) { const fx = new TextScramble(heroP); fx.setText(heroP.textContent); }
+        }, 1200);
     </script>
+
+
+<!-- SAFETY: Force all content visible after 2s (kills GSAP ticker to prevent re-override) -->
+<script>
+setTimeout(function(){
+  // Kill ALL GSAP ScrollTrigger-based animations
+  if(typeof ScrollTrigger!=="undefined"){
+    ScrollTrigger.getAll().forEach(function(st){st.kill()});
+  }
+  if(typeof gsap!=="undefined"){
+    gsap.globalTimeline.getChildren(true,true,true).forEach(function(t){
+      try{t.progress(1);t.kill()}catch(e){}
+    });
+  }
+  // Force everything visible
+  var all=document.querySelectorAll("*");
+  for(var i=0;i<all.length;i++){
+    var el=all[i];
+    var s=window.getComputedStyle(el);
+    if(parseFloat(s.opacity)<0.15&&el.offsetHeight>50&&s.display!=="none"){
+      var c=el.className||"";
+      if(c.indexOf("bubble")>-1||c.indexOf("cursor")>-1||c.indexOf("scroll-progress")>-1||c.indexOf("modal")>-1||c.indexOf("overlay")>-1)continue;
+      el.style.cssText+="opacity:1!important;transform:none!important;";
+    }
+  }
+},2000);
+</script>
 </body>
 </html>

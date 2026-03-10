@@ -31,8 +31,31 @@
         }
 
         html {
-            scroll-behavior: smooth;
+            /* scroll-behavior managed by Lenis */
         }
+
+        /* Lenis smooth scroll */
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: clip; }
+
+        /* ===== CUSTOM CURSOR ===== */
+        .cursor-dot{position:fixed;width:12px;height:12px;background:var(--atn-teal);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s;mix-blend-mode:difference}
+        .cursor-dot.hover{width:48px;height:48px;background:var(--atn-gold)}
+
+        /* Scroll progress bar */
+        .scroll-progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 10000; pointer-events: none; }
+        .scroll-progress-bar { height: 100%; width: 100%; background: linear-gradient(90deg, var(--atn-teal), var(--atn-gold)); transform-origin: left; transform: scaleX(0); }
+
+        /* Prefers reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+        }
+
+        /* GSAP reveal helpers */
+        .word-reveal .word { display: inline-block; overflow: hidden; }
+        .word-reveal .word > span { display: inline-block; }
 
         body {
             font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -311,7 +334,7 @@
             position: relative;
             z-index: 2;
             max-width: 800px;
-            padding: 140px 0 200px;
+            padding: 60px 0 80px;
         }
 
         .hero-badge {
@@ -586,7 +609,7 @@
            ============================================ */
 
         .destinations {
-            padding: 120px 0;
+            padding: 56px 0;
             background: var(--atn-cream);
             position: relative;
         }
@@ -754,7 +777,7 @@
            ============================================ */
 
         .experience {
-            padding: 140px 0;
+            padding: 60px 0;
             background: var(--atn-white);
             position: relative;
             overflow: hidden;
@@ -909,7 +932,7 @@
            ============================================ */
 
         .classes {
-            padding: 140px 0;
+            padding: 60px 0;
             background: linear-gradient(180deg, var(--atn-navy) 0%, #0a1929 100%);
             position: relative;
             overflow: hidden;
@@ -1086,7 +1109,7 @@
            ============================================ */
 
         .stats {
-            padding: 100px 0;
+            padding: 48px 0;
             background: linear-gradient(135deg, var(--atn-teal) 0%, var(--atn-teal-dark) 100%);
             position: relative;
             overflow: hidden;
@@ -1153,7 +1176,7 @@
            ============================================ */
 
         .newsletter {
-            padding: 120px 0;
+            padding: 56px 0;
             background: var(--atn-cream);
             position: relative;
         }
@@ -1261,6 +1284,14 @@
             text-align: center;
             margin-top: 16px;
         }
+
+        /* ===== HORIZONTAL SCROLL SHOWCASE ===== */
+        .horizontal-scroll{position:relative;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        .horizontal-scroll .scroll-track{display:flex;gap:20px;width:max-content;padding:40px 0}
+        .horizontal-scroll .scroll-item{flex-shrink:0;width:70vw;max-width:500px;overflow:hidden;border-radius:8px}
+        .horizontal-scroll .scroll-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+        .horizontal-scroll .scroll-item:hover img{transform:scale(1.05)}
+        @media (max-width: 768px) { .horizontal-scroll .scroll-item{width:85vw} }
 
         /* ============================================
            FOOTER - Clean & Modern
@@ -1892,7 +1923,7 @@
 
         @media (max-width: 768px) {
             .hero-content {
-                padding: 120px 0 180px;
+                padding: 56px 0 80px;
             }
             .booking-card {
                 padding: 32px 24px;
@@ -1926,6 +1957,7 @@
                 gap: 20px;
                 text-align: center;
             }
+            .cursor-dot{display:none}
             .tiare-window {
                 width: calc(100% - 32px);
                 height: calc(100% - 140px);
@@ -1952,9 +1984,21 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ============================================
+           PREMIUM ANIMATIONS — Marquee, Circle Reveal
+           ============================================ */
+        .marquee{overflow:hidden;padding:40px 0;border-top:1px solid rgba(44,204,212,.08);border-bottom:1px solid rgba(44,204,212,.08)}
+        .marquee-track{display:flex;gap:60px;white-space:nowrap;will-change:transform}
+        .marquee-text{font-size:clamp(14px,2vw,20px);letter-spacing:.15em;text-transform:uppercase;opacity:.25;flex-shrink:0}
+        .circle-reveal{clip-path:circle(0% at 50% 50%);transition:clip-path 1.2s cubic-bezier(.25,.46,.45,.94)}
+        .circle-reveal.revealed{clip-path:circle(75% at 50% 50%)}
     </style>
 </head>
 <body>
+    <div class="cursor-dot" id="cursor"></div>
+    <div class="scroll-progress"><div class="scroll-progress-bar" id="scrollProgress"></div></div>
+
     <!-- Header -->
     <header class="header" id="header">
         <div class="header-top">
@@ -1982,7 +2026,7 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-bg">
-            <img src="images/hero-4k.jpg" alt="Polynesie francaise">
+            <img class="scale-scroll" src="images/hero-4k.jpg" alt="Polynesie francaise" data-parallax>
         </div>
 
         <!-- Animated Waves -->
@@ -2071,12 +2115,12 @@
         <div class="container">
             <div class="section-header">
                 <span class="section-subtitle">Nos Destinations</span>
-                <h2>Les plus belles iles du Pacifique</h2>
+                <h2 class="word-reveal">Les plus belles iles du Pacifique</h2>
                 <p>Explorez les joyaux de la Polynesie francaise, des lagons turquoise aux sommets volcaniques majestueux.</p>
             </div>
-            <div class="destinations-grid">
+            <div class="destinations-grid stagger-grid">
                 <div class="destination-card">
-                    <img src="images/bora-bora.jpg" alt="Bora Bora">
+                    <img class="circle-reveal" src="images/bora-bora.jpg" alt="Bora Bora">
                     <div class="destination-content">
                         <span class="destination-tag">Incontournable</span>
                         <h4>Bora Bora</h4>
@@ -2088,7 +2132,7 @@
                     </div>
                 </div>
                 <div class="destination-card">
-                    <img src="images/moorea.jpg" alt="Moorea">
+                    <img class="circle-reveal" src="images/moorea.jpg" alt="Moorea">
                     <div class="destination-content">
                         <span class="destination-tag">Nature</span>
                         <h4>Moorea</h4>
@@ -2100,7 +2144,7 @@
                     </div>
                 </div>
                 <div class="destination-card">
-                    <img src="images/los-angeles.jpg" alt="Los Angeles">
+                    <img class="circle-reveal" src="images/los-angeles.jpg" alt="Los Angeles">
                     <div class="destination-content">
                         <span class="destination-tag">Stopover</span>
                         <h4>Los Angeles</h4>
@@ -2112,7 +2156,7 @@
                     </div>
                 </div>
                 <div class="destination-card">
-                    <img src="images/tokyo.jpg" alt="Tokyo">
+                    <img class="circle-reveal" src="images/tokyo.jpg" alt="Tokyo">
                     <div class="destination-content">
                         <span class="destination-tag">Nouveau</span>
                         <h4>Tokyo</h4>
@@ -2134,7 +2178,7 @@
                 <div class="experience-visual">
                     <div class="experience-blob"></div>
                     <div class="experience-image-main">
-                        <img src="images/hospitality-polynesian.jpg" alt="Hospitalité polynésienne">
+                        <img class="scale-scroll" src="images/hospitality-polynesian.jpg" alt="Hospitalité polynésienne" data-parallax>
                     </div>
                     <div class="experience-image-float">
                         <img src="images/bungalow.jpg" alt="Service a bord">
@@ -2142,9 +2186,9 @@
                 </div>
                 <div class="experience-content">
                     <span class="section-subtitle">L'Experience</span>
-                    <h2>L'hospitalite <span>polynesienne</span> dans les airs</h2>
-                    <p>Vivez le legendaire accueil tahitien des que vous montez a bord. Notre equipage vous transporte vers le paradis avec attention, chaleur et authenticite.</p>
-                    <div class="experience-features">
+                    <h2 class="word-reveal">L'hospitalite <span>polynesienne</span> dans les airs</h2>
+                    <p class="line-reveal">Vivez le legendaire accueil tahitien des que vous montez a bord. Notre equipage vous transporte vers le paradis avec attention, chaleur et authenticite.</p>
+                    <div class="experience-features stagger-grid">
                         <div class="feature-item">
                             <div class="feature-icon">
                                 <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -2193,10 +2237,10 @@
         <div class="container">
             <div class="section-header">
                 <span class="section-subtitle">Nos Classes</span>
-                <h2>Choisissez votre experience</h2>
+                <h2 class="word-reveal">Choisissez votre experience</h2>
                 <p>De l'economie au luxe absolu, trouvez la classe qui correspond a vos envies.</p>
             </div>
-            <div class="classes-grid">
+            <div class="classes-grid stagger-grid">
                 <div class="class-card">
                     <div class="class-card-image">
                         <img src="images/economy-cabin.jpg" alt="Moana Economy">
@@ -2259,24 +2303,46 @@
         <div class="container">
             <div class="stats-grid">
                 <div class="stat-item">
-                    <div class="stat-number">25<span>+</span></div>
+                    <div class="stat-number" data-counter="25" data-suffix="+" data-count="25" data-suffix="+">0<span>+</span></div>
                     <div class="stat-label">Annees d'experience</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">5</div>
+                    <div class="stat-number" data-counter="5" data-count="5">0</div>
                     <div class="stat-label">Destinations</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">787</div>
+                    <div class="stat-number" data-counter="787" data-count="787">0</div>
                     <div class="stat-label">Boeing Dreamliner</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">500<span>K</span></div>
+                    <div class="stat-number" data-counter="500" data-suffix="K" data-count="500" data-suffix="K">0<span>K</span></div>
                     <div class="stat-label">Passagers par an</div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Marquee Ticker -->
+    <div class="marquee">
+        <div class="marquee-track">
+            <span class="marquee-text">AIR TAHITI NUI</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">POLYNESIE</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">DREAMLINER</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">PAPEETE</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">LOS ANGELES</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">PARIS</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">TOKYO</span>
+            <span class="marquee-text">—</span>
+            <span class="marquee-text">AUCKLAND</span>
+            <span class="marquee-text">—</span>
+        </div>
+    </div>
 
     <!-- Newsletter -->
     <section class="newsletter">
@@ -2284,7 +2350,7 @@
             <div class="newsletter-card">
                 <div class="newsletter-content">
                     <div class="newsletter-text">
-                        <h2>Recevez nos <span>offres exclusives</span></h2>
+                        <h2 class="word-reveal">Recevez nos <span>offres exclusives</span></h2>
                         <p>Inscrivez-vous et soyez le premier informe de nos promotions, conseils de voyage et inspirations polynesiennes.</p>
                     </div>
                     <div class="newsletter-form-wrapper">
@@ -2297,6 +2363,18 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- HORIZONTAL SCROLL SHOWCASE -->
+    <section class="horizontal-scroll">
+      <div class="scroll-track">
+        <div class="scroll-item"><img src="images/business-luxury.jpg" alt="Classe Poerava Business"></div>
+        <div class="scroll-item"><img src="images/bora-bora.jpg" alt="Bora Bora lagon turquoise"></div>
+        <div class="scroll-item"><img src="images/hospitality-polynesian.jpg" alt="Hospitalite polynesienne"></div>
+        <div class="scroll-item"><img src="images/moorea.jpg" alt="Moorea vue aerienne"></div>
+        <div class="scroll-item"><img src="images/premium-service.jpg" alt="Classe Manava Premium"></div>
+        <div class="scroll-item"><img src="images/economy-cabin.jpg" alt="Cabine Moana Economy"></div>
+      </div>
     </section>
 
     <!-- Footer -->
@@ -2452,18 +2530,314 @@
         </div>
     </div>
 
-    <script>
-    // Header scroll effect
-    const header = document.getElementById('header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
+    <!-- GSAP + Lenis + SplitType CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
 
-    // Tiare Chatbot
+    <script>
+    /* ============================================
+       GSAP ANIMATIONS — Air Tahiti Nui
+       ============================================ */
+    (function() {
+        'use strict';
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // ---- Lenis Smooth Scroll ----
+        let lenis;
+        if (!prefersReducedMotion) {
+            lenis = new Lenis({ duration: 1.3, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => lenis.raf(time * 1000));
+            gsap.ticker.lagSmoothing(0);
+        }
+
+        // === MAGNETIC CURSOR ===
+        const cursor = document.getElementById('cursor');
+        if (cursor && window.matchMedia('(pointer: fine)').matches) {
+          let mx = 0, my = 0, cx = 0, cy = 0;
+          document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+          (function loop() {
+            cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
+            cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+            requestAnimationFrame(loop);
+          })();
+          document.querySelectorAll('a, button, .cta-btn, .class-card, .route-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+          });
+        }
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ---- Scroll Progress Bar ----
+        gsap.to('#scrollProgress', {
+            scaleX: 1,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: document.documentElement,
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.3
+            }
+        });
+
+        // ---- Header hide/show on scroll direction ----
+        const header = document.getElementById('header');
+        let lastScrollY = 0;
+
+        ScrollTrigger.create({
+            start: 'top top',
+            end: 99999,
+            onUpdate: (self) => {
+                const scrollY = self.scroll();
+                // Add/remove scrolled class
+                if (scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+                // Hide on scroll down, show on scroll up
+                if (!prefersReducedMotion) {
+                    if (scrollY > 300) {
+                        if (self.direction === 1) {
+                            gsap.to(header, { y: -header.offsetHeight, duration: 0.3, ease: 'power2.out' });
+                        } else {
+                            gsap.to(header, { y: 0, duration: 0.3, ease: 'power2.out' });
+                        }
+                    } else {
+                        gsap.set(header, { y: 0 });
+                    }
+                }
+                lastScrollY = scrollY;
+            }
+        });
+
+        // ---- Hero entrance animation ----
+        if (!prefersReducedMotion) {
+            const heroTL = gsap.timeline({ defaults: { ease: 'power3.out' } });
+            const heroH1 = document.querySelector('.hero h1');
+            if (heroH1) {
+                const heroSplit = new SplitType(heroH1, { types: 'words', tagName: 'span' });
+                gsap.set(heroSplit.words, { y: 60, opacity: 0 });
+                heroTL.to(heroSplit.words, { y: 0, opacity: 1, duration: 0.8, stagger: 0.06, delay: 0.3 });
+            }
+            heroTL.from('.hero-badge', { y: 30, opacity: 0, duration: 0.6 }, '<0.1');
+            heroTL.from('.hero-description', { y: 30, opacity: 0, duration: 0.6 }, '<0.2');
+            heroTL.from('.hero-ctas', { y: 30, opacity: 0, duration: 0.6 }, '<0.15');
+        }
+
+        // ---- Word reveal on .word-reveal h2s — IntersectionObserver ----
+        if (!prefersReducedMotion) {
+            document.querySelectorAll('.word-reveal').forEach((el) => {
+                const split = new SplitType(el, { types: 'words', tagName: 'span' });
+                split.words.forEach(w => { w.style.opacity = '0'; w.style.transform = 'translateY(40px)'; w.style.transition = 'opacity 0.7s ease, transform 0.7s ease'; });
+                const wObs = new IntersectionObserver((entries) => {
+                    entries.forEach(e => { if (e.isIntersecting) {
+                        split.words.forEach((w, i) => { setTimeout(() => { w.style.opacity = '1'; w.style.transform = 'none'; }, i * 40); });
+                        wObs.unobserve(e.target);
+                    }});
+                }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+                wObs.observe(el);
+                setTimeout(() => { split.words.forEach(w => { w.style.opacity = '1'; w.style.transform = 'none'; }); }, 1500);
+            });
+        }
+
+        // ---- Parallax on [data-parallax] images ----
+        if (!prefersReducedMotion) {
+            document.querySelectorAll('[data-parallax]').forEach((img) => {
+                gsap.to(img, {
+                    yPercent: -15,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: img.closest('section') || img.parentElement,
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 0.5
+                    }
+                });
+            });
+        }
+
+        // ---- Section reveals (fade up) — IntersectionObserver ----
+        if (!prefersReducedMotion) {
+            const revealSections = document.querySelectorAll('.booking-card, .section-header, .experience-visual, .experience-content, .newsletter-card');
+            revealSections.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(30px)'; el.style.transition = 'opacity 0.8s ease, transform 0.8s ease'; });
+            setTimeout(() => { revealSections.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; }); }, 1500);
+            const sectionObs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'none'; sectionObs.unobserve(e.target); } });
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            revealSections.forEach(el => sectionObs.observe(el));
+        }
+
+        // ---- Stagger destination cards — IntersectionObserver ----
+        if (!prefersReducedMotion) {
+            const destCards = document.querySelectorAll('.destination-card');
+            destCards.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(50px)'; el.style.transition = 'opacity 0.7s ease, transform 0.7s ease'; });
+            setTimeout(() => { destCards.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; }); }, 1500);
+            const destObs = new IntersectionObserver((entries) => {
+                let d = 0;
+                entries.forEach(e => { if (e.isIntersecting) { setTimeout(() => { e.target.style.opacity = '1'; e.target.style.transform = 'none'; }, d); d += 120; destObs.unobserve(e.target); } });
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            destCards.forEach(el => destObs.observe(el));
+        }
+
+        // ---- Stagger class cards — IntersectionObserver ----
+        if (!prefersReducedMotion) {
+            const classCards = document.querySelectorAll('.class-card');
+            classCards.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(50px)'; el.style.transition = 'opacity 0.7s ease, transform 0.7s ease'; });
+            setTimeout(() => { classCards.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; }); }, 1500);
+            const classObs = new IntersectionObserver((entries) => {
+                let d = 0;
+                entries.forEach(e => { if (e.isIntersecting) { setTimeout(() => { e.target.style.opacity = '1'; e.target.style.transform = 'none'; }, d); d += 150; classObs.unobserve(e.target); } });
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            classCards.forEach(el => classObs.observe(el));
+        }
+
+        // ---- Counter animation for stats ----
+        document.querySelectorAll('[data-counter]').forEach((el) => {
+            const target = parseInt(el.getAttribute('data-counter'), 10);
+            const suffix = el.getAttribute('data-suffix') || '';
+            const obj = { val: 0 };
+
+            ScrollTrigger.create({
+                trigger: el,
+                start: 'top 85%',
+                once: true,
+                onEnter: () => {
+                    gsap.to(obj, {
+                        val: target,
+                        duration: prefersReducedMotion ? 0 : 2,
+                        ease: 'power2.out',
+                        onUpdate: () => {
+                            const v = Math.round(obj.val);
+                            if (suffix) {
+                                el.innerHTML = v.toLocaleString('fr-FR') + '<span>' + suffix + '</span>';
+                            } else {
+                                el.textContent = v.toLocaleString('fr-FR');
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // ---- Gallery / fleet images — IntersectionObserver ----
+        if (!prefersReducedMotion) {
+            const expImgs = document.querySelectorAll('.experience-image-main, .experience-image-float');
+            expImgs.forEach(el => { el.style.opacity = '0'; el.style.transform = 'scale(0.92)'; el.style.transition = 'opacity 1s ease, transform 1s ease'; });
+            setTimeout(() => { expImgs.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; }); }, 1500);
+            const imgObs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'none'; imgObs.unobserve(e.target); } });
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            expImgs.forEach(el => imgObs.observe(el));
+        }
+
+        // ---- Feature items stagger — IntersectionObserver ----
+        if (!prefersReducedMotion) {
+            const featureItems = document.querySelectorAll('.feature-item');
+            featureItems.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateX(-20px)'; el.style.transition = 'opacity 0.5s ease, transform 0.5s ease'; });
+            setTimeout(() => { featureItems.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; }); }, 1500);
+            const featObs = new IntersectionObserver((entries) => {
+                let d = 0;
+                entries.forEach(e => { if (e.isIntersecting) { setTimeout(() => { e.target.style.opacity = '1'; e.target.style.transform = 'none'; }, d); d += 100; featObs.unobserve(e.target); } });
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            featureItems.forEach(el => featObs.observe(el));
+        }
+
+        // ---- Stat items stagger — IntersectionObserver ----
+        if (!prefersReducedMotion) {
+            const statItems = document.querySelectorAll('.stat-item');
+            statItems.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(30px)'; el.style.transition = 'opacity 0.6s ease, transform 0.6s ease'; });
+            setTimeout(() => { statItems.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; }); }, 1500);
+            const statObs = new IntersectionObserver((entries) => {
+                let d = 0;
+                entries.forEach(e => { if (e.isIntersecting) { setTimeout(() => { e.target.style.opacity = '1'; e.target.style.transform = 'none'; }, d); d += 100; statObs.unobserve(e.target); } });
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            statItems.forEach(el => statObs.observe(el));
+        }
+                    stagger: 0.12,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: '.stats-grid',
+                        start: 'top 85%',
+                        once: true
+                    }
+                });
+            }
+        }
+
+        // ---- Anchor smooth scroll via Lenis ----
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetEl = document.querySelector(this.getAttribute('href'));
+                if (targetEl) {
+                    if (lenis) {
+                        lenis.scrollTo(targetEl, { offset: 0, duration: 1.2 });
+                    } else {
+                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+
+        // ---- PREMIUM: Marquee Infinite Ticker ----
+        document.querySelectorAll('.marquee-track').forEach(track => {
+            const items = track.innerHTML;
+            track.innerHTML += items + items;
+            gsap.to(track, { x: '-50%', duration: 30, ease: 'none', repeat: -1 });
+        });
+
+        // ---- PREMIUM: Image Scale-on-Scroll ----
+        gsap.utils.toArray('.scale-scroll').forEach(img => {
+            gsap.from(img, {
+                scale: 1.15, ease: 'none',
+                scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1 }
+            });
+        });
+
+        // ---- PREMIUM: Circle Reveal ----
+        document.querySelectorAll('.circle-reveal').forEach(el => {
+            ScrollTrigger.create({ trigger: el, start: 'top 80%', onEnter: () => el.classList.add('revealed') });
+        });
+
+        // ---- PREMIUM: Counter Animation ----
+        document.querySelectorAll('[data-count]').forEach(el => {
+            const target = parseInt(el.dataset.count);
+            const suffix = el.dataset.suffix || '';
+            ScrollTrigger.create({
+                trigger: el, start: 'top 85%',
+                onEnter: () => {
+                    gsap.to({ val: 0 }, {
+                        val: target, duration: 2, ease: 'power2.out',
+                        onUpdate: function() { el.textContent = Math.round(this.targets()[0].val) + suffix; }
+                    });
+                }, once: true
+            });
+        });
+
+        // ---- PREMIUM: Line-by-Line Text Reveal — IntersectionObserver ----
+        document.querySelectorAll('.line-reveal').forEach(el => {
+            const split = new SplitType(el, { types: 'lines' });
+            split.lines.forEach(line => { line.style.overflow = 'hidden'; line.style.opacity = '0'; line.style.transform = 'translateY(100%)'; line.style.transition = 'opacity 0.8s ease, transform 0.8s ease'; });
+            const lObs = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) {
+                    split.lines.forEach((line, i) => { setTimeout(() => { line.style.opacity = '1'; line.style.transform = 'none'; }, i * 100); });
+                    lObs.unobserve(e.target);
+                }});
+            }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+            lObs.observe(el);
+            setTimeout(() => { split.lines.forEach(l => { l.style.opacity = '1'; l.style.transform = 'none'; }); }, 1500);
+        });
+
+        // ---- PREMIUM: Stagger Grid — removed (handled by IntersectionObserver above) ----
+
+    })();
+
+    // Tiare Chatbot (preserved)
     (function() {
         const toggle = document.getElementById('tiareToggle');
         const chatWindow = document.getElementById('tiareWindow');
@@ -2570,7 +2944,7 @@
         input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
     })();
 
-    // Newsletter Modal
+    // Newsletter Modal (preserved)
     (function() {
         const form = document.getElementById('newsletterForm');
         const emailInput = document.getElementById('newsletterEmail');
@@ -2634,16 +3008,75 @@
         });
     })();
 
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    });
+    // === HORIZONTAL SCROLL GALLERY — CSS overflow, no GSAP pin (no blank space) ===
+
+    // === TEXT SCRAMBLE EFFECT ===
+    class TextScramble {
+      constructor(el) { this.el = el; this.chars = '!<>-_\\/[]{}—=+*^?#'; this.update = this.update.bind(this); }
+      setText(newText) {
+        const oldText = this.el.innerText;
+        const length = Math.max(oldText.length, newText.length);
+        const promise = new Promise(resolve => this.resolve = resolve);
+        this.queue = [];
+        for (let i = 0; i < length; i++) {
+          const from = oldText[i] || '';
+          const to = newText[i] || '';
+          const start = Math.floor(Math.random() * 40);
+          const end = start + Math.floor(Math.random() * 40);
+          this.queue.push({ from, to, start, end });
+        }
+        cancelAnimationFrame(this.frameRequest);
+        this.frame = 0;
+        this.update();
+        return promise;
+      }
+      update() {
+        let output = '';
+        let complete = 0;
+        for (let i = 0, n = this.queue.length; i < n; i++) {
+          let { from, to, start, end, char } = this.queue[i];
+          if (this.frame >= end) { complete++; output += to; }
+          else if (this.frame >= start) {
+            if (!char || Math.random() < 0.28) { char = this.chars[Math.floor(Math.random() * this.chars.length)]; this.queue[i].char = char; }
+            output += '<span style="opacity:.4">' + char + '</span>';
+          } else { output += from; }
+        }
+        this.el.innerHTML = output;
+        if (complete === this.queue.length) { this.resolve(); }
+        else { this.frameRequest = requestAnimationFrame(this.update); this.frame++; }
+      }
+    }
+    setTimeout(() => {
+      const heroP = document.querySelector('.hero-content p, .hero p, .hero-text p, .hero-subtitle');
+      if (heroP) { const fx = new TextScramble(heroP); fx.setText(heroP.textContent); }
+    }, 1200);
     </script>
+
+
+<!-- SAFETY: Force all content visible after 2s (kills GSAP ticker to prevent re-override) -->
+<script>
+setTimeout(function(){
+  // Kill ALL GSAP ScrollTrigger-based animations
+  if(typeof ScrollTrigger!=="undefined"){
+    ScrollTrigger.getAll().forEach(function(st){st.kill()});
+  }
+  if(typeof gsap!=="undefined"){
+    gsap.globalTimeline.getChildren(true,true,true).forEach(function(t){
+      try{t.progress(1);t.kill()}catch(e){}
+    });
+  }
+  // Force everything visible
+  var all=document.querySelectorAll("*");
+  for(var i=0;i<all.length;i++){
+    var el=all[i];
+    var s=window.getComputedStyle(el);
+    if(parseFloat(s.opacity)<0.15&&el.offsetHeight>50&&s.display!=="none"){
+      var c=el.className||"";
+      if(c.indexOf("bubble")>-1||c.indexOf("cursor")>-1||c.indexOf("scroll-progress")>-1||c.indexOf("modal")>-1||c.indexOf("overlay")>-1)continue;
+      el.style.cssText+="opacity:1!important;transform:none!important;";
+    }
+  }
+},2000);
+</script>
 </body>
 </html>

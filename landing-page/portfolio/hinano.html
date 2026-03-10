@@ -11,7 +11,11 @@
     <style>
         /* ===== RESET ===== */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        html { }
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: clip; }
         body {
             font-family: 'DM Sans', sans-serif;
             background: #FDF5E6;
@@ -29,13 +33,31 @@
             --cream-dark: #F5EACF;
         }
 
+        /* ===== CUSTOM CURSOR ===== */
+        .cursor-dot{position:fixed;width:12px;height:12px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s;mix-blend-mode:difference}
+        .cursor-dot.hover{width:48px;height:48px;background:var(--cream)}
+
+        /* ===== SCROLL PROGRESS ===== */
+        .scroll-progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 10000; }
+        .scroll-progress-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #E31937, #FFD700); transform-origin: left; transform: scaleX(0); }
+
+        /* ===== NAV HIDE/SHOW ===== */
+        .nav-hidden { transform: translateY(-100%); }
+
+        /* ===== REDUCED MOTION ===== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+            .cursor-dot{display:none}
+        }
+        @media (max-width: 768px) { .cursor-dot{display:none} }
+
         /* ===== NAVBAR ===== */
         .navbar {
             position: fixed;
             top: 0; left: 0; right: 0;
             z-index: 200;
             padding: 22px 0;
-            transition: background 0.4s, padding 0.4s;
+            transition: background 0.4s, padding 0.4s, transform 0.4s;
         }
         .navbar.scrolled {
             background: rgba(253, 245, 230, 0.96);
@@ -134,7 +156,7 @@
             background: var(--cream);
             display: flex;
             align-items: center;
-            padding: 140px 64px 80px 64px;
+            padding: 60px 64px 60px 64px;
             position: relative;
             z-index: 1;
         }
@@ -289,7 +311,7 @@
         /* ===== HISTOIRE ===== */
         .histoire {
             background: var(--cream);
-            padding: 120px 0;
+            padding: 56px 0;
         }
         .histoire .inner {
             max-width: 1260px;
@@ -305,8 +327,10 @@
         }
         .histoire-img-wrap img {
             width: 100%;
-            height: 460px;
-            object-fit: cover;
+            height: auto;
+            max-height: 520px;
+            object-fit: contain;
+            border-radius: 12px;
         }
         /* Vertical timeline accent */
         .histoire-img-wrap::before {
@@ -379,7 +403,7 @@
         /* ===== STATS ===== */
         .stats {
             background: var(--cream-dark);
-            padding: 100px 0;
+            padding: 48px 0;
         }
         .stats .inner {
             max-width: 1260px;
@@ -449,7 +473,7 @@
         /* ===== HORIZONTAL GALLERY ===== */
         .gallery {
             background: var(--brown);
-            padding: 100px 0;
+            padding: 48px 0;
         }
         .gallery .inner {
             max-width: 1260px;
@@ -494,9 +518,15 @@
         .hscroll-item img {
             width: 100%;
             height: 420px;
-            object-fit: cover;
             display: block;
             transition: transform 0.6s cubic-bezier(.25,.46,.45,.94);
+        }
+        .hscroll-item img[src$=".png"] {
+            object-fit: contain;
+            background: linear-gradient(135deg, var(--brown) 0%, #2a1a0e 100%);
+        }
+        .hscroll-item img[src$=".jpg"] {
+            object-fit: cover;
         }
         .hscroll-item:hover img { transform: scale(1.04); }
         .hscroll-caption {
@@ -543,24 +573,24 @@
         }
 
         /* ===== REVEAL CLASSES ===== */
-        .reveal {
+        .reveal.js-reveal {
             opacity: 0;
             transform: translateY(40px);
             transition: opacity 0.7s ease-out, transform 0.7s ease-out;
         }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        .reveal-left {
+        .reveal.visible { opacity: 1; transform: translateY(0) !important; }
+        .reveal-left.js-reveal {
             opacity: 0;
             transform: translateX(-50px);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
-        .reveal-left.visible { opacity: 1; transform: translateX(0); }
-        .reveal-right {
+        .reveal-left.visible { opacity: 1; transform: translateX(0) !important; }
+        .reveal-right.js-reveal {
             opacity: 0;
             transform: translateX(50px);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
-        .reveal-right.visible { opacity: 1; transform: translateX(0); }
+        .reveal-right.visible { opacity: 1; transform: translateX(0) !important; }
 
         /* ===== FOOTER ===== */
         .footer {
@@ -614,6 +644,22 @@
             font-style: italic;
         }
 
+        /* ===== PREMIUM MARQUEE TICKER ===== */
+        .marquee-ticker{overflow:hidden;padding:40px 0;border-top:1px solid rgba(212,160,23,.12);border-bottom:1px solid rgba(212,160,23,.12);background:var(--cream)}
+        .marquee-ticker-track{display:flex;gap:60px;white-space:nowrap;will-change:transform}
+        .marquee-ticker-text{font-family:'Bebas Neue',cursive;font-size:clamp(14px,2vw,20px);letter-spacing:.15em;text-transform:uppercase;opacity:.25;color:var(--brown);flex-shrink:0}
+
+        /* ===== CIRCLE REVEAL ===== */
+        .circle-reveal{clip-path:circle(0% at 50% 50%);transition:clip-path 1.2s cubic-bezier(.25,.46,.45,.94)}
+        .circle-reveal.revealed{clip-path:circle(75% at 50% 50%)}
+
+        /* ===== HORIZONTAL SCROLL SECTION ===== */
+        .horizontal-scroll{position:relative;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        .horizontal-scroll .scroll-track{display:flex;gap:20px;width:max-content;padding:40px 0}
+        .horizontal-scroll .scroll-item{flex-shrink:0;width:70vw;max-width:500px;overflow:hidden;border-radius:8px}
+        .horizontal-scroll .scroll-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+        .horizontal-scroll .scroll-item:hover img{transform:scale(1.05)}
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
             .nav-links { display: none; }
@@ -621,7 +667,7 @@
 
             .hero { grid-template-columns: 1fr; min-height: auto; }
             .hero-left {
-                padding: 120px 32px 60px;
+                padding: 56px 32px 48px;
                 order: 1;
             }
             .hero-left::after { display: none; }
@@ -638,7 +684,7 @@
             }
             .histoire-img-wrap::before,
             .histoire-img-wrap::after { display: none; }
-            .histoire-img-wrap img { height: 280px; }
+            .histoire-img-wrap img { max-height: 320px; }
 
             .stats-grid { grid-template-columns: 1fr; gap: 2px; }
 
@@ -653,7 +699,7 @@
         }
 
         @media (max-width: 600px) {
-            .hero-left { padding: 100px 24px 48px; }
+            .hero-left { padding: 56px 24px 40px; }
             .histoire .inner { padding: 0 24px; }
             .stats .inner { padding: 0 24px; }
             .gallery .inner { padding: 0 0 0 24px; }
@@ -663,6 +709,9 @@
     </style>
 </head>
 <body>
+<div class="cursor-dot" id="cursor"></div>
+
+<div class="scroll-progress"><div class="scroll-progress-bar" id="scrollProgress"></div></div>
 
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar" id="navbar">
@@ -706,7 +755,7 @@
 
     <!-- Right: Ken Burns image -->
     <div class="hero-right">
-        <img src="images/hinano/hero.jpg" alt="Hinano - La biere de Tahiti" loading="eager">
+        <img src="images/hinano/hero.jpg" alt="Hinano - La biere de Tahiti" loading="eager" class="scale-scroll">
         <div class="hero-right-overlay"></div>
         <div class="hero-badge">Depuis 1955</div>
     </div>
@@ -729,6 +778,26 @@
     </div>
 </div>
 
+<!-- ===== PREMIUM MARQUEE TICKER ===== -->
+<div class="marquee-ticker">
+    <div class="marquee-ticker-track">
+        <span class="marquee-ticker-text">HINANO</span>
+        <span class="marquee-ticker-text">&bull;</span>
+        <span class="marquee-ticker-text">BRASSERIE DE TAHITI</span>
+        <span class="marquee-ticker-text">&bull;</span>
+        <span class="marquee-ticker-text">DEPUIS 1955</span>
+        <span class="marquee-ticker-text">&bull;</span>
+        <span class="marquee-ticker-text">LA BIERE DE POLYNESIE</span>
+        <span class="marquee-ticker-text">&bull;</span>
+        <span class="marquee-ticker-text">PUNAAUIA</span>
+        <span class="marquee-ticker-text">&bull;</span>
+        <span class="marquee-ticker-text">L'ESPRIT DES ILES</span>
+        <span class="marquee-ticker-text">&bull;</span>
+        <span class="marquee-ticker-text">BRASSEE AU COEUR DU PACIFIQUE</span>
+        <span class="marquee-ticker-text">&bull;</span>
+    </div>
+</div>
+
 <!-- Wave below marquee -->
 <div class="wave-below">
     <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
@@ -740,13 +809,13 @@
 <section class="histoire" id="histoire">
     <div class="inner">
         <div class="histoire-img-wrap reveal-left">
-            <img src="images/hinano/brewery.jpg" alt="Brasserie de Tahiti — Punaauia" loading="lazy">
+            <img src="images/hinano/brewery.jpg" alt="Brasserie de Tahiti — Punaauia" class="scale-scroll circle-reveal">
         </div>
         <div class="histoire-content reveal-right">
             <div class="section-label">Notre Histoire</div>
-            <h2>Plus de 70 ans de brassage polynesien</h2>
-            <p>En 1955, la Brasserie de Tahiti ouvre ses portes a Punaauia. Une biere nait — fraiche, legere, solaire. Elle s'appelle Hinano, comme la fleur de tiare qui incarne la beaute des iles.</p>
-            <p>Aujourd'hui exportee dans plus de 20 pays, Hinano reste brassee sur l'ile ou elle est nee. L'eau pure des montagnes tahitiennes, le soleil du Pacifique, le savoir-faire de nos maitres brasseurs — rien n'a change.</p>
+            <h2 class="word-reveal">Plus de 70 ans de brassage polynesien</h2>
+            <p class="line-reveal">En 1955, la Brasserie de Tahiti ouvre ses portes a Punaauia. Une biere nait — fraiche, legere, solaire. Elle s'appelle Hinano, comme la fleur de tiare qui incarne la beaute des iles.</p>
+            <p class="line-reveal">Aujourd'hui exportee dans plus de 20 pays, Hinano reste brassee sur l'ile ou elle est nee. L'eau pure des montagnes tahitiennes, le soleil du Pacifique, le savoir-faire de nos maitres brasseurs — rien n'a change.</p>
             <div class="histoire-tags">
                 <span class="histoire-tag">Brasserie locale</span>
                 <span class="histoire-tag">Export mondial</span>
@@ -762,9 +831,9 @@
     <div class="inner">
         <div class="stats-header reveal">
             <div class="section-label">En chiffres</div>
-            <h2>Une legende en nombres</h2>
+            <h2 class="word-reveal">Une legende en nombres</h2>
         </div>
-        <div class="stats-grid">
+        <div class="stats-grid stagger-grid">
             <div class="stat-item card">
                 <div class="stat-number" data-target="1955" data-suffix="">
                     <span class="stat-count">0</span>
@@ -800,40 +869,40 @@
                     L'Esprit Hinano
                 </span>
             </div>
-            <h2>Faites defiler</h2>
+            <h2 class="word-reveal">Faites defiler</h2>
             <p class="gallery-hint">Glissez horizontalement pour explorer</p>
         </div>
         <div class="hscroll-container" id="hscroll">
             <div class="hscroll-item">
-                <img src="images/hinano/bottle.png" alt="La bouteille Hinano" loading="lazy">
+                <img src="images/hinano/bottle.png" alt="La bouteille Hinano">
                 <div class="hscroll-caption">
                     <h3>La bouteille iconique</h3>
                     <p>Un design reconnu dans le monde entier</p>
                 </div>
             </div>
             <div class="hscroll-item">
-                <img src="images/hinano/bar.jpg" alt="Bar polynesien" loading="lazy">
+                <img src="images/hinano/bar.jpg" alt="Bar polynesien">
                 <div class="hscroll-caption">
                     <h3>Au comptoir du Pacifique</h3>
                     <p>Le rendez-vous des locaux depuis toujours</p>
                 </div>
             </div>
             <div class="hscroll-item">
-                <img src="images/hinano/glass.png" alt="Verre Hinano" loading="lazy">
+                <img src="images/hinano/glass.png" alt="Verre Hinano">
                 <div class="hscroll-caption">
                     <h3>Servie a la perfection</h3>
                     <p>Bien froide, bien fraiche, bien tahitienne</p>
                 </div>
             </div>
             <div class="hscroll-item">
-                <img src="images/hinano/lifestyle.jpg" alt="Lifestyle Hinano" loading="lazy">
+                <img src="images/hinano/lifestyle.jpg" alt="Lifestyle Hinano">
                 <div class="hscroll-caption">
                     <h3>L'art de vivre polynesien</h3>
                     <p>Fetes, couchers de soleil, moments entre amis</p>
                 </div>
             </div>
             <div class="hscroll-item">
-                <img src="images/hinano/export.png" alt="Hinano export" loading="lazy">
+                <img src="images/hinano/export.png" alt="Hinano export">
                 <div class="hscroll-caption">
                     <h3>Ambassadrice du Pacifique</h3>
                     <p>Exportee dans plus de 50 pays</p>
@@ -864,9 +933,29 @@
     </div>
 </footer>
 
+<!-- ===== CDN LIBS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+
 <!-- ===== JAVASCRIPT ===== -->
 <script>
-    /* --- Navbar scroll --- */
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* --- Reduced motion check --- */
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* === LENIS SMOOTH SCROLL === */
+    let lenis;
+    if (!prefersReduced) {
+        lenis = new Lenis({ duration: 1.3, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => lenis.raf(time * 1000));
+        gsap.ticker.lagSmoothing(0);
+    }
+
+    /* --- Navbar scroll style --- */
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
         navbar.classList.toggle('scrolled', window.scrollY > 60);
@@ -886,53 +975,159 @@
         document.body.style.overflow = '';
     }
 
-    /* --- Intersection Observer: reveals + stat counters --- */
-    const io = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            const el = entry.target;
-            el.classList.add('visible');
-
-            /* Counter animation */
-            const counter = el.querySelector('.stat-count');
-            if (counter) animateCounter(counter);
-
-            io.unobserve(el);
-        });
-    }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
-
-    /* Staggered cards */
-    document.querySelectorAll('.card').forEach((card, i) => {
-        card.style.transitionDelay = `${i * 160}ms`;
-        io.observe(card);
-    });
-
-    /* All reveal elements */
-    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
-        io.observe(el);
-    });
-
-    /* Stat items (not cards) for border animation */
-    document.querySelectorAll('.stat-item').forEach(el => io.observe(el));
-
-    /* --- Counter animation --- */
-    function animateCounter(el) {
-        const target = parseInt(el.dataset.target, 10);
-        let current = 0;
-        const duration = 1400; /* ms */
-        const steps = 60;
-        const step = target / steps;
-        const interval = duration / steps;
-        const timer = setInterval(() => {
-            current += step;
-            if (current >= target) {
-                el.textContent = target.toLocaleString('fr-FR');
-                clearInterval(timer);
-            } else {
-                el.textContent = Math.floor(current).toLocaleString('fr-FR');
-            }
-        }, interval);
+    // === MAGNETIC CURSOR ===
+    const cursor = document.getElementById('cursor');
+    if (cursor && window.matchMedia('(pointer: fine)').matches) {
+      let mx = 0, my = 0, cx = 0, cy = 0;
+      document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+      (function loop() {
+        cx += (mx - cx) * 0.12; cy += (my - cy) * 0.12;
+        cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+        requestAnimationFrame(loop);
+      })();
+      document.querySelectorAll('a, button, .cta-btn, .beer-card').forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+      });
     }
+
+    /* === SCROLL PROGRESS BAR === */
+    gsap.to('#scrollProgress', {
+        scaleX: 1, ease: 'none',
+        scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0.3 }
+    });
+
+    /* === NAV HIDE/SHOW ON SCROLL === */
+    if (!prefersReduced) {
+        let lastScroll = 0;
+        ScrollTrigger.create({
+            onUpdate: (self) => {
+                const scroll = self.scroll();
+                if (scroll > lastScroll && scroll > 80) navbar.classList.add('nav-hidden');
+                else navbar.classList.remove('nav-hidden');
+                lastScroll = scroll;
+            }
+        });
+    }
+
+    /* === WORD REVEAL === */
+    if (!prefersReduced) {
+        document.querySelectorAll('.word-reveal').forEach(el => {
+            const split = new SplitType(el, { types: 'words' });
+            gsap.from(split.words, {
+                yPercent: 100, opacity: 0, stagger: 0.05, duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: { trigger: el, start: 'top 85%' }
+            });
+        });
+    }
+
+    /* === PARALLAX HERO === */
+    if (!prefersReduced) {
+        document.querySelectorAll('[data-parallax]').forEach(img => {
+            const speed = parseFloat(img.dataset.parallax);
+            gsap.to(img, {
+                yPercent: speed * 30, ease: 'none',
+                scrollTrigger: { trigger: img.parentElement, start: 'top top', end: 'bottom top', scrub: 1 }
+            });
+        });
+    }
+
+    // === REVEAL SECTIONS — IntersectionObserver (no GSAP pin dependency) ===
+    const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    revealEls.forEach(el => el.classList.add('js-reveal'));
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+    revealEls.forEach(el => revealObserver.observe(el));
+    // Safety: reveal all after 1.5s if observer never fires
+    setTimeout(() => { revealEls.forEach(el => { el.classList.add('visible'); el.classList.remove('js-reveal'); }); }, 1500);
+
+    /* === REVEAL SECTIONS — REPLACED === */
+    if (false) gsap.utils.toArray('.reveal, .reveal-left, .reveal-right, section').forEach(el => {
+        gsap.from(el, {
+            y: el.classList.contains('reveal-left') ? 0 : (el.classList.contains('reveal-right') ? 0 : 30),
+            x: el.classList.contains('reveal-left') ? -50 : (el.classList.contains('reveal-right') ? 50 : 0),
+            opacity: 0, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 85%' }
+        });
+    });
+
+    /* === STAGGER CARDS — IntersectionObserver === */
+    const cards = document.querySelectorAll('.card, .product-card, .beer-card, .variant-card');
+    if (cards.length) {
+        cards.forEach((card, i) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(40px)';
+            card.style.transition = `opacity 0.8s ease ${i * 0.12}s, transform 0.8s ease ${i * 0.12}s`;
+        });
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    cardObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+        cards.forEach(card => cardObserver.observe(card));
+        // Safety: reveal all cards after 1.5s
+        setTimeout(() => { cards.forEach(c => { c.style.opacity='1'; c.style.transform='none'; }); }, 1500);
+        if (false) ScrollTrigger.batch(cards, {
+            onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.12, duration: 0.8, ease: 'power3.out' }),
+            start: 'top 88%'
+        });
+    }
+
+    /* === STAT ITEMS — border animation via GSAP === */
+    document.querySelectorAll('.stat-item').forEach(el => {
+        ScrollTrigger.create({
+            trigger: el, start: 'top 85%',
+            onEnter: () => el.classList.add('visible'),
+            once: true
+        });
+    });
+
+    /* === HERO ENTRANCE === */
+    if (!prefersReduced) {
+        const heroTitle = document.querySelector('h1');
+        if (heroTitle) {
+            const splitH1 = new SplitType(heroTitle, { types: 'words' });
+            gsap.from(splitH1.words, {
+                yPercent: 100, opacity: 0, stagger: 0.06, duration: 0.8,
+                ease: 'back.out(1.4)', delay: 0.3
+            });
+        }
+    }
+
+    /* === COUNTER ANIMATION === */
+    document.querySelectorAll('.stat-count[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target, 10);
+        if (!target) return;
+        const obj = { val: 0 };
+        ScrollTrigger.create({
+            trigger: el, start: 'top 85%',
+            onEnter: () => {
+                gsap.to(obj, {
+                    val: target, duration: 2, ease: 'power2.out',
+                    onUpdate: () => { el.textContent = Math.round(obj.val).toLocaleString('fr-FR'); }
+                });
+            }, once: true
+        });
+    });
+
+    /* === GALLERY IMAGES SCALE === */
+    gsap.utils.toArray('.hscroll-item img').forEach(img => {
+        gsap.from(img, {
+            scale: 1.1, opacity: 0.6, duration: 1,
+            scrollTrigger: { trigger: img, start: 'top 90%', end: 'top 50%', scrub: 1 }
+        });
+    });
 
     /* --- Horizontal gallery: drag to scroll + progress bar --- */
     const hscroll = document.getElementById('hscroll');
@@ -984,6 +1179,115 @@
 
     /* Init progress */
     updateProgress();
+
+    /* === PREMIUM MARQUEE TICKER (GSAP) === */
+    document.querySelectorAll('.marquee-ticker-track').forEach(track => {
+        const items = track.innerHTML;
+        track.innerHTML += items + items;
+        gsap.to(track, { x: '-50%', duration: 30, ease: 'none', repeat: -1 });
+    });
+
+    /* === IMAGE SCALE-ON-SCROLL === */
+    gsap.utils.toArray('.scale-scroll').forEach(img => {
+        gsap.from(img, {
+            scale: 1.15, ease: 'none',
+            scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1 }
+        });
+    });
+
+    /* === CIRCLE REVEAL === */
+    document.querySelectorAll('.circle-reveal').forEach(el => {
+        ScrollTrigger.create({ trigger: el, start: 'top 80%', onEnter: () => el.classList.add('revealed') });
+    });
+
+    /* === LINE-BY-LINE TEXT REVEAL === */
+    document.querySelectorAll('.line-reveal').forEach(el => {
+        const split = new SplitType(el, { types: 'lines' });
+        split.lines.forEach(line => { line.style.overflow = 'hidden'; });
+        gsap.from(split.lines, {
+            yPercent: 100, opacity: 0, stagger: 0.1, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 85%' }
+        });
+    });
+
+    /* === STAGGER GRID === */
+    document.querySelectorAll('.stagger-grid').forEach(grid => {
+        gsap.from(grid.children, {
+            y: 60, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: grid, start: 'top 85%' }
+        });
+    });
+
+    /* === HORIZONTAL SCROLL SECTION (GSAP PINNED) === */
+    // Horizontal scroll: CSS overflow-x:auto (no GSAP pin)
+
+    // === TEXT SCRAMBLE EFFECT ===
+    class TextScramble {
+      constructor(el) { this.el = el; this.chars = '!<>-_\\/[]{}—=+*^?#'; this.update = this.update.bind(this); }
+      setText(newText) {
+        const oldText = this.el.innerText;
+        const length = Math.max(oldText.length, newText.length);
+        const promise = new Promise(resolve => this.resolve = resolve);
+        this.queue = [];
+        for (let i = 0; i < length; i++) {
+          const from = oldText[i] || '';
+          const to = newText[i] || '';
+          const start = Math.floor(Math.random() * 40);
+          const end = start + Math.floor(Math.random() * 40);
+          this.queue.push({ from, to, start, end });
+        }
+        cancelAnimationFrame(this.frameRequest);
+        this.frame = 0;
+        this.update();
+        return promise;
+      }
+      update() {
+        let output = '';
+        let complete = 0;
+        for (let i = 0, n = this.queue.length; i < n; i++) {
+          let { from, to, start, end, char } = this.queue[i];
+          if (this.frame >= end) { complete++; output += to; }
+          else if (this.frame >= start) {
+            if (!char || Math.random() < 0.28) { char = this.chars[Math.floor(Math.random() * this.chars.length)]; this.queue[i].char = char; }
+            output += '<span style="opacity:.4">' + char + '</span>';
+          } else { output += from; }
+        }
+        this.el.innerHTML = output;
+        if (complete === this.queue.length) { this.resolve(); }
+        else { this.frameRequest = requestAnimationFrame(this.update); this.frame++; }
+      }
+    }
+    setTimeout(() => {
+      const heroP = document.querySelector('.hero-content p, .hero p, .hero-text p');
+      if (heroP) { const fx = new TextScramble(heroP); fx.setText(heroP.textContent); }
+    }, 1200);
+</script>
+
+
+<!-- SAFETY: Force all content visible after 2s (kills GSAP ticker to prevent re-override) -->
+<script>
+setTimeout(function(){
+  // Kill ALL GSAP ScrollTrigger-based animations
+  if(typeof ScrollTrigger!=="undefined"){
+    ScrollTrigger.getAll().forEach(function(st){st.kill()});
+  }
+  if(typeof gsap!=="undefined"){
+    gsap.globalTimeline.getChildren(true,true,true).forEach(function(t){
+      try{t.progress(1);t.kill()}catch(e){}
+    });
+  }
+  // Force everything visible
+  var all=document.querySelectorAll("*");
+  for(var i=0;i<all.length;i++){
+    var el=all[i];
+    var s=window.getComputedStyle(el);
+    if(parseFloat(s.opacity)<0.15&&el.offsetHeight>50&&s.display!=="none"){
+      var c=el.className||"";
+      if(c.indexOf("bubble")>-1||c.indexOf("cursor")>-1||c.indexOf("scroll-progress")>-1||c.indexOf("modal")>-1||c.indexOf("overlay")>-1)continue;
+      el.style.cssText+="opacity:1!important;transform:none!important;";
+    }
+  }
+},2000);
 </script>
 </body>
 </html>

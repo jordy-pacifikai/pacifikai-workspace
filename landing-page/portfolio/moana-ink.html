@@ -5,61 +5,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Moana Ink — Tatouage Artisan | Papeete</title>
 <meta name="description" content="Moana Ink — Studio de tatouage artisanal à Papeete. Motifs polynésiens traditionnels et contemporains par Teiki, artiste tatoueur.">
+<meta property="og:title" content="Moana Ink — Tatouage Polynésien Artisanal">
+<meta property="og:description" content="Chaque pièce raconte une histoire. Tatouage sur mesure par Teiki, héritier du tatau ma'ohi.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--black:#0A0A0A;--ink:#1A1A1A;--bone:#E8E0D4;--accent:#C45D3E;--dim:rgba(232,224,212,.5);--faint:rgba(232,224,212,.2)}
-html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;color:var(--bone);background:var(--black);font-weight:300;line-height:1.8;cursor:crosshair}
 
-/* CUSTOM CURSOR — ink dot */
-.cursor-dot{position:fixed;width:12px;height:12px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:difference}
-.cursor-dot.hover{width:40px;height:40px;background:var(--bone)}
+/* SCROLL PROGRESS BAR */
+.scroll-progress{position:fixed;top:0;left:0;height:3px;z-index:9999;background:var(--accent);transform-origin:left;transform:scaleX(0);will-change:transform}
+
+/* CUSTOM CURSOR — blob with blend */
+.cursor-dot{position:fixed;width:16px;height:16px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .4s cubic-bezier(.25,.46,.45,.94),height .4s cubic-bezier(.25,.46,.45,.94),background .3s,opacity .3s;mix-blend-mode:difference}
+.cursor-dot.hover{width:64px;height:64px;background:var(--bone);opacity:.8}
+.cursor-ring{position:fixed;width:40px;height:40px;border:1px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.4;transition:width .6s,height .6s,opacity .3s,border-color .3s}
+.cursor-ring.hover{width:80px;height:80px;opacity:0}
+
+/* FILM GRAIN OVERLAY */
+.grain{position:fixed;inset:0;z-index:9990;pointer-events:none;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 48px;display:flex;justify-content:space-between;align-items:center;mix-blend-mode:difference}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 48px;display:flex;justify-content:space-between;align-items:center;mix-blend-mode:difference;transition:transform .35s ease}
+nav.nav-hidden{transform:translateY(-100%)}
 .nav-brand{font-family:'Abril Fatface',serif;font-size:24px;color:var(--bone);text-decoration:none}
 .nav-right a{color:var(--dim);text-decoration:none;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-left:32px;transition:color .3s}
 .nav-right a:hover{color:var(--bone)}
 
-/* HERO — FULL IMAGE, TEXT OVERLAID BOTTOM */
+/* HERO — FULL IMAGE, KEN BURNS ZOOM, TEXT OVERLAID */
 .hero{height:100vh;position:relative;overflow:hidden}
-.hero img{width:100%;height:100%;object-fit:cover;filter:grayscale(.4) contrast(1.1)}
-.hero-ov{position:absolute;inset:0;background:linear-gradient(to top,var(--black) 0%,transparent 40%,rgba(10,10,10,.3) 100%)}
+.hero img{width:100%;height:100%;object-fit:cover;filter:grayscale(.35) contrast(1.1);animation:kenBurns 20s ease-in-out infinite alternate}
+@keyframes kenBurns{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.08) translate(-1%,-1%)}}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(to top,var(--black) 0%,rgba(10,10,10,.1) 35%,rgba(10,10,10,.4) 100%)}
 .hero-text{position:absolute;bottom:80px;left:48px;z-index:2}
-.hero-text h1{font-family:'Abril Fatface',serif;font-size:clamp(48px,8vw,96px);line-height:1;margin-bottom:12px}
-.hero-text h1 span{color:var(--accent)}
-.hero-text p{color:var(--dim);font-size:16px;max-width:420px}
+.hero-text h1{font-family:'Abril Fatface',serif;font-size:clamp(52px,9vw,110px);line-height:.95;margin-bottom:16px;letter-spacing:-0.02em}
+.hero-text h1 span{color:var(--accent);display:inline-block}
+.hero-text p{color:var(--dim);font-size:17px;max-width:440px;line-height:1.7}
+.hero-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2}
+.hero-scroll span{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--dim)}
+.hero-scroll .line{width:1px;height:40px;background:var(--accent);animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
 
 /* HORIZONTAL DIVIDER — SVG tattoo line */
 .tattoo-line{text-align:center;padding:80px 0;opacity:.3}
 .tattoo-line svg{width:200px;height:20px}
 
-/* MASONRY GALLERY with hover zoom */
-.gallery{padding:0 48px 120px}
+/* MASONRY GALLERY with hover reveal */
+.gallery{padding:0 48px 60px}
 .gallery-label{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:32px}
-.masonry{columns:3;column-gap:12px}
-.masonry-item{break-inside:avoid;margin-bottom:12px;position:relative;overflow:hidden;border-radius:4px}
-.masonry-item img{width:100%;display:block;filter:grayscale(.6);transition:all .6s cubic-bezier(.25,.46,.45,.94)}
-.masonry-item:hover img{filter:grayscale(0);transform:scale(1.06)}
-.masonry-item::after{content:'';position:absolute;inset:0;background:rgba(196,93,62,.1);opacity:0;transition:opacity .4s}
-.masonry-item:hover::after{opacity:1}
+.masonry{columns:3;column-gap:16px}
+.masonry-item{break-inside:avoid;margin-bottom:16px;position:relative;overflow:hidden;border-radius:6px}
+.masonry-item img{width:100%;display:block;filter:grayscale(.5);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.masonry-item:hover img{filter:grayscale(0);transform:scale(1.08)}
+.masonry-item .item-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.8) 0%,transparent 50%);opacity:0;transition:opacity .5s;display:flex;align-items:flex-end;padding:20px}
+.masonry-item:hover .item-overlay{opacity:1}
+.masonry-item .item-overlay span{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--bone);font-weight:500}
+/* Clip-path reveal on gallery items */
+.masonry-item{clip-path:inset(100% 0 0 0)}
+.masonry-item.clip-visible{clip-path:inset(0 0 0 0);transition:clip-path 1.2s cubic-bezier(.16,1,.3,1)}
 
-/* ABOUT — SPLIT with SVG LINE DRAW */
-.about{padding:120px 48px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+/* ABOUT — SPLIT with LINE DRAW */
+.about{padding:60px 48px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
 .about-text .label{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
-.about-text h2{font-family:'Abril Fatface',serif;font-size:clamp(32px,4vw,48px);margin-bottom:24px;line-height:1.1}
-.about-text p{color:var(--dim);font-size:15px;margin-bottom:16px}
+.about-text h2{font-family:'Abril Fatface',serif;font-size:clamp(32px,4.5vw,52px);margin-bottom:28px;line-height:1.05}
+.about-text p{color:var(--dim);font-size:15px;margin-bottom:16px;line-height:1.9}
 .about-img{position:relative}
-.about-img img{width:100%;border-radius:4px;filter:grayscale(.3)}
+.about-img img{width:100%;border-radius:6px;filter:grayscale(.3);transition:filter .6s}
+.about-img:hover img{filter:grayscale(0)}
 /* Animated border that draws in */
-.draw-border{position:absolute;inset:-12px;border:1px solid var(--accent);border-radius:8px;clip-path:inset(0 100% 100% 0);transition:clip-path 1.5s cubic-bezier(.25,.46,.45,.94)}
+.draw-border{position:absolute;inset:-14px;border:1px solid var(--accent);border-radius:10px;clip-path:inset(0 100% 100% 0);transition:clip-path 1.8s cubic-bezier(.16,1,.3,1)}
 .draw-border.visible{clip-path:inset(0 0 0 0)}
 
+/* TESTIMONIAL */
+.testimonial{padding:120px 48px;text-align:center;max-width:700px;margin:0 auto}
+.testimonial blockquote{font-family:'Abril Fatface',serif;font-size:clamp(22px,3vw,32px);line-height:1.4;color:var(--bone);margin-bottom:24px;font-style:normal}
+.testimonial cite{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-style:normal}
+
 /* PROCESS — 3 STEPS stacked */
-.process{padding:120px 48px;text-align:center}
+.process{padding:56px 48px;text-align:center}
 .process h2{font-family:'Abril Fatface',serif;font-size:36px;margin-bottom:64px}
 .steps{display:flex;gap:48px;justify-content:center;flex-wrap:wrap}
 .step{flex:1;min-width:200px;max-width:300px}
@@ -68,11 +95,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 48px;display:fl
 .step p{color:var(--dim);font-size:14px}
 
 /* CTA */
-.cta{padding:120px 48px;text-align:center;border-top:1px solid var(--faint)}
-.cta h2{font-family:'Abril Fatface',serif;font-size:clamp(28px,4vw,48px);margin-bottom:16px}
-.cta p{color:var(--dim);margin-bottom:32px}
-.cta-btn{display:inline-block;padding:16px 40px;border:1px solid var(--accent);color:var(--bone);text-decoration:none;font-size:13px;letter-spacing:2px;text-transform:uppercase;transition:all .3s}
-.cta-btn:hover{background:var(--accent);border-color:var(--accent)}
+.cta{padding:140px 48px;text-align:center;border-top:1px solid var(--faint);position:relative}
+.cta h2{font-family:'Abril Fatface',serif;font-size:clamp(32px,5vw,56px);margin-bottom:16px;line-height:1.05}
+.cta p{color:var(--dim);margin-bottom:40px;font-size:16px}
+.cta-btn{display:inline-block;padding:18px 48px;border:1px solid var(--accent);color:var(--bone);text-decoration:none;font-size:13px;letter-spacing:3px;text-transform:uppercase;transition:all .4s cubic-bezier(.25,.46,.45,.94);position:relative;overflow:hidden}
+.cta-btn::before{content:'';position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform .4s cubic-bezier(.25,.46,.45,.94);z-index:-1}
+.cta-btn:hover{color:var(--black);border-color:var(--accent)}
+.cta-btn:hover::before{transform:scaleX(1);transform-origin:left}
 
 /* FOOTER */
 footer{padding:48px;border-top:1px solid var(--faint);display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
@@ -80,27 +109,69 @@ footer p{color:rgba(232,224,212,.3);font-size:13px}
 footer a{color:rgba(232,224,212,.3);text-decoration:none}
 
 /* REVEAL */
-.reveal{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(.25,.46,.45,.94)}
-.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal.js-reveal{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(.25,.46,.45,.94)}
+.reveal.visible{opacity:1;transform:translateY(0) !important}
 
 @media(max-width:768px){
   nav{padding:16px 20px}
   .nav-right a{margin-left:16px;font-size:11px}
   .hero-text{left:20px;bottom:40px}
+  .hero-scroll{display:none}
   .gallery{padding:0 20px 80px}
-  .masonry{columns:2;column-gap:8px}
+  .masonry{columns:2;column-gap:10px}
+  .masonry-item{margin-bottom:10px}
   .about{grid-template-columns:1fr;padding:80px 20px;gap:40px}
   .process{padding:80px 20px}
   .steps{flex-direction:column;align-items:center}
   .cta{padding:80px 20px}
+  .testimonial{padding:80px 20px}
   footer{padding:32px 20px;flex-direction:column;text-align:center}
-  .cursor-dot{display:none}
+  .cursor-dot,.cursor-ring{display:none}
+  .counters{flex-wrap:wrap;gap:32px;padding:60px 20px}
+  .horizontal-scroll .scroll-item{width:85vw}
+  .horizontal-scroll .scroll-item img{height:280px}
+}
+/* HORIZONTAL SCROLL SHOWCASE */
+.horizontal-scroll{position:relative;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:var(--ink)}
+.horizontal-scroll .scroll-track{display:flex;gap:24px;width:max-content;padding:60px 0}
+.horizontal-scroll .scroll-item{flex-shrink:0;width:65vw;max-width:520px;overflow:hidden;border-radius:8px;position:relative}
+.horizontal-scroll .scroll-item img{width:100%;height:400px;object-fit:cover;filter:grayscale(.3);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.horizontal-scroll .scroll-item:hover img{filter:grayscale(0);transform:scale(1.04)}
+
+/* MARQUEE TICKER */
+.marquee{overflow:hidden;padding:48px 0;border-top:1px solid rgba(232,224,212,.06);border-bottom:1px solid rgba(232,224,212,.06)}
+.marquee-track{display:flex;gap:48px;white-space:nowrap;will-change:transform}
+.marquee-text{font-size:clamp(14px,2vw,22px);letter-spacing:.2em;text-transform:uppercase;opacity:.25;flex-shrink:0;font-weight:300}
+.marquee-text.accent{opacity:.5;color:var(--accent)}
+
+/* CIRCLE REVEAL */
+.circle-reveal{clip-path:circle(0% at 50% 50%);transition:clip-path 1.2s cubic-bezier(.25,.46,.45,.94)}
+.circle-reveal.revealed{clip-path:circle(75% at 50% 50%)}
+
+/* COUNTERS ROW */
+.counters{padding:80px 48px;display:flex;justify-content:center;gap:64px;border-top:1px solid var(--faint);border-bottom:1px solid var(--faint)}
+.counter-item{text-align:center}
+.counter-num{font-family:'Abril Fatface',serif;font-size:clamp(40px,5vw,64px);color:var(--accent);line-height:1}
+.counter-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-top:8px}
+
+/* DISCLAIMER BANNER */
+.disclaimer-bar{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(196,93,62,.95);color:#fff;text-align:center;padding:10px 20px;font-size:12px;letter-spacing:1px;backdrop-filter:blur(8px)}
+.disclaimer-bar a{color:#fff;text-decoration:underline}
+
+/* REDUCED MOTION */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .cursor-dot{display:none!important}
+  .masonry-item{clip-path:none!important}
 }
 </style>
 </head>
 <body>
 
+<div class="grain"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
 <div class="cursor-dot" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
 <nav>
   <a href="#" class="nav-brand">Moana Ink</a>
@@ -112,45 +183,97 @@ footer a{color:rgba(232,224,212,.3);text-decoration:none}
 </nav>
 
 <section class="hero">
-  <img src="images/moana-ink/hero.jpg" alt="Tatouage polynésien artisanal">
+  <img src="images/moana-ink/hero.jpg" alt="Tatouage polynésien artisanal" data-parallax="0.3" class="scale-scroll">
   <div class="hero-ov"></div>
-  <div class="hero-text reveal">
-    <h1>Moana<br><span>Ink</span></h1>
+  <div class="hero-text">
+    <h1 class="char-stagger">Moana<br><span>Ink</span></h1>
     <p>Tatouage artisanal polynésien par Teiki. Chaque pièce raconte une histoire.</p>
   </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="line"></div></div>
 </section>
 
 <div class="tattoo-line">
   <svg viewBox="0 0 200 20"><path d="M0 10 Q25 0 50 10 T100 10 T150 10 T200 10" fill="none" stroke="#C45D3E" stroke-width="1" stroke-dasharray="4 4"/></svg>
 </div>
 
+<!-- HORIZONTAL SCROLL SHOWCASE -->
+<section class="horizontal-scroll">
+  <div class="scroll-track">
+    <div class="scroll-item"><img src="images/moana-ink/sleeve.jpg" alt="Tatouage bras complet"></div>
+    <div class="scroll-item"><img src="images/moana-ink/back.jpg" alt="Tatouage dos"></div>
+    <div class="scroll-item"><img src="images/moana-ink/motifs.jpg" alt="Motifs polynésiens"></div>
+    <div class="scroll-item"><img src="images/moana-ink/studio.jpg" alt="Studio Moana Ink"></div>
+    <div class="scroll-item"><img src="images/moana-ink/hero.jpg" alt="Encrage en cours"></div>
+    <div class="scroll-item"><img src="images/moana-ink/tools.jpg" alt="Détail tatouage"></div>
+  </div>
+</section>
+
+<!-- MARQUEE TICKER -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span class="marquee-text">TATOUAGE TRADITIONNEL</span>
+    <span class="marquee-text accent">◆</span>
+    <span class="marquee-text">POLYNÉSIE</span>
+    <span class="marquee-text accent">◆</span>
+    <span class="marquee-text">SUR MESURE</span>
+    <span class="marquee-text accent">◆</span>
+    <span class="marquee-text">ARTISANAL</span>
+    <span class="marquee-text accent">◆</span>
+    <span class="marquee-text">PAPEETE</span>
+    <span class="marquee-text accent">◆</span>
+    <span class="marquee-text">HÉRITAGE MA'OHI</span>
+    <span class="marquee-text accent">◆</span>
+  </div>
+</div>
+
 <section class="gallery" id="galerie">
   <div class="gallery-label reveal">Portfolio</div>
   <div class="masonry">
-    <div class="masonry-item"><img src="images/moana-ink/sleeve.jpg" alt="Tatouage bras complet" loading="lazy"></div>
-    <div class="masonry-item"><img src="images/moana-ink/back.jpg" alt="Tatouage dos" loading="lazy"></div>
-    <div class="masonry-item"><img src="images/moana-ink/motifs.jpg" alt="Motifs polynésiens" loading="lazy"></div>
-    <div class="masonry-item"><img src="images/moana-ink/studio.jpg" alt="Studio" loading="lazy"></div>
-    <div class="masonry-item"><img src="images/moana-ink/tools.jpg" alt="Outils" loading="lazy"></div>
-    <div class="masonry-item"><img src="images/moana-ink/hero.jpg" alt="Travail en cours" loading="lazy"></div>
+    <div class="masonry-item"><img src="images/moana-ink/sleeve.jpg" alt="Tatouage bras complet"><div class="item-overlay"><span>Sleeve Complet</span></div></div>
+    <div class="masonry-item"><img src="images/moana-ink/back.jpg" alt="Tatouage dos"><div class="item-overlay"><span>Pièce Dorsale</span></div></div>
+    <div class="masonry-item"><img src="images/moana-ink/motifs.jpg" alt="Motifs polynésiens"><div class="item-overlay"><span>Motifs Ancestraux</span></div></div>
+    <div class="masonry-item"><img src="images/moana-ink/studio.jpg" alt="Studio"><div class="item-overlay"><span>Le Studio</span></div></div>
+    <div class="masonry-item"><img src="images/moana-ink/tools.jpg" alt="Détail"><div class="item-overlay"><span>Détail & Finesse</span></div></div>
+    <div class="masonry-item"><img src="images/moana-ink/hero.jpg" alt="Travail en cours"><div class="item-overlay"><span>En Cours</span></div></div>
   </div>
 </section>
+
+<!-- COUNTERS -->
+<div class="counters">
+  <div class="counter-item">
+    <div class="counter-num" data-count="12" data-suffix="+">0</div>
+    <div class="counter-label">Années d'expérience</div>
+  </div>
+  <div class="counter-item">
+    <div class="counter-num" data-count="2500" data-suffix="+">0</div>
+    <div class="counter-label">Tatouages réalisés</div>
+  </div>
+  <div class="counter-item">
+    <div class="counter-num" data-count="100" data-suffix="%">0</div>
+    <div class="counter-label">Sur mesure</div>
+  </div>
+</div>
 
 <section class="about" id="apropos">
   <div class="about-text reveal">
     <div class="label">L'Artiste</div>
-    <h2>Teiki,<br>Héritier du Tatau</h2>
+    <h2 class="word-reveal">Teiki, Héritier du Tatau</h2>
     <p>Formé par les maîtres tatoueurs de Faa'a, Teiki pratique le tatouage depuis 2012. Son style mêle les motifs ancestraux ma'ohi — tikis, tortues, vagues — à une esthétique contemporaine.</p>
     <p>Chaque création est un dialogue entre l'artiste et le porteur. Pas de catalogue. Que du sur-mesure.</p>
   </div>
   <div class="about-img reveal">
-    <img src="images/moana-ink/tools.jpg" alt="Outils de tatouage traditionnels" loading="lazy">
+    <img src="images/moana-ink/tools.jpg" alt="Outils de tatouage traditionnels" class="circle-reveal">
     <div class="draw-border"></div>
   </div>
 </section>
 
+<section class="testimonial reveal">
+  <blockquote>"Teiki a compris mon histoire avant même que je finisse de la raconter. Le résultat dépasse tout ce que j'imaginais."</blockquote>
+  <cite>— Hina, Papeete</cite>
+</section>
+
 <section class="process reveal">
-  <h2>Le Processus</h2>
+  <h2 class="word-reveal">Le Processus</h2>
   <div class="steps">
     <div class="step">
       <div class="step-num">01</div>
@@ -182,18 +305,253 @@ footer a{color:rgba(232,224,212,.3);text-decoration:none}
   <p>Site réalisé par <a href="https://pacifikai.com">PACIFIK'AI</a></p>
 </footer>
 
+<div class="disclaimer-bar">Site de démonstration — Concept réalisé par <a href="https://pacifikai.com">PACIFIK'AI</a>. Ce site n'est pas affilié à l'entreprise présentée.</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
 <script>
-// Custom cursor
-const cursor=document.getElementById('cursor');
-document.addEventListener('mousemove',e=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px'});
-document.querySelectorAll('a,.masonry-item,.cta-btn').forEach(el=>{
-  el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));
-  el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'));
+// === LENIS SMOOTH SCROLL ===
+const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
+
+// === SCROLL PROGRESS BAR ===
+gsap.to('#scrollProgress', {
+  scaleX: 1, ease: 'none',
+  scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0.3 }
 });
 
-// Reveal + draw-border
-const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.15});
-document.querySelectorAll('.reveal,.draw-border').forEach(el=>obs.observe(el));
+// === NAV HIDE/SHOW ===
+let lastScroll = 0;
+const nav = document.querySelector('nav');
+ScrollTrigger.create({
+  onUpdate: (self) => {
+    const scroll = self.scroll();
+    if (scroll > lastScroll && scroll > 80) nav.classList.add('nav-hidden');
+    else nav.classList.remove('nav-hidden');
+    lastScroll = scroll;
+  }
+});
+
+// === MAGNETIC CURSOR (Level 3 — blob + ring with lerp) ===
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+if (cursor && ring && window.matchMedia('(pointer: fine)').matches) {
+  let mx = 0, my = 0, cx = 0, cy = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function loop() {
+    cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15;
+    rx += (mx - rx) * 0.08; ry += (my - ry) * 0.08;
+    cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a, button, .cta-btn, .masonry-item, .scroll-item').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+  });
+}
+
+// === CHAR STAGGER — Hero title (Level 3) ===
+document.querySelectorAll('.char-stagger').forEach(el => {
+  const split = new SplitType(el, { types: 'chars' });
+  gsap.from(split.chars, {
+    yPercent: 80, opacity: 0, rotateX: -40,
+    stagger: 0.04, duration: 0.7, ease: 'power4.out',
+    scrollTrigger: { trigger: el, start: 'top 85%' }
+  });
+});
+
+// === WORD REVEAL — Section headings ===
+document.querySelectorAll('.word-reveal').forEach(el => {
+  const split = new SplitType(el, { types: 'words' });
+  gsap.from(split.words, {
+    yPercent: 100, opacity: 0, stagger: 0.05, duration: 0.8,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%' }
+  });
+});
+
+// === PARALLAX HERO IMAGE ===
+document.querySelectorAll('[data-parallax]').forEach(img => {
+  const speed = parseFloat(img.dataset.parallax);
+  gsap.to(img, {
+    yPercent: speed * 30, ease: 'none',
+    scrollTrigger: { trigger: img.parentElement, start: 'top top', end: 'bottom top', scrub: 1 }
+  });
+});
+
+// === CLIP-PATH GALLERY REVEAL ===
+document.querySelectorAll('.masonry-item').forEach((item, i) => {
+  gsap.to(item, {
+    scrollTrigger: {
+      trigger: item, start: 'top 90%',
+      onEnter: () => item.classList.add('clip-visible')
+    }
+  });
+});
+
+// === REVEAL SECTIONS — IntersectionObserver (no GSAP pin dependency) ===
+const revealEls = document.querySelectorAll('.reveal');
+revealEls.forEach(el => el.classList.add('js-reveal'));
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0, rootMargin: '50px 0px 50px 0px' });
+revealEls.forEach(el => revealObserver.observe(el));
+// Safety: reveal all after 1.5s if observer never fires
+setTimeout(() => { revealEls.forEach(el => { el.classList.add('visible'); el.classList.remove('js-reveal'); }); }, 1500);
+
+// === DRAW BORDER ANIMATION ===
+document.querySelectorAll('.draw-border').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el, start: 'top 80%',
+    onEnter: () => el.classList.add('visible')
+  });
+});
+
+// === STAGGER STEPS ===
+gsap.from('.step', {
+  y: 40, opacity: 0, stagger: 0.15, duration: 0.8, ease: 'power3.out',
+  scrollTrigger: { trigger: '.steps', start: 'top 80%' }
+});
+
+// === HORIZONTAL SCROLL GALLERY — CSS overflow, no GSAP pin (no blank space) ===
+
+// === IMAGE SCALE ON SCROLL ===
+gsap.utils.toArray('.scale-scroll').forEach(img => {
+  gsap.from(img, {
+    scale: 1.15, ease: 'none',
+    scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1 }
+  });
+});
+
+// === MARQUEE TICKER ===
+document.querySelectorAll('.marquee-track').forEach(track => {
+  const items = track.innerHTML;
+  track.innerHTML += items + items;
+  gsap.to(track, {
+    x: '-50%', duration: 30, ease: 'none', repeat: -1
+  });
+});
+
+// === COUNTER ANIMATION ===
+document.querySelectorAll('[data-count]').forEach(el => {
+  const target = parseInt(el.dataset.count);
+  const suffix = el.dataset.suffix || '';
+  ScrollTrigger.create({
+    trigger: el, start: 'top 85%',
+    onEnter: () => {
+      gsap.to({ val: 0 }, {
+        val: target, duration: 2, ease: 'power2.out',
+        onUpdate: function() { el.textContent = Math.round(this.targets()[0].val) + suffix; }
+      });
+    }, once: true
+  });
+});
+
+// === CIRCLE REVEAL ===
+document.querySelectorAll('.circle-reveal').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el, start: 'top 80%',
+    onEnter: () => el.classList.add('revealed')
+  });
+});
+
+// === CURSOR TEXT LABEL ===
+if (cursor && window.matchMedia('(pointer: fine)').matches) {
+  document.querySelectorAll('.masonry-item, .scroll-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.innerHTML = '<span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;font-weight:500">VOIR</span>';
+      cursor.classList.add('hover');
+      if (ring) ring.classList.add('hover');
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.innerHTML = '';
+      cursor.classList.remove('hover');
+      if (ring) ring.classList.remove('hover');
+    });
+  });
+}
+
+// === TEXT SCRAMBLE EFFECT ===
+class TextScramble {
+  constructor(el) { this.el = el; this.chars = '!<>-_\\/[]{}—=+*^?#'; this.update = this.update.bind(this); }
+  setText(newText) {
+    const oldText = this.el.innerText;
+    const length = Math.max(oldText.length, newText.length);
+    const promise = new Promise(resolve => this.resolve = resolve);
+    this.queue = [];
+    for (let i = 0; i < length; i++) {
+      const from = oldText[i] || '';
+      const to = newText[i] || '';
+      const start = Math.floor(Math.random() * 40);
+      const end = start + Math.floor(Math.random() * 40);
+      this.queue.push({ from, to, start, end });
+    }
+    cancelAnimationFrame(this.frameRequest);
+    this.frame = 0;
+    this.update();
+    return promise;
+  }
+  update() {
+    let output = '';
+    let complete = 0;
+    for (let i = 0, n = this.queue.length; i < n; i++) {
+      let { from, to, start, end, char } = this.queue[i];
+      if (this.frame >= end) { complete++; output += to; }
+      else if (this.frame >= start) {
+        if (!char || Math.random() < 0.28) { char = this.chars[Math.floor(Math.random() * this.chars.length)]; this.queue[i].char = char; }
+        output += '<span style="opacity:.4">' + char + '</span>';
+      } else { output += from; }
+    }
+    this.el.innerHTML = output;
+    if (complete === this.queue.length) { this.resolve(); }
+    else { this.frameRequest = requestAnimationFrame(this.update); this.frame++; }
+  }
+}
+// Scramble the hero subtitle after char-stagger completes
+setTimeout(() => {
+  const heroP = document.querySelector('.hero-text p');
+  if (heroP) {
+    const fx = new TextScramble(heroP);
+    fx.setText(heroP.textContent);
+  }
+}, 1200);
+</script>
+
+
+<!-- SAFETY: Force all content visible after 2s (kills GSAP ticker to prevent re-override) -->
+<script>
+setTimeout(function(){
+  // Kill ALL GSAP ScrollTrigger-based animations
+  if(typeof ScrollTrigger!=="undefined"){
+    ScrollTrigger.getAll().forEach(function(st){st.kill()});
+  }
+  if(typeof gsap!=="undefined"){
+    gsap.globalTimeline.getChildren(true,true,true).forEach(function(t){
+      try{t.progress(1);t.kill()}catch(e){}
+    });
+  }
+  // Force everything visible
+  var all=document.querySelectorAll("*");
+  for(var i=0;i<all.length;i++){
+    var el=all[i];
+    var s=window.getComputedStyle(el);
+    if(parseFloat(s.opacity)<0.15&&el.offsetHeight>50&&s.display!=="none"){
+      var c=el.className||"";
+      if(c.indexOf("bubble")>-1||c.indexOf("cursor")>-1||c.indexOf("scroll-progress")>-1||c.indexOf("modal")>-1||c.indexOf("overlay")>-1)continue;
+      el.style.cssText+="opacity:1!important;transform:none!important;";
+    }
+  }
+},2000);
 </script>
 </body>
 </html>
