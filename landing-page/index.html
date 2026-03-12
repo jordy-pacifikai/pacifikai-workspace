@@ -8,7 +8,7 @@
 
     <link rel="canonical" href="https://pacifikai.com/">
     <link rel="icon" type="image/png" href="/assets/favicon.png">
-    <link rel="apple-touch-icon" href="/assets/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -31,7 +31,7 @@
 
     <style>
         :root {
-            --announce-height: 36px;
+            --announce-height: 40px;
             --bg: #080c14;
             --bg-card: #0d1424;
             --bg-card-hover: #111b30;
@@ -160,6 +160,7 @@
             background: rgba(10, 10, 10, 0.8);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
+            border-top: 3px solid transparent;
         }
 
         .logo {
@@ -707,6 +708,37 @@
             .cta-section { padding: 3rem 1.5rem; }
             .cta-box { padding: 2.5rem 1.5rem; }
             footer { padding: 1.5rem; flex-direction: column; gap: 1rem; }
+        }
+
+        @media (max-width: 768px) {
+            .card-visual {
+                height: 160px;
+            }
+            .card-visual .radar-svg {
+                width: 70px;
+                height: 70px;
+            }
+            .chat-anim .cb {
+                font-size: 0.55rem;
+            }
+            .card-visual-content {
+                font-size: 0.55rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-visual {
+                height: 140px;
+            }
+            .card {
+                padding: 1rem;
+            }
+            .card h3 {
+                font-size: 1rem;
+            }
+            .card p {
+                font-size: 0.8rem;
+            }
         }
 
         /* Animations */
@@ -2299,7 +2331,7 @@
             <span class="section-dot"></span>
         </div>
 
-        <div class="process-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="process-grid">
             <div class="card">
                 <div class="card-visual">
                     <div class="chat-anim">
@@ -3197,6 +3229,16 @@
             sessionStorage.setItem('announce_closed', '1');
         }
         if (sessionStorage.getItem('announce_closed') === '1') closeAnnounce();
+
+        // Sync announce-height with actual bar height
+        function syncAnnounceHeight() {
+            const bar = document.getElementById('announceBar');
+            if (bar && !bar.classList.contains('hidden')) {
+                document.documentElement.style.setProperty('--announce-height', bar.offsetHeight + 'px');
+            }
+        }
+        syncAnnounceHeight();
+        window.addEventListener('resize', syncAnnounceHeight);
 
         // Teaser tooltip
         let teaserDismissed = false;
