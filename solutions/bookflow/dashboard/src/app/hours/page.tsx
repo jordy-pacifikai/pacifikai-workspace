@@ -53,20 +53,44 @@ const DEFAULT_HOURS: HoursState = Object.fromEntries(
 // ─── Parse bookbot_businesses.hours format ────────────────────────────────────
 // Format: "08:00-12:00,13:00-17:00" (with break) or "08:00-17:00" (no break) or "closed"
 
-function parseHoursRecord(record: Record<string, string> | null): HoursState {
+function parseHoursRecord(record: Record<string, unknown> | null): HoursState {
   if (!record) return DEFAULT_HOURS;
 
   const result = { ...DEFAULT_HOURS };
   for (const day of DAY_ORDER) {
-    const val = record[day];
-    if (!val || val === 'closed') {
+    const raw = record[day];
+    if (!raw) {
+      result[day] = { ...DEFAULT_SLOT, isOpen: day !== 'sun' };
+      continue;
+    }
+
+    // Handle object format: {open, close, is_open, break_start, break_end}
+    if (typeof raw === 'object' && raw !== null) {
+      const obj = raw as { open?: string; close?: string; is_open?: boolean; break_start?: string; break_end?: string };
+      if (obj.is_open === false) {
+        result[day] = { ...DEFAULT_SLOT, isOpen: false };
+      } else {
+        result[day] = {
+          isOpen: true,
+          open: obj.open ?? '08:00',
+          close: obj.close ?? '17:00',
+          hasBreak: Boolean(obj.break_start && obj.break_end),
+          breakStart: obj.break_start ?? '12:00',
+          breakEnd: obj.break_end ?? '13:00',
+        };
+      }
+      continue;
+    }
+
+    // Handle string format: "08:00-17:00" or "08:00-12:00,13:00-17:00" or "closed"
+    const val = String(raw);
+    if (val === 'closed') {
       result[day] = { ...DEFAULT_SLOT, isOpen: false };
       continue;
     }
 
     const ranges = val.split(',').map((r) => r.trim());
     if (ranges.length === 2) {
-      // Has break: "08:00-12:00,13:00-17:00"
       const [r1, r2] = ranges;
       const [open, breakStart] = r1.split('-');
       const [breakEnd, close] = r2.split('-');
@@ -79,7 +103,6 @@ function parseHoursRecord(record: Record<string, string> | null): HoursState {
         breakEnd: breakEnd ?? '13:00',
       };
     } else {
-      // No break: "08:00-17:00"
       const [open, close] = ranges[0].split('-');
       result[day] = {
         isOpen: true,
