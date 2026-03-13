@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { verifyMetaSignature } from "@/lib/meta-signature";
 
 function getSupabase() {
   return createClient(
@@ -16,7 +17,15 @@ function getSupabase() {
  */
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    // Verify Meta signature
+    const rawBody = await req.text();
+    const signature = req.headers.get("x-hub-signature-256");
+    if (signature && !verifyMetaSignature(rawBody, signature)) {
+      console.error("[Instagram] Invalid Meta signature — rejecting");
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const body = JSON.parse(rawBody);
 
     if (body.object !== "instagram") {
       return NextResponse.json({ ok: true });
@@ -75,9 +84,28 @@ export async function POST(req: Request) {
         const messageText = event.message?.text;
         if (!messageText) continue;
 
-        // Trigger the same Ve'a handler (multi-channel)
+        const messageId = event.message?.mid ?? null;
+
+        // Fetch sender profile (name) from Instagram Graph API
+        let senderName: string | undefined;
+        if (business.meta_page_token) {
+          try {
+            const profileRes = await fetch(
+              `https://graph.facebook.com/v22.0/${senderId}?fields=name,username&access_token=${business.meta_page_token}`
+            );
+            if (profileRes.ok) {
+              const profile = await profileRes.json();
+              senderName = profile.name || profile.username || undefined;
+            }
+          } catch {
+            // Non-blocking
+          }
+        }
+
+        // Trigger the same Ve'a handler (multi-channel) with idempotencyKey
         const triggerApiUrl = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev";
         const triggerKey = process.env.TRIGGER_SECRET_KEY!;
+        const idempotencyKey = messageId ?? `ig_${senderId}_${Date.now()}`;
         const triggerRes = await fetch(
           `${triggerApiUrl}/api/v1/tasks/bookbot-whatsapp-handler/trigger`,
           {
@@ -95,7 +123,9 @@ export async function POST(req: Request) {
                 businessId: business.id,
                 pageAccessToken: business.meta_page_token ?? undefined,
                 channel: "instagram",
+                senderName,
               },
+              options: { idempotencyKey },
             }),
           }
         );
@@ -122,7 +152,12 @@ export async function GET(req: Request) {
   const token = url.searchParams.get("hub.verify_token");
   const challenge = url.searchParams.get("hub.challenge");
 
-  const verifyToken = process.env.META_VERIFY_TOKEN ?? "vea_verify_2026";
+  const verifyToken = process.env.META_VERIFY_TOKEN;
+  if (!verifyToken) {
+    console.error("[Instagram] META_VERIFY_TOKEN not set");
+    return new Response("Server Error", { status: 500 });
+  }
+
   if (mode === "subscribe" && token === verifyToken) {
     return new Response(challenge ?? "", { status: 200 });
   }

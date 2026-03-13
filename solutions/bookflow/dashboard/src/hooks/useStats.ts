@@ -101,10 +101,11 @@ async function fetchDashboardStats(businessId: string): Promise<DashboardStats> 
       .from('bookbot_appointments')
       .select('id', { count: 'exact', head: true })
       .eq('business_id', businessId)
-      .eq('status', 'pending'),
+      .eq('status', 'pending')
+      .gte('appointment_date', today),
 
     supabase
-      .from('clients')
+      .from('bookbot_clients')
       .select('id', { count: 'exact', head: true })
       .eq('business_id', businessId),
   ]);
@@ -253,7 +254,7 @@ export function useDashboardStats(businessId: string | null) {
     queryKey: statsKeys.dashboard(businessId ?? ''),
     queryFn: () => fetchDashboardStats(businessId!),
     enabled: Boolean(businessId),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 1000,
   });
 }
 
@@ -262,6 +263,6 @@ export function useAdvancedStats(businessId: string | null) {
     queryKey: statsKeys.advanced(businessId ?? ''),
     queryFn: () => fetchAdvancedStats(businessId!),
     enabled: Boolean(businessId),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 1000,
   });
 }

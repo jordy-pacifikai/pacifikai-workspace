@@ -1,13 +1,10 @@
-import { defineConfig } from "@trigger.dev/sdk/v3";
-import { syncEnvVars } from "@trigger.dev/build/extensions/core";
-import { config } from "dotenv";
-import { resolve } from "path";
+import { defineConfig } from "@trigger.dev/sdk";
 
 export default defineConfig({
   project: "proj_fsojxjgkghmjundzloso",
   runtime: "node",
   logLevel: "log",
-  maxDuration: 60,
+  maxDuration: 180,
   dirs: ["./src"],
   retries: {
     enabledInDev: false,
@@ -17,17 +14,5 @@ export default defineConfig({
       minTimeoutInMs: 1000,
       maxTimeoutInMs: 30000,
     },
-  },
-  build: {
-    extensions: [
-      syncEnvVars(async () => {
-        const result = config({ path: resolve(process.cwd(), ".env") });
-        const vars = result.parsed ?? {};
-        return Object.entries(vars).map(([name, value]) => ({
-          name,
-          value,
-        }));
-      }),
-    ],
   },
 });

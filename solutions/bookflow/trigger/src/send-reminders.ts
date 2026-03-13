@@ -1,17 +1,11 @@
-import { schedules, logger } from "@trigger.dev/sdk";
+import { schedules, logger, queue } from "@trigger.dev/sdk";
 import { sendWhatsApp } from "./lib/whatsapp.js";
+import { supaHeaders } from "./lib/supabase-headers.js";
 import type { BusinessConfig } from "./lib/config.js";
 
-const SUPABASE_URL = process.env.SUPABASE_URL!;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY!;
+const reminderQueue = queue({ name: "reminders", concurrencyLimit: 1 });
 
-function supaHeaders() {
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-  };
-}
+const SUPABASE_URL = process.env.SUPABASE_URL!;
 
 interface Appointment {
   id: string;
@@ -28,31 +22,31 @@ interface Business {
   id: string;
   name: string;
   config: Record<string, unknown>;
-  provider: string;
+  phone?: string;
   twilio_sid?: string;
   twilio_token?: string;
   twilio_from?: string;
-  meta_phone_number_id?: string;
+  phone_number_id?: string;
   meta_access_token?: string;
-  human_phone?: string;
   timezone?: string;
 }
 
 function buildBusinessConfig(biz: Business): BusinessConfig {
+  const cfg = (biz.config ?? {}) as Record<string, unknown>;
   return {
     businessId: biz.id,
     businessName: biz.name ?? "",
     services: [],
     openingHours: {},
     timezone: biz.timezone ?? "Pacific/Tahiti",
-    humanPhone: biz.human_phone ?? "",
-    provider: (biz.provider as "twilio" | "meta") ?? "twilio",
+    humanPhone: (cfg.human_phone as string) ?? (biz.phone as string) ?? "",
+    provider: biz.phone_number_id ? "meta" : "twilio",
     twilioSid: biz.twilio_sid,
     twilioToken: biz.twilio_token,
     twilioFrom: biz.twilio_from,
-    metaPhoneNumberId: biz.meta_phone_number_id,
+    metaPhoneNumberId: biz.phone_number_id,
     metaAccessToken: biz.meta_access_token,
-    chatbotConfig: {},
+    chatbotConfig: cfg,
   };
 }
 
@@ -71,10 +65,11 @@ function buildBusinessConfig(biz: Business): BusinessConfig {
 export const sendReminders = schedules.task({
   id: "send-appointment-reminders",
   cron: "*/30 * * * *",
+  queue: reminderQueue,
   run: async () => {
     // 1. Get all businesses
     const bizRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/bookbot_businesses?select=id,name,config,provider,twilio_sid,twilio_token,twilio_from,meta_phone_number_id,meta_access_token,human_phone,timezone`,
+      `${SUPABASE_URL}/rest/v1/bookbot_businesses?select=id,name,config,phone,twilio_sid,twilio_token,twilio_from,phone_number_id,meta_access_token,timezone`,
       { headers: supaHeaders() }
     );
     const businesses: Business[] = await bizRes.json();
@@ -217,13 +212,19 @@ function formatReminder2h(appt: Appointment, businessName: string): string {
   return `${name}, rappel : votre rendez-vous chez ${businessName} pour ${service} est dans 2 heures (${appt.time_slot}). A tout a l'heure !`;
 }
 
-async function markReminderSent(appointmentId: string, level: "24h" | "2h"): Promise<void> {
-  await fetch(
-    `${SUPABASE_URL}/rest/v1/bookbot_appointments?id=eq.${appointmentId}`,
+async function markReminderSent(appointmentId: string, level: "24h" | "2h"): Promise<boolean> {
+  // Conditional PATCH: only update if reminder_sent is still at the expected previous state
+  const expectedPrev = level === "24h" ? "is.null" : "eq.24h";
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?id=eq.${appointmentId}&reminder_sent=${expectedPrev}`,
     {
       method: "PATCH",
-      headers: supaHeaders(),
+      headers: { ...supaHeaders(), Prefer: "return=headers-only" },
       body: JSON.stringify({ reminder_sent: level }),
     }
   );
+  // Check if any row was actually updated (Content-Range header)
+  const range = res.headers.get("content-range");
+  if (range && range.includes("0")) return false; // no rows matched
+  return res.ok;
 }

@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { statsKeys } from './useStats';
 import type { Appointment } from '@/types/database';
 
 // ─── Keys ────────────────────────────────────────────────────────────────────
@@ -45,7 +46,7 @@ async function fetchAppointments(
 }
 
 async function createAppointment(
-  payload: Omit<Appointment, 'id' | 'created_at' | 'updated_at'>,
+  payload: Partial<Appointment> & { business_id: string; client_name: string; appointment_date: string; time_slot: string },
 ): Promise<Appointment> {
   const { data, error } = await supabase
     .from('bookbot_appointments')
@@ -85,7 +86,14 @@ export function useAppointments(
     queryKey: appointmentKeys.list(businessId ?? '', effectiveFilters),
     queryFn: () => fetchAppointments(businessId!, effectiveFilters),
     enabled: Boolean(businessId),
+    staleTime: 30 * 1000,
+    refetchInterval: 60 * 1000,
   });
+}
+
+function invalidateAll(queryClient: ReturnType<typeof useQueryClient>) {
+  queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
+  queryClient.invalidateQueries({ queryKey: statsKeys.all });
 }
 
 export function useCreateAppointment() {
@@ -93,11 +101,9 @@ export function useCreateAppointment() {
 
   return useMutation({
     mutationFn: (
-      payload: Omit<Appointment, 'id' | 'created_at' | 'updated_at'>,
+      payload: Partial<Appointment> & { business_id: string; client_name: string; appointment_date: string; time_slot: string },
     ) => createAppointment(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
-    },
+    onSuccess: () => invalidateAll(queryClient),
   });
 }
 
@@ -107,8 +113,21 @@ export function useUpdateAppointment() {
   return useMutation({
     mutationFn: ({ id, updates }: { id: string; updates: Partial<Appointment> }) =>
       updateAppointmentById(id, updates),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: appointmentKeys.all });
+    onSuccess: () => invalidateAll(queryClient),
+  });
+}
+
+export function useDeleteAppointment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('bookbot_appointments')
+        .delete()
+        .eq('id', id);
+      if (error) throw new Error(error.message);
     },
+    onSuccess: () => invalidateAll(queryClient),
   });
 }

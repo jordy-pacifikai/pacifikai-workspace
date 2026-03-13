@@ -238,57 +238,50 @@ export default function OnboardingPage() {
         }
 
         const { data: existingDashBiz } = await supabase
-          .from('businesses')
+          .from('bookbot_businesses')
           .select('id')
           .eq('id', bizId!)
           .single()
 
+        // Build services JSONB array
+        const validServices = data.services.filter(s => s.name.trim())
+        const servicesJsonb = validServices.map(s => ({
+          name: s.name.trim(),
+          duration: s.duration,
+          price: s.price,
+        }))
+
         if (existingDashBiz) {
           await supabase
-            .from('businesses')
+            .from('bookbot_businesses')
             .update({
               name: data.businessName,
-              category: data.category,
-              address: data.address || null,
+              sector: data.category,
               phone: data.phone || null,
-              opening_hours: openingHoursObj,
-              owner_id: user.id,
+              hours: openingHoursObj,
+              services: servicesJsonb,
+              owner_user_id: user.id,
+              config: {
+                ...(existingDashBiz as Record<string, unknown>).config as Record<string, unknown> ?? {},
+                address: data.address || null,
+              },
             })
             .eq('id', bizId!)
         } else {
-          await supabase.from('businesses').insert({
+          await supabase.from('bookbot_businesses').insert({
             id: bizId!,
             name: data.businessName,
-            slug: data.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-            category: data.category,
-            address: data.address || null,
-            phone: data.phone || null,
-            opening_hours: openingHoursObj,
-            owner_id: user.id,
-            subscription_plan: 'starter',
-            default_slot_duration: 30,
-            booking_buffer: 0,
-            max_advance_booking_days: 30,
-            rating: 0,
-            review_count: 0,
-            total_bookings: 0,
+            sector: data.category,
+            phone: data.phone || '',
+            hours: openingHoursObj,
+            services: servicesJsonb,
+            owner_user_id: user.id,
+            plan: 'starter',
+            slot_duration_min: 30,
+            config: {
+              address: data.address || null,
+            },
           })
-        }
-
-        // 3. Create services in dashboard services table
-        const validServices = data.services.filter(s => s.name.trim())
-        if (validServices.length > 0) {
-          await supabase.from('services').delete().eq('business_id', bizId!)
-          await supabase.from('services').insert(
-            validServices.map((s, i) => ({
-              business_id: bizId!,
-              name: s.name.trim(),
-              duration: s.duration,
-              price: s.price,
-              is_active: true,
-              display_order: i,
-            })),
-          )
         }
       } catch (e) {
         console.warn('Dashboard tables upsert (non-critical):', e)

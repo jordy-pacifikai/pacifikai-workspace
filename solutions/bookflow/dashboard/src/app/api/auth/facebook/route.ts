@@ -10,7 +10,10 @@ function getSupabase() {
 
 const FB_APP_ID = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '';
 const FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET ?? '';
+const FB_CONFIG_ID = process.env.FACEBOOK_CONFIG_ID ?? '2536440043437319';
 const FB_API = 'https://graph.facebook.com/v22.0';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vea.pacifikai.com';
+const REDIRECT_URI = `${SITE_URL}/api/auth/facebook`;
 
 interface FacebookPage {
   id: string;
@@ -20,95 +23,176 @@ interface FacebookPage {
 }
 
 /**
- * POST /api/auth/facebook
- *
- * Receives a short-lived user token from the frontend,
- * exchanges it for a permanent Page Access Token, stores it,
- * and auto-subscribes the page to webhook events.
- *
- * Body: { accessToken: string, businessId: string }
+ * Helper: connect first page automatically (subscribe webhook + store in DB).
  */
-export async function POST(req: NextRequest) {
-  try {
-    const { accessToken, businessId } = await req.json();
+async function autoConnectPage(page: FacebookPage, businessId: string) {
+  const supabase = getSupabase();
 
-    if (!accessToken || !businessId) {
-      return NextResponse.json(
-        { error: 'accessToken and businessId are required' },
-        { status: 400 },
+  // Subscribe to webhook events
+  await fetch(
+    `${FB_API}/${page.id}/subscribed_apps?` +
+      new URLSearchParams({
+        access_token: page.access_token,
+        subscribed_fields: 'messages,messaging_postbacks',
+      }),
+    { method: 'POST' },
+  ).catch(() => {});
+
+  // Store in database
+  await supabase
+    .from('bookbot_businesses')
+    .update({
+      meta_page_id: page.id,
+      meta_page_token: page.access_token,
+      meta_page_name: page.name ?? null,
+      meta_ig_account_id: page.instagram_business_account?.id ?? null,
+      meta_connected_at: new Date().toISOString(),
+    })
+    .eq('id', businessId);
+}
+
+/**
+ * GET /api/auth/facebook
+ *
+ * Two modes:
+ * 1. ?business_id=xxx → Redirect to Facebook OAuth
+ * 2. ?code=xxx&state=xxx → OAuth callback, exchange code for token
+ */
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url);
+  const code = url.searchParams.get('code');
+  const state = url.searchParams.get('state');
+  const errorParam = url.searchParams.get('error');
+
+  // ── OAuth callback ──────────────────────────────────────────────────────
+  if (code && state) {
+    try {
+      const businessId = state;
+
+      // Exchange code for user access token
+      const tokenRes = await fetch(
+        `${FB_API}/oauth/access_token?` +
+          new URLSearchParams({
+            client_id: FB_APP_ID,
+            client_secret: FB_APP_SECRET,
+            redirect_uri: REDIRECT_URI,
+            code,
+          }),
       );
-    }
+      const tokenData = await tokenRes.json();
 
-    if (!FB_APP_SECRET) {
-      return NextResponse.json(
-        { error: 'FACEBOOK_APP_SECRET is not configured on the server' },
-        { status: 500 },
+      if (tokenData.error) {
+        console.error('[Facebook OAuth] Token exchange error:', tokenData.error);
+        return NextResponse.redirect(
+          `${SITE_URL}/channels?fb_error=${encodeURIComponent(tokenData.error.message)}`,
+        );
+      }
+
+      const userToken = tokenData.access_token as string;
+
+      // Exchange short-lived → long-lived user token
+      const exchangeRes = await fetch(
+        `${FB_API}/oauth/access_token?` +
+          new URLSearchParams({
+            grant_type: 'fb_exchange_token',
+            client_id: FB_APP_ID,
+            client_secret: FB_APP_SECRET,
+            fb_exchange_token: userToken,
+          }),
       );
-    }
+      const exchangeData = await exchangeRes.json();
+      const longLivedToken = (exchangeData.access_token ?? userToken) as string;
 
-    // ── Step 1: Exchange short-lived → long-lived user token ──────────────
-    const exchangeRes = await fetch(
-      `${FB_API}/oauth/access_token?` +
-        new URLSearchParams({
-          grant_type: 'fb_exchange_token',
-          client_id: FB_APP_ID,
-          client_secret: FB_APP_SECRET,
-          fb_exchange_token: accessToken,
-        }),
-    );
-    const exchangeData = await exchangeRes.json();
-
-    if (exchangeData.error) {
-      console.error('[Facebook OAuth] Exchange error:', exchangeData.error);
-      return NextResponse.json(
-        { error: `Facebook token exchange failed: ${exchangeData.error.message}` },
-        { status: 400 },
+      // Get user pages (Page Access Tokens are PERMANENT with long-lived user token)
+      const pagesRes = await fetch(
+        `${FB_API}/me/accounts?` +
+          new URLSearchParams({
+            access_token: longLivedToken,
+            fields: 'id,name,access_token,instagram_business_account',
+          }),
       );
-    }
+      const pagesData = await pagesRes.json();
 
-    const longLivedToken = exchangeData.access_token as string;
+      if (pagesData.error) {
+        console.error('[Facebook OAuth] Pages fetch error:', pagesData.error);
+        return NextResponse.redirect(
+          `${SITE_URL}/channels?fb_error=${encodeURIComponent(pagesData.error.message)}`,
+        );
+      }
 
-    // ── Step 2: Get user pages (Page Access Tokens are PERMANENT) ─────────
-    const pagesRes = await fetch(
-      `${FB_API}/me/accounts?` +
-        new URLSearchParams({
-          access_token: longLivedToken,
-          fields: 'id,name,access_token,instagram_business_account',
-        }),
-    );
-    const pagesData = await pagesRes.json();
+      const pages: FacebookPage[] = pagesData.data ?? [];
 
-    if (pagesData.error) {
-      console.error('[Facebook OAuth] Pages fetch error:', pagesData.error);
-      return NextResponse.json(
-        { error: `Failed to fetch pages: ${pagesData.error.message}` },
-        { status: 400 },
-      );
-    }
+      if (pages.length === 0) {
+        return NextResponse.redirect(
+          `${SITE_URL}/channels?fb_error=${encodeURIComponent('Aucune Page Facebook trouvee. Verifie que tu es admin d\'au moins une Page.')}`,
+        );
+      }
 
-    const pages: FacebookPage[] = pagesData.data ?? [];
+      // Auto-connect if only one page
+      if (pages.length === 1) {
+        await autoConnectPage(pages[0], businessId);
+        return NextResponse.redirect(`${SITE_URL}/channels?fb_connected=true`);
+      }
 
-    if (pages.length === 0) {
-      return NextResponse.json(
-        { error: 'Aucune Page Facebook trouvee. Verifie que tu es admin d\'au moins une Page.' },
-        { status: 400 },
-      );
-    }
-
-    // Return the list of pages so the user can choose which one to connect
-    return NextResponse.json({
-      pages: pages.map((p) => ({
+      // Multiple pages — encode in URL for frontend picker
+      const pagesParam = pages.map((p) => ({
         id: p.id,
         name: p.name,
         access_token: p.access_token,
         instagram_business_account_id: p.instagram_business_account?.id ?? null,
-      })),
-      businessId,
-    });
-  } catch (err) {
-    console.error('[Facebook OAuth] Unexpected error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      }));
+
+      return NextResponse.redirect(
+        `${SITE_URL}/channels?fb_pages=${encodeURIComponent(JSON.stringify(pagesParam))}`,
+      );
+    } catch (err) {
+      console.error('[Facebook OAuth] Callback error:', err);
+      return NextResponse.redirect(
+        `${SITE_URL}/channels?fb_error=${encodeURIComponent('Erreur interne lors de la connexion Facebook')}`,
+      );
+    }
   }
+
+  // ── User cancelled or error from Facebook ──────────────────────────────
+  if (errorParam) {
+    return NextResponse.redirect(
+      `${SITE_URL}/channels?fb_error=${encodeURIComponent(errorParam)}`,
+    );
+  }
+
+  // ── Start OAuth flow ────────────────────────────────────────────────────
+  const businessId = url.searchParams.get('business_id');
+
+  if (!businessId) {
+    return NextResponse.json({ error: 'business_id required' }, { status: 400 });
+  }
+
+  const scopes = [
+    'pages_show_list',
+    'pages_manage_metadata',
+    'pages_messaging',
+    'instagram_manage_messages',
+    'public_profile',
+  ].join(',');
+
+  const oauthUrl =
+    `https://www.facebook.com/v22.0/dialog/oauth?` +
+    new URLSearchParams({
+      client_id: FB_APP_ID,
+      redirect_uri: REDIRECT_URI,
+      config_id: FB_CONFIG_ID,
+      state: businessId,
+      response_type: 'code',
+    });
+
+  return NextResponse.redirect(oauthUrl);
+}
+
+/**
+ * POST /api/auth/facebook — kept for backwards compat (unused now).
+ */
+export async function POST(req: NextRequest) {
+  return NextResponse.json({ error: 'Use GET /api/auth/facebook?business_id=xxx instead' }, { status: 400 });
 }
 
 /**

@@ -1,0 +1,184 @@
+{
+  "meta": {
+    "project": "Ve'a Dashboard",
+    "started": "2026-03-11T15:40:00-10:00",
+    "last_updated": "2026-03-11T21:04:00-10:00",
+    "build_method": "manual"
+  },
+  "features": {
+    "confirm-modal": {
+      "status": "green",
+      "completed_at": "2026-03-11T15:47:00-10:00",
+      "notes": "Reusable ConfirmModal component (danger/warning/default variants)"
+    },
+    "delete-appointments": {
+      "status": "green",
+      "completed_at": "2026-03-11T15:48:00-10:00",
+      "notes": "Delete button on appointments page + calendar detail drawer with ConfirmModal"
+    },
+    "sidebar-reorganization": {
+      "status": "green",
+      "completed_at": "2026-03-11T15:45:00-10:00",
+      "notes": "3 groups: Monitoring, Configuration IA, Mon business"
+    },
+    "feature-requests": {
+      "status": "green",
+      "completed_at": "2026-03-11T15:44:00-10:00",
+      "notes": "Full CRUD page + Supabase table bookbot_feature_requests"
+    },
+    "stats-invalidation": {
+      "status": "green",
+      "completed_at": "2026-03-11T16:00:00-10:00",
+      "notes": "invalidateAll() helper invalidates both appointmentKeys.all and statsKeys.all on create/update/delete"
+    },
+    "no-booking-mode": {
+      "status": "green",
+      "completed_at": "2026-03-11T15:50:00-10:00",
+      "notes": "Chatbot conversational mode when services.length === 0 — filters tools to knowledge+transfer only"
+    },
+    "services-data-sync": {
+      "status": "green",
+      "completed_at": "2026-03-11T16:15:00-10:00",
+      "notes": "CRITICAL FIX: useServices.ts now reads/writes bookbot_businesses.services JSONB instead of phantom 'services' table. Dashboard and chatbot now share same data source."
+    },
+    "audit-webhook-security": {
+      "status": "green",
+      "completed_at": "2026-03-11T17:30:00-10:00",
+      "notes": "Meta signature verification (X-Hub-Signature-256) on all 3 webhooks (WhatsApp, Messenger, Instagram). IdempotencyKey from message ID prevents duplicate triggers."
+    },
+    "audit-race-conditions": {
+      "status": "green",
+      "completed_at": "2026-03-11T18:00:00-10:00",
+      "notes": "conversation_count: atomic RPC replaces read-modify-write. Reminders: queue concurrency=1 + conditional PATCH. Handler: retry maxAttempts=1."
+    },
+    "audit-data-integrity": {
+      "status": "green",
+      "completed_at": "2026-03-11T18:15:00-10:00",
+      "notes": "client_phone nullable, pendingCount date filter, cancelActiveAppointment date guard, CalendarSkeleton position fix, supaHeaders extracted to shared module, GCal tokens no longer in logs."
+    },
+    "audit-type-safety": {
+      "status": "green",
+      "completed_at": "2026-03-11T18:20:00-10:00",
+      "notes": "messenger/instagram added to source union type. Supabase client unified to singleton. Import @trigger.dev/sdk (not /v3). syncEnvVars removed. maxDuration 180s."
+    },
+    "db-schema-audit": {
+      "status": "green",
+      "completed_at": "2026-03-11T20:30:00-10:00",
+      "notes": "Full DB schema vs code audit. Fixed: types/database.ts rewrite (hours/sector/owner_user_id/plan), onboarding column names + services JSONB, send-reminders phone_number_id/provider/human_phone, CreateAppointmentModal reminder_sent null, appointments/calendar Source type."
+    },
+    "getutcday-timezone-fix": {
+      "status": "green",
+      "completed_at": "2026-03-11T20:45:00-10:00",
+      "notes": "ROOT CAUSE of wrong Wednesday slots. getDay() → getUTCDay() in trigger/src/utils/dates.ts and dashboard chat-test/route.ts. new Date('YYYY-MM-DD') parsed as UTC midnight, getDay() returns local TZ day."
+    },
+    "chat-test-multirange": {
+      "status": "green",
+      "completed_at": "2026-03-11T20:45:00-10:00",
+      "notes": "chat-test/route.ts: rewrote slot generation to handle multi-range hours (08:00-12:00,13:00-17:00), added overlap detection, added end_time calculation."
+    },
+    "reminder-sent-migration": {
+      "status": "green",
+      "completed_at": "2026-03-11T20:00:00-10:00",
+      "notes": "DB migration: reminder_sent boolean NOT NULL DEFAULT false → text nullable DEFAULT NULL. Supports null/24h/2h states."
+    }
+  },
+  "global": {
+    "build_status": "pass",
+    "deployed_url": "https://vea.pacifikai.com",
+    "trigger_version": "20260312.13",
+    "trigger_tasks": 5
+  },
+  "next": {
+    "feature": null,
+    "action": "none",
+    "context": "Full audit complete including DB schema vs code alignment, getUTCDay timezone fix, multi-range hours parsing, reminder_sent migration. All deployed. Trigger v20260312.13. Pending: META_APP_SECRET env var in Vercel."
+  },
+  "blockers": [],
+  "history": [
+    {
+      "timestamp": "2026-03-11T15:44:00-10:00",
+      "feature": "feature-requests",
+      "action": "completed"
+    },
+    {
+      "timestamp": "2026-03-11T15:45:00-10:00",
+      "feature": "sidebar-reorganization",
+      "action": "completed"
+    },
+    {
+      "timestamp": "2026-03-11T15:47:00-10:00",
+      "feature": "confirm-modal + delete-appointments",
+      "action": "completed"
+    },
+    {
+      "timestamp": "2026-03-11T15:50:00-10:00",
+      "feature": "no-booking-mode",
+      "action": "completed"
+    },
+    {
+      "timestamp": "2026-03-11T16:00:00-10:00",
+      "feature": "stats-invalidation",
+      "action": "completed"
+    },
+    {
+      "timestamp": "2026-03-11T16:15:00-10:00",
+      "feature": "services-data-sync",
+      "action": "completed",
+      "notes": "Critical fix — dashboard was writing to wrong table"
+    },
+    {
+      "timestamp": "2026-03-11T17:30:00-10:00",
+      "feature": "audit-webhook-security",
+      "action": "completed",
+      "notes": "Meta signature + idempotencyKey on WhatsApp/Messenger/Instagram webhooks"
+    },
+    {
+      "timestamp": "2026-03-11T18:00:00-10:00",
+      "feature": "audit-race-conditions",
+      "action": "completed",
+      "notes": "Atomic RPC, reminder queue, handler no-retry"
+    },
+    {
+      "timestamp": "2026-03-11T18:15:00-10:00",
+      "feature": "audit-data-integrity",
+      "action": "completed",
+      "notes": "6 fixes: nullable phone, date filters, shared headers, skeleton position, GCal log leak"
+    },
+    {
+      "timestamp": "2026-03-11T18:20:00-10:00",
+      "feature": "audit-type-safety",
+      "action": "completed",
+      "notes": "Source types, Supabase singleton, SDK import, syncEnvVars removed, maxDuration 180s"
+    },
+    {
+      "timestamp": "2026-03-11T18:27:00-10:00",
+      "feature": "deploy",
+      "action": "completed",
+      "notes": "Trigger.dev v20260312.11 (5 tasks) + Vercel vea.pacifikai.com"
+    },
+    {
+      "timestamp": "2026-03-11T20:00:00-10:00",
+      "feature": "reminder-sent-migration",
+      "action": "completed",
+      "notes": "DB column boolean → text nullable"
+    },
+    {
+      "timestamp": "2026-03-11T20:30:00-10:00",
+      "feature": "db-schema-audit",
+      "action": "completed",
+      "notes": "types/database.ts rewrite, onboarding fixes, send-reminders fixes"
+    },
+    {
+      "timestamp": "2026-03-11T20:45:00-10:00",
+      "feature": "getutcday-timezone-fix + chat-test-multirange",
+      "action": "completed",
+      "notes": "Root cause Wednesday bug: getDay→getUTCDay. Chat-test multi-range hours + overlap detection"
+    },
+    {
+      "timestamp": "2026-03-11T21:00:00-10:00",
+      "feature": "deploy",
+      "action": "completed",
+      "notes": "Trigger.dev v20260312.13 (5 tasks) + Vercel vea.pacifikai.com. Messenger E2E test passed."
+    }
+  ]
+}

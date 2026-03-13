@@ -8,7 +8,7 @@ import { useServices } from '@/hooks/useServices';
 import { cn } from '@/lib/utils';
 import type { Appointment } from '@/types/database';
 
-type Source = Appointment['source'];
+type Source = string;
 
 interface CreateAppointmentModalProps {
   businessId: string;
@@ -59,8 +59,8 @@ export function CreateAppointmentModal({
     try {
       await createMutation.mutateAsync({
         business_id: businessId,
-        client_name: form.client_name || null,
-        client_phone: form.client_phone || null,
+        client_name: form.client_name.trim() || 'Client',
+        client_phone: form.client_phone.trim() || null,
         service: form.service,
         appointment_date: form.appointment_date,
         time_slot: form.time_slot,
@@ -68,7 +68,7 @@ export function CreateAppointmentModal({
         status: 'pending',
         source: form.source,
         notes: form.notes || null,
-        reminder_sent: false,
+        reminder_sent: null,
         gcal_event_id: null,
       });
       onClose();
@@ -133,8 +133,8 @@ export function CreateAppointmentModal({
                 className={inputCls}
               >
                 <option value="">-- Choisir un service --</option>
-                {services?.map((s) => (
-                  <option key={s.id} value={s.name}>
+                {services?.map((s, i) => (
+                  <option key={`${s.name}-${i}`} value={s.name}>
                     {s.name} ({s.duration} min
                     {s.price ? ` · ${s.price.toLocaleString('fr-FR')} XPF` : ''})
                   </option>

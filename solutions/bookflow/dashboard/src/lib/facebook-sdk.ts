@@ -36,7 +36,6 @@ interface FacebookLoginResponse {
 const FB_APP_ID = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '';
 const FB_VERSION = 'v22.0';
 
-let sdkLoaded = false;
 let sdkReady: Promise<void> | null = null;
 
 /**
@@ -46,7 +45,8 @@ export function loadFacebookSDK(): Promise<void> {
   if (sdkReady) return sdkReady;
 
   sdkReady = new Promise<void>((resolve) => {
-    if (sdkLoaded && window.FB) {
+    // Already loaded and initialized
+    if (window.FB) {
       resolve();
       return;
     }
@@ -58,18 +58,42 @@ export function loadFacebookSDK(): Promise<void> {
         xfbml: false,
         version: FB_VERSION,
       });
-      sdkLoaded = true;
       resolve();
     };
 
-    // Inject SDK script
+    // Inject SDK script (only once)
     if (!document.getElementById('facebook-jssdk')) {
       const script = document.createElement('script');
       script.id = 'facebook-jssdk';
       script.src = `https://connect.facebook.net/fr_FR/sdk.js`;
       script.async = true;
       script.defer = true;
+      script.onerror = () => {
+        sdkReady = null;
+        resolve(); // resolve anyway so the error surfaces at FB.login
+      };
       document.head.appendChild(script);
+    } else {
+      // Script tag exists but SDK not ready yet — wait for fbAsyncInit
+      // If FB loaded but fbAsyncInit was already called, init manually
+      const checkInterval = setInterval(() => {
+        if (window.FB) {
+          clearInterval(checkInterval);
+          window.FB.init({
+            appId: FB_APP_ID,
+            cookie: true,
+            xfbml: false,
+            version: FB_VERSION,
+          });
+          resolve();
+        }
+      }, 100);
+      // Timeout after 10s
+      setTimeout(() => {
+        clearInterval(checkInterval);
+        sdkReady = null;
+        resolve();
+      }, 10000);
     }
   });
 
@@ -85,6 +109,12 @@ export async function loginWithFacebook(): Promise<{
   userID: string;
 }> {
   await loadFacebookSDK();
+
+  if (!window.FB) {
+    throw new Error(
+      'Le SDK Facebook n\'a pas pu se charger. Désactive le bloqueur de pubs / Brave Shield pour ce site, puis réessaie.',
+    );
+  }
 
   return new Promise((resolve, reject) => {
     window.FB!.login(

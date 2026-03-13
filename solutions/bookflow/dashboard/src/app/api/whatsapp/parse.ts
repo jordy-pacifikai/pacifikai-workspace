@@ -3,6 +3,7 @@ export interface ParsedMessage {
   message: string;
   buttonPayload: string | null;
   messageType: "text" | "button" | "interactive";
+  messageId: string | null;
 }
 
 /**
@@ -25,6 +26,7 @@ export function parseWhatsAppMessage(
       message: messageText.trim(),
       buttonPayload,
       messageType: buttonPayload ? "button" : "text",
+      messageId: (body.MessageSid as string) ?? null,
     };
   }
 
@@ -58,6 +60,7 @@ export function parseWhatsAppMessage(
         message: messageText.trim(),
         buttonPayload: buttonPayload || null,
         messageType: "interactive",
+        messageId: (msg.id as string) ?? null,
       };
     }
 
@@ -71,6 +74,7 @@ export function parseWhatsAppMessage(
       message: messageText.trim(),
       buttonPayload: null,
       messageType: "text",
+      messageId: (msg.id as string) ?? null,
     };
   }
 

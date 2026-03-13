@@ -198,6 +198,7 @@ export default function SettingsPage() {
     language: 'fr',
     tone: 'chaleureux',
     customInstructions: '',
+    requiredFields: [] as string[],
   });
   const [chatbotSaving, setChatbotSaving] = useState(false);
   const [chatbotSaved, setChatbotSaved] = useState(false);
@@ -230,6 +231,7 @@ export default function SettingsPage() {
       language: cfg.language ?? 'fr',
       tone: cfg.tone ?? 'chaleureux',
       customInstructions: cfg.custom_instructions ?? '',
+      requiredFields: (cfg.required_fields as string[]) ?? [],
     });
     setNotifs({
       reminder24h: cfg.reminder_24h !== false,
@@ -282,6 +284,7 @@ export default function SettingsPage() {
           language: chatbot.language,
           tone: chatbot.tone,
           custom_instructions: chatbot.customInstructions,
+          required_fields: chatbot.requiredFields,
         },
       },
       {
@@ -477,6 +480,36 @@ export default function SettingsPage() {
               </select>
             </FormField>
           </div>
+
+          <FormField
+            label="Informations a collecter avant reservation"
+            hint="Le chatbot demandera ces infos au client avant de confirmer le rendez-vous."
+          >
+            <div className="space-y-1">
+              {[
+                { key: 'phone', label: 'Numero de telephone' },
+                { key: 'email', label: 'Adresse email' },
+                { key: 'notes', label: 'Notes / remarques du client' },
+              ].map((field) => (
+                <label key={field.key} className="flex items-center gap-2 cursor-pointer py-1.5">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-600 bg-gray-800 text-[#25D366] focus:ring-[#25D366]"
+                    checked={chatbot.requiredFields.includes(field.key)}
+                    onChange={(e) => {
+                      setChatbot((f) => ({
+                        ...f,
+                        requiredFields: e.target.checked
+                          ? [...f.requiredFields, field.key]
+                          : f.requiredFields.filter((k) => k !== field.key),
+                      }));
+                    }}
+                  />
+                  <span className="text-sm text-gray-300">{field.label}</span>
+                </label>
+              ))}
+            </div>
+          </FormField>
 
           <FormField
             label="Instructions personnalisees"

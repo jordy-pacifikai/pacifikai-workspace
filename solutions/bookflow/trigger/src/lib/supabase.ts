@@ -1,15 +1,7 @@
 import type { BusinessConfig } from "./config.js";
+import { supaHeaders as headers } from "./supabase-headers.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY!;
-
-function headers() {
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-  };
-}
 
 export interface Session {
   id: string;
@@ -146,27 +138,46 @@ export async function loadBusinessConfig(
 export async function createAppointment(params: {
   businessId: string;
   clientPhone: string;
+  clientName?: string;
+  clientEmail?: string;
+  clientNotes?: string;
   service: string;
   date: string;
   time: string;
+  endTime?: string;
+  source?: string;
 }): Promise<string | null> {
+  const source = params.source
+    ?? (params.clientPhone.startsWith("messenger_") ? "messenger"
+      : params.clientPhone.startsWith("instagram_") ? "instagram"
+      : "whatsapp");
+
+  const row: Record<string, unknown> = {
+    business_id: params.businessId,
+    client_name: params.clientName || params.clientPhone,
+    client_phone: params.clientPhone,
+    service: params.service,
+    appointment_date: params.date,
+    time_slot: params.time,
+    end_time: params.endTime || null,
+    status: "confirmed",
+    source,
+  };
+  if (params.clientEmail) row.client_email = params.clientEmail;
+  if (params.clientNotes) row.client_notes = params.clientNotes;
+
   const res = await fetch(`${SUPABASE_URL}/rest/v1/bookbot_appointments`, {
     method: "POST",
     headers: { ...headers(), Prefer: "return=representation" },
-    body: JSON.stringify({
-      business_id: params.businessId,
-      client_name: params.clientPhone,
-      client_phone: params.clientPhone,
-      service: params.service,
-      appointment_date: params.date,
-      time_slot: params.time,
-      status: "confirmed",
-      source: "whatsapp",
-    }),
+    body: JSON.stringify(row),
   });
   const data = await res.json();
-  const row = Array.isArray(data) ? data[0] : data;
-  return row?.id ?? null;
+  if (!res.ok) {
+    console.error("[createAppointment] Insert failed:", res.status, JSON.stringify(data));
+    return null;
+  }
+  const created = Array.isArray(data) ? data[0] : data;
+  return created?.id ?? null;
 }
 
 export async function updateAppointmentGCalId(
@@ -186,9 +197,9 @@ export async function updateAppointmentGCalId(
 export async function getBookingsForDate(
   businessId: string,
   date: string
-): Promise<{ time_slot: string; service: string }[]> {
+): Promise<{ time_slot: string; end_time: string | null; service: string }[]> {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/bookbot_appointments?business_id=eq.${businessId}&appointment_date=eq.${date}&status=eq.confirmed&select=time_slot,service`,
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?business_id=eq.${businessId}&appointment_date=eq.${date}&status=in.(confirmed,pending)&select=time_slot,end_time,service`,
     { headers: headers() }
   );
   const data = await res.json();
@@ -247,7 +258,8 @@ export async function searchKnowledgeBase(
   }
 
   // Fallback: full-text search on bookbot_embeddings.fts
-  const ftsQuery = query.split(/\s+/).filter(Boolean).join(" & ");
+  const sanitizeToken = (w: string) => w.replace(/[!&|():*%_'"\\]/g, "");
+  const ftsQuery = query.split(/\s+/).map(sanitizeToken).filter(Boolean).join(" & ");
   const res = await fetch(
     `${SUPABASE_URL}/rest/v1/bookbot_embeddings?business_id=eq.${businessId}&fts=fts.${encodeURIComponent(ftsQuery)}&select=chunk_text&limit=5`,
     { headers: headers() }
@@ -263,8 +275,9 @@ export async function searchKnowledgeBase(
   }
 
   // Last fallback: direct text search on bookbot_knowledge
+  const safeQuery = query.slice(0, 50).replace(/[*%_]/g, "");
   const kRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/bookbot_knowledge?business_id=eq.${businessId}&content=ilike.*${encodeURIComponent(query.slice(0, 50))}*&select=title,content,category&limit=5`,
+    `${SUPABASE_URL}/rest/v1/bookbot_knowledge?business_id=eq.${businessId}&content=ilike.*${encodeURIComponent(safeQuery)}*&select=title,content,category&limit=5`,
     { headers: headers() }
   );
   const kData = await kRes.json();
@@ -393,12 +406,34 @@ export async function refreshGCalBlockedSlots(
   }
 }
 
+export async function getClientAppointments(
+  phone: string,
+  businessId: string
+): Promise<{ id: string; service: string; appointment_date: string; time_slot: string; status: string }[]> {
+  const todayISO = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Pacific/Tahiti",
+    year: "numeric", month: "2-digit", day: "2-digit",
+  }).format(new Date());
+
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?client_phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&appointment_date=gte.${todayISO}&status=in.(confirmed,pending)&order=appointment_date.asc&limit=5&select=id,service,appointment_date,time_slot,status`,
+    { headers: headers() }
+  );
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
+
 export async function cancelActiveAppointment(
   phone: string,
   businessId: string
 ): Promise<{ found: boolean; details?: string; gcalEventId?: string }> {
+  const todayISO = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Pacific/Tahiti",
+    year: "numeric", month: "2-digit", day: "2-digit",
+  }).format(new Date());
+
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/bookbot_appointments?client_phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&status=eq.confirmed&order=appointment_date.asc&limit=1&select=id,appointment_date,time_slot,gcal_event_id`,
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?client_phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&status=eq.confirmed&appointment_date=gte.${todayISO}&order=appointment_date.asc&limit=1&select=id,appointment_date,time_slot,gcal_event_id`,
     { headers: headers() }
   );
   const data = await res.json();

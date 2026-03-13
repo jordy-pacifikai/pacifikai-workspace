@@ -6,6 +6,7 @@ import {
   updateSession,
   createAppointment,
   updateAppointmentGCalId,
+  getClientAppointments,
   cancelActiveAppointment,
   getBookingsForDate,
   getBlockedSlotsForDate,
@@ -77,19 +78,31 @@ const BOOKBOT_TOOLS: OpenAI.ChatCompletionTool[] = [
     function: {
       name: "book_appointment",
       description:
-        "Confirme et crée un rendez-vous. IMPORTANT : tu DOIS avoir demandé confirmation au client AVANT d'appeler cet outil.",
+        "Crée et enregistre un rendez-vous dans la base de données. Appelle cet outil DÈS QUE le client a confirmé (dit oui/ok/parfait). Sans cet appel, le rendez-vous n'est PAS sauvegardé.",
       parameters: {
         type: "object",
         properties: {
           service: { type: "string", description: "Nom du service" },
           date: { type: "string", description: "Date au format YYYY-MM-DD" },
           time: { type: "string", description: "Heure au format HH:MM" },
-          client_name: {
-            type: "string",
-            description: "Prénom ou nom du client",
-          },
+          client_name: { type: "string", description: "Prénom ou nom du client" },
+          client_phone: { type: "string", description: "Numéro de téléphone du client (si collecté)" },
+          client_email: { type: "string", description: "Email du client (si collecté)" },
+          client_notes: { type: "string", description: "Notes ou remarques du client (si collecté)" },
         },
         required: ["service", "date", "time", "client_name"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_my_appointments",
+      description:
+        "Récupère les rendez-vous à venir du client (confirmés ou en attente). Utilise cet outil AVANT de proposer un nouveau créneau pour vérifier si le client a déjà un RDV.",
+      parameters: {
+        type: "object",
+        properties: {},
       },
     },
   },
@@ -136,14 +149,24 @@ function getTahitiDate(): string {
 }
 
 function getTahitiDateISO(): string {
-  const now = new Date();
-  const tahiti = new Date(
-    now.toLocaleString("en-US", { timeZone: "Pacific/Tahiti" })
-  );
-  return `${tahiti.getFullYear()}-${String(tahiti.getMonth() + 1).padStart(2, "0")}-${String(tahiti.getDate()).padStart(2, "0")}`;
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Pacific/Tahiti",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(new Date()); // "YYYY-MM-DD"
 }
 
-function buildSystemPrompt(config: BusinessConfig, today: string): string {
+function channelLabel(channel: string): string {
+  switch (channel) {
+    case "messenger": return "Messenger";
+    case "instagram": return "Instagram";
+    default: return "WhatsApp";
+  }
+}
+
+function buildSystemPrompt(config: BusinessConfig, today: string, channel = "whatsapp"): string {
   const services = parseAllServices(config.services)
     .map(
       (s) =>
@@ -194,17 +217,56 @@ function buildSystemPrompt(config: BusinessConfig, today: string): string {
     ? `\n\n## Instructions spéciales du professionnel\n${customInstructions}`
     : '';
 
-  return `Tu es l'assistant WhatsApp de ${config.businessName}. Ta langue par défaut est le ${language}, ton ${tone}. Tu es basé en Polynésie française.
+  // Required fields before booking
+  const requiredFields = (cfg.required_fields as string[]) ?? [];
+  const fieldLabels: Record<string, string> = {
+    phone: "numéro de téléphone",
+    email: "adresse email",
+    notes: "remarques ou notes",
+  };
+  const requiredFieldsSection = requiredFields.length > 0
+    ? `\n\n## Informations à collecter AVANT de réserver\nAvant d'appeler \`book_appointment\`, tu DOIS avoir collecté ces informations :\n${requiredFields.map((f) => `- ${fieldLabels[f] ?? f}`).join("\n")}\nSi le client ne les a pas fournies, demande-les poliment.`
+    : '';
 
-## Ton rôle
-- Aider les clients à prendre rendez-vous, répondre à leurs questions, gérer les annulations
-- Tu es un assistant amical, pas un robot. Adapte ton ton au client.${greetingInstruction}
+  const chan = channelLabel(channel);
+  const hasBooking = config.services.length > 0;
+
+  // ── Règle anti-improvisation (commune aux 2 modes) ──
+  const antiImprovisation = `
+## RÈGLE FONDAMENTALE — NE JAMAIS INVENTER
+- NE JAMAIS promettre, mentionner ou suggérer quoi que ce soit qui n'est pas explicitement dans ce prompt ou dans les résultats des outils
+- NE JAMAIS mentionner : appel téléphonique, rappel par téléphone, confirmation par email, SMS de confirmation, délai de traitement, validation manuelle, devis, ou tout autre processus non décrit ici
+- NE JAMAIS improviser des formules de politesse qui impliquent une action future (ex: "on vous recontactera", "vous recevrez un appel", "nous vous enverrons une confirmation")
+- Si tu ne sais pas → utilise \`search_knowledge_base\`. Si toujours sans réponse → \`transfer_to_human\`. JAMAIS inventer.
+- Tes seules sources d'information autorisées : ce prompt + les résultats des outils`;
+
+  if (!hasBooking) {
+    // ── Mode assistant conversationnel (sans réservation) ──
+    return `Tu es l'assistant ${chan} de ${config.businessName}. Langue : ${language}. Ton : ${tone}.${greetingInstruction}
+${antiImprovisation}
 
 ## Langue
-- Ta langue par défaut est le ${language}
-- Si le client écrit en anglais, réponds en anglais
-- Si le client écrit en tahitien (reo Māʼohi), réponds en tahitien
-- Adapte automatiquement ta langue à celle du client, sans le mentionner
+- Langue par défaut : ${language}
+- Si le client écrit en anglais → réponds en anglais. En tahitien → réponds en tahitien.
+
+## Aujourd'hui
+${today} (timezone: ${config.timezone})
+
+## Règles OBLIGATOIRES
+1. Utilise \`search_knowledge_base\` pour toute question spécifique au business
+2. Question hors compétence ou client demande un humain → \`transfer_to_human\`
+3. Réponses COURTES (2-4 phrases max) — c'est ${chan}, pas un email
+4. Tu ne gères PAS de rendez-vous. Si le client en demande → \`transfer_to_human\`
+5. Accueil : présente-toi comme l'assistant de ${config.businessName} et demande comment aider${customSection}`;
+  }
+
+  // ── Mode complet avec réservation ──
+  return `Tu es l'assistant ${chan} de ${config.businessName}. Langue : ${language}. Ton : ${tone}.${greetingInstruction}
+${antiImprovisation}
+
+## Langue
+- Langue par défaut : ${language}
+- Si le client écrit en anglais → réponds en anglais. En tahitien → réponds en tahitien.
 
 ## Services proposés
 ${services}
@@ -217,15 +279,32 @@ ${today} (timezone: ${config.timezone})
 
 ## Règles OBLIGATOIRES
 1. TOUJOURS utiliser \`check_availability\` avant de proposer un créneau — NE JAMAIS inventer de disponibilité
-2. TOUJOURS demander confirmation explicite au client ("C'est bon pour toi ?" ou "Je confirme ?") AVANT d'appeler \`book_appointment\`
-3. Demander le prénom du client avant de réserver
-4. Si une question est hors de tes compétences ou que le client demande un humain, utilise \`transfer_to_human\`
-5. Utilise \`search_knowledge_base\` pour les questions spécifiques (politique annulation, parking, produits, etc.)
-6. Réponses COURTES (2-4 phrases max) — c'est WhatsApp, pas un email
-7. Si le client te salue, présente-toi brièvement et demande comment tu peux aider
-8. NE JAMAIS proposer de dates dans le passé. La date minimale est demain.
-9. Si le client donne une date en texte ("lundi prochain", "demain"), convertis en YYYY-MM-DD avant d'appeler les outils
-10. Ta langue par défaut est le ${language}, mais adapte-toi à la langue du client automatiquement${customSection}`;
+2. TOUJOURS demander confirmation explicite ("C'est bon pour toi ?" ou "Je confirme ?") AVANT d'appeler \`book_appointment\`
+3. Quand le client CONFIRME (dit "oui", "ok", "c'est bon", "parfait"...), appelle \`book_appointment\` IMMÉDIATEMENT. NE JAMAIS dire "confirmé" sans avoir appelé l'outil.
+4. Demander le prénom du client avant de réserver (sauf si déjà connu)
+5. Quand le client veut un RDV → d'abord \`get_my_appointments\` pour vérifier s'il en a déjà un
+6. Question hors compétence ou client demande un humain → \`transfer_to_human\`
+7. Questions spécifiques (annulation, parking, produits...) → \`search_knowledge_base\`
+8. Réponses COURTES (2-4 phrases max) — c'est ${chan}, pas un email
+9. NE JAMAIS proposer de dates dans le passé. Date minimale : demain.
+10. Date en texte ("lundi prochain", "demain") → convertis en YYYY-MM-DD avant d'appeler les outils
+
+## PROCESSUS DE RÉSERVATION (ordre strict)
+1. Client demande RDV → demande service + date/heure souhaitée
+2. Appelle \`check_availability\`
+3. Propose le créneau disponible + demande confirmation
+4. Client confirme → appelle \`book_appointment\` IMMÉDIATEMENT
+5. Après \`book_appointment\`, envoie EXACTEMENT ce message (adapte les valeurs) :
+   "✅ RDV confirmé !
+   [Service] — [Date lisible] à [Heure]
+   À bientôt chez ${config.businessName} !"
+   NE PAS ajouter d'autres phrases. NE PAS mentionner d'appel, email, SMS ou autre contact.
+
+## SCRIPTS FIXES (utilise exactement ces formules)
+- Après annulation réussie : "✅ Ton rendez-vous a bien été annulé. N'hésite pas si tu veux en reprendre un !"
+- Après annulation — aucun RDV trouvé : "Je ne trouve pas de rendez-vous actif pour toi. Si tu penses que c'est une erreur, je peux te mettre en contact avec l'équipe."
+- Après \`transfer_to_human\` : "Je te mets en contact avec l'équipe de ${config.businessName}. À très vite !"
+- Question sans réponse dans la base : "Je n'ai pas cette information, mais l'équipe de ${config.businessName} pourra t'aider directement."${requiredFieldsSection}${customSection}`;
 }
 
 async function executeTool(
@@ -274,8 +353,14 @@ async function executeTool(
           const twoDaysFromNow = new Date();
           twoDaysFromNow.setDate(twoDaysFromNow.getDate() + 2);
           if (requestedDate <= twoDaysFromNow) {
-            const dayStart = `${date}T00:00:00Z`;
-            const dayEnd = `${date}T23:59:59Z`;
+            // Use business timezone offset (Tahiti = UTC-10) for GCal query bounds
+            const tz = config.timezone || "Pacific/Tahiti";
+            const dayStartLocal = new Date(`${date}T00:00:00`);
+            const dayEndLocal = new Date(`${date}T23:59:59`);
+            // Get UTC offset for the business timezone
+            const offsetMs = dayStartLocal.getTime() - new Date(dayStartLocal.toLocaleString("en-US", { timeZone: tz })).getTime();
+            const dayStart = new Date(dayStartLocal.getTime() - offsetMs).toISOString();
+            const dayEnd = new Date(dayEndLocal.getTime() - offsetMs).toISOString();
             const freshEvents = await listGCalEvents(
               config.gcalRefreshToken,
               config.gcalCalendarId,
@@ -322,31 +407,44 @@ async function executeTool(
         return `Le commerce est fermé le ${date}.\n\nProchaines dates possibles :\n${nextDates.map((d) => `- ${d.label} (${d.value})`).join("\n")}`;
       }
 
-      const takenTimes = new Set(bookings.map((b) => b.time_slot));
+      // Build list of occupied time ranges [startMins, endMins)
+      const occupiedRanges: { start: number; end: number }[] = [];
 
-      // Add blocked time ranges to taken set
+      // Add bookings (use end_time if available, else estimate with default 30 min)
+      for (const b of bookings) {
+        const bParts = b.time_slot.split(":").map(Number);
+        const bStart = (bParts[0] ?? 0) * 60 + (bParts[1] ?? 0);
+        let bEnd: number;
+        if (b.end_time) {
+          const eParts = b.end_time.split(":").map(Number);
+          bEnd = (eParts[0] ?? 0) * 60 + (eParts[1] ?? 0);
+        } else {
+          // Legacy bookings without end_time — assume default slot duration
+          bEnd = bStart + 30;
+        }
+        occupiedRanges.push({ start: bStart, end: bEnd });
+      }
+
+      // Add blocked time ranges
       for (const block of blockedSlots) {
         if (block.time_from && block.time_to) {
-          const fromH = parseInt(block.time_from.split(":")[0] ?? "0");
-          const fromM = parseInt(block.time_from.split(":")[1] ?? "0");
-          const toH = parseInt(block.time_to.split(":")[0] ?? "0");
-          const toM = parseInt(block.time_to.split(":")[1] ?? "0");
-          // Mark all 30-min slots within the blocked range
-          for (let h = fromH; h <= toH; h++) {
-            for (const m of [0, 30]) {
-              const slotMins = h * 60 + m;
-              const blockStart = fromH * 60 + fromM;
-              const blockEnd = toH * 60 + toM;
-              if (slotMins >= blockStart && slotMins < blockEnd) {
-                takenTimes.add(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-              }
-            }
-          }
+          const fromParts = block.time_from.split(":").map(Number);
+          const toParts = block.time_to.split(":").map(Number);
+          occupiedRanges.push({
+            start: (fromParts[0] ?? 0) * 60 + (fromParts[1] ?? 0),
+            end: (toParts[0] ?? 0) * 60 + (toParts[1] ?? 0),
+          });
         }
       }
 
-      // Filter out taken slots
-      const available = allSlots.filter((s) => !takenTimes.has(s.value));
+      // Filter out slots that would overlap with any occupied range
+      const available = allSlots.filter((s) => {
+        const sParts = s.value.split(":").map(Number);
+        const slotStart = (sParts[0] ?? 0) * 60 + (sParts[1] ?? 0);
+        const slotEnd = slotStart + duration;
+        // Check overlap: two ranges [a,b) and [c,d) overlap if a < d && c < b
+        return !occupiedRanges.some((r) => slotStart < r.end && r.start < slotEnd);
+      });
 
       if (available.length === 0) {
         // Suggest next available dates (skip all-day blocked dates)
@@ -362,29 +460,39 @@ async function executeTool(
       const date = input.date as string;
       const time = input.time as string;
       const clientName = input.client_name as string;
+      const clientEmail = (input.client_email as string) || undefined;
+      const clientNotes = (input.client_notes as string) || undefined;
+      const clientPhoneCollected = (input.client_phone as string) || undefined;
+
+      // Calculate end_time from service duration
+      const services = parseAllServices(config.services);
+      const svc = services.find((s) => s.name.toLowerCase() === service.toLowerCase());
+      const duration = svc?.duration ?? 30;
+      const timeParts = time.split(":").map(Number);
+      const startH = timeParts[0] ?? 0;
+      const startM = timeParts[1] ?? 0;
+      const endMins = startH * 60 + startM + duration;
+      const endH = Math.floor(endMins / 60);
+      const endM = endMins % 60;
+      const endTime = `${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}`;
 
       const appointmentId = await createAppointment({
         businessId: config.businessId,
-        clientPhone,
+        clientPhone: clientPhoneCollected || clientPhone,
+        clientName: clientName || undefined,
+        clientEmail,
+        clientNotes,
         service,
         date,
         time,
+        endTime,
       });
 
       // Push to Google Calendar if connected
       if (appointmentId && config.gcalRefreshToken && config.gcalCalendarId) {
         try {
-          const services = parseAllServices(config.services);
-          const svc = services.find((s) => s.name.toLowerCase() === service.toLowerCase());
-          const duration = svc?.duration ?? 30;
           const startDT = `${date}T${time}:00`;
-          const timeParts = time.split(":").map(Number);
-          const startH = timeParts[0] ?? 0;
-          const startM = timeParts[1] ?? 0;
-          const endMins = startH * 60 + startM + duration;
-          const endH = Math.floor(endMins / 60);
-          const endM = endMins % 60;
-          const endDT = `${date}T${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}:00`;
+          const endDT = `${date}T${endTime}:00`;
 
           const eventId = await createGCalEvent({
             refreshToken: config.gcalRefreshToken,
@@ -408,6 +516,16 @@ async function executeTool(
       });
 
       return `Rendez-vous confirmé !\n- Service : ${service}\n- Date : ${date}\n- Heure : ${time}\n- Client : ${clientName}`;
+    }
+
+    case "get_my_appointments": {
+      const appointments = await getClientAppointments(clientPhone, config.businessId);
+      if (appointments.length === 0) {
+        return "Aucun rendez-vous à venir trouvé pour ce client.";
+      }
+      return `Rendez-vous à venir :\n${appointments.map(
+        (a) => `- ${a.service} le ${a.appointment_date} à ${a.time_slot} (${a.status})`
+      ).join("\n")}`;
     }
 
     case "cancel_appointment": {
@@ -445,6 +563,7 @@ export async function runBookingAgent(
     from: string;
     message: string;
     buttonPayload: string | null;
+    channel?: string;
   },
   config: BusinessConfig
 ): Promise<string> {
@@ -462,19 +581,38 @@ export async function runBookingAgent(
   const userText = payload.buttonPayload ?? payload.message;
   history.push({ role: "user", content: userText });
 
+  // Determine if booking mode is active (has services configured)
+  const hasBooking = config.services.length > 0;
+
+  // Filter tools based on booking mode
+  const activeTools = hasBooking
+    ? BOOKBOT_TOOLS
+    : BOOKBOT_TOOLS.filter((t) =>
+        ["search_knowledge_base", "transfer_to_human"].includes(
+          t.function.name
+        )
+      );
+
   // Build messages for DeepSeek
+  const systemPrompt = buildSystemPrompt(config, getTahitiDate(), payload.channel);
+  // Inject known client name so LLM doesn't re-ask
+  const clientNameHint = session.client_name
+    ? `\n\n## Client actuel\nLe client s'appelle **${session.client_name}**. Ne lui redemande PAS son nom.`
+    : "";
   const messages: OpenAI.ChatCompletionMessageParam[] = [
-    { role: "system", content: buildSystemPrompt(config, getTahitiDate()) },
+    { role: "system", content: systemPrompt + clientNameHint },
     ...history,
   ];
   let finalReply = "";
+  let toolWasCalled = false;
+  let bookAppointmentCalled = false;
   const maxIterations = 5;
 
   for (let i = 0; i < maxIterations; i++) {
     const response = await client.chat.completions.create({
       model: "deepseek-chat",
       max_tokens: 1024,
-      tools: BOOKBOT_TOOLS,
+      tools: activeTools,
       messages,
     });
 
@@ -483,7 +621,8 @@ export async function runBookingAgent(
 
     const msg = choice.message;
 
-    if (choice.finish_reason === "tool_calls" && msg.tool_calls?.length) {
+    if (msg.tool_calls?.length) {
+      toolWasCalled = true;
       // Add assistant message with tool calls to conversation
       messages.push(msg);
 
@@ -491,12 +630,15 @@ export async function runBookingAgent(
       for (const toolCall of msg.tool_calls) {
         if (toolCall.type !== "function") continue;
         const args = JSON.parse(toolCall.function.arguments || "{}");
+        console.log(`[Agent] Tool call: ${toolCall.function.name}`, JSON.stringify(args));
+        if (toolCall.function.name === "book_appointment") bookAppointmentCalled = true;
         const result = await executeTool(
           toolCall.function.name,
           args,
           payload.from,
           config
         );
+        console.log(`[Agent] Tool result: ${toolCall.function.name}`, result.slice(0, 200));
         messages.push({
           role: "tool",
           tool_call_id: toolCall.id,
@@ -506,6 +648,24 @@ export async function runBookingAgent(
     } else {
       // Final text response
       finalReply = msg.content ?? "";
+
+      // GUARD: Detect when DeepSeek says "confirmed" without calling book_appointment
+      const confirmPattern = /(?:confirmé|réservé|rendez-vous est confirmé|c'est réservé|booking confirmed|appointment confirmed)/i;
+      if (hasBooking && !bookAppointmentCalled && confirmPattern.test(finalReply)) {
+        if (i < maxIterations - 1) {
+          console.log("[Agent] GUARD: LLM confirmed booking without calling book_appointment — forcing retry");
+          messages.push({ role: "assistant", content: finalReply });
+          messages.push({
+            role: "user",
+            content: "SYSTÈME: Tu as confirmé un rendez-vous sans appeler l'outil book_appointment. Le rendez-vous N'A PAS été enregistré. Tu DOIS appeler book_appointment maintenant avec les informations du client pour sauvegarder le rendez-vous.",
+          });
+          continue;
+        } else {
+          // maxIterations reached — don't send false confirmation to client
+          console.error("[Agent] GUARD: maxIterations reached without book_appointment call — replacing reply");
+          finalReply = "Désolé, je n'ai pas pu enregistrer le rendez-vous. Peux-tu réessayer en me donnant le service, la date et l'heure souhaités ?";
+        }
+      }
 
       // Add assistant response to history for persistence
       // We store without the system prompt (re-injected each time)

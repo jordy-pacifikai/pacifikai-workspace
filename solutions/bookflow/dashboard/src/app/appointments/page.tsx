@@ -9,14 +9,16 @@ import {
   CheckCheck,
   XCircle,
   UserX,
+  Trash2,
   ChevronDown,
   Filter,
   CalendarDays,
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonRow } from '@/components/ui/Skeleton';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useAppStore } from '@/lib/store';
-import { useAppointments, useUpdateAppointment } from '@/hooks/useAppointments';
+import { useAppointments, useUpdateAppointment, useDeleteAppointment } from '@/hooks/useAppointments';
 import { CreateAppointmentModal } from '@/components/CreateAppointmentModal';
 import { cn } from '@/lib/utils';
 import type { Appointment } from '@/types/database';
@@ -24,7 +26,7 @@ import type { Appointment } from '@/types/database';
 // ─── Status config ─────────────────────────────────────────────────────────────
 
 type Status = Appointment['status'];
-type Source = Appointment['source'];
+type Source = string;
 
 const STATUS_CONFIG: Record<Status, { label: string; bg: string; text: string; border: string }> = {
   pending:   { label: 'En attente', bg: 'bg-yellow-500/15', text: 'text-yellow-400',  border: 'border-yellow-500/40'  },
@@ -42,6 +44,8 @@ const SOURCE_CONFIG: Record<Source, { label: string; bg: string; text: string }>
   manual:   { label: 'Manuel',   bg: 'bg-gray-500/15',  text: 'text-gray-400'  },
   guest:    { label: 'Invité',   bg: 'bg-orange-500/15',text: 'text-orange-400'},
   gcal:     { label: 'Google',   bg: 'bg-sky-500/15',   text: 'text-sky-400'   },
+  messenger:{ label: 'Messenger',bg: 'bg-violet-500/15',text: 'text-violet-400'},
+  instagram:{ label: 'Instagram',bg: 'bg-pink-500/15', text: 'text-pink-400'  },
 };
 
 const STATUS_FILTERS: { value: Status | 'all'; label: string }[] = [
@@ -85,6 +89,7 @@ export default function AppointmentsPage() {
   const [dateTo, setDateTo] = useState('');
   const [page, setPage] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   const filters = useMemo(() => ({
     status: statusFilter !== 'all' ? statusFilter : undefined,
@@ -94,12 +99,17 @@ export default function AppointmentsPage() {
 
   const { data: appointments, isLoading } = useAppointments(businessId, undefined, filters);
   const updateMutation = useUpdateAppointment();
+  const deleteMutation = useDeleteAppointment();
 
   const paginated = useMemo(() => (appointments ?? []).slice(0, page * PAGE_SIZE), [appointments, page]);
   const hasMore = (appointments?.length ?? 0) > page * PAGE_SIZE;
 
   function handleStatusChange(id: string, status: Status) {
     updateMutation.mutate({ id, updates: { status } });
+  }
+
+  function handleDelete(id: string, clientName: string) {
+    setDeleteTarget({ id, name: clientName });
   }
 
   return (
@@ -242,7 +252,7 @@ export default function AppointmentsPage() {
                     <StatusBadge status={appt.status} />
 
                     {/* Source */}
-                    <SourceBadge source={appt.source} />
+                    <SourceBadge source={appt.source ?? 'manual'} />
 
                     {/* Actions */}
                     <div className="flex items-center justify-end gap-1">
@@ -286,6 +296,14 @@ export default function AppointmentsPage() {
                           <XCircle size={15} />
                         </button>
                       )}
+                      <button
+                        onClick={() => handleDelete(appt.id, clientName)}
+                        disabled={deleteMutation.isPending}
+                        title="Supprimer"
+                        className="p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                      >
+                        <Trash2 size={15} />
+                      </button>
                     </div>
                   </div>
                 );
@@ -319,6 +337,24 @@ export default function AppointmentsPage() {
       {showCreateModal && businessId && (
         <CreateAppointmentModal businessId={businessId} onClose={() => setShowCreateModal(false)} />
       )}
+
+      {/* Delete Confirm Modal */}
+      <ConfirmModal
+        open={Boolean(deleteTarget)}
+        title="Supprimer ce rendez-vous ?"
+        description={`Le rendez-vous de ${deleteTarget?.name ?? ''} sera definitivement supprime. Cette action est irreversible.`}
+        confirmLabel="Supprimer"
+        variant="danger"
+        loading={deleteMutation.isPending}
+        onConfirm={() => {
+          if (deleteTarget) {
+            deleteMutation.mutate(deleteTarget.id, {
+              onSuccess: () => setDeleteTarget(null),
+            });
+          }
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </DashboardLayout>
   );
 }

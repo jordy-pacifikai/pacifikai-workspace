@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { parseWhatsAppMessage } from "./parse";
+import { verifyMetaSignature } from "@/lib/meta-signature";
 
 function getSupabase() {
   return createClient(
@@ -46,12 +47,21 @@ export async function POST(req: Request) {
   try {
     const contentType = req.headers.get("content-type") ?? "";
     let body: Record<string, unknown>;
+    let rawBody: string | undefined;
 
     if (contentType.includes("application/x-www-form-urlencoded")) {
+      // Twilio format — no Meta signature check needed
       const formData = await req.formData();
       body = Object.fromEntries(formData.entries()) as Record<string, unknown>;
     } else {
-      body = await req.json();
+      // Meta Cloud API — verify signature
+      rawBody = await req.text();
+      const signature = req.headers.get("x-hub-signature-256");
+      if (signature && !verifyMetaSignature(rawBody, signature)) {
+        console.error("[Ve'a] Invalid Meta signature — rejecting");
+        return new Response("Unauthorized", { status: 401 });
+      }
+      body = JSON.parse(rawBody);
     }
 
     const parsed = parseWhatsAppMessage(body);
@@ -63,7 +73,7 @@ export async function POST(req: Request) {
     const phoneNumberId = extractPhoneNumberId(body);
     const businessId = await resolveBusinessId(phoneNumberId);
 
-    // Trigger task — must await (Vercel serverless kills unawaited fetches)
+    // Trigger task with idempotencyKey to prevent duplicate processing on Meta retries
     const triggerApiUrl = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev";
     const triggerKey = process.env.TRIGGER_SECRET_KEY!;
     const triggerRes = await fetch(
@@ -73,6 +83,7 @@ export async function POST(req: Request) {
         headers: {
           Authorization: `Bearer ${triggerKey}`,
           "Content-Type": "application/json",
+          ...(parsed.messageId ? { "Idempotency-Key": parsed.messageId } : {}),
         },
         body: JSON.stringify({
           payload: {
@@ -81,7 +92,9 @@ export async function POST(req: Request) {
             buttonPayload: parsed.buttonPayload,
             messageType: parsed.messageType,
             businessId,
+            channel: "whatsapp",
           },
+          options: parsed.messageId ? { idempotencyKey: parsed.messageId } : undefined,
         }),
       }
     );
@@ -106,9 +119,13 @@ export async function GET(req: Request) {
   const token = url.searchParams.get("hub.verify_token");
   const challenge = url.searchParams.get("hub.challenge");
 
-  const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN ?? "vea_verify_2026";
+  const verifyToken = process.env.META_VERIFY_TOKEN;
+  if (!verifyToken) {
+    console.error("[Ve'a] META_VERIFY_TOKEN not set");
+    return new Response("Server Error", { status: 500 });
+  }
 
-  if (mode === "subscribe" && token === VERIFY_TOKEN) {
+  if (mode === "subscribe" && token === verifyToken) {
     return new Response(challenge ?? "", { status: 200 });
   }
 

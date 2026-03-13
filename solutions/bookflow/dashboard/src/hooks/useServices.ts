@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import type { Service } from '@/types/database';
+import { businessKeys } from './useBusiness';
 
 // ─── Keys ─────────────────────────────────────────────────────────────────────
 
@@ -13,6 +13,16 @@ export const serviceKeys = {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+/** Service as stored in bookbot_businesses.services JSONB array */
+export interface ServiceItem {
+  name: string;
+  duration: number;
+  price: number;
+  description?: string;
+  category?: string;
+  is_active?: boolean;
+}
+
 export interface ServiceInput {
   name: string;
   description?: string;
@@ -20,52 +30,40 @@ export interface ServiceInput {
   price?: number;
   category?: string;
   is_active?: boolean;
-  display_order?: number;
 }
 
-// ─── Fetch ────────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-async function fetchServices(businessId: string): Promise<Service[]> {
+async function fetchServicesFromBusiness(businessId: string): Promise<ServiceItem[]> {
   const { data, error } = await supabase
-    .from('services')
-    .select('*')
-    .eq('business_id', businessId)
-    .eq('is_active', true)
-    .order('display_order', { ascending: true });
-
-  if (error) throw new Error(error.message);
-  return (data ?? []) as Service[];
-}
-
-async function createService(businessId: string, input: ServiceInput): Promise<Service> {
-  const { data, error } = await supabase
-    .from('services')
-    .insert({ ...input, business_id: businessId })
-    .select()
+    .from('bookbot_businesses')
+    .select('services')
+    .eq('id', businessId)
     .single();
 
   if (error) throw new Error(error.message);
-  return data as Service;
+  const raw: unknown[] = (data as Record<string, unknown>)?.services as unknown[] ?? [];
+  return raw.map((s: unknown) => {
+    const obj = s as Record<string, unknown>;
+    return {
+      name: (obj.name as string) ?? '',
+      duration: (obj.duration as number) ?? 30,
+      price: (obj.price as number) ?? 0,
+      description: (obj.description as string) ?? undefined,
+      category: (obj.category as string) ?? undefined,
+      is_active: obj.is_active !== false, // default true
+    };
+  });
 }
 
-async function updateService(id: string, input: Partial<ServiceInput>): Promise<Service> {
-  const { data, error } = await supabase
-    .from('services')
-    .update({ ...input, updated_at: new Date().toISOString() })
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message);
-  return data as Service;
-}
-
-// Soft delete — set is_active to false
-async function softDeleteService(id: string): Promise<void> {
+async function saveServicesToBusiness(businessId: string, services: ServiceItem[]): Promise<void> {
   const { error } = await supabase
-    .from('services')
-    .update({ is_active: false, updated_at: new Date().toISOString() })
-    .eq('id', id);
+    .from('bookbot_businesses')
+    .update({
+      services: services as unknown as Record<string, unknown>[],
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', businessId);
 
   if (error) throw new Error(error.message);
 }
@@ -75,7 +73,7 @@ async function softDeleteService(id: string): Promise<void> {
 export function useServices(businessId: string | null) {
   return useQuery({
     queryKey: serviceKeys.list(businessId ?? ''),
-    queryFn: () => fetchServices(businessId!),
+    queryFn: () => fetchServicesFromBusiness(businessId!),
     enabled: Boolean(businessId),
   });
 }
@@ -85,9 +83,22 @@ export function useCreateService(businessId: string | null) {
   const id = businessId ?? '';
 
   return useMutation({
-    mutationFn: (input: ServiceInput) => createService(id, input),
+    mutationFn: async (input: ServiceInput) => {
+      const existing = await fetchServicesFromBusiness(id);
+      const newItem: ServiceItem = {
+        name: input.name,
+        duration: input.duration,
+        price: input.price ?? 0,
+        description: input.description,
+        category: input.category,
+        is_active: input.is_active ?? true,
+      };
+      await saveServicesToBusiness(id, [...existing, newItem]);
+      return newItem;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: serviceKeys.list(id) });
+      queryClient.invalidateQueries({ queryKey: businessKeys.all });
     },
   });
 }
@@ -97,10 +108,16 @@ export function useUpdateService(businessId: string | null) {
   const bid = businessId ?? '';
 
   return useMutation({
-    mutationFn: ({ id, input }: { id: string; input: Partial<ServiceInput> }) =>
-      updateService(id, input),
+    mutationFn: async ({ index, input }: { index: number; input: Partial<ServiceInput> }) => {
+      const existing = await fetchServicesFromBusiness(bid);
+      if (index < 0 || index >= existing.length) throw new Error('Service introuvable');
+      existing[index] = { ...existing[index], ...input } as ServiceItem;
+      await saveServicesToBusiness(bid, existing);
+      return existing[index];
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: serviceKeys.list(bid) });
+      queryClient.invalidateQueries({ queryKey: businessKeys.all });
     },
   });
 }
@@ -110,9 +127,15 @@ export function useDeleteService(businessId: string | null) {
   const bid = businessId ?? '';
 
   return useMutation({
-    mutationFn: (id: string) => softDeleteService(id),
+    mutationFn: async (index: number) => {
+      const existing = await fetchServicesFromBusiness(bid);
+      if (index < 0 || index >= existing.length) throw new Error('Service introuvable');
+      existing.splice(index, 1);
+      await saveServicesToBusiness(bid, existing);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: serviceKeys.list(bid) });
+      queryClient.invalidateQueries({ queryKey: businessKeys.all });
     },
   });
 }

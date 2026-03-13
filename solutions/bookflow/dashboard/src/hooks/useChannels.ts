@@ -2,7 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { loginWithFacebook } from '@/lib/facebook-sdk';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -13,7 +12,7 @@ export interface ConnectedPage {
   connectedAt: string | null;
 }
 
-interface FacebookPageOption {
+export interface FacebookPageOption {
   id: string;
   name: string;
   access_token: string;
@@ -57,33 +56,15 @@ export function useConnectedChannels(businessId: string | null) {
 }
 
 /**
- * Step 1: Launch Facebook OAuth popup → returns list of available pages.
+ * Start Facebook OAuth — redirects to Facebook login page.
+ * No popup, no JS SDK — uses server-side redirect flow.
  */
-export function useConnectFacebook(businessId: string | null) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (): Promise<FacebookPageOption[]> => {
-      // Open Facebook Login popup
-      const { accessToken } = await loginWithFacebook();
-
-      // Exchange for permanent page tokens server-side
-      const res = await fetch('/api/auth/facebook', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accessToken, businessId }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? 'Failed to connect Facebook');
-
-      return data.pages as FacebookPageOption[];
-    },
-  });
+export function startFacebookOAuth(businessId: string) {
+  window.location.href = `/api/auth/facebook?business_id=${encodeURIComponent(businessId)}`;
 }
 
 /**
- * Step 2: User picks a page → store permanent token + subscribe webhook.
+ * User picks a page from the list returned in URL params → store permanent token + subscribe webhook.
  */
 export function useSelectPage(businessId: string | null) {
   const queryClient = useQueryClient();

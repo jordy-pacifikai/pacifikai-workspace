@@ -25,5 +25,5 @@ export function getSupabaseBrowser() {
   return browserClient
 }
 
-// Legacy export for existing hooks (same as browser client)
-export const supabase = supabaseUrl ? createClient(supabaseUrl, supabaseAnonKey) : (null as never)
+// Legacy export for existing hooks — use the same singleton as getSupabaseBrowser()
+export const supabase = supabaseUrl ? getSupabaseBrowser() : (null as never)

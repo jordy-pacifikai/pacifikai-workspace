@@ -7,7 +7,7 @@ import type { Client, Appointment } from '@/types/database';
 // ─── Keys ─────────────────────────────────────────────────────────────────────
 
 export const clientKeys = {
-  all: ['clients'] as const,
+  all: ['bookbot_clients'] as const,
   list: (businessId: string) => [...clientKeys.all, 'list', businessId] as const,
   history: (clientId: string) => [...clientKeys.all, 'history', clientId] as const,
 };
@@ -26,7 +26,7 @@ export interface ClientInput {
 
 async function fetchClients(businessId: string): Promise<Client[]> {
   const { data, error } = await supabase
-    .from('clients')
+    .from('bookbot_clients')
     .select('*')
     .eq('business_id', businessId)
     .order('name', { ascending: true });
@@ -49,7 +49,7 @@ async function fetchClientHistory(clientPhone: string): Promise<Appointment[]> {
 
 async function createClient(businessId: string, input: ClientInput): Promise<Client> {
   const { data, error } = await supabase
-    .from('clients')
+    .from('bookbot_clients')
     .insert({ ...input, business_id: businessId })
     .select()
     .single();

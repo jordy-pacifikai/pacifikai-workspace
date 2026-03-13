@@ -131,8 +131,8 @@ async function loadBizConfig(businessId: string): Promise<BizConfig | null> {
     return s as { name: string; duration: number; price: number }
   })
 
-  const hours = data.hours ?? data.opening_hours ?? {}
-  const humanPhone = data.human_phone ?? data.config?.human_phone ?? data.phone ?? ''
+  const hours = data.hours ?? {}
+  const humanPhone = data.config?.human_phone ?? data.phone ?? ''
 
   return {
     businessId: data.id,
@@ -183,8 +183,13 @@ function buildSystemPrompt(config: BizConfig): string {
     ? `\n- Quand un client te salue, utilise cette formule de bienvenue : "${greeting}"`
     : ''
 
-  return `Tu es l'assistant de ${config.businessName}. Tu parles en ${language}, ton ${tone}. Tu es basé en Polynésie française.
-${greetingInstruction}
+  return `Tu es l'assistant de ${config.businessName}. Langue : ${language}. Ton : ${tone}.${greetingInstruction}
+
+## RÈGLE FONDAMENTALE — NE JAMAIS INVENTER
+- NE JAMAIS promettre, mentionner ou suggérer quoi que ce soit qui n'est pas dans ce prompt ou dans les résultats des outils
+- NE JAMAIS mentionner : appel téléphonique, rappel par téléphone, confirmation par email, SMS, délai de traitement, validation manuelle, devis, ou tout autre processus non décrit ici
+- NE JAMAIS improviser des formules qui impliquent une action future ("on vous recontactera", "vous recevrez un appel"...)
+- Si tu ne sais pas → \`search_knowledge_base\`. Toujours sans réponse → \`transfer_to_human\`. JAMAIS inventer.
 
 ## Services
 ${servicesList}
@@ -195,15 +200,22 @@ ${hours}
 ## Aujourd'hui
 ${today} (timezone: ${config.timezone})
 
-## Règles
-1. TOUJOURS utiliser \`check_availability\` avant de proposer un créneau
-2. TOUJOURS demander confirmation AVANT d'appeler \`book_appointment\`
-3. Demander le prénom du client avant de réserver
-4. Réponses COURTES (2-4 phrases max)
-5. Si question hors compétences → \`transfer_to_human\`
-6. Utilise \`search_knowledge_base\` pour les questions spécifiques
-7. NE JAMAIS proposer de dates dans le passé
-8. Tu DOIS répondre en ${language} — c'est la langue configurée par le commerce`
+## Règles OBLIGATOIRES
+1. TOUJOURS utiliser \`check_availability\` avant de proposer un créneau — NE JAMAIS inventer de disponibilité
+2. TOUJOURS demander confirmation ("C'est bon pour toi ?" ou "Je confirme ?") AVANT d'appeler \`book_appointment\`
+3. Client confirme → appelle \`book_appointment\` IMMÉDIATEMENT. NE JAMAIS dire "confirmé" sans avoir appelé l'outil.
+4. Demander le prénom du client avant de réserver
+5. Réponses COURTES (2-4 phrases max)
+6. Question hors compétences → \`transfer_to_human\`
+7. Questions spécifiques → \`search_knowledge_base\`
+8. NE JAMAIS proposer de dates dans le passé
+9. Langue : ${language} — adapte-toi à la langue du client si différente
+
+## SCRIPTS FIXES (utilise exactement ces formules)
+- Après \`book_appointment\` réussi : "✅ RDV confirmé !\\n[Service] — [Date lisible] à [Heure]\\nÀ bientôt chez ${config.businessName} !"
+- Après annulation réussie : "✅ Ton rendez-vous a bien été annulé. N'hésite pas si tu veux en reprendre un !"
+- Après \`transfer_to_human\` : "Je te mets en contact avec l'équipe de ${config.businessName}. À très vite !"
+- Question sans réponse : "Je n'ai pas cette information, mais l'équipe de ${config.businessName} pourra t'aider directement."`
 }
 
 // ─── Tool execution ─────────────────────────────────────────────────────────────
@@ -243,34 +255,58 @@ async function executeTool(
       const service = config.services.find(s => s.name.toLowerCase() === serviceName.toLowerCase())
       const duration = service?.duration ?? 30
 
-      // Generate slots
-      const dayOfWeek = new Date(date).getDay()
+      // Use getUTCDay() because "YYYY-MM-DD" is parsed as UTC midnight
+      const dayOfWeek = new Date(date).getUTCDay()
       const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
       const dayKey = dayKeys[dayOfWeek]
       const hoursStr = (dayKey && config.openingHours[dayKey]) ?? '08:00-17:00'
       if (hoursStr === 'closed') return `Nous sommes fermés le ${date}.`
 
-      const [openStr, closeStr] = hoursStr.split('-')
-      const openH = parseInt(openStr?.split(':')[0] ?? '8')
-      const closeH = parseInt(closeStr?.split(':')[0] ?? '17')
-
+      // Parse multi-range hours (e.g. "08:00-12:00,13:00-17:00")
       const allSlots: string[] = []
-      for (let h = openH; h < closeH; h++) {
-        if (h === 12) continue
-        allSlots.push(`${String(h).padStart(2, '0')}:00`)
-        if (duration <= 30) allSlots.push(`${String(h).padStart(2, '0')}:30`)
+      for (const range of hoursStr.split(',')) {
+        const [openStr, closeStr] = range.trim().split('-')
+        const openParts = (openStr ?? '08:00').split(':')
+        const closeParts = (closeStr ?? '17:00').split(':')
+        const openMins = parseInt(openParts[0] ?? '8') * 60 + parseInt(openParts[1] ?? '0')
+        const closeMins = parseInt(closeParts[0] ?? '17') * 60 + parseInt(closeParts[1] ?? '0')
+
+        for (let mins = openMins; mins + duration <= closeMins; mins += 30) {
+          const h = Math.floor(mins / 60)
+          const m = mins % 60
+          allSlots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`)
+        }
       }
 
       // Get existing bookings
       const { data: bookings } = await getSupabase()
         .from('bookbot_appointments')
-        .select('time_slot')
+        .select('time_slot,end_time')
         .eq('business_id', config.businessId)
         .eq('appointment_date', date)
-        .eq('status', 'confirmed')
+        .in('status', ['confirmed', 'pending'])
 
-      const taken = new Set((bookings ?? []).map((b: { time_slot: string }) => b.time_slot))
-      const available = allSlots.filter(s => !taken.has(s))
+      // Build occupied ranges
+      const occupiedRanges: { start: number; end: number }[] = []
+      for (const b of bookings ?? []) {
+        const bParts = (b as { time_slot: string; end_time: string | null }).time_slot.split(':').map(Number)
+        const bStart = (bParts[0] ?? 0) * 60 + (bParts[1] ?? 0)
+        let bEnd: number
+        if ((b as { end_time: string | null }).end_time) {
+          const eParts = (b as { end_time: string }).end_time.split(':').map(Number)
+          bEnd = (eParts[0] ?? 0) * 60 + (eParts[1] ?? 0)
+        } else {
+          bEnd = bStart + 30
+        }
+        occupiedRanges.push({ start: bStart, end: bEnd })
+      }
+
+      const available = allSlots.filter(s => {
+        const sParts = s.split(':').map(Number)
+        const slotStart = (sParts[0] ?? 0) * 60 + (sParts[1] ?? 0)
+        const slotEnd = slotStart + duration
+        return !occupiedRanges.some(r => slotStart < r.end && r.start < slotEnd)
+      })
 
       if (available.length === 0) return `Aucun créneau disponible le ${date} pour ${serviceName}.`
       return `Créneaux disponibles le ${date} pour ${serviceName} (${duration} min) :\n${available.map(s => `- ${s.replace(':', 'h')}`).join('\n')}`
@@ -282,6 +318,13 @@ async function executeTool(
       const time = input.time as string
       const clientName = input.client_name as string
 
+      // Calculate end_time from service duration
+      const svc = config.services.find(s => s.name.toLowerCase() === service.toLowerCase())
+      const dur = svc?.duration ?? 30
+      const timeParts = time.split(':').map(Number)
+      const endMins = (timeParts[0] ?? 0) * 60 + (timeParts[1] ?? 0) + dur
+      const endTime = `${String(Math.floor(endMins / 60)).padStart(2, '0')}:${String(endMins % 60).padStart(2, '0')}`
+
       await getSupabase().from('bookbot_appointments').insert({
         business_id: config.businessId,
         client_name: clientName,
@@ -289,6 +332,7 @@ async function executeTool(
         service,
         appointment_date: date,
         time_slot: time,
+        end_time: endTime,
         status: 'confirmed',
         source: 'chatbot',
       })

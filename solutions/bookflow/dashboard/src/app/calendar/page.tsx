@@ -17,9 +17,10 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { CreateAppointmentModal } from '@/components/CreateAppointmentModal';
 import { useAppStore } from '@/lib/store';
-import { useAppointments } from '@/hooks/useAppointments';
+import { useAppointments, useDeleteAppointment } from '@/hooks/useAppointments';
 import { useBlockedSlots, useCreateBlockedSlot, useDeleteBlockedSlot } from '@/hooks/useBlockedSlots';
 import { cn } from '@/lib/utils';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import type { Appointment } from '@/types/database';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -40,8 +41,8 @@ const STATUS_CONFIG = {
   no_show:   { bg: 'bg-red-500/20',     border: 'border-red-500',     text: 'text-red-400',     dot: 'bg-red-500',     label: 'No-show'    },
 } satisfies Record<Appointment['status'], { bg: string; border: string; text: string; dot: string; label: string }>;
 
-const SOURCE_LABELS: Record<Appointment['source'], string> = {
-  app: 'App', web: 'Web', manual: 'Manuel', chatbot: 'Chatbot', guest: 'Invité', whatsapp: 'WhatsApp', gcal: 'Google',
+const SOURCE_LABELS: Record<string, string> = {
+  app: 'App', web: 'Web', manual: 'Manuel', chatbot: 'Chatbot', guest: 'Invité', whatsapp: 'WhatsApp', gcal: 'Google', messenger: 'Messenger', instagram: 'Instagram',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -80,9 +81,9 @@ function AppointmentBlock({ appointment, onClick }: AppointmentBlockProps) {
 
   return (
     <button
-      onClick={() => onClick(appointment)}
+      onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
       className={cn(
-        'absolute left-1 right-1 rounded-md border-l-2 px-2 py-1 text-left overflow-hidden cursor-pointer transition-opacity hover:opacity-80',
+        'absolute left-1 right-1 rounded-md border-l-2 px-2 py-1 text-left overflow-hidden cursor-pointer transition-opacity hover:opacity-80 z-[2]',
         cfg.bg,
         cfg.border,
         cfg.text,
@@ -103,9 +104,13 @@ function AppointmentBlock({ appointment, onClick }: AppointmentBlockProps) {
 interface DetailDrawerProps {
   appointment: Appointment | null;
   onClose: () => void;
+  onDelete?: (id: string) => void;
+  isDeleting?: boolean;
 }
 
-function DetailDrawer({ appointment, onClose }: DetailDrawerProps) {
+function DetailDrawer({ appointment, onClose, onDelete, isDeleting }: DetailDrawerProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   if (!appointment) return null;
   const cfg = STATUS_CONFIG[appointment.status];
   const clientName = appointment.client_name ?? 'Inconnu';
@@ -114,14 +119,14 @@ function DetailDrawer({ appointment, onClose }: DetailDrawerProps) {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[50]"
         onClick={onClose}
       />
       {/* Drawer */}
-      <div className="fixed right-0 top-0 bottom-0 w-full max-w-sm bg-gray-900 border-l border-gray-800 z-50 flex flex-col">
+      <div className="fixed right-0 top-0 bottom-0 w-full max-w-sm bg-gray-900 border-l border-gray-800 z-[51] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
-          <h2 className="text-white font-semibold">Détail du RDV</h2>
+          <h2 className="text-white font-semibold">Detail du RDV</h2>
           <button
             onClick={onClose}
             className="p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
@@ -138,7 +143,7 @@ function DetailDrawer({ appointment, onClose }: DetailDrawerProps) {
               <span className={cn('w-1.5 h-1.5 rounded-full', cfg.dot)} />
               {cfg.label}
             </span>
-            <span className="text-xs text-gray-500">{SOURCE_LABELS[appointment.source]}</span>
+            <span className="text-xs text-gray-500">{SOURCE_LABELS[appointment.source ?? 'manual']}</span>
           </div>
 
           {/* Date & Time */}
@@ -190,7 +195,35 @@ function DetailDrawer({ appointment, onClose }: DetailDrawerProps) {
             </div>
           )}
         </div>
+
+        {/* Footer — Delete action */}
+        {onDelete && (
+          <div className="px-5 py-4 border-t border-gray-800">
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-red-400 text-sm font-medium bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors"
+            >
+              <Trash2 size={15} />
+              Supprimer ce rendez-vous
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Delete Confirm Modal */}
+      <ConfirmModal
+        open={showDeleteConfirm}
+        title="Supprimer ce rendez-vous ?"
+        description={`Le rendez-vous de ${clientName} sera definitivement supprime. Cette action est irreversible.`}
+        confirmLabel="Supprimer"
+        variant="danger"
+        loading={isDeleting}
+        onConfirm={() => {
+          onDelete?.(appointment.id);
+          setShowDeleteConfirm(false);
+        }}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </>
   );
 }
@@ -210,12 +243,10 @@ function CalendarSkeleton() {
             {Array.from({ length: 4 }).map((_, j) => (
               <div
                 key={j}
-                className="absolute left-1 right-1 skeleton rounded-md"
+                className="mx-1 skeleton rounded-md"
                 style={{
-                  top: j * SLOT_HEIGHT * 3 + SLOT_HEIGHT,
                   height: SLOT_HEIGHT * 2,
-                  position: 'relative',
-                  margin: `${SLOT_HEIGHT * 2}px 4px ${SLOT_HEIGHT}px`,
+                  marginTop: j === 0 ? SLOT_HEIGHT : SLOT_HEIGHT * 2,
                 }}
               />
             ))}
@@ -247,6 +278,7 @@ export default function CalendarPage() {
     dateTo: format(weekEnd, 'yyyy-MM-dd'),
   });
 
+  const deleteMutation = useDeleteAppointment();
   const { data: blockedSlots } = useBlockedSlots(businessId);
   const createBlock = useCreateBlockedSlot(businessId);
   const deleteBlock = useDeleteBlockedSlot(businessId);
@@ -474,6 +506,12 @@ export default function CalendarPage() {
       <DetailDrawer
         appointment={selectedAppointment}
         onClose={() => setSelectedAppointment(null)}
+        onDelete={(id) => {
+          deleteMutation.mutate(id, {
+            onSuccess: () => setSelectedAppointment(null),
+          });
+        }}
+        isDeleting={deleteMutation.isPending}
       />
 
       {/* Create Modal */}

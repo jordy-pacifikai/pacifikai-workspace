@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Plus, Pencil, Trash2, X, Clock, Tag, ToggleLeft, ToggleRight, Scissors } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonCard } from '@/components/ui/Skeleton';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { useAppStore } from '@/lib/store';
 import {
   useServices,
@@ -11,9 +12,9 @@ import {
   useUpdateService,
   useDeleteService,
   type ServiceInput,
+  type ServiceItem,
 } from '@/hooks/useServices';
 import { cn } from '@/lib/utils';
-import type { Service } from '@/types/database';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
@@ -27,7 +28,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
   Autre:      { bg: 'bg-gray-500/15',   text: 'text-gray-400'   },
 };
 
-function getCategoryStyle(category: string | null) {
+function getCategoryStyle(category: string | undefined | null) {
   if (!category) return { bg: 'bg-gray-500/15', text: 'text-gray-400' };
   return CATEGORY_COLORS[category] ?? { bg: 'bg-gray-500/15', text: 'text-gray-400' };
 }
@@ -52,12 +53,13 @@ const EMPTY_FORM: ServiceFormData = {
 
 interface ServiceFormModalProps {
   businessId: string;
-  service?: Service;
+  service?: ServiceItem;
+  serviceIndex?: number;
   onClose: () => void;
 }
 
-function ServiceFormModal({ businessId, service, onClose }: ServiceFormModalProps) {
-  const isEdit = Boolean(service);
+function ServiceFormModal({ businessId, service, serviceIndex, onClose }: ServiceFormModalProps) {
+  const isEdit = service !== undefined && serviceIndex !== undefined;
   const createMutation = useCreateService(businessId);
   const updateMutation = useUpdateService(businessId);
 
@@ -89,8 +91,8 @@ function ServiceFormModal({ businessId, service, onClose }: ServiceFormModalProp
     };
 
     try {
-      if (isEdit && service) {
-        await updateMutation.mutateAsync({ id: service.id, input });
+      if (isEdit) {
+        await updateMutation.mutateAsync({ index: serviceIndex, input });
       } else {
         await createMutation.mutateAsync(input);
       }
@@ -236,72 +238,26 @@ function ServiceFormModal({ businessId, service, onClose }: ServiceFormModalProp
   );
 }
 
-// ─── Delete Confirmation ────────────────────────────────────────────────────────
-
-interface DeleteConfirmProps {
-  service: Service;
-  onConfirm: () => void;
-  onCancel: () => void;
-  isPending: boolean;
-}
-
-function DeleteConfirm({ service, onConfirm, onCancel, isPending }: DeleteConfirmProps) {
-  return (
-    <>
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onCancel} />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-sm shadow-2xl p-5">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="p-2 rounded-lg bg-red-500/15 text-red-400 shrink-0">
-              <Trash2 size={18} />
-            </div>
-            <div>
-              <h3 className="text-white font-semibold">Supprimer le service</h3>
-              <p className="text-gray-400 text-sm mt-1">
-                Voulez-vous vraiment désactiver <strong className="text-white">{service.name}</strong> ?
-                Il ne sera plus visible pour les réservations.
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={onCancel}
-              className="flex-1 py-2 rounded-lg bg-gray-800 text-gray-300 text-sm font-medium hover:bg-gray-700 transition-colors"
-            >
-              Annuler
-            </button>
-            <button
-              onClick={onConfirm}
-              disabled={isPending}
-              className="flex-1 py-2 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-60"
-            >
-              {isPending ? 'Suppression...' : 'Supprimer'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
 // ─── Service Card ──────────────────────────────────────────────────────────────
 
 interface ServiceCardProps {
-  service: Service;
-  onEdit: (s: Service) => void;
-  onDelete: (s: Service) => void;
-  onToggle: (s: Service) => void;
+  service: ServiceItem;
+  index: number;
+  onEdit: (s: ServiceItem, i: number) => void;
+  onDelete: (s: ServiceItem, i: number) => void;
+  onToggle: (s: ServiceItem, i: number) => void;
   isToggling: boolean;
 }
 
-function ServiceCard({ service, onEdit, onDelete, onToggle, isToggling }: ServiceCardProps) {
+function ServiceCard({ service, index, onEdit, onDelete, onToggle, isToggling }: ServiceCardProps) {
   const catStyle = getCategoryStyle(service.category);
+  const isActive = service.is_active !== false;
 
   return (
     <div
       className={cn(
         'rounded-xl bg-gray-900 border p-5 flex flex-col gap-3 transition-opacity',
-        service.is_active ? 'border-gray-800' : 'border-gray-800/50 opacity-60',
+        isActive ? 'border-gray-800' : 'border-gray-800/50 opacity-60',
       )}
     >
       {/* Top row */}
@@ -321,14 +277,14 @@ function ServiceCard({ service, onEdit, onDelete, onToggle, isToggling }: Servic
         {/* Actions */}
         <div className="flex items-center gap-1 shrink-0">
           <button
-            onClick={() => onEdit(service)}
+            onClick={() => onEdit(service, index)}
             className="p-1.5 rounded-lg text-gray-500 hover:text-gray-200 hover:bg-gray-800 transition-colors"
             title="Modifier"
           >
             <Pencil size={14} />
           </button>
           <button
-            onClick={() => onDelete(service)}
+            onClick={() => onDelete(service, index)}
             className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
             title="Supprimer"
           >
@@ -346,7 +302,7 @@ function ServiceCard({ service, onEdit, onDelete, onToggle, isToggling }: Servic
         </div>
 
         {/* Price */}
-        {service.price != null && (
+        {service.price != null && service.price > 0 && (
           <span className="text-xs font-semibold text-white bg-gray-800 px-2 py-0.5 rounded-md">
             {service.price.toLocaleString('fr-FR')} XPF
           </span>
@@ -366,18 +322,18 @@ function ServiceCard({ service, onEdit, onDelete, onToggle, isToggling }: Servic
       {/* Active toggle */}
       <div className="flex items-center justify-between pt-1 border-t border-gray-800">
         <span className="text-xs text-gray-500">
-          {service.is_active ? 'Actif' : 'Inactif'}
+          {isActive ? 'Actif' : 'Inactif'}
         </span>
         <button
-          onClick={() => onToggle(service)}
+          onClick={() => onToggle(service, index)}
           disabled={isToggling}
           className={cn(
             'transition-colors disabled:opacity-50',
-            service.is_active ? 'text-[#25D366] hover:text-[#25D366]/80' : 'text-gray-600 hover:text-gray-400',
+            isActive ? 'text-[#25D366] hover:text-[#25D366]/80' : 'text-gray-600 hover:text-gray-400',
           )}
-          title={service.is_active ? 'Désactiver' : 'Activer'}
+          title={isActive ? 'Désactiver' : 'Activer'}
         >
-          {service.is_active ? <ToggleRight size={22} /> : <ToggleLeft size={22} />}
+          {isActive ? <ToggleRight size={22} /> : <ToggleLeft size={22} />}
         </button>
       </div>
     </div>
@@ -390,29 +346,28 @@ export default function ServicesPage() {
   const { businessId, businessName } = useAppStore();
 
   const { data: services, isLoading } = useServices(businessId);
-  const createMutation = useCreateService(businessId ?? '');
   const updateMutation = useUpdateService(businessId ?? '');
   const deleteMutation = useDeleteService(businessId ?? '');
 
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingService, setEditingService] = useState<Service | null>(null);
-  const [deletingService, setDeletingService] = useState<Service | null>(null);
+  const [editingService, setEditingService] = useState<{ service: ServiceItem; index: number } | null>(null);
+  const [deletingService, setDeletingService] = useState<{ service: ServiceItem; index: number } | null>(null);
 
-  function handleToggle(service: Service) {
+  function handleToggle(service: ServiceItem, index: number) {
     updateMutation.mutate({
-      id: service.id,
-      input: { is_active: !service.is_active },
+      index,
+      input: { is_active: service.is_active === false },
     });
   }
 
   function handleDeleteConfirm() {
     if (!deletingService) return;
-    deleteMutation.mutate(deletingService.id, {
+    deleteMutation.mutate(deletingService.index, {
       onSuccess: () => setDeletingService(null),
     });
   }
 
-  const activeCount = services?.filter((s) => s.is_active).length ?? 0;
+  const activeServices = services?.filter((s) => s.is_active !== false) ?? [];
   const totalCount = services?.length ?? 0;
 
   return (
@@ -424,7 +379,7 @@ export default function ServicesPage() {
             <h1 className="text-white font-semibold text-lg">Catalogue de services</h1>
             {!isLoading && totalCount > 0 && (
               <p className="text-gray-500 text-sm mt-0.5">
-                {activeCount} actif{activeCount !== 1 ? 's' : ''} · {totalCount} au total
+                {activeServices.length} actif{activeServices.length !== 1 ? 's' : ''} · {totalCount} au total
               </p>
             )}
           </div>
@@ -444,7 +399,7 @@ export default function ServicesPage() {
             <SkeletonCard key={i} />
           ))}
 
-          {!isLoading && services?.length === 0 && (
+          {!isLoading && totalCount === 0 && (
             <div className="col-span-full py-20 text-center">
               <div className="inline-flex p-4 rounded-2xl bg-gray-900 border border-gray-800 mb-4">
                 <Scissors size={28} className="text-gray-600" />
@@ -464,12 +419,13 @@ export default function ServicesPage() {
             </div>
           )}
 
-          {!isLoading && services?.map((service) => (
+          {!isLoading && services?.map((service, index) => (
             <ServiceCard
-              key={service.id}
+              key={`${service.name}-${index}`}
               service={service}
-              onEdit={(s) => setEditingService(s)}
-              onDelete={(s) => setDeletingService(s)}
+              index={index}
+              onEdit={(s, i) => setEditingService({ service: s, index: i })}
+              onDelete={(s, i) => setDeletingService({ service: s, index: i })}
               onToggle={handleToggle}
               isToggling={updateMutation.isPending}
             />
@@ -489,20 +445,23 @@ export default function ServicesPage() {
       {editingService && businessId && (
         <ServiceFormModal
           businessId={businessId}
-          service={editingService}
+          service={editingService.service}
+          serviceIndex={editingService.index}
           onClose={() => setEditingService(null)}
         />
       )}
 
       {/* Delete Confirmation */}
-      {deletingService && (
-        <DeleteConfirm
-          service={deletingService}
-          onConfirm={handleDeleteConfirm}
-          onCancel={() => setDeletingService(null)}
-          isPending={deleteMutation.isPending}
-        />
-      )}
+      <ConfirmModal
+        open={Boolean(deletingService)}
+        title="Supprimer le service ?"
+        description={`Le service "${deletingService?.service.name ?? ''}" sera supprime du catalogue. Cette action est irreversible.`}
+        confirmLabel="Supprimer"
+        variant="danger"
+        loading={deleteMutation.isPending}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeletingService(null)}
+      />
     </DashboardLayout>
   );
 }

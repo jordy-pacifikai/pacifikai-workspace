@@ -35,9 +35,9 @@ export interface ParsedService {
 export function parseService(raw: string): ParsedService {
   const [name, durationStr, priceStr] = raw.split("|");
   return {
-    name: name ?? "Service",
-    duration: parseInt(durationStr ?? "30", 10),
-    price: parseInt(priceStr ?? "0", 10),
+    name: (name ?? "Service").trim(),
+    duration: Math.max(1, parseInt(durationStr ?? "30", 10) || 30),
+    price: Math.max(0, parseInt(priceStr ?? "0", 10) || 0),
     raw,
   };
 }

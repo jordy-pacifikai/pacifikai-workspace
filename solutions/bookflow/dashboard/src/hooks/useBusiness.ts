@@ -15,7 +15,7 @@ export const businessKeys = {
 
 async function fetchBusiness(id: string): Promise<Business> {
   const { data, error } = await supabase
-    .from('businesses')
+    .from('bookbot_businesses')
     .select('*')
     .eq('id', id)
     .single();
@@ -29,7 +29,7 @@ async function updateBusiness(
   updates: Partial<Business>,
 ): Promise<Business> {
   const { data, error } = await supabase
-    .from('businesses')
+    .from('bookbot_businesses')
     .update({ ...updates, updated_at: new Date().toISOString() })
     .eq('id', id)
     .select()

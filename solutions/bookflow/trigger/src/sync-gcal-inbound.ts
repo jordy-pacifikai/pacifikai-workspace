@@ -1,8 +1,8 @@
 import { schedules, logger } from "@trigger.dev/sdk";
 import { listGCalEvents } from "./lib/gcal.js";
+import { supaHeaders } from "./lib/supabase-headers.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY!;
 
 /** Convert a Date to HH:MM in a given timezone */
 function toLocalTime(date: Date, tz: string): string {
@@ -25,14 +25,6 @@ function toLocalDate(date: Date, tz: string): string {
   return `${y}-${m}-${d}`;
 }
 
-function supaHeaders() {
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-  };
-}
-
 /**
  * Sync Google Calendar events → bookbot_blocked_slots + bookbot_appointments.
  * Runs every 15 minutes. For each business with GCal connected:
@@ -47,10 +39,24 @@ export const syncGCalInbound = schedules.task({
   run: async () => {
     // 1. Get all businesses with GCal connected
     const bizRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/bookbot_businesses?gcal_refresh_token=not.is.null&select=id,gcal_refresh_token,gcal_calendar_id,timezone`,
+      `${SUPABASE_URL}/rest/v1/bookbot_businesses?gcal_refresh_token=not.is.null&select=id,gcal_calendar_id,timezone`,
       { headers: supaHeaders() }
     );
-    const businesses: { id: string; gcal_refresh_token: string; gcal_calendar_id: string; timezone?: string }[] = await bizRes.json();
+    const bizRows: { id: string; gcal_calendar_id: string; timezone?: string }[] = await bizRes.json();
+
+    // Fetch refresh tokens separately to avoid them appearing in task logs
+    const businesses: { id: string; gcal_refresh_token: string; gcal_calendar_id: string; timezone?: string }[] = [];
+    for (const biz of Array.isArray(bizRows) ? bizRows : []) {
+      const tokenRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/bookbot_businesses?id=eq.${biz.id}&select=gcal_refresh_token`,
+        { headers: supaHeaders() }
+      );
+      const tokenData = await tokenRes.json();
+      const token = Array.isArray(tokenData) ? tokenData[0]?.gcal_refresh_token : null;
+      if (token) {
+        businesses.push({ ...biz, gcal_refresh_token: token });
+      }
+    }
 
     if (!Array.isArray(businesses) || businesses.length === 0) {
       logger.info("No businesses with GCal connected");

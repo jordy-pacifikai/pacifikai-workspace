@@ -11,9 +11,10 @@ import { useAppStore } from '@/lib/store';
 import { useBusiness, useUpdateBusiness } from '@/hooks/useBusiness';
 import {
   useConnectedChannels,
-  useConnectFacebook,
+  startFacebookOAuth,
   useSelectPage,
   useDisconnectFacebook,
+  type FacebookPageOption,
 } from '@/hooks/useChannels';
 import {
   useGoogleCalendarStatus,
@@ -28,13 +29,6 @@ interface WhatsAppConfig {
   whatsapp_access_token?: string;
   whatsapp_verify_token?: string;
   whatsapp_enabled?: boolean;
-}
-
-interface FacebookPageOption {
-  id: string;
-  name: string;
-  access_token: string;
-  instagram_business_account_id: string | null;
 }
 
 // ─── WhatsApp Card (manual config) ─────────────────────────────────────────────
@@ -122,29 +116,44 @@ function FacebookConnectedCard({
   dashboardUrl: string;
 }) {
   const { data: connected, isLoading } = useConnectedChannels(businessId);
-  const connectFacebook = useConnectFacebook(businessId);
   const selectPage = useSelectPage(businessId);
   const disconnectFacebook = useDisconnectFacebook(businessId);
 
   const [pages, setPages] = useState<FacebookPageOption[]>([]);
   const [showPagePicker, setShowPagePicker] = useState(false);
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
-  async function handleConnect() {
-    setError('');
-    try {
-      const result = await connectFacebook.mutateAsync();
-      if (result.length === 1) {
-        // Auto-select if only one page
-        await selectPage.mutateAsync(result[0]);
-        setShowPagePicker(false);
-      } else {
-        setPages(result);
-        setShowPagePicker(true);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur de connexion Facebook');
+  // Handle OAuth callback URL params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('fb_connected') === 'true') {
+      setSuccessMsg('Facebook connecte avec succes !');
+      window.history.replaceState({}, '', '/channels');
     }
+
+    const fbError = params.get('fb_error');
+    if (fbError) {
+      setError(fbError);
+      window.history.replaceState({}, '', '/channels');
+    }
+
+    const fbPages = params.get('fb_pages');
+    if (fbPages) {
+      try {
+        const parsed = JSON.parse(fbPages) as FacebookPageOption[];
+        setPages(parsed);
+        setShowPagePicker(true);
+      } catch {
+        setError('Erreur lors du chargement des pages Facebook');
+      }
+      window.history.replaceState({}, '', '/channels');
+    }
+  }, []);
+
+  function handleConnect() {
+    startFacebookOAuth(businessId);
   }
 
   async function handleSelectPage(page: FacebookPageOption) {
@@ -153,6 +162,7 @@ function FacebookConnectedCard({
       await selectPage.mutateAsync(page);
       setShowPagePicker(false);
       setPages([]);
+      setSuccessMsg('Page connectee avec succes !');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de la connexion de la page');
     }
@@ -160,6 +170,7 @@ function FacebookConnectedCard({
 
   async function handleDisconnect() {
     setError('');
+    setSuccessMsg('');
     try {
       await disconnectFacebook.mutateAsync();
     } catch (err) {
@@ -171,7 +182,7 @@ function FacebookConnectedCard({
     return <SkeletonCard />;
   }
 
-  const isConnecting = connectFacebook.isPending || selectPage.isPending;
+  const isConnecting = selectPage.isPending;
   const isDisconnecting = disconnectFacebook.isPending;
 
   return (
@@ -196,6 +207,14 @@ function FacebookConnectedCard({
           </span>
         )}
       </div>
+
+      {/* Success */}
+      {successMsg && (
+        <div className="mb-4 p-3 bg-[#25D366]/10 border border-[#25D366]/20 rounded-lg flex items-start gap-2">
+          <CheckCircle2 size={16} className="text-[#25D366] shrink-0 mt-0.5" />
+          <p className="text-xs text-[#25D366]">{successMsg}</p>
+        </div>
+      )}
 
       {/* Error */}
       {error && (
@@ -366,7 +385,7 @@ export default function ChannelsPage() {
     );
   }
 
-  const dashboardUrl = typeof window !== 'undefined' ? window.location.origin : 'https://vea.pacifikai.com';
+  const dashboardUrl = typeof window !== 'undefined' ? window.location.origin : 'https://dashboard.vea.pacifikai.com';
 
   return (
     <DashboardLayout title="Canaux de messagerie">
