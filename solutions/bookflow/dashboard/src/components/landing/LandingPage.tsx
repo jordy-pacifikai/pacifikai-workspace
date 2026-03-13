@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import {
   MessageCircle, CalendarCheck, Clock, BarChart3, Smartphone, Bot,
@@ -77,17 +78,20 @@ function Nav() {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-gray-950/90 backdrop-blur-lg border-b border-gray-800/50' : ''}`}>
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-white">Ve&apos;a</Link>
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/logos/logo-transparent.png" alt="Ve'a" width={36} height={36} className="w-9 h-9 object-contain" />
+          <span className="text-xl font-bold text-white">Ve&apos;a</span>
+        </Link>
         <div className="hidden sm:flex items-center gap-6 text-sm text-gray-400">
           <a href="#features" className="hover:text-white transition-colors">Fonctionnalites</a>
           <a href="#pricing" className="hover:text-white transition-colors">Tarifs</a>
           <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/login" className="text-sm text-gray-400 hover:text-white transition-colors hidden sm:block">Connexion</Link>
-          <Link href="/signup" className="text-sm font-semibold px-4 py-2 rounded-lg text-gray-950 hover:opacity-90 transition-opacity" style={{ backgroundColor: GREEN }}>
+          <a href="https://dashboard.vea.pacifikai.com/login" className="text-sm text-gray-400 hover:text-white transition-colors hidden sm:block">Connexion</a>
+          <a href="https://dashboard.vea.pacifikai.com/signup" className="text-sm font-semibold px-4 py-2 rounded-lg text-gray-950 hover:opacity-90 transition-opacity" style={{ backgroundColor: GREEN }}>
             Essayer gratuitement
-          </Link>
+          </a>
         </div>
       </div>
     </nav>
@@ -118,14 +122,14 @@ function Hero() {
           </h1>
 
           <p className="mt-6 text-lg text-gray-400 max-w-xl leading-relaxed">
-            Ve&apos;a repond a vos clients sur WhatsApp et Messenger, propose les creneaux et confirme les rendez-vous. <strong className="text-gray-200">24h/24, 7j/7.</strong>
+            Ve&apos;a repond a vos clients sur Messenger, Instagram et WhatsApp, propose les creneaux et confirme les rendez-vous. <strong className="text-gray-200">24h/24, 7j/7.</strong>
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start gap-4">
-            <Link href="/signup" className="landing-breathing-border flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-gray-950 hover:opacity-90 transition-all" style={{ backgroundColor: GREEN }}>
+            <a href="https://dashboard.vea.pacifikai.com/signup" className="landing-breathing-border flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-gray-950 hover:opacity-90 transition-all" style={{ backgroundColor: GREEN }}>
               Commencer gratuitement
               <ArrowRight size={18} />
-            </Link>
+            </a>
           </div>
           <p className="mt-3 text-xs text-gray-600 lg:text-left text-center">
             Aucune carte bancaire requise &bull; Pret en 5 minutes
@@ -177,7 +181,7 @@ function Stats() {
           {[
             { ref: s1, prefix: '-', label: 'de no-shows', source: 'Bird/Aimy 2024' },
             { ref: s2, prefix: '+', label: 'de reservations', source: 'Chablyy, Bella Spa' },
-            { ref: s3, prefix: '', label: 'taux de lecture WhatsApp', source: 'vs 30% email' },
+            { ref: s3, prefix: '', label: 'taux de lecture messagerie', source: 'vs 30% email' },
             { ref: null, prefix: '', value: '24/7', label: 'disponibilite', source: 'Meme le dimanche a 23h' },
           ].map((stat, i) => (
             <div key={i} className="text-center">
@@ -225,7 +229,7 @@ function Problem() {
 // ─── Features ─────────────────────────────────────────────────────────────────
 
 const FEATURES = [
-  { icon: MessageCircle, title: 'Multi-canal', desc: 'WhatsApp, Messenger, Instagram. Vos clients vous contactent ou ils veulent.' },
+  { icon: MessageCircle, title: 'Multi-canal', desc: 'Messenger, Instagram, WhatsApp. Vos clients vous contactent ou ils veulent.' },
   { icon: CalendarCheck, title: 'Reservation automatique', desc: 'Le bot propose les creneaux disponibles et confirme en temps reel.' },
   { icon: Clock, title: '24h/24, 7j/7', desc: 'Ne manquez plus jamais un rendez-vous, meme le dimanche a 23h.' },
   { icon: Bot, title: 'IA conversationnelle', desc: 'Repond naturellement en francais, comprend les demandes complexes.' },
@@ -365,12 +369,12 @@ function CaseStudies() {
 const PLANS = [
   {
     name: 'Essentiel', desc: 'L\'automatisation qui change tout', price: '9 900',
-    features: ['WhatsApp IA conversationnel', 'Jusqu\'a 200 conversations/mois', 'Tableau de bord complet', 'Configuration personnalisee', 'Support par email'],
+    features: ['Messenger IA conversationnel', 'Jusqu\'a 200 conversations/mois', 'Tableau de bord complet', 'Configuration personnalisee', 'Support par email'],
     featured: false,
   },
   {
     name: 'Premium', desc: 'Le pack complet multi-canal', price: '19 900',
-    features: ['Tout le plan Essentiel', 'Jusqu\'a 500 conversations/mois', 'Messenger + Instagram', 'Google Calendar sync', 'Support prioritaire', 'Statistiques avancees'],
+    features: ['Tout le plan Essentiel', 'Jusqu\'a 500 conversations/mois', 'Instagram + WhatsApp', 'Google Calendar sync', 'Support prioritaire', 'Statistiques avancees'],
     featured: true,
   },
   {
@@ -414,12 +418,12 @@ function Pricing() {
                   </li>
                 ))}
               </ul>
-              <Link href={plan.price ? '/signup' : 'mailto:support@vea.pacifikai.com?subject=Plan%20Business%20Ve%27a'}
+              <a href={plan.price ? 'https://dashboard.vea.pacifikai.com/signup' : 'mailto:support@vea.pacifikai.com?subject=Plan%20Business%20Ve%27a'}
                 className={`mt-6 block text-center py-2.5 rounded-lg text-sm font-semibold transition-all ${plan.featured ? 'text-gray-950 hover:opacity-90' : 'bg-gray-800 text-gray-200 hover:bg-gray-700'}`}
                 style={plan.featured ? { backgroundColor: GREEN } : undefined}
               >
                 {plan.price ? 'Commencer' : 'Nous contacter'}
-              </Link>
+              </a>
             </div>
           ))}
         </div>
@@ -431,7 +435,7 @@ function Pricing() {
 // ─── FAQ ──────────────────────────────────────────────────────────────────────
 
 const FAQS = [
-  { q: 'Comment ca marche exactement ?', a: 'Ve\'a est un chatbot IA qui repond automatiquement aux messages WhatsApp et Messenger de vos clients. Il comprend leurs demandes, propose les creneaux disponibles et confirme les rendez-vous. Tout est synchronise avec votre tableau de bord.' },
+  { q: 'Comment ca marche exactement ?', a: 'Ve\'a est un chatbot IA qui repond automatiquement aux messages Messenger, Instagram et WhatsApp de vos clients. Il comprend leurs demandes, propose les creneaux disponibles et confirme les rendez-vous. Tout est synchronise avec votre tableau de bord.' },
   { q: 'Est-ce que mes clients parlent a un vrai humain ?', a: 'Non, c\'est une intelligence artificielle conversationnelle en francais. Elle est configuree avec vos services, horaires et regles. Si un cas est trop complexe, elle invite le client a vous appeler directement.' },
   { q: 'Combien de temps pour mettre en place ?', a: 'Environ 5 minutes. Creez votre compte, ajoutez vos services et horaires, et c\'est parti. Nous nous occupons de la configuration technique.' },
   { q: 'Est-ce que ca marche en Polynesie francaise ?', a: 'Oui ! Ve\'a est concu pour les entreprises polynesiennes. Prix en XPF, bot en francais, specificites locales integrees.' },
@@ -476,9 +480,9 @@ function CTAFinal() {
           Rejoignez les commerces polynesiens qui automatisent leurs reservations avec Ve&apos;a.
         </p>
         <div className="mt-8">
-          <Link href="/signup" className="landing-breathing-border inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-base font-semibold text-gray-950 hover:opacity-90 transition-all" style={{ backgroundColor: GREEN }}>
+          <a href="https://dashboard.vea.pacifikai.com/signup" className="landing-breathing-border inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-base font-semibold text-gray-950 hover:opacity-90 transition-all" style={{ backgroundColor: GREEN }}>
             Commencer maintenant <ArrowRight size={18} />
-          </Link>
+          </a>
         </div>
       </div>
     </section>
@@ -493,7 +497,10 @@ function Footer() {
       <div className="max-w-6xl mx-auto">
         <div className="grid sm:grid-cols-3 gap-8">
           <div>
-            <p className="text-lg font-bold text-white mb-2">Ve&apos;a</p>
+            <div className="flex items-center gap-2 mb-2">
+              <Image src="/logos/logo-transparent.png" alt="Ve'a" width={28} height={28} className="w-7 h-7 object-contain" />
+              <p className="text-lg font-bold text-white">Ve&apos;a</p>
+            </div>
             <p className="text-sm text-gray-500">Assistant IA de reservation pour les entreprises de Polynesie francaise.</p>
             <p className="text-sm text-gray-600 mt-2">Par PACIFIK&apos;AI</p>
           </div>

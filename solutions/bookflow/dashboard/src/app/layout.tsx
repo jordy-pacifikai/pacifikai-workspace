@@ -10,9 +10,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Ve'a — Assistant IA de reservation | WhatsApp & Messenger",
-  description: "Ve'a prend les rendez-vous pour vous sur WhatsApp et Messenger. 24/7, IA conversationnelle, Google Calendar. Pour salons, restaurants, cabinets medicaux en Polynesie francaise.",
-  keywords: ['reservation', 'IA', 'WhatsApp', 'Messenger', 'Polynesie', 'chatbot', 'rendez-vous', 'salon', 'restaurant', 'medical'],
+  title: "Ve'a — Assistant IA de reservation | Messenger & Instagram",
+  description: "Ve'a prend les rendez-vous pour vous sur Messenger, Instagram et WhatsApp. 24/7, IA conversationnelle, Google Calendar. Pour salons, restaurants, cabinets medicaux en Polynesie francaise.",
+  keywords: ['reservation', 'IA', 'Messenger', 'Instagram', 'WhatsApp', 'Polynesie', 'chatbot', 'rendez-vous', 'salon', 'restaurant', 'medical'],
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   openGraph: {
     title: "Ve'a — Ne perdez plus de clients",
-    description: "Assistant IA de reservation sur WhatsApp et Messenger. 24/7, pour les entreprises de Polynesie francaise.",
+    description: "Assistant IA de reservation sur Messenger, Instagram et WhatsApp. 24/7, pour les entreprises de Polynesie francaise.",
     url: 'https://vea.pacifikai.com',
     siteName: "Ve'a by PACIFIK'AI",
     locale: 'fr_FR',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "Ve'a — Assistant IA de reservation",
-    description: "Ne perdez plus de clients quand vous ne pouvez pas repondre. WhatsApp & Messenger, 24/7.",
+    description: "Ne perdez plus de clients quand vous ne pouvez pas repondre. Messenger, Instagram & WhatsApp, 24/7.",
     images: ['/icons/og-image.png'],
   },
 };
