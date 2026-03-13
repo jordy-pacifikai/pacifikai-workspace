@@ -512,14 +512,14 @@ export default function SettingsPage() {
           </FormField>
 
           <FormField
-            label="Instructions personnalisees"
-            hint="Consignes specifiques pour le chatbot (ex: pas de coloration le lundi, prix minimum 3000 XPF). Max 500 caracteres."
+            label="Regles du chatbot"
+            hint="Regles courtes TOUJOURS respectees par le chatbot. Pour des infos detaillees (FAQ, catalogue...), utilisez la page Connaissances."
           >
             <textarea
               className={cn(inputClass, 'resize-none')}
               rows={4}
               maxLength={500}
-              placeholder="Ex: On ne prend pas les enfants de moins de 5 ans. Pas de coloration apres 16h. Parking gratuit derriere le salon."
+              placeholder="Ex: Toujours tutoyer le client. Prix minimum 3000 XPF. Pas de coloration apres 16h. Parking gratuit derriere le salon."
               value={chatbot.customInstructions}
               onChange={(e) => setChatbot((f) => ({ ...f, customInstructions: e.target.value }))}
             />

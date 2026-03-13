@@ -12,7 +12,7 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 const REDIRECT_URI = process.env.NEXT_PUBLIC_SITE_URL
   ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google`
-  : 'https://vea.pacifikai.com/api/auth/google';
+  : 'https://dashboard.vea.pacifikai.com/api/auth/google';
 
 /**
  * GET — Generate Google OAuth URL (called from frontend to start flow).

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import OpenAI from 'openai'
 import { createClient } from '@supabase/supabase-js'
+import { createCalendarEvent } from '@/lib/gcal'
 
 function getSupabase() {
   return createClient(
@@ -310,14 +311,27 @@ async function executeTool(
       }
 
       // Get existing bookings
-      const { data: bookings } = await getSupabase()
+      const sb = getSupabase()
+      const { data: bookings } = await sb
         .from('bookbot_appointments')
         .select('time_slot,end_time')
         .eq('business_id', config.businessId)
         .eq('appointment_date', date)
         .in('status', ['confirmed', 'pending'])
 
-      // Build occupied ranges
+      // Get blocked slots (manual + GCal synced)
+      const { data: blockedSlots } = await sb
+        .from('bookbot_blocked_slots')
+        .select('time_from,time_to,all_day')
+        .eq('business_id', config.businessId)
+        .eq('date', date)
+
+      // If any blocked slot is all_day, the entire day is blocked
+      if (blockedSlots?.some((s: { all_day: boolean }) => s.all_day)) {
+        return `Aucun créneau disponible le ${date} pour ${serviceName} (journée bloquée).`
+      }
+
+      // Build occupied ranges from bookings
       const occupiedRanges: { start: number; end: number }[] = []
       for (const b of bookings ?? []) {
         const booking = b as { time_slot: unknown; end_time: unknown }
@@ -332,6 +346,18 @@ async function executeTool(
           bEnd = bStart + 30
         }
         occupiedRanges.push({ start: bStart, end: bEnd })
+      }
+
+      // Add blocked slots to occupied ranges
+      for (const slot of blockedSlots ?? []) {
+        const bs = slot as { time_from: string | null; time_to: string | null; all_day: boolean }
+        if (bs.all_day || !bs.time_from || !bs.time_to) continue
+        const fromParts = bs.time_from.split(':').map(Number)
+        const toParts = bs.time_to.split(':').map(Number)
+        occupiedRanges.push({
+          start: (fromParts[0] ?? 0) * 60 + (fromParts[1] ?? 0),
+          end: (toParts[0] ?? 0) * 60 + (toParts[1] ?? 0),
+        })
       }
 
       const available = allSlots.filter(s => {
@@ -358,7 +384,7 @@ async function executeTool(
       const endMins = (timeParts[0] ?? 0) * 60 + (timeParts[1] ?? 0) + dur
       const endTime = `${String(Math.floor(endMins / 60)).padStart(2, '0')}:${String(endMins % 60).padStart(2, '0')}`
 
-      await getSupabase().from('bookbot_appointments').insert({
+      const { data: apptData } = await getSupabase().from('bookbot_appointments').insert({
         business_id: config.businessId,
         client_name: clientName,
         client_phone: 'test_dashboard',
@@ -368,7 +394,27 @@ async function executeTool(
         end_time: endTime,
         status: 'confirmed',
         source: 'chatbot',
-      })
+      }).select('id').single()
+
+      // Create Google Calendar event (best-effort, don't block booking)
+      try {
+        const gcalEventId = await createCalendarEvent(config.businessId, {
+          summary: `${service} — ${clientName}`,
+          description: `Réservé via Ve'a chatbot.\nService: ${service}\nClient: ${clientName}`,
+          date,
+          startTime: time,
+          endTime,
+          timezone: config.timezone,
+        })
+        if (gcalEventId && apptData?.id) {
+          await getSupabase()
+            .from('bookbot_appointments')
+            .update({ gcal_event_id: gcalEventId })
+            .eq('id', apptData.id)
+        }
+      } catch (e) {
+        console.error('[GCal] Event creation failed (non-blocking):', e)
+      }
 
       return `Rendez-vous confirmé ! ${service} le ${date} à ${time} pour ${clientName}.`
     }

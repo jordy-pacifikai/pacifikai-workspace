@@ -50,6 +50,11 @@ export default function ChatTestPage() {
         body: JSON.stringify({ businessId, message: userMsg.content, sessionId }),
       })
 
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(`${res.status}: ${text.slice(0, 200)}`)
+      }
+
       const data = await res.json()
 
       const botMsg: Message = {
@@ -61,13 +66,14 @@ export default function ChatTestPage() {
       }
 
       setMessages(prev => [...prev, botMsg])
-    } catch {
+    } catch (err) {
+      console.error('[chat-test] fetch error:', err)
       setMessages(prev => [
         ...prev,
         {
           id: `e_${Date.now()}`,
           role: 'assistant',
-          content: 'Erreur de connexion. Réessayez.',
+          content: `Erreur de connexion: ${err instanceof Error ? err.message : 'Réessayez.'}`,
           timestamp: new Date(),
         },
       ])
