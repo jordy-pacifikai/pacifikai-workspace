@@ -158,7 +158,20 @@ function buildSystemPrompt(config: BizConfig): string {
   }
 
   const hours = Object.entries(config.openingHours)
-    .map(([day, h]) => `${dayLabels[day] ?? day}: ${h}`)
+    .map(([day, h]) => {
+      let display: string
+      if (typeof h === 'string') {
+        display = h
+      } else if (typeof h === 'object' && h !== null) {
+        const obj = h as { open?: string; close?: string; is_open?: boolean; break_start?: string; break_end?: string }
+        if (obj.is_open === false) display = 'Fermé'
+        else if (obj.break_start && obj.break_end) display = `${obj.open}-${obj.break_start}, ${obj.break_end}-${obj.close}`
+        else display = `${obj.open ?? '08:00'}-${obj.close ?? '17:00'}`
+      } else {
+        display = String(h)
+      }
+      return `${dayLabels[day] ?? day}: ${display}`
+    })
     .join('\n')
 
   const today = new Date().toLocaleDateString('fr-FR', {
@@ -259,7 +272,25 @@ async function executeTool(
       const dayOfWeek = new Date(date).getUTCDay()
       const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
       const dayKey = dayKeys[dayOfWeek]
-      const hoursStr = (dayKey && config.openingHours[dayKey]) ?? '08:00-17:00'
+      const rawHours = (dayKey && config.openingHours[dayKey]) ?? '08:00-17:00'
+
+      // Normalize hours — can be string "08:00-17:00" or object {open, close, is_open, break_start, break_end}
+      let hoursStr: string
+      if (typeof rawHours === 'string') {
+        hoursStr = rawHours
+      } else if (typeof rawHours === 'object' && rawHours !== null) {
+        const h = rawHours as { open?: string; close?: string; is_open?: boolean; break_start?: string; break_end?: string }
+        if (h.is_open === false) {
+          hoursStr = 'closed'
+        } else if (h.break_start && h.break_end) {
+          hoursStr = `${h.open ?? '08:00'}-${h.break_start},${h.break_end}-${h.close ?? '17:00'}`
+        } else {
+          hoursStr = `${h.open ?? '08:00'}-${h.close ?? '17:00'}`
+        }
+      } else {
+        hoursStr = '08:00-17:00'
+      }
+
       if (hoursStr === 'closed') return `Nous sommes fermés le ${date}.`
 
       // Parse multi-range hours (e.g. "08:00-12:00,13:00-17:00")
@@ -289,11 +320,13 @@ async function executeTool(
       // Build occupied ranges
       const occupiedRanges: { start: number; end: number }[] = []
       for (const b of bookings ?? []) {
-        const bParts = (b as { time_slot: string; end_time: string | null }).time_slot.split(':').map(Number)
+        const booking = b as { time_slot: unknown; end_time: unknown }
+        const tsStr = String(booking.time_slot ?? '00:00')
+        const bParts = tsStr.split(':').map(Number)
         const bStart = (bParts[0] ?? 0) * 60 + (bParts[1] ?? 0)
         let bEnd: number
-        if ((b as { end_time: string | null }).end_time) {
-          const eParts = (b as { end_time: string }).end_time.split(':').map(Number)
+        if (booking.end_time) {
+          const eParts = String(booking.end_time).split(':').map(Number)
           bEnd = (eParts[0] ?? 0) * 60 + (eParts[1] ?? 0)
         } else {
           bEnd = bStart + 30
@@ -321,7 +354,7 @@ async function executeTool(
       // Calculate end_time from service duration
       const svc = config.services.find(s => s.name.toLowerCase() === service.toLowerCase())
       const dur = svc?.duration ?? 30
-      const timeParts = time.split(':').map(Number)
+      const timeParts = String(time).split(':').map(Number)
       const endMins = (timeParts[0] ?? 0) * 60 + (timeParts[1] ?? 0) + dur
       const endTime = `${String(Math.floor(endMins / 60)).padStart(2, '0')}:${String(endMins % 60).padStart(2, '0')}`
 
@@ -354,6 +387,7 @@ async function executeTool(
 // ─── POST handler ───────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
+  try {
   const body = (await request.json()) as ChatTestPayload
 
   if (!body.businessId || !body.message) {
@@ -406,7 +440,7 @@ export async function POST(request: NextRequest) {
 
     const msg = choice.message
 
-    if (choice.finish_reason === 'tool_calls' && msg.tool_calls?.length) {
+    if (msg.tool_calls?.length) {
       // Add assistant message with tool calls
       messages.push(msg)
 
@@ -418,11 +452,19 @@ export async function POST(request: NextRequest) {
         messages.push({ role: 'tool', tool_call_id: toolCall.id, content: result })
         toolCalls.push({ name: toolCall.function.name, input: args, result })
       }
+
+      // If model also included text content alongside tool calls, capture it
+      if (msg.content) finalReply = msg.content
     } else {
       finalReply = msg.content ?? ''
       history.push({ role: 'assistant', content: finalReply })
       break
     }
+  }
+
+  // If loop ended with tool calls but no final text, add whatever we got
+  if (finalReply && history[history.length - 1]?.role !== 'assistant') {
+    history.push({ role: 'assistant', content: finalReply })
   }
 
   // Save session (without system prompt — re-injected each time)
@@ -445,6 +487,13 @@ export async function POST(request: NextRequest) {
     reply: finalReply || 'Désolé, je n\'ai pas pu traiter ta demande.',
     toolCalls,
   })
+  } catch (err) {
+    console.error('[chat-test] Error:', err)
+    return NextResponse.json(
+      { error: 'Internal error', detail: err instanceof Error ? err.message : String(err) },
+      { status: 500 },
+    )
+  }
 }
 
 // ─── DELETE handler — reset session ─────────────────────────────────────────────
