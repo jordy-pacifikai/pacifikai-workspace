@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { getSupabaseBrowser } from '@/lib/supabase'
 
@@ -69,6 +70,7 @@ export default function SignupPage() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
+          <Image src="/logos/logo-transparent.png" alt="Ve'a" width={120} height={65} className="h-16 w-auto mx-auto mb-3" />
           <h1 className="text-2xl font-bold text-white">
             Ve&apos;a
           </h1>

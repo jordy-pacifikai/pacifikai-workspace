@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -15,6 +16,7 @@ import {
   Plug,
   Settings,
   LogOut,
+  Lightbulb,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -25,18 +27,39 @@ interface NavItem {
   icon: React.ElementType;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard',      href: '/stats',        icon: LayoutDashboard },
-  { label: 'Calendrier',     href: '/calendar',     icon: Calendar        },
-  { label: 'Rendez-vous',    href: '/appointments', icon: ClipboardList   },
-  { label: 'Services',       href: '/services',     icon: Scissors        },
-  { label: 'Horaires',       href: '/hours',        icon: Clock           },
-  { label: 'Clients',        href: '/clients',      icon: Users           },
-  { label: 'Agent IA',       href: '/agent',        icon: Bot             },
-  { label: 'Connaissances',  href: '/knowledge',    icon: BookOpen        },
-  { label: 'Test chatbot',   href: '/chat-test',    icon: MessageCircle   },
-  { label: 'Canaux',         href: '/channels',     icon: Plug            },
-  { label: 'Paramètres',     href: '/settings',     icon: Settings        },
+interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    title: 'Monitoring',
+    items: [
+      { label: 'Dashboard',    href: '/stats',        icon: LayoutDashboard },
+      { label: 'Calendrier',   href: '/calendar',     icon: Calendar        },
+      { label: 'Rendez-vous',  href: '/appointments', icon: ClipboardList   },
+      { label: 'Clients',      href: '/clients',      icon: Users           },
+    ],
+  },
+  {
+    title: 'Configuration IA',
+    items: [
+      { label: 'Agent IA',      href: '/agent',     icon: Bot             },
+      { label: 'Connaissances', href: '/knowledge',  icon: BookOpen        },
+      { label: 'Test chatbot',  href: '/chat-test',  icon: MessageCircle   },
+      { label: 'Canaux',        href: '/channels',   icon: Plug            },
+    ],
+  },
+  {
+    title: 'Mon business',
+    items: [
+      { label: 'Services',      href: '/services',          icon: Scissors  },
+      { label: 'Horaires',      href: '/hours',             icon: Clock     },
+      { label: 'Paramètres',    href: '/settings',          icon: Settings  },
+      { label: 'Suggestions',   href: '/feature-requests',  icon: Lightbulb },
+    ],
+  },
 ];
 
 interface SidebarProps {
@@ -61,6 +84,7 @@ export function Sidebar({ businessName = 'Mon Business' }: SidebarProps) {
       {/* ── Logo ─────────────────────────────────────────────────────── */}
       <div className="px-6 py-5 border-b border-gray-800">
         <div className="flex items-center gap-2.5">
+          <Image src="/logos/logo-transparent.png" alt="Ve'a" width={52} height={28} className="h-7 w-auto" />
           <div className="relative">
             <span className="text-xl font-bold tracking-tight text-white">
               Ve&apos;a
@@ -82,47 +106,52 @@ export function Sidebar({ businessName = 'Mon Business' }: SidebarProps) {
 
       {/* ── Navigation ───────────────────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto py-4 px-3">
-        <ul className="space-y-0.5">
-          {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-            const active = isActive(href);
-            return (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group relative',
-                    active
-                      ? 'text-white'
-                      : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/60',
-                  )}
-                  style={
-                    active
-                      ? {
-                          backgroundColor: 'rgba(37, 211, 102, 0.08)',
-                          color: '#25D366',
-                        }
-                      : undefined
-                  }
-                >
-                  {/* active left border indicator */}
-                  {active && (
-                    <span
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r"
-                      style={{ backgroundColor: '#25D366' }}
-                    />
-                  )}
-
-                  <Icon
-                    size={17}
-                    className="shrink-0 transition-colors"
-                    style={active ? { color: '#25D366' } : undefined}
-                  />
-                  {label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+        {NAV_GROUPS.map((group) => (
+          <div key={group.title} className="mb-4">
+            <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-600">
+              {group.title}
+            </p>
+            <ul className="space-y-0.5">
+              {group.items.map(({ label, href, icon: Icon }) => {
+                const active = isActive(href);
+                return (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      className={cn(
+                        'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 group relative',
+                        active
+                          ? 'text-white'
+                          : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/60',
+                      )}
+                      style={
+                        active
+                          ? {
+                              backgroundColor: 'rgba(37, 211, 102, 0.08)',
+                              color: '#25D366',
+                            }
+                          : undefined
+                      }
+                    >
+                      {active && (
+                        <span
+                          className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r"
+                          style={{ backgroundColor: '#25D366' }}
+                        />
+                      )}
+                      <Icon
+                        size={17}
+                        className="shrink-0 transition-colors"
+                        style={active ? { color: '#25D366' } : undefined}
+                      />
+                      {label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
       </nav>
 
       {/* ── Bottom — user + logout ────────────────────────────────────── */}

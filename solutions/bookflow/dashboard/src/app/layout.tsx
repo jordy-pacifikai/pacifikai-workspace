@@ -13,6 +13,15 @@ export const metadata: Metadata = {
   title: "Ve'a — Assistant IA de reservation | WhatsApp & Messenger",
   description: "Ve'a prend les rendez-vous pour vous sur WhatsApp et Messenger. 24/7, IA conversationnelle, Google Calendar. Pour salons, restaurants, cabinets medicaux en Polynesie francaise.",
   keywords: ['reservation', 'IA', 'WhatsApp', 'Messenger', 'Polynesie', 'chatbot', 'rendez-vous', 'salon', 'restaurant', 'medical'],
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icons/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icons/favicon-16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/icons/apple-touch-icon.png',
+  },
+  manifest: '/manifest.json',
   openGraph: {
     title: "Ve'a — Ne perdez plus de clients",
     description: "Assistant IA de reservation sur WhatsApp et Messenger. 24/7, pour les entreprises de Polynesie francaise.",
@@ -20,11 +29,20 @@ export const metadata: Metadata = {
     siteName: "Ve'a by PACIFIK'AI",
     locale: 'fr_FR',
     type: 'website',
+    images: [
+      {
+        url: '/icons/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: "Ve'a — Assistant IA de reservation",
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: "Ve'a — Assistant IA de reservation",
     description: "Ne perdez plus de clients quand vous ne pouvez pas repondre. WhatsApp & Messenger, 24/7.",
+    images: ['/icons/og-image.png'],
   },
 };
 
