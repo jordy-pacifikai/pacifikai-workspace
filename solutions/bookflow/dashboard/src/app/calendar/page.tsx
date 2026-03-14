@@ -298,52 +298,58 @@ export default function CalendarPage() {
     <DashboardLayout title="Calendrier" businessName={businessName ?? undefined}>
       <div className="flex flex-col gap-4">
         {/* Navigation */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentWeek(subWeeks(currentWeek, 1))}
-              className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              onClick={() => setCurrentWeek(addWeeks(currentWeek, 1))}
-              className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors"
-            >
-              <ChevronRight size={16} />
-            </button>
-            <h2 className="text-white font-semibold text-sm ml-1">
-              {format(weekStart, 'd MMM', { locale: fr })} — {format(weekEnd, 'd MMM yyyy', { locale: fr })}
-            </h2>
-          </div>
-          <div className="flex items-center gap-2">
+        <div className="space-y-3">
+          {/* Week nav + today */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+              <button
+                onClick={() => setCurrentWeek(subWeeks(currentWeek, 1))}
+                className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors shrink-0"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={() => setCurrentWeek(addWeeks(currentWeek, 1))}
+                className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors shrink-0"
+              >
+                <ChevronRight size={16} />
+              </button>
+              <h2 className="text-white font-semibold text-xs sm:text-sm ml-1 truncate">
+                {format(weekStart, 'd MMM', { locale: fr })} — {format(weekEnd, 'd MMM yyyy', { locale: fr })}
+              </h2>
+            </div>
             <button
               onClick={() => setCurrentWeek(new Date())}
               disabled={isCurrentWeek}
-              className="px-3 py-1.5 text-sm rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-2.5 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
             >
-              Aujourd'hui
+              <span className="sm:hidden">Auj.</span>
+              <span className="hidden sm:inline">Aujourd&apos;hui</span>
             </button>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-2">
             <button
               onClick={() => { setBlockForm({ date: format(new Date(), 'yyyy-MM-dd'), allDay: true, timeFrom: '08:00', timeTo: '17:00', reason: '' }); setShowBlockModal(true); }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-red-400 text-sm font-medium bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-red-400 text-xs sm:text-sm font-medium bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors"
             >
               <Ban size={15} />
-              Bloquer
+              <span className="hidden sm:inline">Bloquer</span>
             </button>
             <button
               onClick={() => { setCreatePrefill({}); setShowCreateModal(true); }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-white text-sm font-medium transition-opacity hover:opacity-90"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-white text-xs sm:text-sm font-medium transition-opacity hover:opacity-90 ml-auto"
               style={{ backgroundColor: '#25D366' }}
             >
               <Plus size={15} />
-              Nouveau RDV
+              <span className="hidden sm:inline">Nouveau</span> RDV
             </button>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
           {(Object.keys(STATUS_CONFIG) as Appointment['status'][]).map((s) => (
             <div key={s} className="flex items-center gap-1.5">
               <span className={cn('w-2 h-2 rounded-full', STATUS_CONFIG[s].dot)} />

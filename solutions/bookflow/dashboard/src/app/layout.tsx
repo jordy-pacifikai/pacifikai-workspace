@@ -1,6 +1,8 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Providers } from '@/lib/providers';
+import { PWAInstallPrompt } from '@/components/pwa-install-prompt';
+import { ServiceWorkerRegister } from '@/components/sw-register';
 import './globals.css';
 
 const inter = Inter({
@@ -8,6 +10,18 @@ const inter = Inter({
   display: 'swap',
   variable: '--font-inter',
 });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#030712' },
+    { media: '(prefers-color-scheme: light)', color: '#0d9488' },
+  ],
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   title: "Ve'a — Assistant IA de reservation | Messenger & Instagram",
@@ -53,8 +67,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={inter.variable}>
-      <body className="font-sans antialiased bg-gray-950 text-gray-100 min-h-screen">
-        <Providers>{children}</Providers>
+      <body className="font-sans antialiased bg-gray-950 text-gray-100 min-h-screen overscroll-none">
+        <Providers>
+          {children}
+          <PWAInstallPrompt />
+          <ServiceWorkerRegister />
+        </Providers>
       </body>
     </html>
   );
