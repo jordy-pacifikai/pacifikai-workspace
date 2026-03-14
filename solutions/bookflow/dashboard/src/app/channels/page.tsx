@@ -408,6 +408,9 @@ export default function ChannelsPage() {
         </div>
       ) : (
         <div className="grid gap-6">
+          {/* Google Calendar — sync bidirectionnelle */}
+          <GoogleCalendarSection businessId={businessId} />
+
           {/* Messenger & Instagram — OAuth auto */}
           {businessId && (
             <FacebookConnectedCard
@@ -482,8 +485,6 @@ export default function ChannelsPage() {
         </div>
       )}
 
-      {/* ── Google Calendar ─────────────────────────────────────────────── */}
-      <GoogleCalendarSection businessId={businessId} />
     </DashboardLayout>
   );
 }
@@ -513,7 +514,7 @@ function GoogleCalendarSection({ businessId }: { businessId: string | null }) {
   if (isLoading) return null;
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mt-6">
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
           <Calendar size={20} className="text-blue-400" />
