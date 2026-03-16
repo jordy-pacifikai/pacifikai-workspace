@@ -13,7 +13,10 @@ const FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET ?? '';
 const FB_CONFIG_ID = process.env.FACEBOOK_CONFIG_ID ?? '2536440043437319';
 const FB_API = 'https://graph.facebook.com/v22.0';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vea.pacifikai.com';
-const REDIRECT_URI = `${SITE_URL}/api/auth/facebook`;
+// OAuth redirect URI must match what's registered in the Facebook Login for Business config.
+// Both vea.pacifikai.com and dashboard.vea.pacifikai.com serve the same Vercel project,
+// so we always use vea.pacifikai.com which is whitelisted in the Meta config.
+const REDIRECT_URI = 'https://vea.pacifikai.com/api/auth/facebook';
 
 interface FacebookPage {
   id: string;

@@ -118,8 +118,8 @@ export const bookbotHandler = schemaTask({
       replyLength: reply.length,
     });
 
-    // Send reply
-    await sendWhatsApp(payload.from, reply, config);
+    // Send reply (pass pageAccessToken to avoid extra Supabase fetch)
+    await sendWhatsApp(payload.from, reply, config, payload.pageAccessToken);
 
     return { reply, previousState: session.state, quota };
   },

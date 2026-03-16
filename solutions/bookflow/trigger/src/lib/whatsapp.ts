@@ -6,19 +6,28 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY!;
 /**
  * Send a message to the correct channel based on the `to` address format.
  * - "messenger_SENDER_ID" → Facebook Messenger
+ * - "instagram_SENDER_ID" → Instagram DM (same Graph API, different endpoint)
  * - anything else → WhatsApp (Twilio or Meta Cloud API)
  */
 export async function sendWhatsApp(
   to: string,
   message: string,
-  config: BusinessConfig
+  config: BusinessConfig,
+  pageAccessToken?: string
 ): Promise<void> {
   if (!message) return;
 
   // Detect Messenger channel
   if (to.startsWith("messenger_")) {
     const recipientId = to.replace("messenger_", "");
-    await sendViaMessenger(recipientId, message, config);
+    await sendViaMessenger(recipientId, message, config, pageAccessToken);
+    return;
+  }
+
+  // Detect Instagram channel
+  if (to.startsWith("instagram_")) {
+    const recipientId = to.replace("instagram_", "");
+    await sendViaInstagram(recipientId, message, config, pageAccessToken);
     return;
   }
 
@@ -108,10 +117,10 @@ async function sendViaMeta(
 async function sendViaMessenger(
   recipientId: string,
   message: string,
-  config: BusinessConfig
+  config: BusinessConfig,
+  pageAccessToken?: string
 ): Promise<void> {
-  // Load page token from Supabase (not in BusinessConfig by default)
-  const pageToken = await getPageToken(config.businessId);
+  const pageToken = pageAccessToken || await getPageToken(config.businessId);
   if (!pageToken) {
     throw new Error("Messenger page token not found for business");
   }
@@ -131,6 +140,39 @@ async function sendViaMessenger(
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Messenger API error ${res.status}: ${text}`);
+  }
+}
+
+/**
+ * Send via Instagram DM using the Page token.
+ * Instagram DMs use the same /me/messages endpoint as Messenger.
+ */
+async function sendViaInstagram(
+  recipientId: string,
+  message: string,
+  config: BusinessConfig,
+  pageAccessToken?: string
+): Promise<void> {
+  const pageToken = pageAccessToken || await getPageToken(config.businessId);
+  if (!pageToken) {
+    throw new Error("Instagram page token not found for business");
+  }
+
+  const res = await fetch(
+    `https://graph.facebook.com/v22.0/me/messages?access_token=${pageToken}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        recipient: { id: recipientId },
+        message: { text: message },
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Instagram DM API error ${res.status}: ${text}`);
   }
 }
 

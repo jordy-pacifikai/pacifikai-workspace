@@ -44,26 +44,55 @@ export function generateAvailableDates(
 }
 
 /**
- * Parse time ranges like "08:00-12:00,13:00-17:00" into [{open, close}] pairs.
+ * Parse time ranges into [{open, close}] pairs.
+ * Supports two formats:
+ * - String: "08:00-12:00,13:00-17:00"
+ * - Object: { open: "08:00", close: "17:00", is_open: true, break_start: "12:00", break_end: "13:00" }
  */
-function parseTimeRanges(hours: string): { openH: number; openM: number; closeH: number; closeM: number }[] {
-  if (!hours || hours === "closed") return [];
+function parseTimeRanges(hours: string | Record<string, unknown>): { openH: number; openM: number; closeH: number; closeM: number }[] {
+  if (!hours) return [];
+
+  // Object format from dashboard (new)
+  if (typeof hours === "object") {
+    const obj = hours as { open?: string; close?: string; is_open?: boolean; break_start?: string; break_end?: string };
+    if (obj.is_open === false) return [];
+    const openStr = obj.open ?? "08:00";
+    const closeStr = obj.close ?? "17:00";
+
+    const ranges: { openH: number; openM: number; closeH: number; closeM: number }[] = [];
+
+    if (obj.break_start && obj.break_end) {
+      // Split into two ranges around the break
+      ranges.push(parseTimePair(openStr, obj.break_start));
+      ranges.push(parseTimePair(obj.break_end, closeStr));
+    } else {
+      ranges.push(parseTimePair(openStr, closeStr));
+    }
+    return ranges;
+  }
+
+  // String format (legacy)
+  if (hours === "closed") return [];
 
   return hours.split(",").map((range) => {
     const [openStr, closeStr] = range.trim().split("-");
-    const openParts = (openStr ?? "08:00").split(":");
-    const closeParts = (closeStr ?? "17:00").split(":");
-    return {
-      openH: parseInt(openParts[0] ?? "8", 10),
-      openM: parseInt(openParts[1] ?? "0", 10),
-      closeH: parseInt(closeParts[0] ?? "17", 10),
-      closeM: parseInt(closeParts[1] ?? "0", 10),
-    };
+    return parseTimePair(openStr ?? "08:00", closeStr ?? "17:00");
   });
 }
 
+function parseTimePair(openStr: string, closeStr: string) {
+  const openParts = openStr.split(":");
+  const closeParts = closeStr.split(":");
+  return {
+    openH: parseInt(openParts[0] ?? "8", 10),
+    openM: parseInt(openParts[1] ?? "0", 10),
+    closeH: parseInt(closeParts[0] ?? "17", 10),
+    closeM: parseInt(closeParts[1] ?? "0", 10),
+  };
+}
+
 export function generateTimeSlots(
-  openingHours: Record<string, string>,
+  openingHours: Record<string, string | Record<string, unknown>>,
   dateStr: string,
   serviceDuration: number,
   maxSlots = 20
