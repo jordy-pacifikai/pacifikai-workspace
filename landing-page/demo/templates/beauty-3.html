@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zen & Harmonie — Spa & Bien-être | Papeete</title>
+<meta name="description" content="Zen & Harmonie — Retrouvez votre équilibre intérieur">
+<meta property="og:title" content="Zen & Harmonie — Retrouvez votre équilibre intérieur">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.css">
+<style>
+/* ============================================================
+   BEAUTY-3 — Clean Minimalist Zen (Awwwards TOP 1%)
+   Aesop x Japanese zen aesthetics. Restrained, elegant, breathing.
+   PACIFIK'AI Prospection System
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg: #f8f6f3;
+  --accent: #8fa68e;
+  --text: #2a2a2a;
+  --font-display: 'Cormorant Garamond', 'Cormorant Garamond', serif;
+  --font-body: 'Inter', 'DM Sans', sans-serif;
+  --dim: rgba(60,50,40,.45);
+  --border: rgba(60,50,40,.1);
+  --radius: 0px;
+  --cream: #FAF7F2;
+  --ease-out: cubic-bezier(.23,1,.32,1);
+  --ease-smooth: cubic-bezier(.16,1,.3,1);
+  --ease-expo: cubic-bezier(.19,1,.22,1);
+}
+
+html{
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  scroll-behavior:auto;
+}
+
+body{
+  font-family:var(--font-body);
+  color:var(--text);
+  background:var(--bg);
+  font-weight:300;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+@media (pointer:fine){
+  body{cursor:none}
+  a,button{cursor:none}
+}
+
+::selection{background:var(--accent);color:var(--cream)}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{background:none;border:none;font:inherit;color:inherit}
+
+/* ---- PAGE LOADER ---- */
+.page-loader{
+  position:fixed;inset:0;z-index:99999;
+  background:var(--text);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  clip-path:inset(0 0 0 0);
+  transition:clip-path 0.8s var(--ease-expo);
+}
+.page-loader.is-done{clip-path:inset(0 0 100% 0)}
+.loader-name{
+  font-family:var(--font-display);font-size:clamp(24px,3vw,40px);
+  color:var(--cream);letter-spacing:.12em;font-weight:300;
+  opacity:0;transform:translateY(12px);
+}
+.loader-bar{
+  position:absolute;bottom:0;left:0;height:2px;
+  background:var(--accent);width:0;
+}
+
+/* ---- GSAP HIDDEN STATE ---- */
+.gs-hidden{opacity:0}
+
+/* ---- CSS SCROLL-DRIVEN (progressive) ---- */
+@supports (animation-timeline: view()){
+  @keyframes revealScroll{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  .reveal-scroll{animation:revealScroll linear both;animation-timeline:view();animation-range:entry 0% entry 40%}
+  @keyframes scrollProgress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  .scroll-progress-css{
+    position:fixed;top:38px;left:0;width:100%;height:1px;z-index:9998;
+    background:var(--accent);transform-origin:left;
+    animation:scrollProgress linear;animation-timeline:scroll();
+    pointer-events:none;
+  }
+}
+
+/* ---- DISCLAIMER BAR ---- */
+.disclaimer{
+  position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:var(--text);color:var(--cream);
+  font-size:11px;letter-spacing:.06em;text-align:center;
+  padding:10px 24px;font-weight:400;
+}
+.disclaimer a{text-decoration:underline;font-weight:500;color:var(--accent)}
+
+/* ---- SCROLL PROGRESS (GSAP fallback) ---- */
+.scroll-progress{
+  position:fixed;top:38px;left:0;width:100%;height:1px;z-index:9998;
+  background:var(--accent);transform-origin:left;transform:scaleX(0);
+  will-change:transform;pointer-events:none;
+}
+
+/* ---- PARTICLE CONSTELLATION CANVAS ---- */
+.particle-canvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+}
+
+/* ---- MAGNETIC CURSOR (zen, mix-blend-mode:difference) ---- */
+.cursor-dot{
+  position:fixed;width:8px;height:8px;background:var(--cream);border-radius:50%;
+  pointer-events:none;z-index:10001;transform:translate(-50%,-50%);
+  mix-blend-mode:difference;
+  transition:width .35s var(--ease-out),height .35s var(--ease-out),background .3s;
+}
+.cursor-dot.is-hover{width:48px;height:48px;background:rgba(255,255,255,.15)}
+.cursor-dot.is-gallery{width:80px;height:80px;background:rgba(255,255,255,.1)}
+.cursor-ring{
+  position:fixed;width:40px;height:40px;border:1px solid var(--cream);border-radius:50%;
+  pointer-events:none;z-index:10000;transform:translate(-50%,-50%);
+  opacity:.08;mix-blend-mode:difference;
+  transition:width .5s var(--ease-out),height .5s var(--ease-out),opacity .3s;
+}
+.cursor-ring.is-hover{width:0;height:0;opacity:0}
+.cursor-ring.is-gallery{width:0;height:0;opacity:0}
+
+@media (pointer:coarse){.cursor-dot,.cursor-ring{display:none}}
+
+/* ---- NAVIGATION (thin, minimal) ---- */
+nav{
+  position:fixed;top:38px;left:0;right:0;z-index:500;
+  padding:28px 48px;display:flex;justify-content:space-between;align-items:center;
+  transition:transform .5s var(--ease-out),background .4s,backdrop-filter .4s;
+}
+nav.nav-scrolled{
+  background:rgba(250,247,242,.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+nav.nav-hidden{transform:translateY(-120%)}
+.nav-brand{
+  font-family:var(--font-display);font-size:clamp(18px,1.8vw,24px);
+  font-weight:400;letter-spacing:.06em;color:var(--text);
+}
+.nav-links{display:flex;align-items:center;gap:40px}
+.nav-links a{
+  color:var(--dim);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  transition:color .3s;position:relative;font-weight:400;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-6px;left:0;width:0;height:1px;
+  background:var(--text);transition:width .5s var(--ease-out);
+}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{width:100%}
+.nav-divider{width:1px;height:16px;background:var(--border)}
+
+/* ---- HERO (Minimal zen — pinned + parallax) ---- */
+.hero{
+  position:relative;min-height:100vh;min-height:100dvh;
+  display:grid;grid-template-columns:1fr 0.5fr;align-items:center;
+  padding:0 48px;gap:clamp(40px,6vw,96px);overflow:hidden;
+}
+.hero-content{padding-top:120px;max-width:680px}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:40px;
+}
+.hero-eyebrow .line-small{width:28px;height:1px;background:var(--accent)}
+.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(44px,7vw,96px);
+  line-height:1;letter-spacing:-.02em;font-weight:300;
+  margin-bottom:36px;
+}
+.hero-title .char-wrap{display:inline-block;overflow:hidden;vertical-align:top}
+.hero-title .char-inner{display:inline-block}
+.hero-title .line{display:block;overflow:hidden}
+.hero-title .line-inner{display:block}
+.hero-title .line:nth-child(2){font-style:italic;color:var(--accent)}
+.hero-tagline{
+  color:var(--dim);font-size:clamp(14px,1.1vw,16px);
+  max-width:400px;line-height:1.9;font-weight:300;
+}
+.hero-overlay{
+  position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,var(--bg) 100%);
+  pointer-events:none;opacity:0;
+}
+.hero-visual{
+  position:relative;padding-top:120px;
+  display:flex;justify-content:center;align-items:center;
+}
+.hero-img-wrap{
+  width:clamp(240px,22vw,360px);
+  aspect-ratio:3/4;overflow:hidden;position:relative;
+}
+.hero-img-clip{
+  position:absolute;inset:0;
+  clip-path:inset(0 100% 0 0);
+}
+.hero-img-clip img{
+  width:100%;height:100%;object-fit:cover;
+  filter:contrast(1.03) brightness(.97) saturate(.9);
+}
+.hero-scroll{
+  position:absolute;bottom:40px;left:48px;
+  display:flex;align-items:center;gap:12px;
+}
+.hero-scroll span{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+.scroll-line{width:48px;height:1px;position:relative;overflow:hidden;background:var(--border)}
+.scroll-line::after{
+  content:'';position:absolute;top:0;left:0;width:100%;height:100%;
+  background:var(--accent);animation:scrollPulse 2.5s ease-in-out infinite;
+}
+@keyframes scrollPulse{0%{transform:translateX(-100%)}50%{transform:translateX(0)}100%{transform:translateX(100%)}}
+
+/* ---- SECTION COMMON ---- */
+.section{padding:clamp(80px,12vw,160px) 48px;position:relative}
+.section-label{
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:48px;
+  display:flex;align-items:center;gap:14px;
+}
+.section-label::before{content:'';width:32px;height:1px;background:var(--accent)}
+.section-title{
+  font-family:var(--font-display);
+  font-size:clamp(30px,4.5vw,56px);
+  line-height:1.08;letter-spacing:-.015em;font-weight:300;
+  margin-bottom:48px;overflow:hidden;
+}
+
+
+
+/* ---- PROCESS (vertical timeline) ---- */
+.process{background:var(--bg)}
+.process-inner{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  margin-top:64px;max-width:900px;
+}
+.process-timeline{position:relative;padding-left:0}
+.process-line{position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border)}
+.process-line-fill{position:absolute;left:0;top:0;width:1px;height:0;background:var(--accent);transition:height .01s}
+.process-step{position:relative;padding:0 0 clamp(56px,6vw,80px) 48px}
+.process-step:last-child{padding-bottom:0}
+.process-dot{
+  position:absolute;left:-4px;top:6px;
+  width:9px;height:9px;border-radius:50%;
+  border:1px solid var(--border);background:var(--bg);
+  transition:border-color .5s,background .5s;z-index:2;
+}
+.process-step.is-active .process-dot{border-color:var(--accent);background:var(--accent)}
+.process-num{
+  font-family:var(--font-body);font-size:10px;
+  letter-spacing:.25em;color:var(--dim);margin-bottom:14px;text-transform:uppercase;
+}
+.process-step h3{
+  font-family:var(--font-display);font-size:clamp(22px,2.4vw,30px);
+  font-weight:400;margin-bottom:14px;letter-spacing:-.01em;line-height:1.2;
+}
+.process-step p{color:var(--dim);font-size:14px;line-height:1.9;max-width:320px}
+
+/* ---- MARQUEE (thin, spaced) ---- */
+.marquee{
+  overflow:hidden;padding:36px 0;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.marquee-track{display:flex;gap:0;white-space:nowrap;will-change:transform}
+.marquee-word{
+  font-family:var(--font-display);font-size:clamp(13px,1.4vw,18px);
+  letter-spacing:.35em;text-transform:uppercase;color:var(--text);
+  opacity:.12;flex-shrink:0;padding:0 40px;font-weight:300;
+}
+.marquee-sep{
+  flex-shrink:0;display:flex;align-items:center;padding:0 8px;
+  color:var(--accent);opacity:.25;font-size:6px;
+}
+
+/* ---- GALLERY (3x2 zen grid — SVG mask circle reveal) ---- */
+.gallery{padding:clamp(80px,12vw,160px) 48px}
+.gallery-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:56px;
+}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.gallery-item{
+  position:relative;overflow:hidden;aspect-ratio:4/5;
+}
+.gallery-item-inner{
+  width:100%;height:100%;position:relative;
+  clip-path:circle(0% at 50% 50%);
+  transition:clip-path 1.2s var(--ease-smooth);
+}
+.gallery-item.is-revealed .gallery-item-inner{clip-path:circle(75% at 50% 50%)}
+.gallery-item img{
+  width:100%;height:100%;object-fit:cover;
+  filter:grayscale(1) contrast(1.03) brightness(.96);
+  transition:all .8s var(--ease-out);transform:scale(1.06);
+}
+.gallery-item:hover img{
+  filter:grayscale(0) brightness(1) saturate(1.05);transform:scale(1);
+}
+
+/* ---- COUNTERS / STATS (minimal with thin underline) ---- */
+.stats{
+  padding:clamp(64px,8vw,96px) 48px;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;text-align:center}
+.stat{position:relative;padding-bottom:24px}
+.stat::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:32px;height:1px;background:var(--accent);opacity:.4;
+}
+.stat-value{
+  font-family:var(--font-display);font-size:clamp(40px,6vw,72px);
+  font-weight:300;line-height:1;color:var(--text);letter-spacing:-.02em;
+}
+.stat-value .suffix{font-size:.45em;color:var(--accent);vertical-align:super;margin-left:2px}
+.stat-label{
+  font-size:10px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--dim);margin-top:14px;
+}
+
+/* ---- ABOUT (side-by-side with blob SVG mask) ---- */
+.about{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(48px,6vw,96px);align-items:start;
+}
+.about-text{padding-top:clamp(40px,6vw,100px)}
+.about-text .section-label{margin-bottom:32px}
+.about-text h2{
+  font-family:var(--font-display);font-size:clamp(30px,3.8vw,52px);
+  line-height:1.1;font-weight:300;margin-bottom:32px;letter-spacing:-.015em;
+}
+.about-text h2 em{font-style:italic;color:var(--accent)}
+.about-text p{color:var(--dim);font-size:14px;line-height:1.9;margin-bottom:20px;max-width:440px}
+.about-text .line-detail{
+  width:40px;height:1px;background:var(--accent);margin-top:40px;opacity:.5;
+}
+.about-visual{position:relative}
+.about-img-wrap{
+  width:100%;aspect-ratio:3/4;overflow:hidden;position:relative;
+}
+/* SVG blob mask for about image */
+.about-img-mask{
+  width:100%;height:100%;
+  clip-path:url(#blobMask);
+  opacity:0;transform:scale(.92);
+  transition:opacity 1.2s var(--ease-smooth),transform 1.2s var(--ease-smooth);
+}
+.about-img-wrap.is-revealed .about-img-mask{opacity:1;transform:scale(1)}
+.about-img-mask img{width:100%;height:100%;object-fit:cover;filter:contrast(1.03) brightness(.97) saturate(.9)}
+
+/* ---- TESTIMONIAL (large italic, centered) ---- */
+.testimonial{text-align:center;max-width:720px;margin:0 auto}
+.testimonial .quote-mark{
+  font-family:var(--font-display);font-size:clamp(64px,8vw,100px);
+  color:var(--accent);opacity:.15;line-height:.5;margin-bottom:28px;
+}
+.testimonial blockquote{
+  font-family:var(--font-display);font-size:clamp(20px,2.6vw,32px);
+  font-weight:300;line-height:1.55;font-style:italic;
+  margin-bottom:36px;letter-spacing:.005em;
+}
+.testimonial cite{
+  font-style:normal;font-size:10px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--dim);
+}
+.testimonial .cite-line{
+  display:block;width:20px;height:1px;background:var(--accent);
+  margin:0 auto 16px;opacity:.4;
+}
+
+/* ---- CTA (clean bordered section, hover fill button + glow) ---- */
+.cta{
+  position:relative;overflow:hidden;
+  padding:clamp(100px,14vw,180px) 48px;text-align:center;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.cta h2{
+  font-family:var(--font-display);font-size:clamp(32px,5vw,64px);
+  font-weight:300;margin-bottom:20px;letter-spacing:-.015em;
+}
+.cta h2 em{font-style:italic;color:var(--accent)}
+.cta-sub{
+  color:var(--dim);font-size:14px;margin-bottom:48px;
+  letter-spacing:.03em;line-height:1.8;
+}
+.cta-links{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin-bottom:32px}
+.cta-link{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  padding:16px 44px;border:1px solid var(--text);
+  transition:all .5s var(--ease-out),box-shadow .5s;
+  position:relative;overflow:hidden;
+}
+.cta-link::before{
+  content:'';position:absolute;inset:0;background:var(--text);
+  transform:translateY(101%);transition:transform .5s var(--ease-out);z-index:0;
+}
+.cta-link:hover::before{transform:translateY(0)}
+.cta-link span{position:relative;z-index:1;transition:color .5s var(--ease-out)}
+.cta-link:hover span{color:var(--bg)}
+.cta-link:hover{box-shadow:0 0 30px rgba(0,0,0,.08)}
+
+/* ---- FOOTER ---- */
+footer{padding:64px 48px 32px;border-top:1px solid var(--border)}
+.footer-top{
+  display:grid;grid-template-columns:1fr auto auto;gap:64px;
+  margin-bottom:64px;align-items:start;
+}
+.footer-brand{
+  font-family:var(--font-display);font-size:clamp(22px,2.5vw,32px);
+  font-weight:300;margin-bottom:16px;letter-spacing:.02em;
+}
+.footer-address{color:var(--dim);font-size:13px;line-height:1.8;font-style:normal}
+.footer-col h4{
+  font-size:9px;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:20px;
+}
+.footer-col a{
+  display:block;color:var(--dim);font-size:13px;margin-bottom:12px;
+  transition:color .3s;
+}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:24px;border-top:1px solid var(--border);
+  font-size:10px;color:var(--dim);letter-spacing:.08em;
+}
+
+/* ---- PACIFIK'AI BADGE ---- */
+.badge-pacifikai{
+  position:fixed;bottom:20px;right:20px;z-index:9998;
+  background:rgba(250,247,242,.9);backdrop-filter:blur(12px);
+  border:1px solid var(--border);padding:10px 18px;
+  font-size:10px;letter-spacing:.1em;color:var(--dim);
+  border-radius:100px;transition:all .3s;
+}
+.badge-pacifikai:hover{color:var(--text);border-color:var(--accent)}
+.badge-pacifikai strong{color:var(--accent)}
+
+/* ---- KEN BURNS on images ---- */
+@keyframes kenBurns{
+  0%{transform:scale(1)}
+  100%{transform:scale(1.08)}
+}
+.ken-burns img{animation:kenBurns 18s ease-in-out alternate infinite}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1024px){
+  nav{padding:24px 32px}
+  .hero{grid-template-columns:1fr;min-height:auto;padding:0 32px;padding-top:140px;padding-bottom:80px}
+  .hero-visual{padding-top:40px;justify-content:flex-start}
+  .hero-img-wrap{width:clamp(200px,50vw,320px)}
+  .hero-scroll{left:32px;bottom:24px}
+  .section,.gallery,.stats{padding-left:32px;padding-right:32px}
+  .process-inner{grid-template-columns:1fr;max-width:100%}
+  .about{grid-template-columns:1fr;text-align:left}
+  .about-visual{order:-1}
+  .about-img-wrap{max-width:480px}
+  .footer-top{grid-template-columns:1fr;gap:40px}
+  .gallery-grid{grid-template-columns:repeat(2,1fr)}
+  .particle-canvas{display:none}
+}
+
+@media (max-width:640px){
+  .disclaimer{font-size:9px;padding:8px 16px}
+  nav{padding:20px 20px;top:34px}
+  .nav-links{gap:20px}
+  .nav-links a{font-size:10px;letter-spacing:.1em}
+  .nav-divider{display:none}
+  .hero{padding:120px 20px 60px}
+  .hero-scroll{left:20px;bottom:20px}
+  .section,.gallery,.stats,.cta{padding-left:20px;padding-right:20px}
+  .process-step{padding-left:32px}
+  .gallery-grid{grid-template-columns:1fr;gap:8px}
+  .stats-grid{grid-template-columns:1fr;gap:40px}
+  .cta-links{flex-direction:column;align-items:center}
+  footer{padding:48px 20px 24px}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+  .badge-pacifikai{bottom:12px;right:12px;font-size:9px;padding:8px 14px}
+}
+
+/* ---- REDUCED MOTION ---- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important;
+  }
+  .page-loader{display:none!important}
+  .particle-canvas{display:none!important}
+  .gallery-item .gallery-item-inner{clip-path:circle(75% at 50% 50%)!important}
+  .about-img-mask{opacity:1!important;transform:none!important}
+  .hero-img-clip{clip-path:inset(0)!important}
+  .clip-section,.clip-wipe-left,.clip-wipe-circle{clip-path:none!important}
+  .gs-hidden{opacity:1!important;transform:none!important}
+  .cursor-dot,.cursor-ring{display:none!important}
+}
+
+    /* Loader auto-dismiss fallback */
+    @keyframes loaderFadeOut { 0%,80%{opacity:1} 100%{opacity:0;pointer-events:none} }
+    #loader, .page-loader, .preloader { animation: loaderFadeOut 3s ease forwards !important; }
+
+</style>
+</head>
+<body>
+
+<!-- SVG DEFS for blob mask -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <clipPath id="blobMask" clipPathUnits="objectBoundingBox">
+      <path d="M0.5,0.02 C0.75,0.02,0.95,0.15,0.97,0.4 C0.99,0.65,0.85,0.92,0.55,0.97 C0.3,1.01,0.08,0.85,0.03,0.6 C-0.02,0.35,0.2,0.02,0.5,0.02Z" class="blob-path"/>
+    </clipPath>
+  </defs>
+</svg>
+
+<!-- PAGE LOADER -->
+<div class="page-loader" aria-hidden="true">
+  <div class="loader-name">Zen & Harmonie</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- PARTICLE CONSTELLATION CANVAS -->
+<canvas class="particle-canvas" aria-hidden="true"></canvas>
+
+<!-- MAGNETIC CURSOR -->
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<!-- SCROLL PROGRESS BAR (GSAP) -->
+<div class="scroll-progress" aria-hidden="true"></div>
+<!-- CSS Scroll-Driven progress (progressive enhancement) -->
+<div class="scroll-progress-css" aria-hidden="true"></div>
+
+<!-- DISCLAIMER BAR -->
+<div class="disclaimer">
+  Ce site a &eacute;t&eacute; cr&eacute;&eacute; par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a> comme proposition pour <strong>Zen & Harmonie</strong>
+</div>
+
+<!-- NAVIGATION -->
+<nav role="navigation" aria-label="Navigation principale">
+  <a href="#" class="nav-brand">Zen & Harmonie</a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <div class="nav-divider" aria-hidden="true"></div>
+    <a href="#apropos">&Agrave; Propos</a>
+    <div class="nav-divider" aria-hidden="true"></div>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ==================== HERO (pinned + parallax) ==================== -->
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow gs-hidden">
+      <span class="line-small"></span>
+      <span>Spa & Bien-être &mdash; Papeete</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="line"><span class="line-inner">Harmonie &</span></span>
+      <span class="line"><span class="line-inner">Sérénité</span></span>
+    </h1>
+    <p class="hero-tagline gs-hidden">Retrouvez votre équilibre intérieur</p>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-img-wrap ken-burns">
+      <div class="hero-img-clip">
+        <img src="https://v3b.fal.media/files/b/0a924d63/4-sf_6i0DuE-UcyW0wAqB_eL0EjNhr.jpg" alt="Zen & Harmonie — Spa & Bien-être" loading="eager" fetchpriority="high">
+      </div>
+    </div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-scroll gs-hidden">
+    <span>D&eacute;couvrir</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ==================== SERVICES / PROCESS (clip-path wipe) ==================== -->
+<section class="section process clip-section" id="services">
+  <div class="section-label gs-hidden">Notre Savoir-Faire</div>
+  <h2 class="section-title gs-hidden">Un rituel en<br>trois &eacute;tapes</h2>
+  <div class="process-inner">
+    <div class="process-timeline">
+      <div class="process-line" aria-hidden="true">
+        <div class="process-line-fill"></div>
+      </div>
+      <div class="process-step gs-hidden">
+        <div class="process-dot"></div>
+        <div class="process-num">&Eacute;tape 01</div>
+        <h3>Diagnostic</h3>
+        <p>Bilan personnalisé de vos besoins</p>
+      </div>
+      <div class="process-step gs-hidden">
+        <div class="process-dot"></div>
+        <div class="process-num">&Eacute;tape 02</div>
+        <h3>Rituel</h3>
+        <p>Soins adaptés et sur-mesure</p>
+      </div>
+      <div class="process-step gs-hidden">
+        <div class="process-dot"></div>
+        <div class="process-num">&Eacute;tape 03</div>
+        <h3>Harmonie</h3>
+        <p>Retrouvez votre équilibre</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MARQUEE TICKER ==================== -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-word">Bien-être</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Équilibre</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Énergie Vitale</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Zen Absolu</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Corps & Esprit</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Soin Holistique</span>
+    <span class="marquee-sep">&bull;</span>
+    <!-- Duplicated for seamless loop -->
+    <span class="marquee-word">Bien-être</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Équilibre</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Énergie Vitale</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Zen Absolu</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Corps & Esprit</span>
+    <span class="marquee-sep">&bull;</span>
+    <span class="marquee-word">Soin Holistique</span>
+    <span class="marquee-sep">&bull;</span>
+  </div>
+</div>
+
+<!-- ==================== GALLERY (SVG circle mask reveal) ==================== -->
+<section class="gallery clip-wipe-left" id="galerie">
+  <div class="gallery-head">
+    <div>
+      <div class="section-label gs-hidden">Portfolio</div>
+      <h2 class="section-title gs-hidden" style="margin-bottom:0">Nos R&eacute;alisations</h2>
+    </div>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item"><div class="gallery-item-inner"><img src="https://v3b.fal.media/files/b/0a924d63/HoGLGm7QvBfQ3x6Nz6fuv_6BQEeovB.jpg" alt="R&eacute;alisation 1" loading="lazy"></div></div>
+    <div class="gallery-item"><div class="gallery-item-inner"><img src="https://v3b.fal.media/files/b/0a924d63/csX6gSrLo9WMi54wRuoHy_YenFwEtQ.jpg" alt="R&eacute;alisation 2" loading="lazy"></div></div>
+    <div class="gallery-item"><div class="gallery-item-inner"><img src="https://v3b.fal.media/files/b/0a924d63/EmDKY1RB9nsRKWcj1kEE9_Ng3Yth1s.jpg" alt="R&eacute;alisation 3" loading="lazy"></div></div>
+    <div class="gallery-item"><div class="gallery-item-inner"><img src="https://v3b.fal.media/files/b/0a924d63/dY19FNmqKjlRW-2GG5HBk_N0Ra2sug.jpg" alt="R&eacute;alisation 4" loading="lazy"></div></div>
+    <div class="gallery-item"><div class="gallery-item-inner"><img src="https://v3b.fal.media/files/b/0a924d63/Y3l2HgAtVoE4nroyb2z4h_zxE2aRJP.jpg" alt="R&eacute;alisation 5" loading="lazy"></div></div>
+    <div class="gallery-item"><div class="gallery-item-inner"><img src="https://v3b.fal.media/files/b/0a924d63/RjQZiCuoTHvtxjp3O3FH1_UuQafhK1.jpg" alt="R&eacute;alisation 6" loading="lazy"></div></div>
+  </div>
+</section>
+
+<!-- ==================== STATS / COUNTERS (scramble text) ==================== -->
+<section class="stats">
+  <div class="stats-grid">
+    <div class="stat gs-hidden">
+      <div class="stat-value"><span class="counter" data-target="12">0</span><span class="suffix">+</span></div>
+      <div class="stat-label">Praticiens certifiés</div>
+    </div>
+    <div class="stat gs-hidden">
+      <div class="stat-value"><span class="counter" data-target="800">0</span><span class="suffix">+</span></div>
+      <div class="stat-label">Soins réalisés</div>
+    </div>
+    <div class="stat gs-hidden">
+      <div class="stat-value"><span class="counter" data-target="99">0</span><span class="suffix">%</span></div>
+      <div class="stat-label">Sérénité garantie</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ABOUT (blob SVG mask) ==================== -->
+<section class="section clip-wipe-circle" id="apropos">
+  <div class="about">
+    <div class="about-text">
+      <div class="section-label gs-hidden">&Agrave; Propos</div>
+      <h2 class="gs-hidden">L'essentiel de la<br><em>beaut&eacute;</em></h2>
+      <p class="gs-hidden">Retrouvez votre équilibre intérieur</p>
+      <p class="gs-hidden">Chaque geste est pens&eacute; pour r&eacute;v&eacute;ler votre beaut&eacute; naturelle, dans un espace de calme et de s&eacute;r&eacute;nit&eacute; au c&oelig;ur de Papeete.</p>
+      <div class="line-detail gs-hidden"></div>
+    </div>
+    <div class="about-visual">
+      <div class="about-img-wrap">
+        <div class="about-img-mask">
+          <img src="https://v3b.fal.media/files/b/0a924d63/3TDr5O5TBJs1LLKF4eBue_DA3Tds1y.jpg" alt="Zen & Harmonie — &Agrave; propos" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TESTIMONIAL ==================== -->
+<section class="section" id="temoignage">
+  <div class="testimonial">
+    <div class="quote-mark gs-hidden">&ldquo;</div>
+    <blockquote class="gs-hidden">Un havre de paix. Les soins sont d'une douceur incroyable et l'ambiance zen me ressource à chaque visite.</blockquote>
+    <div class="cite-line gs-hidden"></div>
+    <cite class="gs-hidden">&mdash; Hina, Papeete</cite>
+  </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="cta clip-section" id="contact">
+  <div class="cta-content">
+    <h2 class="gs-hidden">Prenez<br><em>rendez-vous</em></h2>
+    <p class="cta-sub gs-hidden">Un moment de calme vous attend</p>
+    <div class="cta-links gs-hidden">
+      <a href="tel:+689 40 789 012" class="cta-link"><span>+689 40 789 012</span></a>
+      <a href="mailto:contact@zen-harmonie.pf" class="cta-link"><span>contact@zen-harmonie.pf</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">Zen & Harmonie</div>
+      <address class="footer-address">Papeete, Tahiti — Polynésie française</address>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <a href="#services">Services</a>
+      <a href="#galerie">Galerie</a>
+      <a href="#apropos">&Agrave; Propos</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Suivez-nous</h4>
+      <a href="#" target="_blank">Facebook</a>
+      <a href="#" target="_blank">Instagram</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Zen & Harmonie. Tous droits r&eacute;serv&eacute;s.</span>
+    <span>Spa & Bien-être &mdash; Papeete</span>
+  </div>
+</footer>
+
+<!-- PACIFIK'AI BADGE -->
+<a href="https://pacifikai.com" target="_blank" class="badge-pacifikai">
+  Propuls&eacute; par <strong>PACIFIK'AI</strong> &mdash; pacifikai.com
+</a>
+
+<!-- ============================================================
+     SCRIPTS — CDN + Inline
+     ============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  /* ================================================================
+     PROGRESSIVE SAFETY TIMEOUTS
+     0.5s — show loader name
+     1.5s — force loader out
+     2.5s — force all content visible
+     ================================================================ */
+  var safetyT1 = setTimeout(function(){
+    var ln = document.querySelector('.loader-name');
+    if(ln){ln.style.opacity='1';ln.style.transform='none'}
+  }, 500);
+
+  var safetyT2 = setTimeout(function(){
+    var loader = document.querySelector('.page-loader');
+    if(loader && !loader.classList.contains('is-done')){
+      loader.classList.add('is-done');
+      setTimeout(function(){loader.style.display='none'},900);
+    }
+  }, 1500);
+
+  var safetyT3 = setTimeout(function(){
+    document.querySelectorAll('.gs-hidden').forEach(function(el){
+      el.style.opacity='1';el.style.transform='none';
+    });
+    document.querySelectorAll('.gallery-item').forEach(function(el){el.classList.add('is-revealed')});
+    document.querySelectorAll('.about-img-wrap').forEach(function(el){el.classList.add('is-revealed')});
+    document.querySelectorAll('.clip-section,.clip-wipe-left,.clip-wipe-circle').forEach(function(el){el.classList.add('is-visible')});
+    var hc=document.querySelector('.hero-img-clip');
+    if(hc)hc.style.clipPath='inset(0)';
+  }, 2500);
+
+  /* ---- REDUCED MOTION CHECK ---- */
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(prefersReduced){
+    var loader=document.querySelector('.page-loader');
+    if(loader)loader.style.display='none';
+    document.querySelectorAll('.gs-hidden').forEach(function(el){
+      el.style.opacity='1';el.style.transform='none';
+    });
+    document.querySelectorAll('.gallery-item').forEach(function(el){el.classList.add('is-revealed')});
+    document.querySelectorAll('.about-img-wrap').forEach(function(el){el.classList.add('is-revealed')});
+    document.querySelectorAll('.clip-section,.clip-wipe-left,.clip-wipe-circle').forEach(function(el){el.classList.add('is-visible')});
+    var hc=document.querySelector('.hero-img-clip');
+    if(hc)hc.style.clipPath='inset(0)';
+    return;
+  }
+
+  /* ---- REGISTER GSAP PLUGINS ---- */
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ================================================================
+     PAGE LOADER — 1.4s progress bar, curtain clip-path wipe
+     ================================================================ */
+  var loaderEl = document.querySelector('.page-loader');
+  var loaderName = document.querySelector('.loader-name');
+  var loaderBar = document.querySelector('.loader-bar');
+
+  if(loaderEl && loaderName && loaderBar){
+    var loaderTL = gsap.timeline({onComplete:initAnimations});
+    loaderTL
+      .to(loaderName,{opacity:1,y:0,duration:.5,ease:'power3.out'},0)
+      .to(loaderBar,{width:'100%',duration:1.4,ease:'power2.inOut'},.1)
+      .to(loaderName,{opacity:0,y:-10,duration:.3,ease:'power2.in'},1.2)
+      .add(function(){loaderEl.classList.add('is-done')},1.5)
+      .add(function(){loaderEl.style.display='none'},2.3);
+  } else {
+    initAnimations();
+  }
+
+  function initAnimations(){
+
+    /* ---- LENIS SMOOTH SCROLL ---- */
+    var lenis = new Lenis({lerp:0.08,smoothWheel:true,wheelMultiplier:0.8});
+    lenis.on('scroll',ScrollTrigger.update);
+    gsap.ticker.add(function(time){lenis.raf(time*1000)});
+    gsap.ticker.lagSmoothing(0);
+
+    /* Smooth anchor links */
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){
+      a.addEventListener('click',function(e){
+        var target=document.querySelector(this.getAttribute('href'));
+        if(target){e.preventDefault();lenis.scrollTo(target,{offset:-80})}
+      });
+    });
+
+    /* ================================================================
+       MAGNETIC CURSOR — dot 8px + ring 40px, independent lerp
+       ================================================================ */
+    var dot=document.querySelector('.cursor-dot');
+    var ring=document.querySelector('.cursor-ring');
+    if(dot&&ring&&window.matchMedia('(pointer:fine)').matches){
+      var mx=0,my=0,dx=0,dy=0,rx=0,ry=0;
+      window.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});
+      gsap.ticker.add(function(){
+        dx+=(mx-dx)*0.15;dy+=(my-dy)*0.15;
+        rx+=(mx-rx)*0.08;ry+=(my-ry)*0.08;
+        dot.style.left=dx+'px';dot.style.top=dy+'px';
+        ring.style.left=rx+'px';ring.style.top=ry+'px';
+      });
+      /* Hover states */
+      document.querySelectorAll('a,button,.process-step').forEach(function(el){
+        el.addEventListener('mouseenter',function(){dot.classList.add('is-hover');ring.classList.add('is-hover')});
+        el.addEventListener('mouseleave',function(){dot.classList.remove('is-hover','is-gallery');ring.classList.remove('is-hover','is-gallery')});
+      });
+      document.querySelectorAll('.gallery-item').forEach(function(el){
+        el.addEventListener('mouseenter',function(){dot.classList.add('is-gallery');ring.classList.add('is-gallery')});
+        el.addEventListener('mouseleave',function(){dot.classList.remove('is-gallery');ring.classList.remove('is-gallery')});
+      });
+    }
+
+    /* ---- SCROLL PROGRESS BAR ---- */
+    gsap.to('.scroll-progress',{
+      scaleX:1,ease:'none',
+      scrollTrigger:{trigger:'body',start:'top top',end:'bottom bottom',scrub:0.3}
+    });
+
+    /* ---- NAV HIDE/SHOW + SCROLLED STATE ---- */
+    var nav=document.querySelector('nav');
+    var lastScroll=0;
+    lenis.on('scroll',function(e){
+      var current=e.animatedScroll;
+      if(current>lastScroll&&current>200){nav.classList.add('nav-hidden')}
+      else{nav.classList.remove('nav-hidden')}
+      if(current>80){nav.classList.add('nav-scrolled')}
+      else{nav.classList.remove('nav-scrolled')}
+      lastScroll=current;
+    });
+
+    /* ================================================================
+       TEXT REVEALS — SplitType
+       Hero H1: chars rotateX(-90) + y(100%) from mask
+       Section titles: words y(120%) from mask
+       Paragraphs: lines opacity + y
+       ================================================================ */
+
+    /* Hero title — char reveal with rotateX from mask */
+    try{
+      var heroLines=document.querySelectorAll('.hero-title .line-inner');
+      heroLines.forEach(function(line,i){
+        var split=new SplitType(line,{types:'chars'});
+        if(split.chars){
+          split.chars.forEach(function(ch){
+            var wrap=document.createElement('span');
+            wrap.className='char-wrap';
+            ch.parentNode.insertBefore(wrap,ch);
+            wrap.appendChild(ch);
+          });
+          gsap.from(split.chars,{
+            rotateX:-90,y:'100%',opacity:0,
+            stagger:0.025,duration:1.2,
+            ease:'power3.out',delay:0.15+(i*0.25)
+          });
+        }
+      });
+    }catch(e){
+      gsap.from('.hero-title .line-inner',{y:50,opacity:0,stagger:0.2,duration:1,ease:'power3.out',delay:0.4});
+    }
+
+    /* Hero image — horizontal wipe reveal */
+    gsap.to('.hero-img-clip',{
+      opacity:1,duration:1.4,ease:'power3.inOut',delay:0.6
+    });
+
+    /* Hero eyebrow & tagline */
+    gsap.from('.hero-eyebrow',{y:16,opacity:0,duration:0.8,ease:'power3.out',delay:1.2});
+    gsap.from('.hero-tagline',{y:16,opacity:0,duration:0.8,ease:'power3.out',delay:1.4});
+    gsap.from('.hero-scroll',{opacity:0,duration:0.6,delay:2});
+
+    /* ---- HERO PIN + PARALLAX ---- */
+    ScrollTrigger.create({
+      trigger:'.hero',
+      start:'top top',
+      end: '+=50%',
+      pin:true,
+      scrub:true,
+      onUpdate:function(self){
+        var p=self.progress;
+        gsap.set('.hero-overlay',{opacity:p*0.6});
+        gsap.set('.hero-content',{y:-p*60});
+      }
+    });
+
+    /* Hero image parallax */
+    gsap.to('.hero-img-wrap',{
+      yPercent:-15,ease:'none',
+      scrollTrigger:{trigger:'.hero',start:'top top',end: '+=50%',scrub:true}
+    });
+
+    /* ---- SECTION TITLE WORDS REVEAL ---- */
+    try{
+      document.querySelectorAll('.section-title').forEach(function(title){
+        var split=new SplitType(title,{types:'words'});
+        if(split.words){
+          split.words.forEach(function(w){w.style.overflow='hidden';w.style.display='inline-block'});
+          gsap.from(split.words,{
+            y:'120%',stagger:0.04,duration:0.8,ease:'power3.out',
+            scrollTrigger:{trigger:title,start:'top 85%',once:true}
+          });
+        }
+      });
+    }catch(e){}
+
+    /* ---- PARAGRAPH LINES REVEAL ---- */
+    try{
+      document.querySelectorAll('.about-text p, .hero-tagline').forEach(function(p){
+        var split=new SplitType(p,{types:'lines'});
+        if(split.lines){
+          gsap.from(split.lines,{
+            y:24,opacity:0,stagger:0.06,duration:0.7,ease:'power3.out',
+            scrollTrigger:{trigger:p,start:'top 88%',once:true}
+          });
+        }
+      });
+    }catch(e){}
+
+    /* ---- GENERIC REVEAL: all .gs-hidden elements ---- */
+    document.querySelectorAll('.gs-hidden').forEach(function(el){
+      gsap.fromTo(el,
+        {y:30,opacity:0},
+        {y:0,opacity:1,duration:0.9,ease:'power3.out',
+          scrollTrigger:{trigger:el,start:'top 88%',once:true}
+        }
+      );
+    });
+
+    /* ================================================================
+       SECTION CLIP-PATH TRANSITIONS
+       ================================================================ */
+    document.querySelectorAll('.clip-section,.clip-wipe-left,.clip-wipe-circle').forEach(function(sec){
+      ScrollTrigger.create({
+        trigger:sec,start:'top 85%',once:true,
+        onEnter:function(){sec.classList.add('is-visible')}
+      });
+    });
+
+    /* ---- PROCESS TIMELINE ---- */
+    var processSteps=document.querySelectorAll('.process-step');
+    var processLineFill=document.querySelector('.process-line-fill');
+
+    processSteps.forEach(function(step,i){
+      ScrollTrigger.create({
+        trigger:step,start:'top 82%',once:true,
+        onEnter:function(){
+          step.classList.add('is-active');
+          gsap.from(step,{y:40,opacity:0,duration:0.8,ease:'power3.out',delay:i*0.12});
+        }
+      });
+    });
+
+    if(processLineFill){
+      var processTimeline=document.querySelector('.process-timeline');
+      gsap.to(processLineFill,{
+        height:'100%',ease:'none',
+        scrollTrigger:{trigger:processTimeline,start:'top 70%',end:'bottom 60%',scrub:0.5}
+      });
+    }
+
+    /* ---- MARQUEE INFINITE SCROLL ---- */
+    var track=document.querySelector('.marquee-track');
+    if(track){
+      var w=track.scrollWidth/2;
+      gsap.to(track,{
+        x:-w,duration:50,ease:'none',repeat:-1,
+        modifiers:{x:gsap.utils.unitize(function(x){return parseFloat(x)%w})}
+      });
+    }
+
+    /* ---- GALLERY — SVG circle clip expand on scroll ---- */
+    document.querySelectorAll('.gallery-item').forEach(function(item,i){
+      ScrollTrigger.create({
+        trigger:item,start:'top 88%',once:true,
+        onEnter:function(){
+          gsap.delayedCall(i%3*0.18,function(){
+            item.classList.add('is-revealed');
+          });
+        }
+      });
+    });
+
+    /* ================================================================
+       COUNTER ANIMATION — scramble effect
+       ================================================================ */
+    var scrambleChars='0123456789';
+    document.querySelectorAll('.counter').forEach(function(el){
+      var target=el.getAttribute('data-target');
+      var num=parseFloat(target);
+      if(isNaN(num))return;
+      ScrollTrigger.create({
+        trigger:el,start:'top 85%',once:true,
+        onEnter:function(){
+          var duration=2200;
+          var start=performance.now();
+          var targetStr=String(Math.round(num));
+          function scramble(now){
+            var elapsed=now-start;
+            var progress=Math.min(elapsed/duration,1);
+            var easedProgress=1-Math.pow(1-progress,3);
+            var revealed=Math.floor(easedProgress*targetStr.length);
+            var result='';
+            for(var c=0;c<targetStr.length;c++){
+              if(c<revealed){result+=targetStr[c]}
+              else{result+=scrambleChars[Math.floor(Math.random()*10)]}
+            }
+            el.textContent=result;
+            if(progress<1)requestAnimationFrame(scramble);
+            else el.textContent=targetStr;
+          }
+          requestAnimationFrame(scramble);
+        }
+      });
+    });
+
+    /* ---- ABOUT — blob mask reveal + parallax ---- */
+    var aboutWrap=document.querySelector('.about-img-wrap');
+    if(aboutWrap){
+      ScrollTrigger.create({
+        trigger:aboutWrap,start:'top 82%',once:true,
+        onEnter:function(){aboutWrap.classList.add('is-revealed')}
+      });
+
+      gsap.to('.about-visual',{
+        yPercent:-12,ease:'none',
+        scrollTrigger:{trigger:'.about',start:'top bottom',end:'bottom top',scrub:true}
+      });
+    }
+
+    /* Animate SVG blob path morphing */
+    var blobPath=document.querySelector('.blob-path');
+    if(blobPath){
+      gsap.to(blobPath,{
+        attr:{d:'M0.5,0.01 C0.78,0.01,0.98,0.18,0.99,0.45 C1.0,0.7,0.82,0.95,0.52,0.99 C0.25,1.02,0.05,0.82,0.01,0.55 C-0.03,0.3,0.18,0.01,0.5,0.01Z'},
+        duration:8,ease:'sine.inOut',repeat:-1,yoyo:true
+      });
+    }
+
+    /* ---- TESTIMONIAL ENTRANCE ---- */
+    gsap.from('.testimonial blockquote',{
+      y:30,opacity:0,duration:1.1,ease:'power3.out',
+      scrollTrigger:{trigger:'.testimonial',start:'top 80%',once:true}
+    });
+    gsap.from('.testimonial .cite-line',{
+      scaleX:0,duration:0.8,ease:'power3.out',delay:0.2,
+      scrollTrigger:{trigger:'.testimonial',start:'top 80%',once:true}
+    });
+    gsap.from('.testimonial cite',{
+      y:16,opacity:0,duration:0.8,ease:'power3.out',delay:0.35,
+      scrollTrigger:{trigger:'.testimonial',start:'top 80%',once:true}
+    });
+
+    /* ---- CTA SECTION ENTRANCE ---- */
+    gsap.from('.cta h2',{
+      y:30,opacity:0,duration:1,ease:'power3.out',
+      scrollTrigger:{trigger:'.cta',start:'top 80%',once:true}
+    });
+    gsap.from('.cta-sub',{
+      y:20,opacity:0,duration:0.8,ease:'power3.out',delay:0.15,
+      scrollTrigger:{trigger:'.cta',start:'top 80%',once:true}
+    });
+    gsap.from('.cta-links',{
+      y:20,opacity:0,duration:0.8,ease:'power3.out',delay:0.3,
+      scrollTrigger:{trigger:'.cta',start:'top 80%',once:true}
+    });
+
+    /* ================================================================
+       PARTICLE CONSTELLATION CANVAS
+       70 particles, connecting lines <120px, mouse repulsion
+       Desktop + motion-safe only
+       ================================================================ */
+    var canvas=document.querySelector('.particle-canvas');
+    if(canvas && window.innerWidth>1024){
+      var ctx=canvas.getContext('2d');
+      var dpr=window.devicePixelRatio||1;
+      var particles=[];
+      var particleCount=70;
+      var connectDist=120;
+      var mouseRepelDist=100;
+      var pmx=-9999,pmy=-9999;
+
+      function resizeCanvas(){
+        canvas.width=window.innerWidth*dpr;
+        canvas.height=window.innerHeight*dpr;
+        canvas.style.width=window.innerWidth+'px';
+        canvas.style.height=window.innerHeight+'px';
+        ctx.scale(dpr,dpr);
+      }
+      resizeCanvas();
+      window.addEventListener('resize',resizeCanvas);
+      window.addEventListener('mousemove',function(e){pmx=e.clientX;pmy=e.clientY});
+
+      /* Parse accent color for particles */
+      var accentStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#8B7355';
+
+      for(var i=0;i<particleCount;i++){
+        particles.push({
+          x:Math.random()*window.innerWidth,
+          y:Math.random()*window.innerHeight,
+          vx:(Math.random()-.5)*.3,
+          vy:(Math.random()-.5)*.3,
+          r:Math.random()*1.5+.5
+        });
+      }
+
+      function drawParticles(){
+        ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+        for(var i=0;i<particles.length;i++){
+          var p=particles[i];
+          /* Mouse repulsion */
+          var ddx=p.x-pmx,ddy=p.y-pmy;
+          var dist=Math.sqrt(ddx*ddx+ddy*ddy);
+          if(dist<mouseRepelDist&&dist>0){
+            var force=(mouseRepelDist-dist)/mouseRepelDist*0.8;
+            p.vx+=ddx/dist*force;
+            p.vy+=ddy/dist*force;
+          }
+          p.vx*=0.98;p.vy*=0.98;
+          p.x+=p.vx;p.y+=p.vy;
+          if(p.x<0)p.x=window.innerWidth;
+          if(p.x>window.innerWidth)p.x=0;
+          if(p.y<0)p.y=window.innerHeight;
+          if(p.y>window.innerHeight)p.y=0;
+
+          ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+          ctx.fillStyle=accentStyle;ctx.globalAlpha=0.15;ctx.fill();
+
+          /* Connecting lines */
+          for(var j=i+1;j<particles.length;j++){
+            var p2=particles[j];
+            var dx=p.x-p2.x,dy=p.y-p2.y;
+            var d=Math.sqrt(dx*dx+dy*dy);
+            if(d<connectDist){
+              ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p2.x,p2.y);
+              ctx.strokeStyle=accentStyle;
+              ctx.globalAlpha=0.04*(1-d/connectDist);
+              ctx.lineWidth=0.5;ctx.stroke();
+            }
+          }
+        }
+        ctx.globalAlpha=1;
+        requestAnimationFrame(drawParticles);
+      }
+      drawParticles();
+    }
+
+  
+    /* ---- SAFETY: kill stuck animations + force visible after 2s ---- */
+    setTimeout(function() {
+      /* Kill ALL GSAP tweens on hidden elements so they can't overwrite us */
+      document.querySelectorAll('.gs-hidden').forEach(function(el) {
+        if (parseFloat(getComputedStyle(el).opacity) < 0.5) {
+          gsap.killTweensOf(el);
+          gsap.set(el, { opacity: 1, y: 0, x: 0, scale: 1, rotateX: 0, clearProps: 'transform' });
+        }
+      });
+      var selectors = '.process-card,.step-card,.service-card,.team-card,.gallery-item,.stat,.faq-item,.about-text p,.about-feature,.hero-eyebrow,.hero-tagline,.hero-scroll,.testimonial blockquote,.testimonial cite';
+      document.querySelectorAll(selectors).forEach(function(el) {
+        if (parseFloat(getComputedStyle(el).opacity) < 0.5) {
+          gsap.killTweensOf(el);
+          gsap.set(el, { opacity: 1, y: 0, x: 0, clearProps: 'transform' });
+        }
+      });
+      document.querySelectorAll('[class*="img-wrap"]').forEach(function(el) {
+        gsap.set(el, { opacity:1 });
+      });
+      document.querySelectorAll('.gallery-item img, .masonry-item img').forEach(function(el) {
+        gsap.set(el, { opacity:1 });
+      });
+      /* Force counters to their target values */
+      document.querySelectorAll('.counter').forEach(function(el) {
+        var target = el.getAttribute('data-target');
+        if (target && el.textContent === '0') el.textContent = target;
+      });
+    }, 2000);
+
+  } /* end initAnimations */
+
+})();
+
+
+</script>
+
+
+
+<!-- ====== SMART SAFETY NET v5 ====== -->
+<script>
+(function(){
+  // Phase 1 (2.5s): Kill loader, unlock scroll
+  setTimeout(function(){
+    // Target ALL loader variants: #loader, .page-loader, .preloader
+    var loaders = document.querySelectorAll('#loader, .page-loader, .preloader, [class*="loader"][style*="z-index"]');
+    loaders.forEach(function(loader){
+      if(parseFloat(getComputedStyle(loader).opacity) > 0.1 || getComputedStyle(loader).display !== 'none'){
+        loader.style.transition = 'opacity 0.3s';
+        loader.style.opacity = '0';
+        loader.style.pointerEvents = 'none';
+        setTimeout(function(){ loader.style.display = 'none'; }, 400);
+      }
+    });
+    // Also check for high z-index overlays
+    document.querySelectorAll('div').forEach(function(el){
+      var s = getComputedStyle(el);
+      if(parseInt(s.zIndex) > 9000 && s.position === 'fixed'){
+        el.style.transition = 'opacity 0.3s';
+        el.style.opacity = '0';
+        el.style.pointerEvents = 'none';
+        setTimeout(function(){ el.style.display = 'none'; }, 400);
+      }
+    });
+    document.body.classList.remove('loading');
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+  }, 2500);
+  
+  // Phase 2 (4s): Fix ALL invisible elements
+  setTimeout(function(){
+    if(typeof gsap === 'undefined') return;
+    
+    // A. Fix ANY element with inline opacity:0 from GSAP
+    document.querySelectorAll('[style*="opacity"]').forEach(function(el){
+      if(el.id === 'loader') return;
+      // Skip menus, modals, overlays
+      if(el.classList.contains('mobile-menu') || el.classList.contains('modal') || 
+         el.classList.contains('menu') || el.closest('.mobile-menu,.modal,.menu')) return;
+      if(parseFloat(el.style.opacity) < 0.1){
+        gsap.killTweensOf(el);
+        el.style.opacity = '1';
+        if(el.style.transform) el.style.transform = 'none';
+      }
+    });
+    
+    // B. Fix ANY element with clip-path hiding content (computed, not just inline)
+    document.querySelectorAll('*').forEach(function(el){
+      if(el.id === 'loader' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+      if(el.offsetHeight === 0 && el.offsetWidth === 0) return; // skip truly empty elements
+      var cp = getComputedStyle(el).clipPath;
+      if(cp && cp !== 'none'){
+        // Check if clip-path is actually hiding content
+        if(cp.includes('inset') && (cp.includes('100%') || cp.includes('50%'))){
+          gsap.killTweensOf(el);
+          el.style.clipPath = 'none';
+        }
+        if(cp.includes('circle(0')){
+          gsap.killTweensOf(el);
+          el.style.clipPath = 'none';
+        }
+        if(cp.includes('polygon') && cp.includes('0%')){
+          // Might be a wipe that hasn't completed
+          gsap.killTweensOf(el);
+          el.style.clipPath = 'none';
+        }
+      }
+    });
+    
+    // C. Fix elements with CSS classes that set initial hidden state
+    document.querySelectorAll('.clip-reveal,.gs-hidden,.reveal,.fade-in').forEach(function(el){
+      el.style.clipPath = 'none';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    
+    // D. Force counters to target values
+    document.querySelectorAll('[data-target],[data-count]').forEach(function(el){
+      var val = el.getAttribute('data-target') || el.getAttribute('data-count');
+      if(val && (el.textContent.trim() === '0' || el.textContent.trim() === '')){
+        el.textContent = val;
+      }
+    });
+    
+    // E. Fix computed opacity<0.5 on important elements
+    var mustShow = 'section,.hero-label,.hero-sub,.hero-cta-row,.hero-content,.nav,.process-card,.step-card,.step,.ritual-step,.gallery-item,.gallery-label,.gallery-grid,.service-card,.team-card,.team-member,.testimonial,.testimonial-card,.testimonial-author,.stat,.stat-item,.faq-item,.cta,.cta-section,.about-content,.about-image,.contact-content,.counter,.count-up,.stat-number,.timeline-item,.timeline-step,.bento-item,.journey-step,.parcours-step,.flip-card,.gauge-item';
+    document.querySelectorAll(mustShow).forEach(function(el){
+      var s = getComputedStyle(el);
+      if(parseFloat(s.opacity) < 0.5){
+        gsap.killTweensOf(el);
+        el.style.opacity = '1';
+      }
+    });
+    
+
+
+    // Force mobile menus/modals CLOSED
+    document.querySelectorAll('.mobile-menu,.modal,.overlay-menu,.nav-mobile').forEach(function(el){
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
+      el.style.display = 'none';
+    });
+
+    // F. Handle CSS animation classes
+    document.querySelectorAll('.gs-hidden').forEach(function(el){
+      // Skip mobile menus, modals, and overlays — they should stay hidden
+      if(el.classList.contains('mobile-menu') || el.classList.contains('modal') || 
+         el.classList.contains('overlay') || el.classList.contains('menu') ||
+         el.classList.contains('sidebar') || el.classList.contains('drawer')) return;
+      var isMenu = el.closest('.mobile-menu,.modal,.overlay,.menu,.sidebar,.drawer');
+      if(isMenu) return;
+      el.classList.remove('gs-hidden');
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    document.querySelectorAll('.clip-reveal,.clip-reveal-right,.clip-reveal-down').forEach(function(el){
+      el.classList.add('active');
+      el.style.clipPath = 'inset(0 0 0 0)';
+    });
+    document.querySelectorAll('.fade-in,.reveal,.slide-up,.slide-in').forEach(function(el){
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+
+    // G. Unlock scroll
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    
+    // H. Kill ALL remaining ScrollTriggers to prevent re-setting opacity:0
+    if(typeof ScrollTrigger !== 'undefined'){
+      ScrollTrigger.getAll().forEach(function(st){ st.kill(); });
+    }
+  }, 4000);
+
+  // Phase 3 (8s): Final sweep — catch anything GSAP re-set after Phase 2
+  setTimeout(function(){
+    if(typeof gsap === 'undefined') return;
+    document.querySelectorAll('[style*="opacity"]').forEach(function(el){
+      if(el.id === 'loader' || el.classList.contains('page-loader')) return;
+      if(el.classList.contains('mobile-menu') || el.classList.contains('modal') ||
+         el.closest('.mobile-menu,.modal,.menu,.page-loader,#loader')) return;
+      if(parseFloat(el.style.opacity) < 0.1){
+        el.style.transition = 'opacity 0.4s, transform 0.4s';
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      }
+    });
+  }, 8000);
+})();
+</script>
+
+</body>
+</html>

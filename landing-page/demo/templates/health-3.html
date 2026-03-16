@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinique du Lagon — Clinique | Punaauia</title>
+<meta name="description" content="Clinique du Lagon — Médecine moderne, approche humaine">
+<meta property="og:title" content="Clinique du Lagon — Médecine moderne, approche humaine">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.css">
+<style>
+/* ============================================================
+   HEALTH-3 — Modern Clinic (Awwwards TOP 1%)
+   Mayo Clinic aesthetic. Card-based, horizontal timeline,
+   progress bars, team flip cards. Outfit + Inter.
+   Light gray-blue #F0F4F8. Breathing circle + gradient mesh.
+   PACIFIK'AI Prospection System — Shared Engine v2
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg: #ffffff;
+  --accent: #3b82f6;
+  --text: #0f172a;
+  --font-display: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+  --font-body: 'Inter', 'Inter', sans-serif;
+  --dim: #64748b;
+  --border: rgba(15,23,42,.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --card-bg: #ffffff;
+  --accent-soft: color-mix(in srgb, var(--accent) 8%, transparent);
+  --accent-mid: color-mix(in srgb, var(--accent) 15%, transparent);
+  --surface: #f8fafc;
+}
+
+html{font-size:16px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:auto}
+body{font-family:var(--font-body);color:var(--text);background:var(--bg);font-weight:400;line-height:1.7;overflow-x:hidden}
+
+@media(pointer:fine){body{cursor:none}a,button{cursor:none}}
+
+::selection{background:var(--accent);color:#fff}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{background:none;border:none;font:inherit;color:inherit;cursor:pointer}
+
+.gs-hidden{opacity:0}
+
+/* ---- PAGE LOADER ---- */
+.page-loader{
+  position:fixed;inset:0;z-index:20000;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:clip-path .8s cubic-bezier(.77,0,.175,1);
+  clip-path:inset(0 0 0 0);
+}
+.page-loader.is-done{clip-path:inset(0 0 100% 0);pointer-events:none}
+.loader-name{
+  font-family:var(--font-display);font-size:clamp(24px,4vw,40px);
+  font-weight:700;letter-spacing:-.02em;color:var(--text);margin-bottom:24px;
+}
+.loader-bar-track{width:200px;height:3px;background:var(--border);border-radius:100px;overflow:hidden}
+.loader-bar-fill{width:0;height:100%;background:var(--accent);border-radius:100px;transition:width .1s linear}
+
+/* ---- SCROLL PROGRESS ---- */
+.scroll-progress{position:fixed;top:0;left:0;right:0;height:3px;background:var(--accent);transform-origin:left;transform:scaleX(0);z-index:9999;will-change:transform;pointer-events:none}
+
+/* ---- CUSTOM CURSOR ---- */
+.cursor-dot{
+  position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;
+  pointer-events:none;z-index:10001;transform:translate(-50%,-50%);
+  mix-blend-mode:difference;
+  transition:width .3s cubic-bezier(.23,1,.32,1),height .3s cubic-bezier(.23,1,.32,1),background .3s;
+}
+.cursor-dot.is-hover{width:48px;height:48px;background:var(--text)}
+.cursor-ring{
+  position:fixed;width:40px;height:40px;border:1px solid var(--text);border-radius:50%;
+  pointer-events:none;z-index:10000;transform:translate(-50%,-50%);opacity:.25;
+  mix-blend-mode:difference;
+  transition:width .45s cubic-bezier(.23,1,.32,1),height .45s cubic-bezier(.23,1,.32,1),opacity .3s;
+}
+.cursor-ring.is-hover{width:0;height:0;opacity:0}
+
+@media(pointer:coarse){.cursor-dot,.cursor-ring{display:none}}
+
+/* ---- NAV ---- */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;transition:all .4s cubic-bezier(.4,0,.2,1)}
+nav.nav-scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 48px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+nav.nav-hidden{transform:translateY(-100%)}
+.nav-brand{font-family:var(--font-display);font-weight:700;font-size:1.35rem;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.nav-brand svg{width:28px;height:28px;color:var(--accent)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{font-size:.875rem;font-weight:500;color:var(--dim);transition:color .25s;position:relative}
+.nav-links a:hover{color:var(--accent)}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width .3s cubic-bezier(.4,0,.2,1)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--accent);color:#fff;border-radius:100px;font-size:.875rem;font-weight:600;transition:all .3s;box-shadow:0 2px 12px color-mix(in srgb, var(--accent) 30%, transparent);position:relative;overflow:hidden}
+.nav-cta::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);opacity:0;transition:opacity .3s}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 6px 24px color-mix(in srgb, var(--accent) 40%, transparent)}
+.nav-cta:hover::before{opacity:1}
+.nav-cta::after{display:none!important}
+
+/* Hamburger */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:1001;padding:6px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);transition:all .3s}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-menu{display:none;position:fixed;inset:0;background:rgba(255,255,255,.98);backdrop-filter:blur(20px);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:28px;opacity:0;pointer-events:none;transition:opacity .3s}
+.mobile-menu.open{opacity:1;pointer-events:all}
+.mobile-menu a{font-family:var(--font-display);font-size:1.5rem;font-weight:600;color:var(--text)}
+
+/* ---- HERO ---- */
+.hero{min-height:150vh;display:flex;align-items:center;padding:140px 48px 80px;position:relative;overflow:hidden}
+.hero-pin{min-height:100vh;display:flex;align-items:center;width:100%}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;max-width:1280px;margin:0 auto;width:100%}
+.hero-content{position:relative;z-index:2}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--accent-soft);border:1px solid var(--accent-mid);border-radius:100px;font-size:.8rem;font-weight:600;color:var(--accent);letter-spacing:.03em;text-transform:uppercase;margin-bottom:24px}
+.hero-badge svg{width:14px;height:14px}
+.hero-title{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);font-weight:700;line-height:1.1;letter-spacing:-.03em;margin-bottom:20px}
+.hero-title em{font-style:normal;color:var(--accent)}
+.hero-title .char{display:inline-block}
+.hero-tagline{font-size:1.125rem;color:var(--dim);max-width:480px;margin-bottom:36px;line-height:1.8}
+.hero-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+
+/* Buttons with fill+glow micro-interaction */
+.btn-primary{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:var(--accent);color:#fff;border-radius:100px;font-size:.95rem;font-weight:600;transition:all .3s;box-shadow:0 4px 20px color-mix(in srgb, var(--accent) 30%, transparent);position:relative;overflow:hidden}
+.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.25),transparent);opacity:0;transition:opacity .3s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px color-mix(in srgb, var(--accent) 45%, transparent)}
+.btn-primary:hover::before{opacity:1}
+.btn-primary svg{width:18px;height:18px;transition:transform .3s}
+.btn-primary:hover svg{transform:translateX(3px)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border:1.5px solid var(--border);border-radius:100px;font-size:.95rem;font-weight:500;transition:all .3s;color:var(--text)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+
+.hero-visual{position:relative;z-index:1}
+.hero-image{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;position:relative;box-shadow:0 32px 64px rgba(0,0,0,.08)}
+.hero-image img{width:100%;height:100%;object-fit:cover;will-change:transform}
+.hero-image::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.12));pointer-events:none}
+.hero-float{position:absolute;bottom:24px;left:-40px;background:var(--card-bg);border-radius:var(--radius-sm);padding:16px 20px;box-shadow:0 8px 32px rgba(0,0,0,.08);display:flex;align-items:center;gap:12px;z-index:3}
+.hero-float .dot{width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.5);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.2)}}
+.hero-float span{font-size:.85rem;font-weight:600}
+.hero-bg-shape{position:absolute;top:-20%;right:-10%;width:60%;height:120%;background:var(--accent-soft);border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+
+/* ---- BREATHING CIRCLE + GRADIENT MESH ---- */
+.breathing-section{position:relative;padding:100px 48px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:420px}
+.breathing-circle{
+  width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb, var(--accent) 30%, transparent),transparent 70%);
+  animation:breathe 4s ease-in-out infinite;position:relative;z-index:2;
+}
+.breathing-ring{
+  position:absolute;width:220px;height:220px;border-radius:50%;
+  border:1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  animation:breatheRing 4s ease-in-out infinite;z-index:1;
+}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.15);opacity:1}}
+@keyframes breatheRing{0%,100%{transform:scale(1);opacity:.3}50%{transform:scale(1.25);opacity:.6}}
+.breathing-text{position:absolute;z-index:3;text-align:center;pointer-events:none}
+.breathing-text span{font-family:var(--font-display);font-size:clamp(1rem,1.5vw,1.25rem);font-weight:500;color:var(--accent);letter-spacing:.05em;text-transform:uppercase}
+.gradient-mesh{
+  position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+}
+.mesh-blob{
+  position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;
+  animation:blobFloat 12s ease-in-out infinite alternate;
+}
+.mesh-blob:nth-child(1){width:400px;height:400px;background:var(--accent);top:-10%;left:-5%;animation-delay:0s}
+.mesh-blob:nth-child(2){width:350px;height:350px;background:color-mix(in srgb, var(--accent) 60%, #60a5fa);bottom:-10%;right:-5%;animation-delay:-4s}
+.mesh-blob:nth-child(3){width:300px;height:300px;background:color-mix(in srgb, var(--accent) 40%, #34d399);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-8s}
+@keyframes blobFloat{0%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-20px) scale(1.1)}100%{transform:translate(-20px,30px) scale(.95)}}
+
+/* ---- SECTION COMMONS ---- */
+.section{padding:120px 48px;max-width:1280px;margin:0 auto;position:relative}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+.section-label svg{width:16px;height:16px}
+.section-title{font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);font-weight:700;line-height:1.15;letter-spacing:-.02em;margin-bottom:16px}
+.section-title em{font-style:normal;color:var(--accent)}
+.section-desc{font-size:1.05rem;color:var(--dim);max-width:560px;line-height:1.8}
+
+
+
+/* ---- COUNTERS ---- */
+.counters{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.counters-inner{max-width:1280px;margin:0 auto;padding:64px 48px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px;text-align:center}
+.counter-item{position:relative}
+.counter-item:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:var(--border)}
+.counter-value{font-family:var(--font-display);font-size:clamp(2.5rem,4vw,3.5rem);font-weight:700;color:var(--accent);line-height:1}
+.counter-label{font-size:.9rem;color:var(--dim);margin-top:8px;font-weight:500}
+
+/* ---- HORIZONTAL TIMELINE ---- */
+.timeline-section{padding:120px 0;overflow:hidden}
+.timeline-header{max-width:1280px;margin:0 auto;padding:0 48px 64px}
+.timeline-track{display:flex;gap:0;position:relative;padding:0 48px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.timeline-track::-webkit-scrollbar{display:none}
+.timeline-track::before{content:'';position:absolute;top:32px;left:48px;right:48px;height:2px;background:var(--border)}
+.timeline-item{flex:0 0 300px;position:relative;padding-top:72px}
+.timeline-dot{position:absolute;top:24px;left:0;width:18px;height:18px;border-radius:50%;background:var(--card-bg);border:3px solid var(--accent);z-index:2;transition:all .3s}
+.timeline-item:hover .timeline-dot{background:var(--accent);transform:scale(1.3)}
+.timeline-year{position:absolute;top:0;left:0;font-family:var(--font-display);font-size:.8rem;font-weight:600;color:var(--accent)}
+.timeline-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:24px;margin-right:24px;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.timeline-card:hover{box-shadow:0 12px 40px rgba(0,0,0,.08);transform:translateY(-6px)}
+.timeline-card h4{font-family:var(--font-display);font-size:1.1rem;font-weight:600;margin-bottom:8px}
+.timeline-card p{font-size:.875rem;color:var(--dim);line-height:1.7}
+
+/* ---- EXPERTISE / PROGRESS BARS ---- */
+.expertise{background:var(--surface)}
+.expertise-inner{max-width:1280px;margin:0 auto;padding:120px 48px}
+.expertise-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:48px}
+.expertise-list{display:flex;flex-direction:column;gap:32px}
+.expertise-item label{display:flex;justify-content:space-between;font-size:.9rem;font-weight:600;margin-bottom:10px}
+.expertise-item label span{color:var(--accent);font-weight:700}
+.progress-track{width:100%;height:6px;background:color-mix(in srgb, var(--accent) 12%, transparent);border-radius:100px;overflow:hidden}
+.progress-bar{height:100%;background:var(--accent);border-radius:100px;width:0;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
+.expertise-visual{position:relative}
+.expertise-visual img{border-radius:var(--radius);width:100%;aspect-ratio:4/5;object-fit:cover;box-shadow:0 24px 48px rgba(0,0,0,.06)}
+
+/* ---- TEAM CARDS (3D FLIP) ---- */
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:48px}
+.team-card{perspective:800px;height:380px;cursor:pointer}
+.team-card-inner{position:relative;width:100%;height:100%;transition:transform .7s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.team-card:hover .team-card-inner{transform:rotateY(180deg)}
+.team-card-front,.team-card-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--radius);overflow:hidden}
+.team-card-front{background:var(--card-bg);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;transition:box-shadow .4s}
+.team-card:hover .team-card-front{box-shadow:0 16px 48px rgba(0,0,0,.1)}
+.team-avatar{width:100px;height:100px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;margin-bottom:20px;transition:transform .3s}
+.team-card:hover .team-avatar{transform:scale(1.05)}
+.team-avatar svg{width:40px;height:40px;color:var(--accent)}
+.team-card-front h4{font-family:var(--font-display);font-size:1.15rem;font-weight:600;margin-bottom:4px}
+.team-card-front p{font-size:.85rem;color:var(--dim)}
+.team-card-back{background:var(--accent);color:#fff;transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.team-card-back h4{font-family:var(--font-display);font-size:1.15rem;font-weight:600;margin-bottom:12px}
+.team-card-back p{font-size:.875rem;line-height:1.7;opacity:.9}
+.team-card-back .team-cta{display:inline-block;margin-top:20px;padding:8px 20px;border:1.5px solid rgba(255,255,255,.5);border-radius:100px;font-size:.8rem;font-weight:600;transition:all .3s;color:#fff}
+.team-card-back .team-cta:hover{background:#fff;color:var(--accent)}
+
+/* ---- BENTO GALLERY ---- */
+.gallery-section{background:var(--surface)}
+.gallery-inner{max-width:1280px;margin:0 auto;padding:120px 48px}
+.bento-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:280px 280px;gap:16px;margin-top:48px}
+.bento-item{border-radius:var(--radius-sm);overflow:hidden;position:relative;clip-path:inset(100% 0 0 0);transition:clip-path .8s cubic-bezier(.77,0,.175,1)}
+.bento-item.is-revealed{clip-path:inset(0 0 0 0)}
+.bento-item:nth-child(1){grid-column:span 2}
+.bento-item:nth-child(4){grid-column:span 2}
+.bento-item img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.bento-item:hover img{transform:scale(1.05)}
+.bento-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55));opacity:0;transition:opacity .4s;display:flex;align-items:flex-end;padding:24px}
+.bento-item:hover .bento-overlay{opacity:1}
+.bento-overlay span{color:#fff;font-size:.9rem;font-weight:600}
+
+/* ---- 3-STEP PROCESS ---- */
+.process{padding:120px 48px;max-width:1280px;margin:0 auto}
+.process-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:64px;position:relative}
+.process-steps::before{content:'';position:absolute;top:40px;left:15%;right:15%;height:2px;background:var(--border)}
+.step{text-align:center;position:relative;padding:0 24px}
+.step-icon{width:80px;height:80px;border-radius:50%;background:var(--card-bg);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;z-index:2;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.step:hover .step-icon{background:var(--accent);box-shadow:0 8px 24px color-mix(in srgb, var(--accent) 35%, transparent);transform:scale(1.08)}
+.step-icon svg{width:28px;height:28px;color:var(--accent);transition:color .4s}
+.step:hover .step-icon svg{color:#fff}
+.step-num{position:absolute;top:-8px;right:-4px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:3}
+.step h4{font-family:var(--font-display);font-size:1.1rem;font-weight:600;margin-bottom:8px}
+.step p{font-size:.875rem;color:var(--dim);line-height:1.7;max-width:280px;margin:0 auto}
+
+/* ---- TESTIMONIAL ---- */
+.testimonial{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.testimonial-inner{max-width:800px;margin:0 auto;padding:100px 48px;text-align:center}
+.testimonial-stars{display:flex;gap:4px;justify-content:center;margin-bottom:24px;color:#f59e0b}
+.testimonial-stars svg{width:20px;height:20px;fill:currentColor}
+.testimonial-quote{font-family:var(--font-display);font-size:clamp(1.25rem,2.5vw,1.75rem);font-weight:500;line-height:1.5;letter-spacing:-.01em;margin-bottom:24px;position:relative}
+.testimonial-quote::before{content:'\201C';font-size:4rem;color:var(--accent);opacity:.3;position:absolute;top:-20px;left:-10px;font-family:Georgia,serif;line-height:1}
+.testimonial-author{font-size:.9rem;font-weight:600;color:var(--accent)}
+
+/* ---- CTA ---- */
+.cta{position:relative;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:var(--accent);z-index:0}
+.cta-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,color-mix(in srgb, var(--accent) 80%, #fff) 0%,var(--accent) 70%)}
+.cta-inner{max-width:1280px;margin:0 auto;padding:120px 48px;text-align:center;position:relative;z-index:2}
+.cta h2{font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);font-weight:700;line-height:1.15;color:#fff;margin-bottom:16px;letter-spacing:-.02em}
+.cta h2 em{font-style:normal;opacity:.7}
+.cta-sub{font-size:1.05rem;color:rgba(255,255,255,.8);margin-bottom:40px;max-width:500px;margin-left:auto;margin-right:auto}
+.cta-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:#fff;color:var(--accent);border-radius:100px;font-size:1rem;font-weight:700;transition:all .3s;box-shadow:0 4px 20px rgba(0,0,0,.15);position:relative;overflow:hidden}
+.cta-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.03),transparent);opacity:0;transition:opacity .3s}
+.cta-btn:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.cta-btn:hover::before{opacity:1}
+.cta-btn svg{width:18px;height:18px;transition:transform .3s}
+.cta-btn:hover svg{transform:translateX(3px)}
+.cta-contact{display:flex;gap:32px;justify-content:center;margin-top:32px}
+.cta-contact a{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.85);font-size:.9rem;transition:color .25s}
+.cta-contact a:hover{color:#fff}
+.cta-contact svg{width:16px;height:16px}
+
+/* ---- FOOTER ---- */
+footer{background:#0f172a;color:rgba(255,255,255,.7);padding:80px 48px 40px}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:64px}
+.footer-brand{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:12px}
+.footer-desc{font-size:.875rem;line-height:1.8;max-width:300px}
+.footer-col h4{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-bottom:16px}
+.footer-col a{display:block;font-size:.875rem;margin-bottom:10px;transition:color .25s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;justify-content:space-between;font-size:.8rem}
+
+/* ---- PACIFIKAI BADGE ---- */
+.badge-pacifikai{display:block;background:#0f172a;color:rgba(255,255,255,.6);text-align:center;padding:10px;font-size:.75rem;letter-spacing:.02em;border-top:1px solid rgba(255,255,255,.06)}
+.badge-pacifikai strong{color:#fff;font-weight:600}
+
+/* ---- CSS SCROLL-DRIVEN ANIMATIONS (Progressive Enhancement) ---- */
+@supports(animation-timeline:view()){
+  .scroll-reveal-native{
+    animation:nativeFadeUp linear both;
+    animation-timeline:view();
+    animation-range:entry 0% entry 100%;
+  }
+  @keyframes nativeFadeUp{
+    from{opacity:0;transform:translateY(30px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+}
+
+/* ---- RESPONSIVE ---- */
+@media(max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .hero-visual{max-width:500px;margin:0 auto}
+  .hero-float{left:16px}
+  .expertise-grid{grid-template-columns:1fr;gap:48px}
+  .team-grid{grid-template-columns:repeat(2,1fr)}
+  .bento-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  .bento-item:nth-child(1),.bento-item:nth-child(4){grid-column:span 1}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  nav{padding:16px 24px}
+  nav.nav-scrolled{padding:12px 24px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .mobile-menu{display:flex}
+  .hero{padding:120px 24px 60px;min-height:auto}
+  .section{padding:80px 24px}
+  .counters-inner{padding:48px 24px;grid-template-columns:1fr;gap:32px}
+  .counter-item:not(:last-child)::after{display:none}
+  .timeline-header{padding:0 24px 48px}
+  .timeline-track{padding:0 24px;flex-direction:column;gap:32px}
+  .timeline-track::before{top:0;bottom:0;left:32px;width:2px;height:auto;right:auto}
+  .timeline-item{flex:none;padding-top:0;padding-left:48px}
+  .timeline-dot{top:4px;left:24px}
+  .timeline-year{left:48px;top:-18px;position:relative}
+  .timeline-card{margin-right:0}
+  .expertise-inner{padding:80px 24px}
+  .team-grid{grid-template-columns:1fr}
+  .team-card{height:320px}
+  /* Mobile: no flip, tap to reveal */
+  .team-card:hover .team-card-inner{transform:none}
+  .team-card.is-flipped .team-card-inner{transform:rotateY(180deg)}
+  .gallery-inner{padding:80px 24px}
+  .bento-grid{grid-template-columns:1fr;grid-template-rows:auto}
+  .process{padding:80px 24px}
+  .process-steps{grid-template-columns:1fr;gap:48px}
+  .process-steps::before{display:none}
+  .testimonial-inner{padding:80px 24px}
+  .cta-inner{padding:80px 24px}
+  .cta-contact{flex-direction:column;gap:16px;align-items:center}
+  footer{padding:60px 24px 32px}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+  .breathing-section{padding:80px 24px;min-height:320px}
+  .breathing-circle{width:140px;height:140px}
+  .breathing-ring{width:180px;height:180px}
+}
+
+/* ---- REDUCED MOTION ---- */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms!important;animation-iteration-count:1!important;
+    transition-duration:0.01ms!important;scroll-behavior:auto!important;
+  }
+  .gs-hidden{opacity:1!important;transform:none!important}
+  .bento-item{clip-path:inset(0 0 0 0)!important}
+  .progress-bar{transition:none!important}
+  .page-loader{display:none!important}
+  .cursor-dot,.cursor-ring{display:none!important}
+  .breathing-circle,.breathing-ring,.mesh-blob{animation:none!important}
+}
+
+    /* Loader auto-dismiss fallback */
+    @keyframes loaderFadeOut { 0%,80%{opacity:1} 100%{opacity:0;pointer-events:none} }
+    #loader, .page-loader, .preloader { animation: loaderFadeOut 3s ease forwards !important; }
+
+</style>
+</head>
+<body>
+
+<!-- PAGE LOADER -->
+<div class="page-loader" aria-hidden="true">
+  <div class="loader-name">Clinique du Lagon</div>
+  <div class="loader-bar-track"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<!-- ==================== NAV ==================== -->
+<nav>
+  <a href="#" class="nav-brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    Clinique du Lagon
+  </a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#equipe">&Eacute;quipe</a>
+    <a href="#galerie">Galerie</a>
+    <a href="#parcours">Parcours</a>
+    <a href="#contact" class="nav-cta">Contactez-nous</a>
+  </div>
+  <div class="hamburger" onclick="this.classList.toggle('active');document.querySelector('.mobile-menu').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu">
+  <a href="#services" onclick="document.querySelector('.hamburger').click()">Services</a>
+  <a href="#equipe" onclick="document.querySelector('.hamburger').click()">&Eacute;quipe</a>
+  <a href="#galerie" onclick="document.querySelector('.hamburger').click()">Galerie</a>
+  <a href="#parcours" onclick="document.querySelector('.hamburger').click()">Parcours</a>
+  <a href="tel:+689 40 888 999" class="btn-primary" onclick="document.querySelector('.hamburger').click()">Contactez-nous</a>
+</div>
+
+<!-- ==================== HERO (Pinned + Parallax) ==================== -->
+<section class="hero">
+  <div class="hero-bg-shape" aria-hidden="true"></div>
+  <div class="hero-pin">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-badge gs-hidden">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Clinique &mdash; Punaauia
+        </div>
+        <h1 class="hero-title gs-hidden">Votre sant&eacute;,<br>notre <em>priorit&eacute;</em></h1>
+        <p class="hero-tagline gs-hidden">Médecine moderne, approche humaine</p>
+        <div class="hero-actions gs-hidden">
+          <a href="tel:+689 40 888 999" class="btn-primary">
+            <span>Contactez-nous</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#services" class="btn-outline">D&eacute;couvrir</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-image gs-hidden">
+          <img src="https://v3b.fal.media/files/b/0a924d6b/rJNACnN1B6waXJITu-GHp_3PLer6T8.jpg" alt="Clinique du Lagon — Clinique">
+        </div>
+        <div class="hero-float gs-hidden">
+          <div class="dot"></div>
+          <span>Consultations ouvertes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== COUNTERS ==================== -->
+<section class="counters clip-section">
+  <div class="counters-inner">
+    <div class="counter-item gs-hidden">
+      <div class="counter-value"><span class="counter" data-target="20">0</span></div>
+      <div class="counter-label">Médecins spécialistes</div>
+    </div>
+    <div class="counter-item gs-hidden">
+      <div class="counter-value"><span class="counter" data-target="10000">0</span></div>
+      <div class="counter-label">Patients par an</div>
+    </div>
+    <div class="counter-item gs-hidden">
+      <div class="counter-value"><span class="counter" data-target="24">0</span></div>
+      <div class="counter-label">Urgences 7j/7</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== BREATHING CIRCLE + GRADIENT MESH ==================== -->
+<section class="breathing-section clip-section">
+  <div class="gradient-mesh" aria-hidden="true">
+    <div class="mesh-blob"></div>
+    <div class="mesh-blob"></div>
+    <div class="mesh-blob"></div>
+  </div>
+  <div class="breathing-ring" aria-hidden="true"></div>
+  <div class="breathing-circle" aria-hidden="true"></div>
+  <div class="breathing-text"><span>Respirez</span></div>
+</section>
+
+<!-- ==================== HORIZONTAL TIMELINE ==================== -->
+<section class="timeline-section clip-section" id="services">
+  <div class="timeline-header">
+    <div class="section-label gs-hidden">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Notre Parcours
+    </div>
+    <h2 class="section-title gs-hidden">Une histoire<br>d'<em>excellence</em></h2>
+    <p class="section-desc gs-hidden">Les &eacute;tapes cl&eacute;s qui ont fa&ccedil;onn&eacute; notre engagement envers vos soins de sant&eacute;.</p>
+  </div>
+  <div class="timeline-track">
+    <div class="timeline-item gs-hidden">
+      <span class="timeline-year">2005</span>
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <h4>Fondation</h4>
+        <p>Cr&eacute;ation de la clinique avec une vision centr&eacute;e sur le patient et l'excellence m&eacute;dicale au c&oelig;ur de Punaauia.</p>
+      </div>
+    </div>
+    <div class="timeline-item gs-hidden">
+      <span class="timeline-year">2012</span>
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <h4>Expansion</h4>
+        <p>Ouverture de d&eacute;partements sp&eacute;cialis&eacute;s et acquisition d'&eacute;quipements diagnostiques de pointe.</p>
+      </div>
+    </div>
+    <div class="timeline-item gs-hidden">
+      <span class="timeline-year">2019</span>
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <h4>Innovation</h4>
+        <p>Int&eacute;gration de la t&eacute;l&eacute;m&eacute;decine et des protocoles num&eacute;riques pour un suivi patient optimal.</p>
+      </div>
+    </div>
+    <div class="timeline-item gs-hidden">
+      <span class="timeline-year">2024</span>
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <h4>Aujourd'hui</h4>
+        <p>&Eacute;quipe pluridisciplinaire reconnue, au service de votre sant&eacute; avec les technologies les plus r&eacute;centes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== EXPERTISE / PROGRESS BARS ==================== -->
+<section class="expertise clip-section">
+  <div class="expertise-inner">
+    <div class="section-label gs-hidden">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Nos Expertises
+    </div>
+    <h2 class="section-title gs-hidden">Domaines de <em>comp&eacute;tence</em></h2>
+    <div class="expertise-grid">
+      <div class="expertise-list">
+        <div class="expertise-item gs-hidden">
+          <label>M&eacute;decine g&eacute;n&eacute;rale <span>95%</span></label>
+          <div class="progress-track"><div class="progress-bar" data-width="95"></div></div>
+        </div>
+        <div class="expertise-item gs-hidden">
+          <label>Soins sp&eacute;cialis&eacute;s <span>90%</span></label>
+          <div class="progress-track"><div class="progress-bar" data-width="90"></div></div>
+        </div>
+        <div class="expertise-item gs-hidden">
+          <label>Diagnostic avanc&eacute; <span>88%</span></label>
+          <div class="progress-track"><div class="progress-bar" data-width="88"></div></div>
+        </div>
+        <div class="expertise-item gs-hidden">
+          <label>Pr&eacute;vention &amp; bien-&ecirc;tre <span>92%</span></label>
+          <div class="progress-track"><div class="progress-bar" data-width="92"></div></div>
+        </div>
+        <div class="expertise-item gs-hidden">
+          <label>T&eacute;l&eacute;m&eacute;decine <span>85%</span></label>
+          <div class="progress-track"><div class="progress-bar" data-width="85"></div></div>
+        </div>
+      </div>
+      <div class="expertise-visual gs-hidden">
+        <img src="https://v3b.fal.media/files/b/0a924d6b/ACwfHHM3USzI64ByduxTe_VkHvc8tJ.jpg" alt="Clinique du Lagon expertise" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TEAM ==================== -->
+<section class="section clip-section" id="equipe">
+  <div class="section-label gs-hidden">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Notre &Eacute;quipe
+  </div>
+  <h2 class="section-title gs-hidden">Des praticiens<br>d'<em>exception</em></h2>
+  <p class="section-desc gs-hidden">&Eacute;quipe pluridisciplinaire d&eacute;vou&eacute;e. Survolez une carte pour d&eacute;couvrir le praticien.</p>
+  <div class="team-grid">
+    <div class="team-card gs-hidden">
+      <div class="team-card-inner">
+        <div class="team-card-front">
+          <div class="team-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <h4>Dr. Martin</h4>
+          <p>Directeur M&eacute;dical</p>
+        </div>
+        <div class="team-card-back">
+          <h4>Dr. Martin</h4>
+          <p>20 ans d'exp&eacute;rience en m&eacute;decine interne. Approche int&eacute;grative et humaine, au service de chaque patient.</p>
+          <a href="tel:+689 40 888 999" class="team-cta">Prendre RDV</a>
+        </div>
+      </div>
+    </div>
+    <div class="team-card gs-hidden">
+      <div class="team-card-inner">
+        <div class="team-card-front">
+          <div class="team-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <h4>Dr. Tehei</h4>
+          <p>P&eacute;diatrie</p>
+        </div>
+        <div class="team-card-back">
+          <h4>Dr. Tehei</h4>
+          <p>Sp&eacute;cialiste en p&eacute;diatrie et n&eacute;onatologie. Une approche douce et rassurante pour les plus jeunes.</p>
+          <a href="tel:+689 40 888 999" class="team-cta">Prendre RDV</a>
+        </div>
+      </div>
+    </div>
+    <div class="team-card gs-hidden">
+      <div class="team-card-inner">
+        <div class="team-card-front">
+          <div class="team-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <h4>Dr. Moana</h4>
+          <p>Dermatologie</p>
+        </div>
+        <div class="team-card-back">
+          <h4>Dr. Moana</h4>
+          <p>Expert en dermatologie tropicale et esth&eacute;tique. Soins adapt&eacute;s au climat polyn&eacute;sien.</p>
+          <a href="tel:+689 40 888 999" class="team-cta">Prendre RDV</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== BENTO GALLERY ==================== -->
+<section class="gallery-section clip-section" id="galerie">
+  <div class="gallery-inner">
+    <div class="section-label gs-hidden">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      Nos Espaces
+    </div>
+    <h2 class="section-title gs-hidden">Un cadre <em>moderne</em></h2>
+    <div class="bento-grid">
+      <div class="bento-item"><img src="https://v3b.fal.media/files/b/0a924d6b/ACwfHHM3USzI64ByduxTe_VkHvc8tJ.jpg" alt="Clinique du Lagon 1" loading="lazy"><div class="bento-overlay"><span>Accueil</span></div></div>
+      <div class="bento-item"><img src="https://v3b.fal.media/files/b/0a924d6b/PE_-BGk9uG5bMtgswrp2o_rdtgJ7HP.jpg" alt="Clinique du Lagon 2" loading="lazy"><div class="bento-overlay"><span>Consultation</span></div></div>
+      <div class="bento-item"><img src="https://v3b.fal.media/files/b/0a924d6b/bwDGWpjMEQ4IqRVW1aDtg_j2EKjwyQ.jpg" alt="Clinique du Lagon 3" loading="lazy"><div class="bento-overlay"><span>&Eacute;quipement</span></div></div>
+      <div class="bento-item"><img src="https://v3b.fal.media/files/b/0a924d6b/F4KmIHiy9lLXN2xOCpCep_mPYxkAay.jpg" alt="Clinique du Lagon 4" loading="lazy"><div class="bento-overlay"><span>Laboratoire</span></div></div>
+      <div class="bento-item"><img src="https://v3b.fal.media/files/b/0a924d6b/BgfwLbtiBU23W1NckBVLr_3fTdczcy.jpg" alt="Clinique du Lagon 5" loading="lazy"><div class="bento-overlay"><span>Soins</span></div></div>
+      <div class="bento-item"><img src="https://v3b.fal.media/files/b/0a924d6b/r4AA44d_dQQ6cmBYs6TzG_ocA3Rgmu.jpg" alt="Clinique du Lagon 6" loading="lazy"><div class="bento-overlay"><span>Espace d'attente</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 3-STEP PROCESS ==================== -->
+<section class="process clip-section" id="parcours">
+  <div style="text-align:center">
+    <div class="section-label gs-hidden" style="justify-content:center">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Votre Parcours
+    </div>
+    <h2 class="section-title gs-hidden">3 &eacute;tapes, <em>simplement</em></h2>
+  </div>
+  <div class="process-steps">
+    <div class="step gs-hidden">
+      <div class="step-icon">
+        <span class="step-num">1</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+      </div>
+      <h4>Urgence</h4>
+      <p>Prise en charge immédiate</p>
+    </div>
+    <div class="step gs-hidden">
+      <div class="step-icon">
+        <span class="step-num">2</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <h4>Diagnostic</h4>
+      <p>Équipements de pointe</p>
+    </div>
+    <div class="step gs-hidden">
+      <div class="step-icon">
+        <span class="step-num">3</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <h4>Guérison</h4>
+      <p>Suivi médical complet</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TESTIMONIAL ==================== -->
+<section class="testimonial clip-section">
+  <div class="testimonial-inner">
+    <div class="testimonial-stars gs-hidden">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    </div>
+    <blockquote class="testimonial-quote gs-hidden">Un niveau de soins exceptionnel. L'équipe est compétente et rassurante.</blockquote>
+    <cite class="testimonial-author gs-hidden">&mdash; Pierre, Punaauia</cite>
+  </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="cta" id="contact">
+  <div class="cta-bg" aria-hidden="true"></div>
+  <div class="cta-inner">
+    <h2 class="gs-hidden">Prenez rendez-vous<br><em>d&egrave;s aujourd'hui</em></h2>
+    <p class="cta-sub gs-hidden">Votre sant&eacute; m&eacute;rite les meilleurs soins. Contactez-nous pour planifier votre consultation.</p>
+    <a href="tel:+689 40 888 999" class="cta-btn gs-hidden">
+      <span>Contactez-nous</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <div class="cta-contact gs-hidden">
+      <a href="tel:+689 40 888 999">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+        +689 40 888 999
+      </a>
+      <a href="mailto:contact@clinique-lagon.pf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+        contact@clinique-lagon.pf
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Clinique du Lagon</div>
+        <p class="footer-desc">Médecine moderne, approche humaine</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <a href="#services">Services</a>
+        <a href="#equipe">&Eacute;quipe</a>
+        <a href="#galerie">Galerie</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>D&eacute;partements</h4>
+        <a href="#">M&eacute;decine g&eacute;n&eacute;rale</a>
+        <a href="#">Sp&eacute;cialistes</a>
+        <a href="#">Imagerie</a>
+        <a href="#">Laboratoire</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="tel:+689 40 888 999">+689 40 888 999</a>
+        <a href="mailto:contact@clinique-lagon.pf">contact@clinique-lagon.pf</a>
+        <a href="#">Punaauia</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Clinique du Lagon. Tous droits r&eacute;serv&eacute;s.</span>
+      <span>Clinique &mdash; Punaauia</span>
+    </div>
+  </div>
+</footer>
+
+<!-- PACIFIK'AI DISCLAIMER -->
+<div class="badge-pacifikai">
+  Prototype cr&eacute;&eacute; par <strong>PACIFIK'AI</strong> &mdash; pacifikai.com
+</div>
+
+<!-- ============================================================
+     SCRIPTS — CDN + Inline (Shared Engine v2)
+     ============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/split-type"></script>
+<script>
+(function(){
+  'use strict';
+
+  /* ============================================================
+     SAFETY TIMEOUTS — progressive reveal if CDNs fail
+     ============================================================ */
+  var safetyT1=setTimeout(function(){revealAll()},500);
+  var safetyT2=setTimeout(function(){revealAll()},1500);
+  var safetyT3=setTimeout(function(){revealAll()},2500);
+
+  function revealAll(){
+    document.querySelectorAll('.gs-hidden').forEach(function(el){el.style.opacity='1';el.style.transform='none'});
+    document.querySelectorAll('.bento-item').forEach(function(el){el.classList.add('is-revealed')});
+    document.querySelectorAll('.progress-bar').forEach(function(el){el.style.width=el.getAttribute('data-width')+'%'});
+    var loader=document.querySelector('.page-loader');
+    if(loader)loader.classList.add('is-done');
+  }
+
+  /* ============================================================
+     REDUCED MOTION — kill ALL animations
+     ============================================================ */
+  var prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(prefersReduced){
+    revealAll();
+    return;
+  }
+
+  /* ============================================================
+     GSAP + PLUGINS
+     ============================================================ */
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ============================================================
+     PAGE LOADER — progress bar 1.4s, curtain clip wipe
+     ============================================================ */
+  var loader=document.querySelector('.page-loader');
+  var loaderFill=document.querySelector('.loader-bar-fill');
+  if(loader&&loaderFill){
+    var progress={val:0};
+    gsap.to(progress,{
+      val:100,duration:1.4,ease:'power2.inOut',
+      onUpdate:function(){loaderFill.style.width=Math.round(progress.val)+'%'},
+      onComplete:function(){
+        gsap.delayedCall(0.2,function(){
+          loader.classList.add('is-done');
+          gsap.delayedCall(0.8,function(){initAnimations()});
+        });
+      }
+    });
+  }else{
+    initAnimations();
+  }
+
+  function initAnimations(){
+
+  /* ============================================================
+     LENIS SMOOTH SCROLL
+     ============================================================ */
+  var lenis=new Lenis({lerp:0.08,smoothWheel:true,wheelMultiplier:0.85});
+  lenis.on('scroll',ScrollTrigger.update);
+  gsap.ticker.add(function(time){lenis.raf(time*1000)});
+  gsap.ticker.lagSmoothing(0);
+
+  /* Smooth anchors */
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var t=document.querySelector(this.getAttribute('href'));
+      if(t){e.preventDefault();lenis.scrollTo(t,{offset:-80})}
+    });
+  });
+
+  /* ============================================================
+     MAGNETIC CURSOR — dot 8px + ring 40px, lerp 0.15/0.08
+     ============================================================ */
+  var dot=document.querySelector('.cursor-dot');
+  var ring=document.querySelector('.cursor-ring');
+  if(dot&&ring&&window.matchMedia('(pointer:fine)').matches){
+    var mx=0,my=0,dx=0,dy=0,rx=0,ry=0;
+    window.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});
+    gsap.ticker.add(function(){
+      dx+=(mx-dx)*0.15;dy+=(my-dy)*0.15;
+      rx+=(mx-rx)*0.08;ry+=(my-ry)*0.08;
+      dot.style.left=dx+'px';dot.style.top=dy+'px';
+      ring.style.left=rx+'px';ring.style.top=ry+'px';
+    });
+    document.querySelectorAll('a,button,.team-card,.bento-item,.step,.timeline-card').forEach(function(el){
+      el.addEventListener('mouseenter',function(){dot.classList.add('is-hover');ring.classList.add('is-hover')});
+      el.addEventListener('mouseleave',function(){dot.classList.remove('is-hover');ring.classList.remove('is-hover')});
+    });
+  }
+
+  /* ============================================================
+     SCROLL PROGRESS BAR
+     ============================================================ */
+  gsap.to('.scroll-progress',{
+    scaleX:1,ease:'none',
+    scrollTrigger:{trigger:'body',start:'top top',end:'bottom bottom',scrub:0.3}
+  });
+
+  /* ============================================================
+     NAV HIDE/SHOW
+     ============================================================ */
+  var nav=document.querySelector('nav');
+  var lastScroll=0;
+  lenis.on('scroll',function(e){
+    var c=e.animatedScroll;
+    if(c>lastScroll&&c>200){nav.classList.add('nav-hidden')}
+    else{nav.classList.remove('nav-hidden')}
+    if(c>80){nav.classList.add('nav-scrolled')}
+    else{nav.classList.remove('nav-scrolled')}
+    lastScroll=c;
+  });
+
+  /* ============================================================
+     HERO PIN + PARALLAX (pin +=150%, scrub, parallax layers)
+     ============================================================ */
+  var heroSection=document.querySelector('.hero');
+  var heroPin=document.querySelector('.hero-pin');
+  if(heroSection&&heroPin){
+    ScrollTrigger.create({
+      trigger:heroSection,
+      start:'top top',
+      end: '+=50%',
+      pin:heroPin,
+      scrub:true
+    });
+
+    /* Parallax: image drifts up, bg shape drifts down */
+    gsap.to('.hero-image img',{
+      yPercent:18,ease:'none',
+      scrollTrigger:{trigger:heroSection,start:'top top',end:'bottom top',scrub:true}
+    });
+    gsap.to('.hero-bg-shape',{
+      yPercent:-30,scale:1.2,ease:'none',
+      scrollTrigger:{trigger:heroSection,start:'top top',end:'bottom top',scrub:true}
+    });
+    gsap.to('.hero-float',{
+      y:-40,ease:'none',
+      scrollTrigger:{trigger:heroSection,start:'top top',end:'bottom top',scrub:true}
+    });
+  }
+
+  /* ============================================================
+     HERO TIMELINE — SplitType chars with rotateX(-90) + y(100%) mask
+     ============================================================ */
+  var heroTl=gsap.timeline({delay:0.1});
+
+  heroTl.fromTo('.hero-badge',{y:20,opacity:0},{y:0,opacity:1,duration:0.6,ease:'power3.out'});
+
+  /* SplitType hero title — chars reveal with mask */
+  try{
+    var st=new SplitType('.hero-title',{types:'chars,words'});
+    if(st.chars&&st.chars.length){
+      /* Set mask overflow hidden on words */
+      if(st.words){st.words.forEach(function(w){w.style.overflow='hidden';w.style.display='inline-block'})}
+      heroTl.from(st.chars,{
+        y:'100%',rotateX:-90,opacity:0,
+        stagger:0.03,duration:0.9,ease:'power4.out'
+      },'-=0.2');
+    }
+  }catch(e){
+    heroTl.fromTo('.hero-title',{y:50,opacity:0},{y:0,opacity:1,duration:1,ease:'power3.out'},'-=0.2');
+  }
+
+  heroTl
+    .fromTo('.hero-tagline',{y:20,opacity:0},{y:0,opacity:1,duration:0.7,ease:'power3.out'},'-=0.4')
+    .fromTo('.hero-actions',{y:20,opacity:0},{y:0,opacity:1,duration:0.6,ease:'power3.out'},'-=0.3')
+    .fromTo('.hero-image',{y:60,opacity:0,scale:1.05},{y:0,opacity:1,scale:1,duration:1.2,ease:'power3.out'},'-=0.5')
+    .fromTo('.hero-float',{x:-30,opacity:0},{x:0,opacity:1,duration:0.7,ease:'power3.out'},'-=0.3');
+
+  /* ============================================================
+     SECTION TITLES — SplitType words reveal with y(120%) mask
+     ============================================================ */
+  try{
+    document.querySelectorAll('.section-title').forEach(function(title){
+      if(title.closest('.hero'))return;
+      var split=new SplitType(title,{types:'words'});
+      if(split.words&&split.words.length){
+        split.words.forEach(function(w){w.style.overflow='hidden';w.style.display='inline-block'});
+        gsap.from(split.words,{
+          y:'120%',opacity:0,stagger:0.05,duration:0.8,ease:'power3.out',
+          scrollTrigger:{trigger:title,start:'top 88%',once:true}
+        });
+      }
+    });
+  }catch(e){}
+
+  /* ============================================================
+     SECTION DESCRIPTIONS — SplitType lines reveal
+     ============================================================ */
+  try{
+    document.querySelectorAll('.section-desc,.hero-tagline').forEach(function(p){
+      if(p.closest('.hero'))return;
+      var split=new SplitType(p,{types:'lines'});
+      if(split.lines&&split.lines.length){
+        gsap.from(split.lines,{
+          y:20,opacity:0,stagger:0.08,duration:0.7,ease:'power3.out',
+          scrollTrigger:{trigger:p,start:'top 88%',once:true}
+        });
+      }
+    });
+  }catch(e){}
+
+  /* ============================================================
+     GENERIC SCROLL REVEAL — .gs-hidden elements
+     ============================================================ */
+  document.querySelectorAll('.gs-hidden').forEach(function(el){
+    if(el.closest('.hero'))return;
+    gsap.fromTo(el,
+      {y:32,opacity:0},
+      {y:0,opacity:1,duration:0.8,ease:'power3.out',
+        scrollTrigger:{trigger:el,start:'top 88%',once:true}
+      }
+    );
+  });
+
+  /* ============================================================
+     SECTION CLIP-PATH TRANSITIONS — alternating wipes
+     ============================================================ */
+  document.querySelectorAll('.clip-section').forEach(function(section,i){
+    var direction=i%2===0
+      ?{from:'polygon(0 0,100% 0,100% 0%,0 0%)',to:'polygon(0 0,100% 0,100% 100%,0 100%)'}
+      :{from:'polygon(0 100%,100% 100%,100% 100%,0 100%)',to:'polygon(0 0,100% 0,100% 100%,0 100%)'};
+    gsap.fromTo(section,
+      {clipPath:direction.from},
+      {clipPath:direction.to,duration:1,ease:'power3.inOut',
+        scrollTrigger:{trigger:section,start:'top 95%',end:'top 60%',scrub:1}
+      }
+    );
+  });
+
+  /* ============================================================
+     COUNTER ANIMATION — scramble effect
+     ============================================================ */
+  document.querySelectorAll('.counter').forEach(function(el){
+    var target=el.getAttribute('data-target');
+    var num=parseFloat(target);
+    if(isNaN(num))return;
+    var chars='0123456789';
+    var obj={val:0,scramble:true};
+    var finalText=Math.round(num).toLocaleString('fr-FR');
+
+    ScrollTrigger.create({
+      trigger:el,start:'top 85%',once:true,
+      onEnter:function(){
+        /* Scramble phase */
+        var scrambleInterval=setInterval(function(){
+          var scrambled='';
+          for(var i=0;i<finalText.length;i++){
+            if(finalText[i]===' '||finalText[i]===',')scrambled+=finalText[i];
+            else scrambled+=chars[Math.floor(Math.random()*10)];
+          }
+          el.textContent=scrambled;
+        },50);
+
+        gsap.to(obj,{
+          val:num,duration:2.2,ease:'power2.out',
+          onUpdate:function(){
+            el.textContent=Math.round(obj.val).toLocaleString('fr-FR');
+          },
+          onComplete:function(){
+            clearInterval(scrambleInterval);
+            el.textContent=finalText;
+          }
+        });
+        setTimeout(function(){clearInterval(scrambleInterval)},600);
+      }
+    });
+  });
+
+  /* ============================================================
+     TIMELINE STAGGER
+     ============================================================ */
+  gsap.from('.timeline-item',{
+    y:40,opacity:0,stagger:0.15,duration:0.85,ease:'power3.out',
+    scrollTrigger:{trigger:'.timeline-track',start:'top 82%',once:true}
+  });
+
+  /* ============================================================
+     PROGRESS BARS
+     ============================================================ */
+  document.querySelectorAll('.progress-bar').forEach(function(bar){
+    var w=bar.getAttribute('data-width');
+    ScrollTrigger.create({
+      trigger:bar,start:'top 90%',once:true,
+      onEnter:function(){bar.style.width=w+'%'}
+    });
+  });
+
+  /* ============================================================
+     TEAM CARDS STAGGER + MOBILE TAP FLIP
+     ============================================================ */
+  gsap.from('.team-card',{
+    y:50,opacity:0,stagger:0.12,duration:0.85,ease:'power3.out',
+    scrollTrigger:{trigger:'.team-grid',start:'top 82%',once:true}
+  });
+
+  /* Mobile: tap to flip instead of hover */
+  if(window.matchMedia('(max-width:768px)').matches){
+    document.querySelectorAll('.team-card').forEach(function(card){
+      card.addEventListener('click',function(){
+        this.classList.toggle('is-flipped');
+      });
+    });
+  }
+
+  /* ============================================================
+     BENTO GALLERY — clip-path reveal
+     ============================================================ */
+  document.querySelectorAll('.bento-item').forEach(function(item,i){
+    ScrollTrigger.create({
+      trigger:item,start:'top 90%',once:true,
+      onEnter:function(){
+        gsap.delayedCall(i*0.1,function(){item.classList.add('is-revealed')});
+      }
+    });
+  });
+
+  /* Ken Burns on bento images */
+  document.querySelectorAll('.bento-item img').forEach(function(img){
+    gsap.fromTo(img,{scale:1.12},{
+      scale:1,duration:1.2,ease:'power2.out',
+      scrollTrigger:{trigger:img.closest('.bento-item'),start:'top 90%',once:true}
+    });
+  });
+
+  /* ============================================================
+     PROCESS STEPS
+     ============================================================ */
+  gsap.from('.step',{
+    y:50,opacity:0,stagger:0.15,duration:0.85,ease:'power3.out',
+    scrollTrigger:{trigger:'.process-steps',start:'top 82%',once:true}
+  });
+
+  /* ============================================================
+     TESTIMONIAL
+     ============================================================ */
+  try{
+    var quoteEl=document.querySelector('.testimonial-quote');
+    if(quoteEl){
+      var quoteSplit=new SplitType(quoteEl,{types:'words'});
+      if(quoteSplit.words&&quoteSplit.words.length){
+        gsap.from(quoteSplit.words,{
+          y:20,opacity:0,stagger:0.03,duration:0.6,ease:'power3.out',
+          scrollTrigger:{trigger:'.testimonial',start:'top 80%',once:true}
+        });
+      }
+    }
+  }catch(e){
+    gsap.from('.testimonial-quote',{
+      y:36,opacity:0,duration:1,ease:'power3.out',
+      scrollTrigger:{trigger:'.testimonial',start:'top 80%',once:true}
+    });
+  }
+  gsap.from('.testimonial-author',{
+    y:16,opacity:0,duration:0.8,ease:'power3.out',delay:0.2,
+    scrollTrigger:{trigger:'.testimonial',start:'top 80%',once:true}
+  });
+
+  /* ============================================================
+     CTA PARALLAX + ENTRANCE
+     ============================================================ */
+  gsap.to('.cta-bg',{
+    yPercent:-15,ease:'none',
+    scrollTrigger:{trigger:'.cta',start:'top bottom',end:'bottom top',scrub:true}
+  });
+  gsap.from('.cta-btn',{
+    y:24,opacity:0,duration:0.8,ease:'power3.out',
+    scrollTrigger:{trigger:'.cta',start:'top 75%',once:true}
+  });
+
+  /* ============================================================
+     BUTTON FILL + GLOW MICRO-INTERACTIONS (magnetic)
+     ============================================================ */
+  document.querySelectorAll('.btn-primary,.nav-cta,.cta-btn').forEach(function(btn){
+    btn.addEventListener('mousemove',function(e){
+      var rect=btn.getBoundingClientRect();
+      var x=e.clientX-rect.left-rect.width/2;
+      var y=e.clientY-rect.top-rect.height/2;
+      gsap.to(btn,{x:x*0.15,y:y*0.15,duration:0.3,ease:'power2.out'});
+    });
+    btn.addEventListener('mouseleave',function(){
+      gsap.to(btn,{x:0,y:0,duration:0.5,ease:'elastic.out(1,0.3)'});
+    });
+  });
+
+  /* ============================================================
+     UNDERLINE DRAW MICRO-INTERACTION (nav links)
+     ============================================================ */
+  /* Already handled via CSS .nav-links a::after transitions */
+
+  /* ============================================================
+     CARD LIFT + SHADOW (timeline cards, step icons)
+     ============================================================ */
+  /* Already handled via CSS transitions on .timeline-card:hover and .step:hover */
+
+  
+    /* ---- SAFETY: kill stuck animations + force visible after 2s ---- */
+    setTimeout(function() {
+      /* Kill ALL GSAP tweens on hidden elements so they can't overwrite us */
+      document.querySelectorAll('.gs-hidden').forEach(function(el) {
+        if (parseFloat(getComputedStyle(el).opacity) < 0.5) {
+          gsap.killTweensOf(el);
+          gsap.set(el, { opacity: 1, y: 0, x: 0, scale: 1, rotateX: 0, clearProps: 'transform' });
+        }
+      });
+      var selectors = '.process-card,.step-card,.service-card,.team-card,.gallery-item,.stat,.faq-item,.about-text p,.about-feature,.hero-eyebrow,.hero-tagline,.hero-scroll,.testimonial blockquote,.testimonial cite';
+      document.querySelectorAll(selectors).forEach(function(el) {
+        if (parseFloat(getComputedStyle(el).opacity) < 0.5) {
+          gsap.killTweensOf(el);
+          gsap.set(el, { opacity: 1, y: 0, x: 0, clearProps: 'transform' });
+        }
+      });
+      document.querySelectorAll('[class*="img-wrap"]').forEach(function(el) {
+        gsap.set(el, { opacity:1 });
+      });
+      document.querySelectorAll('.gallery-item img, .masonry-item img').forEach(function(el) {
+        gsap.set(el, { opacity:1 });
+      });
+      /* Force counters to their target values */
+      document.querySelectorAll('.counter').forEach(function(el) {
+        var target = el.getAttribute('data-target');
+        if (target && el.textContent === '0') el.textContent = target;
+      });
+    }, 2000);
+
+  } /* end initAnimations */
+
+})();
+
+
+</script>
+
+
+
+<!-- ====== SMART SAFETY NET v5 ====== -->
+<script>
+(function(){
+  // Phase 1 (2.5s): Kill loader, unlock scroll
+  setTimeout(function(){
+    // Target ALL loader variants: #loader, .page-loader, .preloader
+    var loaders = document.querySelectorAll('#loader, .page-loader, .preloader, [class*="loader"][style*="z-index"]');
+    loaders.forEach(function(loader){
+      if(parseFloat(getComputedStyle(loader).opacity) > 0.1 || getComputedStyle(loader).display !== 'none'){
+        loader.style.transition = 'opacity 0.3s';
+        loader.style.opacity = '0';
+        loader.style.pointerEvents = 'none';
+        setTimeout(function(){ loader.style.display = 'none'; }, 400);
+      }
+    });
+    // Also check for high z-index overlays
+    document.querySelectorAll('div').forEach(function(el){
+      var s = getComputedStyle(el);
+      if(parseInt(s.zIndex) > 9000 && s.position === 'fixed'){
+        el.style.transition = 'opacity 0.3s';
+        el.style.opacity = '0';
+        el.style.pointerEvents = 'none';
+        setTimeout(function(){ el.style.display = 'none'; }, 400);
+      }
+    });
+    document.body.classList.remove('loading');
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+  }, 2500);
+  
+  // Phase 2 (4s): Fix ALL invisible elements
+  setTimeout(function(){
+    if(typeof gsap === 'undefined') return;
+    
+    // A. Fix ANY element with inline opacity:0 from GSAP
+    document.querySelectorAll('[style*="opacity"]').forEach(function(el){
+      if(el.id === 'loader') return;
+      // Skip menus, modals, overlays
+      if(el.classList.contains('mobile-menu') || el.classList.contains('modal') || 
+         el.classList.contains('menu') || el.closest('.mobile-menu,.modal,.menu')) return;
+      if(parseFloat(el.style.opacity) < 0.1){
+        gsap.killTweensOf(el);
+        el.style.opacity = '1';
+        if(el.style.transform) el.style.transform = 'none';
+      }
+    });
+    
+    // B. Fix ANY element with clip-path hiding content (computed, not just inline)
+    document.querySelectorAll('*').forEach(function(el){
+      if(el.id === 'loader' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+      if(el.offsetHeight === 0 && el.offsetWidth === 0) return; // skip truly empty elements
+      var cp = getComputedStyle(el).clipPath;
+      if(cp && cp !== 'none'){
+        // Check if clip-path is actually hiding content
+        if(cp.includes('inset') && (cp.includes('100%') || cp.includes('50%'))){
+          gsap.killTweensOf(el);
+          el.style.clipPath = 'none';
+        }
+        if(cp.includes('circle(0')){
+          gsap.killTweensOf(el);
+          el.style.clipPath = 'none';
+        }
+        if(cp.includes('polygon') && cp.includes('0%')){
+          // Might be a wipe that hasn't completed
+          gsap.killTweensOf(el);
+          el.style.clipPath = 'none';
+        }
+      }
+    });
+    
+    // C. Fix elements with CSS classes that set initial hidden state
+    document.querySelectorAll('.clip-reveal,.gs-hidden,.reveal,.fade-in').forEach(function(el){
+      el.style.clipPath = 'none';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    
+    // D. Force counters to target values
+    document.querySelectorAll('[data-target],[data-count]').forEach(function(el){
+      var val = el.getAttribute('data-target') || el.getAttribute('data-count');
+      if(val && (el.textContent.trim() === '0' || el.textContent.trim() === '')){
+        el.textContent = val;
+      }
+    });
+    
+    // E. Fix computed opacity<0.5 on important elements
+    var mustShow = 'section,.hero-label,.hero-sub,.hero-cta-row,.hero-content,.nav,.process-card,.step-card,.step,.ritual-step,.gallery-item,.gallery-label,.gallery-grid,.service-card,.team-card,.team-member,.testimonial,.testimonial-card,.testimonial-author,.stat,.stat-item,.faq-item,.cta,.cta-section,.about-content,.about-image,.contact-content,.counter,.count-up,.stat-number,.timeline-item,.timeline-step,.bento-item,.journey-step,.parcours-step,.flip-card,.gauge-item';
+    document.querySelectorAll(mustShow).forEach(function(el){
+      var s = getComputedStyle(el);
+      if(parseFloat(s.opacity) < 0.5){
+        gsap.killTweensOf(el);
+        el.style.opacity = '1';
+      }
+    });
+    
+
+
+    // Force mobile menus/modals CLOSED
+    document.querySelectorAll('.mobile-menu,.modal,.overlay-menu,.nav-mobile').forEach(function(el){
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
+      el.style.display = 'none';
+    });
+
+    // F. Handle CSS animation classes
+    document.querySelectorAll('.gs-hidden').forEach(function(el){
+      // Skip mobile menus, modals, and overlays — they should stay hidden
+      if(el.classList.contains('mobile-menu') || el.classList.contains('modal') || 
+         el.classList.contains('overlay') || el.classList.contains('menu') ||
+         el.classList.contains('sidebar') || el.classList.contains('drawer')) return;
+      var isMenu = el.closest('.mobile-menu,.modal,.overlay,.menu,.sidebar,.drawer');
+      if(isMenu) return;
+      el.classList.remove('gs-hidden');
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    document.querySelectorAll('.clip-reveal,.clip-reveal-right,.clip-reveal-down').forEach(function(el){
+      el.classList.add('active');
+      el.style.clipPath = 'inset(0 0 0 0)';
+    });
+    document.querySelectorAll('.fade-in,.reveal,.slide-up,.slide-in').forEach(function(el){
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+
+    // G. Unlock scroll
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    
+    // H. Kill ALL remaining ScrollTriggers to prevent re-setting opacity:0
+    if(typeof ScrollTrigger !== 'undefined'){
+      ScrollTrigger.getAll().forEach(function(st){ st.kill(); });
+    }
+  }, 4000);
+
+  // Phase 3 (8s): Final sweep — catch anything GSAP re-set after Phase 2
+  setTimeout(function(){
+    if(typeof gsap === 'undefined') return;
+    document.querySelectorAll('[style*="opacity"]').forEach(function(el){
+      if(el.id === 'loader' || el.classList.contains('page-loader')) return;
+      if(el.classList.contains('mobile-menu') || el.classList.contains('modal') ||
+         el.closest('.mobile-menu,.modal,.menu,.page-loader,#loader')) return;
+      if(parseFloat(el.style.opacity) < 0.1){
+        el.style.transition = 'opacity 0.4s, transform 0.4s';
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      }
+    });
+  }, 8000);
+})();
+</script>
+
+</body>
+</html>

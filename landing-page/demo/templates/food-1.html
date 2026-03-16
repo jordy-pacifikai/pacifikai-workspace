@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Tiki Gourmand — Restaurant | Papeete</title>
+<meta name="description" content="Le Tiki Gourmand — Saveurs authentiques de Polynésie">
+<meta property="og:title" content="Le Tiki Gourmand — Saveurs authentiques de Polynésie">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.css">
+<style>
+/* ============================================================
+   FOOD-1 — Warm Rustic Chaleureux
+   Awwwards TOP 1% restaurant/roulotte template
+   PACIFIK'AI Prospection System — v2.0
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg: #1c1410;
+  --accent: #c17d3e;
+  --text: #f5efe8;
+  --font-display: 'Playfair Display', 'Cormorant Garamond', serif;
+  --font-body: 'Inter', 'Inter', sans-serif;
+  --dim: rgba(255,245,230,.45);
+  --border: rgba(255,245,230,.08);
+  --warm-glow: rgba(255,170,50,.06);
+  --warm-shadow: 0 8px 32px rgba(180,100,20,.12);
+  --warm-shadow-hover: 0 16px 48px rgba(180,100,20,.22);
+  --radius: 3px;
+  --ease: cubic-bezier(.23,1,.32,1);
+}
+
+html{
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  scroll-behavior:auto;
+}
+
+body{
+  font-family:var(--font-body);
+  color:var(--text);
+  background:var(--bg);
+  font-weight:300;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+@media(pointer:fine){body{cursor:none}a,button{cursor:none}}
+
+::selection{background:var(--accent);color:var(--bg)}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{background:none;border:none;font:inherit;color:inherit}
+
+/* ---- GSAP HIDDEN STATE ---- */
+.gs-hidden{opacity:0}
+
+/* ============================================================
+   PAGE LOADER — Full-screen overlay + progress bar
+   ============================================================ */
+.page-loader{
+  position:fixed;inset:0;z-index:99999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  will-change:clip-path;
+}
+.loader-name{
+  font-family:var(--font-display);
+  font-size:clamp(24px,4vw,42px);
+  font-weight:400;letter-spacing:.15em;
+  color:var(--text);text-transform:uppercase;
+  opacity:0;
+}
+.loader-bar{
+  position:absolute;bottom:0;left:0;width:100%;height:1px;
+  background:var(--accent);transform-origin:left;transform:scaleX(0);
+}
+
+/* ---- DISCLAIMER BAR (top) ---- */
+.disclaimer-top{
+  position:fixed;top:0;left:0;right:0;z-index:9999;
+  background:var(--accent);color:var(--bg);
+  font-size:11px;letter-spacing:.06em;text-align:center;
+  padding:10px 24px;font-weight:600;
+}
+.disclaimer-top a{text-decoration:underline;font-weight:700}
+
+/* ---- SCROLL PROGRESS ---- */
+.scroll-progress{
+  position:fixed;top:38px;left:0;width:100%;height:2px;z-index:9998;
+  background:var(--accent);transform-origin:left;transform:scaleX(0);
+  will-change:transform;pointer-events:none;
+}
+
+/* ---- CSS SCROLL-DRIVEN PROGRESS (native) ---- */
+@supports (animation-timeline: scroll()){
+  .scroll-progress-native{
+    position:fixed;top:38px;left:0;width:100%;height:2px;z-index:9997;
+    background:var(--accent);transform-origin:left;
+    animation:scrollScale linear;
+    animation-timeline:scroll();
+    pointer-events:none;
+  }
+  @keyframes scrollScale{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+}
+
+/* ---- CUSTOM CURSOR (Magnetic) ---- */
+.cursor-dot{
+  position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;
+  pointer-events:none;z-index:10001;transform:translate(-50%,-50%);
+  mix-blend-mode:difference;
+  transition:width .3s var(--ease),height .3s var(--ease),background .3s;
+}
+.cursor-dot.is-hover{width:48px;height:48px;background:var(--text)}
+.cursor-ring{
+  position:fixed;width:40px;height:40px;border:1px solid var(--text);border-radius:50%;
+  pointer-events:none;z-index:10000;transform:translate(-50%,-50%);opacity:.2;
+  mix-blend-mode:difference;
+  transition:width .45s var(--ease),height .45s var(--ease),opacity .3s;
+}
+.cursor-ring.is-hover{width:0;height:0;opacity:0}
+@media(pointer:coarse){.cursor-dot,.cursor-ring{display:none}}
+
+/* ---- FILM GRAIN (warm) ---- */
+.grain{position:fixed;inset:0;z-index:9990;pointer-events:none;opacity:.028}
+.grain::after{
+  content:'';position:absolute;inset:-200%;width:400%;height:400%;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grainShift 8s steps(10) infinite;
+}
+@keyframes grainShift{
+  0%{transform:translate(0,0)}10%{transform:translate(-5%,-10%)}
+  20%{transform:translate(-15%,5%)}30%{transform:translate(7%,-25%)}
+  40%{transform:translate(-5%,25%)}50%{transform:translate(-15%,10%)}
+  60%{transform:translate(15%,0%)}70%{transform:translate(0%,15%)}
+  80%{transform:translate(3%,35%)}90%{transform:translate(-10%,10%)}
+}
+
+/* ---- NAVIGATION ---- */
+nav{
+  position:fixed;top:38px;left:0;right:0;z-index:500;
+  padding:24px 48px;display:flex;justify-content:space-between;align-items:center;
+  mix-blend-mode:difference;
+  transition:transform .5s var(--ease);
+}
+nav.nav-hidden{transform:translateY(-120%)}
+.nav-brand{
+  font-family:var(--font-display);font-size:clamp(20px,2.2vw,28px);
+  font-weight:500;letter-spacing:.04em;color:var(--text);
+}
+.nav-links{display:flex;align-items:center;gap:36px}
+.nav-links a{
+  color:var(--dim);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  transition:color .3s;position:relative;font-weight:400;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;
+  background:var(--accent);transition:width .4s var(--ease);
+}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{width:100%}
+
+/* ---- HAMBURGER ---- */
+.hamburger{
+  display:none;flex-direction:column;gap:5px;
+  width:28px;padding:4px 0;z-index:601;
+}
+.hamburger span{
+  display:block;width:100%;height:1.5px;background:var(--text);
+  transition:transform .4s var(--ease),opacity .3s;transform-origin:center;
+}
+.hamburger.is-open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hamburger.is-open span:nth-child(2){opacity:0}
+.hamburger.is-open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* ---- MOBILE MENU OVERLAY ---- */
+.mobile-menu{
+  position:fixed;inset:0;z-index:550;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;
+  clip-path:circle(0% at calc(100% - 40px) 60px);
+  transition:clip-path .7s var(--ease);
+  pointer-events:none;
+}
+.mobile-menu.is-open{clip-path:circle(150% at calc(100% - 40px) 60px);pointer-events:auto}
+.mobile-menu a{
+  font-family:var(--font-display);font-size:clamp(28px,6vw,42px);
+  font-weight:400;letter-spacing:.04em;color:var(--text);
+  transition:color .3s;opacity:0;transform:translateY(30px);
+}
+.mobile-menu.is-open a{opacity:1;transform:translateY(0);transition:color .3s, opacity .5s var(--ease), transform .5s var(--ease)}
+.mobile-menu a:nth-child(1){transition-delay:.15s}
+.mobile-menu a:nth-child(2){transition-delay:.2s}
+.mobile-menu a:nth-child(3){transition-delay:.25s}
+.mobile-menu a:nth-child(4){transition-delay:.3s}
+.mobile-menu a:hover{color:var(--accent)}
+
+/* ============================================================
+   HERO — Pinned parallax with smoke particles
+   ============================================================ */
+.hero{
+  position:relative;height:100vh;height:100dvh;overflow:hidden;
+  display:flex;align-items:flex-end;justify-content:flex-start;
+}
+.hero-media{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hero-media img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.55) contrast(1.1) saturate(1.2);
+  will-change:transform;transform:scale(1.15);
+}
+/* Warm vignette on hero */
+.hero-overlay{
+  position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(to top, var(--bg) 0%, transparent 50%),
+    linear-gradient(to right, rgba(18,16,9,.7) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 80%, var(--warm-glow), transparent 60%),
+    radial-gradient(ellipse at center, transparent 30%, rgba(18,16,9,.35) 100%);
+  opacity:.85;
+}
+.hero-content{
+  position:relative;z-index:3;
+  padding:0 48px 80px;width:100%;max-width:1000px;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:12px;
+  font-size:10px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:32px;
+  border:1px solid rgba(255,200,100,.15);padding:8px 20px;
+  border-radius:100px;backdrop-filter:blur(4px);
+}
+.hero-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(48px,9vw,120px);
+  line-height:.92;letter-spacing:-.025em;font-weight:400;
+  margin-bottom:28px;
+}
+.hero-title .line{display:block;overflow:hidden;clip-path:inset(0 0 0 0)}
+.hero-title .line-inner{display:block}
+.hero-title .line:nth-child(2){
+  font-style:italic;color:var(--accent);
+  padding-left:clamp(20px,5vw,80px);
+}
+.hero-tagline{
+  color:var(--dim);font-size:clamp(14px,1.2vw,17px);
+  max-width:440px;line-height:1.8;font-weight:300;
+}
+.hero-scroll{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.hero-scroll span{font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:var(--dim)}
+.scroll-line{width:1px;height:48px;position:relative;overflow:hidden}
+.scroll-line::after{
+  content:'';position:absolute;top:0;left:0;width:100%;height:100%;
+  background:var(--accent);animation:scrollPulse 2s cubic-bezier(.65,0,.35,1) infinite;
+}
+@keyframes scrollPulse{0%{transform:translateY(-100%)}50%{transform:translateY(0)}100%{transform:translateY(100%)}}
+
+/* ---- SMOKE / STEAM PARTICLES ---- */
+.smoke-container{
+  position:absolute;bottom:0;left:0;right:0;height:60%;z-index:2;
+  pointer-events:none;overflow:hidden;
+}
+.smoke-wisp{
+  position:absolute;bottom:-20px;
+  width:30px;height:80px;
+  background:radial-gradient(ellipse, rgba(255,255,255,.15), transparent);
+  filter:blur(12px);opacity:0;
+  animation:smokeRise var(--dur) var(--del) ease-out infinite;
+}
+.smoke-wisp:nth-child(1){left:12%;--dur:6s;--del:0s}
+.smoke-wisp:nth-child(2){left:25%;--dur:7s;--del:1.2s}
+.smoke-wisp:nth-child(3){left:38%;--dur:5.5s;--del:0.5s}
+.smoke-wisp:nth-child(4){left:48%;--dur:8s;--del:2s}
+.smoke-wisp:nth-child(5){left:60%;--dur:6.5s;--del:0.8s}
+.smoke-wisp:nth-child(6){left:72%;--dur:7.5s;--del:1.5s}
+.smoke-wisp:nth-child(7){left:83%;--dur:5s;--del:3s}
+.smoke-wisp:nth-child(8){left:20%;--dur:9s;--del:2.5s}
+.smoke-wisp:nth-child(9){left:55%;--dur:6.8s;--del:3.5s}
+.smoke-wisp:nth-child(10){left:90%;--dur:7.2s;--del:1s}
+.smoke-wisp:nth-child(11){left:35%;--dur:8.5s;--del:4s}
+.smoke-wisp:nth-child(12){left:78%;--dur:5.8s;--del:0.3s}
+@keyframes smokeRise{
+  0%{opacity:0;transform:translateY(0) scale(.5)}
+  20%{opacity:.3}
+  60%{opacity:.15;transform:translateY(-120px) scale(1.2)}
+  100%{opacity:0;transform:translateY(-200px) scale(1.5) translateX(20px)}
+}
+
+/* ============================================================
+   SECTION COMMON
+   ============================================================ */
+.section{padding:clamp(80px,12vw,160px) 48px;position:relative;overflow:hidden}
+.section-label{
+  font-size:10px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:48px;
+  display:flex;align-items:center;gap:16px;
+}
+.section-label::before{content:'';width:40px;height:1px;background:var(--accent)}
+.section-title{
+  font-family:var(--font-display);
+  font-size:clamp(32px,5vw,64px);
+  line-height:1.05;letter-spacing:-.02em;font-weight:400;
+  margin-bottom:48px;
+}
+
+
+
+/* ---- CSS SCROLL-DRIVEN REVEAL (native) ---- */
+@supports (animation-timeline: view()){
+  .reveal-scroll{
+    opacity:0;transform:translateY(40px);
+    animation:revealUp linear both;
+    animation-timeline:view();
+    animation-range:entry 0% entry 30%;
+  }
+  @keyframes revealUp{to{opacity:1;transform:translateY(0)}}
+}
+
+/* ============================================================
+   PROCESS (3 steps) — card lift + shadow micro-interactions
+   ============================================================ */
+.process{background:var(--bg);position:relative}
+.process::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:1px;height:80px;background:linear-gradient(to bottom,var(--accent),transparent);
+  opacity:.3;
+}
+.process-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:64px;
+}
+.process-card{
+  padding:56px 40px;position:relative;text-align:center;
+  border:1px solid var(--border);border-radius:var(--radius);
+  transition:border-color .5s,background .5s,box-shadow .5s,transform .5s var(--ease);
+}
+.process-card:hover{
+  border-color:var(--accent);background:var(--warm-glow);
+  box-shadow:var(--warm-shadow-hover);transform:translateY(-8px);
+}
+/* Button fill glow micro-interaction on hover */
+.process-card::after{
+  content:'';position:absolute;inset:-1px;border-radius:var(--radius);
+  background:radial-gradient(circle at 50% 100%, rgba(255,170,50,.12), transparent 60%);
+  opacity:0;transition:opacity .5s;pointer-events:none;
+}
+.process-card:hover::after{opacity:1}
+.process-icon{
+  width:80px;height:80px;margin:0 auto 28px;
+  border:1px solid var(--border);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  transition:border-color .5s,transform .5s var(--ease),box-shadow .5s;
+}
+.process-card:hover .process-icon{border-color:var(--accent);transform:scale(1.08);box-shadow:0 0 30px rgba(255,170,50,.15)}
+.process-num{
+  font-family:var(--font-display);font-size:clamp(48px,5vw,64px);
+  color:var(--accent);opacity:.1;font-weight:400;line-height:1;margin-bottom:20px;
+}
+.process-card h3{
+  font-family:var(--font-display);font-size:clamp(22px,2.5vw,30px);
+  font-weight:500;margin-bottom:16px;letter-spacing:-.01em;
+}
+.process-card p{color:var(--dim);font-size:14px;line-height:1.8;max-width:320px;margin:0 auto}
+.process-card .line-accent{
+  width:32px;height:1px;background:var(--accent);margin:32px auto 0;
+  transform-origin:center;transform:scaleX(0);transition:transform .6s var(--ease);
+}
+.process-card:hover .line-accent{transform:scaleX(1)}
+
+/* ============================================================
+   MARQUEE TICKER
+   ============================================================ */
+.marquee{
+  overflow:hidden;padding:48px 0;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:linear-gradient(90deg,var(--bg),rgba(30,25,15,.6),var(--bg));
+}
+.marquee-track{display:flex;gap:0;white-space:nowrap;will-change:transform}
+.marquee-word{
+  font-family:var(--font-display);font-size:clamp(16px,2.2vw,26px);
+  letter-spacing:.2em;text-transform:uppercase;color:var(--text);
+  opacity:.12;flex-shrink:0;padding:0 32px;font-weight:400;
+}
+.marquee-sep{
+  flex-shrink:0;display:flex;align-items:center;padding:0 12px;
+  color:var(--accent);opacity:.35;font-size:8px;
+}
+
+/* ============================================================
+   HORIZONTAL SCROLL GALLERY (Pinned)
+   ============================================================ */
+.hscroll-section{
+  position:relative;overflow:hidden;
+  background:var(--bg);
+}
+.hscroll-header{
+  padding:clamp(80px,12vw,160px) 48px clamp(40px,6vw,64px);
+}
+.hscroll-track{
+  display:flex;gap:24px;padding:0 48px 80px;
+  will-change:transform;
+}
+.hscroll-item{
+  flex-shrink:0;width:clamp(320px,40vw,560px);
+  position:relative;overflow:hidden;border-radius:var(--radius);
+  border:1px solid var(--border);
+  transition:border-color .5s;
+}
+.hscroll-item:hover{border-color:rgba(255,200,100,.25)}
+.hscroll-item img{
+  width:100%;height:clamp(360px,50vh,520px);object-fit:cover;
+  filter:saturate(.85) contrast(1.05) brightness(.9);
+  transition:all .7s var(--ease);transform:scale(1.06);
+}
+.hscroll-item:hover img{
+  filter:saturate(1.2) brightness(1.05) contrast(1.02);transform:scale(1);
+}
+/* Ken Burns on idle */
+@keyframes kenBurns{
+  0%{transform:scale(1.06) translate(0,0)}
+  50%{transform:scale(1.1) translate(-1%,-1%)}
+  100%{transform:scale(1.06) translate(0,0)}
+}
+.hscroll-item img{animation:kenBurns 12s ease-in-out infinite}
+.hscroll-item:hover img{animation:none;transform:scale(1)}
+/* Warm vignette overlay */
+.hscroll-item::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center, transparent 40%, rgba(18,16,9,.45) 100%);
+  opacity:.6;transition:opacity .5s;pointer-events:none;
+}
+.hscroll-item:hover::after{opacity:.25}
+/* Hover info overlay slide-in */
+.hscroll-info{
+  position:absolute;bottom:0;left:0;right:0;z-index:2;
+  padding:32px;
+  background:linear-gradient(to top, rgba(18,16,9,.85), transparent);
+  transform:translateY(100%);transition:transform .5s var(--ease);
+}
+.hscroll-item:hover .hscroll-info{transform:translateY(0)}
+.hscroll-info span{
+  font-family:var(--font-display);font-size:clamp(18px,2vw,24px);
+  font-weight:400;color:var(--text);
+}
+
+/* ============================================================
+   COUNTERS / STATS — scramble animation
+   ============================================================ */
+.stats{
+  padding:clamp(64px,8vw,96px) 48px;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,var(--bg),rgba(30,25,12,.3),var(--bg));
+}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;text-align:center}
+.stat-value{
+  font-family:var(--font-display);font-size:clamp(48px,7vw,96px);
+  font-weight:400;line-height:1;color:var(--text);letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;
+}
+.stat-label{
+  font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--dim);margin-top:12px;
+}
+
+/* ============================================================
+   TESTIMONIAL
+   ============================================================ */
+.testimonial{text-align:center;max-width:800px;margin:0 auto}
+.testimonial .quote-mark{
+  font-family:var(--font-display);font-size:clamp(80px,10vw,140px);
+  color:var(--accent);opacity:.15;line-height:.6;margin-bottom:24px;
+}
+.testimonial-border{
+  width:60px;height:1px;background:var(--accent);margin:0 auto 40px;opacity:.4;
+}
+.testimonial blockquote{
+  font-family:var(--font-display);font-size:clamp(22px,3vw,36px);
+  font-weight:400;font-style:italic;line-height:1.5;
+  margin-bottom:32px;letter-spacing:.01em;color:var(--text);
+}
+.testimonial cite{
+  font-style:normal;font-size:12px;letter-spacing:.25em;
+  text-transform:uppercase;color:var(--accent);
+  font-family:var(--font-body);
+}
+
+/* ============================================================
+   CTA — with parallax background
+   ============================================================ */
+.cta{
+  position:relative;overflow:hidden;
+  padding:clamp(120px,16vw,220px) 48px;text-align:center;
+}
+.cta-bg{
+  position:absolute;inset:0;z-index:0;
+  background:url('https://v3b.fal.media/files/b/0a924d66/ogpEmP67oB6xuULP9E4BD_gC4owfUg.jpg') center/cover no-repeat;
+  filter:brightness(.25) contrast(1.1) saturate(1.2);
+  will-change:transform;
+}
+.cta-overlay{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(18,16,9,.65),rgba(18,16,9,.85));
+}
+.cta::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:60%;height:40%;z-index:1;
+  background:radial-gradient(ellipse at center bottom, rgba(255,170,50,.08), transparent 70%);
+  pointer-events:none;
+}
+.cta-content{position:relative;z-index:2}
+.cta h2{
+  font-family:var(--font-display);font-size:clamp(36px,6vw,72px);
+  font-weight:400;margin-bottom:16px;letter-spacing:-.02em;
+}
+.cta h2 em{font-style:italic;color:var(--accent)}
+.cta-sub{
+  color:var(--dim);font-size:clamp(14px,1.2vw,17px);
+  margin-bottom:48px;max-width:500px;margin-left:auto;margin-right:auto;
+}
+.cta-links{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin-bottom:32px}
+.cta-link{
+  display:inline-flex;align-items:center;gap:12px;
+  font-size:13px;letter-spacing:.15em;text-transform:uppercase;
+  padding:16px 40px;border:1px solid var(--accent);
+  transition:all .4s var(--ease);
+  position:relative;overflow:hidden;
+}
+/* Button fill + glow micro-interaction */
+.cta-link::before{
+  content:'';position:absolute;inset:0;background:var(--accent);
+  transform:translateY(100%);transition:transform .4s var(--ease);z-index:0;
+}
+.cta-link:hover::before{transform:translateY(0)}
+.cta-link::after{
+  content:'';position:absolute;inset:-2px;
+  box-shadow:0 0 24px rgba(255,170,50,.3);opacity:0;
+  transition:opacity .4s;pointer-events:none;
+}
+.cta-link:hover::after{opacity:1}
+.cta-link span{position:relative;z-index:1}
+.cta-link:hover{color:var(--bg)}
+.cta-link--filled{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.cta-link--filled::before{background:var(--text)}
+.cta-link--filled:hover{color:var(--bg)}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer{padding:64px 48px 32px;border-top:1px solid var(--border)}
+.footer-top{
+  display:grid;grid-template-columns:1fr auto auto;gap:64px;
+  margin-bottom:64px;align-items:start;
+}
+.footer-brand{
+  font-family:var(--font-display);font-size:clamp(24px,3vw,36px);
+  font-weight:400;margin-bottom:16px;
+}
+.footer-contact{color:var(--dim);font-size:13px;line-height:1.9;font-style:normal}
+.footer-contact a{transition:color .3s}
+.footer-contact a:hover{color:var(--accent)}
+.footer-col h4{
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:20px;
+}
+/* Link underline draw micro-interaction */
+.footer-col a{
+  display:block;color:var(--dim);font-size:13px;margin-bottom:12px;
+  transition:color .3s;position:relative;
+}
+.footer-col a::after{
+  content:'';position:absolute;bottom:-1px;left:0;width:0;height:1px;
+  background:var(--accent);transition:width .4s var(--ease);
+}
+.footer-col a:hover{color:var(--text)}
+.footer-col a:hover::after{width:100%}
+.footer-map{
+  width:100%;height:200px;border:1px solid var(--border);border-radius:var(--radius);
+  margin-bottom:48px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,245,230,.03);
+  font-size:12px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;
+}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:24px;border-top:1px solid var(--border);
+  font-size:11px;color:var(--dim);letter-spacing:.05em;
+}
+
+/* ---- PACIFIK'AI DISCLAIMER BAR (bottom) ---- */
+.disclaimer-bottom{
+  background:rgba(18,16,9,.95);border-top:1px solid var(--border);
+  padding:16px 24px;text-align:center;
+  font-size:11px;letter-spacing:.08em;color:var(--dim);
+}
+.disclaimer-bottom a{color:var(--accent);text-decoration:underline;font-weight:500}
+
+/* ---- BADGE FIXED ---- */
+.badge-pacifikai{
+  position:fixed;bottom:20px;right:20px;z-index:9998;
+  background:rgba(18,16,9,.85);backdrop-filter:blur(12px);
+  border:1px solid var(--border);padding:10px 18px;
+  font-size:10px;letter-spacing:.1em;color:var(--dim);
+  border-radius:100px;transition:all .3s;
+}
+.badge-pacifikai:hover{color:var(--text);border-color:var(--accent)}
+.badge-pacifikai strong{color:var(--accent)}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:1024px){
+  nav{padding:24px 32px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .hero-content{padding:0 32px 64px}
+  .section,.hscroll-header,.stats{padding-left:32px;padding-right:32px}
+  .process-grid{grid-template-columns:1fr}
+  .hscroll-track{padding-left:32px;padding-right:32px}
+  .hscroll-item{width:clamp(280px,65vw,440px)}
+  .footer-top{grid-template-columns:1fr;gap:40px}
+  .stats-grid{gap:32px}
+}
+
+@media(max-width:640px){
+  .disclaimer-top{font-size:9px;padding:8px 16px}
+  nav{padding:20px 20px;top:34px}
+  .hero-content{padding:0 20px 56px}
+  .hero-title{font-size:clamp(36px,12vw,56px)}
+  .section,.hscroll-header,.stats,.cta{padding-left:20px;padding-right:20px}
+  .process-card{padding:40px 24px}
+  .hscroll-track{padding-left:20px;padding-right:20px;gap:16px}
+  .hscroll-item{width:clamp(260px,80vw,360px)}
+  .stats-grid{grid-template-columns:1fr;gap:40px}
+  .cta-links{flex-direction:column;align-items:center}
+  footer{padding:48px 20px 24px}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+  .badge-pacifikai{bottom:12px;right:12px;font-size:9px;padding:8px 14px}
+  .smoke-wisp{filter:blur(6px)}
+}
+
+/* ---- REDUCED MOTION: disable EVERYTHING ---- */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important;
+  }
+  .page-loader{display:none!important}
+  .gs-hidden{opacity:1!important;transform:none!important}
+  .hero-media img{transform:scale(1)!important;filter:brightness(.6)!important}
+  .smoke-wisp{display:none!important}
+  .cursor-dot,.cursor-ring{display:none!important}
+  .clip-wipe,.clip-circle,.clip-curtain{clip-path:none!important}
+  .hscroll-item img{animation:none!important}
+  .mobile-menu{clip-path:none!important}
+}
+
+    /* Loader auto-dismiss fallback */
+    @keyframes loaderFadeOut { 0%,80%{opacity:1} 100%{opacity:0;pointer-events:none} }
+    #loader, .page-loader, .preloader { animation: loaderFadeOut 3s ease forwards !important; }
+
+</style>
+</head>
+<body>
+
+<!-- PAGE LOADER -->
+<div class="page-loader" id="pageLoader" aria-hidden="true">
+  <span class="loader-name" id="loaderName">Le Tiki Gourmand</span>
+  <div class="loader-bar" id="loaderBar"></div>
+</div>
+
+<!-- FILM GRAIN OVERLAY -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<!-- SCROLL PROGRESS BAR (GSAP) -->
+<div class="scroll-progress" aria-hidden="true"></div>
+<!-- SCROLL PROGRESS BAR (CSS native fallback) -->
+<div class="scroll-progress-native" aria-hidden="true"></div>
+
+<!-- DISCLAIMER BAR (top) -->
+<div class="disclaimer-top">
+  Prototype cr&eacute;&eacute; par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a> pour <strong>Le Tiki Gourmand</strong>
+</div>
+
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#carte" data-nav>La Carte</a>
+  <a href="#galerie" data-nav>Galerie</a>
+  <a href="#temoignage" data-nav>Avis</a>
+  <a href="#contact" data-nav>R&eacute;server</a>
+</div>
+
+<!-- NAVIGATION -->
+<nav role="navigation" aria-label="Navigation principale">
+  <a href="#" class="nav-brand">Le Tiki Gourmand</a>
+  <div class="nav-links">
+    <a href="#carte">La Carte</a>
+    <a href="#galerie">Galerie</a>
+    <a href="#temoignage">Avis</a>
+    <a href="#contact">R&eacute;server</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ==================== HERO (Pinned + Parallax) ==================== -->
+<section class="hero" id="hero">
+  <div class="hero-media">
+    <img src="https://v3b.fal.media/files/b/0a924d66/ogpEmP67oB6xuULP9E4BD_gC4owfUg.jpg" alt="Le Tiki Gourmand — Restaurant" loading="eager" fetchpriority="high">
+  </div>
+  <div class="hero-overlay"></div>
+
+  <!-- SMOKE / STEAM PARTICLES (12 wisps) -->
+  <div class="smoke-container" aria-hidden="true">
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+    <div class="smoke-wisp"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow gs-hidden">
+      <span class="dot"></span>
+      <span>Restaurant &mdash; Papeete</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="line"><span class="line-inner">Le Tiki Gourmand</span></span>
+      <span class="line"><span class="line-inner">Saveurs authentiques de Polynésie</span></span>
+    </h1>
+    <p class="hero-tagline gs-hidden">Saveurs authentiques de Polynésie</p>
+  </div>
+  <div class="hero-scroll gs-hidden">
+    <span>D&eacute;couvrir</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ==================== PROCESS (3 steps) — clip-path wipe ==================== -->
+<section class="section process clip-wipe" id="carte">
+  <div class="section-label gs-hidden">L'Exp&eacute;rience</div>
+  <h2 class="section-title gs-hidden">Un voyage<br>en trois <em style="font-style:italic;color:var(--accent)">saveurs</em></h2>
+  <div class="process-grid">
+    <div class="process-card gs-hidden">
+      <div class="process-icon">&#127860;</div>
+      <div class="process-num">01</div>
+      <h3>Sélection</h3>
+      <p>Produits locaux frais du jour</p>
+      <div class="line-accent"></div>
+    </div>
+    <div class="process-card gs-hidden">
+      <div class="process-icon">&#128293;</div>
+      <div class="process-num">02</div>
+      <h3>Préparation</h3>
+      <p>Cuisine minute par nos chefs</p>
+      <div class="line-accent"></div>
+    </div>
+    <div class="process-card gs-hidden">
+      <div class="process-icon">&#10024;</div>
+      <div class="process-num">03</div>
+      <h3>Dégustation</h3>
+      <p>Savourez l'authenticité</p>
+      <div class="line-accent"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MARQUEE TICKER ==================== -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-word">Saveurs Locales</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Fait Maison</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Produits Frais</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Cuisine du March&eacute;</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Terroir Polyn&eacute;sien</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Passion &amp; Tradition</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Go&ucirc;ts Authentiques</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Table d'Exception</span>
+    <span class="marquee-sep">&diams;</span>
+    <!-- Duplicate for seamless loop -->
+    <span class="marquee-word">Saveurs Locales</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Fait Maison</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Produits Frais</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Cuisine du March&eacute;</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Terroir Polyn&eacute;sien</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Passion &amp; Tradition</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Go&ucirc;ts Authentiques</span>
+    <span class="marquee-sep">&diams;</span>
+    <span class="marquee-word">Table d'Exception</span>
+    <span class="marquee-sep">&diams;</span>
+  </div>
+</div>
+
+<!-- ==================== HORIZONTAL SCROLL GALLERY (Pinned) — clip-path circle ==================== -->
+<section class="hscroll-section clip-circle" id="galerie">
+  <div class="hscroll-header">
+    <div class="section-label gs-hidden">Nos Cr&eacute;ations</div>
+    <h2 class="section-title gs-hidden" style="margin-bottom:0">L'Art de<br>la <em style="font-style:italic;color:var(--accent)">Table</em></h2>
+  </div>
+  <div class="hscroll-track" id="hscrollTrack">
+    <div class="hscroll-item">
+      <img src="https://v3b.fal.media/files/b/0a924d66/YQvGmksqJwXj8yFAI2b0D_OhSX3IpF.jpg" alt="Plat signature" loading="lazy">
+      <div class="hscroll-info"><span>Plat Signature</span></div>
+    </div>
+    <div class="hscroll-item">
+      <img src="https://v3b.fal.media/files/b/0a924d66/goOVO4Q5X5uu3NkyTtTXt_XEST4Lis.jpg" alt="Ambiance" loading="lazy">
+      <div class="hscroll-info"><span>Ambiance</span></div>
+    </div>
+    <div class="hscroll-item">
+      <img src="https://v3b.fal.media/files/b/0a924d66/c3fzL8Z8XTyI3qzL1f0UN_atpXdsAR.jpg" alt="Sp&eacute;cialit&eacute;" loading="lazy">
+      <div class="hscroll-info"><span>Sp&eacute;cialit&eacute;</span></div>
+    </div>
+    <div class="hscroll-item">
+      <img src="https://v3b.fal.media/files/b/0a924d66/C562oWMaNSR5f-rBdbigk_mQA6YS4E.jpg" alt="Dessert" loading="lazy">
+      <div class="hscroll-info"><span>Dessert</span></div>
+    </div>
+    <div class="hscroll-item">
+      <img src="https://v3b.fal.media/files/b/0a924d66/_cxNOBeHL1mH6SpY2mZ88_nXudsW31.jpg" alt="Cocktail" loading="lazy">
+      <div class="hscroll-info"><span>Cocktail</span></div>
+    </div>
+    <div class="hscroll-item">
+      <img src="https://v3b.fal.media/files/b/0a924d66/OUErWdbkOy65tvIB948pE_acZnFm1Q.jpg" alt="Terrasse" loading="lazy">
+      <div class="hscroll-info"><span>Terrasse</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== STATS / COUNTERS — clip-path curtain ==================== -->
+<section class="stats clip-curtain">
+  <div class="stats-grid">
+    <div class="stat gs-hidden">
+      <div class="stat-value"><span class="counter" data-target="15">0</span></div>
+      <div class="stat-label">Années d'expérience</div>
+    </div>
+    <div class="stat gs-hidden">
+      <div class="stat-value"><span class="counter" data-target="200">0</span></div>
+      <div class="stat-label">Plats à la carte</div>
+    </div>
+    <div class="stat gs-hidden">
+      <div class="stat-value"><span class="counter" data-target="98">0</span></div>
+      <div class="stat-label">Clients satisfaits</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TESTIMONIAL — clip-path wipe ==================== -->
+<section class="section clip-wipe" id="temoignage">
+  <div class="testimonial">
+    <div class="quote-mark gs-hidden">&ldquo;</div>
+    <div class="testimonial-border gs-hidden"></div>
+    <blockquote class="gs-hidden">La meilleure table de Papeete. Les saveurs sont incomparables et le service est impeccable.</blockquote>
+    <cite class="gs-hidden">&mdash; Teva, Papeete</cite>
+  </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="cta clip-circle" id="contact">
+  <div class="cta-bg" aria-hidden="true"></div>
+  <div class="cta-overlay"></div>
+  <div class="cta-content">
+    <h2 class="gs-hidden">Réservez votre table</h2>
+    <p class="cta-sub gs-hidden">Saveurs authentiques de Polynésie</p>
+    <div class="cta-links gs-hidden">
+      <a href="tel:+689 40 111 222" class="cta-link cta-link--filled"><span>+689 40 111 222</span></a>
+      <a href="mailto:contact@tiki-gourmand.pf" class="cta-link"><span>contact@tiki-gourmand.pf</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="footer-map" aria-label="Emplacement carte">
+    &#128205; Carte &mdash; Papeete
+  </div>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">Le Tiki Gourmand</div>
+      <address class="footer-contact">
+        Papeete<br>
+        <a href="tel:+689 40 111 222">+689 40 111 222</a><br>
+        <a href="mailto:contact@tiki-gourmand.pf">contact@tiki-gourmand.pf</a>
+      </address>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <a href="#carte">La Carte</a>
+      <a href="#galerie">Galerie</a>
+      <a href="#temoignage">Avis</a>
+      <a href="#contact">R&eacute;server</a>
+    </div>
+    <div class="footer-col">
+      <h4>Suivez-nous</h4>
+      <a href="#" target="_blank">Facebook</a>
+      <a href="#" target="_blank">Instagram</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Le Tiki Gourmand. Tous droits r&eacute;serv&eacute;s.</span>
+    <span>Restaurant &mdash; Papeete</span>
+  </div>
+</footer>
+
+<!-- PACIFIK'AI DISCLAIMER BAR (bottom) -->
+<div class="disclaimer-bottom">
+  Prototype cr&eacute;&eacute; par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a> &mdash; pacifikai.com
+</div>
+
+<!-- BADGE FIXED -->
+<a href="https://pacifikai.com" target="_blank" class="badge-pacifikai">
+  Propuls&eacute; par <strong>PACIFIK'AI</strong>
+</a>
+
+<!-- ============================================================
+     SCRIPTS — CDN + Inline
+     ============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  /* ============================================================
+     PROGRESSIVE SAFETY TIMEOUTS
+     0.5s hero | 1.5s all elements | 2.5s kill everything
+     ============================================================ */
+  var forceReveal = function(selector){
+    document.querySelectorAll(selector).forEach(function(el){
+      el.style.opacity='1';el.style.transform='none';
+    });
+  };
+  var heroTimer = setTimeout(function(){
+    forceReveal('.hero .gs-hidden');
+    document.querySelectorAll('.hero-title .line-inner').forEach(function(el){
+      el.style.opacity='1';el.style.transform='none';
+    });
+  }, 500);
+  var allTimer = setTimeout(function(){ forceReveal('.gs-hidden') }, 1500);
+  var killTimer = setTimeout(function(){
+    forceReveal('.gs-hidden');
+    document.querySelectorAll('.clip-wipe,.clip-circle,.clip-curtain').forEach(function(el){
+      el.classList.add('is-visible');
+    });
+    var loader = document.getElementById('pageLoader');
+    if(loader) loader.style.display='none';
+  }, 2500);
+
+  /* ============================================================
+     REDUCED MOTION CHECK — bail early
+     ============================================================ */
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(prefersReduced){
+    /* clearTimeout removed */
+/* clearTimeout removed */
+/* clearTimeout removed */
+forceReveal('.gs-hidden');
+    document.querySelectorAll('.clip-wipe,.clip-circle,.clip-curtain').forEach(function(el){
+      el.classList.add('is-visible');
+    });
+    var loader = document.getElementById('pageLoader');
+    if(loader) loader.style.display='none';
+    return;
+  }
+
+  /* ============================================================
+     REGISTER GSAP PLUGINS
+     ============================================================ */
+  gsap.registerPlugin(ScrollTrigger);
+  /* clearTimeout removed */
+/* clearTimeout removed */
+/* clearTimeout removed */
+/* ============================================================
+     PAGE LOADER — progress bar + curtain wipe
+     ============================================================ */
+  var pageLoader = document.getElementById('pageLoader');
+  var loaderName = document.getElementById('loaderName');
+  var loaderBar = document.getElementById('loaderBar');
+
+  function initAnimations(){
+    /* ---- LENIS SMOOTH SCROLL ---- */
+    var lenis = new Lenis({lerp:0.1, smoothWheel:true, wheelMultiplier:0.9});
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function(time){ lenis.raf(time * 1000) });
+    gsap.ticker.lagSmoothing(0);
+
+    /* ---- HAMBURGER MENU ---- */
+    var burger = document.getElementById('hamburger');
+    var mobileMenu = document.getElementById('mobileMenu');
+    if(burger && mobileMenu){
+      burger.addEventListener('click', function(){
+        burger.classList.toggle('is-open');
+        mobileMenu.classList.toggle('is-open');
+        if(mobileMenu.classList.contains('is-open')) lenis.stop();
+        else lenis.start();
+      });
+      mobileMenu.querySelectorAll('a[data-nav]').forEach(function(a){
+        a.addEventListener('click', function(){
+          burger.classList.remove('is-open');
+          mobileMenu.classList.remove('is-open');
+          lenis.start();
+        });
+      });
+    }
+
+    /* ---- SMOOTH ANCHOR LINKS ---- */
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        var target = document.querySelector(this.getAttribute('href'));
+        if(target){ e.preventDefault(); lenis.scrollTo(target, {offset:-80}) }
+      });
+    });
+
+    /* ============================================================
+       MAGNETIC CURSOR — lerp 0.15/0.08, hover states
+       ============================================================ */
+    var dot = document.getElementById('cursorDot');
+    var ring = document.getElementById('cursorRing');
+    if(dot && ring && window.matchMedia('(pointer:fine)').matches){
+      var mx=0, my=0, dx=0, dy=0, rx=0, ry=0;
+      window.addEventListener('mousemove', function(e){ mx=e.clientX; my=e.clientY });
+      gsap.ticker.add(function(){
+        dx += (mx - dx) * 0.15;
+        dy += (my - dy) * 0.15;
+        rx += (mx - rx) * 0.08;
+        ry += (my - ry) * 0.08;
+        dot.style.left = dx + 'px'; dot.style.top = dy + 'px';
+        ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      });
+      /* Magnetic attraction on interactive elements */
+      document.querySelectorAll('a,button,.process-card,.hscroll-item,.cta-link').forEach(function(el){
+        el.addEventListener('mouseenter', function(){
+          dot.classList.add('is-hover'); ring.classList.add('is-hover');
+        });
+        el.addEventListener('mouseleave', function(){
+          dot.classList.remove('is-hover'); ring.classList.remove('is-hover');
+        });
+      });
+    }
+
+    /* ---- SCROLL PROGRESS BAR (GSAP) ---- */
+    gsap.to('.scroll-progress', {
+      scaleX:1, ease:'none',
+      scrollTrigger:{ trigger:'body', start:'top top', end:'bottom bottom', scrub:0.3 }
+    });
+
+    /* ---- NAV HIDE/SHOW ON SCROLL ---- */
+    var navEl = document.querySelector('nav');
+    var lastScroll = 0;
+    lenis.on('scroll', function(e){
+      var current = e.animatedScroll;
+      if(current > lastScroll && current > 150) navEl.classList.add('nav-hidden');
+      else navEl.classList.remove('nav-hidden');
+      lastScroll = current;
+    });
+
+    /* ============================================================
+       HERO PIN + PARALLAX
+       Pin end: '+=50%', scrub. Image yPercent:-15 + scale 1.08,
+       overlay opacity -> 0.6, text yPercent:-30 + opacity -> 0
+       ============================================================ */
+    gsap.to('.hero-media img', { scale:1, duration:6, ease:'power1.out' });
+
+    var heroTl = gsap.timeline({
+      scrollTrigger:{
+        trigger:'.hero',
+        start:'top top',
+        end: '+=50%',
+        pin:true,
+        scrub:1,
+      }
+    });
+    heroTl.to('.hero-media img', { yPercent:-15, scale:1.08, ease:'none' }, 0);
+    heroTl.to('.hero-overlay', { opacity:0.6, ease:'none' }, 0);
+    heroTl.to('.hero-content', { yPercent:-30, opacity:0, ease:'none' }, 0);
+    heroTl.to('.hero-scroll', { opacity:0, ease:'none' }, 0);
+
+    /* ============================================================
+       TEXT REVEALS with SplitType
+       ============================================================ */
+    try {
+      /* Hero H1: chars rotateX(-90) + y(100%) from overflow:hidden mask, stagger 0.03s */
+      var heroLines = document.querySelectorAll('.hero-title .line-inner');
+      heroLines.forEach(function(line, idx){
+        var split = new SplitType(line, { types:'chars' });
+        gsap.from(split.chars, {
+          rotateX:-90, y:'100%', opacity:0,
+          stagger:0.03, duration:1.2,
+          ease:'power4.out', delay:0.3 + idx * 0.15
+        });
+      });
+
+      /* Section titles: words y(120%) from mask, stagger 0.05s */
+      document.querySelectorAll('.section-title').forEach(function(title){
+        var split = new SplitType(title, { types:'words' });
+        gsap.from(split.words, {
+          y:'120%', opacity:0, stagger:0.05, duration:1, ease:'power3.out',
+          scrollTrigger:{ trigger:title, start:'top 85%', once:true }
+        });
+      });
+
+      /* Paragraphs: lines opacity + y(20px) stagger 0.08s */
+      document.querySelectorAll('.hero-tagline, .process-card p, .cta-sub').forEach(function(p){
+        var split = new SplitType(p, { types:'lines' });
+        gsap.from(split.lines, {
+          y:20, opacity:0, stagger:0.08, duration:0.8, ease:'power3.out',
+          scrollTrigger:{ trigger:p, start:'top 88%', once:true }
+        });
+      });
+    } catch(e){
+      /* Fallback if SplitType fails */
+      gsap.from('.hero-title .line-inner', {
+        y:60, opacity:0, stagger:0.15, duration:1, ease:'power3.out', delay:0.3
+      });
+    }
+
+    /* Hero eyebrow & scroll indicator */
+    gsap.from('.hero-eyebrow', { y:20, opacity:0, duration:0.8, ease:'power3.out', delay:1 });
+    gsap.from('.hero-scroll',  { opacity:0, duration:0.6, delay:1.8 });
+
+    /* ============================================================
+       SECTION CLIP-PATH TRANSITIONS — ScrollTrigger reveals
+       ============================================================ */
+    document.querySelectorAll('.clip-wipe,.clip-circle,.clip-curtain').forEach(function(el){
+      ScrollTrigger.create({
+        trigger:el, start:'top 85%', once:true,
+        onEnter:function(){ el.classList.add('is-visible') }
+      });
+    });
+
+    /* ---- GENERIC REVEAL: .gs-hidden elements ---- */
+    document.querySelectorAll('.gs-hidden').forEach(function(el){
+      if(el.closest('.hero')) return; /* hero handled separately */
+      gsap.fromTo(el,
+        { y:40, opacity:0 },
+        { y:0, opacity:1, duration:0.9, ease:'power3.out',
+          scrollTrigger:{ trigger:el, start:'top 88%', once:true }
+        }
+      );
+    });
+
+    /* ---- PROCESS CARDS STAGGER ---- */
+    gsap.from('.process-card', {
+      y:60, opacity:0, stagger:0.15, duration:0.9, ease:'power3.out',
+      scrollTrigger:{ trigger:'.process-grid', start:'top 80%', once:true }
+    });
+
+    /* ---- MARQUEE INFINITE SCROLL ---- */
+    var track = document.querySelector('.marquee-track');
+    if(track){
+      var w = track.scrollWidth / 2;
+      gsap.to(track, {
+        x: -w, duration:40, ease:'none', repeat:-1,
+        modifiers:{ x: gsap.utils.unitize(function(x){ return parseFloat(x) % w }) }
+      });
+    }
+
+    /* ============================================================
+       HORIZONTAL SCROLL GALLERY (Pinned)
+       ============================================================ */
+    var htrack = document.getElementById('hscrollTrack');
+    if(htrack){
+      var htrackWidth = htrack.scrollWidth - window.innerWidth;
+      gsap.to(htrack, {
+        x: -htrackWidth,
+        ease:'none',
+        scrollTrigger:{
+          trigger:'.hscroll-section',
+          start:'top top',
+          end:function(){ return '+=' + htrackWidth },
+          pin:true,
+          scrub:1,
+          invalidateOnRefresh:true,
+        }
+      });
+      /* Different parallax speed per image */
+      document.querySelectorAll('.hscroll-item img').forEach(function(img, i){
+        var speed = [0.8, 1.2, 0.6, 1.4, 0.9, 1.1][i % 6];
+        gsap.to(img, {
+          yPercent: -6 * speed, ease:'none',
+          scrollTrigger:{
+            trigger:'.hscroll-section',
+            start:'top top',
+            end:'bottom top',
+            scrub:true
+          }
+        });
+      });
+    }
+
+    /* ============================================================
+       COUNTER SCRAMBLE ANIMATION
+       Random chars -> final value over 1.5s
+       ============================================================ */
+    var scrambleChars = '0123456789';
+    document.querySelectorAll('.counter').forEach(function(el){
+      var target = el.getAttribute('data-target');
+      var num = parseFloat(target);
+
+      ScrollTrigger.create({
+        trigger:el, start:'top 85%', once:true,
+        onEnter:function(){
+          if(isNaN(num)){
+            /* Non-numeric: scramble text */
+            var finalStr = target;
+            var duration = 1500;
+            var startTime = Date.now();
+            var scrambleInterval = setInterval(function(){
+              var elapsed = Date.now() - startTime;
+              var progress = Math.min(elapsed / duration, 1);
+              var result = '';
+              for(var i = 0; i < finalStr.length; i++){
+                if(i < finalStr.length * progress){
+                  result += finalStr[i];
+                } else {
+                  result += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+                }
+              }
+              el.textContent = result;
+              if(progress >= 1) clearInterval(scrambleInterval);
+            }, 50);
+            return;
+          }
+          /* Numeric: scramble then count */
+          var obj = { val:0 };
+          var scrambleDone = false;
+          var scrambleInt = setInterval(function(){
+            if(scrambleDone){ clearInterval(scrambleInt); return; }
+            el.textContent = Math.floor(Math.random() * num * 1.5);
+          }, 50);
+          gsap.to(obj, {
+            val:num, duration:1.5, ease:'power2.out',
+            onUpdate:function(){
+              var v = Math.round(obj.val);
+              if(obj.val > num * 0.3){ scrambleDone = true; }
+              el.textContent = v;
+            },
+            onComplete:function(){
+              scrambleDone = true;
+              el.textContent = Math.round(num);
+            }
+          });
+        }
+      });
+    });
+
+    /* ---- CTA PARALLAX ---- */
+    gsap.to('.cta-bg', {
+      yPercent:-20, ease:'none',
+      scrollTrigger:{ trigger:'.cta', start:'top bottom', end:'bottom top', scrub:true }
+    });
+
+    /* ---- TESTIMONIAL ENTRANCE ---- */
+    gsap.from('.testimonial blockquote', {
+      y:40, opacity:0, duration:1, ease:'power3.out',
+      scrollTrigger:{ trigger:'.testimonial', start:'top 80%', once:true }
+    });
+    gsap.from('.testimonial cite', {
+      y:20, opacity:0, duration:0.8, ease:'power3.out', delay:0.2,
+      scrollTrigger:{ trigger:'.testimonial', start:'top 80%', once:true }
+    });
+  }
+
+  /* ============================================================
+     RUN PAGE LOADER SEQUENCE
+     1. Fade in business name
+     2. Fill progress bar 1.4s (power2.inOut)
+     3. Curtain clip-path wipe (inset 0 0 100% 0 -> inset 0, 0.8s)
+     4. initAnimations()
+     ============================================================ */
+  if(pageLoader && loaderName && loaderBar){
+    var loaderTl = gsap.timeline({
+      onComplete:function(){
+        pageLoader.style.pointerEvents='none';
+        initAnimations();
+      }
+    });
+
+    loaderTl
+      .to(loaderName, { opacity:1, duration:0.4, ease:'power2.out' })
+      .to(loaderBar, { scaleX:1, duration:1.4, ease:'power2.inOut' }, 0.2)
+      .to(pageLoader, {
+        clipPath:'inset(0 0 100% 0)',
+        duration:0.8,
+        ease:'power3.inOut'
+      }, '+=0.2');
+  } else {
+    initAnimations();
+  }
+
+})();
+
+
+</script>
+
+
+
+<!-- ====== SMART SAFETY NET v5 ====== -->
+<script>
+(function(){
+  // Phase 1 (2.5s): Kill loader, unlock scroll
+  setTimeout(function(){
+    // Target ALL loader variants: #loader, .page-loader, .preloader
+    var loaders = document.querySelectorAll('#loader, .page-loader, .preloader, [class*="loader"][style*="z-index"]');
+    loaders.forEach(function(loader){
+      if(parseFloat(getComputedStyle(loader).opacity) > 0.1 || getComputedStyle(loader).display !== 'none'){
+        loader.style.transition = 'opacity 0.3s';
+        loader.style.opacity = '0';
+        loader.style.pointerEvents = 'none';
+        setTimeout(function(){ loader.style.display = 'none'; }, 400);
+      }
+    });
+    // Also check for high z-index overlays
+    document.querySelectorAll('div').forEach(function(el){
+      var s = getComputedStyle(el);
+      if(parseInt(s.zIndex) > 9000 && s.position === 'fixed'){
+        el.style.transition = 'opacity 0.3s';
+        el.style.opacity = '0';
+        el.style.pointerEvents = 'none';
+        setTimeout(function(){ el.style.display = 'none'; }, 400);
+      }
+    });
+    document.body.classList.remove('loading');
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+  }, 2500);
+  
+  // Phase 2 (4s): Fix ALL invisible elements
+  setTimeout(function(){
+    if(typeof gsap === 'undefined') return;
+    
+    // A. Fix ANY element with inline opacity:0 from GSAP
+    document.querySelectorAll('[style*="opacity"]').forEach(function(el){
+      if(el.id === 'loader') return;
+      // Skip menus, modals, overlays
+      if(el.classList.contains('mobile-menu') || el.classList.contains('modal') || 
+         el.classList.contains('menu') || el.closest('.mobile-menu,.modal,.menu')) return;
+      if(parseFloat(el.style.opacity) < 0.1){
+        gsap.killTweensOf(el);
+        el.style.opacity = '1';
+        if(el.style.transform) el.style.transform = 'none';
+      }
+    });
+    
+    // B. Fix ANY element with clip-path hiding content (computed, not just inline)
+    document.querySelectorAll('*').forEach(function(el){
+      if(el.id === 'loader' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+      if(el.offsetHeight === 0 && el.offsetWidth === 0) return; // skip truly empty elements
+      var cp = getComputedStyle(el).clipPath;
+      if(cp && cp !== 'none'){
+        // Check if clip-path is actually hiding content
+        if(cp.includes('inset') && (cp.includes('100%') || cp.includes('50%'))){
+          gsap.killTweensOf(el);
+          el.style.clipPath = 'none';
+        }
+        if(cp.includes('circle(0')){
+          gsap.killTweensOf(el);
+          el.style.clipPath = 'none';
+        }
+        if(cp.includes('polygon') && cp.includes('0%')){
+          // Might be a wipe that hasn't completed
+          gsap.killTweensOf(el);
+          el.style.clipPath = 'none';
+        }
+      }
+    });
+    
+    // C. Fix elements with CSS classes that set initial hidden state
+    document.querySelectorAll('.clip-reveal,.gs-hidden,.reveal,.fade-in').forEach(function(el){
+      el.style.clipPath = 'none';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    
+    // D. Force counters to target values
+    document.querySelectorAll('[data-target],[data-count]').forEach(function(el){
+      var val = el.getAttribute('data-target') || el.getAttribute('data-count');
+      if(val && (el.textContent.trim() === '0' || el.textContent.trim() === '')){
+        el.textContent = val;
+      }
+    });
+    
+    // E. Fix computed opacity<0.5 on important elements
+    var mustShow = 'section,.hero-label,.hero-sub,.hero-cta-row,.hero-content,.nav,.process-card,.step-card,.step,.ritual-step,.gallery-item,.gallery-label,.gallery-grid,.service-card,.team-card,.team-member,.testimonial,.testimonial-card,.testimonial-author,.stat,.stat-item,.faq-item,.cta,.cta-section,.about-content,.about-image,.contact-content,.counter,.count-up,.stat-number,.timeline-item,.timeline-step,.bento-item,.journey-step,.parcours-step,.flip-card,.gauge-item';
+    document.querySelectorAll(mustShow).forEach(function(el){
+      var s = getComputedStyle(el);
+      if(parseFloat(s.opacity) < 0.5){
+        gsap.killTweensOf(el);
+        el.style.opacity = '1';
+      }
+    });
+    
+
+
+    // Force mobile menus/modals CLOSED
+    document.querySelectorAll('.mobile-menu,.modal,.overlay-menu,.nav-mobile').forEach(function(el){
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
+      el.style.display = 'none';
+    });
+
+    // F. Handle CSS animation classes
+    document.querySelectorAll('.gs-hidden').forEach(function(el){
+      // Skip mobile menus, modals, and overlays — they should stay hidden
+      if(el.classList.contains('mobile-menu') || el.classList.contains('modal') || 
+         el.classList.contains('overlay') || el.classList.contains('menu') ||
+         el.classList.contains('sidebar') || el.classList.contains('drawer')) return;
+      var isMenu = el.closest('.mobile-menu,.modal,.overlay,.menu,.sidebar,.drawer');
+      if(isMenu) return;
+      el.classList.remove('gs-hidden');
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+    document.querySelectorAll('.clip-reveal,.clip-reveal-right,.clip-reveal-down').forEach(function(el){
+      el.classList.add('active');
+      el.style.clipPath = 'inset(0 0 0 0)';
+    });
+    document.querySelectorAll('.fade-in,.reveal,.slide-up,.slide-in').forEach(function(el){
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+
+    // G. Unlock scroll
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    
+    // H. Kill ALL remaining ScrollTriggers to prevent re-setting opacity:0
+    if(typeof ScrollTrigger !== 'undefined'){
+      ScrollTrigger.getAll().forEach(function(st){ st.kill(); });
+    }
+  }, 4000);
+
+  // Phase 3 (8s): Final sweep — catch anything GSAP re-set after Phase 2
+  setTimeout(function(){
+    if(typeof gsap === 'undefined') return;
+    document.querySelectorAll('[style*="opacity"]').forEach(function(el){
+      if(el.id === 'loader' || el.classList.contains('page-loader')) return;
+      if(el.classList.contains('mobile-menu') || el.classList.contains('modal') ||
+         el.closest('.mobile-menu,.modal,.menu,.page-loader,#loader')) return;
+      if(parseFloat(el.style.opacity) < 0.1){
+        el.style.transition = 'opacity 0.4s, transform 0.4s';
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      }
+    });
+  }, 8000);
+})();
+</script>
+
+</body>
+</html>
