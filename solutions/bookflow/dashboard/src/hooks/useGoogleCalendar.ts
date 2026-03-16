@@ -38,17 +38,18 @@ export function useConnectGoogle(businessId: string | null) {
 export function useDisconnectGoogle(businessId: string | null) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (opts?: { keepSlots?: boolean }) => {
       if (!businessId) throw new Error('No business ID');
       const res = await fetch('/api/auth/google', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ businessId }),
+        body: JSON.stringify({ businessId, keepSlots: opts?.keepSlots ?? false }),
       });
       if (!res.ok) throw new Error('Disconnect failed');
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: gcalKeys.status(businessId) });
+      qc.invalidateQueries({ queryKey: ['blocked-slots'] });
     },
   });
 }

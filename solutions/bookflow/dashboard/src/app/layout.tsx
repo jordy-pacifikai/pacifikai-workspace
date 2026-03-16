@@ -24,6 +24,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  verification: {
+    google: 'hfgGx3lKxRCrn_DUbR_boTxcTvVh4ttg1tbdSuI5_40',
+  },
   title: "Ve'a — Assistant IA de reservation | Messenger & Instagram",
   description: "Ve'a prend les rendez-vous pour vous sur Messenger, Instagram et WhatsApp. 24/7, IA conversationnelle, Google Calendar. Pour salons, restaurants, cabinets medicaux en Polynesie francaise.",
   keywords: ['reservation', 'IA', 'Messenger', 'Instagram', 'WhatsApp', 'Polynesie', 'chatbot', 'rendez-vous', 'salon', 'restaurant', 'medical'],

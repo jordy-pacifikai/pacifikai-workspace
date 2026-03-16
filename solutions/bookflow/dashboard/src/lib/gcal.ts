@@ -111,19 +111,102 @@ export async function createCalendarEvent(
 }
 
 /**
+ * Subscribe to Google Calendar push notifications (webhooks).
+ * Google will POST to webhookUrl whenever events change.
+ * Channel expires after 7 days (max allowed by Google).
+ */
+export async function watchCalendar(
+  businessId: string,
+  webhookUrl: string,
+): Promise<{ channelId: string; resourceId: string; expiration: string } | null> {
+  const sb = getAdmin();
+  const { data: biz } = await sb
+    .from('bookbot_businesses')
+    .select('gcal_calendar_id')
+    .eq('id', businessId)
+    .single();
+
+  if (!biz?.gcal_calendar_id) return null;
+
+  const accessToken = await getAccessToken(businessId);
+  if (!accessToken) return null;
+
+  const channelId = `vea-${businessId}-${Date.now()}`;
+
+  const res = await fetch(
+    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(biz.gcal_calendar_id)}/events/watch`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: channelId,
+        type: 'web_hook',
+        address: webhookUrl,
+        params: { ttl: '604800' }, // 7 days
+      }),
+    },
+  );
+
+  if (!res.ok) {
+    console.error('[GCal Watch] Failed:', await res.text());
+    return null;
+  }
+
+  const data = await res.json();
+  return {
+    channelId: data.id,
+    resourceId: data.resourceId,
+    expiration: data.expiration,
+  };
+}
+
+/**
+ * Stop a Google Calendar watch channel.
+ */
+export async function stopWatch(
+  businessId: string,
+  channelId: string,
+  resourceId: string,
+): Promise<void> {
+  const accessToken = await getAccessToken(businessId);
+  if (!accessToken) return;
+
+  await fetch('https://www.googleapis.com/calendar/v3/channels/stop', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id: channelId, resourceId }),
+  }).catch(() => {});
+}
+
+/**
  * Fetch upcoming Google Calendar events and return them.
  */
-export async function listCalendarEvents(
-  businessId: string,
-  timeMin: string,
-  timeMax: string,
-): Promise<Array<{
+export interface GCalAttendee {
+  email: string;
+  displayName?: string;
+  self?: boolean;
+}
+
+export interface GCalEvent {
   id: string;
   summary: string;
   start: string;
   end: string;
   allDay: boolean;
-}> | null> {
+  attendees: GCalAttendee[];
+}
+
+export async function listCalendarEvents(
+  businessId: string,
+  timeMin: string,
+  timeMax: string,
+): Promise<GCalEvent[] | null> {
   const sb = getAdmin();
   const { data: biz } = await sb
     .from('bookbot_businesses')
@@ -160,6 +243,7 @@ export async function listCalendarEvents(
     summary?: string;
     start?: { dateTime?: string; date?: string };
     end?: { dateTime?: string; date?: string };
+    attendees?: Array<{ email?: string; displayName?: string; self?: boolean }>;
   }>;
 
   return items.map((item) => ({
@@ -168,5 +252,8 @@ export async function listCalendarEvents(
     start: item.start?.dateTime ?? item.start?.date ?? '',
     end: item.end?.dateTime ?? item.end?.date ?? '',
     allDay: !item.start?.dateTime,
+    attendees: (item.attendees ?? [])
+      .filter((a) => a.email && !a.self)
+      .map((a) => ({ email: a.email!, displayName: a.displayName, self: a.self })),
   }));
 }

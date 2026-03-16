@@ -6,19 +6,24 @@ import {
   addDays,
   startOfWeek,
   endOfWeek,
+  startOfMonth,
+  endOfMonth,
   addWeeks,
   subWeeks,
+  addMonths,
+  subMonths,
   isSameDay,
+  isSameMonth,
   parseISO,
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, X, Clock, User, Scissors, MessageSquare, Plus, Ban, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Clock, User, Scissors, MessageSquare, Plus, Ban, Trash2, CalendarDays, LayoutGrid } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { CreateAppointmentModal } from '@/components/CreateAppointmentModal';
 import { useAppStore } from '@/lib/store';
 import { useAppointments, useDeleteAppointment } from '@/hooks/useAppointments';
-import { useBlockedSlots, useCreateBlockedSlot, useDeleteBlockedSlot } from '@/hooks/useBlockedSlots';
+import { useBlockedSlots, useCreateBlockedSlot, useDeleteBlockedSlot, type BlockedSlot } from '@/hooks/useBlockedSlots';
 import { cn } from '@/lib/utils';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import type { Appointment } from '@/types/database';
@@ -261,21 +266,35 @@ function CalendarSkeleton() {
 
 export default function CalendarPage() {
   const { businessId, businessName } = useAppStore();
-  const [currentWeek, setCurrentWeek] = useState(() => new Date());
+  const [view, setView] = useState<'week' | 'month'>('week');
+  const [currentDate, setCurrentDate] = useState(() => new Date());
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedBlock, setSelectedBlock] = useState<BlockedSlot | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createPrefill, setCreatePrefill] = useState<{ date?: string; time?: string }>({});
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [blockForm, setBlockForm] = useState({ date: '', allDay: true, timeFrom: '08:00', timeTo: '17:00', reason: '' });
 
-  const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 }); // Monday
-  const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
+  const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+  const monthStart = startOfMonth(currentDate);
+  const monthEnd = endOfMonth(currentDate);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
+  // For month view: build grid from Monday before monthStart to Sunday after monthEnd
+  const monthGridStart = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const monthGridEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+  const monthGridDays: Date[] = [];
+  { let d = monthGridStart; while (d <= monthGridEnd) { monthGridDays.push(d); d = addDays(d, 1); } }
+
+  // Fetch range depends on view
+  const fetchFrom = view === 'week' ? weekStart : monthGridStart;
+  const fetchTo = view === 'week' ? weekEnd : monthGridEnd;
+
   const { data: appointments, isLoading } = useAppointments(businessId, undefined, {
-    dateFrom: format(weekStart, 'yyyy-MM-dd'),
-    dateTo: format(weekEnd, 'yyyy-MM-dd'),
+    dateFrom: format(fetchFrom, 'yyyy-MM-dd'),
+    dateTo: format(fetchTo, 'yyyy-MM-dd'),
   });
 
   const deleteMutation = useDeleteAppointment();
@@ -284,7 +303,9 @@ export default function CalendarPage() {
   const deleteBlock = useDeleteBlockedSlot(businessId);
 
   const today = new Date();
-  const isCurrentWeek = isSameDay(weekStart, startOfWeek(today, { weekStartsOn: 1 }));
+  const isCurrentPeriod = view === 'week'
+    ? isSameDay(weekStart, startOfWeek(today, { weekStartsOn: 1 }))
+    : isSameMonth(currentDate, today);
 
   // Time axis labels (07:00 → 20:00 every 30 min)
   const timeLabels = Array.from({ length: TOTAL_SLOTS }, (_, i) => {
@@ -299,33 +320,61 @@ export default function CalendarPage() {
       <div className="flex flex-col gap-4">
         {/* Navigation */}
         <div className="space-y-3">
-          {/* Week nav + today */}
+          {/* Nav + view toggle + today */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
               <button
-                onClick={() => setCurrentWeek(subWeeks(currentWeek, 1))}
+                onClick={() => setCurrentDate(view === 'week' ? subWeeks(currentDate, 1) : subMonths(currentDate, 1))}
                 className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors shrink-0"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
-                onClick={() => setCurrentWeek(addWeeks(currentWeek, 1))}
+                onClick={() => setCurrentDate(view === 'week' ? addWeeks(currentDate, 1) : addMonths(currentDate, 1))}
                 className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors shrink-0"
               >
                 <ChevronRight size={16} />
               </button>
               <h2 className="text-white font-semibold text-xs sm:text-sm ml-1 truncate">
-                {format(weekStart, 'd MMM', { locale: fr })} — {format(weekEnd, 'd MMM yyyy', { locale: fr })}
+                {view === 'week'
+                  ? `${format(weekStart, 'd MMM', { locale: fr })} — ${format(weekEnd, 'd MMM yyyy', { locale: fr })}`
+                  : format(currentDate, 'MMMM yyyy', { locale: fr })
+                }
               </h2>
             </div>
-            <button
-              onClick={() => setCurrentWeek(new Date())}
-              disabled={isCurrentWeek}
-              className="px-2.5 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-            >
-              <span className="sm:hidden">Auj.</span>
-              <span className="hidden sm:inline">Aujourd&apos;hui</span>
-            </button>
+            <div className="flex items-center gap-1.5">
+              {/* View toggle */}
+              <div className="flex items-center bg-gray-900 border border-gray-800 rounded-lg p-0.5">
+                <button
+                  onClick={() => setView('week')}
+                  className={cn(
+                    'p-1.5 rounded-md transition-colors',
+                    view === 'week' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300',
+                  )}
+                  title="Vue semaine"
+                >
+                  <CalendarDays size={15} />
+                </button>
+                <button
+                  onClick={() => setView('month')}
+                  className={cn(
+                    'p-1.5 rounded-md transition-colors',
+                    view === 'month' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300',
+                  )}
+                  title="Vue mois"
+                >
+                  <LayoutGrid size={15} />
+                </button>
+              </div>
+              <button
+                onClick={() => setCurrentDate(new Date())}
+                disabled={isCurrentPeriod}
+                className="px-2.5 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+              >
+                <span className="sm:hidden">Auj.</span>
+                <span className="hidden sm:inline">Aujourd&apos;hui</span>
+              </button>
+            </div>
           </div>
 
           {/* Actions */}
@@ -365,7 +414,7 @@ export default function CalendarPage() {
         {/* Calendar grid */}
         {isLoading ? (
           <CalendarSkeleton />
-        ) : (
+        ) : view === 'week' ? (
           <div className="overflow-x-auto">
             <div className="flex min-w-[700px]">
               {/* Time axis */}
@@ -376,7 +425,6 @@ export default function CalendarPage() {
                     className="relative"
                     style={{ height: SLOT_HEIGHT }}
                   >
-                    {/* Only show hour labels */}
                     {i % 2 === 0 && (
                       <span className="absolute -top-2 right-2 text-[10px] text-gray-600 select-none">
                         {label}
@@ -397,7 +445,6 @@ export default function CalendarPage() {
 
                   return (
                     <div key={dayStr} className="flex-1 min-w-[100px] flex flex-col">
-                      {/* Day header */}
                       <div
                         className={cn(
                           'h-12 flex flex-col items-center justify-center rounded-t-lg border-x border-t text-center mb-px',
@@ -406,25 +453,14 @@ export default function CalendarPage() {
                             : 'bg-gray-900 border-gray-800',
                         )}
                       >
-                        <span
-                          className={cn(
-                            'text-[10px] uppercase tracking-wider',
-                            isToday ? 'text-[#25D366]' : 'text-gray-500',
-                          )}
-                        >
+                        <span className={cn('text-[10px] uppercase tracking-wider', isToday ? 'text-[#25D366]' : 'text-gray-500')}>
                           {format(day, 'EEE', { locale: fr })}
                         </span>
-                        <span
-                          className={cn(
-                            'text-sm font-bold',
-                            isToday ? 'text-[#25D366]' : 'text-gray-200',
-                          )}
-                        >
+                        <span className={cn('text-sm font-bold', isToday ? 'text-[#25D366]' : 'text-gray-200')}>
                           {format(day, 'd')}
                         </span>
                       </div>
 
-                      {/* Time slots container */}
                       <div
                         className={cn(
                           'relative flex-1 border-x border-b rounded-b-lg cursor-pointer',
@@ -442,33 +478,29 @@ export default function CalendarPage() {
                           setShowCreateModal(true);
                         }}
                       >
-                        {/* Horizontal grid lines (every 30min) */}
                         {timeLabels.map((label, i) => (
                           <div
                             key={label}
-                            className={cn(
-                              'absolute left-0 right-0 border-t',
-                              i % 2 === 0 ? 'border-gray-800' : 'border-gray-800/40',
-                            )}
+                            className={cn('absolute left-0 right-0 border-t', i % 2 === 0 ? 'border-gray-800' : 'border-gray-800/40')}
                             style={{ top: i * SLOT_HEIGHT }}
                           />
                         ))}
 
-                        {/* Blocked slots */}
                         {(blockedSlots ?? [])
                           .filter((b) => b.date === dayStr)
                           .map((block) => {
                             if (block.all_day) {
                               return (
-                                <div
+                                <button
                                   key={block.id}
-                                  className="absolute left-0 right-0 bg-red-500/10 border-l-2 border-red-500 z-[1] pointer-events-none"
+                                  onClick={(e) => { e.stopPropagation(); setSelectedBlock(block); }}
+                                  className="absolute left-0 right-0 bg-red-500/10 border-l-2 border-red-500 z-[1] cursor-pointer hover:bg-red-500/20 transition-colors text-left"
                                   style={{ top: 0, height: TOTAL_SLOTS * SLOT_HEIGHT }}
                                 >
                                   <span className="absolute top-2 left-2 text-[10px] text-red-400 font-medium">
                                     {block.source === 'gcal' ? '📅 ' : ''}{block.reason ?? 'Bloque'}
                                   </span>
-                                </div>
+                                </button>
                               );
                             }
                             if (block.time_from && block.time_to) {
@@ -476,27 +508,116 @@ export default function CalendarPage() {
                               const endOffset = timeToSlotOffset(block.time_to);
                               const height = Math.max(endOffset - top, SLOT_HEIGHT / 2);
                               return (
-                                <div
+                                <button
                                   key={block.id}
-                                  className="absolute left-1 right-1 bg-red-500/15 border-l-2 border-red-500 rounded-md z-[1] pointer-events-none px-2 py-1"
+                                  onClick={(e) => { e.stopPropagation(); setSelectedBlock(block); }}
+                                  className="absolute left-1 right-1 bg-red-500/15 border-l-2 border-red-500 rounded-md z-[1] cursor-pointer hover:bg-red-500/25 transition-colors px-2 py-1 overflow-hidden text-left"
                                   style={{ top, height }}
                                 >
-                                  <span className="text-[10px] text-red-400 font-medium truncate">
-                                    {block.reason ?? 'Bloque'}
-                                  </span>
-                                </div>
+                                  <span className="block text-[10px] text-red-400 font-medium truncate">{block.reason ?? 'Bloque'}</span>
+                                </button>
                               );
                             }
                             return null;
                           })}
 
-                        {/* Appointments */}
                         {dayAppointments.map((appt) => (
-                          <AppointmentBlock
-                            key={appt.id}
-                            appointment={appt}
-                            onClick={setSelectedAppointment}
-                          />
+                          <AppointmentBlock key={appt.id} appointment={appt} onClick={setSelectedAppointment} />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* ─── Month View ─────────────────────────────────────────── */
+          <div className="overflow-x-auto">
+            <div className="min-w-[700px]">
+              {/* Day-of-week headers */}
+              <div className="grid grid-cols-7 gap-px mb-px">
+                {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((d) => (
+                  <div key={d} className="bg-gray-900 border border-gray-800 rounded-t-lg py-2 text-center">
+                    <span className="text-[10px] uppercase tracking-wider text-gray-500">{d}</span>
+                  </div>
+                ))}
+              </div>
+              {/* Day cells grid */}
+              <div className="grid grid-cols-7 gap-px">
+                {monthGridDays.map((day) => {
+                  const dayStr = format(day, 'yyyy-MM-dd');
+                  const isToday = isSameDay(day, today);
+                  const isOutsideMonth = !isSameMonth(day, currentDate);
+                  const dayAppointments = (appointments ?? []).filter((a) => a.appointment_date === dayStr);
+                  const dayBlocked = (blockedSlots ?? []).filter((b) => b.date === dayStr);
+                  const hasBlocked = dayBlocked.length > 0;
+
+                  // Group appointments by status for dot display
+                  const statusCounts: Partial<Record<Appointment['status'], number>> = {};
+                  dayAppointments.forEach((a) => { statusCounts[a.status] = (statusCounts[a.status] ?? 0) + 1; });
+
+                  return (
+                    <div
+                      key={dayStr}
+                      onClick={() => {
+                        setView('week');
+                        setCurrentDate(day);
+                      }}
+                      className={cn(
+                        'min-h-[90px] sm:min-h-[110px] border rounded-lg p-1.5 sm:p-2 cursor-pointer transition-colors group',
+                        isOutsideMonth ? 'bg-gray-950/50 border-gray-800/50' : 'bg-gray-900/50 border-gray-800',
+                        isToday && 'border-[#25D366]/40 bg-[#25D366]/[0.04]',
+                        hasBlocked && !isToday && 'border-red-500/20 bg-red-500/[0.03]',
+                        'hover:border-gray-700',
+                      )}
+                    >
+                      {/* Day number */}
+                      <div className="flex items-center justify-between mb-1">
+                        <span
+                          className={cn(
+                            'text-xs sm:text-sm font-semibold w-6 h-6 flex items-center justify-center rounded-full',
+                            isToday ? 'bg-[#25D366] text-black' : isOutsideMonth ? 'text-gray-700' : 'text-gray-300',
+                          )}
+                        >
+                          {format(day, 'd')}
+                        </span>
+                        {dayAppointments.length > 0 && (
+                          <span className="text-[10px] text-gray-500 font-medium">{dayAppointments.length}</span>
+                        )}
+                      </div>
+
+                      {/* Event pills — show up to 3 */}
+                      <div className="space-y-0.5">
+                        {dayAppointments.slice(0, 3).map((appt) => {
+                          const cfg = STATUS_CONFIG[appt.status];
+                          return (
+                            <div
+                              key={appt.id}
+                              className={cn('flex items-center gap-1 rounded px-1 py-0.5 overflow-hidden', cfg.bg)}
+                              onClick={(e) => { e.stopPropagation(); setSelectedAppointment(appt); }}
+                            >
+                              <span className={cn('w-1 h-1 rounded-full shrink-0', cfg.dot)} />
+                              <span className={cn('text-[9px] sm:text-[10px] font-medium truncate', cfg.text)}>
+                                {appt.time_slot?.slice(0, 5)} {appt.client_name?.split(' ')[0] ?? ''}
+                              </span>
+                            </div>
+                          );
+                        })}
+                        {dayAppointments.length > 3 && (
+                          <p className="text-[9px] text-gray-500 pl-1">+{dayAppointments.length - 3} autres</p>
+                        )}
+                        {dayBlocked.map((b) => (
+                          <div
+                            key={b.id}
+                            onClick={(e) => { e.stopPropagation(); setSelectedBlock(b); }}
+                            className="flex items-center gap-1 rounded px-1 py-0.5 bg-red-500/10 overflow-hidden cursor-pointer hover:bg-red-500/20 transition-colors"
+                          >
+                            <span className="w-1 h-1 rounded-full bg-red-500 shrink-0" />
+                            <span className="text-[9px] sm:text-[10px] text-red-400 truncate">
+                              {b.source === 'gcal' ? '📅 ' : ''}{b.all_day ? 'Bloqué' : `${b.time_from?.slice(0, 5)}-${b.time_to?.slice(0, 5)}`}
+                            </span>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -508,7 +629,7 @@ export default function CalendarPage() {
         )}
       </div>
 
-      {/* Detail Drawer */}
+      {/* Detail Drawer — Appointment */}
       <DetailDrawer
         appointment={selectedAppointment}
         onClose={() => setSelectedAppointment(null)}
@@ -519,6 +640,73 @@ export default function CalendarPage() {
         }}
         isDeleting={deleteMutation.isPending}
       />
+
+      {/* Detail Drawer — Blocked Slot */}
+      {selectedBlock && (
+        <>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[50]" onClick={() => setSelectedBlock(null)} />
+          <div className="fixed right-0 top-0 bottom-0 w-full max-w-sm bg-gray-900 border-l border-gray-800 z-[51] flex flex-col">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
+              <h2 className="text-white font-semibold">Creneau bloque</h2>
+              <button onClick={() => setSelectedBlock(null)} className="p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+              {/* Source badge */}
+              <div className="flex items-center gap-2">
+                <span className={cn(
+                  'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border',
+                  selectedBlock.source === 'gcal'
+                    ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                    : 'bg-red-500/10 border-red-500/30 text-red-400',
+                )}>
+                  {selectedBlock.source === 'gcal' ? '📅 Google Calendar' : 'Manuel'}
+                </span>
+              </div>
+
+              {/* Reason */}
+              <div className="bg-gray-800 rounded-xl p-4">
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Motif</p>
+                <p className="text-sm text-gray-200">{selectedBlock.reason ?? 'Aucun motif'}</p>
+              </div>
+
+              {/* Date & Time */}
+              <div className="bg-gray-800 rounded-xl p-4 space-y-2">
+                <div className="flex items-center gap-2 text-gray-300">
+                  <Clock size={15} className="text-gray-500" />
+                  <span className="text-sm font-medium">
+                    {format(parseISO(selectedBlock.date), 'EEEE d MMMM yyyy', { locale: fr })}
+                  </span>
+                </div>
+                {selectedBlock.all_day ? (
+                  <p className="text-xs text-gray-500 ml-[23px]">Journee entiere</p>
+                ) : (
+                  <p className="text-xs text-gray-500 ml-[23px]">
+                    {selectedBlock.time_from?.slice(0, 5)} — {selectedBlock.time_to?.slice(0, 5)}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Delete */}
+            <div className="px-5 py-4 border-t border-gray-800">
+              <button
+                onClick={() => {
+                  deleteBlock.mutate(selectedBlock.id, {
+                    onSuccess: () => setSelectedBlock(null),
+                  });
+                }}
+                disabled={deleteBlock.isPending}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-red-400 text-sm font-medium bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors disabled:opacity-50"
+              >
+                <Trash2 size={15} />
+                {deleteBlock.isPending ? 'Suppression...' : 'Supprimer ce blocage'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Create Modal */}
       {showCreateModal && businessId && (

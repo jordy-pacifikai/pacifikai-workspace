@@ -122,11 +122,16 @@ export function useDeleteAppointment() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('bookbot_appointments')
-        .delete()
-        .eq('id', id);
-      if (error) throw new Error(error.message);
+      // Use API route to handle GCal bidirectional sync + dismissed tracking
+      const res = await fetch('/api/appointments', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appointmentId: id }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Delete failed' }));
+        throw new Error(err.error ?? 'Delete failed');
+      }
     },
     onSuccess: () => invalidateAll(queryClient),
   });

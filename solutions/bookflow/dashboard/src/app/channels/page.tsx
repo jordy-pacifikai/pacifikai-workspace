@@ -495,6 +495,7 @@ function GoogleCalendarSection({ businessId }: { businessId: string | null }) {
   const { data: gcalStatus, isLoading } = useGoogleCalendarStatus(businessId);
   const connectGoogle = useConnectGoogle(businessId);
   const disconnectGoogle = useDisconnectGoogle(businessId);
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false);
 
   const isConnected = Boolean(gcalStatus?.gcal_connected_at);
 
@@ -559,13 +560,62 @@ function GoogleCalendarSection({ businessId }: { businessId: string | null }) {
             Les nouveaux RDV sont automatiquement ajoutes a votre Google Calendar. Les annulations sont aussi synchronisees.
           </p>
           <button
-            onClick={() => disconnectGoogle.mutate()}
+            onClick={() => setShowDisconnectModal(true)}
             disabled={disconnectGoogle.isPending}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-red-400 text-sm font-medium border border-gray-700 hover:border-red-500/40 hover:bg-red-500/10 transition-colors disabled:opacity-50"
           >
             <LogOut size={15} />
             {disconnectGoogle.isPending ? 'Deconnexion...' : 'Deconnecter'}
           </button>
+
+          {/* Disconnect modal */}
+          {showDisconnectModal && (
+            <>
+              <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setShowDisconnectModal(false)} />
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl">
+                  <div className="px-5 py-4 border-b border-gray-800">
+                    <h2 className="text-white font-semibold">Deconnecter Google Calendar</h2>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Que souhaitez-vous faire avec les creneaux synchronises depuis Google Calendar ?
+                    </p>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    <button
+                      onClick={() => {
+                        disconnectGoogle.mutate({ keepSlots: false }, { onSuccess: () => setShowDisconnectModal(false) });
+                      }}
+                      disabled={disconnectGoogle.isPending}
+                      className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 hover:border-red-500/40 hover:bg-red-500/10 transition-colors text-left disabled:opacity-50"
+                    >
+                      <p className="text-sm font-medium text-red-400">Supprimer les creneaux GCal</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Les creneaux bloques importes depuis Google Calendar seront supprimes du dashboard.
+                      </p>
+                    </button>
+                    <button
+                      onClick={() => {
+                        disconnectGoogle.mutate({ keepSlots: true }, { onSuccess: () => setShowDisconnectModal(false) });
+                      }}
+                      disabled={disconnectGoogle.isPending}
+                      className="w-full p-4 bg-gray-800 rounded-xl border border-gray-700 hover:border-blue-500/40 hover:bg-blue-500/5 transition-colors text-left disabled:opacity-50"
+                    >
+                      <p className="text-sm font-medium text-blue-400">Garder les creneaux</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Les creneaux resteront visibles dans le calendrier meme apres la deconnexion.
+                      </p>
+                    </button>
+                    <button
+                      onClick={() => setShowDisconnectModal(false)}
+                      className="w-full py-2 text-sm text-gray-500 hover:text-gray-300 transition-colors"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
