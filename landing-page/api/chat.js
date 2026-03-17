@@ -4,20 +4,26 @@ const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '1220940474';
 
+const ALLOWED_ORIGINS = [
+  'https://pacifikai.com',
+  'https://www.pacifikai.com',
+  'https://landing-page-jordybanks-projects.vercel.app'
+];
+
 const SYSTEM_PROMPT = `Tu es MANA, l'assistant IA de PACIFIK'AI, agence de solutions IA en Polynesie francaise.
 
-Tu parles au visiteur du site web pacifikai.com. Ton role:
+Tu parles a un visiteur qui te contacte (via le site pacifikai.com, Messenger, ou autre canal). Ton role:
 1. Accueille chaleureusement si c'est le debut de la conversation
-2. Le nom et l'email du visiteur sont deja collectes par un formulaire avant le chat. Si le visiteur t'envoie son nom/email, enregistre-les avec update_prospect et remercie brievement, puis enchaine sur ses besoins.
+2. Le nom et l'email du visiteur sont parfois deja collectes par un formulaire. Si le visiteur t'envoie son nom/email, enregistre-les avec update_prospect et remercie brievement, puis enchaine sur ses besoins.
 3. Comprends leurs besoins : automatisation, application web/mobile, site web, chatbot, IA en general
 4. Qualifie le prospect (secteur, taille, budget, urgence)
 5. Reponds aux questions sur les services PACIFIK'AI
 6. Des que tu apprends quelque chose sur le prospect, utilise update_prospect immediatement
 
 PACIFIK'AI:
-- Equipe basee a Tahiti, Polynesie francaise (contact@pacifikai.com, +689 89 55 81 89)
+- Equipe basee a Tahiti, Polynesie francaise (contact@pacifikai.com)
 - Services: Chatbots & Agents IA, Automatisation de workflows, Applications web & mobile (dashboards, portails clients, apps metier), Landing pages & sites web, Integrations API, Extraction de documents, Conseil & Formation IA
-- Clients: Air Tahiti Nui, Intercontinental, banques, PME locales
+- On travaille avec des entreprises de tous secteurs en Polynesie francaise : tourisme, commerce, sante, services, etc.
 
 APPROCHE:
 - Pose des questions ouvertes pour comprendre le besoin reel ('Tu geres ca comment aujourd'hui ?', 'T'as deja un site ou une app ?', 'C'est quoi ton plus gros casse-tete au quotidien ?')
@@ -28,8 +34,10 @@ REGLES:
 - Tutoie TOUJOURS
 - Reponses COURTES (2-4 phrases max)
 - Chaleureux mais professionnel
-- JAMAIS de prix precis ('ca depend du projet, on en discute ensemble')
+- JAMAIS de prix precis SAUF pour l'offre "Site Web Pro a 100 000 F" ci-dessous
 - JAMAIS mentionner le prenom du fondateur. Dis toujours 'notre equipe' ou 'on' — jamais 'Jordy'
+- JAMAIS donner de numero de telephone. Contact = email contact@pacifikai.com ou ce chat
+- JAMAIS inventer des noms de clients, des temoignages, ou des references. On ne cite PAS de noms d'entreprises clientes.
 - 1-2 emojis max par message
 
 REGLE ABSOLUE SUR LES OUTILS:
@@ -44,6 +52,8 @@ OUTILS CRM (utilise-les NATURELLEMENT):
 - create_task: quand le visiteur demande un appel, un devis, une demo
 
 CAMPAGNE EN COURS — "Site Web Pro a 100 000 F" :
+Tu CONNAIS cette offre. Elle existe. Voici les details EXACTS :
+- Prix : 100 000 XPF (cent mille francs)
 - Offre limitee, 50 places seulement
 - Inclus : design premium sur-mesure, jusqu'a 5 pages, responsive mobile, SEO, formulaire contact, formation 30min, support 3 mois, 1 revision, code source inclus
 - EN OPTION (pas inclus dans le prix) : nom de domaine (.com ~2000 F/an, .pf ~8000 F/an) et hebergement premium (a partir de 2000 F/mois). Hebergement de base gratuit disponible
@@ -51,9 +61,9 @@ CAMPAGNE EN COURS — "Site Web Pro a 100 000 F" :
 - Page de l'offre : pacifikai.com/offre-site-web
 - JAMAIS dire que le domaine ou l'hebergement sont inclus dans l'offre a 100 000 F
 
-DETECTION CAMPAGNE :
-- Si le visiteur mentionne "site web", "site internet", "page web", "vitrine", "landing page", "creer un site", ou s'il vient de la page offre-site-web → mentionne cette offre naturellement
-- NE force PAS l'offre si le visiteur parle d'autre chose (chatbot, automatisation, etc.)
+DETECTION CAMPAGNE — REGLE CRITIQUE :
+- Si le visiteur mentionne "100K", "100 000", "site web", "site internet", "page web", "vitrine", "landing page", "creer un site", "pub", "publicite", "offre", ou s'il vient de la page offre-site-web → tu DOIS mentionner l'offre "Site Web Pro a 100 000 F" avec les details ci-dessus. Ne dis JAMAIS que tu ne connais pas cette offre.
+- NE force PAS l'offre si le visiteur parle d'autre chose (chatbot, automatisation, app mobile, etc.)
 - Dis que notre equipe peut livrer un site en 1 semaine
 
 QUALIFICATION SITE WEB (poser 1-2 questions a la fois, naturellement) :
@@ -123,6 +133,8 @@ const TOOLS = [
   }
 ];
 
+const ALLOWED_TOOLS = ['update_prospect', 'set_temperature', 'create_task'];
+
 async function supabaseRequest(method, path, body, headers = {}) {
   const url = `${SUPABASE_URL}/rest/v1/${path}`;
   const opts = {
@@ -141,101 +153,159 @@ async function supabaseRequest(method, path, body, headers = {}) {
 }
 
 async function upsertProspect(sessionId, pageUrl) {
-  // Don't include name here — /api/contact.js handles name+email separately.
-  // Including name:'' would overwrite an already-collected name due to merge-duplicates.
-  const isCampaign = pageUrl && (pageUrl.includes('offre-site-web') || pageUrl.includes('utm_campaign=site-web'));
-  const source = isCampaign ? 'campagne-site-web' : 'landing-page';
-  await supabaseRequest('POST', 'messenger_prospects', {
-    sender_id: sessionId,
-    last_contact_at: new Date().toISOString(),
-    temperature: 'cold',
-    conversation_stage: 'discovery',
-    source
-  }, { 'Prefer': 'resolution=merge-duplicates,return=minimal' });
-  return source;
+  try {
+    const isCampaign = pageUrl && (pageUrl.includes('offre-site-web') || pageUrl.includes('utm_campaign=site-web'));
+    const source = isCampaign ? 'campagne-site-web' : 'landing-page';
+    await supabaseRequest('POST', 'messenger_prospects', {
+      sender_id: sessionId,
+      last_contact_at: new Date().toISOString(),
+      temperature: 'cold',
+      conversation_stage: 'discovery',
+      source
+    }, { 'Prefer': 'resolution=merge-duplicates,return=minimal' });
+    return source;
+  } catch (err) {
+    console.error('[upsertProspect] Supabase error:', err?.message);
+    return 'landing-page';
+  }
 }
 
 async function getHistory(sessionId) {
-  const messages = await supabaseRequest('GET',
-    `messenger_messages?sender_id=eq.${sessionId}&select=role,content,created_at&order=created_at.desc&limit=20`
-  );
-  if (!Array.isArray(messages)) return [];
-  return messages.reverse().map(m => ({
-    role: m.role === 'assistant' ? 'assistant' : 'user',
-    content: m.content
-  }));
+  try {
+    const messages = await supabaseRequest('GET',
+      `messenger_messages?sender_id=eq.${sessionId}&select=role,content,created_at&order=created_at.desc&limit=20`
+    );
+    if (!Array.isArray(messages)) return [];
+    return messages.reverse().map(m => ({
+      role: m.role === 'assistant' ? 'assistant' : 'user',
+      content: m.content
+    }));
+  } catch (err) {
+    console.error('[getHistory] Supabase error:', err?.message);
+    return [];
+  }
 }
 
-async function callClaude(messages) {
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 800,
-      system: SYSTEM_PROMPT,
-      tools: TOOLS,
-      messages
-    })
-  });
-  return resp.json();
+async function callClaude(messages, systemPrompt) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 25000);
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 800,
+        system: systemPrompt,
+        tools: TOOLS,
+        messages
+      }),
+      signal: controller.signal
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.type === 'error') {
+      console.error('Claude API error:', resp.status, data);
+      return { error: data?.error?.type || `HTTP ${resp.status}` };
+    }
+    return data;
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      console.error('Claude API timeout after 25s');
+      return { error: 'timeout' };
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function saveMessages(sessionId, userMsg, botMsg) {
-  await supabaseRequest('POST', 'messenger_messages', [
-    { sender_id: sessionId, role: 'user', content: userMsg, read: false },
-    { sender_id: sessionId, role: 'assistant', content: botMsg, read: true }
-  ], { 'Prefer': 'return=minimal' });
+  try {
+    await supabaseRequest('POST', 'messenger_messages', [
+      { sender_id: sessionId, role: 'user', content: userMsg, read: false },
+      { sender_id: sessionId, role: 'assistant', content: botMsg, read: true }
+    ], { 'Prefer': 'return=minimal' });
+  } catch (err) {
+    console.error('[saveMessages] Supabase error:', err?.message);
+  }
 }
 
 async function executeCrmActions(sessionId, toolUseBlocks) {
   const results = [];
   for (const tool of toolUseBlocks) {
-    if (tool.name === 'update_prospect') {
-      const updates = { ...tool.input, last_contact_at: new Date().toISOString() };
-      await supabaseRequest('PATCH',
-        `messenger_prospects?sender_id=eq.${sessionId}`,
-        updates, { 'Prefer': 'return=minimal' }
-      );
-      results.push({ action: 'update_prospect', fields: Object.keys(updates) });
-    } else if (tool.name === 'set_temperature') {
-      await supabaseRequest('PATCH',
-        `messenger_prospects?sender_id=eq.${sessionId}`,
-        { temperature: tool.input.temperature, last_contact_at: new Date().toISOString() },
-        { 'Prefer': 'return=minimal' }
-      );
-      results.push({ action: 'set_temperature', value: tool.input.temperature });
-    } else if (tool.name === 'create_task') {
-      await supabaseRequest('POST', 'crm_tasks', {
-        prospect_sender_id: sessionId,
-        prospect_name: 'Visiteur Landing Page',
-        type: tool.input.type,
-        title: tool.input.title,
-        description: tool.input.description || '',
-        priority: tool.input.priority || 'medium'
-      }, { 'Prefer': 'return=minimal' });
-      results.push({ action: 'create_task', title: tool.input.title });
+    if (!ALLOWED_TOOLS.includes(tool.name)) {
+      console.warn('[CRM] Unknown tool ignored:', tool.name);
+      continue;
+    }
+    try {
+      if (tool.name === 'update_prospect') {
+        const updates = { ...tool.input, last_contact_at: new Date().toISOString() };
+        await supabaseRequest('PATCH',
+          `messenger_prospects?sender_id=eq.${sessionId}`,
+          updates, { 'Prefer': 'return=minimal' }
+        );
+        results.push({ action: 'update_prospect', fields: Object.keys(updates) });
+      } else if (tool.name === 'set_temperature') {
+        await supabaseRequest('PATCH',
+          `messenger_prospects?sender_id=eq.${sessionId}`,
+          { temperature: tool.input.temperature, last_contact_at: new Date().toISOString() },
+          { 'Prefer': 'return=minimal' }
+        );
+        results.push({ action: 'set_temperature', value: tool.input.temperature });
+      } else if (tool.name === 'create_task') {
+        await supabaseRequest('POST', 'crm_tasks', {
+          prospect_sender_id: sessionId,
+          prospect_name: 'Visiteur Landing Page',
+          type: tool.input.type,
+          title: tool.input.title,
+          description: tool.input.description || '',
+          priority: tool.input.priority || 'medium'
+        }, { 'Prefer': 'return=minimal' });
+        results.push({ action: 'create_task', title: tool.input.title });
+      }
+    } catch (err) {
+      console.error(`[CRM] ${tool.name} error:`, err?.message);
     }
   }
   return results;
 }
 
 async function notifyTelegram(taskTitles, temperature) {
-  const text = `NOUVELLE TACHE MANA (Landing Page)\n\nTache: ${taskTitles.join(', ')}\nTemperature: ${temperature || 'inchangee'}\n\nSource: pacifikai.com`;
-  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
-  });
+  try {
+    const text = `NOUVELLE TACHE MANA (Landing Page)\n\nTache: ${taskTitles.join(', ')}\nTemperature: ${temperature || 'inchangee'}\n\nSource: pacifikai.com`;
+    const resp = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
+    });
+    if (!resp.ok) console.error('[Telegram] Notify failed:', resp.status, await resp.text());
+  } catch (err) {
+    console.error('[Telegram] Notify error:', err?.message);
+  }
+}
+
+async function checkDedup(sessionId, message) {
+  try {
+    const key = `${sessionId}:${message.substring(0, 100)}`;
+    const fiveSecondsAgo = new Date(Date.now() - 5000).toISOString();
+    const existing = await supabaseRequest('GET',
+      `messenger_messages?sender_id=eq.${sessionId}&role=eq.user&content=eq.${encodeURIComponent(message)}&created_at=gt.${fiveSecondsAgo}&select=id&limit=1`
+    );
+    return Array.isArray(existing) && existing.length > 0;
+  } catch {
+    return false;
+  }
 }
 
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS — restrict to known origins
+  const origin = req.headers.origin;
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -248,6 +318,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'message and session_id required' });
     }
 
+    // Deduplication via Supabase (works across serverless instances)
+    const isDuplicate = await checkDedup(session_id, message);
+    if (isDuplicate) {
+      console.log(`[Chat] Duplicate message rejected: ${session_id}`);
+      return res.status(200).json({ success: true, response: null, session_id, deduplicated: true });
+    }
+
     // 1. Upsert prospect
     const source = await upsertProspect(session_id, page_url);
 
@@ -255,16 +332,15 @@ export default async function handler(req, res) {
     const history = await getHistory(session_id);
     const messages = [...history, { role: 'user', content: message }];
 
-    // 2b. Inject campaign context if visitor comes from offre-site-web
+    // 2b. Campaign context — inject into system prompt (not messages) to avoid alternation issues
+    let systemPrompt = SYSTEM_PROMPT;
     if (page_url && page_url.includes('offre-site-web')) {
-      messages.unshift({ role: 'user', content: '[CONTEXTE SYSTEME: Ce visiteur vient de la page offre-site-web. Il cherche probablement un site internet. Qualifie-le pour la campagne Site Web Pro a 100 000 F.]' });
-      messages.splice(1, 0, { role: 'assistant', content: 'Compris.' });
+      systemPrompt += '\n\nCONTEXTE: Ce visiteur vient de la page offre-site-web. Il cherche probablement un site internet. Qualifie-le pour la campagne Site Web Pro a 100 000 F.';
     }
 
-    // 3. Call Claude
-    const claudeResponse = await callClaude(messages);
+    // 3. Call Claude (with 25s timeout)
+    const claudeResponse = await callClaude(messages, systemPrompt);
     if (claudeResponse.error) {
-      console.error('Claude API error:', claudeResponse.error);
       return res.status(200).json({
         success: false,
         response: "Desole, petit souci technique. Ecris a contact@pacifikai.com en attendant !",
@@ -293,14 +369,14 @@ export default async function handler(req, res) {
       responseText = responseText.substring(0, 2000) + '...';
     }
 
-    // 5. Save messages
+    // 5. Save messages (non-blocking — don't crash if Supabase is slow)
     await saveMessages(session_id, message, responseText);
 
-    // 6. Execute CRM actions
+    // 6. Execute CRM actions (with tool whitelist validation)
     if (toolUseBlocks.length > 0) {
       const results = await executeCrmActions(session_id, toolUseBlocks);
 
-      // 7. Notify Telegram if task created
+      // 7. Notify Telegram if task created (with error handling)
       const taskResults = results.filter(r => r.action === 'create_task');
       if (taskResults.length > 0) {
         const tempResult = results.find(r => r.action === 'set_temperature');
@@ -318,7 +394,7 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Chat API error:', error?.message || error);
-    return res.status(500).json({
+    return res.status(200).json({
       success: false,
       response: "Desole, petit souci technique. Ecris a contact@pacifikai.com !",
       session_id: req.body?.session_id
