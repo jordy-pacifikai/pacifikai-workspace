@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahiti Carrosserie — L'Excellence de la Carrosserie en Polynésie</title>
+  <meta name="description" content="Tahiti Carrosserie — Carrosserie, peinture, mécanique et vitrage à Papeete. Plus de 20 ans d'expérience au service de votre véhicule.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0D0D0D;
+      color: #F5F5F5;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    ::selection { background: #DC2626; color: #F5F5F5; }
+
+    /* ===== CUSTOM CURSOR ===== */
+    .cursor-dot {
+      position: fixed;
+      top: 0; left: 0;
+      width: 8px; height: 8px;
+      background: #DC2626;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+    }
+    .cursor-ring {
+      position: fixed;
+      top: 0; left: 0;
+      width: 40px; height: 40px;
+      border: 1.5px solid rgba(220, 38, 38, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s, height 0.3s, border-color 0.3s;
+    }
+    .cursor-hover .cursor-dot { width: 16px; height: 16px; background: #F5F5F5; mix-blend-mode: difference; }
+    .cursor-hover .cursor-ring { width: 60px; height: 60px; border-color: rgba(245, 245, 245, 0.3); }
+
+    @media (pointer: coarse) {
+      .cursor-dot, .cursor-ring { display: none; }
+      body { cursor: auto; }
+    }
+
+    /* ===== SCROLL PROGRESS ===== */
+    .scroll-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: #DC2626;
+      z-index: 9999;
+      transform-origin: left;
+      transform: scaleX(0);
+      width: 100%;
+    }
+
+    /* ===== LOADER ===== */
+    .loader {
+      position: fixed;
+      inset: 0;
+      background: #0D0D0D;
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+    .loader-line {
+      width: 60px; height: 2px;
+      background: #DC2626;
+      transform-origin: left;
+      transform: scaleX(0);
+    }
+    .loader-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 6vw, 4.5rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #F5F5F5;
+      opacity: 0;
+    }
+    .loader-sub {
+      font-size: 0.875rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(245, 245, 245, 0.4);
+      opacity: 0;
+    }
+
+    /* ===== DISCLAIMER ===== */
+    .disclaimer {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #DC2626;
+      color: #F5F5F5;
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      z-index: 9990;
+      transform: translateY(-100%);
+    }
+    .disclaimer a {
+      text-decoration: underline;
+      font-weight: 700;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('hero.jpg') center/cover no-repeat;
+      will-change: transform;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+        rgba(13,13,13,0.7) 0%,
+        rgba(13,13,13,0.4) 40%,
+        rgba(13,13,13,0.8) 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 24px;
+      padding-top: 40px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border: 1px solid rgba(220, 38, 38, 0.4);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(245, 245, 245, 0.7);
+      margin-bottom: 32px;
+      opacity: 0;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: #DC2626;
+      border-radius: 50%;
+      animation: pulse-dot 2s ease infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.5); }
+    }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 12vw, 10rem);
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #F5F5F5;
+    }
+    .hero-title .word { display: inline-block; overflow: hidden; }
+    .hero-title .word span { display: inline-block; }
+    .hero-subtitle {
+      font-size: clamp(0.95rem, 2vw, 1.25rem);
+      color: rgba(245, 245, 245, 0.6);
+      margin-top: 24px;
+      letter-spacing: 0.08em;
+      font-weight: 300;
+      opacity: 0;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 48px;
+      padding: 18px 48px;
+      background: #DC2626;
+      color: #F5F5F5;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: none;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity: 0;
+    }
+    .hero-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #F5F5F5;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .hero-cta:hover::before { transform: translateY(0); }
+    .hero-cta:hover { color: #0D0D0D; transform: scale(1.02); }
+    .hero-cta span { position: relative; z-index: 1; }
+    .hero-cta svg { position: relative; z-index: 1; transition: transform 0.3s; }
+    .hero-cta:hover svg { transform: translateX(4px); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+    }
+    .hero-scroll span {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(245, 245, 245, 0.4);
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(180deg, rgba(220,38,38,0.8), transparent);
+      animation: scroll-anim 2s ease infinite;
+    }
+    @keyframes scroll-anim {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* ===== SECTION COMMON ===== */
+    section { padding: 120px 24px; }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #DC2626;
+      margin-bottom: 24px;
+    }
+    .section-label::before {
+      content: '';
+      width: 40px; height: 1px;
+      background: #DC2626;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .section-title .red { color: #DC2626; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ===== STATS ===== */
+    .stats {
+      background: #0D0D0D;
+      border-top: 1px solid rgba(245, 245, 245, 0.06);
+      border-bottom: 1px solid rgba(245, 245, 245, 0.06);
+      padding: 80px 24px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 40px 20px;
+      position: relative;
+    }
+    .stat-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 20%; height: 60%;
+      width: 1px;
+      background: rgba(245, 245, 245, 0.08);
+    }
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: #DC2626;
+      line-height: 1;
+    }
+    .stat-suffix {
+      font-size: 0.6em;
+      color: rgba(220, 38, 38, 0.7);
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: rgba(245, 245, 245, 0.5);
+      margin-top: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:not(:last-child)::after { display: none; }
+      .stat-item { padding: 24px 16px; border-bottom: 1px solid rgba(245,245,245,0.06); }
+    }
+
+    /* ===== SERVICES ===== */
+    .services {
+      position: relative;
+      background: #0D0D0D;
+    }
+    .services-bg {
+      position: absolute;
+      inset: 0;
+      background: url('work.jpg') center/cover no-repeat;
+      opacity: 0.04;
+    }
+    .services .container { position: relative; z-index: 2; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+    .service-card {
+      background: rgba(26, 26, 26, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(245, 245, 245, 0.06);
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.4s, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .service-card:hover {
+      border-color: rgba(220, 38, 38, 0.3);
+      transform: translateY(-4px);
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: #DC2626;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-icon {
+      width: 56px; height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      margin-bottom: 28px;
+      color: #DC2626;
+    }
+    .service-icon svg { width: 28px; height: 28px; }
+    .service-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .service-card p {
+      color: rgba(245, 245, 245, 0.55);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .service-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border: 1px solid rgba(220, 38, 38, 0.2);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #DC2626;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .service-card { padding: 36px 28px; }
+    }
+
+    /* ===== BEFORE/AFTER ===== */
+    .before-after {
+      background: #0D0D0D;
+      overflow: hidden;
+    }
+    .ba-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-top: 64px;
+      position: relative;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      overflow: hidden;
+      border: 1px solid rgba(245, 245, 245, 0.06);
+    }
+    .ba-side {
+      position: relative;
+      height: 500px;
+      overflow: hidden;
+    }
+    .ba-side img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .ba-side:hover img { transform: scale(1.05); }
+    .ba-label {
+      position: absolute;
+      bottom: 24px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 10px 24px;
+      background: rgba(13, 13, 13, 0.85);
+      backdrop-filter: blur(10px);
+    }
+    .ba-side:first-child .ba-label { left: 24px; color: rgba(245,245,245,0.6); }
+    .ba-side:last-child .ba-label { right: 24px; color: #DC2626; }
+    .ba-divider {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: #DC2626;
+      z-index: 3;
+      transform: translateX(-50%);
+    }
+    .ba-divider::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px; height: 48px;
+      border: 2px solid #DC2626;
+      border-radius: 50%;
+      background: #0D0D0D;
+    }
+    .ba-divider::after {
+      content: '\2194';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: #DC2626;
+      font-size: 1.25rem;
+    }
+    .ba-text {
+      text-align: center;
+      max-width: 700px;
+      margin: 48px auto 0;
+      color: rgba(245, 245, 245, 0.5);
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .ba-layout { grid-template-columns: 1fr; }
+      .ba-side { height: 300px; }
+      .ba-divider { display: none; }
+      .ba-side:last-child .ba-label { left: 24px; right: auto; }
+    }
+
+    /* ===== ABOUT ===== */
+    .about {
+      background: #0D0D0D;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-top: 64px;
+    }
+    .about-image {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+    .about-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .about-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(220, 38, 38, 0.2);
+      pointer-events: none;
+    }
+    .about-text h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 24px;
+    }
+    .about-text p {
+      color: rgba(245, 245, 245, 0.55);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .about-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .about-feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: #1A1A1A;
+      border-left: 2px solid #DC2626;
+    }
+    .about-feature span {
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 768px) {
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-features { grid-template-columns: 1fr; }
+    }
+
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+      position: relative;
+      background: #DC2626;
+      text-align: center;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 50%, rgba(0,0,0,0.2), transparent 70%);
+    }
+    .cta-section .container { position: relative; z-index: 2; }
+    .cta-section .section-label { color: rgba(245, 245, 245, 0.8); }
+    .cta-section .section-label::before { background: rgba(245, 245, 245, 0.5); }
+    .cta-section .section-title {
+      color: #F5F5F5;
+      margin-bottom: 24px;
+    }
+    .cta-subtitle {
+      font-size: 1.1rem;
+      color: rgba(245, 245, 245, 0.8);
+      max-width: 600px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+    .cta-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto 48px;
+    }
+    .cta-card {
+      background: rgba(13, 13, 13, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 32px 24px;
+      border: 1px solid rgba(245, 245, 245, 0.15);
+      transition: background 0.3s;
+    }
+    .cta-card:hover { background: rgba(13, 13, 13, 0.35); }
+    .cta-card svg {
+      width: 32px; height: 32px;
+      margin-bottom: 16px;
+      color: #F5F5F5;
+    }
+    .cta-card h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .cta-card p {
+      font-size: 0.85rem;
+      color: rgba(245, 245, 245, 0.75);
+      line-height: 1.6;
+    }
+    .cta-phone {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 56px;
+      background: #0D0D0D;
+      color: #F5F5F5;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 0.1em;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .cta-phone:hover { transform: scale(1.03); background: #1A1A1A; }
+
+    @media (max-width: 768px) {
+      .cta-cards { grid-template-columns: 1fr; max-width: 400px; }
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: #0A0A0A;
+      padding: 80px 24px 40px;
+      border-top: 1px solid rgba(245, 245, 245, 0.06);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 64px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-brand h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+    .footer-brand p {
+      color: rgba(245, 245, 245, 0.4);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      max-width: 320px;
+    }
+    .footer h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #DC2626;
+      margin-bottom: 20px;
+    }
+    .footer ul { list-style: none; }
+    .footer ul li {
+      padding: 6px 0;
+      font-size: 0.85rem;
+      color: rgba(245, 245, 245, 0.5);
+    }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 64px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(245, 245, 245, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: rgba(245, 245, 245, 0.3);
+    }
+    .footer-bottom a { color: #DC2626; }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+
+    /* ===== REVEAL UTILS ===== */
+    .reveal { opacity: 0; transform: translateY(40px); }
+    .reveal-left { opacity: 0; transform: translateX(-40px); }
+    .reveal-right { opacity: 0; transform: translateX(40px); }
+
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal, .reveal-left, .reveal-right { opacity: 1; transform: none; }
+      .loader { display: none; }
+      .scroll-line { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress"></div>
+
+  <!-- Loader -->
+  <div class="loader">
+    <div class="loader-line"></div>
+    <div class="loader-text">Tahiti Carrosserie</div>
+    <div class="loader-sub">Papeete, Tahiti</div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    Prototype cr&eacute;&eacute; par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a> &mdash; Agence IA &amp; Web Design &agrave; Tahiti
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Carrosserie Premium &bull; Papeete</div>
+      <h1 class="hero-title">
+        <div class="word"><span>Tahiti</span></div>
+        <div class="word"><span>Carrosserie</span></div>
+      </h1>
+      <p class="hero-subtitle">L'Excellence de la Carrosserie en Polyn&eacute;sie</p>
+      <a href="tel:+68989504485" class="hero-cta">
+        <span>Devis Gratuit</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="hero-scroll">
+      <span>D&eacute;couvrir</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div class="stat-number"><span class="counter" data-target="20">0</span><span class="stat-suffix">+</span></div>
+        <div class="stat-label">Ans d'Exp&eacute;rience</div>
+      </div>
+      <div class="stat-item reveal">
+        <div class="stat-number"><span class="counter" data-target="5000">0</span><span class="stat-suffix">+</span></div>
+        <div class="stat-label">V&eacute;hicules R&eacute;par&eacute;s</div>
+      </div>
+      <div class="stat-item reveal">
+        <div class="stat-number"><span class="counter" data-target="100">0</span><span class="stat-suffix">%</span></div>
+        <div class="stat-label">Satisfaction Client</div>
+      </div>
+      <div class="stat-item reveal">
+        <div class="stat-number"><span class="counter" data-target="5">0</span><span class="stat-suffix"> Ans</span></div>
+        <div class="stat-label">Garantie Travaux</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="services">
+    <div class="services-bg"></div>
+    <div class="container">
+      <div class="section-label reveal">Nos Expertises</div>
+      <h2 class="section-title reveal">Des Services<br><span class="red">Complets</span></h2>
+      <div class="services-grid">
+        <!-- Carrosserie -->
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+          </div>
+          <h3>Carrosserie</h3>
+          <p>Redressage, d&eacute;bosselage et r&eacute;paration de tous types de carrosseries. Remise en &eacute;tat compl&egrave;te apr&egrave;s accident avec finitions irr&eacute;prochables.</p>
+          <span class="service-tag">Agr&eacute;&eacute; Assurances</span>
+        </div>
+        <!-- Peinture -->
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg>
+          </div>
+          <h3>Peinture</h3>
+          <p>Cabine de peinture professionnelle, teintes d'origine garanties. Peinture compl&egrave;te, retouches, vernis haute r&eacute;sistance UV tropicale.</p>
+          <span class="service-tag">Cabine Pro</span>
+        </div>
+        <!-- Mécanique -->
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z"/></svg>
+          </div>
+          <h3>M&eacute;canique</h3>
+          <p>Entretien courant, r&eacute;vision, diagnostic &eacute;lectronique. R&eacute;parations m&eacute;caniques toutes marques pour maintenir votre v&eacute;hicule en parfait &eacute;tat.</p>
+          <span class="service-tag">Toutes Marques</span>
+        </div>
+        <!-- Vitrage -->
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><path d="m2 8 10 6 10-6"/></svg>
+          </div>
+          <h3>Vitrage</h3>
+          <p>Remplacement et r&eacute;paration de pare-brise, vitres lat&eacute;rales et lunette arri&egrave;re. Intervention rapide, pi&egrave;ces d'origine.</p>
+          <span class="service-tag">Intervention Rapide</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Before / After -->
+  <section class="before-after">
+    <div class="container">
+      <div style="text-align: center;">
+        <div class="section-label reveal" style="justify-content: center;">Nos R&eacute;alisations</div>
+        <h2 class="section-title reveal">Avant <span class="red">&amp;</span> Apr&egrave;s</h2>
+      </div>
+      <div class="ba-layout">
+        <div class="ba-side reveal-left">
+          <img src="before.jpg" alt="V&eacute;hicule avant r&eacute;paration" loading="lazy">
+          <div class="ba-label">Avant</div>
+        </div>
+        <div class="ba-divider"></div>
+        <div class="ba-side reveal-right">
+          <img src="after.jpg" alt="V&eacute;hicule apr&egrave;s r&eacute;paration" loading="lazy">
+          <div class="ba-label">Apr&egrave;s</div>
+        </div>
+      </div>
+      <p class="ba-text reveal">Chaque v&eacute;hicule est trait&eacute; avec le plus grand soin. De la r&eacute;ception &agrave; la livraison, nous garantissons un r&eacute;sultat qui d&eacute;passe vos attentes.</p>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about">
+    <div class="container">
+      <div class="section-label reveal">Notre Atelier</div>
+      <h2 class="section-title reveal">L'Expertise au<br><span class="red">Service</span> de Votre V&eacute;hicule</h2>
+      <div class="about-grid">
+        <div class="about-image reveal-left">
+          <img src="team.jpg" alt="Atelier Tahiti Carrosserie" loading="lazy">
+        </div>
+        <div class="about-text">
+          <h3 class="reveal">Plus de 20 ans de savoir-faire</h3>
+          <p class="reveal">Tahiti Carrosserie est la r&eacute;f&eacute;rence en carrosserie automobile &agrave; Papeete. Notre &eacute;quipe de professionnels qualifi&eacute;s met son expertise au service de votre v&eacute;hicule, quel que soit le d&eacute;g&acirc;t.</p>
+          <p class="reveal">&Eacute;quip&eacute;s d'une cabine de peinture dernier cri et d'outils de diagnostic avanc&eacute;s, nous assurons des r&eacute;parations aux standards les plus exigeants.</p>
+          <div class="about-features">
+            <div class="about-feature reveal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>&Eacute;quipement Pro</span>
+            </div>
+            <div class="about-feature reveal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Agr&eacute;&eacute; Assurances</span>
+            </div>
+            <div class="about-feature reveal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Garantie 5 Ans</span>
+            </div>
+            <div class="about-feature reveal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              <span>Devis Gratuit</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="section-label reveal">Contactez-Nous</div>
+      <h2 class="section-title reveal">Votre V&eacute;hicule<br>M&eacute;rite le <span style="text-decoration: underline; text-decoration-color: rgba(245,245,245,0.4); text-underline-offset: 8px;">Meilleur</span></h2>
+      <p class="cta-subtitle reveal">Confiez votre v&eacute;hicule &agrave; des experts. Devis gratuit et sans engagement.</p>
+      <div class="cta-cards">
+        <div class="cta-card reveal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+          <h4>T&eacute;l&eacute;phone</h4>
+          <p>+689 89 50 44 85</p>
+        </div>
+        <div class="cta-card reveal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <h4>Adresse</h4>
+          <p>Papeete, Tahiti<br>Polyn&eacute;sie fran&ccedil;aise</p>
+        </div>
+        <div class="cta-card reveal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <h4>Horaires</h4>
+          <p>Lun-Ven : 7h &mdash; 17h<br>Sam : 7h &mdash; 12h</p>
+        </div>
+      </div>
+      <a href="tel:+68989504485" class="cta-phone reveal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+        <span>Appeler Maintenant</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Tahiti Carrosserie</h3>
+        <p>L'excellence de la carrosserie en Polyn&eacute;sie fran&ccedil;aise. Plus de 20 ans d'exp&eacute;rience au service de votre v&eacute;hicule &agrave; Papeete.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li>Carrosserie</li>
+          <li>Peinture</li>
+          <li>M&eacute;canique</li>
+          <li>Vitrage</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li>+689 89 50 44 85</li>
+          <li>Papeete, Tahiti</li>
+          <li>tahiticarrosserie.com</li>
+          <li>Lun-Ven 7h-17h</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Tahiti Carrosserie. Tous droits r&eacute;serv&eacute;s.</span>
+      <span>Site con&ccedil;u par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a></span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    /* ===== REDUCED MOTION CHECK ===== */
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ===== LENIS SMOOTH SCROLL ===== */
+    let lenis;
+    if (!prefersReduced) {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        touchMultiplier: 2,
+      });
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    /* ===== GSAP REGISTER ===== */
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ===== CUSTOM CURSOR ===== */
+    if (window.matchMedia('(pointer: fine)').matches && !prefersReduced) {
+      const dot = document.querySelector('.cursor-dot');
+      const ring = document.querySelector('.cursor-ring');
+      let mouseX = 0, mouseY = 0;
+      let ringX = 0, ringY = 0;
+
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.left = mouseX + 'px';
+        dot.style.top = mouseY + 'px';
+      });
+
+      function animateRing() {
+        ringX += (mouseX - ringX) * 0.12;
+        ringY += (mouseY - ringY) * 0.12;
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+        requestAnimationFrame(animateRing);
+      }
+      animateRing();
+
+      document.querySelectorAll('a, button, .service-card, .cta-card, .hero-cta, .cta-phone').forEach(el => {
+        el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+      });
+    }
+
+    /* ===== SCROLL PROGRESS BAR ===== */
+    if (!prefersReduced) {
+      gsap.to('.scroll-progress', {
+        scaleX: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: document.body,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.3,
+        }
+      });
+    }
+
+    /* ===== LOADER ===== */
+    const loader = document.querySelector('.loader');
+    if (!prefersReduced && loader) {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.to(loader, {
+            yPercent: -100,
+            duration: 0.8,
+            ease: 'power3.inOut',
+            onComplete: () => { loader.style.display = 'none'; }
+          });
+          animateHero();
+          gsap.to('.disclaimer', { y: 0, duration: 0.5, delay: 0.3, ease: 'power2.out' });
+        }
+      });
+      tl.to('.loader-line', { scaleX: 1, duration: 0.6, ease: 'power2.inOut' })
+        .to('.loader-text', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.2')
+        .to('.loader-sub', { opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2')
+        .to({}, { duration: 0.5 });
+    } else {
+      if (loader) loader.style.display = 'none';
+      document.querySelector('.disclaimer').style.transform = 'translateY(0)';
+      document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+    }
+
+    /* ===== HERO ANIMATION ===== */
+    function animateHero() {
+      if (prefersReduced) return;
+      const htl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      htl.from('.hero-bg', { scale: 1.2, duration: 1.8, ease: 'power2.out' })
+         .from('.hero-title .word span', {
+           yPercent: 110, duration: 1, stagger: 0.15, ease: 'power4.out'
+         }, '-=1.4')
+         .to('.hero-badge', { opacity: 1, duration: 0.6 }, '-=0.5')
+         .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.6 }, '-=0.3')
+         .to('.hero-cta', { opacity: 1, y: 0, duration: 0.6 }, '-=0.2')
+         .to('.hero-scroll', { opacity: 1, duration: 0.5 }, '-=0.1');
+
+      /* Hero parallax */
+      gsap.to('.hero-bg', {
+        yPercent: 30,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        }
+      });
+    }
+
+    /* ===== REVEAL ANIMATIONS ===== */
+    if (!prefersReduced) {
+      gsap.utils.toArray('.reveal').forEach(el => {
+        gsap.to(el, {
+          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+        });
+      });
+      gsap.utils.toArray('.reveal-left').forEach(el => {
+        gsap.to(el, {
+          opacity: 1, x: 0, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+        });
+      });
+      gsap.utils.toArray('.reveal-right').forEach(el => {
+        gsap.to(el, {
+          opacity: 1, x: 0, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+        });
+      });
+    }
+
+    /* ===== COUNTER ANIMATION ===== */
+    if (!prefersReduced) {
+      document.querySelectorAll('.counter').forEach(counter => {
+        const target = parseInt(counter.dataset.target);
+        ScrollTrigger.create({
+          trigger: counter.closest('.stat-item'),
+          start: 'top 85%',
+          once: true,
+          onEnter: () => {
+            gsap.to(counter, {
+              duration: 2,
+              ease: 'power2.out',
+              onUpdate: function() {
+                const progress = this.progress();
+                let val = Math.round(target * progress);
+                if (target >= 1000) {
+                  counter.textContent = val.toLocaleString('fr-FR');
+                } else {
+                  counter.textContent = val;
+                }
+              }
+            });
+          }
+        });
+      });
+    } else {
+      document.querySelectorAll('.counter').forEach(c => {
+        const t = parseInt(c.dataset.target);
+        c.textContent = t >= 1000 ? t.toLocaleString('fr-FR') : t;
+      });
+    }
+
+    /* ===== SERVICE CARDS STAGGER ===== */
+    if (!prefersReduced) {
+      gsap.utils.toArray('.service-card').forEach((card, i) => {
+        gsap.to(card, {
+          opacity: 1, y: 0, duration: 0.7,
+          delay: i * 0.1,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: card, start: 'top 88%', once: true }
+        });
+      });
+    }
+
+    /* ===== FALLBACK IMAGES ===== */
+    document.querySelectorAll('img').forEach(img => {
+      img.addEventListener('error', function() {
+        this.style.background = '#1A1A1A';
+        this.style.minHeight = '200px';
+        this.alt = '';
+      });
+    });
+  </script>
+<script>setTimeout(function(){document.querySelectorAll("*").forEach(function(e){if(getComputedStyle(e).opacity==="0"){e.style.opacity="1";e.style.transform="none"}});var l=document.querySelector(".loader");if(l)l.style.display="none"},3000);</script>
+</body>
+</html>
