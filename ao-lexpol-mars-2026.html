@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AO Lexpol — Opportunites PACIFIK'AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#08080d;--s1:#0f0f18;--s2:#161622;--s3:#1e1e30;
+    --b1:#252540;--b2:#353560;
+    --t1:#eeeef4;--t2:#a0a0b8;--t3:#6a6a88;
+    --accent:#7c5cfc;--accent2:#a78bfa;--accent-bg:rgba(124,92,252,.08);
+    --green:#34d399;--green-bg:rgba(52,211,153,.1);
+    --yellow:#fbbf24;--yellow-bg:rgba(251,191,36,.1);
+    --red:#f87171;--red-bg:rgba(248,113,113,.1);
+    --orange:#fb923c;--orange-bg:rgba(251,146,60,.1);
+    --cyan:#22d3ee;--cyan-bg:rgba(34,211,238,.1);
+    --blue:#60a5fa;--blue-bg:rgba(96,165,250,.1);
+  }
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t1);line-height:1.65;-webkit-font-smoothing:antialiased}
+
+  .page{max-width:1100px;margin:0 auto;padding:48px 32px 80px}
+
+  /* Header */
+  .hero{margin-bottom:48px}
+  .hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--accent-bg);border:1px solid rgba(124,92,252,.2);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px}
+  .hero h1{font-size:36px;font-weight:900;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px}
+  .hero h1 span{background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{color:var(--t2);font-size:15px;max-width:720px}
+
+  .stats-row{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+  .stat{background:var(--s1);border:1px solid var(--b1);border-radius:10px;padding:14px 20px;text-align:center;min-width:110px}
+  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.5px}
+  .stat .l{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);margin-top:2px}
+  .stat.g .n{color:var(--green)}.stat.y .n{color:var(--yellow)}.stat.r .n{color:var(--red)}.stat.a .n{color:var(--accent2)}
+
+  /* Card */
+  .card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;margin-bottom:28px;overflow:hidden;transition:.3s}
+  .card:hover{border-color:var(--b2);box-shadow:0 8px 40px rgba(0,0,0,.25)}
+
+  .card-top{padding:28px 32px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:space-between}
+  .card-left{flex:1;min-width:280px}
+  .card-right{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+
+  .badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .b{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .b.green{background:var(--green-bg);color:var(--green)}
+  .b.yellow{background:var(--yellow-bg);color:var(--yellow)}
+  .b.red{background:var(--red-bg);color:var(--red)}
+  .b.orange{background:var(--orange-bg);color:var(--orange)}
+  .b.cyan{background:var(--cyan-bg);color:var(--cyan)}
+  .b.accent{background:var(--accent-bg);color:var(--accent2)}
+  .b.blue{background:var(--blue-bg);color:var(--blue)}
+
+  .card h2{font-size:21px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px}
+  .card .sub{font-size:13px;color:var(--t3)}
+
+  .pill{background:var(--s2);border-radius:10px;padding:10px 16px;text-align:center;min-width:90px}
+  .pill .pl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3)}
+  .pill .pv{font-size:14px;font-weight:700;margin-top:1px}
+  .pill .pv.urgent{color:var(--red)}.pill .pv.soon{color:var(--yellow)}.pill .pv.ok{color:var(--green)}
+
+  .divider{height:1px;background:var(--b1);margin:0 32px}
+
+  .card-body{padding:24px 32px 28px}
+
+  /* Section */
+  .sec{margin-bottom:24px}
+  .sec:last-child{margin-bottom:0}
+  .sec-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent2);font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .sec-title::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+  /* Explainer */
+  .explain{background:var(--s2);border-radius:12px;padding:20px 24px;font-size:13.5px;color:var(--t2);line-height:1.75;margin-bottom:20px}
+  .explain strong{color:var(--t1)}
+  .explain em{color:var(--cyan);font-style:normal;font-weight:500}
+
+  /* Details grid */
+  .dg{display:grid;grid-template-columns:130px 1fr;gap:5px 14px;font-size:13px}
+  .dg dt{color:var(--t3);font-weight:500}.dg dd{color:var(--t2)}
+  .dg dd a{color:var(--accent2);text-decoration:none}.dg dd a:hover{text-decoration:underline}
+
+  /* Strategy box */
+  .strat{background:linear-gradient(135deg,rgba(124,92,252,.05),rgba(34,211,238,.03));border:1px solid rgba(124,92,252,.12);border-radius:14px;padding:24px 28px}
+  .strat h3{font-size:13px;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px}
+  .strat-list{list-style:none;display:flex;flex-direction:column;gap:14px}
+  .strat-list li{display:flex;gap:12px;font-size:13px;line-height:1.7}
+  .strat-list .ico{flex-shrink:0;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:1px;font-weight:700}
+  .strat-list .ico.g{background:var(--green-bg);color:var(--green)}
+  .strat-list .ico.c{background:var(--cyan-bg);color:var(--cyan)}
+  .strat-list .ico.o{background:var(--orange-bg);color:var(--orange)}
+  .strat-list .ico.y{background:var(--yellow-bg);color:var(--yellow)}
+  .strat-list .ico.a{background:var(--accent-bg);color:var(--accent2)}
+  .strat-list li strong{color:var(--t1)}
+  .strat-list li .detail{color:var(--t2)}
+
+  /* Score */
+  .score-row{display:flex;align-items:center;gap:14px;margin-top:20px;padding-top:18px;border-top:1px solid var(--b1)}
+  .score-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);white-space:nowrap}
+  .score-bar{flex:1;height:5px;background:var(--s3);border-radius:100px;overflow:hidden}
+  .score-fill{height:100%;border-radius:100px}
+  .score-fill.high{background:linear-gradient(90deg,var(--green),#6ee7b7)}
+  .score-fill.mid{background:linear-gradient(90deg,var(--yellow),#fde68a)}
+  .score-fill.low{background:linear-gradient(90deg,var(--orange),#fdba74)}
+  .score-val{font-size:15px;font-weight:800;min-width:40px;text-align:right}
+  .score-val.high{color:var(--green)}.score-val.mid{color:var(--yellow)}.score-val.low{color:var(--orange)}
+
+  /* Buttons */
+  .btns{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:.2s}
+  .btn.primary{background:var(--accent);color:#fff}.btn.primary:hover{background:#6b4fe6;box-shadow:0 4px 20px rgba(124,92,252,.3)}
+  .btn.ghost{background:var(--s2);color:var(--t2);border:1px solid var(--b1)}.btn.ghost:hover{border-color:var(--accent)}
+
+  /* Next steps */
+  .next{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:32px;margin-top:8px}
+  .next h2{font-size:20px;font-weight:800;margin-bottom:20px;letter-spacing:-.3px}
+  .next ol{list-style:none;counter-reset:step}
+  .next ol li{counter-increment:step;display:flex;gap:14px;margin-bottom:16px;font-size:14px}
+  .next ol li::before{content:counter(step);flex-shrink:0;width:28px;height:28px;background:var(--accent-bg);border:1px solid rgba(124,92,252,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--accent2)}
+  .next ol li strong{color:var(--t1)}
+  .next ol li span{color:var(--t2)}
+
+  .footer{text-align:center;padding-top:48px;font-size:12px;color:var(--t3)}
+  .footer a{color:var(--accent2);text-decoration:none}
+
+  @media(max-width:768px){
+    .page{padding:24px 16px 48px}
+    .hero h1{font-size:26px}
+    .card-top{padding:20px}
+    .card-body{padding:16px 20px 24px}
+    .divider{margin:0 20px}
+    .dg{grid-template-columns:1fr;gap:4px}
+    .dg dt{color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  }
+
+  .card{opacity:0;transform:translateY(16px);animation:up .5s ease forwards}
+  .card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.12s}
+  .card:nth-child(3){animation-delay:.19s}.card:nth-child(4){animation-delay:.26s}
+  .card:nth-child(5){animation-delay:.33s}.card:nth-child(6){animation-delay:.4s}
+  @keyframes up{to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Veille marches publics PF</div>
+  <h1>Appels d'offres <span>Lexpol</span></h1>
+  <p>Scrape du 15 mars 2026 — 42 AO ouverts analyses, 6 pertinents pour PACIFIK'AI. Pour chaque AO : ce que ca implique concretement, et comment on peut y repondre.</p>
+  <div class="stats-row">
+    <div class="stat a"><div class="n">42</div><div class="l">AO ouverts</div></div>
+    <div class="stat g"><div class="n">6</div><div class="l">Pertinents</div></div>
+    <div class="stat y"><div class="n">2</div><div class="l">Urgents (demain)</div></div>
+    <div class="stat r"><div class="n">0</div><div class="l">DCE obtenus</div></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- AO 1: INFOGÉRANCE LYCÉE -->
+<!-- ============================================================ -->
+<div class="card">
+  <div class="card-top">
+    <div class="card-left">
+      <div class="badges">
+        <span class="b green">Faisable en direct</span>
+        <span class="b accent">IT / Infogerance</span>
+        <span class="b yellow">J-10</span>
+      </div>
+      <h2>Infogerance informatique — Lycee Tuianu Le Gayic</h2>
+      <div class="sub">Papara (PK 38.2) &mdash; Etablissement scolaire ~500 eleves</div>
+    </div>
+    <div class="card-right">
+      <div class="pill"><div class="pl">Deadline</div><div class="pv soon">25/03</div></div>
+      <div class="pill"><div class="pl">Procedure</div><div class="pv">MAPA</div></div>
+      <div class="pill"><div class="pl">Duree</div><div class="pv">12m x3</div></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="card-body">
+
+    <div class="sec">
+      <div class="sec-title">Ce que ca veut dire concretement</div>
+      <div class="explain">
+        Un lycee en Polynesie qui cherche un <strong>prestataire informatique externe</strong> pour gerer tout son parc IT au quotidien. Le proviseur n'a pas d'equipe IT interne — il a besoin de quelqu'un qui <strong>maintient les ordis, le reseau, les serveurs, les imprimantes, le Wi-Fi, les comptes utilisateurs</strong> et qui repond quand ca plante.<br><br>
+        Concretement, ca couvre probablement :<br>
+        &bull; <em>Parc de 50-150 postes</em> (salles info, administration, CDI, labo)<br>
+        &bull; <em>Reseau local + Wi-Fi</em> (switch, bornes, VLAN pedagogique/admin)<br>
+        &bull; <em>Serveur(s) local/cloud</em> (annuaire LDAP/AD, partage fichiers, pronote/ENT)<br>
+        &bull; <em>Maintenance curative</em> : depannage sur site quand un truc tombe en panne<br>
+        &bull; <em>Maintenance preventive</em> : mises a jour, sauvegardes, antivirus, nettoyage<br>
+        &bull; <em>Support utilisateurs</em> : aider les profs et l'admin quand ils galèrent<br>
+        &bull; <em>Gestion des comptes</em> : creation/suppression des comptes eleves/profs chaque annee<br><br>
+        <strong>Budget estime</strong> : 2-5M XPF/an (200-500K/mois) selon le perimetre. Les marches d'infogerance scolaire en PF tournent dans cette fourchette.<br>
+        <strong>Profil recherche</strong> : boite IT locale avec technicien(s) dispo pour intervenir sur site a Papara. Pas besoin d'etre gros — juste fiable et reactif.
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">Infos officielles</div>
+      <dl class="dg">
+        <dt>Annonce</dt><dd>n&deg; 64861448</dd>
+        <dt>Acheteur</dt><dd>Lycee Tuianu Le Gayic, PK 38.2, BP 120.001</dd>
+        <dt>Contact</dt><dd><a href="mailto:direction@lycpapa.education.pf">direction@lycpapa.education.pf</a> — 40.54.76.50</dd>
+        <dt>Publication</dt><dd>JOAM n&deg;50 du 11/03/2026</dd>
+        <dt>DCE</dt><dd>A retirer par email ou sur place. Lexpol indique "telechargeable" mais necessite connexion.</dd>
+        <dt>Lots</dt><dd>Non (marche unique)</dd>
+        <dt>Reconduction</dt><dd>2 fois 12 mois (36 mois total max)</dd>
+      </dl>
+    </div>
+
+    <div class="sec">
+      <div class="strat">
+        <h3>Ce que PACIFIK'AI peut proposer</h3>
+        <ul class="strat-list">
+          <li>
+            <div class="ico g">1</div>
+            <div><strong>Monitoring + alerting automatise</strong><br><span class="detail">On installe Uptime Kuma ou un agent de monitoring sur le reseau du lycee. Dashboard en temps reel pour le proviseur, alertes SMS/email quand un service tombe. Le lycee voit qu'on est proactifs, pas juste reactifs.</span></div>
+          </li>
+          <li>
+            <div class="ico c">2</div>
+            <div><strong>Helpdesk avec ticketing + chatbot triage</strong><br><span class="detail">Interface simple pour les profs : "mon ordi marche pas" → le chatbot MANA adapte pose 3 questions, classe le ticket par urgence, et si c'est un truc basique (mot de passe oublie, imprimante) il guide la resolution sans intervention humaine. Ca reduit les interventions de 30-40%.</span></div>
+          </li>
+          <li>
+            <div class="ico o">3</div>
+            <div><strong>Intervention sur site J+1 + astreinte</strong><br><span class="detail">Le nerf de la guerre : avoir un tech qui peut aller a Papara rapidement. On propose une astreinte telephonique + intervention sur site sous 24h. C'est CA que le proviseur achete en priorite.</span></div>
+          </li>
+          <li>
+            <div class="ico y">4</div>
+            <div><strong>Reporting mensuel automatise</strong><br><span class="detail">Chaque mois, le proviseur recoit un rapport : uptime, tickets resolus, etat du parc, recommandations. Genere automatiquement par notre stack. Ca justifie le renouvellement du marche.</span></div>
+          </li>
+        </ul>
+        <div class="score-row">
+          <span class="score-label">Pertinence PACIFIK'AI</span>
+          <div class="score-bar"><div class="score-fill high" style="width:82%"></div></div>
+          <span class="score-val high">82%</span>
+        </div>
+        <div class="btns">
+          <a href="https://lexpol.cloud.pf/LexpolAfficheAnnonceMP.php?t=292682" target="_blank" class="btn primary">Voir l'annonce Lexpol</a>
+          <a href="mailto:direction@lycpapa.education.pf?subject=DCE%20-%20Infogerance%20informatique" class="btn ghost">Demander le DCE par email</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- AO 2: STRATÉGIE TOURISTIQUE -->
+<!-- ============================================================ -->
+<div class="card">
+  <div class="card-top">
+    <div class="card-left">
+      <div class="badges">
+        <span class="b orange">Sous-traitance</span>
+        <span class="b blue">Strategie / Conseil</span>
+        <span class="b yellow">J-12</span>
+      </div>
+      <h2>Strategie touristique PF 2027-2035</h2>
+      <div class="sub">Service du Tourisme &mdash; Immeuble Paofai, Papeete</div>
+    </div>
+    <div class="card-right">
+      <div class="pill"><div class="pl">Deadline</div><div class="pv soon">27/03</div></div>
+      <div class="pill"><div class="pl">Procedure</div><div class="pv">MAPA</div></div>
+      <div class="pill"><div class="pl">Envergure</div><div class="pv" style="color:var(--cyan)">National</div></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="card-body">
+
+    <div class="sec">
+      <div class="sec-title">Ce que ca veut dire concretement</div>
+      <div class="explain">
+        Le Service du Tourisme veut <strong>un prestataire pour co-ecrire la prochaine strategie touristique de la Polynesie</strong> sur 8 ans. C'est un marche de <strong>consulting strategique haut niveau</strong> — pas du dev, pas du site web.<br><br>
+        Le prestataire devra probablement :<br>
+        &bull; <em>Diagnostic complet</em> : analyser l'etat actuel du tourisme PF (flux, capacites, revenus, concurrence regionale)<br>
+        &bull; <em>Benchmark international</em> : comparer avec Hawaii, Maldives, Fidji, Nouvelle-Caledonie<br>
+        &bull; <em>Concertation</em> : ateliers avec les professionnels du secteur, communes, compagnies aeriennes, hotels<br>
+        &bull; <em>Feuille de route 2027-2035</em> : objectifs chiffres, axes strategiques, plan d'actions, budget<br>
+        &bull; <em>Livrables</em> : rapport final + presentation au gouvernement<br><br>
+        <strong>Budget estime</strong> : 15-40M XPF. C'est un gros marche de prestations intellectuelles.<br>
+        <strong>Profil recherche</strong> : cabinet de conseil en strategie/tourisme avec references solides (etudes nationales, plans directeurs). Pas une agence web.
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">Infos officielles</div>
+      <dl class="dg">
+        <dt>Annonce</dt><dd>n&deg; 42373506</dd>
+        <dt>Acheteur</dt><dd>Service du tourisme, Immeuble Paofai, BP 4527, 98713 Papeete</dd>
+        <dt>Contact</dt><dd><a href="mailto:strategie.sdt@administration.gov.pf">strategie.sdt@administration.gov.pf</a> — 40 47 62 02</dd>
+        <dt>Publication</dt><dd>JOAM n&deg;37 du 20/02/2026</dd>
+        <dt>DCE</dt><dd>A retirer sur place (Paofai entree D, 1er/2e etage) ou demander par email</dd>
+        <dt>Remise plis</dt><dd>Depot physique Paofai ou voie postale BP 4527 avec AR</dd>
+      </dl>
+    </div>
+
+    <div class="sec">
+      <div class="strat">
+        <h3>Ce que PACIFIK'AI peut proposer</h3>
+        <ul class="strat-list">
+          <li>
+            <div class="ico o">!</div>
+            <div><strong>On ne peut PAS repondre en direct</strong><br><span class="detail">PACIFIK'AI n'est pas un cabinet de conseil strategique. On n'a pas les references en planification touristique nationale. Repondre seul serait non-credible.</span></div>
+          </li>
+          <li>
+            <div class="ico c">→</div>
+            <div><strong>Se proposer comme sous-traitant technique</strong><br><span class="detail">Contacter les cabinets susceptibles de repondre (BDO, In Extenso, cabinets locaux type THL Conseil, Pae Ora Consulting) et proposer notre brique tech : dashboard data tourisme, IA predictive, outils de concertation en ligne.</span></div>
+          </li>
+          <li>
+            <div class="ico g">+</div>
+            <div><strong>Dashboard analytics tourisme</strong><br><span class="detail">Notre valeur ajoutee concrete : une plateforme de pilotage des donnees touristiques (flux aeroport, hotels, croisieres, revenus). Exactement ce qu'un cabinet de conseil ne sait pas construire en interne.</span></div>
+          </li>
+          <li>
+            <div class="ico a">$</div>
+            <div><strong>Potentiel</strong><br><span class="detail">En sous-traitance technique, on viserait 3-8M XPF sur le marche. Plus important : ca ouvre une relation directe avec le Service du Tourisme pour d'autres missions.</span></div>
+          </li>
+        </ul>
+        <div class="score-row">
+          <span class="score-label">Pertinence PACIFIK'AI</span>
+          <div class="score-bar"><div class="score-fill mid" style="width:40%"></div></div>
+          <span class="score-val mid">40%</span>
+        </div>
+        <div class="btns">
+          <a href="https://lexpol.cloud.pf/LexpolAfficheAnnonceMP.php?t=285001" target="_blank" class="btn primary">Voir l'annonce Lexpol</a>
+          <a href="mailto:strategie.sdt@administration.gov.pf?subject=Partenariat%20technique%20-%20Strategie%20touristique%202027-2035" class="btn ghost">Contacter le Service du Tourisme</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- AO 3: FORMATION ENTREPRENEURS SEFI -->
+<!-- ============================================================ -->
+<div class="card">
+  <div class="card-top">
+    <div class="card-left">
+      <div class="badges">
+        <span class="b orange">Partenariat requis</span>
+        <span class="b accent">Formation</span>
+        <span class="b green">J-30</span>
+      </div>
+      <h2>Formation createurs & gestionnaires d'entreprises</h2>
+      <div class="sub">SEFI &mdash; Immeuble Papineau, Papeete &mdash; Lot 2 Tereheamanu</div>
+    </div>
+    <div class="card-right">
+      <div class="pill"><div class="pl">Deadline</div><div class="pv ok">14/04</div></div>
+      <div class="pill"><div class="pl">Procedure</div><div class="pv">MAPA</div></div>
+      <div class="pill"><div class="pl">Duree</div><div class="pv">12m x4</div></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="card-body">
+
+    <div class="sec">
+      <div class="sec-title">Ce que ca veut dire concretement</div>
+      <div class="explain">
+        Le SEFI (equivalent Pole Emploi en PF) cherche un <strong>organisme de formation pour former les futurs entrepreneurs</strong> de la communaute de communes Tereheamanu (Teva I Uta, Taiarapu, Papara, Paea).<br><br>
+        Ca couvre probablement :<br>
+        &bull; <em>Modules de formation</em> : comptabilite, gestion, marketing, droit des affaires, fiscalite PF<br>
+        &bull; <em>Public</em> : demandeurs d'emploi et porteurs de projets de la zone sud de Tahiti<br>
+        &bull; <em>Format</em> : sessions en presentiel (probablement 1-3 semaines par session, plusieurs cohortes/an)<br>
+        &bull; <em>Livrables</em> : attestations de formation, suivi post-formation, bilan pedagogique<br>
+        &bull; <em>Note</em> : c'est le <strong>Lot 2</strong> — il y a d'autres lots (probablement d'autres zones geographiques)<br><br>
+        <strong>Budget estime</strong> : 3-8M XPF/an par lot. Marche recurrent (4 ans possible).<br>
+        <strong>Profil recherche</strong> : organisme de formation agree, avec formateurs qualifies en creation d'entreprise. Le SEFI est tres strict sur les agrements.
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">Infos officielles</div>
+      <dl class="dg">
+        <dt>Annonce</dt><dd>n&deg; 514348</dd>
+        <dt>Acheteur</dt><dd>SEFI, Immeuble Papineau, BP 540, 98713 Papeete</dd>
+        <dt>Contact</dt><dd><a href="mailto:marches.publics@sefi.pf">marches.publics@sefi.pf</a> — 40 46 12 12</dd>
+        <dt>Autorite</dt><dd>Ministre de la Fonction publique, de l'emploi et de la formation pro</dd>
+        <dt>DCE</dt><dd>Telechargeable sur Lexpol</dd>
+        <dt>Depot plis</dt><dd>Immeuble Papineau, rue Tepano Jaussen, Papeete</dd>
+      </dl>
+    </div>
+
+    <div class="sec">
+      <div class="strat">
+        <h3>Ce que PACIFIK'AI peut proposer</h3>
+        <ul class="strat-list">
+          <li>
+            <div class="ico o">!</div>
+            <div><strong>On ne peut PAS repondre seul</strong><br><span class="detail">PACIFIK'AI n'est pas un organisme de formation agree. Le SEFI exige des agrements specifiques qu'on n'a pas.</span></div>
+          </li>
+          <li>
+            <div class="ico c">→</div>
+            <div><strong>Partenariat avec un OF local</strong><br><span class="detail">Contacter CCISM, CCI, CNAM PF, OPEN, ou un organisme prive pour proposer un module "outils numeriques pour entrepreneurs" : utiliser l'IA pour son business plan, son marketing, sa compta.</span></div>
+          </li>
+          <li>
+            <div class="ico g">+</div>
+            <div><strong>Plateforme e-learning sur mesure</strong><br><span class="detail">Construire le LMS du programme : modules en ligne, quiz adaptatifs, suivi de progression, generation de certificats. Les OF locaux n'ont generalement pas ca.</span></div>
+          </li>
+          <li>
+            <div class="ico a">$</div>
+            <div><strong>Potentiel</strong><br><span class="detail">Sous-traitance plateforme + module IA : 1-3M XPF. Et c'est un marche de 4 ans — revenus recurrents.</span></div>
+          </li>
+        </ul>
+        <div class="score-row">
+          <span class="score-label">Pertinence PACIFIK'AI</span>
+          <div class="score-bar"><div class="score-fill low" style="width:35%"></div></div>
+          <span class="score-val low">35%</span>
+        </div>
+        <div class="btns">
+          <a href="https://lexpol.cloud.pf/LexpolAfficheAnnonceMP.php?t=290998" target="_blank" class="btn primary">Voir l'annonce Lexpol</a>
+          <a href="mailto:marches.publics@sefi.pf?subject=DCE%20-%20Formation%20entrepreneurs%20Tereheamanu" class="btn ghost">Demander le DCE</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- AO 4: PLAN GESTION LAGON RANGIROA -->
+<!-- ============================================================ -->
+<div class="card">
+  <div class="card-top">
+    <div class="card-left">
+      <div class="badges">
+        <span class="b orange">Sous-traitance</span>
+        <span class="b cyan">Environnement / Data</span>
+        <span class="b green">J-19</span>
+      </div>
+      <h2>Plan de gestion du lagon de Rangiroa</h2>
+      <div class="sub">Commune de Rangiroa via SIVMTG &mdash; Tuamotu</div>
+    </div>
+    <div class="card-right">
+      <div class="pill"><div class="pl">Deadline</div><div class="pv ok">03/04</div></div>
+      <div class="pill"><div class="pl">Procedure</div><div class="pv">AO ouvert</div></div>
+      <div class="pill"><div class="pl">Validite</div><div class="pv">120j</div></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="card-body">
+
+    <div class="sec">
+      <div class="sec-title">Ce que ca veut dire concretement</div>
+      <div class="explain">
+        Rangiroa = <strong>2e plus grand atoll du monde</strong>. La commune veut un <strong>plan de gestion pour proteger et reguler l'usage de son lagon</strong>. C'est un gros enjeu ecologique et economique (plongee, perliculture, peche, tourisme).<br><br>
+        Le prestataire devra :<br>
+        &bull; <em>Etat des lieux ecologique</em> : biodiversite marine, qualite de l'eau, pressions humaines<br>
+        &bull; <em>Cartographie des usages</em> : zones de peche, mouillages, fermes perlieres, sites de plongee, passes<br>
+        &bull; <em>Concertation locale</em> : reunions avec pecheurs, plongeurs, perliculteurs, associations, tavana<br>
+        &bull; <em>Zonage propose</em> : rahui (zones protegees), zones d'activite, regles d'usage<br>
+        &bull; <em>Plan de gestion final</em> : document officiel avec reglementation, suivi, indicateurs<br><br>
+        <strong>Budget estime</strong> : 10-25M XPF. C'est un AO ouvert (pas un MAPA), donc marche formel avec garanties.<br>
+        <strong>Profil recherche</strong> : bureau d'etude en environnement marin avec experience Pacifique. Creocean, Pae Tai Pae Uta, IRD, etc.
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title">Infos officielles</div>
+      <dl class="dg">
+        <dt>Annonce</dt><dd>n&deg; 37888096</dd>
+        <dt>Acheteur</dt><dd>Commune de Rangiroa, via SIVMTG</dd>
+        <dt>Contact tech</dt><dd><a href="mailto:technique@sivmtg.pf">technique@sivmtg.pf</a> — 40 503 888</dd>
+        <dt>Depot plis</dt><dd>SIVMTG, Immeuble Faremiro, Av. Prince Hinoi, 5e etage, Papeete</dd>
+        <dt>Recours</dt><dd>Tribunal administratif PF, 40 50 90 25</dd>
+      </dl>
+    </div>
+
+    <div class="sec">
+      <div class="strat">
+        <h3>Ce que PACIFIK'AI peut proposer</h3>
+        <ul class="strat-list">
+          <li>
+            <div class="ico o">!</div>
+            <div><strong>On ne peut PAS repondre seul</strong><br><span class="detail">C'est un marche d'expertise environnementale marine. Il faut des biologistes marins, des experts en gestion de ressources, des plongeurs scientifiques. Pas notre metier.</span></div>
+          </li>
+          <li>
+            <div class="ico c">→</div>
+            <div><strong>Sous-traitant tech d'un BET environnement</strong><br><span class="detail">Proposer a Creocean PF ou Pae Tai Pae Uta notre brique technologique : SIG interactif, plateforme de collecte de donnees, visualisation.</span></div>
+          </li>
+          <li>
+            <div class="ico g">+</div>
+            <div><strong>Plateforme cartographique interactive</strong><br><span class="detail">Carte du lagon avec toutes les couches (usages, biodiversite, rahui, pressions). Accessible aux elus et a la population. Version mobile pour les pecheurs. C'est exactement le type d'outil que les BET ne savent pas construire eux-memes.</span></div>
+          </li>
+          <li>
+            <div class="ico a">$</div>
+            <div><strong>Potentiel</strong><br><span class="detail">2-5M XPF en sous-traitance plateforme. Et c'est duplicable pour d'autres atolls (Fakarava, Tikehau, Ahe — tous auront besoin de plans de gestion).</span></div>
+          </li>
+        </ul>
+        <div class="score-row">
+          <span class="score-label">Pertinence PACIFIK'AI</span>
+          <div class="score-bar"><div class="score-fill low" style="width:30%"></div></div>
+          <span class="score-val low">30%</span>
+        </div>
+        <div class="btns">
+          <a href="https://lexpol.cloud.pf/LexpolAfficheAnnonceMP.php?t=291087" target="_blank" class="btn primary">Voir l'annonce Lexpol</a>
+          <a href="mailto:technique@sivmtg.pf?subject=Plan%20gestion%20lagon%20Rangiroa%20-%20Proposition%20partenariat%20technique" class="btn ghost">Contacter le SIVMTG</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- AO 5: CARTOGRAPHIE COMPÉTENCES (EXPIRÉ) -->
+<!-- ============================================================ -->
+<div class="card" style="opacity:.7">
+  <div class="card-top">
+    <div class="card-left">
+      <div class="badges">
+        <span class="b red">Expire demain 16/03</span>
+        <span class="b accent">RH / Assessment</span>
+      </div>
+      <h2>Cartographie des competences & potentiel manager</h2>
+      <div class="sub">Centre de Gestion et de Formation (CGF)</div>
+    </div>
+    <div class="card-right">
+      <div class="pill"><div class="pl">Deadline</div><div class="pv urgent">16/03</div></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="card-body">
+
+    <div class="sec">
+      <div class="sec-title">Ce que ca veut dire concretement</div>
+      <div class="explain">
+        Le CGF (organisme qui gere les agents de la fonction publique PF) veut <strong>evaluer les competences relationnelles et le potentiel managerial</strong> de ses agents/stagiaires avec des <strong>tests psychometriques</strong> (type MBTI, DISC, Hogan, Assessment Center).<br><br>
+        Ca couvre :<br>
+        &bull; <em>Passation de tests</em> : faire passer des tests de personnalite et competences sociales<br>
+        &bull; <em>Analyse des resultats</em> : profils individuels, mapping des competences, scoring potentiel manager<br>
+        &bull; <em>Restitution</em> : entretiens individuels + rapport pour le CGF<br>
+        &bull; <em>Outils certifies</em> : le CGF veut probablement des outils psychometriques valides scientifiquement (pas un quiz maison)<br><br>
+        <strong>Profil recherche</strong> : psychologue du travail ou cabinet RH avec certifications sur les outils d'assessment. Marche niche.
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="strat">
+        <h3>A surveiller pour la prochaine fois</h3>
+        <ul class="strat-list">
+          <li>
+            <div class="ico y">!</div>
+            <div><strong>Trop tard pour cette fois</strong><br><span class="detail">Deadline demain 16/03 a 11h — impossible de monter un dossier.</span></div>
+          </li>
+          <li>
+            <div class="ico g">→</div>
+            <div><strong>Opportunite future forte</strong><br><span class="detail">Le CGF relance regulierement ce type de marche. PACIFIK'AI pourrait construire une plateforme d'assessment IA (analyse video d'entretien, tests adaptatifs, dashboard RH predictif) et la proposer au prochain renouvellement. C'est un marche ou notre tech IA ferait une vraie difference.</span></div>
+          </li>
+        </ul>
+        <div class="btns">
+          <a href="https://lexpol.cloud.pf/LexpolAfficheAnnonceMP.php?t=290131" target="_blank" class="btn ghost">Voir l'annonce (expiree)</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- AO 6: INFOGÉRANCE COLLÈGE HITIAA (EXPIRÉ) -->
+<!-- ============================================================ -->
+<div class="card" style="opacity:.7">
+  <div class="card-top">
+    <div class="card-left">
+      <div class="badges">
+        <span class="b red">Expire demain 16/03</span>
+        <span class="b accent">IT / Infogerance</span>
+      </div>
+      <h2>Infogerance informatique — College de Hitia'a</h2>
+      <div class="sub">College de Hitia'a O Te Ra &mdash; Presqu'ile</div>
+    </div>
+    <div class="card-right">
+      <div class="pill"><div class="pl">Deadline</div><div class="pv urgent">16/03</div></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="card-body">
+
+    <div class="sec">
+      <div class="sec-title">Ce que ca veut dire concretement</div>
+      <div class="explain">
+        <strong>Meme chose que le Lycee Tuianu Le Gayic</strong> — un college qui cherche un prestataire IT pour gerer son parc informatique. College = probablement plus petit (30-80 postes), mais meme type de besoins : maintenance, reseau, support, comptes.<br><br>
+        <strong>Point cle</strong> : ca confirme qu'il y a un <strong>marche recurrent d'infogerance dans l'Education</strong> en PF. Chaque college et lycee a besoin de ca, et les contrats arrivent a echeance regulierement.
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="strat">
+        <h3>A surveiller — strategie sectorielle</h3>
+        <ul class="strat-list">
+          <li>
+            <div class="ico y">!</div>
+            <div><strong>Trop tard pour cette fois</strong><br><span class="detail">Deadline 16/03 a minuit.</span></div>
+          </li>
+          <li>
+            <div class="ico g">→</div>
+            <div><strong>Prospecter le secteur Education</strong><br><span class="detail">Il y a 30+ colleges et 15+ lycees en PF. Chacun a un marche d'infogerance qui se renouvelle tous les 1-3 ans. Au lieu d'attendre les AO sur Lexpol, contacter directement les proviseurs et principaux avec une offre standardisee PACIFIK'AI.</span></div>
+          </li>
+          <li>
+            <div class="ico c">+</div>
+            <div><strong>Template de reponse</strong><br><span class="detail">Preparer un dossier de candidature type pour l'infogerance scolaire (CV, references, methodo, BPU) reutilisable pour chaque AO. Ca prend 2h au lieu de 2 jours quand un nouvel AO sort.</span></div>
+          </li>
+        </ul>
+        <div class="btns">
+          <a href="https://lexpol.cloud.pf/LexpolAfficheAnnonceMP.php?t=289826" target="_blank" class="btn ghost">Voir l'annonce (expiree)</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEXT STEPS -->
+<!-- ============================================================ -->
+<div class="next">
+  <h2>Prochaines etapes</h2>
+  <ol>
+    <li><strong>Demander le DCE du Lycee Tuianu Le Gayic</strong><br><span>Email a direction@lycpapa.education.pf AUJOURD'HUI. C'est le seul AO ou on peut repondre en direct, et la deadline est dans 10 jours.</span></li>
+    <li><strong>Preparer un template de reponse "Infogerance scolaire"</strong><br><span>Dossier type reutilisable : presentation PACIFIK'AI, methodologie, outils (monitoring, ticketing, reporting), engagement SLA, BPU. Reutilisable pour CHAQUE futur AO college/lycee.</span></li>
+    <li><strong>Mettre en place une alerte Lexpol automatique</strong><br><span>Scraper Lexpol chaque semaine avec des mots-cles : "informatique", "infogerance", "numerique", "digital", "formation", "conseil". Notification automatique quand un AO pertinent sort.</span></li>
+    <li><strong>Contacter les cabinets pour la strategie touristique</strong><br><span>Si on veut le marche du Service du Tourisme, il faut identifier QUI va repondre et se positionner en sous-traitant tech MAINTENANT (deadline J-12).</span></li>
+    <li><strong>Lister les etablissements scolaires de PF</strong><br><span>Construire une base de donnees des colleges/lycees avec : nom, adresse, email, proviseur/principal, date prevue de renouvellement infogerance. Demarcher en direct AVANT les AO.</span></li>
+  </ol>
+</div>
+
+<div class="footer">
+  <p>Source : <a href="https://lexpol.cloud.pf/LexpolMarchesPublics.php" target="_blank">lexpol.cloud.pf</a> — Genere par PACIFIK'AI le 15/03/2026 — 42 AO scrapes, 6 filtres</p>
+</div>
+
+</div>
+</body>
+</html>

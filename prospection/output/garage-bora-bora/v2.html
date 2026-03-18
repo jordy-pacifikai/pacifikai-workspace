@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Garage Bora Bora — Le seul garage automobile de Bora Bora. Mécanique générale, climatisation, freinage et entretien toutes marques.">
+  <meta name="theme-color" content="#121009">
+  <meta property="og:title" content="Garage Bora Bora — Votre mécanicien au paradis">
+  <meta property="og:description" content="Le seul garage automobile de Bora Bora. Mécanique générale, climatisation, freinage et entretien toutes marques.">
+  <meta property="og:image" content="hero.jpg">
+  <meta property="og:type" content="website">
+  <title>Garage Bora Bora — Votre mécanicien au paradis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #121009;
+      --bg-light: #1a1710;
+      --accent: #E8A838;
+      --accent-glow: rgba(232, 168, 56, 0.15);
+      --text: #F5F0E8;
+      --text-muted: #a89e8c;
+      --glass: rgba(18, 16, 9, 0.65);
+      --glass-border: rgba(232, 168, 56, 0.12);
+      --radius: 20px;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Montserrat', system-ui, sans-serif;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal-left, .reveal-right, .reveal-scale { opacity: 1 !important; transform: none !important; }
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+      background: var(--accent);
+      color: var(--bg);
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      position: relative;
+      z-index: 100;
+    }
+    .disclaimer a { color: var(--bg); text-decoration: underline; }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 90;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--glass-border);
+      transition: padding 0.4s ease, background 0.4s ease;
+    }
+    .nav-logo {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 24px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .menu-toggle span {
+      display: block; width: 24px; height: 2px;
+      background: var(--accent); margin: 5px 0;
+      transition: all 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta-desktop { display: none; }
+      .menu-toggle { display: block; }
+      nav { padding: 14px 20px; }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('hero.jpg') center/cover no-repeat;
+      filter: brightness(0.35) saturate(0.8);
+      transform: scale(1.05);
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(18,16,9,0.7) 0%,
+        rgba(18,16,9,0.3) 40%,
+        rgba(18,16,9,0.5) 70%,
+        rgba(18,16,9,0.95) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+    }
+    .hero-badge {
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 8px 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      border-radius: 2px;
+      animation: fadeInDown 0.8s ease both;
+    }
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      animation: fadeInUp 1s ease 0.2s both;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+      animation: fadeInUp 1s ease 0.4s both;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 1s ease 0.6s both;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      padding: 16px 40px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(232, 168, 56, 0.3);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      padding: 16px 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border: 1px solid var(--text-muted);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      animation: fadeInUp 1s ease 1s both;
+    }
+    .hero-scroll::after {
+      content: '';
+      width: 1px; height: 40px;
+      background: linear-gradient(var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── Section Utility ── */
+    section { padding: clamp(64px, 10vw, 128px) clamp(20px, 5vw, 64px); }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      display: inline-block;
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* ── Services ── */
+    .services { background: var(--bg); }
+    .services-header { text-align: center; margin-bottom: 64px; }
+    .services-header .section-desc { margin: 0 auto; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .service-card {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      cursor: pointer;
+      group: true;
+    }
+    .service-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.6s ease, filter 0.6s ease;
+    }
+    .service-card:hover .service-card-bg {
+      transform: scale(1.08);
+      filter: brightness(0.5);
+    }
+    .service-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(18,16,9,0.95) 0%, rgba(18,16,9,0.3) 50%, transparent 100%);
+    }
+    .service-card-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 32px;
+      z-index: 2;
+    }
+    .service-card-icon {
+      width: 48px; height: 48px;
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+    .service-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .service-card p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+    .service-card:hover p { max-height: 100px; opacity: 1; }
+    .service-card:nth-child(1) .service-card-bg { background-image: url('mechanic.jpg'); }
+    .service-card:nth-child(2) .service-card-bg { background-image: url('tools.jpg'); }
+    .service-card:nth-child(3) .service-card-bg { background-image: url('exterior.jpg'); }
+    .service-card:nth-child(4) .service-card-bg { background-image: url('paradise.jpg'); }
+
+    /* ── Quote ── */
+    .quote-section {
+      background: var(--bg-light);
+      text-align: center;
+      position: relative;
+    }
+    .quote-section::before {
+      content: '\201C';
+      font-family: var(--font-serif);
+      font-size: 12rem;
+      color: var(--accent);
+      opacity: 0.08;
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      line-height: 1;
+    }
+    .quote-text {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-style: italic;
+      line-height: 1.5;
+      max-width: 700px;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+    .quote-author {
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+    .quote-role {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    /* ── Stats ── */
+    .stats-section { background: var(--bg); }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      margin-bottom: 64px;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 32px 16px;
+      background: var(--bg-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .stat-item:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+    .info-card {
+      padding: 32px;
+      background: var(--bg-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: border-color 0.3s ease;
+    }
+    .info-card:hover { border-color: var(--accent); }
+    .info-icon {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      background: var(--accent-glow);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+    .info-card h4 {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .info-card p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; }
+
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Gallery ── */
+    .gallery-section { background: var(--bg-light); }
+    .gallery-header { text-align: center; margin-bottom: 48px; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 16px;
+    }
+    .gallery-item {
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+      display: block;
+    }
+    .gallery-item:hover img { transform: scale(1.05); }
+    .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+    .gallery-item:nth-child(1) img { aspect-ratio: 4/3; }
+    .gallery-item:nth-child(2) img,
+    .gallery-item:nth-child(3) img { aspect-ratio: 1/1; }
+
+    @media (max-width: 640px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-item:nth-child(1) { grid-column: span 1; grid-row: span 1; }
+      .gallery-item img { aspect-ratio: 16/9 !important; }
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      background:
+        linear-gradient(135deg, rgba(18,16,9,0.92), rgba(18,16,9,0.85)),
+        url('paradise.jpg') center/cover no-repeat;
+      text-align: center;
+      position: relative;
+    }
+    .cta-section .section-title span { color: var(--accent); }
+    .cta-section .section-desc { margin: 0 auto 40px; }
+    .cta-phone {
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 32px;
+      transition: opacity 0.3s ease;
+    }
+    .cta-phone:hover { opacity: 0.8; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--glass-border);
+      padding: 48px clamp(20px, 5vw, 64px);
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-brand {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .footer-brand small {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 4px;
+    }
+    .footer-info {
+      display: flex;
+      gap: 32px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .footer-credit {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--glass-border);
+      background: var(--bg);
+    }
+    .footer-credit a { color: var(--accent); text-decoration: none; }
+
+    /* ── Reveal Animations (CSS only) ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      animation: revealUp 0.8s ease forwards;
+      animation-play-state: paused;
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      animation: revealLeft 0.8s ease forwards;
+      animation-play-state: paused;
+    }
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.95);
+      animation: revealScale 0.8s ease forwards;
+      animation-play-state: paused;
+    }
+
+    /* Intersection-free reveal: stagger via animation-delay + timeline */
+    .reveal.in-view,
+    .reveal-left.in-view,
+    .reveal-scale.in-view { animation-play-state: running; }
+
+    /* Fallback: auto-play after page load with staggered delays */
+    .services-grid .service-card:nth-child(1) { animation: revealUp 0.8s ease 0.1s both; }
+    .services-grid .service-card:nth-child(2) { animation: revealUp 0.8s ease 0.2s both; }
+    .services-grid .service-card:nth-child(3) { animation: revealUp 0.8s ease 0.3s both; }
+    .services-grid .service-card:nth-child(4) { animation: revealUp 0.8s ease 0.4s both; }
+
+    .stats-grid .stat-item:nth-child(1) { animation: revealUp 0.7s ease 0.1s both; }
+    .stats-grid .stat-item:nth-child(2) { animation: revealUp 0.7s ease 0.2s both; }
+    .stats-grid .stat-item:nth-child(3) { animation: revealUp 0.7s ease 0.3s both; }
+    .stats-grid .stat-item:nth-child(4) { animation: revealUp 0.7s ease 0.4s both; }
+
+    .info-grid .info-card:nth-child(1) { animation: revealUp 0.7s ease 0.15s both; }
+    .info-grid .info-card:nth-child(2) { animation: revealUp 0.7s ease 0.25s both; }
+    .info-grid .info-card:nth-child(3) { animation: revealUp 0.7s ease 0.35s both; }
+    .info-grid .info-card:nth-child(4) { animation: revealUp 0.7s ease 0.45s both; }
+    .info-grid .info-card:nth-child(5) { animation: revealUp 0.7s ease 0.55s both; }
+
+    /* ── Keyframes ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes revealLeft {
+      from { opacity: 0; transform: translateX(-40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes revealScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; transform: scaleY(1); }
+      50% { opacity: 0.5; transform: scaleY(0.6); }
+    }
+
+    /* ── Gold line accent ── */
+    .gold-line {
+      width: 60px;
+      height: 2px;
+      background: var(--accent);
+      margin: 24px auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    Site de d&eacute;monstration &mdash; Concept r&eacute;alis&eacute; par PACIFIK'AI. Ce site n'est pas affili&eacute; &agrave; l'entreprise pr&eacute;sent&eacute;e.
+    <a href="https://pacifikai.com/offre-site-web">En savoir plus</a>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#" class="nav-logo">Garage Bora Bora</a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#confiance">Confiance</a></li>
+      <li><a href="#galerie">Galerie</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="tel:+68940677003" class="nav-cta nav-cta-desktop">Appeler</a>
+    <button class="menu-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="accueil">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Le seul garage de Bora Bora</div>
+      <h1>Garage <span>Bora Bora</span></h1>
+      <p>Votre m&eacute;canicien au paradis. M&eacute;canique g&eacute;n&eacute;rale, climatisation, freinage et entretien toutes marques sur l'&icirc;le la plus belle du monde.</p>
+      <div class="hero-actions">
+        <a href="tel:+68940677003" class="btn-primary">Appeler maintenant</a>
+        <a href="#services" class="btn-secondary">Nos services</a>
+      </div>
+    </div>
+    <div class="hero-scroll">Scroll</div>
+  </section>
+
+  <!-- Services -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="services-header">
+        <span class="section-label">Nos expertises</span>
+        <h2 class="section-title">Un service complet<br>pour votre v&eacute;hicule</h2>
+        <p class="section-desc">De la r&eacute;paration moteur &agrave; la recharge clim, nous intervenons sur toutes les marques avec pi&egrave;ces livr&eacute;es directement sur l'&icirc;le.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-card-bg"></div>
+          <div class="service-card-overlay"></div>
+          <div class="service-card-content">
+            <div class="service-card-icon">&#9881;</div>
+            <h3>M&eacute;canique G&eacute;n&eacute;rale</h3>
+            <p>Diagnostic &eacute;lectronique, r&eacute;paration moteur, embrayage, bo&icirc;te de vitesses. Toutes marques.</p>
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="service-card-bg"></div>
+          <div class="service-card-overlay"></div>
+          <div class="service-card-content">
+            <div class="service-card-icon">&#10052;</div>
+            <h3>Climatisation</h3>
+            <p>Recharge gaz, diagnostic fuites, r&eacute;paration compresseur. Indispensable sous les tropiques.</p>
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="service-card-bg"></div>
+          <div class="service-card-overlay"></div>
+          <div class="service-card-content">
+            <div class="service-card-icon">&#9899;</div>
+            <h3>Freinage</h3>
+            <p>Remplacement plaquettes et disques, purge circuit, contr&ocirc;le &eacute;tat g&eacute;n&eacute;ral du syst&egrave;me.</p>
+          </div>
+        </div>
+        <div class="service-card">
+          <div class="service-card-bg"></div>
+          <div class="service-card-overlay"></div>
+          <div class="service-card-content">
+            <div class="service-card-icon">&#9883;</div>
+            <h3>Entretien</h3>
+            <p>Vidange, filtres, courroies, bougies. Entretien r&eacute;gulier pour la long&eacute;vit&eacute; de votre v&eacute;hicule.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quote -->
+  <section class="quote-section">
+    <div class="container">
+      <p class="quote-text">Ici, chaque voiture m&eacute;rite la m&ecirc;me attention qu'un h&ocirc;te dans un palace. Nous traitons votre v&eacute;hicule avec soin, efficacit&eacute; et honn&ecirc;tet&eacute;.</p>
+      <div class="gold-line"></div>
+      <p class="quote-author">Garage Bora Bora</p>
+      <p class="quote-role">Votre m&eacute;canicien de confiance depuis toujours</p>
+    </div>
+  </section>
+
+  <!-- Stats + Trust -->
+  <section class="stats-section" id="confiance">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">N&deg;1</div>
+          <div class="stat-label">Seul garage de Bora Bora</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Toutes marques</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">360&deg;</div>
+          <div class="stat-label">D&eacute;pannage toute l'&icirc;le</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">0 F</div>
+          <div class="stat-label">Devis gratuit</div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-icon">&#9873;</div>
+          <div>
+            <h4>Seul atelier de l'&icirc;le</h4>
+            <p>Aucun autre garage sur Bora Bora. Nous sommes l&agrave; pour vous.</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">&#9888;</div>
+          <div>
+            <h4>D&eacute;pannage et remorquage</h4>
+            <p>Intervention rapide partout sur l'&icirc;le, 7j/7.</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">&#9992;</div>
+          <div>
+            <h4>Pi&egrave;ces livr&eacute;es rapidement</h4>
+            <p>R&eacute;seau de fournisseurs pour des pi&egrave;ces disponibles vite.</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">&#9733;</div>
+          <div>
+            <h4>Tarifs honn&ecirc;tes</h4>
+            <p>Devis gratuit, prix transparents, pas de surprise.</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">&#9962;</div>
+          <div>
+            <h4>Particuliers &amp; h&ocirc;tels</h4>
+            <p>Au service des r&eacute;sidents comme des &eacute;tablissements h&ocirc;teliers.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="gallery-section" id="galerie">
+    <div class="container">
+      <div class="gallery-header">
+        <span class="section-label">Notre atelier</span>
+        <h2 class="section-title">Un garage au c&oelig;ur du paradis</h2>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="exterior.jpg" alt="Vue ext&eacute;rieure du Garage Bora Bora" loading="lazy">
+        </div>
+        <div class="gallery-item">
+          <img src="mechanic.jpg" alt="M&eacute;canicien au travail" loading="lazy">
+        </div>
+        <div class="gallery-item">
+          <img src="tools.jpg" alt="Outils et &eacute;quipement professionnel" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="contact">
+    <div class="container">
+      <span class="section-label">Prenez rendez-vous</span>
+      <h2 class="section-title">Votre voiture a besoin<br>d'<span>attention</span> ?</h2>
+      <p class="section-desc">Appelez-nous pour un diagnostic gratuit. Nous intervenons sur toute l'&icirc;le de Bora Bora.</p>
+      <a href="tel:+68940677003" class="cta-phone">+689 40 67 70 03</a>
+      <br>
+      <a href="tel:+68940677003" class="btn-primary">Appeler le garage</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        Garage Bora Bora
+        <small>Votre m&eacute;canicien au paradis</small>
+      </div>
+      <div class="footer-info">
+        <span>+689 40 67 70 03</span>
+        <span>Bora Bora, Polyn&eacute;sie fran&ccedil;aise</span>
+      </div>
+    </div>
+  </footer>
+  <div class="footer-credit">
+    Concept r&eacute;alis&eacute; par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a> &mdash; Agence IA &amp; Web en Polyn&eacute;sie fran&ccedil;aise
+  </div>
+
+</body>
+</html>

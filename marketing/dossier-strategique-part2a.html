@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossier Stratégique IA - Partie 2A | PACIFIK'AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #0a1628;
+            --navy-light: #132240;
+            --navy-mid: #1a2d4a;
+            --gold: #c8a456;
+            --gold-light: #d4b978;
+            --gold-dark: #a68935;
+            --cream: #f5f0e8;
+            --cream-dark: #e8e0d0;
+            --white: #ffffff;
+            --text: #2a2a2a;
+            --text-light: #6b7280;
+            --red: #dc2626;
+            --orange: #ea580c;
+            --green: #16a34a;
+            --blue: #2563eb;
+            --teal: #0d9488;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            color: var(--text);
+            background: var(--cream);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--navy);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--cream);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--navy-light);
+            color: var(--gold);
+        }
+
+        .nav-link.active {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 3rem;
+            background: var(--navy);
+            color: var(--cream);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            color: var(--cream-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .header .part-number {
+            font-size: 1rem;
+            color: var(--gold-light);
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        /* Category Section */
+        .category-section {
+            page-break-before: always;
+            margin-bottom: 3rem;
+        }
+
+        .category-header {
+            background: var(--navy);
+            color: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+        }
+
+        .category-header.cat-a::before { background: var(--red); }
+        .category-header.cat-b::before { background: var(--blue); }
+        .category-header.cat-c::before { background: var(--red); }
+        .category-header.cat-d::before { background: var(--green); }
+        .category-header.cat-e::before { background: var(--teal); }
+
+        .category-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            display: inline-block;
+        }
+
+        .category-count {
+            font-size: 1rem;
+            color: var(--cream-dark);
+            font-weight: 400;
+        }
+
+        /* Solution Card */
+        .solution-card {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            border-left: 4px solid;
+        }
+
+        .solution-card.cat-a { border-left-color: var(--red); }
+        .solution-card.cat-b { border-left-color: var(--blue); }
+        .solution-card.cat-c { border-left-color: var(--red); }
+        .solution-card.cat-d { border-left-color: var(--green); }
+        .solution-card.cat-e { border-left-color: var(--teal); }
+
+        .solution-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .solution-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--navy);
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .solution-number {
+            color: var(--gold);
+            margin-right: 0.5rem;
+        }
+
+        .badges-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-price {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
+        .badge-feasibility {
+            color: var(--white);
+        }
+
+        .badge-feasibility.oui {
+            background: var(--green);
+        }
+
+        .badge-feasibility.partiel {
+            background: var(--orange);
+        }
+
+        .buyer-tag {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .buyer-tag::before {
+            content: "👤 ";
+        }
+
+        /* Solution Sections */
+        .solution-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .section-content {
+            padding-left: 1.75rem;
+            color: var(--text);
+        }
+
+        .section-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .section-content ul li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .section-content ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        /* Estimation Callout */
+        .estimation-callout {
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--gold-dark);
+        }
+
+        .estimation-callout .title {
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+        }
+
+        .estimation-callout .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        /* Impact Stats */
+        .impact-stats {
+            background: var(--cream);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .impact-stats ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-highlight {
+            background: var(--gold-light);
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 2px solid var(--gold);
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--gold);
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            .nav-bar {
+                display: none;
+            }
+            .container {
+                max-width: 100%;
+                padding: 1rem;
+            }
+            .category-section {
+                page-break-before: always;
+            }
+            .solution-card {
+                page-break-inside: avoid;
+            }
+        }
+
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-logo">PACIFIK'AI</div>
+        <div class="nav-links">
+            <a href="dossier-strategique-part1.html" class="nav-link">Partie 1</a>
+            <a href="dossier-strategique-part2a.html" class="nav-link active">Partie 2A</a>
+            <a href="dossier-strategique-part2b.html" class="nav-link">Partie 2B</a>
+            <a href="dossier-strategique-part3.html" class="nav-link">Partie 3</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Opportunités IA en Polynésie Française</h1>
+            <div class="subtitle">Dossier Stratégique - Analyse Complète</div>
+            <div class="part-number">PARTIE 2A - SOLUTIONS A-E (13 SOLUTIONS)</div>
+        </header>
+
+        <!-- CATEGORIE A: FINANCES ET FRAUDE -->
+        <section class="category-section">
+            <div class="category-header cat-a">
+                <h2 class="category-title">
+                    <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    CATÉGORIE A - FINANCES ET FRAUDE
+                </h2>
+                <div class="category-count">2 solutions | Impact budgétaire majeur</div>
+            </div>
+
+            <!-- A1 -->
+            <article class="solution-card cat-a">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">A1.</span>
+                        Plateforme Anti-Fraude Douanière et Fiscale IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">30-80M F CFP (250-670K EUR)</span>
+                        <span class="badge badge-feasibility oui">Faisabilité: OUI</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">Direction des Douanes + DICP</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        254 Mds F CFP d'importations avec un taux de couverture de 8,9%. Même 1% de fraude = 2,5 Mds F CFP non perçus. Sous-déclaration de valeur, classification tarifaire incorrecte, circuits de contournement.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Analyse IA des déclarations douanières (anomalies valeur/poids/origine)</li>
+                            <li>Scoring de risque automatique par importateur et par conteneur</li>
+                            <li>Détection des patterns de fraude (séries temporelles, clustering)</li>
+                            <li>Dashboard temps réel pour les agents des douanes</li>
+                            <li>Alertes automatiques sur les déclarations suspectes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>Autriche: <span class="stat-highlight">185M EUR récupérés en 1 an</span> (analyse de 6,5M de cas)</li>
+                                <li>US Treasury: <span class="stat-highlight">4 Mds USD récupérés</span> (FY2024)</li>
+                                <li>Madagascar: déploiement douanes IA en cours (10 ans de données)</li>
+                                <li>ROI moyen gouvernemental: <span class="stat-highlight">451-791% sur 5 ans</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="estimation-callout">
+                    <div class="title">🎯 Estimation Polynésie Française</div>
+                    <div class="value">Si on récupère 0,5% des importations = 1,27 Mds F CFP/an</div>
+                </div>
+            </article>
+
+            <!-- A2 -->
+            <article class="solution-card cat-a">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">A2.</span>
+                        Détection Fraude Sociale CPS
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">25-60M F CFP (200-500K EUR)</span>
+                        <span class="badge badge-feasibility oui">Faisabilité: OUI</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">CPS (Caisse de Prévoyance Sociale)</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        La CPS couvre quasi toute la population (280K assurés). Les dépenses santé sont énormes (22% diabète = coûts colossaux). Fraude estimée 1-5% des dépenses.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Analyse IA des remboursements (optique, dentaire, pharmacie, consultations)</li>
+                            <li>Détection patterns anormaux: fréquence, montants, combinaisons suspectes</li>
+                            <li>Scoring de risque par assuré et par prescripteur</li>
+                            <li>Alertes en temps réel pour les contrôleurs CPS</li>
+                            <li>Dashboard investigation avec timeline patient</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>France CPAM Paris (2025): <span class="stat-highlight">125 cas détectés en phase test</span>, centaines de milliers EUR</li>
+                                <li>UK NHS: <span class="stat-highlight">480M GBP récupérés en 1 an</span> via IA (FRAA)</li>
+                                <li>US CMS: <span class="stat-highlight">141M USD économisés en 8 mois</span> (refus automatisé réclamations)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="estimation-callout">
+                    <div class="title">🎯 Estimation Polynésie Française</div>
+                    <div class="value">Si dépenses santé CPS ~100 Mds XPF et fraude 1% = 1 Md F CFP/an récupérable</div>
+                </div>
+            </article>
+        </section>
+
+        <!-- CATEGORIE B: SERVICES CITOYENS -->
+        <section class="category-section">
+            <div class="category-header cat-b">
+                <h2 class="category-title">
+                    <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    CATÉGORIE B - SERVICES CITOYENS ET ADMINISTRATION
+                </h2>
+                <div class="category-count">3 solutions | Amélioration accès services publics</div>
+            </div>
+
+            <!-- B1 -->
+            <article class="solution-card cat-b">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">B1.</span>
+                        Assistant Virtuel Citoyen "E-FENUA"
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">20-60M F CFP (170-500K EUR)</span>
+                        <span class="badge badge-feasibility oui">Faisabilité: OUI</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">DGEN / Présidence</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        Démarches administratives complexes (CPS, impôts, état civil, permis, aides sociales). Les îles éloignées n'ont quasi aucun guichet. Les horaires sont limités.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Chatbot IA multicanal (WhatsApp, Messenger, web, SMS)</li>
+                            <li>Guide les citoyens 24/7 dans leurs démarches</li>
+                            <li>Français + reo tahiti (même basique)</li>
+                            <li>Connecté aux bases du Pays (CPS, état civil, impôts)</li>
+                            <li>Escalade vers agent humain si besoin</li>
+                            <li>FAQ dynamique enrichie par IA générative</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>Singapour VICA/Kaki: <span class="stat-highlight">+40% capacité de traitement</span></li>
+                                <li>Estonie Burokratt: <span class="stat-highlight">3 000 e-services via un canal unique</span> (budget 13M EUR sur 4 ans)</li>
+                                <li>France ameliBot: <span class="stat-highlight">-50% trafic email Sécu</span></li>
+                                <li>S'inscrit dans: Programme Smart Polynesia (70 mesures transition numérique)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- B2 -->
+            <article class="solution-card cat-b">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">B2.</span>
+                        Traitement Automatique Documents Administratifs (IDP)
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">15-40M F CFP (125-335K EUR)</span>
+                        <span class="badge badge-feasibility oui">Faisabilité: OUI</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">DSI</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        Milliers de dossiers papier (permis de construire, déclarations douanières, demandes CPS, aides sociales). Délais longs, erreurs de saisie, dossiers incomplets.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>OCR + IA pour extraction automatique de données des formulaires</li>
+                            <li>Classification et routage automatique des dossiers</li>
+                            <li>Vérification de complétude (documents manquants)</li>
+                            <li>Workflow d'approbation digitalisé</li>
+                            <li>Dashboard suivi des dossiers en temps réel</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>UK HM Land Registry: <span class="stat-highlight">transactions quasi-instantanées</span></li>
+                                <li>Agences US: <span class="stat-highlight">-60% temps de traitement</span></li>
+                                <li>IDP réduit les erreurs de saisie de <span class="stat-highlight">80-95%</span></li>
+                                <li>S'inscrit dans: Dématérialisation Te Ariari (obligatoire progressivement 2025-2027)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- B3 -->
+            <article class="solution-card cat-b">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">B3.</span>
+                        Chatbot CPS pour Assurés
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">10-25M F CFP (80-200K EUR)</span>
+                        <span class="badge badge-feasibility oui">Faisabilité: OUI</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">CPS</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        280K assurés, guichets surchargés, questions répétitives sur les remboursements, droits, démarches.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Chatbot IA 24/7 (web + WhatsApp/Messenger)</li>
+                            <li>Guide les assurés: droits, remboursements, démarches</li>
+                            <li>Prise de RDV automatisée</li>
+                            <li>Suivi des demandes en cours</li>
+                            <li>Français + reo tahiti basique</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>France ameliBot: <span class="stat-highlight">-50% trafic email entrant</span></li>
+                                <li>US SSA: temps de réponse <span class="stat-highlight">7 min (vs 30+ min)</span></li>
+                                <li>Zurich Insurance: <span class="stat-highlight">-40% temps traitement</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- CATEGORIE C: SANTE PUBLIQUE -->
+        <section class="category-section">
+            <div class="category-header cat-c">
+                <h2 class="category-title">
+                    <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                    CATÉGORIE C - SANTÉ PUBLIQUE
+                </h2>
+                <div class="category-count">2 solutions | Urgence diabète et accès soins</div>
+            </div>
+
+            <!-- C1 -->
+            <article class="solution-card cat-c">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">C1.</span>
+                        Télémédecine IA Îles Éloignées
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">30-80M F CFP (250-670K EUR)</span>
+                        <span class="badge badge-feasibility partiel">Faisabilité: PARTIEL</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">DSP / Ministère Santé / CPS</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        22% diabète, 70% surpoids, quasi-zéro spécialistes dans les Tuamotu/Marquises/Gambier/Australes. Évacuations sanitaires = fortune. 1 personne sur 2 diabétiques non diagnostiquée.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Téléconsultations augmentées par IA (pré-diagnostic, tri)</li>
+                            <li>Suivi patients chroniques (diabète, hypertension) avec alertes IA</li>
+                            <li>Aide au diagnostic pour infirmiers des dispensaires isolés</li>
+                            <li>Dashboard suivi épidémiologique par île</li>
+                            <li>Mode offline/basse bande passante pour zones mal connectées</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>Marché télémédecine APAC: <span class="stat-highlight">28,5 → 215 Mds USD d'ici 2033</span> (CAGR 25,2%)</li>
+                                <li>Réduction complications diabète: <span class="stat-highlight">20-40%</span> (études pilotes Lancet Digital Health)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- C2 -->
+            <article class="solution-card cat-c">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">C2.</span>
+                        Prédiction Coûts Santé et Patients à Risque
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">20-50M F CFP (150-400K EUR)</span>
+                        <span class="badge badge-feasibility oui">Faisabilité: OUI</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">CPS / DSP</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        22% diabète = coûts énormes pour la CPS. 5-10% des patients représentent 50%+ des dépenses. Pas de détection précoce des patients à risque.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Modèle prédictif: identifier les patients à haut coût AVANT les complications</li>
+                            <li>Variables: âge, coûts actuels, hospitalisations, comorbidités</li>
+                            <li>Prévention ciblée: programmes éducation, suivi renforcé, télémédecine</li>
+                            <li>Dashboard pour décideurs CPS avec projection des coûts</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>PLOS One: <span class="stat-highlight">AUC 0.80-0.85</span> pour prédiction patients haut coût</li>
+                                <li>ML multi-institutionnel: performance supérieure aux modèles actuariels</li>
+                                <li>Réduction hospitalisations ciblées (10%) = <span class="stat-highlight">centaines de millions XPF/an</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- CATEGORIE D: ENVIRONNEMENT ET CLIMAT -->
+        <section class="category-section">
+            <div class="category-header cat-d">
+                <h2 class="category-title">
+                    <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    CATÉGORIE D - ENVIRONNEMENT ET CLIMAT
+                </h2>
+                <div class="category-count">6 solutions | Urgence climatique +15cm mini d'ici 2050</div>
+            </div>
+
+            <!-- D1 -->
+            <article class="solution-card cat-d">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">D1.</span>
+                        Monitoring Récifs Coralliens IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">25-60M F CFP (200-500K EUR)</span>
+                        <span class="badge badge-feasibility partiel">Faisabilité: PARTIEL</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">DIREN / CRIOBE / Min. Environnement</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        La PF possède la plus grande ZEE d'outre-mer (4,8M km²). Blanchissement corallien en augmentation. Le tourisme plongée dépend directement de la santé des récifs.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Capteurs température + pH + caméras sous-marines</li>
+                            <li>Prédiction blanchissement 3-6 mois à l'avance</li>
+                            <li>Détection étoiles de mer, espèces invasives</li>
+                            <li>Dashboard état des récifs par archipel + alertes</li>
+                            <li>Intégration données satellite (SST, courants)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>IA prédiction blanchissement: précision <span class="stat-highlight">85-90%</span></li>
+                                <li>Scaffolds 3D + IA: taux survie coraux <span class="stat-highlight">85% (vs 40-50% traditionnel)</span></li>
+                                <li>Protection du tourisme plongée (revenus majeurs PF)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- D2 -->
+            <article class="solution-card cat-d">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">D2.</span>
+                        Surveillance ZEE - Pêche Illégale IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">5-10M F CFP (35-90K EUR)</span>
+                        <span class="badge badge-feasibility oui">Faisabilité: OUI</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">Marine nationale / DRMM</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        5M km² de ZEE à surveiller. Moyens navals/aériens limités. Pêche illégale (IUU) estimée à 333M USD dans le Pacifique.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Intégration Global Fishing Watch (GRATUIT pour gouvernements)</li>
+                            <li>Dashboard PF custom avec alertes temps réel</li>
+                            <li>Détection "dark vessels" par radar satellite + IA</li>
+                            <li>Liaison marine nationale pour interception</li>
+                            <li>Historique et preuve pour poursuites juridiques</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>GFW: <span class="stat-highlight">75% des bateaux non tracés détectés</span> par radar IA</li>
+                                <li>Science 2025: AMP strictes = <span class="stat-highlight">9x moins de pêche illégale</span></li>
+                                <li>Quasi gratuit (GFW financé par Bloomberg/Google/DiCaprio Foundation)</li>
+                                <li>Économies patrouilles physiques: <span class="stat-highlight">millions EUR/an</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- D3 -->
+            <article class="solution-card cat-d">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">D3.</span>
+                        Alertes Cyclones et Tsunamis IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">20-50M F CFP (170-420K EUR)</span>
+                        <span class="badge badge-feasibility partiel">Faisabilité: PARTIEL</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">Sécurité Civile / Haut-Commissariat</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        Atolls Tuamotu à 3-6m d'altitude, 16K habitants. Montée des eaux +15cm mini d'ici 2050 (irréversible, NASA 2025). Cyclones plus intenses.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Modèle prédictif complémentaire à Météo-France PF</li>
+                            <li>Alertes SMS/WhatsApp géo-ciblées par île</li>
+                            <li>Dashboard risques temps réel par archipel</li>
+                            <li>Scénarios d'évacuation automatisés par atoll</li>
+                            <li>Intégration données météo + marée + houle + satellite</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>Google DeepMind GraphCast: prévision ouragan <span class="stat-highlight">9 jours à l'avance</span></li>
+                                <li>Fugaku Japon: prédiction tsunami en <span class="stat-highlight">secondes</span></li>
+                                <li>Jakarta: amélioration efficacité pompes <span class="stat-highlight">+45,4%</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- D4 -->
+            <article class="solution-card cat-d">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">D4.</span>
+                        Cartographie Risques Climatiques IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">15-40M F CFP (125-335K EUR)</span>
+                        <span class="badge badge-feasibility partiel">Faisabilité: PARTIEL</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">DIREN / Sécurité Civile / Communes</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        Montée des eaux menace infrastructures côtières. Pas de modélisation précise par zone. Les communes n'ont pas de vision des risques à 10-30 ans.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Jumeau numérique de Papeete/Faa'a + îles côtières</li>
+                            <li>Modélisation zones inondation par scénario (+15cm, +30cm, +50cm)</li>
+                            <li>Identification infrastructures critiques menacées</li>
+                            <li>Planification évacuations/relocalisations</li>
+                            <li>Dashboard interactif pour décideurs</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>NASA 2025: <span class="stat-highlight">+15cm mini d'ici 2050, IRRÉVERSIBLE</span></li>
+                                <li>Tuvalu: <span class="stat-highlight">5 → 25 jours d'inondation/an d'ici 2050</span></li>
+                                <li>Fidji: 42 villages recommandés pour relocalisation, 6 déjà déplacés</li>
+                                <li>Microsoft "Trusted AI for Resilient Infrastructure": jumeaux numériques pour villes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- D5 -->
+            <article class="solution-card cat-d">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">D5.</span>
+                        Monitoring Espèces Endémiques IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">10-30M F CFP (80-230K EUR)</span>
+                        <span class="badge badge-feasibility oui">Faisabilité: OUI</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">DIREN / Min. Environnement</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        Espèces endémiques critiques (Monarque de Tahiti, Lori ultramarin, Martin-chasseur de Niau). Suivi manuel coûteux et incomplet.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>50-100 camera-traps dans forêts de montagne</li>
+                            <li>20-50 capteurs acoustiques BirdNET (Cornell, GRATUIT)</li>
+                            <li>Intégration Wildlife Insights (Google, GRATUIT)</li>
+                            <li>Classification automatique des espèces par IA</li>
+                            <li>Dashboard suivi populations + alertes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>BirdNET: <span class="stat-highlight">&gt;90% précision</span>, 6 000+ espèces</li>
+                                <li>Wildlife Insights: <span class="stat-highlight">élimine 99% du tri manuel</span></li>
+                                <li>YOLOv8 oiseaux: <span class="stat-highlight">2% écart</span> avec comptage manuel</li>
+                                <li>Logiciels gratuits: BirdNET (open source), Wildlife Insights (Google), eBird (Cornell)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- D6 -->
+            <article class="solution-card cat-d">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">D6.</span>
+                        Suivi Populations Cétacés IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">12-50M F CFP (100-400K EUR)</span>
+                        <span class="badge badge-feasibility partiel">Faisabilité: PARTIEL</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">DIREN / Min. Environnement / Tourisme</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        Baleines à bosse (migration juillet-novembre), dauphins, cachalots. Pas de suivi systématique. Risques collision navires.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>5-10 bouées acoustiques IA (passes îles Sous-le-Vent)</li>
+                            <li>Détection temps réel + classification espèce</li>
+                            <li>Alerte whale-watching responsable (distances sécurité)</li>
+                            <li>Comptage et suivi population inter-annuel</li>
+                            <li>Dashboard données scientifiques</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>CNN acoustique: <span class="stat-highlight">97% précision</span> identification baleines à bosse (187K heures)</li>
+                                <li>Sinay.ai: prévention collisions navires-baleines</li>
+                                <li>Valorisation tourisme baleinier premium</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- CATEGORIE E: RESSOURCES NATURELLES ET INFRASTRUCTURE -->
+        <section class="category-section">
+            <div class="category-header cat-e">
+                <h2 class="category-title">
+                    <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    </svg>
+                    CATÉGORIE E - RESSOURCES NATURELLES ET INFRASTRUCTURE
+                </h2>
+                <div class="category count">4 solutions | Eau, énergie, foncier</div>
+            </div>
+
+            <!-- E1 -->
+            <article class="solution-card cat-e">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">E1.</span>
+                        Détection Fuites Réseaux Eau IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">25-60M F CFP (200-500K EUR)</span>
+                        <span class="badge badge-feasibility partiel">Faisabilité: PARTIEL</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">Communes / Direction Équipement</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        40-60% de pertes sur certaines îles (vs 14-18% moyenne US, 20% France). Eau potable = ressource critique, surtout sur les atolls sans nappe phréatique.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Capteurs IoT + compteurs intelligents sur zones pilotes</li>
+                            <li>IA analyse: détection fuites, maintenance prédictive</li>
+                            <li>Dashboard centralisé multi-îles</li>
+                            <li>Alertes temps réel contamination et fuites</li>
+                            <li>Pilote: Tahiti + 2-3 îles prioritaires</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>Atlanta USA: <span class="stat-highlight">2,4M USD économisés en 1 an</span>, -90% temps détection</li>
+                                <li>WINT.ai: <span class="stat-highlight">ROI moyen 6 mois</span></li>
+                                <li>Smart meters + IA: ROI 9-36 mois</li>
+                                <li>Passer de 50% à 25% pertes = <span class="stat-highlight">doubler l'eau facturée</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- E2 -->
+            <article class="solution-card cat-e">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">E2.</span>
+                        Dessalement Optimisé IA (Tuamotu)
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">35-100M F CFP par unité (300-800K EUR)</span>
+                        <span class="badge badge-feasibility partiel">Faisabilité: PARTIEL</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">Communes Tuamotu / Direction Équipement</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        Atolls des Tuamotu sans nappe phréatique. Dépendance eau de pluie + dessalement. Coût énergétique du dessalement = énorme (91% fossile).
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>IA optimise cycles dessalement (production solaire prévue, consommation, stockage)</li>
+                            <li>Couplage solaire/éolien + batterie + osmose inverse</li>
+                            <li>Maintenance prédictive des membranes</li>
+                            <li>Dashboard multi-sites centralisé</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>Réduction consommation énergie: <span class="stat-highlight">-30 à 50%</span></li>
+                                <li>Prolongation durée vie membranes: <span class="stat-highlight">+20-40%</span></li>
+                                <li>Juk-do Island (Corée): système autonome solaire + RO + IA</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- E3 -->
+            <article class="solution-card cat-e">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">E3.</span>
+                        Plateforme Transition Énergétique IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">20-60M F CFP (170-500K EUR)</span>
+                        <span class="badge badge-feasibility partiel">Faisabilité: PARTIEL</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">EDT / Min. Énergie / FTE</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        Tahiti = 50% ENR atteint. Objectif 75% en 2030. Îles éloignées = 91-99% fossile. Le FTE (Fonds de Transition Énergétique) est ouvert.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Prédiction production solaire/éolienne par île (météo IA)</li>
+                            <li>Optimisation mix énergétique temps réel</li>
+                            <li>Dashboard suivi transition par archipel</li>
+                            <li>Planification stockage batterie optimal</li>
+                            <li>Simulation scénarios déploiement ENR</li>
+                        </ul>
+                    </div>
+                </div>
+            </article>
+
+            <!-- E4 -->
+            <article class="solution-card cat-e">
+                <div class="solution-header">
+                    <h3 class="solution-title">
+                        <span class="solution-number">E4.</span>
+                        Gestion Foncière Numérique IA
+                    </h3>
+                    <div class="badges-group">
+                        <span class="badge badge-price">40-100M F CFP (335-840K EUR)</span>
+                        <span class="badge badge-feasibility partiel">Faisabilité: PARTIEL</span>
+                    </div>
+                </div>
+
+                <div class="buyer-tag">Direction Affaires Foncières (DAF)</div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Problème
+                    </h4>
+                    <div class="section-content">
+                        LE problème historique de la PF. Terres en indivision depuis des générations, cadastre incomplet, litiges décennaux. Bloque le développement économique.
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Solution
+                    </h4>
+                    <div class="section-content">
+                        <ul>
+                            <li>Numérisation et indexation IA du cadastre existant</li>
+                            <li>Analyse automatique titres de propriété et généalogies</li>
+                            <li>Outil résolution assistée des indivisions</li>
+                            <li>Cartographie interactive statuts fonciers par île</li>
+                            <li>Système alertes mutations et prescriptions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="solution-section">
+                    <h4 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        Impact Mesurable
+                    </h4>
+                    <div class="section-content">
+                        <div class="impact-stats">
+                            <ul>
+                                <li>UK HM Land Registry: <span class="stat-highlight">transactions quasi-instantanées</span></li>
+                                <li>Portugal BUPi: plateforme cadastrale unifiée</li>
+                                <li>Déblocage du développement économique (construction, investissement)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-logo">PACIFIK'AI</div>
+            <div>Février 2026 | Confidentiel | Page 2/4</div>
+            <div style="margin-top: 0.5rem; color: var(--gold);">
+                Dossier Stratégique - Solutions IA Polynésie Française
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funnel Closing Guide — Site Web 100K | PACIFIK'AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #080c14;
+  --bg-card: #0d1424;
+  --bg-card-hover: #111b30;
+  --bg-elevated: #141e33;
+  --accent: #f97066;
+  --accent-glow: rgba(249, 112, 102, 0.25);
+  --lagoon: #14b8a6;
+  --lagoon-glow: rgba(20, 184, 166, 0.2);
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --border: rgba(148, 163, 184, 0.08);
+  --border-active: rgba(249, 112, 102, 0.4);
+  --gold: #f59e0b;
+  --blue: #3b82f6;
+  --purple: #a855f7;
+  --green: #22c55e;
+  --pink: #ec4899;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ─── NOISE TEXTURE ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── AMBIENT GLOW ─── */
+.glow-top {
+  position: fixed;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(249,112,102,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-bottom {
+  position: fixed;
+  bottom: -300px;
+  right: -200px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(ellipse, rgba(20,184,166,0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── LAYOUT ─── */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── HEADER ─── */
+header {
+  padding: 60px 0 40px;
+  text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(249,112,102,0.08);
+  border: 1px solid rgba(249,112,102,0.2);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 24px;
+}
+
+.badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-glow); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 8px transparent; }
+}
+
+h1 {
+  font-family: 'Audiowide', sans-serif;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--lagoon) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+header p {
+  color: var(--text-muted);
+  font-size: 16px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ─── SECTION TITLES ─── */
+.section-title {
+  font-family: 'Audiowide', sans-serif;
+  font-size: clamp(20px, 3.5vw, 28px);
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 40px;
+}
+
+/* ─── FUNNEL ─── */
+.funnel-section {
+  padding: 20px 0 60px;
+}
+
+.funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+/* Vertical connector line */
+.funnel::before {
+  content: '';
+  position: absolute;
+  left: 36px;
+  top: 40px;
+  bottom: 40px;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    var(--accent) 0%,
+    var(--lagoon) 35%,
+    var(--gold) 50%,
+    var(--blue) 65%,
+    var(--purple) 80%,
+    var(--green) 100%
+  );
+  opacity: 0.3;
+}
+
+.funnel-step {
+  display: flex;
+  gap: 20px;
+  padding: 16px 0;
+  position: relative;
+  animation: fadeSlideUp 0.5s ease-out both;
+}
+
+.funnel-step:nth-child(1) { animation-delay: 0.1s; }
+.funnel-step:nth-child(2) { animation-delay: 0.2s; }
+.funnel-step:nth-child(3) { animation-delay: 0.3s; }
+.funnel-step:nth-child(4) { animation-delay: 0.4s; }
+.funnel-step:nth-child(5) { animation-delay: 0.5s; }
+.funnel-step:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Step number circle */
+.step-indicator {
+  flex-shrink: 0;
+  width: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  z-index: 2;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  color: #fff;
+  position: relative;
+}
+
+.step-number::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 2px;
+}
+
+/* Step colors */
+.step--1 .step-number { background: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
+.step--2 .step-number { background: var(--lagoon); box-shadow: 0 0 20px var(--lagoon-glow); }
+.step--3 .step-number { background: var(--gold); box-shadow: 0 0 20px rgba(245,158,11,0.25); }
+.step--4 .step-number { background: var(--blue); box-shadow: 0 0 20px rgba(59,130,246,0.25); }
+.step--5 .step-number { background: var(--purple); box-shadow: 0 0 20px rgba(168,85,247,0.25); }
+.step--6 .step-number { background: var(--green); box-shadow: 0 0 20px rgba(34,197,94,0.25); }
+
+/* Arrow between steps */
+.step-arrow {
+  margin-top: 12px;
+  color: var(--text-dim);
+  font-size: 18px;
+  opacity: 0.4;
+}
+
+/* Step card */
+.step-card {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(148,163,184,0.15);
+  transform: translateX(4px);
+}
+
+/* Active step (step 3) */
+.step--active .step-card {
+  border-color: var(--border-active);
+  background: linear-gradient(135deg, rgba(249,112,102,0.04) 0%, var(--bg-card) 100%);
+  box-shadow: 0 0 40px rgba(249,112,102,0.08), inset 0 1px 0 rgba(249,112,102,0.1);
+  animation: pulseCard 3s ease-in-out infinite;
+}
+
+@keyframes pulseCard {
+  0%, 100% { box-shadow: 0 0 40px rgba(249,112,102,0.08), inset 0 1px 0 rgba(249,112,102,0.1); }
+  50% { box-shadow: 0 0 60px rgba(249,112,102,0.15), inset 0 1px 0 rgba(249,112,102,0.2); }
+}
+
+.step--active .step-card::before {
+  content: 'ON EST ICI';
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  animation: blink-tag 2s ease-in-out infinite;
+}
+
+@keyframes blink-tag {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.step-label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.step--1 .step-label { color: var(--accent); }
+.step--2 .step-label { color: var(--lagoon); }
+.step--3 .step-label { color: var(--gold); }
+.step--4 .step-label { color: var(--blue); }
+.step--5 .step-label { color: var(--purple); }
+.step--6 .step-label { color: var(--green); }
+
+.step-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.step-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.detail-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  margin-top: 1px;
+}
+
+.detail-item strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Prospect info card inside step 3 */
+.prospect-card {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(245,158,11,0.05);
+  border: 1px solid rgba(245,158,11,0.15);
+  border-radius: var(--radius-sm);
+}
+
+.prospect-card h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prospect-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  font-size: 13px;
+}
+
+.prospect-meta dt {
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.prospect-meta dd {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ─── DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), rgba(249,112,102,0.15), var(--border), transparent);
+  margin: 60px 0;
+}
+
+/* ─── CONVERSATION GUIDE ─── */
+.guide-section {
+  padding: 0 0 80px;
+}
+
+.guide-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Accordion */
+.accordion {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.accordion:hover {
+  border-color: rgba(148,163,184,0.15);
+}
+
+.accordion.open {
+  border-color: rgba(20,184,166,0.3);
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  user-select: none;
+}
+
+.accordion-header:hover {
+  background: var(--bg-card-hover);
+}
+
+.accordion-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.acc--now .accordion-icon { background: rgba(249,112,102,0.12); }
+.acc--discovery .accordion-icon { background: rgba(20,184,166,0.12); }
+.acc--objections .accordion-icon { background: rgba(245,158,11,0.12); }
+.acc--followup .accordion-icon { background: rgba(59,130,246,0.12); }
+.acc--close .accordion-icon { background: rgba(34,197,94,0.12); }
+
+.accordion-title-group { flex: 1; }
+
+.accordion-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.acc--now .accordion-label { color: var(--accent); }
+.acc--discovery .accordion-label { color: var(--lagoon); }
+.acc--objections .accordion-label { color: var(--gold); }
+.acc--followup .accordion-label { color: var(--blue); }
+.acc--close .accordion-label { color: var(--green); }
+
+.accordion-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.accordion-chevron {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  transition: transform 0.3s ease;
+  font-size: 12px;
+}
+
+.accordion.open .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.accordion.open .accordion-body {
+  max-height: 2000px;
+}
+
+.accordion-content {
+  padding: 0 24px 24px;
+  padding-left: 84px;
+}
+
+/* Content blocks inside accordion */
+.content-block {
+  margin-bottom: 20px;
+}
+
+.content-block:last-child { margin-bottom: 0; }
+
+.content-block h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.content-block p, .content-block li {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.content-block ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.content-block li {
+  padding-left: 20px;
+  position: relative;
+}
+
+.content-block li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lagoon);
+  opacity: 0.6;
+}
+
+/* Tip box */
+.tip-box {
+  padding: 14px 18px;
+  background: rgba(20,184,166,0.06);
+  border-left: 3px solid var(--lagoon);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.tip-box strong {
+  color: var(--lagoon);
+}
+
+/* Warning box */
+.warn-box {
+  padding: 14px 18px;
+  background: rgba(249,112,102,0.06);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.warn-box strong {
+  color: var(--accent);
+}
+
+/* Script block */
+.script-block {
+  padding: 18px 20px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  font-style: italic;
+}
+
+.script-block .highlight {
+  color: var(--accent);
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* Objection row */
+.objection-row {
+  padding: 16px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+}
+
+.objection-row:last-child { margin-bottom: 0; }
+
+.objection-q {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.objection-q::before {
+  content: '?';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(245,158,11,0.15);
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.objection-a {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding-left: 30px;
+  line-height: 1.6;
+}
+
+.objection-a strong {
+  color: var(--green);
+}
+
+/* ─── PRIORITY TAG ─── */
+.priority-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.priority-tag--urgent {
+  background: rgba(249,112,102,0.12);
+  color: var(--accent);
+}
+
+.priority-tag--normal {
+  background: rgba(20,184,166,0.12);
+  color: var(--lagoon);
+}
+
+/* ─── QUICK METRICS BAR ─── */
+.metrics-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.metric-card {
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  animation: fadeSlideUp 0.5s ease-out both;
+}
+
+.metric-card:nth-child(1) { animation-delay: 0.05s; }
+.metric-card:nth-child(2) { animation-delay: 0.1s; }
+.metric-card:nth-child(3) { animation-delay: 0.15s; }
+.metric-card:nth-child(4) { animation-delay: 0.2s; }
+
+.metric-value {
+  font-family: 'Audiowide', sans-serif;
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.metric-value--accent { color: var(--accent); }
+.metric-value--lagoon { color: var(--lagoon); }
+.metric-value--gold { color: var(--gold); }
+.metric-value--green { color: var(--green); }
+
+.metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ─── NOW BANNER ─── */
+.now-banner {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, rgba(249,112,102,0.08) 0%, rgba(20,184,166,0.05) 100%);
+  border: 1px solid rgba(249,112,102,0.2);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  animation: fadeSlideUp 0.5s ease-out 0.3s both;
+}
+
+.now-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  animation: pulse-icon 2s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+  50% { box-shadow: 0 0 0 12px transparent; }
+}
+
+.now-text h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.now-text p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 40px 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+footer p {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 640px) {
+  header { padding: 40px 0 24px; }
+
+  .funnel::before { left: 24px; }
+
+  .step-indicator { width: 36px; }
+  .step-number { width: 32px; height: 32px; font-size: 13px; }
+
+  .step-card { padding: 18px 16px; }
+  .step-title { font-size: 16px; }
+  .detail-item { font-size: 12px; }
+
+  .accordion-content { padding-left: 24px; }
+  .accordion-header { padding: 16px; gap: 12px; }
+  .accordion-icon { width: 36px; height: 36px; font-size: 16px; }
+
+  .prospect-meta { grid-template-columns: 1fr; gap: 4px; }
+
+  .metrics-bar { grid-template-columns: repeat(2, 1fr); }
+
+  .now-banner { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="glow-top"></div>
+<div class="glow-bottom"></div>
+
+<div class="container">
+
+  <!-- ─── HEADER ─── -->
+  <header>
+    <div class="badge">Guide Interne</div>
+    <h1>Funnel Site Web 100K</h1>
+    <p>Processus de vente complet, de la pub Facebook au closing. Campagne PACIFIK'AI Polynesie.</p>
+  </header>
+
+  <!-- ─── METRICS ─── -->
+  <div class="metrics-bar">
+    <div class="metric-card">
+      <div class="metric-value metric-value--accent">100K</div>
+      <div class="metric-label">Prix XPF</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value metric-value--lagoon">50</div>
+      <div class="metric-label">Places max</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value metric-value--gold">7j</div>
+      <div class="metric-label">Livraison</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value metric-value--green">6</div>
+      <div class="metric-label">Ads actives</div>
+    </div>
+  </div>
+
+  <!-- ─── NOW BANNER ─── -->
+  <div class="now-banner">
+    <div class="now-icon">&#9889;</div>
+    <div class="now-text">
+      <h3>Action requise : repondre a Emilienne Taputu</h3>
+      <p>Lead chaud recu le 13 mars 2026 a 16h02 Tahiti. Repondre sous 2h maximum.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PART 1 : FUNNEL DE VENTE               -->
+  <!-- ═══════════════════════════════════════ -->
+  <section class="funnel-section">
+    <h2 class="section-title">Le Funnel Complet</h2>
+    <p class="section-subtitle">6 etapes, de la decouverte a la livraison</p>
+
+    <div class="funnel">
+
+      <!-- STEP 1 -->
+      <div class="funnel-step step--1">
+        <div class="step-indicator">
+          <div class="step-number">1</div>
+          <div class="step-arrow">&#8595;</div>
+        </div>
+        <div class="step-card">
+          <div class="step-label">Etape 1</div>
+          <h3 class="step-title">&#128226; Awareness &mdash; Facebook Ads</h3>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-icon">&#127912;</span>
+              <span><strong>6 creatives actives :</strong> Avant/Apres, 3D Devices, Magazine, Prix Barre, Story Urgence, Testimonial</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#128176;</span>
+              <span><strong>Budget :</strong> 200-300 $ total (~10-15 $/jour)</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#127919;</span>
+              <span><strong>Cible :</strong> PME/commerce Polynesie, 25-55 ans, chefs d'entreprise</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#128200;</span>
+              <span><strong>Pixel :</strong> 595267857952574 (tracking conversions)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="funnel-step step--2">
+        <div class="step-indicator">
+          <div class="step-number">2</div>
+          <div class="step-arrow">&#8595;</div>
+        </div>
+        <div class="step-card">
+          <div class="step-label">Etape 2</div>
+          <h3 class="step-title">&#127760; Landing Page &mdash; pacifikai.com/offre-site-web</h3>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-icon">&#128230;</span>
+              <span><strong>Offre :</strong> Site web professionnel cle en main a 100 000 XPF</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#9200;</span>
+              <span><strong>Urgence :</strong> 50 places limitees (scarcity reelle)</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#128247;</span>
+              <span><strong>Preuve :</strong> Portfolio 3D carousel + testimonials clients</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#128233;</span>
+              <span><strong>CTA :</strong> Formulaire de contact ou email direct</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 — ACTIVE -->
+      <div class="funnel-step step--3 step--active">
+        <div class="step-indicator">
+          <div class="step-number">3</div>
+          <div class="step-arrow">&#8595;</div>
+        </div>
+        <div class="step-card">
+          <div class="step-label">Etape 3</div>
+          <h3 class="step-title">&#128172; Premier Contact &mdash; Email recu</h3>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-icon">&#128293;</span>
+              <span><strong>Lead CHAUD</strong> &mdash; elle a fait l'effort d'ecrire spontanement</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#9201;</span>
+              <span><strong>Timing critique :</strong> repondre sous 2h (les leads refroidissent vite)</span>
+            </div>
+          </div>
+          <div class="prospect-card">
+            <h4>&#128100; Prospect</h4>
+            <dl class="prospect-meta">
+              <dt>Nom</dt>
+              <dd>Emilienne Taputu</dd>
+              <dt>Email</dt>
+              <dd>emiliennetaputu@gmail.com</dd>
+              <dt>Message</dt>
+              <dd>"J'aimerais avoir plus d'information mercii"</dd>
+              <dt>Date</dt>
+              <dd>13 mars 2026, 16h02 (Tahiti)</dd>
+              <dt>Source</dt>
+              <dd>Facebook Ads &rarr; Landing Page &rarr; Email</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="funnel-step step--4">
+        <div class="step-indicator">
+          <div class="step-number">4</div>
+          <div class="step-arrow">&#8595;</div>
+        </div>
+        <div class="step-card">
+          <div class="step-label">Etape 4</div>
+          <h3 class="step-title">&#128270; Qualification BANT</h3>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-icon">&#128176;</span>
+              <span><strong>Budget :</strong> 100K XPF (fixe par l'offre, pas de nego)</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#128081;</span>
+              <span><strong>Authority :</strong> est-elle la decideuse ? (probablement oui vu le contact direct)</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#127919;</span>
+              <span><strong>Need :</strong> comprendre son activite, ses besoins web specifiques</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#128197;</span>
+              <span><strong>Timeline :</strong> quand veut-elle le site ? (plus c'est urgent, mieux c'est)</span>
+            </div>
+          </div>
+          <div class="tip-box" style="margin-top:14px;">
+            <strong>Rappel :</strong> Deal &lt; 200K XPF = BANT simplifie, pas besoin de process lourd. Rester conversationnel.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="funnel-step step--5">
+        <div class="step-indicator">
+          <div class="step-number">5</div>
+          <div class="step-arrow">&#8595;</div>
+        </div>
+        <div class="step-card">
+          <div class="step-label">Etape 5</div>
+          <h3 class="step-title">&#129309; Proposition &amp; Closing</h3>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-icon">&#128196;</span>
+              <span><strong>Envoyer :</strong> infos detaillees + exemples portfolio adaptes a son activite</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#128222;</span>
+              <span><strong>Appel decouverte :</strong> 15-20 min max, pas plus</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#9989;</span>
+              <span><strong>Technique :</strong> Assumptive close (prix fixe = pas de nego, juste "on demarre ?")</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#128221;</span>
+              <span><strong>E-signature :</strong> dans les 30 min apres accord oral</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="funnel-step step--6">
+        <div class="step-indicator">
+          <div class="step-number">6</div>
+        </div>
+        <div class="step-card">
+          <div class="step-label">Etape 6</div>
+          <h3 class="step-title">&#128640; Delivery</h3>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-icon">&#128197;</span>
+              <span><strong>Livraison :</strong> 7 jours calendaires</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#127912;</span>
+              <span><strong>Inclus :</strong> Design + developpement + mise en ligne + domaine</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#127891;</span>
+              <span><strong>Formation :</strong> session d'utilisation 30 min (visio ou en personne)</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">&#128170;</span>
+              <span><strong>Apres-vente :</strong> upsell maintenance / SEO / reseaux sociaux</span>
+            </div>
+          </div>
+          <div class="tip-box" style="margin-top:14px;">
+            <strong>Upsell :</strong> proposer forfait maintenance mensuel (15-25K XPF/mois) + gestion reseaux sociaux apres livraison.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /funnel -->
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PART 2 : GUIDE DE CONVERSATION         -->
+  <!-- ═══════════════════════════════════════ -->
+  <section class="guide-section">
+    <h2 class="section-title">Guide de Conversation</h2>
+    <p class="section-subtitle">Scripts et strategies pour chaque etape avec Emilienne</p>
+
+    <div class="guide-cards">
+
+      <!-- ACC 1 — Email 1 -->
+      <div class="accordion acc--now open">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <div class="accordion-icon">&#9993;</div>
+          <div class="accordion-title-group">
+            <div class="accordion-label">Maintenant &bull; Email 1</div>
+            <div class="accordion-title">Reponse initiale &mdash; creer la connexion</div>
+          </div>
+          <span class="priority-tag priority-tag--urgent">Urgent</span>
+          <div class="accordion-chevron">&#9660;</div>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+
+            <div class="content-block">
+              <h4>Objectifs</h4>
+              <ul>
+                <li>Creer un lien chaleureux et professionnel</li>
+                <li>Donner de la valeur immediatement (pas juste "merci de votre interet")</li>
+                <li>Qualifier : comprendre son activite en posant UNE question cle</li>
+                <li>Proposer un CTA clair : appel de 15 min ou reponse email</li>
+              </ul>
+            </div>
+
+            <div class="content-block">
+              <h4>Ton &amp; Style</h4>
+              <p>Chaleureux, professionnel, polynesien. Tutoiement ou vouvoiement selon le feeling (vouvoiement par defaut en premier contact). Pas de jargon technique. Pas de pression.</p>
+            </div>
+
+            <div class="content-block">
+              <h4>Script suggere</h4>
+              <div class="script-block">Bonjour Emilienne,
+
+Merci pour votre message, ca fait plaisir de voir votre interet !
+
+Voici ce que comprend notre offre <span class="highlight">site web professionnel a 100 000 XPF</span> :
+
+&#10003; Design moderne sur-mesure adapte a votre activite
+&#10003; Site responsive (mobile + desktop)
+&#10003; Mise en ligne complete (domaine + hebergement)
+&#10003; Livraison en <span class="highlight">7 jours</span>
+&#10003; Formation pour gerer votre site en autonomie
+
+Pour vous preparer la meilleure proposition, j'aurais une petite question :
+<span class="highlight">Quelle est votre activite et qu'est-ce que vous aimeriez mettre en avant sur votre site ?</span>
+
+On peut aussi en discuter par telephone si vous preferez, je suis disponible pour un appel de 15 min a votre convenance.
+
+Mauruuru,
+Jordy &mdash; PACIFIK'AI</div>
+            </div>
+
+            <div class="warn-box">
+              <strong>Timing :</strong> repondre dans les 2 heures. Un lead chaud perd 80% de sa valeur apres 24h. Elle a ecrit "mercii" avec deux i = enthousiaste.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ACC 2 — Discovery -->
+      <div class="accordion acc--discovery">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <div class="accordion-icon">&#128269;</div>
+          <div class="accordion-title-group">
+            <div class="accordion-label">Etape suivante &bull; Email 2 / Appel</div>
+            <div class="accordion-title">Discovery &mdash; methode SPIN</div>
+          </div>
+          <span class="priority-tag priority-tag--normal">A venir</span>
+          <div class="accordion-chevron">&#9660;</div>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+
+            <div class="content-block">
+              <h4>Questions SPIN a poser</h4>
+            </div>
+
+            <div class="content-block">
+              <h4>S &mdash; Situation</h4>
+              <ul>
+                <li>"Vous avez deja un site web ou c'est votre premier ?"</li>
+                <li>"Quelle est votre activite exactement ?"</li>
+                <li>"Vous etes sur les reseaux sociaux ? Facebook, Instagram ?"</li>
+                <li>"Comment vos clients vous trouvent aujourd'hui ?"</li>
+              </ul>
+            </div>
+
+            <div class="content-block">
+              <h4>P &mdash; Probleme</h4>
+              <ul>
+                <li>"Qu'est-ce qui vous manque le plus aujourd'hui cote digital ?"</li>
+                <li>"Vous avez deja essaye de faire un site ? Qu'est-ce qui a bloque ?"</li>
+                <li>"Vos concurrents ont un site web ?"</li>
+              </ul>
+            </div>
+
+            <div class="content-block">
+              <h4>I &mdash; Implication</h4>
+              <ul>
+                <li>"Sans site web, combien de clients potentiels vous passent a cote selon vous ?"</li>
+                <li>"Les gens qui cherchent sur Google votre type de service, ils tombent sur qui ?"</li>
+                <li>"Ca vous est deja arrive de perdre un client parce qu'il n'a pas trouve d'info en ligne ?"</li>
+              </ul>
+            </div>
+
+            <div class="content-block">
+              <h4>N &mdash; Need-Payoff</h4>
+              <ul>
+                <li>"Si votre site ramenait ne serait-ce que 5 clients par mois, ca changerait quoi pour vous ?"</li>
+                <li>"Imaginez que quelqu'un tape votre activite sur Google et tombe direct sur un beau site pro... ca donnerait quelle image ?"</li>
+                <li>"Ce serait quoi pour vous le site ideal ?"</li>
+              </ul>
+            </div>
+
+            <div class="tip-box">
+              <strong>Astuce :</strong> poser 2-3 questions max, pas un interrogatoire. Ecouter 80%, parler 20%. La meilleure vente, c'est quand le prospect se convainc lui-meme.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ACC 3 — Objections -->
+      <div class="accordion acc--objections">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <div class="accordion-icon">&#128737;</div>
+          <div class="accordion-title-group">
+            <div class="accordion-label">Anticiper</div>
+            <div class="accordion-title">Objections probables &amp; reponses</div>
+          </div>
+          <div class="accordion-chevron">&#9660;</div>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+
+            <div class="objection-row">
+              <div class="objection-q">"C'est combien exactement ?"</div>
+              <div class="objection-a">"C'est <strong>100 000 XPF tout compris</strong> : design, developpement, mise en ligne, domaine et formation. Pas de frais caches, pas de surprise. C'est un tarif special pour les 50 premiers clients."</div>
+            </div>
+
+            <div class="objection-row">
+              <div class="objection-q">"C'est quoi le resultat concret ?"</div>
+              <div class="objection-a">"Je vous envoie des exemples de sites qu'on a realises. Vous allez voir, c'est du <strong>design professionnel moderne</strong>, responsive mobile, rapide. Voici quelques exemples : [lien portfolio]"</div>
+            </div>
+
+            <div class="objection-row">
+              <div class="objection-q">"Faut combien de temps ?"</div>
+              <div class="objection-a">"<strong>7 jours</strong> apres validation du brief. On est rapides parce qu'on a une methode rodee. Vous aurez votre site en ligne la semaine prochaine."</div>
+            </div>
+
+            <div class="objection-row">
+              <div class="objection-q">"Je dois reflechir..."</div>
+              <div class="objection-a">"Bien sur, prenez le temps. Juste pour info, il reste <strong>X places sur les 50</strong> et on a plusieurs demandes en ce moment. Si vous voulez, on peut faire un appel de 15 min pour repondre a toutes vos questions, sans engagement."</div>
+            </div>
+
+            <div class="objection-row">
+              <div class="objection-q">"C'est cher..."</div>
+              <div class="objection-a">"Je comprends. Pour comparer, un site web pro en Polynesie coute habituellement entre <strong>300 000 et 500 000 XPF</strong>. A 100K, c'est 3 a 5 fois moins cher. Et si le site vous ramene 2-3 clients, il est deja rembourse."</div>
+            </div>
+
+            <div class="objection-row">
+              <div class="objection-q">"J'ai un ami/neveu qui peut le faire..."</div>
+              <div class="objection-a">"C'est une option. La difference avec nous : c'est <strong>livre en 7 jours</strong>, optimise pour Google, responsive mobile, et vous avez un support pro. Souvent les sites faits par un proche prennent des mois et restent inacheves."</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ACC 4 — Follow-up -->
+      <div class="accordion acc--followup">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <div class="accordion-icon">&#128140;</div>
+          <div class="accordion-title-group">
+            <div class="accordion-label">Si pas de reponse &bull; J+2</div>
+            <div class="accordion-title">Email 3 &mdash; Follow-up en douceur</div>
+          </div>
+          <div class="accordion-chevron">&#9660;</div>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+
+            <div class="content-block">
+              <h4>Strategie</h4>
+              <ul>
+                <li>Relance douce, JAMAIS agressive</li>
+                <li>Apporter un nouvel angle / nouvelle valeur</li>
+                <li>Creer un micro-engagement (question simple a repondre)</li>
+                <li>Rappeler l'urgence subtilement</li>
+              </ul>
+            </div>
+
+            <div class="content-block">
+              <h4>Script suggere</h4>
+              <div class="script-block">Bonjour Emilienne,
+
+Je reviens vers vous suite a notre echange. Je me suis permis de regarder ce qui se fait dans votre secteur, et je vois un vrai potentiel pour vous demarquer en ligne.
+
+D'ailleurs, on vient de finir un site pour un client dans un domaine similaire &mdash; je peux vous montrer le resultat si ca vous interesse.
+
+<span class="highlight">Est-ce que vous etes plutot disponible cette semaine pour un rapide appel de 15 min ?</span>
+
+Belle journee,
+Jordy &mdash; PACIFIK'AI</div>
+            </div>
+
+            <div class="tip-box">
+              <strong>Regle des 3 relances :</strong> Email 1 (J+0) &rarr; Email 2 (J+2) &rarr; Dernier email (J+5). Apres 3 relances sans reponse, passer en nurture long terme (newsletter, retargeting).
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ACC 5 — Close -->
+      <div class="accordion acc--close">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <div class="accordion-icon">&#127942;</div>
+          <div class="accordion-title-group">
+            <div class="accordion-label">Finalisation</div>
+            <div class="accordion-title">Close &mdash; conclure la vente</div>
+          </div>
+          <div class="accordion-chevron">&#9660;</div>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+
+            <div class="content-block">
+              <h4>Technique : Assumptive Close</h4>
+              <p>Le prix est fixe, pas de negociation. La question n'est pas "est-ce que vous voulez ?" mais <strong>"quand est-ce qu'on commence ?"</strong>. Le close est naturel quand la decouverte est bien faite.</p>
+            </div>
+
+            <div class="content-block">
+              <h4>Phrase de close</h4>
+              <div class="script-block">"Super, je vois bien ce qu'il vous faut. <span class="highlight">Je vous envoie le formulaire pour demarrer ?</span> On peut commencer des cette semaine et vous aurez votre site en ligne dans 7 jours."</div>
+            </div>
+
+            <div class="content-block">
+              <h4>Paiement</h4>
+              <ul>
+                <li><strong>Virement bancaire</strong> (standard PF)</li>
+                <li><strong>Especes</strong> (courant en Polynesie, legal sous 1.5M XPF)</li>
+                <li><strong>Acompte 50% + 50%</strong> a la livraison (si besoin de rassurer)</li>
+              </ul>
+            </div>
+
+            <div class="content-block">
+              <h4>Onboarding post-close</h4>
+              <ul>
+                <li>Brief creatif de 30 min (activite, couleurs, contenu, photos)</li>
+                <li>Collecte des assets : logo, textes, photos (ou on cree tout)</li>
+                <li>Acces domaine si existant, sinon on achete</li>
+                <li>WhatsApp pour les echanges rapides pendant la prod</li>
+              </ul>
+            </div>
+
+            <div class="tip-box">
+              <strong>Apres le close :</strong> envoyer un recap par email dans les 30 min avec : resume du projet, timeline, prochaine etape. Le client doit sentir que c'est deja en marche.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /guide-cards -->
+  </section>
+
+  <footer>
+    <p>PACIFIK'AI &mdash; Guide interne &mdash; Mars 2026 &mdash; Ne pas diffuser</p>
+  </footer>
+
+</div><!-- /container -->
+
+<script>
+function toggleAccordion(header) {
+  const accordion = header.parentElement;
+  const isOpen = accordion.classList.contains('open');
+
+  // Close all
+  document.querySelectorAll('.accordion').forEach(a => a.classList.remove('open'));
+
+  // Toggle clicked
+  if (!isOpen) {
+    accordion.classList.add('open');
+  }
+}
+
+// Intersection Observer for scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.funnel-step, .accordion, .metric-card').forEach(el => {
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ora Vanille — Vanille de Taha'a | PACIFIK'AI Portfolio</title>
+    <meta name="description" content="Ora Vanille : producteur artisanal de vanille de Taha'a, l'Ile Vanille du Pacifique. Trois generations de savoir-faire, pollinisation a la main, affinage 9 mois.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body {
+            font-family: 'Work Sans', system-ui, sans-serif;
+            background: #FAF5EB;
+            color: #2C2418;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+        /* ========== SCROLL PROGRESS BAR ========== */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; z-index: 9000;
+            height: 3px; width: 0%;
+            background: linear-gradient(90deg, #6B5B4E, #2D5A3D);
+        }
+
+        /* ========== TYPOGRAPHY ========== */
+        h1, h2, h3, h4 {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            line-height: 1.2;
+            color: #2C2418;
+        }
+        .section-label {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #2D5A3D;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        /* ========== LAYOUT HELPERS ========== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 clamp(1.25rem, 4vw, 3rem);
+        }
+        section { position: relative; }
+
+        /* ========== HERO ========== */
+        .hero {
+            position: relative;
+            height: 100vh;
+            min-height: 600px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+        .hero-image-wrapper {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            will-change: transform;
+        }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to top,
+                rgba(44, 36, 24, 0.85) 0%,
+                rgba(44, 36, 24, 0.4) 40%,
+                rgba(44, 36, 24, 0.15) 70%,
+                rgba(44, 36, 24, 0.05) 100%
+            );
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding-bottom: clamp(3rem, 8vh, 6rem);
+            width: 100%;
+        }
+        .hero-content h1 {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-weight: 600;
+            font-size: clamp(3rem, 8vw, 6.5rem);
+            color: #FAF5EB;
+            line-height: 1.05;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .hero-content p {
+            font-family: 'Work Sans', sans-serif;
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: rgba(245, 222, 179, 0.9);
+            font-weight: 300;
+            max-width: 520px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .btn-primary {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: #FAF5EB;
+            color: #2C2418;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            border-radius: 4px;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #F5DEB3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(107, 91, 78, 0.25);
+        }
+        .hero-scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            right: clamp(1.25rem, 4vw, 3rem);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(245, 222, 179, 0.6);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: rgba(245, 222, 179, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #F5DEB3;
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+        @keyframes scrollPulse {
+            0% { top: -100%; }
+            50% { top: 100%; }
+            100% { top: 100%; }
+        }
+
+        /* ========== STORY SECTION ========== */
+        .story {
+            padding: clamp(5rem, 10vh, 8rem) 0;
+            background: #FAF5EB;
+        }
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(2rem, 5vw, 5rem);
+            align-items: center;
+        }
+        .story-text h2 {
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            margin-bottom: 1.5rem;
+        }
+        .story-text p {
+            font-size: 1.05rem;
+            color: #6B5B4E;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .story-text .highlight {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-size: 1.25rem;
+            color: #2D5A3D;
+            border-left: 3px solid #2D5A3D;
+            padding-left: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        .story-image-wrapper {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid rgba(107, 91, 78, 0.15);
+        }
+        .story-image-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(45, 90, 61, 0.2);
+            border-radius: 12px;
+            z-index: -1;
+        }
+        .story-image-wrapper img {
+            width: 100%;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+        }
+
+        /* ========== PROCESS TIMELINE ========== */
+        .process {
+            padding: clamp(5rem, 10vh, 8rem) 0;
+            background: linear-gradient(180deg, #FAF5EB 0%, #f3ead8 100%);
+        }
+        .process .section-title { text-align: center; }
+        .process .section-label { text-align: center; }
+        .process-intro {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 4rem;
+            color: #6B5B4E;
+            font-size: 1.05rem;
+        }
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 28px;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, #6B5B4E, rgba(107, 91, 78, 0.2));
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 80px;
+            padding-bottom: 3.5rem;
+        }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-dot {
+            position: absolute;
+            left: 18px;
+            top: 6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #2D5A3D;
+            border: 3px solid #FAF5EB;
+            box-shadow: 0 0 0 2px #2D5A3D;
+        }
+        .timeline-period {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #2D5A3D;
+            margin-bottom: 0.35rem;
+        }
+        .timeline-title {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2C2418;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-desc {
+            color: #6B5B4E;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .timeline-image {
+            margin-top: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+            max-width: 400px;
+        }
+        .timeline-image img {
+            width: 100%;
+            aspect-ratio: 16/10;
+            object-fit: cover;
+        }
+
+        /* ========== PRODUCTS ========== */
+        .products {
+            position: relative;
+            padding: clamp(5rem, 10vh, 8rem) 0;
+            overflow: hidden;
+        }
+        .products-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .products-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .products-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(44, 36, 24, 0.88);
+        }
+        .products-content {
+            position: relative;
+            z-index: 1;
+        }
+        .products .section-label { color: #F5DEB3; }
+        .products .section-title { color: #FAF5EB; text-align: center; }
+        .products .section-label { text-align: center; }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .product-card {
+            background: rgba(250, 245, 235, 0.06);
+            border: 1px solid rgba(245, 222, 179, 0.12);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            transition: transform 0.4s ease, border-color 0.4s ease, background 0.4s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(245, 222, 179, 0.3);
+            background: rgba(250, 245, 235, 0.1);
+        }
+        .product-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .product-name {
+            font-family: 'Fraunces', serif;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #FAF5EB;
+            margin-bottom: 0.5rem;
+        }
+        .product-detail {
+            font-size: 0.85rem;
+            color: rgba(245, 222, 179, 0.6);
+            margin-bottom: 1.25rem;
+        }
+        .product-price {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            background: rgba(245, 222, 179, 0.15);
+            color: #F5DEB3;
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            border-radius: 100px;
+            border: 1px solid rgba(245, 222, 179, 0.2);
+        }
+        .product-unit {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: rgba(245, 222, 179, 0.5);
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        /* ========== TERROIR PARALLAX ========== */
+        .terroir {
+            position: relative;
+            height: 80vh;
+            min-height: 500px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .terroir-bg {
+            position: absolute;
+            inset: -20% 0;
+            z-index: 0;
+            will-change: transform;
+        }
+        .terroir-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .terroir-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(44, 36, 24, 0.65);
+            z-index: 1;
+        }
+        .terroir-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 750px;
+            padding: 0 clamp(1.25rem, 4vw, 3rem);
+        }
+        .terroir-content h2 {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            color: #FAF5EB;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+        .terroir-content p {
+            font-size: clamp(1rem, 1.8vw, 1.15rem);
+            color: rgba(245, 222, 179, 0.85);
+            line-height: 1.8;
+        }
+
+        /* ========== ORDER CTA ========== */
+        .order-cta {
+            padding: clamp(5rem, 10vh, 7rem) 0;
+            background: #FAF5EB;
+            text-align: center;
+        }
+        .order-cta h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+        }
+        .order-cta .cta-sub {
+            color: #6B5B4E;
+            font-size: 1.05rem;
+            max-width: 480px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+        .btn-earth {
+            display: inline-block;
+            padding: 1.1rem 3rem;
+            background: #6B5B4E;
+            color: #FAF5EB;
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+            border-radius: 4px;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn-earth:hover {
+            background: #2D5A3D;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(45, 90, 61, 0.25);
+        }
+        .order-shipping {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: rgba(107, 91, 78, 0.6);
+            letter-spacing: 0.05em;
+        }
+        .cta-divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #6B5B4E, #2D5A3D);
+            margin: 0 auto 2rem;
+            border-radius: 1px;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: #2C2418;
+            color: rgba(245, 222, 179, 0.7);
+            padding: 3.5rem 0 2rem;
+        }
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .footer-brand h3 {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-size: 1.5rem;
+            color: #F5DEB3;
+            margin-bottom: 0.5rem;
+        }
+        .footer-brand p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .footer-contact p {
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+        .footer-contact a {
+            color: #F5DEB3;
+            transition: opacity 0.2s ease;
+        }
+        .footer-contact a:hover { opacity: 0.7; }
+        .footer-bottom {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(245, 222, 179, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: rgba(245, 222, 179, 0.4);
+        }
+        .footer-bottom a {
+            color: rgba(245, 222, 179, 0.4);
+            transition: color 0.2s ease;
+        }
+        .footer-bottom a:hover { color: #F5DEB3; }
+
+        /* ========== REVEAL ANIMATIONS ========== */
+        .reveal { opacity: 0; transform: translateY(40px); }
+        .reveal-left { opacity: 0; transform: translateX(-40px); }
+        .reveal-right { opacity: 0; transform: translateX(40px); }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .story-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .story-image-wrapper { order: -1; }
+            .products-grid {
+                grid-template-columns: 1fr;
+                max-width: 380px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .timeline::before { left: 16px; }
+            .timeline-item { padding-left: 56px; }
+            .timeline-dot { left: 6px; }
+            .hero-scroll-hint { display: none; }
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .product-card { padding: 2rem 1.5rem; }
+        }
+
+        /* ========== REDUCED MOTION ========== */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal, .reveal-left, .reveal-right {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .hero-image {
+                transform: none !important;
+                animation: none !important;
+            }
+            .terroir-bg {
+                transform: none !important;
+            }
+            .scroll-line::after { animation: none; }
+            .scroll-progress { display: none; }
+        }
+    </style>
+<style>.ifr .loader,.ifr .custom-cursor,.ifr .cursor-dot,.ifr .cursor-ring,.ifr .scroll-progress,.ifr .disclaimer,.ifr .scroll-indicator,.ifr .scroll-hint{display:none!important}.ifr body,.ifr html{overflow:hidden!important}</style>
+<script>if(window.self!==window.top){document.documentElement.classList.add("ifr");var _f=setInterval(function(){document.querySelectorAll("*").forEach(function(e){var s=getComputedStyle(e);if(s.opacity==="0"&&!e.classList.contains("loader")){e.style.opacity="1";if(s.animationName==="none"||s.animationName==="")e.style.transform="none"}});document.body.style.overflow="hidden";window.scrollTo(0,0)},200);setTimeout(function(){clearInterval(_f)},5000)}</script></head>
+<body>
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+        <div class="hero-image-wrapper">
+            <img class="hero-image" id="heroImage" src="/portfolio/new/images/ora-vanille/hero.jpg" alt="Plantation de vanille a Taha'a, Polynesie francaise">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content container">
+            <h1>Ora Vanille</h1>
+            <p>La Vanille de Taha'a — L'Ile Vanille du Pacifique</p>
+            <a href="#products" class="btn-primary">Decouvrir nos produits</a>
+        </div>
+        <div class="hero-scroll-hint">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- ==================== STORY ==================== -->
+    <section class="story" id="story">
+        <div class="container">
+            <div class="story-grid">
+                <div class="story-text">
+                    <p class="section-label reveal">Notre Histoire</p>
+                    <h2 class="section-title reveal">Un savoir-faire transmis de generation en generation</h2>
+                    <p class="reveal">Depuis trois generations, notre famille cultive la vanille de Taha'a avec passion et respect du savoir-faire ancestral. Chaque gousse est pollinisee a la main, sechee au soleil, et affinee pendant 9 mois pour reveler un arome d'exception.</p>
+                    <p class="reveal">Sur les pentes luxuriantes de Taha'a, nos vanilliers poussent a l'ombre des cocotiers et des arbres a pain, dans un ecosysteme naturel qui confere a chaque gousse sa richesse aromatique unique.</p>
+                    <p class="highlight reveal">Chaque gousse raconte l'histoire de notre terre, de nos mains, et de notre patience.</p>
+                </div>
+                <div class="reveal-right">
+                    <div class="story-image-wrapper">
+                        <img src="/portfolio/new/images/ora-vanille/vanille.jpg" alt="Gousses de vanille fraiches de Taha'a" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PROCESS TIMELINE ==================== -->
+    <section class="process" id="process">
+        <div class="container">
+            <p class="section-label">Le Processus</p>
+            <h2 class="section-title">De la fleur a la gousse</h2>
+            <p class="process-intro">Un voyage de patience et de precision qui dure pres d'un an, pour transformer une delicate orchidee en l'epice la plus precieuse du Pacifique.</p>
+
+            <div class="timeline">
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <p class="timeline-period">Decembre — Janvier</p>
+                    <h3 class="timeline-title">Pollinisation</h3>
+                    <p class="timeline-desc">Chaque fleur de vanille ne s'ouvre qu'un seul matin. Nos cultivateurs parcourent la plantation des l'aube pour polliniser a la main chaque orchidee, un geste delicat transmis depuis des generations. Sans ce savoir-faire, aucune gousse ne verrait le jour.</p>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <p class="timeline-period">Juin — Aout</p>
+                    <h3 class="timeline-title">Recolte</h3>
+                    <p class="timeline-desc">Apres 9 mois de maturation sur la liane, les gousses sont recoltees une a une au moment exact ou elles atteignent leur maturite. Un timing crucial qui determine la qualite de la vanille finale.</p>
+                    <div class="timeline-image">
+                        <img src="/portfolio/new/images/ora-vanille/sechage.jpg" alt="Sechage des gousses de vanille au soleil" loading="lazy">
+                    </div>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <p class="timeline-period">9 mois d'affinage</p>
+                    <h3 class="timeline-title">Sechage et Affinage</h3>
+                    <p class="timeline-desc">Les gousses sont d'abord echaudees, puis alternent entre bains de soleil et repos dans des malles en bois. Lentement, elles developpent leur robe brune et leur parfum enivrant de vanilline — un processus artisanal que rien ne peut accelerer.</p>
+                </div>
+
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <p class="timeline-period">Le soin final</p>
+                    <h3 class="timeline-title">Conditionnement</h3>
+                    <p class="timeline-desc">Chaque gousse est triee, classee selon sa taille et son taux de vanilline, puis conditionnee a la main dans nos ateliers de Patio. De notre plantation jusqu'a votre cuisine, la chaine du soin reste intacte.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRODUCTS ==================== -->
+    <section class="products" id="products">
+        <div class="products-bg">
+            <img src="/portfolio/new/images/ora-vanille/produits.jpg" alt="Gamme de produits Ora Vanille" loading="lazy">
+        </div>
+        <div class="products-content container">
+            <p class="section-label">Nos Produits</p>
+            <h2 class="section-title">L'excellence, simplement</h2>
+            <div class="products-grid">
+                <div class="product-card reveal">
+                    <div class="product-icon" aria-hidden="true">&#127793;</div>
+                    <h3 class="product-name">Gousses de Vanille</h3>
+                    <p class="product-detail">10 gousses — Grade A — 16-18 cm</p>
+                    <div class="product-price">
+                        3 500 <span style="font-size:0.75em;">XPF</span>
+                    </div>
+                    <span class="product-unit">Sachet sous vide</span>
+                </div>
+                <div class="product-card reveal">
+                    <div class="product-icon" aria-hidden="true">&#129380;</div>
+                    <h3 class="product-name">Extrait Pur</h3>
+                    <p class="product-detail">100 ml — Maceration artisanale 12 mois</p>
+                    <div class="product-price">
+                        4 800 <span style="font-size:0.75em;">XPF</span>
+                    </div>
+                    <span class="product-unit">Flacon en verre</span>
+                </div>
+                <div class="product-card reveal">
+                    <div class="product-icon" aria-hidden="true">&#10024;</div>
+                    <h3 class="product-name">Poudre de Vanille</h3>
+                    <p class="product-detail">50 g — Gousses broyees pures, sans additif</p>
+                    <div class="product-price">
+                        2 200 <span style="font-size:0.75em;">XPF</span>
+                    </div>
+                    <span class="product-unit">Pot hermetique</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TERROIR PARALLAX ==================== -->
+    <section class="terroir" id="terroir">
+        <div class="terroir-bg" id="terroirBg">
+            <img src="/portfolio/new/images/ora-vanille/terroir.jpg" alt="Paysage de Taha'a, ile vanille du Pacifique" loading="lazy">
+        </div>
+        <div class="terroir-overlay"></div>
+        <div class="terroir-content">
+            <h2 class="reveal">L'Ile Vanille du Pacifique</h2>
+            <p class="reveal">Taha'a, surnommee l'Ile Vanille, offre un terroir unique ou le climat tropical et les sols volcaniques donnent a notre vanille un parfum incomparable. Nichee au coeur des Iles Sous-le-Vent, notre ile produit 80% de la vanille de Polynesie francaise — un tresor du Pacifique reconnu par les plus grands chefs du monde.</p>
+        </div>
+    </section>
+
+    <!-- ==================== ORDER CTA ==================== -->
+    <section class="order-cta" id="order">
+        <div class="container">
+            <p class="section-label reveal">Commandez</p>
+            <div class="cta-divider reveal"></div>
+            <h2 class="reveal">Goutez l'Excellence Polynesienne</h2>
+            <p class="cta-sub reveal">De notre plantation de Taha'a jusqu'a votre table, la vanille Ora Vanille est un voyage sensoriel vers le Pacifique.</p>
+            <a href="#" class="btn-earth reveal">Commander en Ligne</a>
+            <p class="order-shipping reveal">Livraison dans le monde entier — Expedition sous 48h depuis Papeete</p>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <h3>Ora Vanille</h3>
+                    <p>Producteur artisanal de vanille<br>depuis trois generations.</p>
+                </div>
+                <div class="footer-contact">
+                    <p>
+                        Patio, Taha'a<br>
+                        Iles Sous-le-Vent<br>
+                        Polynesie francaise 98733<br><br>
+                        <a href="mailto:contact@oravanille.pf">contact@oravanille.pf</a><br>
+                        <a href="tel:+68940123456">+689 40 12 34 56</a>
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Ora Vanille — Tous droits reserves</span>
+                <span>Site fictif — <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI Portfolio</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+    <script>
+        /* ========== REDUCED MOTION CHECK ========== */
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ========== LENIS SMOOTH SCROLL ========== */
+        let lenis;
+        if (!prefersReduced) {
+            lenis = new Lenis({
+                duration: 1.2,
+                easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+                orientation: 'vertical',
+                gestureOrientation: 'vertical',
+                smoothWheel: true,
+            });
+
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+
+            /* Sync Lenis with GSAP ScrollTrigger */
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add(function(time) {
+                lenis.raf(time * 1000);
+            });
+            gsap.ticker.lagSmoothing(0);
+        }
+
+        /* ========== REGISTER GSAP PLUGINS ========== */
+        gsap.registerPlugin(ScrollTrigger);
+
+        /* ========== SCROLL PROGRESS BAR ========== */
+        if (!prefersReduced) {
+            gsap.to('#scrollProgress', {
+                width: '100%',
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: document.body,
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 0.3,
+                }
+            });
+        }
+
+        /* ========== KEN BURNS HERO ========== */
+        if (!prefersReduced) {
+            gsap.to('#heroImage', {
+                scale: 1.15,
+                x: 20,
+                duration: 15,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+            });
+        }
+
+        /* ========== SCROLL REVEAL ANIMATIONS ========== */
+        if (!prefersReduced) {
+            /* Standard reveals — fade up */
+            gsap.utils.toArray('.reveal').forEach(function(el) {
+                gsap.to(el, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.9,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 88%',
+                        toggleActions: 'play none none none',
+                    }
+                });
+            });
+
+            /* Reveal from left */
+            gsap.utils.toArray('.reveal-left').forEach(function(el) {
+                gsap.to(el, {
+                    opacity: 1,
+                    x: 0,
+                    duration: 0.9,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 88%',
+                        toggleActions: 'play none none none',
+                    }
+                });
+            });
+
+            /* Reveal from right */
+            gsap.utils.toArray('.reveal-right').forEach(function(el) {
+                gsap.to(el, {
+                    opacity: 1,
+                    x: 0,
+                    duration: 0.9,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 88%',
+                        toggleActions: 'play none none none',
+                    }
+                });
+            });
+
+            /* Stagger timeline items */
+            var timelineItems = gsap.utils.toArray('.timeline-item');
+            timelineItems.forEach(function(item, i) {
+                gsap.to(item, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    delay: 0.1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: item,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none',
+                    }
+                });
+            });
+
+            /* Product cards stagger */
+            var productCards = gsap.utils.toArray('.product-card');
+            productCards.forEach(function(card, i) {
+                gsap.to(card, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    delay: i * 0.15,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: '.products-grid',
+                        start: 'top 80%',
+                        toggleActions: 'play none none none',
+                    }
+                });
+            });
+        } else {
+            /* If reduced motion, ensure all elements are visible */
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(function(el) {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+        }
+
+        /* ========== TERROIR PARALLAX ========== */
+        if (!prefersReduced) {
+            gsap.to('#terroirBg', {
+                yPercent: -15,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '.terroir',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 0.5,
+                }
+            });
+        }
+
+        /* ========== SMOOTH ANCHOR SCROLL ========== */
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                var target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    if (lenis) {
+                        lenis.scrollTo(target, { offset: 0, duration: 1.5 });
+                    } else {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}. {{TAGLINE}}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family={{FONT_DISPLAY}}:wght@400;500;600;700&family={{FONT_BODY}}:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ================================================================
+       MEDICAL V3 — Modern Tech Medical
+       Dark, high-tech, advanced. Glassmorphism + gradient mesh.
+       BAB framework: Before > After > Bridge
+       Horizontal scroll services + 3D tilt tech cards
+       ================================================================ */
+
+    /* -- Reset & Base -- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --text: {{COLOR_TEXT}};
+      --pop: #22C55E;
+      --accent-soft: rgba(59, 130, 246, 0.08);
+      --accent-mid: rgba(59, 130, 246, 0.15);
+      --accent-glow: rgba(59, 130, 246, 0.25);
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --card-border: rgba(59, 130, 246, 0.12);
+      --glass-bg: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --muted: rgba(226, 232, 240, 0.5);
+      --surface: #111827;
+      --font-display: '{{FONT_DISPLAY}}', 'Space Grotesk', sans-serif;
+      --font-body: '{{FONT_BODY}}', 'Inter', sans-serif;
+      --radius: 16px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.7;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    /* -- Disclaimer & Loader -- */
+    .disclaimer{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--accent);color:#fff;font-size:11px;letter-spacing:.06em;text-align:center;padding:10px 24px;font-weight:500}
+    .disclaimer a{color:#fff;text-decoration:underline;font-weight:600}
+    .loader{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+    .loader-inner{text-align:center}
+    .loader-logo{font-family:var(--font-display);font-size:clamp(28px,5vw,48px);font-weight:700;letter-spacing:.02em;color:var(--accent);opacity:0}
+    .loader-bar{width:120px;height:2px;background:rgba(255,255,255,0.06);margin:24px auto 0;overflow:hidden;border-radius:2px}
+    .loader-bar-fill{width:100%;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;border-radius:2px}
+
+    /* -- Scroll Progress -- */
+    .scroll-progress{position:fixed;top:38px;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--pop));z-index:9998;transition:none}
+
+    /* -- Gradient Mesh Background -- */
+    .gradient-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 15%, rgba(59,130,246,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 85% 85%, rgba(34,197,94,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 40% at 50% 50%, rgba(59,130,246,0.03) 0%, transparent 70%),
+        var(--bg);
+      animation: meshPulse 18s ease-in-out infinite alternate;
+    }
+    @keyframes meshPulse {
+      0% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+      50% { background-position: 10% 20%, 90% 70%, 55% 45%; }
+      100% { background-position: 5% 10%, 95% 90%, 48% 52%; }
+    }
+
+    /* -- Container -- */
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* -- Typography -- */
+    h1, h2, h3, h4, h5 { font-family: var(--font-display); line-height: 1.1; color: var(--text); }
+    p { line-height: 1.7; }
+    .accent { color: var(--accent); }
+    .pop { color: var(--pop); }
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: clamp(16px, 3vw, 24px);
+      letter-spacing: -0.02em;
+    }
+    .section-desc {
+      font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.8;
+    }
+
+    /* -- Navigation -- */
+    .nav {
+      position: fixed;
+      top: 38px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+      background: rgba(10, 15, 26, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: padding 0.3s ease, box-shadow 0.3s ease;
+    }
+    .nav.scrolled {
+      padding: 0.6rem 2rem;
+      box-shadow: 0 4px 30px rgba(59,130,246,0.06);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+    .nav-logo { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; letter-spacing: -0.01em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { list-style: none; display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 0.88rem; font-weight: 500; letter-spacing: 0.02em; transition: color 0.3s; color: var(--muted); }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: 10px 24px; border-radius: 60px; font-weight: 600;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.3); }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; width: 28px; cursor: pointer; background: none; border: none; }
+    .nav-toggle span { display: block; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
+    .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
+        background: var(--bg); flex-direction: column; justify-content: center; gap: 28px;
+        transition: right 0.4s cubic-bezier(0.22,1,0.36,1); box-shadow: -8px 0 40px rgba(0,0,0,0.3);
+      }
+      .nav-links.open { right: 0; }
+      .nav-toggle { display: flex; }
+    }
+
+    /* -- Buttons -- */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff;
+      font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+      padding: 16px 36px; border-radius: 60px; border: none; cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(59,130,246,0.3); }
+    .btn-primary svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--accent);
+      font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+      padding: 16px 36px; border-radius: 60px; border: 1px solid var(--card-border); cursor: pointer;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .btn-outline:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+    /* ══════════════════════════════════════
+       HERO — Dark gradient mesh, glassmorphism card
+       ══════════════════════════════════════ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: clamp(140px, 18vh, 200px) 0 clamp(80px, 12vh, 120px);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(32px, 4vw, 64px);
+      align-items: center;
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 0.78rem; font-weight: 600;
+      padding: 8px 20px; border-radius: 60px;
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 32px;
+      opacity: 0; transform: translateY(20px);
+    }
+    .hero-badge svg { width: 16px; height: 16px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .hero-badge .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--pop);
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+    }
+    .hero-title {
+      font-size: clamp(2.8rem, 6.5vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .hero-title .line { display: block; overflow: hidden; }
+    .hero-title .line-inner { display: block; transform: translateY(110%); }
+    .hero-desc {
+      font-size: clamp(1rem, 1.4vw, 1.1rem);
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 40px;
+      line-height: 1.8;
+      opacity: 0; transform: translateY(20px);
+    }
+    .hero-actions {
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+      opacity: 0; transform: translateY(20px);
+    }
+
+    /* Glassmorphism Card */
+    .hero-glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: clamp(32px, 4vw, 48px);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px) scale(0.97);
+    }
+    .hero-glass::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 180deg, transparent 0%, rgba(59,130,246,0.08) 25%, transparent 50%, rgba(34,197,94,0.05) 75%, transparent 100%);
+      animation: glassRotate 12s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes glassRotate {
+      100% { transform: rotate(360deg); }
+    }
+    .hero-glass-content { position: relative; z-index: 2; }
+    .hero-glass-img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .hero-glass-info { display: flex; flex-direction: column; gap: 12px; }
+    .hero-glass-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--glass-border);
+      font-size: 0.9rem;
+    }
+    .hero-glass-row:last-child { border-bottom: none; }
+    .hero-glass-label { color: var(--muted); font-weight: 500; }
+    .hero-glass-value { font-weight: 600; color: var(--text); }
+    .hero-glass-value.available { color: var(--pop); }
+
+    @media (max-width: 768px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-glass { margin-top: 32px; }
+    }
+
+    /* ══════════════════════════════════════
+       BAB — Before / After / Bridge
+       ══════════════════════════════════════ */
+    .bab { padding: clamp(80px, 10vw, 140px) 0; }
+    .bab-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .bab-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 40px 28px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(30px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .bab-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 28px; right: 28px;
+      height: 3px;
+      border-radius: 0 0 3px 3px;
+    }
+    .bab-card:nth-child(1)::before { background: var(--muted); }
+    .bab-card:nth-child(2)::before { background: var(--accent); }
+    .bab-card:nth-child(3)::before { background: var(--pop); }
+    .bab-step {
+      font-family: var(--font-display);
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 16px;
+    }
+    .bab-card:nth-child(1) .bab-step { color: var(--muted); }
+    .bab-card:nth-child(2) .bab-step { color: var(--accent); }
+    .bab-card:nth-child(3) .bab-step { color: var(--pop); }
+    .bab-heading {
+      font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+      font-weight: 700; margin-bottom: 16px; letter-spacing: -0.01em;
+    }
+    .bab-text { font-size: 0.92rem; color: var(--muted); line-height: 1.8; }
+
+    @media (max-width: 768px) { .bab-grid { grid-template-columns: 1fr; gap: 20px; } }
+
+    /* ══════════════════════════════════════
+       SERVICES — Horizontal Scroll
+       ══════════════════════════════════════ */
+    .services-section { padding: clamp(80px, 10vw, 140px) 0; overflow: hidden; }
+    .services-header { margin-bottom: clamp(48px, 6vw, 72px); }
+    .services-header .section-desc { max-width: 480px; }
+    .services-track {
+      display: flex;
+      gap: 24px;
+      padding: 0 24px;
+      width: max-content;
+      will-change: transform;
+    }
+    .service-card {
+      width: clamp(300px, 28vw, 380px);
+      flex-shrink: 0;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
+    .service-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 40px rgba(59,130,246,0.08);
+    }
+    .service-card-img { width: 100%; height: 220px; object-fit: cover; }
+    .service-card-body { padding: 24px; }
+    .service-card-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 0.7rem; font-weight: 600;
+      padding: 4px 12px; border-radius: 60px;
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .service-card-tag.available { background: rgba(34,197,94,0.1); color: var(--pop); }
+    .service-card-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .service-card-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+    .service-card-price { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+    .services-scroll-hint {
+      text-align: center; margin-top: 24px;
+      font-size: 0.8rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .services-scroll-hint svg {
+      width: 20px; height: 20px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      vertical-align: middle; margin-left: 6px;
+      animation: scrollArrow 1.5s ease-in-out infinite;
+    }
+    @keyframes scrollArrow {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(6px); }
+    }
+
+    /* ══════════════════════════════════════
+       TECHNOLOGY — 3D Tilt Cards
+       ══════════════════════════════════════ */
+    .technology { padding: clamp(80px, 10vw, 140px) 0; }
+    .technology-header { text-align: center; margin-bottom: clamp(48px, 6vw, 72px); }
+    .technology-header .section-desc { margin: 0 auto; }
+    .technology-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .tech-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: border-color 0.4s, box-shadow 0.4s;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    .tech-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 60px rgba(59,130,246,0.1);
+    }
+    .tech-card-icon {
+      width: 48px; height: 48px;
+      background: var(--accent-soft); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .tech-card-icon svg { width: 24px; height: 24px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .tech-card-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.01em; }
+    .tech-card-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+
+    @media (max-width: 768px) { .technology-grid { grid-template-columns: 1fr; } }
+
+    /* ══════════════════════════════════════
+       TESTIMONIALS
+       ══════════════════════════════════════ */
+    .testimonials {
+      padding: clamp(80px, 10vw, 140px) 0;
+      background: var(--surface);
+    }
+    .testimonials-header { text-align: center; margin-bottom: clamp(48px, 6vw, 64px); }
+    .testimonials-header .section-desc { margin: 0 auto; }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .testimonial-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      opacity: 0; transform: translateY(30px);
+    }
+    .testimonial-stars { display: flex; gap: 3px; margin-bottom: 16px; }
+    .testimonial-stars svg { width: 16px; height: 16px; fill: var(--pop); }
+    .testimonial-text { font-size: 0.95rem; line-height: 1.8; color: var(--text); margin-bottom: 20px; font-style: italic; }
+    .testimonial-author { font-weight: 600; font-size: 0.88rem; }
+    .testimonial-role { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+    @media (max-width: 768px) { .testimonials-grid { grid-template-columns: 1fr; } }
+
+    /* ══════════════════════════════════════
+       CTA
+       ══════════════════════════════════════ */
+    .cta-section {
+      padding: clamp(80px, 12vw, 160px) 0;
+      background: var(--accent);
+      color: #fff;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-mesh {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 50% 70% at 20% 30%, rgba(34,197,94,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 70%, rgba(255,255,255,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .cta-heading {
+      font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+      font-weight: 700; margin-bottom: 16px;
+      position: relative; letter-spacing: -0.02em;
+    }
+    .cta-sub {
+      font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 40px; max-width: 500px;
+      margin-left: auto; margin-right: auto; line-height: 1.7;
+    }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #fff; color: var(--accent);
+      font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+      padding: 18px 44px; border-radius: 60px; border: none; cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
+    .cta-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .cta-info {
+      margin-top: 56px;
+      display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+    }
+    .cta-info-item { font-size: 0.9rem; color: rgba(255,255,255,0.7); }
+    .cta-info-item strong {
+      display: block; color: #fff;
+      font-family: var(--font-display); font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════ */
+    .footer { padding: 48px 0; background: #050810; color: #fff; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-brand { font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; }
+    .footer-brand span { color: var(--accent); }
+    .footer-copy { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+    .footer-copy a { color: var(--accent); text-decoration: none; }
+    .footer-socials { display: flex; gap: 12px; }
+    .footer-socials a {
+      width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.08); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; transition: border-color 0.3s, background 0.3s;
+    }
+    .footer-socials a:hover { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+    .footer-socials svg { width: 16px; height: 16px; fill: #fff; transition: fill 0.3s; }
+    .footer-socials a:hover svg { fill: var(--accent); }
+
+    /* -- Reveal utility -- */
+    .reveal { opacity: 0; transform: translateY(40px); }
+
+    /* -- Reduced Motion -- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .gradient-mesh { animation: none !important; }
+      .hero-glass::before { animation: none !important; }
+      .hero-badge .status-dot { animation: none !important; }
+      .hero-title .line-inner { transform: none !important; }
+      .hero-badge, .hero-desc, .hero-actions, .hero-glass { opacity: 1 !important; transform: none !important; }
+      .tech-card, .bab-card, .testimonial-card, .reveal { opacity: 1 !important; transform: none !important; }
+      .services-scroll-hint svg { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Gradient Mesh Background -->
+  <div class="gradient-mesh"></div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    Prototype cree par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a> — Site web professionnel a 100 000 XPF
+  </div>
+
+  <!-- Loader -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">{{BUSINESS_NAME}}</div>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">{{BUSINESS_NAME}}<span>.</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#technology">Equipement</a></li>
+        <li><a href="#testimonials">Avis</a></li>
+        <li><a href="#cta" class="nav-cta">Rendez-vous</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       HERO — Dark gradient mesh, glassmorphism card
+       ══════════════════════════════════════ -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-badge" id="heroBadge">
+            <span class="status-dot"></span>
+            <span><span class="pop">Disponible</span> — {{SUBSECTOR}} a {{CITY}}</span>
+          </div>
+          <h1 class="hero-title">
+            <span class="line"><span class="line-inner">Medecine de</span></span>
+            <span class="line"><span class="line-inner"><span class="accent">precision</span>,</span></span>
+            <span class="line"><span class="line-inner">soins d'<span class="pop">avenir</span>.</span></span>
+          </h1>
+          <p class="hero-desc" id="heroDesc">
+            {{TAGLINE}}. {{BUSINESS_NAME}} allie technologie de pointe et expertise humaine pour une prise en charge d'excellence a {{CITY}}.
+          </p>
+          <div class="hero-actions" id="heroActions">
+            <a href="#cta" class="btn-primary">
+              Prendre rendez-vous
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#services" class="btn-outline">Nos specialites</a>
+          </div>
+        </div>
+        <div class="hero-glass" id="heroGlass">
+          <div class="hero-glass-content">
+            <img src="{{HERO_IMAGE}}" alt="{{BUSINESS_NAME}}" class="hero-glass-img">
+            <div class="hero-glass-info">
+              <div class="hero-glass-row">
+                <span class="hero-glass-label">Statut</span>
+                <span class="hero-glass-value available">Ouvert maintenant</span>
+              </div>
+              <div class="hero-glass-row">
+                <span class="hero-glass-label">Prochaine dispo</span>
+                <span class="hero-glass-value">Aujourd'hui</span>
+              </div>
+              <div class="hero-glass-row">
+                <span class="hero-glass-label">Specialites</span>
+                <span class="hero-glass-value">{{SUBSECTOR}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       BAB — Before / After / Bridge
+       ══════════════════════════════════════ -->
+  <section class="bab" id="bab">
+    <div class="container">
+      <div class="bab-grid">
+        <div class="bab-card">
+          <p class="bab-step">Avant</p>
+          <h3 class="bab-heading">Attente, incertitude, stress.</h3>
+          <p class="bab-text">Des semaines d'attente pour un rendez-vous. Un diagnostic flou. Du materiel vieillissant qui ne rassure personne. Votre sante merite mieux qu'un parcours du combattant a {{CITY}}.</p>
+        </div>
+        <div class="bab-card">
+          <p class="bab-step">Apres</p>
+          <h3 class="bab-heading">Rapidite, precision, serenite.</h3>
+          <p class="bab-text">Imaginez un rendez-vous obtenu sous 48h. Un diagnostic precis grace a l'imagerie derniere generation. Un suivi digital clair et rassurant — vous savez exactement ou vous en etes.</p>
+        </div>
+        <div class="bab-card">
+          <p class="bab-step">Le Pont</p>
+          <h3 class="bab-heading">{{BUSINESS_NAME}} vous accompagne.</h3>
+          <p class="bab-text">Equipement de pointe, equipe specialisee et prise de rendez-vous simplifiee. Pas de jargon, pas d'attente inutile — juste des soins d'excellence adaptes a la Polynesie.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SERVICES — Horizontal Scroll
+       ══════════════════════════════════════ -->
+  <section class="services-section" id="services">
+    <div class="container">
+      <div class="services-header">
+        <p class="section-label">Nos Specialites</p>
+        <h2 class="section-title">Des soins <span class="accent">complets</span>, une equipe <span class="accent">dediee</span>.</h2>
+        <p class="section-desc">Chaque specialite est portee par des praticiens experimentes et du materiel de derniere generation.</p>
+      </div>
+    </div>
+    <div class="services-track" id="servicesTrack">
+      <div class="service-card">
+        <img src="{{IMAGE_1}}" alt="{{SERVICE_1}}" class="service-card-img" loading="lazy">
+        <div class="service-card-body">
+          <span class="service-card-tag available">Disponible</span>
+          <h3 class="service-card-name">{{SERVICE_1}}</h3>
+          <p class="service-card-desc">Consultation complete avec diagnostic approfondi et plan de traitement personnalise.</p>
+          <span class="service-card-price">{{PRICE_1}}</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <img src="{{IMAGE_2}}" alt="{{SERVICE_2}}" class="service-card-img" loading="lazy">
+        <div class="service-card-body">
+          <span class="service-card-tag available">Disponible</span>
+          <h3 class="service-card-name">{{SERVICE_2}}</h3>
+          <p class="service-card-desc">Examens de pointe pour un diagnostic rapide et fiable.</p>
+          <span class="service-card-price">{{PRICE_2}}</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <img src="{{IMAGE_3}}" alt="{{SERVICE_3}}" class="service-card-img" loading="lazy">
+        <div class="service-card-body">
+          <span class="service-card-tag">Specialise</span>
+          <h3 class="service-card-name">{{SERVICE_3}}</h3>
+          <p class="service-card-desc">Traitement specialise avec les dernieres avancees medicales.</p>
+          <span class="service-card-price">{{PRICE_3}}</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <img src="{{IMAGE_4}}" alt="{{SERVICE_4}}" class="service-card-img" loading="lazy">
+        <div class="service-card-body">
+          <span class="service-card-tag available">Disponible</span>
+          <h3 class="service-card-name">{{SERVICE_4}}</h3>
+          <p class="service-card-desc">Suivi preventif complet, bilan de sante et accompagnement long terme.</p>
+          <span class="service-card-price">{{PRICE_4}}</span>
+        </div>
+      </div>
+      <div class="service-card">
+        <img src="{{HERO_IMAGE}}" alt="Urgences" class="service-card-img" loading="lazy">
+        <div class="service-card-body">
+          <span class="service-card-tag available">24/7</span>
+          <h3 class="service-card-name">Urgences</h3>
+          <p class="service-card-desc">Prise en charge immediate, equipe d'urgence disponible jour et nuit.</p>
+          <span class="service-card-price">Sur place</span>
+        </div>
+      </div>
+    </div>
+    <p class="services-scroll-hint">
+      Glissez pour decouvrir
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </p>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       TECHNOLOGY — 3D Tilt Cards
+       ══════════════════════════════════════ -->
+  <section class="technology" id="technology">
+    <div class="container">
+      <div class="technology-header">
+        <p class="section-label">Equipement</p>
+        <h2 class="section-title">Technologie <span class="accent">medicale</span> avancee</h2>
+        <p class="section-desc">Investir dans le meilleur equipement, c'est investir dans votre sante.</p>
+      </div>
+      <div class="technology-grid">
+        <div class="tech-card" data-tilt>
+          <div class="tech-card-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3 class="tech-card-name">Imagerie Numerique</h3>
+          <p class="tech-card-desc">Scanner, echographie et radiographie haute resolution pour un diagnostic precis en temps reel.</p>
+        </div>
+        <div class="tech-card" data-tilt>
+          <div class="tech-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <h3 class="tech-card-name">Monitoring Connecte</h3>
+          <p class="tech-card-desc">Suivi en continu de vos constantes avec alertes automatiques et partage securise avec votre medecin.</p>
+        </div>
+        <div class="tech-card" data-tilt>
+          <div class="tech-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="tech-card-name">Telemedecine Securisee</h3>
+          <p class="tech-card-desc">Consultations a distance chiffrees, ideal pour le suivi entre les iles et les zones eloignees.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       TESTIMONIALS
+       ══════════════════════════════════════ -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="testimonials-header">
+        <p class="section-label">Temoignages</p>
+        <h2 class="section-title">La <span class="accent">confiance</span> de nos patients</h2>
+        <p class="section-desc">Ils nous font confiance pour leur sante. Decouvrez leurs experiences.</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="testimonial-text">"Prise en charge rapide et professionnelle. L'equipement est impressionnant et l'equipe met vraiment en confiance."</p>
+          <p class="testimonial-author">Teiva P.</p>
+          <p class="testimonial-role">Patient</p>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="testimonial-text">"Enfin un cabinet moderne a {{CITY}}. La telemedecine m'a permis de continuer mon suivi depuis Bora Bora. Tres pratique."</p>
+          <p class="testimonial-author">Moana L.</p>
+          <p class="testimonial-role">Patiente depuis 3 ans</p>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="testimonial-text">"Le docteur a pris le temps de tout m'expliquer clairement. Les resultats etaient rapides et le suivi numerique est top."</p>
+          <p class="testimonial-author">Raimana K.</p>
+          <p class="testimonial-role">Patient regulier</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       CTA
+       ══════════════════════════════════════ -->
+  <section class="cta-section" id="cta">
+    <div class="cta-mesh"></div>
+    <div class="container">
+      <h2 class="cta-heading reveal">Votre sante <span style="opacity:0.7">merite</span> le meilleur.</h2>
+      <p class="cta-sub reveal">Prenez rendez-vous en ligne en quelques clics. Consultation disponible sous 48h a {{CITY}}.</p>
+      <div class="reveal">
+        <a href="#" class="cta-btn">
+          Prendre rendez-vous
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="cta-info reveal">
+        <div class="cta-info-item">
+          <strong>Adresse</strong>
+          {{ADDRESS}}
+        </div>
+        <div class="cta-info-item">
+          <strong>Telephone</strong>
+          {{PHONE}}
+        </div>
+        <div class="cta-info-item">
+          <strong>Horaires</strong>
+          {{HOURS}}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">{{BUSINESS_NAME}}<span>.</span></div>
+      <p class="footer-copy">&copy; 2026 {{BUSINESS_NAME}} — {{CITY}}. Site par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a></p>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385h-3.047v-3.47h3.047v-2.642c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385c5.736-.9 10.124-5.864 10.124-11.854z"/></svg>
+        </a>
+        <a href="#" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      /* -- Loader -- */
+      var loaderTl = gsap.timeline();
+      loaderTl
+        .to('.loader-logo', { opacity: 1, duration: 0.6, ease: 'power2.out' })
+        .to('.loader-bar-fill', { scaleX: 1, duration: 1.2, ease: 'power2.inOut' }, 0.3)
+        .to('.loader', { yPercent: -100, duration: 0.8, ease: 'power3.inOut' }, 1.8);
+
+      /* -- Reduced Motion Check -- */
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* -- Lenis Smooth Scroll -- */
+      var lenis;
+      if (!prefersReducedMotion) {
+        lenis = new Lenis({
+          duration: 1.3,
+          easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+          smoothWheel: true,
+        });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* -- GSAP Register -- */
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* -- Scroll Progress Bar -- */
+      var scrollProgress = document.getElementById('scrollProgress');
+      window.addEventListener('scroll', function () {
+        var scrollTop = window.scrollY;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 0) { scrollProgress.style.width = ((scrollTop / docHeight) * 100) + '%'; }
+      }, { passive: true });
+
+      /* -- Navigation -- */
+      var nav = document.getElementById('nav');
+      var navToggle = document.getElementById('navToggle');
+      var navLinks = document.getElementById('navLinks');
+
+      window.addEventListener('scroll', function () {
+        nav.classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
+
+      navToggle.addEventListener('click', function () {
+        navToggle.classList.toggle('active');
+        navLinks.classList.toggle('open');
+      });
+
+      navLinks.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          navToggle.classList.remove('active');
+          navLinks.classList.remove('open');
+        });
+      });
+
+      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            if (lenis) { lenis.scrollTo(target, { offset: -80 }); }
+            else { target.scrollIntoView({ behavior: 'smooth' }); }
+          }
+        });
+      });
+
+      /* -- Skip Animations if Reduced Motion -- */
+      if (prefersReducedMotion) {
+        document.querySelectorAll('.hero-title .line-inner').forEach(function (el) { el.style.transform = 'none'; });
+        document.querySelectorAll('.hero-badge, .hero-desc, .hero-actions, .hero-glass, .reveal, .tech-card, .bab-card, .testimonial-card').forEach(function (el) {
+          el.style.opacity = '1'; el.style.transform = 'none';
+        });
+        return;
+      }
+
+      /* ══════════════════════════════
+         HERO — Text reveals + Glass card
+         ══════════════════════════════ */
+      var heroTl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 2.0 });
+      heroTl
+        .to('.hero-title .line-inner', { y: '0%', duration: 1, stagger: 0.12 })
+        .to('#heroBadge', { opacity: 1, y: 0, duration: 0.7 }, '-=0.6')
+        .to('#heroDesc', { opacity: 1, y: 0, duration: 0.7 }, '-=0.4')
+        .to('#heroActions', { opacity: 1, y: 0, duration: 0.7 }, '-=0.3')
+        .to('#heroGlass', { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'power2.out' }, '-=0.5');
+
+      /* ══════════════════════════════
+         BAB — Card stagger
+         ══════════════════════════════ */
+      gsap.to('.bab-card', {
+        opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out',
+        scrollTrigger: { trigger: '.bab-grid', start: 'top 82%', once: true },
+      });
+
+      /* ══════════════════════════════
+         SERVICES — Horizontal Scroll (GSAP pin)
+         ══════════════════════════════ */
+      var servicesTrack = document.getElementById('servicesTrack');
+      if (servicesTrack) {
+        var trackWidth = servicesTrack.scrollWidth - window.innerWidth;
+        gsap.to(servicesTrack, {
+          x: -trackWidth,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.services-section',
+            start: 'top 10%',
+            end: function () { return '+=' + trackWidth; },
+            pin: true,
+            scrub: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+      }
+
+      /* ══════════════════════════════
+         TECHNOLOGY — 3D Tilt Cards
+         ══════════════════════════════ */
+      gsap.to('.tech-card', {
+        opacity: 1, y: 0, duration: 0.7, stagger: 0.12, ease: 'power3.out',
+        scrollTrigger: { trigger: '.technology-grid', start: 'top 82%', once: true },
+      });
+
+      /* 3D Tilt effect */
+      document.querySelectorAll('[data-tilt]').forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+          var rect = card.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          var centerX = rect.width / 2;
+          var centerY = rect.height / 2;
+          var rotateX = ((y - centerY) / centerY) * -10;
+          var rotateY = ((x - centerX) / centerX) * 10;
+          card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale3d(1.03, 1.03, 1.03)';
+        });
+        card.addEventListener('mouseleave', function () {
+          card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        });
+      });
+
+      /* ══════════════════════════════
+         TESTIMONIALS
+         ══════════════════════════════ */
+      gsap.to('.testimonial-card', {
+        opacity: 1, y: 0, duration: 0.7, stagger: 0.12, ease: 'power3.out',
+        scrollTrigger: { trigger: '.testimonials-grid', start: 'top 82%', once: true },
+      });
+
+      /* ══════════════════════════════
+         GENERIC REVEALS
+         ══════════════════════════════ */
+      gsap.utils.toArray('.reveal').forEach(function (el) {
+        gsap.to(el, {
+          opacity: 1, y: 0, duration: 0.85, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+        });
+      });
+
+      /* ══════════════════════════════
+         SECTION LABELS & TITLES
+         ══════════════════════════════ */
+      document.querySelectorAll('.section-label').forEach(function (label) {
+        gsap.from(label, {
+          clipPath: 'inset(0 100% 0 0)', opacity: 0, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: label, start: 'top 90%', once: true },
+        });
+      });
+
+      document.querySelectorAll('.section-title').forEach(function (title) {
+        gsap.from(title, {
+          y: 40, opacity: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: title, start: 'top 86%', once: true },
+        });
+      });
+
+      /* ══════════════════════════════
+         CTA & FOOTER
+         ══════════════════════════════ */
+      gsap.from('.cta-heading', {
+        y: 50, opacity: 0, duration: 1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.cta-section', start: 'top 80%', once: true },
+      });
+
+      gsap.from('.footer', {
+        opacity: 0, y: 20, duration: 0.8, ease: 'power2.out',
+        scrollTrigger: { trigger: '.footer', start: 'top 95%', once: true },
+      });
+
+    })();
+  </script>
+</body>
+</html>

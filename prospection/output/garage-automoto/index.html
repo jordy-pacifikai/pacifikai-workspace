@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garage Automoto — Votre Mecanicien de Confiance a Papeete</title>
+<meta name="description" content="Garage Automoto — Mecanique auto, diagnostic, freinage, climatisation a Papeete. Plus de 15 ans d'expertise.">
+<meta property="og:title" content="Garage Automoto — Mecanicien de Confiance a Papeete">
+<meta property="og:description" content="Revision, diagnostic electronique, freinage, climatisation. Toutes marques. Devis gratuit.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --navy:#0D2137;
+  --teal:#0D9488;
+  --teal-dark:#0B7C72;
+  --teal-light:rgba(13,148,136,.08);
+  --teal-mid:rgba(13,148,136,.18);
+  --white:#FAFAFA;
+  --gray:#F5F7FA;
+  --text:#0D2137;
+  --dim:#5A6B7F;
+  --border:rgba(13,33,55,.08);
+  --radius-sm:12px;
+  --radius-md:20px;
+  --radius-lg:24px;
+  --shadow-sm:0 2px 8px rgba(0,0,0,.04);
+  --shadow-md:0 8px 32px rgba(0,0,0,.06);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.08);
+  --shadow-hover:0 16px 48px rgba(0,0,0,.12);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--white);
+  color:var(--text);
+  overflow-x:hidden;
+  line-height:1.7;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-0.03em;line-height:1.1}
+
+.section-label{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--teal);margin-bottom:16px;
+}
+.section-label::before{
+  content:'';display:block;width:24px;height:2px;background:var(--teal);border-radius:2px;
+}
+
+/* ============================================
+   LOADER
+   ============================================ */
+.loader{display:none;
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:var(--navy);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:24px;
+}
+.loader-brand{
+  font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;
+  color:#fff;letter-spacing:-0.02em;opacity:1;
+}
+.loader-bar{
+  width:200px;height:3px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;
+}
+.loader-fill{
+  width:0%;height:100%;background:var(--teal);border-radius:4px;
+}
+
+/* ============================================
+   DISCLAIMER
+   ============================================ */
+.disclaimer{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--navy);color:rgba(255,255,255,.85);
+  padding:14px 24px;font-size:13px;text-align:center;line-height:1.5;
+  transform:translateY(100%);
+  border-top:1px solid rgba(13,148,136,.3);
+}
+.disclaimer a{color:var(--teal);text-decoration:none;font-weight:600}
+.disclaimer .close-disc{
+  display:inline-block;margin-left:16px;padding:4px 14px;
+  background:var(--teal);color:#fff;border:none;border-radius:50px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  transition:background .25s ease;
+}
+.disclaimer .close-disc:hover{background:var(--teal-dark)}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 48px;
+  background:rgba(250,250,250,.72);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  transition:box-shadow .4s ease,background .4s ease;
+}
+nav.scrolled{
+  box-shadow:0 1px 24px rgba(0,0,0,.06);
+  background:rgba(250,250,250,.92);
+}
+.nav-brand{
+  font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;
+  color:var(--text);text-decoration:none;letter-spacing:-0.02em;
+}
+.nav-brand span{color:var(--teal)}
+.nav-center{display:flex;gap:32px;list-style:none}
+.nav-center a{
+  font-size:14px;font-weight:500;color:var(--dim);
+  text-decoration:none;transition:color .25s ease;
+  position:relative;
+}
+.nav-center a::after{
+  content:'';position:absolute;bottom:-4px;left:0;right:0;
+  height:2px;background:var(--teal);
+  transform:scaleX(0);transform-origin:right;
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.nav-center a:hover{color:var(--text)}
+.nav-center a:hover::after{transform:scaleX(1);transform-origin:left}
+.nav-cta{
+  padding:10px 24px;border-radius:50px;
+  background:var(--teal);color:#fff;
+  font-size:13px;font-weight:600;text-decoration:none;
+  transition:all .3s ease;
+  box-shadow:0 2px 12px rgba(13,148,136,.2);
+}
+.nav-cta:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(13,148,136,.3);
+  background:var(--teal-dark);
+}
+
+/* Mobile nav */
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.nav-toggle span{width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s ease}
+
+/* ============================================
+   HERO — Split Layout
+   ============================================ */
+.hero{
+  min-height:100vh;padding:140px 48px 80px;
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+  max-width:1320px;margin:0 auto;
+}
+.hero-text{opacity:1}
+.hero-overline{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;
+  color:var(--teal);margin-bottom:20px;
+}
+.hero-overline svg{width:16px;height:16px;fill:var(--teal)}
+.hero h1{
+  font-size:clamp(2.8rem,5vw,4.2rem);
+  margin-bottom:20px;color:var(--navy);
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--teal),#14B8A6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  font-size:18px;color:var(--dim);line-height:1.7;
+  max-width:480px;margin-bottom:36px;
+}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:16px 36px;border-radius:50px;
+  background:var(--teal);color:#fff;
+  font-size:15px;font-weight:600;text-decoration:none;
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 4px 20px rgba(13,148,136,.25);
+  border:none;cursor:pointer;
+}
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(13,148,136,.35);
+  background:var(--teal-dark);
+}
+.btn-primary svg{width:18px;height:18px;fill:#fff;transition:transform .3s ease}
+.btn-primary:hover svg{transform:translateX(3px)}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:16px 32px;border-radius:50px;
+  background:transparent;color:var(--text);
+  font-size:15px;font-weight:600;text-decoration:none;
+  border:1.5px solid var(--border);
+  transition:all .3s ease;
+}
+.btn-secondary:hover{border-color:var(--teal);color:var(--teal)}
+
+.hero-visual{
+  position:relative;opacity:1;
+}
+.hero-img-wrap{
+  position:relative;border-radius:var(--radius-lg);overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  aspect-ratio:4/5;
+}
+.hero-img-wrap img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform 6s cubic-bezier(.16,1,.3,1);
+}
+.hero-img-wrap:hover img{transform:scale(1.04)}
+.hero-float{
+  position:absolute;bottom:-20px;left:-24px;
+  background:#fff;border-radius:var(--radius-md);
+  padding:16px 24px;box-shadow:var(--shadow-md);
+  display:flex;align-items:center;gap:12px;
+  z-index:2;
+}
+.hero-float-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--teal-light);
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-float-icon svg{width:22px;height:22px;fill:var(--teal)}
+.hero-float-text{font-size:13px;font-weight:600;color:var(--text)}
+.hero-float-text span{display:block;font-size:11px;font-weight:400;color:var(--dim);margin-top:2px}
+
+/* ============================================
+   TRUST BAR — Stats
+   ============================================ */
+.trust{
+  background:var(--navy);padding:56px 48px;
+  position:relative;overflow:hidden;
+}
+.trust::before{
+  content:'';position:absolute;top:-50%;right:-10%;
+  width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(13,148,136,.12),transparent 70%);
+  pointer-events:none;
+}
+.trust-grid{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
+  text-align:center;
+}
+.trust-item{opacity:1}
+.trust-num{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(2rem,3.5vw,2.8rem);font-weight:700;
+  color:#fff;letter-spacing:-0.02em;
+  margin-bottom:4px;
+}
+.trust-num .teal{color:var(--teal)}
+.trust-desc{font-size:14px;color:rgba(255,255,255,.55);font-weight:500}
+
+/* ============================================
+   SERVICES — Bento Grid
+   ============================================ */
+.services{
+  padding:120px 48px;background:var(--gray);
+}
+.services-header{
+  text-align:center;max-width:600px;margin:0 auto 64px;
+  opacity:1;
+}
+.services-header h2{
+  font-size:clamp(2rem,3.5vw,3rem);color:var(--navy);margin-bottom:16px;
+}
+.services-header p{font-size:16px;color:var(--dim);line-height:1.7}
+
+.bento{
+  max-width:1200px;margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:auto auto;
+  gap:20px;
+}
+.bento-card{
+  background:#fff;border-radius:var(--radius-md);
+  padding:36px 32px;position:relative;
+  overflow:hidden;
+  border:1px solid var(--border);
+  transition:all .4s cubic-bezier(.4,0,.2,1);
+  opacity:1;
+}
+.bento-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-hover);
+  border-color:rgba(13,148,136,.2);
+}
+.bento-card.featured{
+  grid-column:span 2;grid-row:span 1;
+  background:var(--navy);color:#fff;
+  border:none;
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  padding:0;
+}
+.bento-card.featured .bento-text{padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
+.bento-card.featured .bento-img{
+  width:100%;height:100%;object-fit:cover;
+  border-radius:0 var(--radius-md) var(--radius-md) 0;
+}
+.bento-card.featured h3{color:#fff;margin-bottom:8px}
+.bento-card.featured p{color:rgba(255,255,255,.65)}
+
+.bento-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:var(--teal-light);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;
+  transition:background .3s ease;
+}
+.bento-card:hover .bento-icon{background:var(--teal-mid)}
+.bento-icon svg{width:24px;height:24px;fill:var(--teal)}
+.bento-card h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:20px;font-weight:700;margin-bottom:8px;
+  letter-spacing:-0.02em;
+}
+.bento-card p{font-size:14px;color:var(--dim);line-height:1.6}
+.bento-card.featured .bento-icon{background:rgba(13,148,136,.15)}
+.bento-card.featured .bento-icon svg{fill:var(--teal)}
+
+/* ============================================
+   WORKSHOP — Parallax
+   ============================================ */
+.workshop{
+  position:relative;height:70vh;min-height:500px;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+}
+.workshop-bg{
+  position:absolute;top:-20%;left:0;width:100%;height:140%;
+  object-fit:cover;
+  will-change:transform;
+}
+.workshop-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(13,33,55,.85),rgba(13,33,55,.6));
+}
+.workshop-content{
+  position:relative;z-index:2;text-align:center;
+  max-width:700px;padding:0 24px;opacity:1;
+}
+.workshop-content h2{
+  font-size:clamp(2rem,4vw,3.2rem);color:#fff;margin-bottom:20px;
+}
+.workshop-content p{
+  font-size:17px;color:rgba(255,255,255,.7);line-height:1.8;margin-bottom:32px;
+}
+.workshop-content .btn-primary{
+  background:var(--teal);
+}
+
+/* ============================================
+   WHY US
+   ============================================ */
+.why{
+  padding:120px 48px;background:var(--white);
+}
+.why-inner{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+.why-visual{opacity:1}
+.why-img{
+  width:100%;border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+  object-fit:cover;aspect-ratio:4/5;
+}
+.why-text{opacity:1}
+.why-text h2{
+  font-size:clamp(2rem,3.5vw,2.8rem);color:var(--navy);margin-bottom:40px;
+}
+.pillar{
+  display:flex;gap:20px;margin-bottom:28px;
+  padding-bottom:28px;border-bottom:1px solid var(--border);
+}
+.pillar:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.pillar-icon{
+  width:48px;height:48px;min-width:48px;border-radius:14px;
+  background:var(--teal-light);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .3s ease;
+}
+.pillar:hover .pillar-icon{background:var(--teal-mid)}
+.pillar-icon svg{width:22px;height:22px;fill:var(--teal)}
+.pillar h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:17px;font-weight:700;margin-bottom:4px;letter-spacing:-0.01em;
+}
+.pillar p{font-size:14px;color:var(--dim);line-height:1.6}
+
+/* ============================================
+   CTA SECTION
+   ============================================ */
+.cta-section{
+  background:var(--navy);padding:100px 48px;
+  position:relative;overflow:hidden;
+}
+.cta-section::before{
+  content:'';position:absolute;bottom:-30%;left:-5%;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(13,148,136,.1),transparent 70%);
+  pointer-events:none;
+}
+.cta-section::after{
+  content:'';position:absolute;top:-20%;right:-5%;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(13,148,136,.06),transparent 70%);
+  pointer-events:none;
+}
+.cta-inner{
+  max-width:900px;margin:0 auto;text-align:center;
+  position:relative;z-index:2;opacity:1;
+}
+.cta-inner h2{
+  font-size:clamp(2rem,4vw,3.2rem);color:#fff;margin-bottom:20px;
+}
+.cta-inner p{
+  font-size:17px;color:rgba(255,255,255,.6);line-height:1.7;
+  max-width:560px;margin:0 auto 48px;
+}
+.cta-details{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:32px;
+  margin-bottom:48px;
+}
+.cta-detail{
+  padding:28px 20px;border-radius:var(--radius-md);
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  transition:all .3s ease;
+}
+.cta-detail:hover{
+  background:rgba(255,255,255,.07);
+  border-color:rgba(13,148,136,.2);
+}
+.cta-detail svg{
+  width:28px;height:28px;fill:var(--teal);margin-bottom:12px;
+}
+.cta-detail h4{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;
+}
+.cta-detail p{font-size:13px;color:rgba(255,255,255,.5);line-height:1.5}
+.cta-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.cta-actions .btn-primary{
+  padding:18px 44px;font-size:16px;
+}
+.cta-actions .btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:18px 36px;border-radius:50px;
+  color:#fff;font-size:15px;font-weight:600;
+  text-decoration:none;
+  border:1.5px solid rgba(255,255,255,.15);
+  transition:all .3s ease;
+}
+.cta-actions .btn-outline:hover{border-color:var(--teal);color:var(--teal)}
+.cta-actions .btn-outline svg{width:18px;height:18px;fill:currentColor}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+footer{
+  background:var(--navy);padding:40px 48px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.footer-inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.footer-left{font-size:13px;color:rgba(255,255,255,.35)}
+.footer-left a{color:var(--teal);text-decoration:none}
+.footer-right{display:flex;gap:24px}
+.footer-right a{font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;transition:color .25s}
+.footer-right a:hover{color:var(--teal)}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media(max-width:1024px){
+  nav{padding:14px 28px}
+  .hero{grid-template-columns:1fr;padding:120px 28px 60px;gap:40px;text-align:center;min-height:auto}
+  .hero-sub{margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}
+  .hero-visual{max-width:480px;margin:0 auto}
+  .hero-float{left:50%;transform:translateX(-50%);bottom:-16px}
+  .trust-grid{grid-template-columns:repeat(2,1fr);gap:24px}
+  .bento{grid-template-columns:1fr 1fr}
+  .bento-card.featured{grid-column:span 2}
+  .why-inner{grid-template-columns:1fr;gap:48px}
+  .why-visual{max-width:480px;margin:0 auto}
+  .cta-details{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:768px){
+  nav{padding:12px 20px}
+  .nav-center{display:none}
+  .nav-toggle{display:flex}
+  .hero{padding:100px 20px 48px}
+  .hero h1{font-size:2.2rem}
+  .services{padding:80px 20px}
+  .bento{grid-template-columns:1fr;gap:16px}
+  .bento-card.featured{grid-column:span 1;grid-template-columns:1fr}
+  .bento-card.featured .bento-img{height:200px;border-radius:0 0 var(--radius-md) var(--radius-md)}
+  .workshop{height:50vh;min-height:400px}
+  .why{padding:80px 20px}
+  .cta-section{padding:80px 20px}
+  .cta-details{grid-template-columns:1fr}
+  footer{padding:28px 20px}
+  .footer-inner{flex-direction:column;gap:16px;text-align:center}
+  .trust{padding:40px 20px}
+  .trust-grid{gap:20px}
+}
+
+@media(max-width:480px){
+  .hero h1{font-size:1.9rem}
+  .hero-actions{flex-direction:column;gap:12px;width:100%}
+  .btn-primary,.btn-secondary{width:100%;justify-content:center}
+  .hero-float{position:relative;left:auto;bottom:auto;transform:none;margin-top:16px}
+  .trust-grid{grid-template-columns:1fr 1fr}
+  .trust-num{font-size:1.6rem}
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .loader{display:none;display:none}
+  .hero-text,.hero-visual,.trust-item,.services-header,
+  .bento-card,.workshop-content,.why-visual,.why-text,.cta-inner{
+    opacity:1 !important;transform:none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== LOADER ==================== -->
+<div class="loader" id="loader">
+  <div class="loader-brand" id="loader-brand">GARAGE AUTOMOTO</div>
+  <div class="loader-bar"><div class="loader-fill" id="loader-fill"></div></div>
+</div>
+
+<!-- ==================== DISCLAIMER ==================== -->
+<div class="disclaimer" id="disclaimer">
+  Prototype realise par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a> pour Garage Automoto. Demonstration gratuite, images non contractuelles.
+  <button class="close-disc" onclick="document.getElementById('disclaimer').style.transform='translateY(100%)'">OK</button>
+</div>
+
+<!-- ==================== NAVIGATION ==================== -->
+<nav id="nav">
+  <a href="#" class="nav-brand">AUTO<span>MOTO</span></a>
+  <ul class="nav-center">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#atelier">Atelier</a></li>
+    <li><a href="#pourquoi">Pourquoi Nous</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="tel:+68940500500" class="nav-cta">+689 40 50 05 00</a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="hero">
+  <div class="hero-text">
+    <div class="hero-overline">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      Mecanicien de Confiance
+    </div>
+    <h1>GARAGE<br><em>AUTOMOTO</em></h1>
+    <p class="hero-sub">Votre mecanicien de confiance a Papeete. Plus de 15 ans d'expertise, toutes marques, devis gratuit et transparent.</p>
+    <div class="hero-actions">
+      <a href="tel:+68940500500" class="btn-primary">
+        Prendre RDV
+        <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7l7 7-7 7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#services" class="btn-secondary">Nos Services</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-img-wrap">
+      <img src="hero.jpg" alt="Garage Automoto — Atelier mecanique Papeete" width="600" height="750">
+    </div>
+    <div class="hero-float">
+      <div class="hero-float-icon">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+      </div>
+      <div class="hero-float-text">
+        Devis Gratuit
+        <span>Sans engagement</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TRUST BAR ==================== -->
+<section class="trust" id="trust">
+  <div class="trust-grid">
+    <div class="trust-item">
+      <div class="trust-num"><span class="counter" data-target="15">0</span><span class="teal">+</span> Ans</div>
+      <div class="trust-desc">D'experience</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-num"><span class="counter" data-target="3000">0</span><span class="teal">+</span></div>
+      <div class="trust-desc">Clients satisfaits</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-num">Toutes <span class="teal">Marques</span></div>
+      <div class="trust-desc">Japonaises, europeennes, US</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-num">Devis <span class="teal">Gratuit</span></div>
+      <div class="trust-desc">Sans engagement</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SERVICES — Bento ==================== -->
+<section class="services" id="services">
+  <div class="services-header">
+    <div class="section-label">Nos Services</div>
+    <h2>Un savoir-faire complet pour votre vehicule</h2>
+    <p>De la revision a la reparation lourde, notre equipe qualifiee prend soin de votre voiture.</p>
+  </div>
+  <div class="bento">
+    <!-- 1. Revision (standard) -->
+    <div class="bento-card">
+      <div class="bento-icon">
+        <svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+      </div>
+      <h3>Revision Complete</h3>
+      <p>Vidange, filtres, bougies, courroie. Entretien periodique selon les preconisations constructeur.</p>
+    </div>
+    <!-- 2. Diagnostic (featured with image) -->
+    <div class="bento-card featured">
+      <div class="bento-text">
+        <div class="bento-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+        </div>
+        <h3>Diagnostic Electronique</h3>
+        <p>Lecture des codes defaut, reset voyants, analyse moteur. Equipement de derniere generation.</p>
+      </div>
+      <img class="bento-img" src="diag.jpg" alt="Diagnostic electronique automobile" width="400" height="300" loading="lazy">
+    </div>
+    <!-- 3. Freinage -->
+    <div class="bento-card">
+      <div class="bento-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#0D9488" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="#0D9488"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="#0D9488" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <h3>Freinage</h3>
+      <p>Plaquettes, disques, liquide de frein. Securite maximale, pieces de qualite.</p>
+    </div>
+    <!-- 4. Climatisation -->
+    <div class="bento-card">
+      <div class="bento-icon">
+        <svg viewBox="0 0 24 24"><path d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22z"/></svg>
+      </div>
+      <h3>Climatisation</h3>
+      <p>Recharge gaz, nettoyage circuit, remplacement compresseur. Essentiel sous le climat polynesien.</p>
+    </div>
+    <!-- 5. Pneus -->
+    <div class="bento-card">
+      <div class="bento-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><circle cx="12" cy="12" r="4"/></svg>
+      </div>
+      <h3>Pneus &amp; Geometrie</h3>
+      <p>Montage, equilibrage, parallélisme. Large choix de marques adaptees aux routes de Tahiti.</p>
+    </div>
+    <!-- 6. Embrayage -->
+    <div class="bento-card">
+      <div class="bento-icon">
+        <svg viewBox="0 0 24 24"><path d="M19.44 12.99l-.01.02c.04-.33.08-.67.08-1.01 0-.34-.04-.68-.08-1.01l.01.02 2.44-1.92-2.43-4.22-2.87 1.16.01.01c-.56-.45-1.18-.82-1.85-1.09l-.02.01-.39-3.06h-4.86l-.39 3.06-.02-.01c-.67.27-1.29.64-1.85 1.09l.01-.01-2.87-1.16-2.43 4.22 2.44 1.92.01-.02c-.04.33-.08.67-.08 1.01 0 .34.04.68.08 1.01l-.01-.02-2.44 1.92 2.43 4.22 2.87-1.16-.01-.01c.56.45 1.18.82 1.85 1.09l.02-.01.39 3.06h4.86l.39-3.06.02.01c.67-.27 1.29-.64 1.85-1.09l-.01.01 2.87 1.16 2.43-4.22-2.44-1.92zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+      </div>
+      <h3>Embrayage</h3>
+      <p>Remplacement kit complet, butee, volant moteur. Intervention rapide et garantie.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WORKSHOP — Parallax ==================== -->
+<section class="workshop" id="atelier">
+  <img class="workshop-bg" src="bay.jpg" alt="Atelier Garage Automoto" width="1600" height="900" id="parallax-bg">
+  <div class="workshop-overlay"></div>
+  <div class="workshop-content">
+    <div class="section-label" style="justify-content:center;color:var(--teal)">Notre Atelier</div>
+    <h2>Un equipement professionnel de pointe</h2>
+    <p>Pont elevateur, valise diagnostic, banc de geometrie, station de climatisation. Notre atelier est equipe pour intervenir sur tous types de vehicules avec precision et efficacite.</p>
+    <a href="tel:+68940500500" class="btn-primary">
+      Prendre RDV
+      <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7l7 7-7 7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ==================== WHY US ==================== -->
+<section class="why" id="pourquoi">
+  <div class="why-inner">
+    <div class="why-visual">
+      <img class="why-img" src="work.jpg" alt="Mecanicien au travail — Garage Automoto" width="600" height="750" loading="lazy">
+    </div>
+    <div class="why-text">
+      <div class="section-label">Pourquoi Nous</div>
+      <h2>Pourquoi choisir Garage Automoto</h2>
+      <div class="pillar">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        </div>
+        <div>
+          <h4>Transparence</h4>
+          <p>Devis detaille avant toute intervention. Pas de mauvaise surprise, vous savez exactement ce que vous payez.</p>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div>
+          <h4>Expertise</h4>
+          <p>Plus de 15 ans d'experience sur toutes les marques. Equipe formee aux dernieres technologies automobiles.</p>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+        </div>
+        <div>
+          <h4>Rapidite</h4>
+          <p>Diagnostics rapides, pieces en stock. On minimise votre temps d'immobilisation vehicule.</p>
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+        </div>
+        <div>
+          <h4>Prix Juste</h4>
+          <p>Tarifs competitifs et honnetes. Pas de travaux inutiles. On repare ce qui doit l'etre, point final.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="cta-section" id="contact">
+  <div class="cta-inner">
+    <div class="section-label" style="justify-content:center;color:var(--teal)">Contact</div>
+    <h2>Prenez rendez-vous aujourd'hui</h2>
+    <p>Besoin d'une revision, d'un diagnostic ou d'une reparation ? Contactez-nous pour un devis gratuit et sans engagement.</p>
+    <div class="cta-details">
+      <div class="cta-detail">
+        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        <h4>Telephone</h4>
+        <p>+689 40 50 05 00</p>
+      </div>
+      <div class="cta-detail">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        <h4>Adresse</h4>
+        <p>Papeete, Tahiti<br>Polynesie francaise</p>
+      </div>
+      <div class="cta-detail">
+        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+        <h4>Horaires</h4>
+        <p>Lun - Ven : 7h - 17h<br>Sam - Dim : Ferme</p>
+      </div>
+    </div>
+    <div class="cta-actions">
+      <a href="tel:+68940500500" class="btn-primary">
+        Appeler Maintenant
+        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="#fff"/></svg>
+      </a>
+      <a href="mailto:garautomoto@mail.pf" class="btn-outline">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Envoyer un Email
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      &copy; 2026 Garage Automoto — Papeete, Tahiti. Prototype par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a>
+    </div>
+    <div class="footer-right">
+      <a href="tel:+68940500500">Telephone</a>
+      <a href="mailto:garautomoto@mail.pf">Email</a>
+      <a href="#services">Services</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  /* ---- Reduced Motion Check ---- */
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- Loader ---- */
+  const loader = document.getElementById('loader');
+  const loaderBrand = document.getElementById('loader-brand');
+  const loaderFill = document.getElementById('loader-fill');
+
+  if(prefersReduced){
+    loader.style.display='none';
+    document.body.style.overflow='';
+    init();
+  } else {
+    document.body.style.overflow='hidden';
+    const tl = gsap.timeline({onComplete:()=>{
+      gsap.to(loader,{yPercent:-100,duration:.7,ease:'power3.inOut',onComplete:()=>{
+        loader.style.display='none';
+        document.body.style.overflow='';
+        init();
+      }});
+    }});
+    tl.to(loaderBrand,{opacity:1,duration:.5,ease:'power2.out'})
+      .to(loaderFill,{width:'100%',duration:1.2,ease:'power2.inOut'},'-=.2')
+      .to({},{ duration:.3 });
+  }
+
+  function init(){
+    /* ---- Lenis Smooth Scroll ---- */
+    const lenis = new Lenis({
+      duration:1.2,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel:true,
+    });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(time => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    /* ---- Nav scroll ---- */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll',()=>{
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    },{passive:true});
+
+    /* ---- Mobile nav toggle ---- */
+    const toggle = document.getElementById('nav-toggle');
+    const navCenter = document.querySelector('.nav-center');
+    if(toggle){
+      toggle.addEventListener('click',()=>{
+        const open = navCenter.style.display === 'flex';
+        navCenter.style.display = open ? 'none' : 'flex';
+        navCenter.style.position = 'absolute';
+        navCenter.style.top = '100%';
+        navCenter.style.left = '0';
+        navCenter.style.right = '0';
+        navCenter.style.flexDirection = 'column';
+        navCenter.style.padding = '20px 24px';
+        navCenter.style.background = 'rgba(250,250,250,.96)';
+        navCenter.style.backdropFilter = 'blur(20px)';
+        navCenter.style.borderBottom = '1px solid var(--border)';
+        navCenter.style.gap = '16px';
+        if(open){
+          navCenter.removeAttribute('style');
+        }
+      });
+    }
+
+    /* ---- Disclaimer ---- */
+    const disc = document.getElementById('disclaimer');
+    gsap.to(disc,{y:0,duration:.6,delay:.5,ease:'power3.out'});
+
+    if(prefersReduced) return;
+
+    /* ---- Hero Animations ---- */
+    const heroTl = gsap.timeline({defaults:{ease:'power3.out'}});
+    heroTl.from('.hero-text',{opacity:1,y:40,duration:.9})
+           .from('.hero-visual',{opacity:1,x:40,duration:.9},'-=.6')
+           .from('.hero-float',{opacity:1,y:20,scale:.95,duration:.6},'-=.3');
+
+    /* ---- Trust Counter Animation ---- */
+    const counters = document.querySelectorAll('.counter');
+    counters.forEach(c=>{
+      const target = parseInt(c.dataset.target);
+      ScrollTrigger.create({
+        trigger:c,
+        start:'top 85%',
+        once:true,
+        onEnter:()=>{
+          gsap.to(c,{
+            innerText:target,
+            duration:2,
+            ease:'power2.out',
+            snap:{innerText:1},
+            onUpdate:function(){
+              c.textContent = Math.round(parseFloat(c.textContent)).toLocaleString('fr-FR');
+            }
+          });
+        }
+      });
+    });
+
+    /* ---- Trust Items Stagger ---- */
+    gsap.from('.trust-item',{
+      scrollTrigger:{trigger:'.trust',start:'top 80%'},
+      opacity:1,y:30,duration:.7,stagger:.12,ease:'power3.out'
+    });
+
+    /* ---- Services Header ---- */
+    gsap.from('.services-header',{
+      scrollTrigger:{trigger:'.services-header',start:'top 80%'},
+      opacity:1,y:30,duration:.8,ease:'power3.out'
+    });
+
+    /* ---- Bento Cards Stagger ---- */
+    gsap.from('.bento-card',{
+      scrollTrigger:{trigger:'.bento',start:'top 75%'},
+      opacity:1,y:40,duration:.7,stagger:.1,ease:'power3.out'
+    });
+
+    /* ---- Workshop Parallax ---- */
+    const parallaxBg = document.getElementById('parallax-bg');
+    gsap.to(parallaxBg,{
+      yPercent:20,
+      ease:'none',
+      scrollTrigger:{
+        trigger:'.workshop',
+        start:'top bottom',
+        end:'bottom top',
+        scrub:true
+      }
+    });
+    gsap.from('.workshop-content',{
+      scrollTrigger:{trigger:'.workshop',start:'top 60%'},
+      opacity:1,y:40,duration:.9,ease:'power3.out'
+    });
+
+    /* ---- Why Us ---- */
+    gsap.from('.why-visual',{
+      scrollTrigger:{trigger:'.why',start:'top 70%'},
+      opacity:1,x:-40,duration:.9,ease:'power3.out'
+    });
+    gsap.from('.why-text',{
+      scrollTrigger:{trigger:'.why',start:'top 70%'},
+      opacity:1,x:40,duration:.9,ease:'power3.out',delay:.15
+    });
+    gsap.from('.pillar',{
+      scrollTrigger:{trigger:'.why-text',start:'top 75%'},
+      opacity:1,x:20,duration:.6,stagger:.1,ease:'power3.out'
+    });
+
+    /* ---- CTA Section ---- */
+    gsap.from('.cta-inner',{
+      scrollTrigger:{trigger:'.cta-section',start:'top 70%'},
+      opacity:1,y:40,duration:.9,ease:'power3.out'
+    });
+    gsap.from('.cta-detail',{
+      scrollTrigger:{trigger:'.cta-details',start:'top 80%'},
+      opacity:1,y:20,duration:.6,stagger:.12,ease:'power3.out'
+    });
+
+  } /* end init */
+})();
+
+// Fallback: if GSAP didn't load or animations didn't fire after 3s, show everything
+setTimeout(function(){
+  document.querySelectorAll('[style*="opacity: 0"], .hero-text, .trust-item, .bento-card, .workshop-content, .why-visual, .why-text, .cta-inner, .why-item').forEach(function(el){
+    el.style.opacity = '1';
+    el.style.transform = 'none';
+  });
+  var loader = document.querySelector('.loader');
+  if(loader) loader.style.display = 'none';
+}, 3000);
+</script>
+</body>
+</html>

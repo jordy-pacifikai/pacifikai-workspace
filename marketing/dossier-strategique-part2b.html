@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dossier Stratégique IA - Partie 2B | PACIFIK'AI</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== CSS RESET & BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --navy: #0a1628;
+      --navy-light: #132240;
+      --navy-mid: #1a2d4a;
+      --gold: #c8a456;
+      --gold-light: #d4b978;
+      --gold-dark: #a68935;
+      --cream: #f5f0e8;
+      --cream-dark: #e8e0d0;
+      --white: #ffffff;
+      --text: #2a2a2a;
+      --text-light: #6b7280;
+      --red: #dc2626;
+      --orange: #ea580c;
+      --green: #16a34a;
+      --blue: #2563eb;
+      --teal: #0d9488;
+      --purple: #7c3aed;
+      --pink: #db2777;
+      --indigo: #4f46e5;
+      --amber: #d97706;
+      --cyan: #0891b2;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--white);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--navy);
+    }
+
+    /* ===== LAYOUT ===== */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 15mm;
+      background: var(--white);
+      position: relative;
+    }
+
+    @media print {
+      .page {
+        margin: 0;
+        padding: 15mm;
+        width: 210mm;
+        min-height: 297mm;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .page-break {
+        page-break-before: always;
+      }
+    }
+
+    /* ===== NAVIGATION ===== */
+    .nav-bar {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      padding: 12px 20px;
+      margin: -15mm -15mm 8mm -15mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      color: var(--cream);
+      text-decoration: none;
+      font-size: 10pt;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .nav-link:hover {
+      background: var(--navy-light);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    .nav-link.active {
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 14pt;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .header h1 {
+      font-size: 24pt;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .header .subtitle {
+      font-size: 13pt;
+      color: var(--gold-dark);
+      font-weight: 600;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+
+    .header .part-info {
+      font-size: 10pt;
+      color: var(--text-light);
+      margin-top: 8px;
+    }
+
+    /* ===== CATEGORY SECTIONS ===== */
+    .category-section {
+      margin-bottom: 30px;
+      page-break-inside: avoid;
+    }
+
+    .category-header {
+      background: linear-gradient(135deg, var(--category-color) 0%, var(--category-color-dark) 100%);
+      color: var(--white);
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .category-icon {
+      font-size: 28pt;
+      line-height: 1;
+    }
+
+    .category-title {
+      font-size: 16pt;
+      color: var(--white);
+      margin: 0;
+    }
+
+    /* Category F: Economie */
+    .category-f .category-header {
+      --category-color: var(--amber);
+      --category-color-dark: #b45309;
+    }
+
+    /* Category G: Education */
+    .category-g .category-header {
+      --category-color: var(--purple);
+      --category-color-dark: #6d28d9;
+    }
+
+    /* Category H: Emploi */
+    .category-h .category-header {
+      --category-color: var(--indigo);
+      --category-color-dark: #4338ca;
+    }
+
+    /* Category I: Biodiversité */
+    .category-i .category-header {
+      --category-color: var(--cyan);
+      --category-color-dark: #0e7490;
+    }
+
+    /* Category J: Communication */
+    .category-j .category-header {
+      --category-color: var(--pink);
+      --category-color-dark: #be185d;
+    }
+
+    /* ===== SOLUTION CARDS ===== */
+    .solution-card {
+      background: var(--white);
+      border: 2px solid var(--cream-dark);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      page-break-inside: avoid;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .solution-card.featured {
+      border: 3px double var(--gold);
+      box-shadow: 0 0 20px rgba(200, 164, 86, 0.3), 0 4px 12px rgba(0,0,0,0.15);
+      background: linear-gradient(135deg, var(--white) 0%, #fffef8 100%);
+    }
+
+    .category-badge {
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: var(--badge-color);
+      color: var(--white);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .special-badge {
+      position: absolute;
+      top: -12px;
+      right: 20px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--navy);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(200, 164, 86, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .special-badge::before {
+      content: "⭐";
+      font-size: 11pt;
+    }
+
+    .solution-header {
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+
+    .solution-title {
+      font-size: 14pt;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .solution-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .price-badge {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 9pt;
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .buyer-tag {
+      background: var(--cream);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 9pt;
+      font-weight: 600;
+      border: 1px solid var(--cream-dark);
+    }
+
+    .feasibility-badge {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .feasibility-yes {
+      background: var(--green);
+      color: var(--white);
+    }
+
+    .feasibility-partial {
+      background: var(--orange);
+      color: var(--white);
+    }
+
+    /* ===== SOLUTION SECTIONS ===== */
+    .solution-section {
+      margin-bottom: 15px;
+    }
+
+    .section-label {
+      font-weight: 700;
+      color: var(--navy);
+      font-size: 10pt;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::before {
+      font-size: 12pt;
+    }
+
+    .section-label.problem::before {
+      content: "⚠️";
+    }
+
+    .section-label.solution::before {
+      content: "💡";
+    }
+
+    .section-label.impact::before {
+      content: "📊";
+    }
+
+    .section-content {
+      font-size: 10pt;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .solution-section ul {
+      margin-left: 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .solution-section ul li {
+      padding-left: 22px;
+      position: relative;
+      margin-bottom: 6px;
+    }
+
+    .solution-section ul li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 11pt;
+    }
+
+    .estimation-callout {
+      background: linear-gradient(135deg, #fffbf0 0%, #fff8e1 100%);
+      border-left: 4px solid var(--gold);
+      padding: 12px 15px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 9.5pt;
+      color: var(--text);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .estimation-callout strong {
+      color: var(--gold-dark);
+      font-weight: 700;
+    }
+
+    .highlight-stat {
+      color: var(--gold-dark);
+      font-weight: 700;
+    }
+
+    .prerequisite {
+      background: var(--cream);
+      border-left: 4px solid var(--orange);
+      padding: 10px 12px;
+      margin-top: 10px;
+      border-radius: 4px;
+      font-size: 9pt;
+      color: var(--text);
+      font-style: italic;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 2px solid var(--gold);
+      text-align: center;
+      font-size: 9pt;
+      color: var(--text-light);
+    }
+
+    .footer strong {
+      color: var(--gold-dark);
+      font-weight: 700;
+    }
+
+    /* ===== POLYNESIAN PATTERN DECORATION ===== */
+    .pattern-decoration {
+      position: fixed;
+      bottom: 10mm;
+      right: 10mm;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @media print {
+      .pattern-decoration {
+        position: absolute;
+      }
+    }
+
+    /* ===== PRICING OPTIONS ===== */
+    .pricing-options {
+      background: var(--cream);
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 9.5pt;
+    }
+
+    .pricing-options h4 {
+      font-size: 10pt;
+      color: var(--navy);
+      margin-bottom: 8px;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+
+    .pricing-options ul {
+      margin-left: 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .pricing-options ul li {
+      padding-left: 18px;
+      position: relative;
+      margin-bottom: 4px;
+    }
+
+    .pricing-options ul li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--gold-dark);
+      font-weight: 700;
+    }
+
+    /* ===== PHASES BOX ===== */
+    .phases-box {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border: 2px solid var(--blue);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 12px;
+    }
+
+    .phases-box h4 {
+      font-size: 10.5pt;
+      color: var(--blue);
+      margin-bottom: 10px;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+
+    .phase-item {
+      margin-bottom: 10px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .phase-item::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 12pt;
+    }
+
+    .phase-title {
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 3px;
+    }
+
+    .phase-desc {
+      font-size: 9.5pt;
+      color: var(--text);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Navigation -->
+    <nav class="nav-bar no-print">
+      <div class="nav-logo">PACIFIK'AI</div>
+      <div class="nav-links">
+        <a href="dossier-strategique-part1.html" class="nav-link">Partie 1: Diagnostic</a>
+        <a href="dossier-strategique-part2a.html" class="nav-link">Partie 2A: Solutions A-E</a>
+        <a href="dossier-strategique-part2b.html" class="nav-link active">Partie 2B: Solutions F-J</a>
+        <a href="dossier-strategique-part3.html" class="nav-link">Partie 3: Synthèse</a>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="header">
+      <h1>L'IA en Polynésie Française</h1>
+      <div class="subtitle">Dossier Stratégique - Opportunités et Priorités</div>
+      <div class="part-info">Partie 2B - Solutions d'IA (Catégories F à J) - 13 Solutions</div>
+    </header>
+
+    <!-- CATEGORY F: ECONOMIE -->
+    <section class="category-section category-f">
+      <div class="category-header">
+        <div class="category-icon">🏪</div>
+        <h2 class="category-title">F. ÉCONOMIE ET COMMERCE</h2>
+      </div>
+
+      <!-- F1 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--amber);">Économie</div>
+        <div class="solution-header">
+          <h3 class="solution-title">F1. Optimisation Logistique Inter-Îles IA</h3>
+          <div class="solution-meta">
+            <span class="price-badge">20-60M XPF (170-500K EUR)</span>
+            <span class="buyer-tag">Dir. Transports / Air Tahiti</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            Transport inter-îles cher, irrégulier, sous-optimisé. Îles éloignées = ruptures de stock récurrentes.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Optimisation rotations goélettes (météo, demande, priorités)</li>
+              <li>Prédiction demande par île (produits essentiels, carburant)</li>
+              <li>Dashboard suivi temps réel approvisionnements</li>
+              <li>Alertes rupture stock anticipées</li>
+              <li>Optimisation plans de vol Air Tahiti</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">McKinsey:</strong> -5 à 20% coûts logistiques avec IA<br>
+            <strong class="highlight-stat">Marché IA maritime:</strong> 4,13 Mds USD (2024)
+          </div>
+        </div>
+      </article>
+
+      <!-- F2 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--amber);">Économie</div>
+        <div class="solution-header">
+          <h3 class="solution-title">F2. Marketplace Producteurs Locaux "Fenua Market"</h3>
+          <div class="solution-meta">
+            <span class="price-badge">15-35M XPF (125-300K EUR)</span>
+            <span class="buyer-tag">CCISM / GIE Tahiti Export</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            Produits PF premium (perles, vanille, mono'i, noni, artisanat) mal valorisés à l'export. Pas de plateforme unifiée. Déficit commercial 231 Mds XPF.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Marketplace IA multi-vendeurs (producteurs locaux)</li>
+              <li>Photos améliorées par IA, descriptions multilingues auto-générées (FR/EN/JP/ZH)</li>
+              <li>Pricing dynamique basé sur demande internationale</li>
+              <li>Storytelling IA: chaque produit raconte son histoire (village, artisan, technique)</li>
+              <li>Certification origine + logistique inter-îles intégrée</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">eBay IA traduction:</strong> +17,5% exports vers Amérique latine<br>
+            <strong class="highlight-stat">IA supply chain:</strong> -50% erreurs prévision, -37% ruptures stock
+          </div>
+        </div>
+      </article>
+
+      <!-- F3 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--amber);">Économie</div>
+        <div class="solution-header">
+          <h3 class="solution-title">F3. Dashboard Tourisme Prédictif et Durable</h3>
+          <div class="solution-meta">
+            <span class="price-badge">15-40M XPF (125-335K EUR)</span>
+            <span class="buyer-tag">Tahiti Tourisme / Min. Tourisme</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            263K touristes/an, 14,7% PIB. Stagnation (+0,7% en 2024). Concentration Bora Bora/Moorea. Besoin diversifier et optimiser.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Prédiction flux touristiques par île et saison</li>
+              <li>Monitoring capacité d'accueil (carrying capacity)</li>
+              <li>Revenue management hôtels et pensions</li>
+              <li>Analyse sentiment visiteurs (avis, réseaux sociaux)</li>
+              <li>Recommandations redistribution vers îles sous-visitées</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">Marché IA tourisme:</strong> 3 Mds USD (2024), CAGR 33,2% APAC<br>
+            <strong class="highlight-stat">Revenue management:</strong> +10-20% RevPAR
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Page break for print -->
+    <div class="page-break"></div>
+
+    <!-- CATEGORY G: EDUCATION -->
+    <section class="category-section category-g">
+      <div class="category-header">
+        <div class="category-icon">🎓</div>
+        <h2 class="category-title">G. ÉDUCATION ET CULTURE</h2>
+      </div>
+
+      <!-- G1 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--purple);">Éducation</div>
+        <div class="solution-header">
+          <h3 class="solution-title">G1. Tuteurs IA pour Îles Éloignées</h3>
+          <div class="solution-meta">
+            <span class="price-badge">15-50M XPF (125-420K EUR)</span>
+            <span class="buyer-tag">Min. Éducation / Vice-Rectorat</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            1/3 écoles moins de 5 classes, 13% écoles à classe unique (atolls). 50% collégiens Tuamotu-Gambier changent d'archipel pour étudier. Coût transport scolaire Marquises = 67 780 XPF/élève/an (x4,5).
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Tuteur IA personnalisé (français, maths, sciences) adapté au programme PF</li>
+              <li>Mode offline/basse bande passante pour atolls</li>
+              <li>Dashboard enseignant suivi progression</li>
+              <li>Parcours adaptatif par élève (lacunes identifiées, rythme personnalisé)</li>
+              <li>Support reo tahiti basique</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">Khanmigo:</strong> 700K élèves (2024-25), 15 USD/élève/an<br>
+            <strong class="highlight-stat">Squirrel AI (Chine):</strong> maîtrise 56% → 89% en 1 mois zones rurales<br>
+            <strong class="highlight-stat">Marché EdTech IA:</strong> 6,9 Mds USD (2025) → 32-41 Mds USD (2030)
+          </div>
+        </div>
+      </article>
+
+      <!-- G2 - FEATURED -->
+      <article class="solution-card featured">
+        <div class="category-badge" style="--badge-color: var(--purple);">Éducation</div>
+        <div class="special-badge">PROJET LE PLUS INNOVANT</div>
+        <div class="solution-header">
+          <h3 class="solution-title">G2. Préservation Langues Polynésiennes par IA</h3>
+          <div class="solution-meta">
+            <span class="price-badge">35-70M XPF (300-600K EUR sur 3 ans)</span>
+            <span class="buyer-tag">Min. Culture / Fare Vana'a / UPF</span>
+            <span class="feasibility-badge feasibility-partial">Claude Code: PARTIEL</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            Reo tahiti (~70K locuteurs, en recul chez les jeunes), marquisien (~9K), paumotu (~5K), mangarévien (~3K). UNESCO: 40% des langues mondiales en danger d'extinction.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution en 3 Phases</div>
+          <div class="phases-box">
+            <div class="phase-item">
+              <div class="phase-title">Phase 1: Collecte données audio (6-12 mois, 100-150K EUR)</div>
+              <div class="phase-desc">
+                Campagne crowdsourcing vocal + numérisation archives (Radio Tahiti, généalogies orales, chants)
+              </div>
+            </div>
+            <div class="phase-item">
+              <div class="phase-title">Phase 2: ASR tahitien (12-18 mois, 100-200K EUR)</div>
+              <div class="phase-desc">
+                Fine-tuning Whisper/wav2vec2, objectif >85% précision, outil transcription médias locaux
+              </div>
+            </div>
+            <div class="phase-item">
+              <div class="phase-title">Phase 3: Traduction + pédagogie (18-24 mois, 100-250K EUR)</div>
+              <div class="phase-desc">
+                Traduction bidirectionnelle FR ↔ reo tahiti, app apprentissage, matériel bilingue écoles
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">Te Hiku Media (NZ):</strong> ASR reo māori 92% précision, 13M NZD financement gouvernemental<br>
+            <strong class="highlight-stat">Innovation mondiale:</strong> Premier ASR tahitien au monde<br>
+            <strong class="highlight-stat">Licence Kaitiakitanga:</strong> souveraineté données culturelles (modèle māori)
+          </div>
+        </div>
+      </article>
+
+      <!-- G3 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--purple);">Éducation</div>
+        <div class="solution-header">
+          <h3 class="solution-title">G3. Traduction Temps Réel Assemblée PF</h3>
+          <div class="solution-meta">
+            <span class="price-badge">20-40M XPF (170-335K EUR)</span>
+            <span class="buyer-tag">Assemblée de PF</span>
+            <span class="feasibility-badge feasibility-partial">Claude Code: PARTIEL</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            Débats en français et tahitien, pas de traduction systématique. Accessibilité démocratique limitée.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Speech-to-text tahitien (basé sur G2)</li>
+              <li>Traduction temps réel tahitien → français (et inverse)</li>
+              <li>Sous-titrage en direct des débats</li>
+              <li>Transcription automatique des séances</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">Inde Sansad Bhashini (2025):</strong> traduction IA temps réel Parlement, dizaines de langues<br>
+            <strong class="highlight-stat">Accessibilité démocratique</strong> pour tous les citoyens
+          </div>
+        </div>
+
+        <div class="prerequisite">
+          <strong>Prérequis:</strong> Solution G2 phase 2 (ASR tahitien) doit être complétée
+        </div>
+      </article>
+    </section>
+
+    <!-- Page break for print -->
+    <div class="page-break"></div>
+
+    <!-- CATEGORY H: EMPLOI -->
+    <section class="category-section category-h">
+      <div class="category-header">
+        <div class="category-icon">💼</div>
+        <h2 class="category-title">H. EMPLOI ET RH</h2>
+      </div>
+
+      <!-- H1 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--indigo);">Emploi</div>
+        <div class="solution-header">
+          <h3 class="solution-title">H1. Plateforme Emploi.PF IA</h3>
+          <div class="solution-meta">
+            <span class="price-badge">20-35M XPF (150-300K EUR)</span>
+            <span class="buyer-tag">SEFI (Service de l'Emploi)</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            6,7% chômage, 20% chez les jeunes. Déficit de compétences numériques. Déconnexion offre/demande. Contraintes géographiques (mobilité inter-îles).
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Matching sémantique IA CV/offres adapté contexte PF</li>
+              <li>Secteurs spécifiques: tourisme, perliculture, BTP, agriculture, services publics</li>
+              <li>Gestion contraintes géographiques (mobilité inter-îles)</li>
+              <li>Modules formation recommandée pour combler les gaps</li>
+              <li>Intégration SEFI</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">Marché HR Tech IA:</strong> 8,16 Mds USD (2025), CAGR 15,9%<br>
+            <strong class="highlight-stat">Adoption IA recrutement:</strong> 43% organisations (2025, vs 26% en 2024)<br>
+            <strong class="highlight-stat">Économies:</strong> -30% coût par recrutement
+          </div>
+        </div>
+      </article>
+
+      <!-- H2 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--indigo);">Emploi</div>
+        <div class="solution-header">
+          <h3 class="solution-title">H2. Cartographie Compétences Fonctionnaires</h3>
+          <div class="solution-meta">
+            <span class="price-badge">15-40M XPF (125-335K EUR/an)</span>
+            <span class="buyer-tag">DGRH / Min. Fonction Publique</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            ~15K fonctionnaires du Pays. Pas de vision des compétences disponibles. Mobilité interne rigide. Vague de départs retraite à venir.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Cartographie automatisée des compétences par direction/service</li>
+              <li>Identification gaps et besoins formation</li>
+              <li>Mobilité interne facilitée (matching postes/compétences)</li>
+              <li>Planification successions</li>
+              <li>Dashboard RH stratégique</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">MuchSkills:</strong> 3 EUR/user/mois, 11K+ compétences cartographiées<br>
+            <strong class="highlight-stat">365Talents:</strong> détection compétences cachées, clients Société Générale, Veolia<br>
+            <strong class="highlight-stat">OCDE 2025:</strong> recommande l'IA pour workforce planning public
+          </div>
+        </div>
+      </article>
+
+      <!-- H3 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--indigo);">Emploi</div>
+        <div class="solution-header">
+          <h3 class="solution-title">H3. Formation Continue IA Fonctionnaires</h3>
+          <div class="solution-meta">
+            <span class="price-badge">12-60M XPF (96-480K EUR/an)</span>
+            <span class="buyer-tag">DGRH / Min. Fonction Publique</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            Déficit compétences numériques. Formation actuelle non personnalisée. Pas de mesure de l'impact.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>LMS avec IA adaptative (parcours personnalisé par agent)</li>
+              <li>Contenus adaptés contexte PF (réglementation locale, secteurs spécifiques)</li>
+              <li>Génération automatique de cours depuis documents internes</li>
+              <li>Analytics engagement et completion</li>
+              <li>Multilinguisme FR + reo tahiti</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pricing-options">
+          <h4>Options Pricing</h4>
+          <ul>
+            <li>360Learning: 8 EUR/user/mois (1K users pilote = 96K EUR/an)</li>
+            <li>Coursera for Business: 399 USD/user/an (500 users = 200K USD/an)</li>
+            <li>Custom dev + contenus PF: 200-400K EUR dev + 50K/an</li>
+          </ul>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            Formation personnalisée = meilleur engagement et rétention des connaissances
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Page break for print -->
+    <div class="page-break"></div>
+
+    <!-- CATEGORY I: BIODIVERSITE -->
+    <section class="category-section category-i">
+      <div class="category-header">
+        <div class="category-icon">🐠</div>
+        <h2 class="category-title">I. BIODIVERSITÉ MARINE ET PÊCHE</h2>
+      </div>
+
+      <!-- I1 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--cyan);">Biodiversité</div>
+        <div class="solution-header">
+          <h3 class="solution-title">I1. Prédiction Zones de Pêche IA</h3>
+          <div class="solution-meta">
+            <span class="price-badge">10-25M XPF (80-200K EUR)</span>
+            <span class="buyer-tag">DRMM / Armateurs</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            82 navires palangriers, 8 790 tonnes/an. Consommation carburant = 1er poste de coût. Zones de pêche non optimisées.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Prédiction zones optimales (température surface, courants, chlorophylle, bathymétrie)</li>
+              <li>Prévisions 8 jours, précision 75-92%</li>
+              <li>Optimisation itinéraires par navire</li>
+              <li>Dashboard flottille temps réel</li>
+              <li>Intégration météo marine</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">GreenFish (Seafood Innovation Award 2025):</strong> précision 75-92%<br>
+            <strong class="highlight-stat">Réduction carburant:</strong> -15 à 25%<br>
+            <strong class="highlight-stat">JCOPE-T DA (Japon):</strong> modèle océanographique pêche thonière
+          </div>
+        </div>
+      </article>
+
+      <!-- I2 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--cyan);">Biodiversité</div>
+        <div class="solution-header">
+          <h3 class="solution-title">I2. Grading Perles de Tahiti par Vision IA</h3>
+          <div class="solution-meta">
+            <span class="price-badge">15-35M XPF (125-300K EUR)</span>
+            <span class="buyer-tag">GIE Perle / DRM / Perliculteurs</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            Classement manuel = subjectif, biais, lent. Crise export Q4 2024 (-69% valeur). Besoin standardisation pour regagner confiance marché.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>CNN entraîné sur milliers d'images de perles</li>
+              <li>Classification automatique: forme, couleur, lustre, surface, épaisseur nacre</li>
+              <li>Précision: 99,9% (référence Sarine pour diamants)</li>
+              <li>Certification numérique par perle</li>
+              <li>Réduction coûts tri: -40%</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            <strong class="highlight-stat">Standardisation</strong> = meilleurs prix export (lots homogènes certifiés)<br>
+            <strong class="highlight-stat">Étude existante:</strong> 298 perles tahitiennes mesurées par computer vision<br>
+            <strong class="highlight-stat">Référence:</strong> technologies Sarine (diamants) et GIA (gemmes)
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- CATEGORY J: COMMUNICATION -->
+    <section class="category-section category-j">
+      <div class="category-header">
+        <div class="category-icon">📢</div>
+        <h2 class="category-title">J. COMMUNICATION ET MÉDIA</h2>
+      </div>
+
+      <!-- J1 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--pink);">Communication</div>
+        <div class="solution-header">
+          <h3 class="solution-title">J1. Analyse Sentiment Réseaux Sociaux PF</h3>
+          <div class="solution-meta">
+            <span class="price-badge">2-15M XPF (15-120K EUR/an)</span>
+            <span class="buyer-tag">Présidence / Cabinet / Min. Communication</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            Facebook ultra-dominant en PF (66,5% population). Discussions publiques sur groupes Facebook. Le gouvernement n'a pas de vision temps réel de l'opinion publique.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Monitoring web + réseaux sociaux (Facebook dominant)</li>
+              <li>Analyse sentiment IA par sujet</li>
+              <li>Alertes crises et sujets sensibles</li>
+              <li>Dashboard veille médiatique (TNTV, Tahiti Infos, Radio 1, etc.)</li>
+              <li>Rapports automatiques hebdomadaires</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pricing-options">
+          <h4>Options Pricing</h4>
+          <ul>
+            <li>Brand24: 1,5-5K EUR/an (starter/pro)</li>
+            <li>Talkwalker: 10-30K EUR/an</li>
+            <li>Meltwater: 15-50K EUR/an (suite complète)</li>
+          </ul>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            Vision temps réel de l'opinion publique = meilleure communication gouvernementale et anticipation crises
+          </div>
+        </div>
+      </article>
+
+      <!-- J2 -->
+      <article class="solution-card">
+        <div class="category-badge" style="--badge-color: var(--pink);">Communication</div>
+        <div class="solution-header">
+          <h3 class="solution-title">J2. Génération Contenu Multilingue Gouvernemental</h3>
+          <div class="solution-meta">
+            <span class="price-badge">6-12M XPF (50-100K EUR)</span>
+            <span class="buyer-tag">Cabinet Présidence / Min. Communication</span>
+            <span class="feasibility-badge feasibility-yes">Claude Code: OUI</span>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label problem">Problème</div>
+          <div class="section-content">
+            Communications officielles en français uniquement. Pas de traduction systématique en reo tahiti ou anglais.
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label solution">Solution</div>
+          <div class="section-content">
+            <ul>
+              <li>Outil IA génération communications officielles en FR + reo tahiti + EN</li>
+              <li>Fine-tuning sur registre administratif polynésien</li>
+              <li>Templates par type de communication (communiqué, discours, annonce)</li>
+              <li>Workflow validation avant publication</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <div class="section-label impact">Impact Mesurable</div>
+          <div class="section-content">
+            Accessibilité démocratique améliorée + rayonnement international (communications en EN)
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <strong>PACIFIK'AI</strong> | Février 2026 | <strong>Confidentiel</strong> | Page 3/4
+    </footer>
+
+    <!-- Polynesian pattern decoration -->
+    <svg class="pattern-decoration" width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 10 L70 40 L100 40 L75 60 L85 90 L60 70 L35 90 L45 60 L20 40 L50 40 Z" fill="var(--navy)" opacity="0.3"/>
+      <circle cx="60" cy="60" r="25" stroke="var(--gold)" stroke-width="2" fill="none"/>
+      <path d="M40 60 Q60 40 80 60 Q60 80 40 60" fill="var(--gold)" opacity="0.5"/>
+    </svg>
+  </div>
+</body>
+</html>

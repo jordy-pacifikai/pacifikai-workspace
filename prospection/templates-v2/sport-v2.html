@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}. {{TAGLINE}}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family={{FONT_DISPLAY}}:wght@300;400;500;600;700;800&family={{FONT_BODY}}:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ================================================================
+       SPORT V2 — Outdoor Nature Energy
+       Light, natural, energetic. OPPOSITE of V1's dark neon.
+       PAS framework: Problem > Agitate > Solution
+       ================================================================ */
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --text: {{COLOR_TEXT}};
+      --accent-light: #40916C;
+      --card-bg: #FFFFFF;
+      --card-border: #E8ECE3;
+      --muted: #6B7B6E;
+      --cream: #FAFBF8;
+      --font-display: '{{FONT_DISPLAY}}', sans-serif;
+      --font-body: '{{FONT_BODY}}', sans-serif;
+      --radius: 12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Disclaimer & Loader ── */
+    .disclaimer{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--accent);color:#fff;font-size:11px;letter-spacing:.06em;text-align:center;padding:10px 24px;font-weight:500}
+    .disclaimer a{color:#fff;text-decoration:underline;font-weight:600}
+    .loader{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+    .loader-inner{text-align:center}
+    .loader-logo{font-family:var(--font-display);font-size:clamp(28px,5vw,48px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);opacity:0}
+    .loader-bar{width:120px;height:2px;background:var(--card-border);margin:24px auto 0;overflow:hidden;border-radius:2px}
+    .loader-bar-fill{width:100%;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;border-radius:2px}
+
+    /* ── Scroll Progress ── */
+    .scroll-progress{position:fixed;top:38px;left:0;width:0%;height:3px;background:var(--accent);z-index:9998;transition:none}
+
+    /* ── Container ── */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Typography ── */
+    h1, h2, h3, h4, h5 {
+      font-family: var(--font-display);
+      line-height: 1.1;
+      color: var(--text);
+    }
+    p { line-height: 1.7; }
+    .accent { color: var(--accent); }
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: clamp(16px, 3vw, 24px);
+    }
+    .section-desc {
+      font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.8;
+    }
+
+    /* ── Button ── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      padding: 16px 36px;
+      border-radius: 60px;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(45,106,79,0.25);
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.15);
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+      border-radius: 60px;
+    }
+    .btn-primary:hover::after { transform: translateX(0); }
+    .btn-primary svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 0.3s;
+    }
+    .btn-primary:hover svg { transform: translateX(4px); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: var(--accent);
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      padding: 14px 34px;
+      border-radius: 60px;
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, transform 0.3s;
+    }
+    .btn-outline:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* ── Navigation ── */
+    .nav {
+      position: fixed;
+      top: 38px;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 16px 0;
+      transition: background 0.4s, padding 0.3s, box-shadow 0.4s;
+    }
+    .nav.scrolled {
+      background: rgba(245,247,242,0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 10px 0;
+      box-shadow: 0 1px 20px rgba(0,0,0,0.06);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.3s cubic-bezier(0.22,1,0.36,1);
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 10px 24px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .nav-cta::after { display: none; }
+    .nav-cta:hover {
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(45,106,79,0.2);
+    }
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 28px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .nav-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 75%;
+        height: 100dvh;
+        flex-direction: column;
+        align-items: flex-start;
+        background: rgba(245,247,242,0.98);
+        backdrop-filter: blur(20px);
+        padding: 100px 32px 40px;
+        gap: 20px;
+        transition: right 0.4s cubic-bezier(0.22,1,0.36,1);
+        box-shadow: -4px 0 30px rgba(0,0,0,0.08);
+      }
+      .nav-links.open { right: 0; }
+      .nav-links a { font-size: 1.1rem; }
+      .nav-toggle { display: flex; }
+    }
+
+    /* ── Hero — Split Layout ── */
+    .hero {
+      position: relative;
+      min-height: 100dvh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      margin-top: 38px;
+      overflow: hidden;
+    }
+    .hero-content {
+      padding: clamp(40px, 8vw, 100px);
+      padding-top: clamp(80px, 12vw, 140px);
+      z-index: 2;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(45,106,79,0.08);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 60px;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .hero-badge svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 2;
+    }
+    .hero-title {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .hero-title .line { display: block; overflow: hidden; }
+    .hero-title .line-inner {
+      display: block;
+      transform: translateY(110%);
+    }
+    .hero-desc {
+      font-size: clamp(1rem, 1.5vw, 1.15rem);
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 32px;
+      max-width: 440px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .hero-image {
+      position: relative;
+      height: 100%;
+      min-height: 600px;
+      overflow: hidden;
+    }
+    .hero-image img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, var(--bg) 0%, transparent 20%);
+      z-index: 1;
+    }
+    /* Organic blob decoration */
+    .hero-blob {
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(45,106,79,0.06), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero-content {
+        padding: 120px 24px 48px;
+        order: 2;
+      }
+      .hero-image {
+        min-height: 50vh;
+        order: 1;
+      }
+      .hero-image-overlay {
+        background: linear-gradient(to top, var(--bg) 0%, transparent 30%);
+      }
+    }
+
+    /* ── Stats Bar ── */
+    .stats {
+      padding: 56px 0;
+      background: var(--card-bg);
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+    .stat-item { padding: 16px 8px; }
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    }
+
+    /* ── Programs ── */
+    .programs {
+      padding: clamp(80px, 10vw, 140px) 0;
+    }
+    .programs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: clamp(40px, 5vw, 64px);
+    }
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .program-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s, border-color 0.4s;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .program-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(45,106,79,0.1);
+      border-color: var(--accent-light);
+    }
+    .program-img-wrap {
+      overflow: hidden;
+      position: relative;
+    }
+    .program-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .program-card:hover .program-img { transform: scale(1.06); }
+    .program-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 60px;
+      z-index: 2;
+    }
+    .program-body { padding: 24px; }
+    .program-name {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .program-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .program-price {
+      display: inline-block;
+      margin-top: 12px;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    @media (max-width: 900px) {
+      .programs-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .programs-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── About — Community ── */
+    .about {
+      padding: clamp(80px, 10vw, 140px) 0;
+      background: var(--cream);
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 80px);
+      align-items: center;
+    }
+    .about-image-wrap {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .about-image {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      display: block;
+    }
+    .about-image-accent {
+      position: absolute;
+      bottom: -12px;
+      right: -12px;
+      width: 120px;
+      height: 120px;
+      border: 3px solid var(--accent);
+      border-radius: var(--radius);
+      z-index: -1;
+    }
+    .about-content { padding: 16px 0; }
+    .about-heading {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    .about-text {
+      font-size: clamp(0.95rem, 1.3vw, 1.05rem);
+      color: var(--muted);
+      line-height: 1.85;
+      margin-bottom: 24px;
+    }
+    .about-text strong { color: var(--accent); font-weight: 600; }
+    .about-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .about-feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .about-feature-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(45,106,79,0.08);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .about-feature-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    @media (max-width: 768px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .about-image-wrap { max-width: 400px; margin: 0 auto; }
+    }
+
+    /* ── Schedule Grid ── */
+    .schedule {
+      padding: clamp(80px, 10vw, 140px) 0;
+    }
+    .schedule-header {
+      text-align: center;
+      margin-bottom: clamp(40px, 5vw, 64px);
+    }
+    .schedule-header .section-desc {
+      margin: 8px auto 0;
+    }
+    .schedule-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+    }
+    .schedule-table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+    .schedule-table th {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 16px 14px;
+      text-align: left;
+      color: var(--accent);
+      background: rgba(45,106,79,0.04);
+      border-bottom: 2px solid var(--card-border);
+    }
+    .schedule-table td {
+      padding: 14px;
+      font-size: 0.88rem;
+      border-bottom: 1px solid var(--card-border);
+      vertical-align: top;
+      color: var(--text);
+    }
+    .schedule-table tr:last-child td { border-bottom: none; }
+    .schedule-table tr:hover td { background: rgba(45,106,79,0.02); }
+    .class-name {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .class-time {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+    .popular {
+      position: relative;
+      background: rgba(45,106,79,0.04);
+      border-left: 3px solid var(--accent);
+      padding-left: 12px !important;
+    }
+    .popular-badge {
+      display: inline-block;
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 60px;
+      font-weight: 700;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ── CTA Section ── */
+    .cta-section {
+      padding: clamp(80px, 12vw, 160px) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--accent);
+      color: #fff;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section::after {
+      content: '';
+      position: absolute;
+      bottom: -200px;
+      left: -200px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0,0,0,0.1), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-heading {
+      font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      position: relative;
+      letter-spacing: -0.02em;
+    }
+    .cta-sub {
+      font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 40px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      color: var(--accent);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 18px 44px;
+      border-radius: 60px;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
+    .cta-info {
+      margin-top: 56px;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .cta-info-item {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .cta-info-item strong {
+      display: block;
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 48px 0;
+      background: var(--text);
+      color: #fff;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    .footer-brand span { color: var(--accent-light); }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+    }
+    .footer-copy a { color: var(--accent-light); text-decoration: none; }
+    .footer-socials {
+      display: flex;
+      gap: 12px;
+    }
+    .footer-socials a {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .footer-socials a:hover {
+      border-color: var(--accent-light);
+      background: rgba(64,145,108,0.15);
+    }
+    .footer-socials svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+      transition: fill 0.3s;
+    }
+    .footer-socials a:hover svg { fill: var(--accent-light); }
+
+    /* ── Leaf decoration (SVG pattern) ── */
+    .leaf-decoration {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.04;
+    }
+
+    /* ── Reveal utility ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    /* ── Reduced Motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .hero-title .line-inner { transform: none !important; }
+      .hero-badge, .hero-desc, .hero-actions { opacity: 1 !important; transform: none !important; }
+      .program-card, .reveal { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    🎨 Prototype créé par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a> — Site web professionnel à 100 000 XPF
+  </div>
+
+  <!-- Loader -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">{{BUSINESS_NAME}}</div>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">{{BUSINESS_NAME}}<span>.</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#programs">Programmes</a></li>
+        <li><a href="#about">Communaute</a></li>
+        <li><a href="#schedule">Planning</a></li>
+        <li><a href="#cta" class="nav-cta">Essai Gratuit</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       HERO — Split layout, outdoor energy
+       ══════════════════════════════════════ -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge" id="heroBadge">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        {{SUBSECTOR}} a {{CITY}}
+      </div>
+      <h1 class="hero-title">
+        <span class="line"><span class="line-inner">Depasse tes</span></span>
+        <span class="line"><span class="line-inner"><span class="accent">limites</span>, pas</span></span>
+        <span class="line"><span class="line-inner">ton budget.</span></span>
+      </h1>
+      <p class="hero-desc" id="heroDesc">
+        {{TAGLINE}}. Rejoins {{BUSINESS_NAME}} et decouvre un training qui s'adapte a ton rythme, ton niveau et ton ile.
+      </p>
+      <div class="hero-actions" id="heroActions">
+        <a href="#cta" class="btn-primary">
+          Essai Gratuit
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#programs" class="btn-outline">Voir les cours</a>
+      </div>
+      <div class="hero-blob"></div>
+    </div>
+    <div class="hero-image">
+      <img src="{{HERO_IMAGE}}" alt="{{BUSINESS_NAME}} — Entrainement outdoor a {{CITY}}" id="heroImg">
+      <div class="hero-image-overlay"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       STATS — Counter animations
+       ══════════════════════════════════════ -->
+  <section class="stats" id="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" data-count="500" data-suffix="+">0</div>
+          <div class="stat-label">Membres actifs</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="12" data-suffix="">0</div>
+          <div class="stat-label">Coachs certifies</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="35" data-suffix="">0</div>
+          <div class="stat-label">Cours / Semaine</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="6" data-suffix="/7">0</div>
+          <div class="stat-label">Jours ouvert</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       PROGRAMS — 4 Cards with stagger
+       ══════════════════════════════════════ -->
+  <section class="programs" id="programs">
+    <div class="container">
+      <div class="programs-header">
+        <div>
+          <p class="section-label">Nos Programmes</p>
+          <h2 class="section-title">Trouve le cours<br>qui te <span class="accent">correspond</span>.</h2>
+        </div>
+        <p class="section-desc">
+          Du HIIT intense au yoga en bord de lagon. Que tu veuilles sculpter, souffler ou te depasser, on a le programme.
+        </p>
+      </div>
+      <div class="programs-grid">
+        <article class="program-card">
+          <div class="program-img-wrap">
+            <span class="program-tag">Populaire</span>
+            <img src="{{IMAGE_1}}" alt="{{SERVICE_1}}" class="program-img" loading="lazy">
+          </div>
+          <div class="program-body">
+            <h3 class="program-name">{{SERVICE_1}}</h3>
+            <p class="program-desc">Cardio haute intensite pour bruler un max en 45 min chrono.</p>
+            <span class="program-price">{{PRICE_1}}</span>
+          </div>
+        </article>
+        <article class="program-card">
+          <div class="program-img-wrap">
+            <img src="{{IMAGE_2}}" alt="{{SERVICE_2}}" class="program-img" loading="lazy">
+          </div>
+          <div class="program-body">
+            <h3 class="program-name">{{SERVICE_2}}</h3>
+            <p class="program-desc">Force fonctionnelle et endurance, adapte a tous les niveaux.</p>
+            <span class="program-price">{{PRICE_2}}</span>
+          </div>
+        </article>
+        <article class="program-card">
+          <div class="program-img-wrap">
+            <img src="{{IMAGE_3}}" alt="{{SERVICE_3}}" class="program-img" loading="lazy">
+          </div>
+          <div class="program-body">
+            <h3 class="program-name">{{SERVICE_3}}</h3>
+            <p class="program-desc">Equilibre corps-esprit, flexibilite et serenite tropicale.</p>
+            <span class="program-price">{{PRICE_3}}</span>
+          </div>
+        </article>
+        <article class="program-card">
+          <div class="program-img-wrap">
+            <img src="{{IMAGE_4}}" alt="{{SERVICE_4}}" class="program-img" loading="lazy">
+          </div>
+          <div class="program-body">
+            <h3 class="program-name">{{SERVICE_4}}</h3>
+            <p class="program-desc">Plans personnalises, coaching prive adapte au Fenua.</p>
+            <span class="program-price">{{PRICE_4}}</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       ABOUT — Community + Image
+       ══════════════════════════════════════ -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image-wrap reveal">
+          <img src="{{IMAGE_1}}" alt="Communaute {{BUSINESS_NAME}}" class="about-image">
+          <div class="about-image-accent"></div>
+        </div>
+        <div class="about-content">
+          <p class="section-label reveal">Notre Communaute</p>
+          <h2 class="about-heading reveal">
+            Plus qu'une salle.<br>Un <span class="accent">mouvement</span>.
+          </h2>
+          <p class="about-text reveal">
+            {{BUSINESS_NAME}} est ne d'une conviction simple : <strong>le sport doit s'adapter a notre ile, pas l'inverse</strong>.
+            Nos bootcamps tropicaux se font pieds dans le sable a {{CITY}}, nos sessions sunrise commencent
+            face au lagon, et notre communaute se retrouve aussi bien sous la barre qu'autour d'un ma'a apres l'effort.
+          </p>
+          <div class="about-features reveal">
+            <div class="about-feature">
+              <div class="about-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              Coachs diplomes et passionnes
+            </div>
+            <div class="about-feature">
+              <div class="about-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              Sessions outdoor pieds dans le sable
+            </div>
+            <div class="about-feature">
+              <div class="about-feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              Communaute bienveillante, zero jugement
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SCHEDULE — Weekly grid
+       ══════════════════════════════════════ -->
+  <section class="schedule" id="schedule">
+    <div class="container">
+      <div class="schedule-header">
+        <p class="section-label">Planning</p>
+        <h2 class="section-title">Ta semaine <span class="accent">type</span></h2>
+        <p class="section-desc">Chaque cours est inclus dans ton abonnement. Viens quand tu veux, autant que tu veux.</p>
+      </div>
+      <div class="schedule-table-wrap reveal">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Horaire</th>
+              <th>Lundi</th>
+              <th>Mardi</th>
+              <th>Mercredi</th>
+              <th>Jeudi</th>
+              <th>Vendredi</th>
+              <th>Samedi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="class-name">6h00</span></td>
+              <td class="popular">
+                <span class="class-name">{{SERVICE_1}} <span class="popular-badge">Top</span></span>
+                <span class="class-time">6h00 - 7h00</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_2}}</span>
+                <span class="class-time">6h00 - 6h45</span>
+              </td>
+              <td class="popular">
+                <span class="class-name">{{SERVICE_1}} <span class="popular-badge">Top</span></span>
+                <span class="class-time">6h00 - 7h00</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_2}}</span>
+                <span class="class-time">6h00 - 6h45</span>
+              </td>
+              <td class="popular">
+                <span class="class-name">{{SERVICE_1}} <span class="popular-badge">Top</span></span>
+                <span class="class-time">6h00 - 7h00</span>
+              </td>
+              <td>
+                <span class="class-name">Bootcamp Plage</span>
+                <span class="class-time">6h30 - 7h30</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="class-name">8h00</span></td>
+              <td>
+                <span class="class-name">{{SERVICE_3}}</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td>
+                <span class="class-name">Force & Conditioning</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_3}}</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td>
+                <span class="class-name">Force & Conditioning</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_3}}</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td class="popular">
+                <span class="class-name">Open Gym <span class="popular-badge">Top</span></span>
+                <span class="class-time">8h00 - 9h30</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="class-name">17h30</span></td>
+              <td class="popular">
+                <span class="class-name">{{SERVICE_1}} <span class="popular-badge">Top</span></span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_4}}</span>
+                <span class="class-time">17h30 - 18h15</span>
+              </td>
+              <td class="popular">
+                <span class="class-name">{{SERVICE_1}} <span class="popular-badge">Top</span></span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_4}}</span>
+                <span class="class-time">17h30 - 18h15</span>
+              </td>
+              <td>
+                <span class="class-name">Friday Throwdown</span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       CTA — Full green band
+       ══════════════════════════════════════ -->
+  <section class="cta-section" id="cta">
+    <div class="container">
+      <h2 class="cta-heading reveal">Pret a commencer<br>ton <span style="opacity:0.7">parcours</span> ?</h2>
+      <p class="cta-sub reveal">Premier cours offert, sans engagement. Viens tester l'energie {{BUSINESS_NAME}} a {{CITY}}.</p>
+      <div class="reveal">
+        <a href="#" class="cta-btn">
+          Reserver mon essai gratuit
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="cta-info reveal">
+        <div class="cta-info-item">
+          <strong>Adresse</strong>
+          {{ADDRESS}}
+        </div>
+        <div class="cta-info-item">
+          <strong>Telephone</strong>
+          {{PHONE}}
+        </div>
+        <div class="cta-info-item">
+          <strong>Horaires</strong>
+          {{HOURS}}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">{{BUSINESS_NAME}}<span>.</span></div>
+      <p class="footer-copy">&copy; 2026 {{BUSINESS_NAME}} — {{CITY}}. Site par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a></p>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385h-3.047v-3.47h3.047v-2.642c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385c5.736-.9 10.124-5.864 10.124-11.854z"/></svg>
+        </a>
+        <a href="#" aria-label="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      /* ── Loader ── */
+      var loaderTl = gsap.timeline();
+      loaderTl
+        .to('.loader-logo', { opacity: 1, duration: 0.6, ease: 'power2.out' })
+        .to('.loader-bar-fill', { scaleX: 1, duration: 1.2, ease: 'power2.inOut' }, 0.3)
+        .to('.loader', { yPercent: -100, duration: 0.8, ease: 'power3.inOut' }, 1.8);
+
+      /* ── Reduced Motion Check ── */
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* ── Lenis Smooth Scroll ── */
+      var lenis;
+      if (!prefersReducedMotion) {
+        lenis = new Lenis({
+          duration: 1.2,
+          easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+          smoothWheel: true,
+        });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* ── GSAP Register ── */
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* ── Scroll Progress Bar ── */
+      var scrollProgress = document.getElementById('scrollProgress');
+      window.addEventListener('scroll', function () {
+        var scrollTop = window.scrollY;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 0) {
+          scrollProgress.style.width = ((scrollTop / docHeight) * 100) + '%';
+        }
+      }, { passive: true });
+
+      /* ── Navigation ── */
+      var nav = document.getElementById('nav');
+      var navToggle = document.getElementById('navToggle');
+      var navLinks = document.getElementById('navLinks');
+
+      window.addEventListener('scroll', function () {
+        nav.classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
+
+      navToggle.addEventListener('click', function () {
+        navToggle.classList.toggle('active');
+        navLinks.classList.toggle('open');
+      });
+
+      navLinks.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          navToggle.classList.remove('active');
+          navLinks.classList.remove('open');
+        });
+      });
+
+      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            if (lenis) {
+              lenis.scrollTo(target, { offset: -60 });
+            } else {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      /* ── Skip Animations if Reduced Motion ── */
+      if (prefersReducedMotion) {
+        document.querySelectorAll('.hero-title .line-inner').forEach(function (el) {
+          el.style.transform = 'none';
+        });
+        document.querySelectorAll('.hero-badge, .hero-desc, .hero-actions, .reveal, .program-card').forEach(function (el) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+        document.querySelectorAll('.stat-number').forEach(function (el) {
+          var target = parseInt(el.getAttribute('data-count'));
+          var suffix = el.getAttribute('data-suffix') || '';
+          el.textContent = target + suffix;
+        });
+        return;
+      }
+
+      /* ══════════════════════════════
+         HERO — SplitText-style reveals
+         ══════════════════════════════ */
+      var heroTl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 2.0 });
+
+      heroTl
+        .to('.hero-title .line-inner', {
+          y: '0%',
+          duration: 1,
+          stagger: 0.12,
+        })
+        .to('#heroBadge', {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+        }, '-=0.6')
+        .to('#heroDesc', {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+        }, '-=0.4')
+        .to('#heroActions', {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+        }, '-=0.3');
+
+      /* Hero image subtle parallax */
+      gsap.to('#heroImg', {
+        yPercent: 12,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
+
+      /* ══════════════════════════════
+         COUNTER ANIMATIONS
+         ══════════════════════════════ */
+      var statNumbers = document.querySelectorAll('.stat-number');
+      statNumbers.forEach(function (el) {
+        var target = parseInt(el.getAttribute('data-count'));
+        var suffix = el.getAttribute('data-suffix') || '';
+        var obj = { val: 0 };
+
+        gsap.to(obj, {
+          val: target,
+          duration: 2.2,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            once: true,
+          },
+          onUpdate: function () {
+            el.textContent = Math.round(obj.val) + suffix;
+          },
+        });
+      });
+
+      /* ══════════════════════════════
+         PROGRAMS — Card stagger
+         ══════════════════════════════ */
+      gsap.to('.program-card', {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.programs-grid',
+          start: 'top 82%',
+          once: true,
+        },
+      });
+
+      /* ══════════════════════════════
+         GENERIC REVEAL ANIMATIONS
+         ══════════════════════════════ */
+      var reveals = gsap.utils.toArray('.reveal');
+      reveals.forEach(function (el) {
+        gsap.to(el, {
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            once: true,
+          },
+        });
+      });
+
+      /* ══════════════════════════════
+         ABOUT — Image accent line draw
+         ══════════════════════════════ */
+      gsap.from('.about-image-accent', {
+        scaleX: 0,
+        scaleY: 0,
+        transformOrigin: 'bottom right',
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.about-image-wrap',
+          start: 'top 75%',
+          once: true,
+        },
+      });
+
+      /* ══════════════════════════════
+         ABOUT — Features stagger
+         ══════════════════════════════ */
+      gsap.from('.about-feature', {
+        x: -30,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.about-features',
+          start: 'top 85%',
+          once: true,
+        },
+      });
+
+      /* ══════════════════════════════
+         SECTION LABELS — Clip reveal
+         ══════════════════════════════ */
+      document.querySelectorAll('.section-label').forEach(function (label) {
+        gsap.from(label, {
+          clipPath: 'inset(0 100% 0 0)',
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: label,
+            start: 'top 90%',
+            once: true,
+          },
+        });
+      });
+
+      /* ══════════════════════════════
+         SECTION TITLES — Rise up
+         ══════════════════════════════ */
+      document.querySelectorAll('.section-title').forEach(function (title) {
+        gsap.from(title, {
+          y: 40,
+          opacity: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: title,
+            start: 'top 86%',
+            once: true,
+          },
+        });
+      });
+
+      /* ══════════════════════════════
+         CTA — Heading entrance
+         ══════════════════════════════ */
+      gsap.from('.cta-heading', {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.cta-section',
+          start: 'top 80%',
+          once: true,
+        },
+      });
+
+      /* ══════════════════════════════
+         FOOTER — Fade in
+         ══════════════════════════════ */
+      gsap.from('.footer', {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.footer',
+          start: 'top 95%',
+          once: true,
+        },
+      });
+
+    })();
+  </script>
+</body>
+</html>

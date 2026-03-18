@@ -1,0 +1,340 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-sand: #FAF7F2;
+  --color-ink: #2C2C2C;
+  --color-lagoon: #1A9E96;
+  --color-lagoon-deep: #0D7377;
+  --color-gold: #C4A265;
+  --color-gold-light: #D4B87E;
+  --ease-luxury: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  color: var(--color-ink);
+  background: var(--color-sand);
+  font-family: var(--font-lato), 'Lato', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   LUXURY SELECTION
+   ═══════════════════════════════════════════ */
+::selection {
+  background: rgba(26, 158, 150, 0.15);
+  color: var(--color-ink);
+}
+
+/* ═══════════════════════════════════════════
+   SCROLL INDICATOR
+   ═══════════════════════════════════════════ */
+@keyframes scrollPulse {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(10px); opacity: 0.3; }
+}
+
+.scroll-indicator-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0));
+  animation: scrollPulse 2.5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════
+   HORIZONTAL SCROLL
+   ═══════════════════════════════════════════ */
+.horizontal-scroll {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overflow-x: auto;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.horizontal-scroll > * {
+  scroll-snap-align: center;
+}
+
+/* ═══════════════════════════════════════════
+   FLOATING LABELS — Luxury Form Inputs
+   ═══════════════════════════════════════════ */
+.float-label-group {
+  position: relative;
+}
+
+.float-label-group input,
+.float-label-group textarea,
+.float-label-group select {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(44, 44, 44, 0.2);
+  padding: 1.5rem 0 0.75rem;
+  font-size: 1rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.4s var(--ease-luxury);
+  font-family: var(--font-lato), 'Lato', sans-serif;
+  color: var(--color-ink);
+  letter-spacing: 0.01em;
+}
+
+.float-label-group input:focus,
+.float-label-group textarea:focus,
+.float-label-group select:focus {
+  border-bottom-color: var(--color-gold);
+}
+
+.float-label-group label {
+  position: absolute;
+  left: 0;
+  top: 1.5rem;
+  font-size: 0.95rem;
+  color: rgba(44, 44, 44, 0.4);
+  pointer-events: none;
+  transition: all 0.35s var(--ease-luxury);
+  letter-spacing: 0.02em;
+}
+
+.float-label-group input:focus ~ label,
+.float-label-group input:not(:placeholder-shown) ~ label,
+.float-label-group textarea:focus ~ label,
+.float-label-group textarea:not(:placeholder-shown) ~ label,
+.float-label-group select:focus ~ label,
+.float-label-group select:valid ~ label {
+  top: 0;
+  font-size: 0.65rem;
+  color: var(--color-gold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════
+   CLIP-PATH REVEALS
+   ═══════════════════════════════════════════ */
+.clip-reveal {
+  clip-path: inset(100% 0 0 0);
+}
+
+.clip-reveal-visible {
+  clip-path: inset(0);
+}
+
+.clip-reveal-left {
+  clip-path: inset(0 100% 0 0);
+}
+
+.clip-reveal-left-visible {
+  clip-path: inset(0);
+}
+
+/* ═══════════════════════════════════════════
+   MAGNETIC BUTTON
+   ═══════════════════════════════════════════ */
+.magnetic-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s var(--ease-luxury);
+  will-change: transform;
+}
+
+.magnetic-btn::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  z-index: -1;
+}
+
+/* ═══════════════════════════════════════════
+   PARALLAX HERO BG
+   ═══════════════════════════════════════════ */
+.hero-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@supports (background-attachment: fixed) {
+  .hero-bg-fixed {
+    background-attachment: fixed;
+  }
+}
+
+/* mobile: no fixed bg (perf) */
+@media (max-width: 768px) {
+  .hero-bg-fixed {
+    background-attachment: scroll;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   IMAGE CONTAINERS — Always overflow-hidden
+   ═══════════════════════════════════════════ */
+.img-container {
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.img-container-organic {
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+.img-container-pill {
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+/* ═══════════════════════════════════════════
+   LIGHTBOX
+   ═══════════════════════════════════════════ */
+.lightbox-overlay {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ═══════════════════════════════════════════
+   PROGRESS BAR
+   ═══════════════════════════════════════════ */
+.progress-step {
+  transition: all 0.6s var(--ease-luxury);
+}
+
+/* ═══════════════════════════════════════════
+   MASONRY GALLERY
+   ═══════════════════════════════════════════ */
+.masonry-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 200px;
+  gap: 8px;
+}
+
+.masonry-gallery .masonry-tall {
+  grid-row: span 2;
+}
+
+.masonry-gallery .masonry-wide {
+  grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+  .masonry-gallery {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 160px;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   ASYMMETRIC ACTIVITIES GRID
+   ═══════════════════════════════════════════ */
+.activities-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  min-height: 600px;
+}
+
+.activities-grid > :nth-child(1) {
+  grid-row: span 2;
+}
+
+.activities-grid > :nth-child(4) {
+  grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+  .activities-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    min-height: auto;
+  }
+
+  .activities-grid > :nth-child(1) {
+    grid-row: span 1;
+  }
+
+  .activities-grid > :nth-child(4) {
+    grid-column: span 1;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   CUSTOM CURSOR BLEND (desktop only)
+   ═══════════════════════════════════════════ */
+@media (hover: hover) and (pointer: fine) {
+  .cursor-blend {
+    cursor: none;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   LENIS SMOOTH SCROLL
+   ═══════════════════════════════════════════ */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   REDUCED MOTION — ALWAYS RESPECT
+   ═══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .scroll-indicator-line {
+    animation: none;
+    opacity: 0.5;
+  }
+
+  .hero-bg-fixed {
+    background-attachment: scroll;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════ */
+.text-balance {
+  text-wrap: balance;
+}
+
+.gpu {
+  will-change: transform;
+  transform: translateZ(0);
+}

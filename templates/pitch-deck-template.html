@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PACIFIK'AI × {{company.name}} - Pitch Deck</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2CCCD4;
+            --primary-dark: #1aa3aa;
+            --secondary: #C9A84C;
+            --text: #1a1a1a;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --bg-dark: #0f172a;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @page { size: 16in 9in; margin: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #1a1a1a;
+            color: var(--white);
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            min-height: 100vh;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            page-break-after: always;
+        }
+
+        .slide.dark { background: var(--bg-gradient); }
+        .slide.light { background: var(--white); color: var(--text); }
+        .slide.accent { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); }
+
+        .slide-number {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            font-size: 14px;
+            opacity: 0.5;
+        }
+
+        .watermark {
+            position: absolute;
+            bottom: 40px;
+            left: 60px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.5;
+        }
+
+        h1 { font-size: 64px; font-weight: 800; line-height: 1.1; letter-spacing: -2px; }
+        h2 { font-size: 48px; font-weight: 700; line-height: 1.2; letter-spacing: -1px; }
+        h3 { font-size: 32px; font-weight: 600; margin-bottom: 24px; }
+        .subtitle { font-size: 24px; font-weight: 400; opacity: 0.8; margin-top: 16px; }
+        .highlight { color: var(--primary); }
+        .light .highlight { color: var(--primary-dark); }
+
+        .cover-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .cover-logos {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .logo-text { font-size: 36px; font-weight: 800; }
+        .logo-x { font-size: 24px; opacity: 0.5; }
+
+        .cover-badge {
+            display: inline-block;
+            background: rgba(44, 204, 212, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 40px;
+        }
+
+        .cover-date {
+            position: absolute;
+            bottom: 80px;
+            font-size: 18px;
+            opacity: 0.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .light .stat-card { background: #f8fafc; border-color: #e2e8f0; }
+        .stat-value { font-size: 56px; font-weight: 800; color: var(--primary); line-height: 1; }
+        .stat-label { font-size: 16px; margin-top: 12px; opacity: 0.7; }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            flex: 1;
+            align-items: center;
+        }
+
+        .content-left { padding-right: 40px; }
+        .content-right { padding-left: 40px; }
+
+        .feature-list { list-style: none; margin-top: 32px; }
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+            font-size: 20px;
+        }
+        .feature-list li::before {
+            content: "→";
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .case-studies {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .case-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .light .case-card { background: #f8fafc; border-color: #e2e8f0; }
+        .case-logo { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: var(--primary); }
+        .case-stat { font-size: 36px; font-weight: 800; margin: 16px 0; }
+        .case-desc { font-size: 14px; opacity: 0.7; }
+        .case-source { font-size: 11px; opacity: 0.5; margin-top: 12px; font-style: italic; }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .pricing-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-card.recommended {
+            border-color: var(--primary);
+            background: rgba(44, 204, 212, 0.1);
+        }
+
+        .pricing-card.recommended::before {
+            content: "RECOMMANDÉ";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: var(--bg-dark);
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pricing-name { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .pricing-desc { font-size: 14px; opacity: 0.6; margin-bottom: 24px; }
+        .pricing-amount { font-size: 48px; font-weight: 800; color: var(--primary); }
+        .pricing-period { font-size: 16px; opacity: 0.6; }
+        .pricing-setup { font-size: 14px; margin-top: 8px; opacity: 0.7; }
+
+        .pricing-features { list-style: none; margin-top: 32px; text-align: left; }
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pricing-features li::before { content: "✓"; color: var(--success); font-weight: bold; }
+
+        .roi-highlight {
+            background: linear-gradient(135deg, rgba(44, 204, 212, 0.2), rgba(44, 204, 212, 0.05));
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            padding: 48px;
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        .roi-value { font-size: 80px; font-weight: 900; color: var(--primary); line-height: 1; }
+        .roi-label { font-size: 24px; margin-top: 16px; opacity: 0.8; }
+
+        .timeline {
+            display: flex;
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .timeline-item {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+        }
+
+        .timeline-item::after {
+            content: "→";
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .timeline-item:last-child::after { display: none; }
+        .timeline-phase { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); margin-bottom: 8px; }
+        .timeline-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+        .timeline-desc { font-size: 14px; opacity: 0.7; }
+
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .pain-card {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .pain-icon { font-size: 40px; margin-bottom: 16px; }
+        .pain-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+        .pain-desc { font-size: 14px; opacity: 0.8; }
+
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .solution-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .solution-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: var(--success); }
+        .solution-desc { font-size: 14px; opacity: 0.8; margin-bottom: 16px; }
+        .solution-roi { font-size: 24px; font-weight: 800; color: var(--primary); }
+        .solution-savings { font-size: 12px; opacity: 0.6; }
+
+        .cta-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--white);
+            color: var(--primary-dark);
+            padding: 20px 60px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: 40px;
+            transition: transform 0.2s;
+        }
+
+        .cta-button:hover { transform: scale(1.05); }
+
+        .contact-info {
+            margin-top: 48px;
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        .contact-info a { color: var(--white); }
+    </style>
+</head>
+<body>
+
+    <!-- SLIDE 1: COVER -->
+    <section class="slide dark">
+        <div class="cover-content">
+            <div class="cover-logos">
+                <span class="logo-text highlight">PACIFIK'AI</span>
+                <span class="logo-x">×</span>
+                <span class="logo-text">{{company.name}}</span>
+            </div>
+            <h1>Automatisation IA<br><span class="highlight">{{company.sector}}</span></h1>
+            <p class="subtitle">Proposition de partenariat stratégique</p>
+            <span class="cover-badge">Score de fit: {{scores.global}}/100</span>
+        </div>
+        <div class="cover-date">{{metadata.generatedAt}}</div>
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">1</span>
+    </section>
+
+    <!-- SLIDE 2: CONTEXTE MARCHE -->
+    <section class="slide dark">
+        <h2>Le marché <span class="highlight">{{company.sector}}</span></h2>
+        <p class="subtitle">Contexte et opportunités</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{sectorContext.marketSize}}</div>
+                <div class="stat-label">Taille du marché</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{sectorContext.growthRate}}</div>
+                <div class="stat-label">Croissance annuelle</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{scores.urgency}}%</div>
+                <div class="stat-label">Score d'urgence IA</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{scores.fit}}%</div>
+                <div class="stat-label">Adéquation PACIFIK'AI</div>
+            </div>
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">2</span>
+    </section>
+
+    <!-- SLIDE 3: KEY FACTS -->
+    <section class="slide dark">
+        <h2>À propos de <span class="highlight">{{company.name}}</span></h2>
+
+        <div class="content-grid">
+            <div class="content-left">
+                <h3>Profil entreprise</h3>
+                <ul class="feature-list">
+                    {{#each keyFacts}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="content-right">
+                <div class="stat-card" style="padding: 48px;">
+                    <div class="stat-value">{{company.size}}</div>
+                    <div class="stat-label">Catégorie</div>
+                    <div style="margin-top: 24px; font-size: 18px; opacity: 0.7;">
+                        {{company.employees}} employés<br>
+                        {{company.location.city}}, {{company.location.country}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">3</span>
+    </section>
+
+    <!-- SLIDE 4: PAIN POINTS -->
+    <section class="slide dark">
+        <h2>Défis <span class="highlight">identifiés</span></h2>
+        <p class="subtitle">Problématiques clés dans votre secteur</p>
+
+        <div class="pain-grid">
+            {{#each painPoints}}
+            <div class="pain-card">
+                <div class="pain-icon">{{icon}}</div>
+                <div class="pain-title">{{title}}</div>
+                <div class="pain-desc">{{description}}</div>
+            </div>
+            {{/each}}
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">4</span>
+    </section>
+
+    <!-- SLIDE 5: SOLUTIONS -->
+    <section class="slide dark">
+        <h2>Solutions <span class="highlight">PACIFIK'AI</span></h2>
+        <p class="subtitle">Automatisations IA adaptées à vos besoins</p>
+
+        <div class="solution-grid">
+            {{#each solutions}}
+            <div class="solution-card">
+                <div class="solution-title">{{title}}</div>
+                <div class="solution-desc">{{description}}</div>
+                <div class="solution-roi">ROI {{roi}}%</div>
+                <div class="solution-savings">Économie: {{savings.amount}} {{savings.currency}}/{{savings.period}}</div>
+            </div>
+            {{/each}}
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">5</span>
+    </section>
+
+    <!-- SLIDE 6: CASE STUDIES -->
+    <section class="slide dark">
+        <h2>Résultats <span class="highlight">prouvés</span></h2>
+        <p class="subtitle">Études de cas dans votre secteur</p>
+
+        <div class="case-studies">
+            {{#each caseStudies}}
+            <div class="case-card">
+                <div class="case-logo">{{company}}</div>
+                <div class="case-stat">{{value}}</div>
+                <div class="case-desc">{{metric}}</div>
+                <div class="case-source">Source: {{source}}</div>
+            </div>
+            {{/each}}
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">6</span>
+    </section>
+
+    <!-- SLIDE 7: ROI -->
+    <section class="slide light">
+        <h2>Retour sur investissement</h2>
+        <p class="subtitle">Projection basée sur votre profil</p>
+
+        <div class="content-grid">
+            <div class="content-left">
+                <h3>Méthodologie</h3>
+                <ul class="feature-list">
+                    <li>Analyse des coûts actuels</li>
+                    <li>Benchmark secteur {{company.sector}}</li>
+                    <li>Gains d'efficacité documentés</li>
+                    <li>Projection sur 12 mois</li>
+                </ul>
+            </div>
+            <div class="content-right">
+                <div class="roi-highlight">
+                    <div class="roi-value">{{solutions.[0].roi}}%</div>
+                    <div class="roi-label">ROI estimé première année</div>
+                </div>
+            </div>
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">7</span>
+    </section>
+
+    <!-- SLIDE 8: PRICING -->
+    <section class="slide dark">
+        <h2>Investissement</h2>
+        <p class="subtitle">Formules adaptées à {{company.name}}</p>
+
+        <div class="pricing-grid">
+            <div class="pricing-card {{#if (eq pricing.recommended 'starter')}}recommended{{/if}}">
+                <div class="pricing-name">{{pricing.tiers.starter.name}}</div>
+                <div class="pricing-desc">{{pricing.tiers.starter.workflows}} workflows</div>
+                <div class="pricing-amount">{{pricing.tiers.starter.monthly}}</div>
+                <div class="pricing-period">XPF/mois</div>
+                <div class="pricing-setup">Setup: {{pricing.tiers.starter.setup}} XPF</div>
+                <ul class="pricing-features">
+                    {{#each pricing.tiers.starter.features}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+
+            <div class="pricing-card {{#if (eq pricing.recommended 'business')}}recommended{{/if}}">
+                <div class="pricing-name">{{pricing.tiers.business.name}}</div>
+                <div class="pricing-desc">{{pricing.tiers.business.workflows}} workflows</div>
+                <div class="pricing-amount">{{pricing.tiers.business.monthly}}</div>
+                <div class="pricing-period">XPF/mois</div>
+                <div class="pricing-setup">Setup: {{pricing.tiers.business.setup}} XPF</div>
+                <ul class="pricing-features">
+                    {{#each pricing.tiers.business.features}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+
+            <div class="pricing-card {{#if (eq pricing.recommended 'enterprise')}}recommended{{/if}}">
+                <div class="pricing-name">{{pricing.tiers.enterprise.name}}</div>
+                <div class="pricing-desc">{{pricing.tiers.enterprise.workflows}} workflows</div>
+                <div class="pricing-amount">{{pricing.tiers.enterprise.monthly}}</div>
+                <div class="pricing-period">XPF/mois</div>
+                <div class="pricing-setup">Setup: {{pricing.tiers.enterprise.setup}} XPF</div>
+                <ul class="pricing-features">
+                    {{#each pricing.tiers.enterprise.features}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">8</span>
+    </section>
+
+    <!-- SLIDE 9: TIMELINE -->
+    <section class="slide dark">
+        <h2>Plan de <span class="highlight">déploiement</span></h2>
+        <p class="subtitle">De la signature au résultat</p>
+
+        <div class="timeline">
+            {{#each timeline}}
+            <div class="timeline-item">
+                <div class="timeline-phase">{{day}}</div>
+                <div class="timeline-title">{{title}}</div>
+                <div class="timeline-desc">{{description}}</div>
+            </div>
+            {{/each}}
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">9</span>
+    </section>
+
+    <!-- SLIDE 10: SALES SCRIPT PREVIEW -->
+    <section class="slide dark">
+        <h2>Approche <span class="highlight">personnalisée</span></h2>
+
+        <div class="content-grid">
+            <div class="content-left">
+                <h3>Accroche</h3>
+                <div class="quote-block">
+                    "{{salesScript.hook}}"
+                </div>
+
+                <h3 style="margin-top: 32px;">Questions clés</h3>
+                <ul class="feature-list">
+                    {{#each salesScript.questions}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="content-right">
+                <h3>Objections anticipées</h3>
+                {{#each salesScript.objections}}
+                <div style="margin-bottom: 24px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                    <div style="color: var(--warning); font-weight: 600; margin-bottom: 8px;">💬 "{{objection}}"</div>
+                    <div style="font-size: 14px; opacity: 0.8;">→ {{response}}</div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">10</span>
+    </section>
+
+    <!-- SLIDE 11: SOURCES -->
+    <section class="slide dark">
+        <h2>Sources & <span class="highlight">références</span></h2>
+        <p class="subtitle">Données vérifiées et sourcées</p>
+
+        <div style="margin-top: 48px; columns: 2; column-gap: 48px;">
+            {{#each sources}}
+            <div style="margin-bottom: 16px; break-inside: avoid;">
+                <a href="{{url}}" style="color: var(--primary); font-size: 14px; text-decoration: none;">
+                    {{title}}
+                </a>
+                <div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">{{snippet}}</div>
+            </div>
+            {{/each}}
+        </div>
+
+        <span class="watermark">PACIFIK'AI</span>
+        <span class="slide-number">11</span>
+    </section>
+
+    <!-- SLIDE 12: CTA -->
+    <section class="slide accent">
+        <div class="cta-content">
+            <h1>Prêt à <span style="color: var(--bg-dark);">automatiser</span> ?</h1>
+            <p class="subtitle" style="opacity: 1; color: var(--white);">
+                Transformez {{company.name}} avec l'IA
+            </p>
+
+            <a href="mailto:jordy@pacifikai.com?subject=Partenariat {{company.name}}" class="cta-button">
+                Planifier un appel →
+            </a>
+
+            <div class="contact-info">
+                <strong>Jordy Banks</strong><br>
+                jordy@pacifikai.com | +689 89 55 81 89<br>
+                <a href="https://pacifikai.com">pacifikai.com</a>
+            </div>
+        </div>
+
+        <span class="watermark" style="color: var(--bg-dark);">PACIFIK'AI</span>
+        <span class="slide-number" style="color: var(--bg-dark);">12</span>
+    </section>
+
+</body>
+</html>

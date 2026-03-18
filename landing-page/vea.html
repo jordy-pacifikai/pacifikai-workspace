@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ve'a — Assistant de Reservation IA | PACIFIK'AI</title>
+    <meta name="description" content="Ve'a par PACIFIK'AI : votre assistant de reservation intelligent sur WhatsApp et Messenger. Reservations 24h/24, rappels automatiques, zero appel manque.">
+
+    <link rel="canonical" href="https://pacifikai.com/vea">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Ve'a — Assistant de Reservation IA | PACIFIK'AI">
+    <meta property="og:description" content="Votre assistant de reservation intelligent sur WhatsApp et Messenger. Reservations 24h/24, zero appel manque.">
+    <meta property="og:url" content="https://pacifikai.com/vea">
+    <meta property="og:image" content="https://pacifikai.com/assets/og-image.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-card: #111111;
+            --bg-card-hover: #1a1a1a;
+            --border: #222222;
+            --border-light: #333333;
+            --text: #fafafa;
+            --text-secondary: #a0a0a0;
+            --text-dim: #666666;
+            --green: #25D366;
+            --green-glow: rgba(37, 211, 102, 0.3);
+            --green-soft: rgba(37, 211, 102, 0.08);
+            --blue: #3b82f6;
+            --blue-soft: rgba(59, 130, 246, 0.08);
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(37, 211, 102, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 50% at 80% 90%, rgba(59, 130, 246, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+        }
+        nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+        .nav-brand .logo-text { font-weight: 700; font-size: 1.3rem; letter-spacing: -0.02em; }
+        .nav-brand .logo-text span { color: var(--green); }
+        .nav-brand .by { font-size: 0.75rem; color: var(--text-dim); font-weight: 400; }
+        .nav-cta {
+            background: var(--green); color: #000; padding: 10px 24px; border-radius: 8px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .nav-cta:hover { box-shadow: 0 0 20px var(--green-glow); transform: translateY(-1px); }
+
+        /* HERO */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--green-soft); border: 1px solid rgba(37, 211, 102, 0.2);
+            padding: 6px 16px; border-radius: 100px; font-size: 0.85rem; color: var(--green);
+            margin-bottom: 32px;
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+        }
+        .hero h1 .highlight { color: var(--green); }
+        .hero p {
+            font-size: 1.2rem; color: var(--text-secondary);
+            max-width: 600px; margin: 0 auto 40px;
+        }
+        .hero-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--green); color: #000; padding: 14px 32px; border-radius: 10px;
+            text-decoration: none; font-weight: 700; font-size: 1rem;
+            transition: all 0.2s; border: none; cursor: pointer;
+        }
+        .btn-primary:hover { box-shadow: 0 0 30px var(--green-glow); transform: translateY(-2px); }
+        .btn-secondary {
+            background: transparent; color: var(--text); padding: 14px 32px; border-radius: 10px;
+            text-decoration: none; font-weight: 600; font-size: 1rem;
+            border: 1px solid var(--border-light); transition: all 0.2s;
+        }
+        .btn-secondary:hover { border-color: var(--green); color: var(--green); }
+
+        /* CHANNELS */
+        .channels {
+            display: flex; justify-content: center; gap: 32px; margin-top: 48px;
+            flex-wrap: wrap;
+        }
+        .channel {
+            display: flex; align-items: center; gap: 10px;
+            color: var(--text-secondary); font-size: 0.95rem;
+        }
+        .channel-icon {
+            width: 36px; height: 36px; border-radius: 10px; display: flex;
+            align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .channel-whatsapp { background: rgba(37, 211, 102, 0.15); }
+        .channel-messenger { background: rgba(59, 130, 246, 0.15); }
+        .channel-instagram { background: rgba(225, 48, 108, 0.15); }
+
+        /* FEATURES */
+        .features { padding: 100px 0; }
+        .section-label {
+            color: var(--green); font-size: 0.85rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800;
+            letter-spacing: -0.02em; margin-bottom: 16px;
+        }
+        .section-subtitle {
+            color: var(--text-secondary); font-size: 1.1rem; max-width: 600px; margin-bottom: 60px;
+        }
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .feature-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px;
+            transition: all 0.3s;
+        }
+        .feature-card:hover { border-color: rgba(37, 211, 102, 0.3); transform: translateY(-4px); }
+        .feature-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 20px;
+            background: var(--green-soft);
+        }
+        .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+        .feature-card p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+
+        /* SECTORS */
+        .sectors { padding: 80px 0; }
+        .sectors-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px; margin-top: 48px;
+        }
+        .sector-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px; text-align: center;
+        }
+        .sector-icon { font-size: 2.5rem; margin-bottom: 16px; }
+        .sector-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+        .sector-card p { color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* PRICING */
+        .pricing { padding: 100px 0; }
+        .pricing-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px; margin-top: 48px;
+        }
+        .price-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 40px 32px;
+            position: relative; transition: all 0.3s;
+        }
+        .price-card.featured {
+            border-color: var(--green);
+            box-shadow: 0 0 40px rgba(37, 211, 102, 0.1);
+        }
+        .price-card.featured::before {
+            content: 'Populaire';
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--green); color: #000; padding: 4px 16px;
+            border-radius: 100px; font-size: 0.8rem; font-weight: 700;
+        }
+        .price-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+        .price-desc { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 20px; }
+        .price-amount { font-size: 2.5rem; font-weight: 800; margin-bottom: 4px; }
+        .price-amount span { font-size: 1rem; font-weight: 400; color: var(--text-secondary); }
+        .price-setup { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 24px; }
+        .price-features { list-style: none; margin-bottom: 32px; }
+        .price-features li {
+            padding: 8px 0; color: var(--text-secondary); font-size: 0.9rem;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .price-features li::before { content: ''; color: var(--green); font-weight: 700; }
+        .price-btn {
+            display: block; width: 100%; padding: 14px; border-radius: 10px;
+            text-align: center; text-decoration: none; font-weight: 700; font-size: 0.95rem;
+            transition: all 0.2s; border: none; cursor: pointer;
+        }
+        .price-btn-primary { background: var(--green); color: #000; }
+        .price-btn-primary:hover { box-shadow: 0 0 20px var(--green-glow); }
+        .price-btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border-light); }
+        .price-btn-secondary:hover { border-color: var(--green); color: var(--green); }
+
+        /* CTA */
+        .cta-section {
+            padding: 100px 0; text-align: center;
+        }
+        .cta-box {
+            background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(59, 130, 246, 0.05));
+            border: 1px solid rgba(37, 211, 102, 0.2);
+            border-radius: 24px; padding: 64px 40px;
+        }
+        .cta-box h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 16px; }
+        .cta-box p { color: var(--text-secondary); font-size: 1.1rem; max-width: 500px; margin: 0 auto 32px; }
+
+        /* FOOTER */
+        footer {
+            padding: 40px 0; border-top: 1px solid var(--border);
+            text-align: center; color: var(--text-dim); font-size: 0.85rem;
+        }
+        footer a { color: var(--text-secondary); text-decoration: none; }
+        footer a:hover { color: var(--green); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero { padding: 130px 0 60px; }
+            .features-grid, .pricing-grid, .sectors-grid { grid-template-columns: 1fr; }
+            .channels { gap: 16px; }
+            .cta-box { padding: 40px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="container">
+            <a href="/vea" class="nav-brand">
+                <div>
+                    <div class="logo-text"><span>Ve'a</span></div>
+                    <div class="by">par PACIFIK'AI</div>
+                </div>
+            </a>
+            <a href="/#contact" class="nav-cta">Demander une demo</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span>&#x1f4ac;</span> Assistant IA de reservation
+            </div>
+            <h1>Vos clients reservent<br>par <span class="highlight">message</span>.<br>Ve'a s'occupe du reste.</h1>
+            <p>Un assistant intelligent qui repond sur WhatsApp, Messenger et Instagram 24h/24. Il prend les rendez-vous, envoie les rappels, gere les annulations. Zero appel manque.</p>
+            <div class="hero-ctas">
+                <a href="/#contact" class="btn-primary">Demander une demo gratuite</a>
+                <a href="https://bookbot-propale.vercel.app" class="btn-secondary" target="_blank">Voir la proposition</a>
+            </div>
+            <div class="channels">
+                <div class="channel">
+                    <div class="channel-icon channel-whatsapp">&#x1f4f1;</div>
+                    <span>WhatsApp</span>
+                </div>
+                <div class="channel">
+                    <div class="channel-icon channel-messenger">&#x1f4ac;</div>
+                    <span>Messenger</span>
+                </div>
+                <div class="channel">
+                    <div class="channel-icon channel-instagram">&#x1f4f7;</div>
+                    <span>Instagram DM</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features">
+        <div class="container">
+            <div class="section-label">Fonctionnalites</div>
+            <h2 class="section-title">Tout ce dont votre commerce a besoin</h2>
+            <p class="section-subtitle">Ve'a comprend le langage naturel, connait vos services et vos horaires, et gere les reservations de A a Z.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1f4c5;</div>
+                    <h3>Reservations automatiques</h3>
+                    <p>Vos clients ecrivent un message, Ve'a trouve le prochain creneau disponible et confirme. Pas de lien, pas d'appli a telecharger.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1f514;</div>
+                    <h3>Rappels & confirmations</h3>
+                    <p>Message automatique la veille du rendez-vous. Le client confirme ou reporte en un message. Fini les no-shows.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1f9e0;</div>
+                    <h3>IA conversationnelle</h3>
+                    <p>Ve'a repond aux questions sur vos tarifs, horaires et services. Il connait votre activite sur le bout des doigts.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1f310;</div>
+                    <h3>Multi-canal</h3>
+                    <p>WhatsApp, Messenger, Instagram DM — tout centralise dans un seul dashboard. Vos clients utilisent leur messagerie preferee.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1f4ca;</div>
+                    <h3>Dashboard client</h3>
+                    <p>Calendrier, liste de rendez-vous, statistiques, gestion des services et horaires. Tout en un seul endroit.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x26a1;</div>
+                    <h3>Setup en 30 minutes</h3>
+                    <p>On configure tout pour vous. Connectez votre Page Facebook en 1 clic, ajoutez vos services, et c'est parti.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTORS -->
+    <section class="sectors">
+        <div class="container">
+            <div class="section-label">Pour qui ?</div>
+            <h2 class="section-title">Concu pour les commerces de proximite</h2>
+            <p class="section-subtitle">Salons de beaute, restaurants, cabinets medicaux — partout ou il y a des rendez-vous, Ve'a fait gagner du temps.</p>
+            <div class="sectors-grid">
+                <div class="sector-card">
+                    <div class="sector-icon">&#x1f487;</div>
+                    <h3>Salons de beaute</h3>
+                    <p>Coiffeurs, estheticiennes, barbershops. Vos clientes reservent pendant que vous travaillez.</p>
+                </div>
+                <div class="sector-card">
+                    <div class="sector-icon">&#x1f37d;&#xfe0f;</div>
+                    <h3>Restaurants</h3>
+                    <p>Reservations de tables, commandes, evenements. Plus besoin de repondre au telephone en plein service.</p>
+                </div>
+                <div class="sector-card">
+                    <div class="sector-icon">&#x1fa7a;</div>
+                    <h3>Cabinets medicaux</h3>
+                    <p>Medecins, dentistes, kines. Prise de RDV structuree avec rappel automatique.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-label">Tarifs</div>
+            <h2 class="section-title">Simple, transparent, sans surprise</h2>
+            <p class="section-subtitle">Pas d'engagement. Testez Ve'a sur votre activite et voyez les resultats avant de vous engager.</p>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <div class="price-name">Essentiel</div>
+                    <div class="price-desc">Pour demarrer</div>
+                    <div class="price-amount">15 000 F<span>/mois</span></div>
+                    <div class="price-setup">+ 100 000 F mise en place</div>
+                    <ul class="price-features">
+                        <li>100 conversations/mois</li>
+                        <li>1 canal (WhatsApp ou Messenger)</li>
+                        <li>Dashboard client</li>
+                        <li>Rappels automatiques</li>
+                        <li>Support email</li>
+                    </ul>
+                    <a href="/#contact" class="price-btn price-btn-secondary">Commencer</a>
+                </div>
+                <div class="price-card featured">
+                    <div class="price-name">Business</div>
+                    <div class="price-desc">Le plus populaire</div>
+                    <div class="price-amount">25 000 F<span>/mois</span></div>
+                    <div class="price-setup">+ 180 000 F mise en place</div>
+                    <ul class="price-features">
+                        <li>500 conversations/mois</li>
+                        <li>Multi-canal (WhatsApp + Messenger + IG)</li>
+                        <li>Dashboard client</li>
+                        <li>Rappels + confirmations</li>
+                        <li>Statistiques avancees</li>
+                        <li>Support prioritaire</li>
+                    </ul>
+                    <a href="/#contact" class="price-btn price-btn-primary">Commencer</a>
+                </div>
+                <div class="price-card">
+                    <div class="price-name">Premium</div>
+                    <div class="price-desc">Pour les gros volumes</div>
+                    <div class="price-amount">45 000 F<span>/mois</span></div>
+                    <div class="price-setup">+ 280 000 F mise en place</div>
+                    <ul class="price-features">
+                        <li>2 000 conversations/mois</li>
+                        <li>Tous les canaux</li>
+                        <li>Multi-etablissements</li>
+                        <li>IA personnalisee a votre marque</li>
+                        <li>API & integrations</li>
+                        <li>Account manager dedie</li>
+                    </ul>
+                    <a href="/#contact" class="price-btn price-btn-secondary">Nous contacter</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Pret a ne plus rater un seul rendez-vous ?</h2>
+                <p>Demandez une demo gratuite. On vous montre Ve'a en action sur votre activite en 30 minutes.</p>
+                <a href="/#contact" class="btn-primary">Demander une demo gratuite</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p>Ve'a par <a href="https://pacifikai.com">PACIFIK'AI</a> &mdash; Agence Automatisation IA en Polynesie francaise</p>
+            <p style="margin-top: 8px;">jordy@pacifikai.com &bull; +689 89 55 81 89</p>
+        </div>
+    </footer>
+
+</body>
+</html>

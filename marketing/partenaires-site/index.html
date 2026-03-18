@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programme Partenaires | PACIFIK'AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a12;
+            --bg-card: #0f1020;
+            --bg-card-hover: #151630;
+            --border: #1a1a2e;
+            --border-light: #252540;
+            --text: #ffffff;
+            --text-secondary: #8888aa;
+            --text-dim: #555570;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.4);
+            --accent-soft: rgba(59, 130, 246, 0.1);
+            --green: #10b981;
+            --orange: #f59e0b;
+            --purple: #8b5cf6;
+            --font: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%);
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.12;
+            animation: orbFloat 25s ease-in-out infinite;
+        }
+
+        .orb-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: 5%; }
+        .orb-2 { width: 400px; height: 400px; background: var(--orange); top: 50%; right: -100px; animation-delay: -8s; }
+        .orb-3 { width: 350px; height: 350px; background: var(--purple); bottom: 5%; left: 15%; animation-delay: -16s; }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -40px) scale(1.05); }
+            66% { transform: translate(-30px, 30px) scale(0.95); }
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 3rem 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .logo span { color: var(--accent); }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 6rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            background: var(--accent-soft);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 4rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Section */
+        section {
+            padding: 4rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Partner Model - Single Card Highlight */
+        .partner-model {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+            margin-top: 3rem;
+            padding: 2.5rem;
+            background: var(--bg);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .partner-model::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--purple), var(--green));
+        }
+
+        .partner-model-icon {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--accent-soft) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .partner-model-content {
+            flex: 1;
+        }
+
+        .partner-model-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .partner-model-content h3 .commission-badge {
+            font-size: 0.9rem;
+            padding: 0.4rem 1rem;
+            background: linear-gradient(135deg, var(--green) 0%, rgba(16, 185, 129, 0.7) 100%);
+            border-radius: 100px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .partner-model-content > p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            max-width: 500px;
+        }
+
+        .partner-benefits {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .partner-benefit {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .partner-benefit::before {
+            content: '✓';
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .partner-model {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+            .partner-model-content h3 {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .partner-benefits {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+        }
+
+        /* Ideas Section */
+        .ideas-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .ideas-table thead {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .ideas-table th {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ideas-table td {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .ideas-table tr:hover td {
+            background: var(--bg-card-hover);
+        }
+
+        .profile-tag {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            background: var(--accent-soft);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .potential-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--green);
+        }
+
+        /* Sectors */
+        .sectors-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .sector-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .sector-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            background: var(--bg-card-hover);
+        }
+
+        .sector-card:hover .sector-details {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1rem;
+            padding-top: 1rem;
+        }
+
+        .sector-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .sector-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .sector-card > p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .sector-details {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border-top: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .sector-pain {
+            font-size: 0.75rem;
+            color: var(--orange);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .sector-pain-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .sector-solutions {
+            list-style: none;
+        }
+
+        .sector-solutions li {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding: 0.35rem 0;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .sector-solutions li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .sector-potential {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+        }
+
+        .sector-potential-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            padding: 0.25rem 0;
+        }
+
+        .sector-potential-label {
+            color: var(--text-dim);
+        }
+
+        .sector-potential-value {
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .sector-potential-row.highlight {
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .sector-potential-row.highlight .sector-potential-label {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .sector-potential-row.highlight .sector-potential-value {
+            color: var(--green);
+            font-size: 0.85rem;
+        }
+
+        /* Actions */
+        .actions-section {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .action-card {
+            position: relative;
+        }
+
+        .action-level {
+            position: absolute;
+            top: -12px;
+            left: 1.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .level-easy { background: var(--green); color: var(--bg); }
+        .level-medium { background: var(--orange); color: var(--bg); }
+        .level-advanced { background: var(--purple); color: var(--text); }
+
+        .action-card-inner {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            height: 100%;
+        }
+
+        .action-card h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-right: 2rem;
+        }
+
+        .action-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .action-card .quote {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--accent-soft);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        /* About Section */
+        .about-section {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .about-intro {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .about-intro h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .about-intro p {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .solution-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .solution-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .solution-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .solution-card h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .solution-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* CTA */
+        .cta-section {
+            text-align: center;
+            padding: 5rem 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--text);
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Social Proof */
+        .social-proof {
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .clients-label {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+        }
+
+        .clients-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            opacity: 0.6;
+        }
+
+        .client-logo {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+        }
+
+        /* Results */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .result-metric {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--green) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result-context {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .result-client {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Process */
+        .process-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 3rem;
+        }
+
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--purple), var(--green));
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--bg);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            max-width: 150px;
+            margin: 0 auto;
+        }
+
+        .step-time {
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* FAQ */
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .faq-question::before {
+            content: 'Q';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            color: var(--bg);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .faq-answer {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            padding-left: 2.25rem;
+        }
+
+        /* Urgency Banner */
+        .urgency-banner {
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+        }
+
+        .urgency-text {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .urgency-icon {
+            font-size: 1.5rem;
+        }
+
+        .urgency-title {
+            font-weight: 700;
+            color: var(--orange);
+        }
+
+        .urgency-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .urgency-slots {
+            background: var(--bg);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .slots-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--orange);
+        }
+
+        .slots-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        /* Guarantee */
+        .guarantee-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .guarantee-icon {
+            font-size: 2rem;
+        }
+
+        .guarantee-text h4 {
+            color: var(--green);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .guarantee-text p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sectors-grid { grid-template-columns: repeat(2, 1fr); }
+            .solutions-grid { grid-template-columns: repeat(2, 1fr); }
+            .actions-grid { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .results-grid { grid-template-columns: repeat(2, 1fr); }
+            .faq-grid { grid-template-columns: 1fr; }
+            .process-timeline { flex-direction: column; gap: 2rem; }
+            .process-timeline::before { display: none; }
+            .urgency-banner { flex-direction: column; text-align: center; gap: 1rem; }
+
+            /* Show sector details on tablet */
+            .sector-card .sector-details {
+                max-height: 500px;
+                opacity: 1;
+                margin-top: 1rem;
+                padding-top: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sectors-grid { grid-template-columns: 1fr; }
+            .solutions-grid { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: 1fr; }
+            .results-grid { grid-template-columns: 1fr; }
+            .ideas-table { display: block; overflow-x: auto; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+            .clients-grid { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-grid"></div>
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo">PACIFIK'<span>AI</span></div>
+            <p class="tagline">Agence d'automatisation IA - Polynesie francaise</p>
+        </header>
+
+        <section class="hero">
+            <span class="hero-badge">Programme Partenaires 2026</span>
+            <h1>Monetise ton reseau.<br><span>On s'occupe du reste.</span></h1>
+            <p class="hero-subtitle">
+                Tu connais des entreprises qui perdent du temps sur des taches repetitives ?
+                Deviens partenaire PACIFIK'AI et genere des revenus passifs.
+            </p>
+        </section>
+
+        <!-- Qui est PACIFIK'AI -->
+        <div class="about-section">
+            <div class="about-intro">
+                <h2>Qui est PACIFIK'AI ?</h2>
+                <p>
+                    On est une agence d'automatisation IA basee en Polynesie francaise.
+                    Notre job : aider les entreprises locales a gagner du temps et de l'argent
+                    en automatisant leurs taches repetitives avec l'intelligence artificielle.
+                    Chatbots, dashboards, workflows automatises... on construit des solutions sur-mesure
+                    qui tournent 24/7.
+                </p>
+            </div>
+            <div class="solutions-grid">
+                <div class="solution-card">
+                    <div class="solution-icon">🤖</div>
+                    <h4>Chatbots IA</h4>
+                    <p>Repondent aux clients 24/7 sur Messenger, WhatsApp, site web. Multilingues et personnalises.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="solution-icon">⚡</div>
+                    <h4>Automatisations</h4>
+                    <p>Emails, relances, factures, reservations... tout ce qui se repete peut etre automatise.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="solution-icon">📊</div>
+                    <h4>Dashboards</h4>
+                    <p>Tableaux de bord en temps reel pour suivre les KPIs, ventes, stocks, performances.</p>
+                </div>
+                <div class="solution-card">
+                    <div class="solution-icon">🔗</div>
+                    <h4>Integrations</h4>
+                    <p>On connecte tous les outils : CRM, comptabilite, reservations, reseaux sociaux.</p>
+                </div>
+            </div>
+
+            <!-- Partner Model intégré -->
+            <div class="partner-model">
+                <div class="partner-model-icon">🤝</div>
+                <div class="partner-model-content">
+                    <h3>Deviens Apporteur d'Affaires <span class="commission-badge">20% commission</span></h3>
+                    <p>Tu presentes une entreprise qui a besoin d'automatisation, on s'occupe de tout le reste. Zero competence technique requise.</p>
+                    <div class="partner-benefits">
+                        <span class="partner-benefit">Tu identifies un besoin dans ton reseau</span>
+                        <span class="partner-benefit">On gere la demo et la vente</span>
+                        <span class="partner-benefit">Commission versee a la signature</span>
+                        <span class="partner-benefit">Aucun investissement de ta part</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">47</div>
+                <div class="stat-label">Workflows en production</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">850K</div>
+                <div class="stat-label">XPF economises/mois clients</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">20%</div>
+                <div class="stat-label">Commission partenaire</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">2 sem</div>
+                <div class="stat-label">Delai moyen livraison</div>
+            </div>
+        </div>
+
+        <!-- Resultats concrets -->
+        <section>
+            <div class="section-header">
+                <h2>Resultats reels de nos clients</h2>
+                <p>Ce que tu peux promettre a ton reseau</p>
+            </div>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-metric">-70%</div>
+                    <div class="result-context">Temps traitement emails</div>
+                    <div class="result-client">Compagnie aerienne - 15 workflows</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-metric">24/7</div>
+                    <div class="result-context">Chatbot qualification leads</div>
+                    <div class="result-client">Concession auto - 8 workflows</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-metric">+340%</div>
+                    <div class="result-context">ROI sur 6 mois</div>
+                    <div class="result-client">Croisieres - 4 workflows</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <h2>Idees selon ton profil</h2>
+                <p>Trouve l'angle qui correspond a tes forces</p>
+            </div>
+
+            <table class="ideas-table">
+                <thead>
+                    <tr>
+                        <th>Ton profil</th>
+                        <th>Idee concrete</th>
+                        <th>Potentiel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="profile-tag">Commercial / Vendeur</span></td>
+                        <td>Prospection clients B2B pour PACIFIK'AI</td>
+                        <td><span class="potential-tag">15-25% commission</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <h2>Secteurs porteurs en Polynesie</h2>
+                <p>Les opportunites locales avec le plus de potentiel</p>
+            </div>
+
+            <p style="text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-bottom: 2rem;">Survole une carte pour voir les details</p>
+
+            <div class="sectors-grid">
+                <div class="sector-card">
+                    <div class="sector-icon">🏨</div>
+                    <h4>Tourisme / Hotellerie</h4>
+                    <p>Pensions, hotels, tours operators</p>
+                    <div class="sector-details">
+                        <div class="sector-pain">Probleme recurrent :</div>
+                        <div class="sector-pain-text">"On passe 3h/jour a repondre aux memes questions par email et Messenger"</div>
+                        <ul class="sector-solutions">
+                            <li>Chatbot multilingue 24/7 (dispo, tarifs, activites)</li>
+                            <li>Reponse auto aux avis TripAdvisor/Google</li>
+                            <li>Sync reservations multi-plateformes</li>
+                            <li>Upsell automatique pre-sejour</li>
+                            <li>Dashboard taux occupation temps reel</li>
+                        </ul>
+                        <div class="sector-potential">
+                            <div class="sector-potential-row">
+                                <span class="sector-potential-label">Prix projet</span>
+                                <span class="sector-potential-value">200-600K XPF</span>
+                            </div>
+                            <div class="sector-potential-row highlight">
+                                <span class="sector-potential-label">Ta commission (20%)</span>
+                                <span class="sector-potential-value">40-120K XPF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sector-card">
+                    <div class="sector-icon">🍽️</div>
+                    <h4>Restauration</h4>
+                    <p>Restaurants, snacks, traiteurs</p>
+                    <div class="sector-details">
+                        <div class="sector-pain">Probleme recurrent :</div>
+                        <div class="sector-pain-text">"Les reservations par telephone c'est ingerable, et on oublie de rappeler les clients"</div>
+                        <ul class="sector-solutions">
+                            <li>Reservation en ligne + rappels SMS auto</li>
+                            <li>Commande WhatsApp/Messenger avec paiement</li>
+                            <li>Programme fidelite automatise</li>
+                            <li>Gestion stocks + alertes rupture</li>
+                            <li>Collecte avis post-repas automatique</li>
+                        </ul>
+                        <div class="sector-potential">
+                            <div class="sector-potential-row">
+                                <span class="sector-potential-label">Prix projet</span>
+                                <span class="sector-potential-value">150-400K XPF</span>
+                            </div>
+                            <div class="sector-potential-row highlight">
+                                <span class="sector-potential-label">Ta commission (20%)</span>
+                                <span class="sector-potential-value">30-80K XPF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sector-card">
+                    <div class="sector-icon">🛒</div>
+                    <h4>Commerce / Retail</h4>
+                    <p>Boutiques, grossistes, e-commerce</p>
+                    <div class="sector-details">
+                        <div class="sector-pain">Probleme recurrent :</div>
+                        <div class="sector-pain-text">"On repond 50x/jour aux memes questions sur les produits et la dispo"</div>
+                        <ul class="sector-solutions">
+                            <li>Chatbot catalogue produits intelligent</li>
+                            <li>Alertes stock + commande fournisseur auto</li>
+                            <li>Sync prix site web / caisse / marketplaces</li>
+                            <li>Relance paniers abandonnes</li>
+                            <li>Segmentation clients + promos ciblees</li>
+                        </ul>
+                        <div class="sector-potential">
+                            <div class="sector-potential-row">
+                                <span class="sector-potential-label">Prix projet</span>
+                                <span class="sector-potential-value">200-500K XPF</span>
+                            </div>
+                            <div class="sector-potential-row highlight">
+                                <span class="sector-potential-label">Ta commission (20%)</span>
+                                <span class="sector-potential-value">40-100K XPF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sector-card">
+                    <div class="sector-icon">🔧</div>
+                    <h4>Services / Artisans</h4>
+                    <p>Plombiers, electriciens, prestataires</p>
+                    <div class="sector-details">
+                        <div class="sector-pain">Probleme recurrent :</div>
+                        <div class="sector-pain-text">"Je perds des clients parce que je rappelle trop tard ou j'oublie les relances"</div>
+                        <ul class="sector-solutions">
+                            <li>Prise de RDV en ligne avec calendrier</li>
+                            <li>Devis automatiques selon formulaire</li>
+                            <li>Relance devis non signes (J+3, J+7)</li>
+                            <li>Facturation auto apres intervention</li>
+                            <li>Demande avis Google automatique</li>
+                        </ul>
+                        <div class="sector-potential">
+                            <div class="sector-potential-row">
+                                <span class="sector-potential-label">Prix projet</span>
+                                <span class="sector-potential-value">100-300K XPF</span>
+                            </div>
+                            <div class="sector-potential-row highlight">
+                                <span class="sector-potential-label">Ta commission (20%)</span>
+                                <span class="sector-potential-value">20-60K XPF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sector-card">
+                    <div class="sector-icon">🏥</div>
+                    <h4>Sante / Medical</h4>
+                    <p>Cabinets, cliniques, praticiens</p>
+                    <div class="sector-details">
+                        <div class="sector-pain">Probleme recurrent :</div>
+                        <div class="sector-pain-text">"Les patients oublient leurs RDV, et la secretaire passe sa journee au telephone"</div>
+                        <ul class="sector-solutions">
+                            <li>Prise RDV en ligne 24/7</li>
+                            <li>Rappels SMS J-1 + confirmation</li>
+                            <li>Formulaires pre-consultation</li>
+                            <li>Suivi post-consultation automatise</li>
+                            <li>Gestion liste d'attente intelligente</li>
+                        </ul>
+                        <div class="sector-potential">
+                            <div class="sector-potential-row">
+                                <span class="sector-potential-label">Prix projet</span>
+                                <span class="sector-potential-value">200-450K XPF</span>
+                            </div>
+                            <div class="sector-potential-row highlight">
+                                <span class="sector-potential-label">Ta commission (20%)</span>
+                                <span class="sector-potential-value">40-90K XPF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sector-card">
+                    <div class="sector-icon">🏠</div>
+                    <h4>Immobilier</h4>
+                    <p>Agences, promoteurs, syndics</p>
+                    <div class="sector-details">
+                        <div class="sector-pain">Probleme recurrent :</div>
+                        <div class="sector-pain-text">"On perd du temps avec des visiteurs pas qualifies, et le suivi client c'est le chaos"</div>
+                        <ul class="sector-solutions">
+                            <li>Qualification leads automatique (budget, criteres)</li>
+                            <li>Matching biens/acheteurs intelligent</li>
+                            <li>Alertes nouveaux biens personnalisees</li>
+                            <li>Visite virtuelle + prise RDV auto</li>
+                            <li>Suivi pipeline ventes avec relances</li>
+                        </ul>
+                        <div class="sector-potential">
+                            <div class="sector-potential-row">
+                                <span class="sector-potential-label">Prix projet</span>
+                                <span class="sector-potential-value">300-700K XPF</span>
+                            </div>
+                            <div class="sector-potential-row highlight">
+                                <span class="sector-potential-label">Ta commission (20%)</span>
+                                <span class="sector-potential-value">60-140K XPF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sector-card">
+                    <div class="sector-icon">🚗</div>
+                    <h4>Auto / Location</h4>
+                    <p>Concessions, loueurs, garages</p>
+                    <div class="sector-details">
+                        <div class="sector-pain">Probleme recurrent :</div>
+                        <div class="sector-pain-text">"La gestion des reservations et du parc vehicules c'est un casse-tete Excel"</div>
+                        <ul class="sector-solutions">
+                            <li>Reservation en ligne avec dispo temps reel</li>
+                            <li>Contrats + etats des lieux digitaux</li>
+                            <li>Alertes entretien / controle technique</li>
+                            <li>Chatbot FAQ + tarifs instantane</li>
+                            <li>Dashboard flotte + rentabilite vehicule</li>
+                        </ul>
+                        <div class="sector-potential">
+                            <div class="sector-potential-row">
+                                <span class="sector-potential-label">Prix projet</span>
+                                <span class="sector-potential-value">250-600K XPF</span>
+                            </div>
+                            <div class="sector-potential-row highlight">
+                                <span class="sector-potential-label">Ta commission (20%)</span>
+                                <span class="sector-potential-value">50-120K XPF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sector-card">
+                    <div class="sector-icon">📚</div>
+                    <h4>Formation / Coaching</h4>
+                    <p>Formateurs, coachs, ecoles</p>
+                    <div class="sector-details">
+                        <div class="sector-pain">Probleme recurrent :</div>
+                        <div class="sector-pain-text">"Le suivi des apprenants et les relances pour les paiements, c'est manuel et ca prend un temps fou"</div>
+                        <ul class="sector-solutions">
+                            <li>Onboarding eleves automatise</li>
+                            <li>Rappels modules + deadlines</li>
+                            <li>Quiz/evaluations avec correction auto</li>
+                            <li>Certificats generes automatiquement</li>
+                            <li>Relance paiements echelonnes</li>
+                        </ul>
+                        <div class="sector-potential">
+                            <div class="sector-potential-row">
+                                <span class="sector-potential-label">Prix projet</span>
+                                <span class="sector-potential-value">150-400K XPF</span>
+                            </div>
+                            <div class="sector-potential-row highlight">
+                                <span class="sector-potential-label">Ta commission (20%)</span>
+                                <span class="sector-potential-value">30-80K XPF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="actions-section">
+            <div class="section-header">
+                <h2>Par ou commencer ?</h2>
+                <p>3 niveaux d'engagement selon ta disponibilite</p>
+            </div>
+
+            <div class="actions-grid">
+                <div class="action-card">
+                    <span class="action-level level-easy">Facile</span>
+                    <div class="action-card-inner">
+                        <h4>Intro simple</h4>
+                        <p>Tu identifies quelqu'un dans ton reseau qui perd du temps sur des taches repetitives. Tu fais l'intro par message ou en personne.</p>
+                        <div class="quote">"Je connais quelqu'un qui automatise des process avec l'IA, ca pourrait t'interesser ?"</div>
+                    </div>
+                </div>
+
+                <div class="action-card">
+                    <span class="action-level level-medium">Moyen</span>
+                    <div class="action-card-inner">
+                        <h4>Idee de produit</h4>
+                        <p>Tu as une idee de business ou tu connais un probleme recurrent dans ton secteur. On construit le MVP ensemble et on partage les revenus.</p>
+                        <div class="quote">"Les [X] galèrent tous avec [Y], on pourrait creer un outil pour ca."</div>
+                    </div>
+                </div>
+
+                <div class="action-card">
+                    <span class="action-level level-advanced">Engage</span>
+                    <div class="action-card-inner">
+                        <h4>Offre packagée</h4>
+                        <p>On monte une offre specifique pour ton secteur. Tu geres le commercial et la relation client, on gere toute la partie technique.</p>
+                        <div class="quote">"On cree une offre [secteur] complete : chatbot + dashboard + automations."</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Process -->
+        <section>
+            <div class="section-header">
+                <h2>Comment ca se passe ?</h2>
+                <p>Du premier contact a la premiere commission</p>
+            </div>
+            <div class="process-timeline">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Premier contact</div>
+                    <div class="step-desc">Tu nous presentes l'opportunite</div>
+                    <div class="step-time">Jour 0</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Demo client</div>
+                    <div class="step-desc">On fait la demo ensemble ou seul</div>
+                    <div class="step-time">Jour 1-3</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Proposition</div>
+                    <div class="step-desc">Devis detaille envoye au client</div>
+                    <div class="step-time">Jour 3-5</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Livraison</div>
+                    <div class="step-desc">On construit, tu suis si tu veux</div>
+                    <div class="step-time">2-4 semaines</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Commission</div>
+                    <div class="step-desc">Virement a la signature client</div>
+                    <div class="step-time">J+7 apres paiement</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section>
+            <div class="section-header">
+                <h2>Questions frequentes</h2>
+                <p>Les reponses aux objections classiques</p>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">J'y connais rien en technique, ca va ?</div>
+                    <div class="faq-answer">Parfait. Tu identifies le besoin, on gere tout le reste. Tu n'as pas besoin de comprendre comment ca marche, juste de savoir que ca marche.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">C'est quoi le montant moyen d'une commission ?</div>
+                    <div class="faq-answer">Projet moyen = 350-800K XPF. A 20% de commission = 70-160K XPF par deal.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Et si le client ne signe pas ?</div>
+                    <div class="faq-answer">Aucun risque pour toi. Pas de signature = pas de commission, mais pas de frais non plus. On partage le risque.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Je dois faire quoi exactement ?</div>
+                    <div class="faq-answer">Version minimale : une intro par message. Version complete : tu participes aux meetings, tu suis le projet. C'est toi qui choisis ton niveau d'implication.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">C'est legal ? Y'a un contrat ?</div>
+                    <div class="faq-answer">Oui. Contrat de partenariat clair avec commissions definies. Tout est transparent et trace.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Et si le client a un probleme apres ?</div>
+                    <div class="faq-answer">On gere le support. Tu n'es pas responsable de la maintenance. Ta mission s'arrete a l'intro, sauf si tu veux t'impliquer plus.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Pret a collaborer ?</h2>
+            <p>Envoie-nous le nom de l'entreprise + le probleme identifie</p>
+            <div class="cta-buttons">
+                <a href="https://wa.me/68989558189?text=Salut%20Jordy,%20j'ai%20peut-etre%20une%20opportunite%20pour%20PACIFIK'AI%20:" class="btn btn-primary">
+                    WhatsApp direct
+                </a>
+                <a href="mailto:jordy@pacifikai.com?subject=Opportunite%20partenariat%20PACIFIK'AI" class="btn btn-secondary">
+                    Email avec details
+                </a>
+            </div>
+
+            <!-- Guarantee -->
+            <div class="guarantee-box">
+                <span class="guarantee-icon">🛡️</span>
+                <div class="guarantee-text">
+                    <h4>Garantie zero risque</h4>
+                    <p>Pas de frais d'entree, pas d'engagement. Tu es paye uniquement quand le client signe. Si ca ne fonctionne pas, tu n'as rien perdu.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>PACIFIK'AI &copy; 2026 - <a href="https://pacifikai.com">pacifikai.com</a></p>
+        </footer>
+    </div>
+</body>
+</html>

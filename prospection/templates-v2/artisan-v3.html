@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}. {{TAGLINE}}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ================================================================
+       ARTISAN V3 — Dark Artisanal Premium
+       Dark bg, craft luxury, editorial.
+       BAB framework: Before > After > Bridge
+       Gradient mesh dark + horizontal scroll timeline + 3D tilt products
+       ================================================================ */
+
+    /* -- Reset & Base -- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --text: {{COLOR_TEXT}};
+      --pop: #D97706;
+      --pop-dark: #B45309;
+      --pop-light: #F59E0B;
+      --dark-100: #1A1610;
+      --dark-200: #252117;
+      --dark-300: #3D3527;
+      --card-bg: #1A1610;
+      --card-border: rgba(217,119,6,0.12);
+      --muted: #8A7D6B;
+      --font-display: '{{FONT_DISPLAY}}', 'Playfair Display', Georgia, serif;
+      --font-body: '{{FONT_BODY}}', 'Inter', -apple-system, sans-serif;
+      --radius: 8px;
+      --radius-sm: 4px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.7;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    /* -- Disclaimer & Loader -- */
+    .disclaimer{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--pop);color:#fff;font-size:11px;letter-spacing:.06em;text-align:center;padding:10px 24px;font-weight:500}
+    .disclaimer a{color:#fff;text-decoration:underline;font-weight:600}
+    .loader{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+    .loader-inner{text-align:center}
+    .loader-logo{font-family:var(--font-display);font-size:clamp(32px,6vw,56px);font-weight:700;font-style:italic;letter-spacing:.02em;color:var(--pop);opacity:0}
+    .loader-bar{width:100px;height:1px;background:var(--dark-300);margin:24px auto 0;overflow:hidden}
+    .loader-bar-fill{width:100%;height:100%;background:var(--pop);transform:scaleX(0);transform-origin:left}
+
+    /* -- Scroll Progress -- */
+    .scroll-progress{position:fixed;top:38px;left:0;width:0%;height:2px;background:var(--pop);z-index:9998;transition:none}
+
+    /* -- Gradient Mesh Background -- */
+    .gradient-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(217,119,6,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 70% at 90% 80%, rgba(245,240,228,0.03) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 40% at 50% 50%, rgba(26,22,16,0.5) 0%, transparent 70%),
+        var(--bg);
+      animation: meshCraft 25s ease-in-out infinite alternate;
+    }
+    @keyframes meshCraft {
+      0% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+      50% { background-position: 12% 30%, 88% 65%, 48% 55%; }
+      100% { background-position: 5% 50%, 95% 20%, 55% 42%; }
+    }
+
+    /* -- Container -- */
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* -- Typography -- */
+    h1, h2, h3, h4, h5 { font-family: var(--font-display); line-height: 1.1; color: var(--text); }
+    p { line-height: 1.7; }
+    .accent { color: var(--accent); }
+    .pop { color: var(--pop); }
+
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--pop);
+      margin-bottom: 16px;
+    }
+
+    /* ========================================
+       NAVIGATION — DARK EDITORIAL
+    ======================================== */
+    .nav {
+      position: fixed; top: 38px; left: 0; width: 100%;
+      z-index: 1000; padding: 20px 0;
+      transition: background .4s, padding .4s, border-color .4s;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+      background: rgba(15, 13, 10, .92);
+      backdrop-filter: blur(16px);
+      padding: 14px 0;
+      border-bottom-color: var(--dark-300);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 26px; font-weight: 700; font-style: italic;
+      letter-spacing: .01em; color: var(--pop);
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-size: 12px; font-weight: 500; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--muted);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--pop); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--pop);
+      padding: 10px 22px;
+      border: 1px solid var(--pop);
+      border-radius: var(--radius-sm);
+      font-size: 11px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; cursor: pointer;
+      transition: background .2s, color .2s;
+    }
+    .nav-cta:hover { background: var(--pop); color: var(--bg); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-logo { font-size: 22px; }
+    }
+
+    /* ========================================
+       HERO — DARK FULL VIEWPORT
+    ======================================== */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: calc(38px + 80px + 40px) 24px 60px;
+      text-align: center;
+      position: relative;
+    }
+    .hero-overline {
+      font-size: 11px; font-weight: 600; letter-spacing: .25em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 12vw, 130px);
+      line-height: .92; letter-spacing: -.01em;
+      font-weight: 800; font-style: italic;
+      color: var(--text);
+      max-width: 900px; margin: 0 auto;
+    }
+    .hero-title .pop-word { color: var(--pop); }
+    .hero-subtitle {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--text); font-weight: 300;
+      max-width: 480px; margin: 28px auto 0;
+      line-height: 1.7; opacity: .5;
+    }
+    .hero-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, var(--pop), transparent);
+      margin: 40px auto;
+    }
+    .hero-image {
+      width: 100%; max-width: 1000px;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 21/9;
+    }
+    .hero-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* ========================================
+       BAB SECTION — BEFORE / AFTER / BRIDGE
+    ======================================== */
+    .bab { background: var(--dark-100); }
+    .section { padding: 100px 24px; }
+    .bab-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 0; align-items: stretch;
+    }
+    .bab-col {
+      padding: 48px 40px;
+      display: flex; flex-direction: column;
+      justify-content: center;
+    }
+    .bab-before { text-align: right; }
+    .bab-after { text-align: left; }
+    .bab-line-container {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 0; position: relative;
+    }
+    .bab-line {
+      width: 1px; height: 0;
+      background: var(--pop);
+    }
+    .bab-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      border: 1px solid var(--pop);
+      background: var(--bg);
+      margin: 12px 0;
+      flex-shrink: 0;
+    }
+    .bab-tag {
+      font-size: 10px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--pop);
+      margin-bottom: 12px;
+    }
+    .bab-text {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 3.5vw, 32px);
+      line-height: 1.2; font-weight: 700;
+      font-style: italic; color: var(--text);
+    }
+    .bab-bridge {
+      max-width: 1000px; margin: 0 auto;
+      text-align: center; padding: 48px 40px 0;
+    }
+    .bab-bridge-tag {
+      font-size: 10px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--pop);
+      margin-bottom: 12px;
+    }
+    .bab-bridge-text {
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.7; color: var(--text); opacity: .5;
+      max-width: 600px; margin: 0 auto;
+      font-weight: 300;
+    }
+
+    @media (max-width: 768px) {
+      .bab-inner { grid-template-columns: 1fr; }
+      .bab-before, .bab-after { text-align: center; padding: 32px 24px; }
+      .bab-line-container { flex-direction: row; padding: 0 24px; }
+      .bab-line { width: 0; height: 1px; }
+      .bab-bridge { padding: 32px 24px 0; }
+    }
+
+    /* ========================================
+       PROCESS — HORIZONTAL SCROLL TIMELINE
+    ======================================== */
+    .process-header {
+      max-width: 1200px; margin: 0 auto;
+      padding-bottom: 48px;
+    }
+    .process-scroll-wrapper {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 0 24px 24px;
+      position: relative;
+    }
+    .process-scroll-wrapper::-webkit-scrollbar { display: none; }
+    .process-track {
+      display: flex; gap: 0;
+      width: max-content;
+      padding: 12px 0;
+      position: relative;
+    }
+    .process-line {
+      position: absolute;
+      top: 24px; left: 24px; right: 24px;
+      height: 1px;
+      background: var(--dark-300);
+    }
+    .process-step {
+      width: 300px; flex-shrink: 0;
+      padding: 0 24px;
+      position: relative;
+    }
+    .process-step-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--pop);
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+    .process-step-num {
+      font-family: var(--font-display);
+      font-size: 48px; font-weight: 800;
+      color: var(--dark-300);
+      line-height: 1; margin-bottom: 16px;
+    }
+    .process-step-title {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 700;
+      font-style: italic; color: var(--text);
+      margin-bottom: 12px;
+    }
+    .process-step-desc {
+      font-size: 14px; line-height: 1.7;
+      color: var(--text); opacity: .45;
+    }
+    .process-scroll-hint {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 500; color: var(--muted);
+      opacity: .5; margin-top: 20px;
+      max-width: 1200px; margin-left: auto; margin-right: auto;
+      padding: 0 24px;
+    }
+    .process-scroll-hint svg { flex-shrink: 0; }
+
+    /* ========================================
+       PRODUCTS — 3D TILT CARDS
+    ======================================== */
+    .products-header {
+      max-width: 1200px; margin: 0 auto;
+      padding-bottom: 48px;
+    }
+    .products { background: var(--dark-100); }
+    .products-scroll-wrapper {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 0 24px 24px;
+    }
+    .products-scroll-wrapper::-webkit-scrollbar { display: none; }
+    .products-track {
+      display: flex; gap: 24px;
+      width: max-content;
+      padding: 12px 0;
+    }
+    .product-card {
+      width: 300px; flex-shrink: 0;
+      background: var(--dark-200);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      transform-style: preserve-3d;
+      perspective: 800px;
+      transition: box-shadow .3s;
+      cursor: default;
+    }
+    .product-card:hover {
+      box-shadow: 0 20px 60px rgba(217,119,6,.08), 0 4px 16px rgba(0,0,0,.2);
+    }
+    .product-card-inner {
+      transform-style: preserve-3d;
+      transition: transform .15s ease-out;
+    }
+    .product-card-img {
+      width: 100%; aspect-ratio: 1/1;
+      overflow: hidden;
+    }
+    .product-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .6s ease;
+    }
+    .product-card:hover .product-card-img img { transform: scale(1.04); }
+    .product-card-body { padding: 24px; }
+    .product-card-name {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 700;
+      font-style: italic; color: var(--text);
+    }
+    .product-card-desc {
+      font-size: 13px; color: var(--text); opacity: .45;
+      line-height: 1.6; margin-top: 8px;
+    }
+    .product-card-price {
+      font-family: var(--font-display);
+      font-size: 24px; color: var(--pop);
+      margin-top: 16px; font-weight: 700;
+    }
+    .products-scroll-hint {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 500; color: var(--muted);
+      opacity: .5; margin-top: 20px;
+      max-width: 1200px; margin-left: auto; margin-right: auto;
+      padding: 0 24px;
+    }
+
+    @media (max-width: 768px) {
+      .product-card { width: 260px; }
+    }
+
+    /* ========================================
+       TERROIR — PARALLAX SECTION
+    ======================================== */
+    .terroir {
+      position: relative;
+      overflow: hidden;
+      min-height: 60vh;
+      display: flex; align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .terroir-bg {
+      position: absolute; inset: 0;
+      z-index: 0;
+    }
+    .terroir-bg img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .terroir-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(15,13,10,.8), rgba(15,13,10,.6));
+      z-index: 1;
+    }
+    .terroir-content {
+      position: relative; z-index: 2;
+      max-width: 700px; padding: 80px 24px;
+    }
+    .terroir-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 7vw, 72px);
+      font-weight: 800; font-style: italic;
+      color: var(--text); line-height: 1;
+    }
+    .terroir-desc {
+      font-size: 16px; line-height: 1.8;
+      color: var(--text); opacity: .5;
+      margin-top: 24px; font-weight: 300;
+    }
+
+    /* ========================================
+       CTA — AMBER POP
+    ======================================== */
+    .cta-section {
+      background: var(--pop);
+      padding: 100px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-mesh {
+      position: absolute; inset: 0;
+      opacity: .15;
+      background:
+        radial-gradient(ellipse 60% 60% at 30% 40%, var(--pop-dark), transparent),
+        radial-gradient(ellipse 50% 50% at 70% 60%, rgba(255,255,255,.08), transparent);
+      animation: meshCraft 18s ease-in-out infinite alternate;
+    }
+    .cta-inner {
+      position: relative; z-index: 1;
+      max-width: 640px; margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1; font-weight: 800;
+      font-style: italic; color: var(--bg);
+    }
+    .cta-subtitle {
+      font-size: 16px; line-height: 1.7;
+      color: rgba(15,13,10,.7);
+      margin-top: 20px;
+    }
+    .cta-info {
+      display: flex; justify-content: center;
+      gap: 32px; margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .cta-info-item {
+      display: flex; align-items: center; gap: 10px;
+      color: rgba(15,13,10,.6); font-size: 14px;
+    }
+    .cta-info-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--bg); color: var(--pop);
+      padding: 16px 36px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; border: none; cursor: pointer;
+      margin-top: 40px;
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,.3);
+    }
+    .cta-btn svg { width: 18px; height: 18px; }
+
+    /* ========================================
+       FOOTER — DARK
+    ======================================== */
+    .footer {
+      background: var(--bg);
+      padding: 48px 24px 24px;
+      border-top: 1px solid var(--dark-300);
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 700;
+      font-style: italic; color: var(--pop);
+    }
+    .footer-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .footer-links a {
+      font-size: 12px; color: var(--muted);
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--pop); }
+    .footer-bottom {
+      max-width: 1200px; margin: 32px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--dark-300);
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--muted); opacity: .5;
+    }
+    .footer-bottom a { color: var(--pop); }
+
+    @media (max-width: 768px) {
+      .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    /* ========================================
+       SECTION SHARED
+    ======================================== */
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1; font-weight: 800;
+      font-style: italic; color: var(--text);
+    }
+    .section-desc {
+      font-size: 15px; line-height: 1.7;
+      color: var(--text); opacity: .45;
+      max-width: 560px; margin-top: 16px;
+      font-weight: 300;
+    }
+
+    /* ========================================
+       REDUCED MOTION
+    ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .gradient-mesh, .cta-mesh { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GRADIENT MESH BG -->
+  <div class="gradient-mesh"></div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    Prototype offert par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a> — Site web professionnel a 100 000 XPF
+  </div>
+
+  <!-- LOADER -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">{{BUSINESS_NAME}}</div>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- SCROLL PROGRESS -->
+  <div class="scroll-progress"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">{{BUSINESS_NAME}}</a>
+      <ul class="nav-links">
+        <li><a href="#savoir-faire">Savoir-Faire</a></li>
+        <li><a href="#produits">Produits</a></li>
+        <li><a href="#terroir">Terroir</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="tel:{{PHONE}}" class="nav-cta">Decouvrir</a>
+    </div>
+  </nav>
+
+  <!-- ========================================
+       HERO — DARK FULL VIEWPORT
+  ======================================== -->
+  <section class="hero">
+    <span class="hero-overline reveal-up">{{SUBSECTOR}} — {{CITY}}</span>
+    <h1 class="hero-title reveal">{{BUSINESS_NAME}}</h1>
+    <p class="hero-subtitle reveal-up">{{TAGLINE}}</p>
+    <div class="hero-line reveal-up"></div>
+    <div class="hero-image reveal-scale">
+      <img src="{{HERO_IMAGE}}" alt="{{BUSINESS_NAME}} — {{SUBSECTOR}}" loading="eager">
+    </div>
+  </section>
+
+  <!-- ========================================
+       BAB SECTION — BEFORE / AFTER / BRIDGE
+  ======================================== -->
+  <section class="section bab" id="transformation">
+    <div class="bab-inner">
+      <div class="bab-col bab-before">
+        <span class="bab-tag reveal-up">Avant</span>
+        <p class="bab-text reveal">{{BAB_BEFORE}}</p>
+      </div>
+      <div class="bab-line-container">
+        <div class="bab-dot"></div>
+        <div class="bab-line"></div>
+        <div class="bab-dot"></div>
+      </div>
+      <div class="bab-col bab-after">
+        <span class="bab-tag reveal-up">Apres</span>
+        <p class="bab-text reveal">{{BAB_AFTER}}</p>
+      </div>
+    </div>
+    <div class="bab-bridge reveal-up">
+      <span class="bab-bridge-tag">Le Pont</span>
+      <p class="bab-bridge-text">{{BAB_BRIDGE}}</p>
+    </div>
+  </section>
+
+  <!-- ========================================
+       PROCESS — HORIZONTAL SCROLL TIMELINE
+  ======================================== -->
+  <section class="section" id="savoir-faire">
+    <div class="process-header">
+      <span class="section-label reveal-up">Savoir-Faire</span>
+      <h2 class="section-title reveal">Notre Processus</h2>
+      <p class="section-desc reveal-up">{{PROCESS_DESCRIPTION}}</p>
+    </div>
+    <div class="process-scroll-wrapper">
+      <div class="process-track">
+        <div class="process-line"></div>
+        <div class="process-step reveal-up">
+          <div class="process-step-dot"></div>
+          <div class="process-step-num">01</div>
+          <h3 class="process-step-title">{{STEP_1_TITLE}}</h3>
+          <p class="process-step-desc">{{STEP_1_DESC}}</p>
+        </div>
+        <div class="process-step reveal-up">
+          <div class="process-step-dot"></div>
+          <div class="process-step-num">02</div>
+          <h3 class="process-step-title">{{STEP_2_TITLE}}</h3>
+          <p class="process-step-desc">{{STEP_2_DESC}}</p>
+        </div>
+        <div class="process-step reveal-up">
+          <div class="process-step-dot"></div>
+          <div class="process-step-num">03</div>
+          <h3 class="process-step-title">{{STEP_3_TITLE}}</h3>
+          <p class="process-step-desc">{{STEP_3_DESC}}</p>
+        </div>
+        <div class="process-step reveal-up">
+          <div class="process-step-dot"></div>
+          <div class="process-step-num">04</div>
+          <h3 class="process-step-title">{{STEP_4_TITLE}}</h3>
+          <p class="process-step-desc">{{STEP_4_DESC}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="process-scroll-hint">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Glissez pour decouvrir le processus
+    </div>
+  </section>
+
+  <!-- ========================================
+       PRODUCTS — 3D TILT CARDS
+  ======================================== -->
+  <section class="section products" id="produits">
+    <div class="products-header">
+      <span class="section-label reveal-up">Nos Creations</span>
+      <h2 class="section-title reveal">Produits</h2>
+      <p class="section-desc reveal-up">{{PRODUCTS_DESCRIPTION}}</p>
+    </div>
+    <div class="products-scroll-wrapper">
+      <div class="products-track">
+        <div class="product-card" data-tilt>
+          <div class="product-card-inner">
+            <div class="product-card-img">
+              <img src="{{IMAGE_1}}" alt="{{SERVICE_1}}" loading="lazy">
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-card-name">{{SERVICE_1}}</h3>
+              <p class="product-card-desc">{{SERVICE_DESC_1}}</p>
+              <span class="product-card-price">{{PRICE_1}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="product-card" data-tilt>
+          <div class="product-card-inner">
+            <div class="product-card-img">
+              <img src="{{IMAGE_2}}" alt="{{SERVICE_2}}" loading="lazy">
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-card-name">{{SERVICE_2}}</h3>
+              <p class="product-card-desc">{{SERVICE_DESC_2}}</p>
+              <span class="product-card-price">{{PRICE_2}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="product-card" data-tilt>
+          <div class="product-card-inner">
+            <div class="product-card-img">
+              <img src="{{IMAGE_3}}" alt="{{SERVICE_3}}" loading="lazy">
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-card-name">{{SERVICE_3}}</h3>
+              <p class="product-card-desc">{{SERVICE_DESC_3}}</p>
+              <span class="product-card-price">{{PRICE_3}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="product-card" data-tilt>
+          <div class="product-card-inner">
+            <div class="product-card-img">
+              <img src="{{IMAGE_4}}" alt="{{SERVICE_4}}" loading="lazy">
+            </div>
+            <div class="product-card-body">
+              <h3 class="product-card-name">{{SERVICE_4}}</h3>
+              <p class="product-card-desc">{{SERVICE_DESC_4}}</p>
+              <span class="product-card-price">{{PRICE_4}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="products-scroll-hint">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Glissez pour decouvrir nos creations
+    </div>
+  </section>
+
+  <!-- ========================================
+       TERROIR — PARALLAX
+  ======================================== -->
+  <section class="terroir" id="terroir">
+    <div class="terroir-bg">
+      <img src="{{IMAGE_1}}" alt="Terroir {{CITY}}" loading="lazy">
+    </div>
+    <div class="terroir-overlay"></div>
+    <div class="terroir-content">
+      <span class="section-label reveal-up">Terroir</span>
+      <h2 class="terroir-title reveal">{{CITY}}</h2>
+      <p class="terroir-desc reveal-up">{{TERROIR_DESCRIPTION}}</p>
+    </div>
+  </section>
+
+  <!-- ========================================
+       CTA — AMBER POP
+  ======================================== -->
+  <section class="cta-section" id="contact">
+    <div class="cta-mesh"></div>
+    <div class="cta-inner">
+      <h2 class="cta-title reveal">Decouvrez Notre Savoir-Faire</h2>
+      <p class="cta-subtitle reveal-up">{{BUSINESS_NAME}} vous invite a decouvrir l'artisanat authentique de {{CITY}}.</p>
+      <div class="cta-info reveal-up">
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>{{PHONE}}</span>
+        </div>
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>{{ADDRESS}}</span>
+        </div>
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>{{HOURS}}</span>
+        </div>
+      </div>
+      <a href="tel:{{PHONE}}" class="cta-btn reveal-up">
+        Nous contacter
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">{{BUSINESS_NAME}}</div>
+      <ul class="footer-links">
+        <li><a href="#savoir-faire">Savoir-Faire</a></li>
+        <li><a href="#produits">Produits</a></li>
+        <li><a href="#terroir">Terroir</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>Prototype realise par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a></span>
+      <span>{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}</span>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    /* ========================================
+       INIT — REDUCED MOTION
+    ======================================== */
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ========================================
+       LOADER
+    ======================================== */
+    if (!prefersReducedMotion) {
+      const loaderTL = gsap.timeline();
+      loaderTL
+        .to('.loader-logo', { opacity: 1, duration: .6, ease: 'power2.out' })
+        .to('.loader-bar-fill', { scaleX: 1, duration: 1.2, ease: 'power2.inOut' }, '-=.3')
+        .to('.loader', { opacity: 0, duration: .5, ease: 'power2.inOut', onComplete() {
+          document.querySelector('.loader').style.display = 'none';
+        }}, '+=.2');
+    } else {
+      document.querySelector('.loader').style.display = 'none';
+    }
+
+    /* ========================================
+       LENIS SMOOTH SCROLL
+    ======================================== */
+    let lenis;
+    if (!prefersReducedMotion) {
+      lenis = new Lenis({
+        duration: 1.4,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        touchMultiplier: 1.5
+      });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    /* ========================================
+       SCROLL PROGRESS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.to('.scroll-progress', {
+        width: '100%',
+        ease: 'none',
+        scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: .3 }
+      });
+    }
+
+    /* ========================================
+       NAV SHRINK
+    ======================================== */
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    /* ========================================
+       REVEAL ANIMATIONS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.registerPlugin(ScrollTrigger);
+
+      document.querySelectorAll('.reveal').forEach(el => {
+        gsap.fromTo(el,
+          { clipPath: 'inset(0 0 100% 0)', opacity: 0 },
+          {
+            clipPath: 'inset(0 0 0% 0)', opacity: 1,
+            duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+          }
+        );
+      });
+
+      document.querySelectorAll('.reveal-up').forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 30, opacity: 0 },
+          {
+            y: 0, opacity: 1,
+            duration: .7, ease: 'power3.out',
+            delay: i * .04,
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+          }
+        );
+      });
+
+      document.querySelectorAll('.reveal-scale').forEach(el => {
+        gsap.fromTo(el,
+          { scale: .93, opacity: 0 },
+          {
+            scale: 1, opacity: 1,
+            duration: .8, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+          }
+        );
+      });
+
+      /* BAB line animation */
+      const babLine = document.querySelector('.bab-line');
+      if (babLine) {
+        gsap.fromTo(babLine,
+          { height: 0 },
+          {
+            height: 100,
+            duration: 1.2, ease: 'power2.out',
+            scrollTrigger: { trigger: '.bab-inner', start: 'top 75%', once: true }
+          }
+        );
+      }
+
+      /* Process steps stagger */
+      gsap.fromTo('.process-step', { y: 40, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .6, ease: 'power3.out',
+        stagger: .12,
+        scrollTrigger: { trigger: '.process-track', start: 'top 85%', once: true }
+      });
+
+      /* Product cards stagger */
+      gsap.fromTo('.product-card', { y: 40, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .6, ease: 'power3.out',
+        stagger: .1,
+        scrollTrigger: { trigger: '.products-track', start: 'top 85%', once: true }
+      });
+
+      /* Terroir parallax */
+      const terroirBg = document.querySelector('.terroir-bg img');
+      if (terroirBg) {
+        gsap.fromTo(terroirBg,
+          { scale: 1.15 },
+          {
+            scale: 1,
+            scrollTrigger: { trigger: '.terroir', start: 'top bottom', end: 'bottom top', scrub: 1 }
+          }
+        );
+      }
+    }
+
+    /* ========================================
+       3D TILT ON PRODUCT CARDS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      document.querySelectorAll('[data-tilt]').forEach(card => {
+        const inner = card.querySelector('.product-card-inner');
+        if (!inner) return;
+        const maxTilt = 8;
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          const rotateX = (0.5 - y) * maxTilt;
+          const rotateY = (x - 0.5) * maxTilt;
+          inner.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          inner.style.transform = 'perspective(800px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        });
+      });
+    }
+
+    /* ========================================
+       SMOOTH SCROLL ANCHOR LINKS
+    ======================================== */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          if (lenis) lenis.scrollTo(target, { offset: -80 });
+          else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

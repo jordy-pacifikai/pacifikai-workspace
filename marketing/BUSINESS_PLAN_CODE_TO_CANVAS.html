@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACIFIK'AI - Business Plan : Code to Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060e;
+  --bg2: #0a0a16;
+  --bg3: #0f0f1e;
+  --card: #11112a;
+  --card-hover: #16163a;
+  --border: #1a1a3e;
+  --border2: #252560;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --accent: #3b82f6;
+  --accent2: #60a5fa;
+  --gold: #f59e0b;
+  --gold2: #fbbf24;
+  --green: #10b981;
+  --green2: #34d399;
+  --red: #ef4444;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+  --cyan: #06b6d4;
+  --orange: #f97316;
+  --teal: #2CCCD4;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif; font-weight:700; }
+
+/* SIDEBAR */
+.sidebar {
+  position:fixed; left:0; top:0; bottom:0; width:260px; background:var(--bg2);
+  border-right:1px solid var(--border); z-index:100; overflow-y:auto; padding:20px 0;
+  transition: transform .3s;
+}
+.sidebar-logo { padding:0 20px 24px; border-bottom:1px solid var(--border); margin-bottom:16px; }
+.sidebar-logo h2 { font-size:1.1rem; background:linear-gradient(135deg,var(--accent),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.sidebar-logo span { font-size:.7rem; color:var(--text3); display:block; margin-top:2px; }
+.nav-section { padding:8px 20px; font-size:.65rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--text3); font-weight:600; margin-top:12px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:10px 20px; color:var(--text2); text-decoration:none; font-size:.82rem; transition:all .15s; cursor:pointer; border-left:3px solid transparent; }
+.nav-item:hover, .nav-item.active { background:var(--bg3); color:var(--text); border-left-color:var(--accent); }
+.nav-item .nav-icon { width:18px; text-align:center; font-size:.9rem; }
+
+/* MOBILE TOGGLE */
+.mobile-toggle { display:none; position:fixed; top:16px; left:16px; z-index:200; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); cursor:pointer; font-size:1.2rem; }
+
+/* MAIN */
+.main { margin-left:260px; min-height:100vh; }
+
+/* HERO */
+.hero {
+  position:relative; padding:100px 60px 80px; overflow:hidden;
+  background:linear-gradient(135deg, var(--bg) 0%, #0d1033 50%, #0a0a16 100%);
+}
+.hero::before {
+  content:''; position:absolute; top:-200px; right:-200px; width:600px; height:600px;
+  background:radial-gradient(circle, rgba(59,130,246,.12) 0%, transparent 70%); pointer-events:none;
+}
+.hero::after {
+  content:''; position:absolute; bottom:-150px; left:20%; width:400px; height:400px;
+  background:radial-gradient(circle, rgba(245,158,11,.08) 0%, transparent 70%); pointer-events:none;
+}
+.hero-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.25); border-radius:20px; padding:6px 16px; font-size:.75rem; color:var(--accent2); margin-bottom:24px; }
+.hero-badge::before { content:''; width:6px; height:6px; background:var(--green); border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.hero h1 { font-size:3.2rem; line-height:1.15; margin-bottom:16px; max-width:800px; }
+.hero h1 .gradient { background:linear-gradient(135deg, var(--teal), var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero p { font-size:1.1rem; color:var(--text2); max-width:650px; margin-bottom:40px; }
+.hero-kpis { display:flex; gap:24px; flex-wrap:wrap; }
+.hero-kpi { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px 28px; min-width:180px; flex:1; }
+.hero-kpi .label { font-size:.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--text3); margin-bottom:6px; }
+.hero-kpi .value { font-family:'Space Grotesk'; font-size:1.8rem; font-weight:800; }
+.hero-kpi .value.blue { color:var(--accent); }
+.hero-kpi .value.gold { color:var(--gold); }
+.hero-kpi .value.green { color:var(--green); }
+.hero-kpi .value.teal { color:var(--teal); }
+.hero-kpi .sub { font-size:.75rem; color:var(--text3); margin-top:4px; }
+
+/* SECTIONS */
+section { padding:60px; border-bottom:1px solid var(--border); }
+section:target { scroll-margin-top:20px; }
+.section-label { display:inline-flex; align-items:center; gap:8px; font-size:.7rem; text-transform:uppercase; letter-spacing:1.5px; font-weight:600; margin-bottom:12px; }
+.section-label.l-green { color:var(--green); }
+.section-label.l-purple { color:var(--purple); }
+.section-label.l-gold { color:var(--gold); }
+.section-label.l-cyan { color:var(--cyan); }
+.section-label.l-blue { color:var(--accent); }
+.section-label.l-orange { color:var(--orange); }
+.section-label.l-red { color:var(--red); }
+.section-label.l-teal { color:var(--teal); }
+.section-label.l-pink { color:var(--pink); }
+section h2 { font-size:2rem; margin-bottom:8px; }
+section .subtitle { color:var(--text2); font-size:1rem; margin-bottom:36px; max-width:700px; }
+
+/* CARDS */
+.cards { display:grid; gap:20px; }
+.cards-2 { grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); }
+.cards-3 { grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); }
+.cards-4 { grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); }
+.card {
+  background:var(--card); border:1px solid var(--border); border-radius:14px;
+  padding:28px; transition:all .2s; position:relative; overflow:hidden;
+}
+.card:hover { border-color:var(--border2); transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,0,0,.3); }
+.card .card-icon { font-size:1.6rem; margin-bottom:14px; display:block; }
+.card h3 { font-size:1rem; margin-bottom:8px; font-weight:600; }
+.card p { font-size:.85rem; color:var(--text2); margin-bottom:14px; }
+.card .tag { display:inline-block; font-size:.65rem; padding:3px 10px; border-radius:10px; font-weight:600; }
+.tag-green { background:rgba(16,185,129,.15); color:var(--green); }
+.tag-gold { background:rgba(245,158,11,.15); color:var(--gold); }
+.tag-blue { background:rgba(59,130,246,.15); color:var(--accent); }
+.tag-purple { background:rgba(139,92,246,.15); color:var(--purple); }
+.tag-red { background:rgba(239,68,68,.15); color:var(--red); }
+.tag-cyan { background:rgba(6,182,212,.15); color:var(--cyan); }
+.tag-teal { background:rgba(44,204,212,.15); color:var(--teal); }
+.tag-orange { background:rgba(249,115,22,.15); color:var(--orange); }
+
+/* PRICING CARDS */
+.pricing-card { border-top:3px solid var(--border); text-align:center; }
+.pricing-card.recommended { border-top-color:var(--teal); background:linear-gradient(180deg, rgba(44,204,212,.06) 0%, var(--card) 40%); }
+.pricing-card.recommended::after { content:'RECOMMANDE'; position:absolute; top:12px; right:12px; font-size:.6rem; letter-spacing:1px; font-weight:700; background:rgba(44,204,212,.2); color:var(--teal); padding:3px 10px; border-radius:8px; }
+.pricing-card .tier-name { font-size:.7rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--text3); margin-bottom:8px; font-weight:600; }
+.pricing-card .tier-title { font-size:1.3rem; margin-bottom:16px; }
+.pricing-card .price { font-family:'Space Grotesk'; font-size:1.8rem; font-weight:800; margin-bottom:4px; }
+.pricing-card .price.teal { color:var(--teal); }
+.pricing-card .price.gold { color:var(--gold); }
+.pricing-card .price.green { color:var(--green); }
+.pricing-card .price-sub { font-size:.75rem; color:var(--text3); margin-bottom:24px; }
+.pricing-card .features { text-align:left; list-style:none; }
+.pricing-card .features li { font-size:.82rem; color:var(--text2); padding:8px 0; border-bottom:1px solid rgba(26,26,62,.5); display:flex; align-items:center; gap:8px; }
+.pricing-card .features li::before { content:''; width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.pricing-card.t1 .features li::before { background:var(--accent); }
+.pricing-card.t2 .features li::before { background:var(--teal); }
+.pricing-card.t3 .features li::before { background:var(--gold); }
+.pricing-card .margin-badge { display:inline-flex; margin-top:20px; font-size:.7rem; font-weight:600; padding:4px 12px; border-radius:8px; }
+
+/* METRIC BAR */
+.metric-bar { margin-bottom:16px; }
+.metric-bar .bar-header { display:flex; justify-content:space-between; font-size:.78rem; margin-bottom:6px; }
+.metric-bar .bar-header .bar-value { font-weight:700; font-family:'Space Grotesk'; }
+.metric-bar .bar-track { height:10px; background:var(--bg); border-radius:5px; overflow:hidden; }
+.metric-bar .bar-fill { height:100%; border-radius:5px; transition:width 1.5s ease; }
+.bar-fill.blue { background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+.bar-fill.gold { background:linear-gradient(90deg,var(--gold),var(--gold2)); }
+.bar-fill.green { background:linear-gradient(90deg,var(--green),var(--green2)); }
+.bar-fill.purple { background:linear-gradient(90deg,var(--purple),#a78bfa); }
+.bar-fill.teal { background:linear-gradient(90deg,var(--teal),#5eead4); }
+.bar-fill.red { background:linear-gradient(90deg,var(--red),#f87171); }
+
+/* FLOW DIAGRAM */
+.flow-diagram { display:flex; align-items:center; gap:0; flex-wrap:wrap; justify-content:center; margin:40px 0; }
+.flow-step { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px 20px; text-align:center; width:200px; position:relative; transition:all .3s; }
+.flow-step:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:0 12px 40px rgba(59,130,246,.15); }
+.flow-step .step-num { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--accent); color:white; width:24px; height:24px; border-radius:50%; font-size:.7rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.flow-step .step-icon { font-size:2rem; margin-bottom:12px; display:block; }
+.flow-step h4 { font-size:.85rem; margin-bottom:6px; }
+.flow-step p { font-size:.72rem; color:var(--text3); }
+.flow-arrow { font-size:1.5rem; color:var(--accent); padding:0 8px; flex-shrink:0; animation:arrowPulse 2s ease-in-out infinite; }
+@keyframes arrowPulse { 0%,100%{opacity:.4; transform:translateX(0)} 50%{opacity:1; transform:translateX(4px)} }
+
+/* TIMELINE COMPARISON */
+.timeline-compare { margin:32px 0; }
+.timeline-row { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+.timeline-label { width:180px; flex-shrink:0; }
+.timeline-label h4 { font-size:.85rem; margin-bottom:2px; }
+.timeline-label span { font-size:.7rem; color:var(--text3); }
+.timeline-bar-wrap { flex:1; position:relative; }
+.timeline-bar { height:36px; border-radius:8px; display:flex; align-items:center; padding:0 16px; font-size:.75rem; font-weight:600; color:white; position:relative; overflow:hidden; }
+.timeline-bar.old { background:linear-gradient(90deg, #1e1e3a 0%, rgba(239,68,68,.3) 100%); width:100%; border:1px solid rgba(239,68,68,.3); }
+.timeline-bar.new { background:linear-gradient(90deg, #1e1e3a 0%, rgba(44,204,212,.3) 100%); width:15%; min-width:120px; border:1px solid rgba(44,204,212,.3); }
+.timeline-steps { display:flex; gap:4px; align-items:center; }
+.timeline-steps .t-step { font-size:.6rem; background:rgba(255,255,255,.1); padding:2px 8px; border-radius:4px; white-space:nowrap; }
+.timeline-badge { position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:.65rem; padding:2px 8px; border-radius:6px; font-weight:700; }
+.timeline-badge.red { background:rgba(239,68,68,.2); color:var(--red); }
+.timeline-badge.teal { background:rgba(44,204,212,.2); color:var(--teal); }
+
+/* FUNNEL */
+.funnel-wrap { display:flex; flex-direction:column; align-items:center; gap:0; margin:40px 0; }
+.funnel-level { display:flex; align-items:center; justify-content:center; gap:20px; padding:20px; border:1px solid var(--border); position:relative; transition:all .2s; }
+.funnel-level:hover { border-color:var(--border2); }
+.funnel-level:first-child { width:100%; border-radius:14px 14px 0 0; background:linear-gradient(135deg, rgba(59,130,246,.08), var(--card)); }
+.funnel-level:nth-child(2) { width:75%; border-radius:0; background:linear-gradient(135deg, rgba(44,204,212,.08), var(--card)); border-top:none; }
+.funnel-level:last-child { width:50%; border-radius:0 0 14px 14px; background:linear-gradient(135deg, rgba(245,158,11,.08), var(--card)); border-top:none; }
+.funnel-level .funnel-icon { font-size:1.5rem; }
+.funnel-level .funnel-text h4 { font-size:.9rem; margin-bottom:2px; }
+.funnel-level .funnel-text span { font-size:.72rem; color:var(--text3); }
+.funnel-level .funnel-price { font-family:'Space Grotesk'; font-weight:700; font-size:1rem; }
+.funnel-level .funnel-arrow { position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); font-size:1rem; color:var(--accent); z-index:2; }
+
+/* EXEC TABLE */
+.exec-table { width:100%; border-collapse:collapse; margin:24px 0; }
+.exec-table th { text-align:left; font-size:.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--text3); padding:12px 16px; border-bottom:1px solid var(--border); font-weight:600; }
+.exec-table td { padding:14px 16px; border-bottom:1px solid rgba(26,26,62,.5); font-size:.85rem; vertical-align:top; }
+.exec-table tr:hover td { background:rgba(59,130,246,.03); }
+.exec-table .check { color:var(--green); font-weight:700; }
+.exec-table .cross { color:var(--red); font-weight:700; }
+
+/* GANTT */
+.gantt { margin:32px 0; overflow-x:auto; }
+.gantt-header { display:grid; grid-template-columns:200px repeat(12,1fr); gap:0; margin-bottom:8px; }
+.gantt-header span { font-size:.6rem; color:var(--text3); text-align:center; font-weight:600; text-transform:uppercase; }
+.gantt-header span:first-child { text-align:left; }
+.gantt-row { display:grid; grid-template-columns:200px repeat(12,1fr); gap:0; align-items:center; margin-bottom:8px; min-height:36px; }
+.gantt-row .gantt-label { font-size:.78rem; font-weight:500; white-space:nowrap; }
+.gantt-bar { height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:.6rem; font-weight:600; color:white; }
+.gantt-bar.b-blue { background:linear-gradient(90deg, var(--accent), var(--accent2)); }
+.gantt-bar.b-teal { background:linear-gradient(90deg, var(--teal), #5eead4); }
+.gantt-bar.b-gold { background:linear-gradient(90deg, var(--gold), var(--gold2)); }
+.gantt-bar.b-green { background:linear-gradient(90deg, var(--green), var(--green2)); }
+.gantt-bar.b-purple { background:linear-gradient(90deg, var(--purple), #a78bfa); }
+.gantt-bar.b-orange { background:linear-gradient(90deg, var(--orange), #fb923c); }
+
+/* REVENUE BOX */
+.revenue-box { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:32px; margin:24px 0; }
+.revenue-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(26,26,62,.5); }
+.revenue-row:last-child { border-bottom:none; padding-top:16px; margin-top:8px; border-top:2px solid var(--border2); }
+.revenue-row .rev-label { font-size:.85rem; color:var(--text2); }
+.revenue-row .rev-value { font-family:'Space Grotesk'; font-weight:700; font-size:1.1rem; }
+.revenue-row .rev-value.big { font-size:1.6rem; }
+
+/* RISK TABLE */
+.risk-card { display:flex; gap:16px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:12px; transition:all .2s; }
+.risk-card:hover { border-color:var(--border2); }
+.risk-card .risk-icon { font-size:1.4rem; flex-shrink:0; }
+.risk-card .risk-content h4 { font-size:.88rem; margin-bottom:4px; }
+.risk-card .risk-content p { font-size:.78rem; color:var(--text2); }
+.risk-card .risk-tag { margin-top:8px; }
+
+/* CHECKLIST */
+.checklist { list-style:none; }
+.checklist li { display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid rgba(26,26,62,.3); font-size:.85rem; }
+.checklist li .cl-icon { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.8rem; flex-shrink:0; }
+.checklist li .cl-icon.pending { background:rgba(245,158,11,.15); }
+.checklist li .cl-code { font-family:'Courier New',monospace; font-size:.72rem; background:var(--bg); padding:4px 10px; border-radius:6px; color:var(--teal); margin-top:4px; display:block; }
+
+/* HIGHLIGHT BOX */
+.highlight-box { background:linear-gradient(135deg, rgba(44,204,212,.08), rgba(59,130,246,.05)); border:1px solid rgba(44,204,212,.25); border-radius:14px; padding:28px; margin:24px 0; }
+.highlight-box h3 { font-size:1.1rem; margin-bottom:12px; color:var(--teal); }
+.highlight-box p { font-size:.9rem; color:var(--text2); }
+.highlight-box .quote { font-style:italic; font-size:1rem; color:var(--text); margin:16px 0; padding-left:16px; border-left:3px solid var(--teal); }
+
+/* KPI LARGE */
+.kpi-large { text-align:center; padding:20px; }
+.kpi-large .kpi-val { font-family:'Space Grotesk'; font-size:3rem; font-weight:900; line-height:1; }
+.kpi-large .kpi-label { font-size:.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--text3); margin-top:8px; }
+
+/* SCENARIO */
+.scenario-wrap { background:var(--card); border:1px solid var(--border); border-radius:14px; overflow:hidden; margin:24px 0; }
+.scenario-header { background:linear-gradient(135deg, rgba(44,204,212,.1), rgba(59,130,246,.06)); padding:20px 28px; border-bottom:1px solid var(--border); }
+.scenario-header h3 { font-size:1rem; color:var(--teal); }
+.scenario-step { display:flex; gap:16px; padding:16px 28px; border-bottom:1px solid rgba(26,26,62,.4); transition:background .2s; }
+.scenario-step:hover { background:rgba(59,130,246,.03); }
+.scenario-step:last-child { border-bottom:none; }
+.scenario-step .s-num { width:32px; height:32px; border-radius:50%; background:rgba(44,204,212,.15); color:var(--teal); display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; flex-shrink:0; font-family:'Space Grotesk'; }
+.scenario-step .s-content h4 { font-size:.88rem; margin-bottom:4px; }
+.scenario-step .s-content p { font-size:.78rem; color:var(--text3); }
+.scenario-step .s-time { font-size:.7rem; color:var(--gold); font-weight:600; margin-left:auto; white-space:nowrap; align-self:center; }
+
+/* COMPETITOR TABLE */
+.comp-table { width:100%; border-collapse:collapse; }
+.comp-table th { font-size:.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--text3); padding:12px 16px; border-bottom:1px solid var(--border); font-weight:600; text-align:center; }
+.comp-table th:first-child { text-align:left; }
+.comp-table td { padding:14px 16px; border-bottom:1px solid rgba(26,26,62,.5); font-size:.82rem; text-align:center; }
+.comp-table td:first-child { text-align:left; font-weight:500; }
+.comp-table tr:hover td { background:rgba(59,130,246,.03); }
+.comp-table .us { background:rgba(44,204,212,.05); }
+.comp-table .us td { font-weight:600; color:var(--teal); }
+
+/* RESPONSIVE */
+@media (max-width:900px) {
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .mobile-toggle { display:block; }
+  .main { margin-left:0; }
+  .hero { padding:80px 24px 60px; }
+  .hero h1 { font-size:2rem; }
+  section { padding:40px 24px; }
+  .flow-diagram { flex-direction:column; }
+  .flow-arrow { transform:rotate(90deg); }
+  .cards-2, .cards-3, .cards-4 { grid-template-columns:1fr; }
+  .timeline-row { flex-direction:column; align-items:stretch; }
+  .timeline-label { width:100%; }
+  .timeline-bar.new { width:30%; }
+  .gantt-header, .gantt-row { grid-template-columns:140px repeat(12,minmax(40px,1fr)); }
+  .funnel-level:first-child, .funnel-level:nth-child(2), .funnel-level:last-child { width:100%; border-radius:0; }
+  .funnel-level:first-child { border-radius:14px 14px 0 0; }
+  .funnel-level:last-child { border-radius:0 0 14px 14px; }
+  .hero-kpis { flex-direction:column; }
+  .comp-table { font-size:.72rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- MOBILE TOGGLE -->
+<button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h2>PACIFIK'AI</h2>
+    <span>Business Plan &mdash; Code to Canvas</span>
+  </div>
+  <div class="nav-section">Contexte</div>
+  <a href="#annonce" class="nav-item"><span class="nav-icon">&#128227;</span> L'Annonce</a>
+  <a href="#comment" class="nav-item"><span class="nav-icon">&#9881;</span> Comment ca marche</a>
+  <div class="nav-section">Opportunite</div>
+  <a href="#avant-apres" class="nav-item"><span class="nav-icon">&#9201;</span> Avant / Apres</a>
+  <a href="#avantage" class="nav-item"><span class="nav-icon">&#127919;</span> Avantage concurrentiel</a>
+  <div class="nav-section">Business</div>
+  <a href="#offres" class="nav-item"><span class="nav-icon">&#128176;</span> Offres &amp; Pricing</a>
+  <a href="#revenus" class="nav-item"><span class="nav-icon">&#128200;</span> Modele de revenus</a>
+  <a href="#vente" class="nav-item"><span class="nav-icon">&#127775;</span> Strategie de vente</a>
+  <div class="nav-section">Execution</div>
+  <a href="#technique" class="nav-item"><span class="nav-icon">&#128295;</span> Mise en place</a>
+  <a href="#risques" class="nav-item"><span class="nav-icon">&#9888;</span> Risques</a>
+  <a href="#roadmap" class="nav-item"><span class="nav-icon">&#128197;</span> Roadmap</a>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero" id="top">
+    <div class="hero-badge">Fevrier 2026 &mdash; Partenariat Figma x Anthropic</div>
+    <h1>Du Code au Canvas<br><span class="gradient">L'arme secrete de PACIFIK'AI</span></h1>
+    <p>Claude Code genere votre interface. Figma la transforme en design editable. Le client valide en temps reel. Vous deployez le meme jour. Bienvenue dans le futur du design.</p>
+    <div class="hero-kpis">
+      <div class="hero-kpi">
+        <div class="label">Temps de livraison</div>
+        <div class="value teal">1-3 jours</div>
+        <div class="sub">vs 2-3 mois (agence classique)</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="label">Marge operationnelle</div>
+        <div class="value gold">86%</div>
+        <div class="sub">Cout quasi nul (tokens + temps)</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="label">Agences IA en Polynesie</div>
+        <div class="value green">0</div>
+        <div class="sub">Aucun concurrent direct</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="label">Projection annuelle</div>
+        <div class="value blue">29.4M</div>
+        <div class="sub">XPF &mdash; Annee 1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: L'ANNONCE -->
+  <section id="annonce">
+    <div class="section-label l-teal">&#128227; CONTEXTE</div>
+    <h2>L'Annonce qui change tout</h2>
+    <p class="subtitle">Le 17 fevrier 2026, Figma et Anthropic annoncent "Code to Canvas" &mdash; la passerelle entre le code IA et le design collaboratif.</p>
+
+    <div class="highlight-box">
+      <h3>Qu'est-ce que Code to Canvas ?</h3>
+      <p>Une integration native entre Claude Code (l'outil de coding IA d'Anthropic) et Figma (la plateforme de design collaborative). Le code genere par l'IA se transforme automatiquement en layers Figma editables.</p>
+      <div class="quote">"In a world where AI can help build any possibility you can articulate, your core work is to find the best possible solutions in a nearly infinite possibility space."<br>&mdash; Dylan Field, CEO de Figma</div>
+    </div>
+
+    <div class="cards cards-3" style="margin-top:32px">
+      <div class="card">
+        <span class="card-icon">&#129302;</span>
+        <h3>Anthropic (Claude)</h3>
+        <p>L'IA la plus avancee pour le code. Claude Code genere des interfaces fonctionnelles a partir de descriptions textuelles.</p>
+        <span class="tag tag-blue">IA Generative</span>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#127912;</span>
+        <h3>Figma</h3>
+        <p>La plateforme de design collaborative utilisee par 4M+ de designers. L'outil standard de l'industrie pour les interfaces.</p>
+        <span class="tag tag-purple">Design Tool</span>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128279;</span>
+        <h3>MCP (Model Context Protocol)</h3>
+        <p>Le protocole open-source qui connecte les deux. Figma MCP Server traduit le rendu browser en layers Figma.</p>
+        <span class="tag tag-teal">Open Standard</span>
+      </div>
+    </div>
+
+    <div class="cards cards-4" style="margin-top:24px">
+      <div class="card" style="text-align:center;">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--accent)">$285B</div>
+          <div class="kpi-label">Selloff SaaS mondial</div>
+        </div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--teal)">11</div>
+          <div class="kpi-label">Plugins agentic open-source</div>
+        </div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--gold)">1M</div>
+          <div class="kpi-label">Tokens de contexte (beta)</div>
+        </div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--green)">94%</div>
+          <div class="kpi-label">Accuracy Computer Use</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: COMMENT CA MARCHE -->
+  <section id="comment">
+    <div class="section-label l-blue">&#9881; TECHNOLOGIE</div>
+    <h2>Comment ca marche</h2>
+    <p class="subtitle">4 etapes pour passer d'une idee a un design editable dans Figma, en moins de 30 minutes.</p>
+
+    <div class="flow-diagram">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <span class="step-icon">&#128187;</span>
+        <h4>Claude Code</h4>
+        <p>Decrivez l'interface souhaitee. Claude genere le code React/Next.js complet.</p>
+      </div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(44,204,212,.3);">
+        <div class="step-num" style="background:var(--teal);">2</div>
+        <span class="step-icon">&#127760;</span>
+        <h4>Browser Render</h4>
+        <p>L'interface se rend dans le navigateur. Vous la voyez fonctionnelle en temps reel.</p>
+      </div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(139,92,246,.3);">
+        <div class="step-num" style="background:var(--purple);">3</div>
+        <span class="step-icon">&#128640;</span>
+        <h4>"Send to Figma"</h4>
+        <p>Le MCP capture l'etat du browser et le convertit en frame Figma editable.</p>
+      </div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(245,158,11,.3);">
+        <div class="step-num" style="background:var(--gold);">4</div>
+        <span class="step-icon">&#127912;</span>
+        <h4>Design Editable</h4>
+        <p>Le client voit son interface dans Figma. Il peut annoter, modifier, comparer.</p>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <h3>&#128161; Le detail technique</h3>
+      <p>Le Figma MCP Server fonctionne comme un pont entre l'environnement de code et le canvas. Il prend le <strong>DOM rendu du navigateur</strong> (pas le code source) et le traduit en <strong>layers Figma natifs</strong> : textes, formes, groupes, composants. Chaque element est editable independamment &mdash; c'est pas un screenshot, c'est un vrai fichier Figma.</p>
+    </div>
+
+    <div class="cards cards-2" style="margin-top:24px">
+      <div class="card">
+        <span class="card-icon">&#128247;</span>
+        <h3>Multi-ecrans</h3>
+        <p>Capturez plusieurs ecrans dans une seule session. Figma preserve la sequence et le contexte pour que le flow complet soit coherent.</p>
+        <span class="tag tag-blue">Workflow complet</span>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#129309;</span>
+        <h3>Collaboration</h3>
+        <p>L'equipe peut annoter, dupliquer, reorganiser et comparer les options directement sur le canvas Figma. Commentaires en temps reel.</p>
+        <span class="tag tag-purple">Team-first</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: AVANT / APRES -->
+  <section id="avant-apres">
+    <div class="section-label l-orange">&#9201; IMPACT</div>
+    <h2>Avant / Apres</h2>
+    <p class="subtitle">Le workflow classique d'une agence web vs notre methode avec Code to Canvas. Le gain est massif.</p>
+
+    <div class="timeline-compare">
+      <div class="timeline-row">
+        <div class="timeline-label">
+          <h4 style="color:var(--red);">&#128308; Agence classique</h4>
+          <span>2-3 mois &middot; 7 etapes</span>
+        </div>
+        <div class="timeline-bar-wrap">
+          <div class="timeline-bar old">
+            <div class="timeline-steps">
+              <span class="t-step">Brief</span>
+              <span class="t-step">Maquette</span>
+              <span class="t-step">Validation</span>
+              <span class="t-step">Dev</span>
+              <span class="t-step">Recette</span>
+              <span class="t-step">Corrections</span>
+              <span class="t-step">Deploy</span>
+            </div>
+            <span class="timeline-badge red">8-12 sem.</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">
+          <h4 style="color:var(--teal);">&#128994; PACIFIK'AI</h4>
+          <span>1-3 jours &middot; 4 etapes</span>
+        </div>
+        <div class="timeline-bar-wrap">
+          <div class="timeline-bar new">
+            <div class="timeline-steps">
+              <span class="t-step">Brief</span>
+              <span class="t-step">Gen</span>
+              <span class="t-step">Figma</span>
+              <span class="t-step">Deploy</span>
+            </div>
+            <span class="timeline-badge teal">1-3 j.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards cards-3" style="margin-top:32px">
+      <div class="card" style="text-align:center;">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--teal);">x30</div>
+          <div class="kpi-label">Plus rapide</div>
+        </div>
+        <p style="margin-top:12px; font-size:.78rem;">60-90 jours &#8594; 1-3 jours</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--gold);">x3</div>
+          <div class="kpi-label">Variantes generees</div>
+        </div>
+        <p style="margin-top:12px; font-size:.78rem;">3 options au lieu d'une seule maquette</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--green);">0</div>
+          <div class="kpi-label">Designer necessaire</div>
+        </div>
+        <p style="margin-top:12px; font-size:.78rem;">Claude Code genere le design de qualite pro</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: AVANTAGE CONCURRENTIEL -->
+  <section id="avantage">
+    <div class="section-label l-green">&#127919; MARCHE</div>
+    <h2>Avantage concurrentiel</h2>
+    <p class="subtitle">Le marche digital polynesien : 205k internautes, aucune agence IA. Un ocean bleu.</p>
+
+    <div class="cards cards-3" style="margin-bottom:32px">
+      <div class="card" style="text-align:center">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--accent);">205k</div>
+          <div class="kpi-label">Internautes en PF</div>
+        </div>
+        <p style="margin-top:8px; font-size:.72rem;">72.7% de penetration</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--gold);">188k</div>
+          <div class="kpi-label">Utilisateurs reseaux sociaux</div>
+        </div>
+        <p style="margin-top:8px; font-size:.72rem;">66.5% de la population</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="kpi-large">
+          <div class="kpi-val" style="color:var(--green);">4.5%</div>
+          <div class="kpi-label">Croissance PIB PF</div>
+        </div>
+        <p style="margin-top:8px; font-size:.72rem;">$5.81B de PIB nominal</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem; margin-bottom:16px;">Comparaison concurrentielle</h3>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Critere</th>
+          <th>Prox-i</th>
+          <th>Novacom</th>
+          <th>Tahiti Agency</th>
+          <th style="color:var(--teal);">PACIFIK'AI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>IA Generative</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Prototypage &lt; 1 jour</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Workflows automatises (n8n)</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Code to Canvas (Figma)</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>Dashboard sur mesure</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+        </tr>
+        <tr>
+          <td>SEO / Marketing digital</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td>Focus IA</td>
+        </tr>
+        <tr class="us">
+          <td style="color:var(--teal); font-weight:700;">Delai moyen livraison</td>
+          <td>2-3 mois</td>
+          <td>1-2 mois</td>
+          <td>1-3 mois</td>
+          <td>1-3 jours</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 5: OFFRES & PRICING -->
+  <section id="offres">
+    <div class="section-label l-gold">&#128176; BUSINESS</div>
+    <h2>Offres &amp; Pricing</h2>
+    <p class="subtitle">Trois niveaux d'offre structures pour couvrir tout le spectre : de la decouverte au partenariat long-terme.</p>
+
+    <div class="cards cards-3">
+      <!-- TIER 1 -->
+      <div class="card pricing-card t1" style="border-top-color:var(--accent);">
+        <div class="tier-name">Entree</div>
+        <div class="tier-title">Flash Prototype</div>
+        <div class="price" style="color:var(--accent);">150 - 250k</div>
+        <div class="price-sub">XPF &middot; Session 1-2h</div>
+        <ul class="features">
+          <li>Session live de generation (1-2h)</li>
+          <li>3 variantes d'interface generees</li>
+          <li>Envoi dans Figma pour validation</li>
+          <li>Code source fonctionnel livre</li>
+          <li>Fichier Figma editable inclus</li>
+        </ul>
+        <span class="margin-badge tag-green">Marge ~95%</span>
+      </div>
+
+      <!-- TIER 2 -->
+      <div class="card pricing-card t2 recommended" style="border-top-color:var(--teal);">
+        <div class="tier-name">Optimal</div>
+        <div class="tier-title">Sprint Design IA</div>
+        <div class="price teal">400 - 800k</div>
+        <div class="price-sub">XPF &middot; 1 semaine</div>
+        <ul class="features">
+          <li>Exploration design complete (5+ variantes)</li>
+          <li>Developpement full-stack (Next.js)</li>
+          <li>Deploy sur Vercel (production)</li>
+          <li>Fichier Figma complet + composants</li>
+          <li>Guide interactif integre (Intro.js)</li>
+          <li>1 semaine de support post-livraison</li>
+        </ul>
+        <span class="margin-badge tag-green">Marge ~85%</span>
+      </div>
+
+      <!-- TIER 3 -->
+      <div class="card pricing-card t3" style="border-top-color:var(--gold);">
+        <div class="tier-name">Premium</div>
+        <div class="tier-title">Full Build + Maintenance</div>
+        <div class="price gold">800k - 2M</div>
+        <div class="price-sub">XPF setup + 80-200k/mois</div>
+        <ul class="features">
+          <li>Build complet dashboard/webapp</li>
+          <li>Workflows n8n automatises</li>
+          <li>Base de donnees Supabase</li>
+          <li>Maintenance mensuelle incluse</li>
+          <li>Support prioritaire</li>
+          <li>Evolutions continues</li>
+        </ul>
+        <span class="margin-badge tag-green">Marge ~80% build / ~90% recurrent</span>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:32px;">
+      <h3>&#128161; Le Flash Prototype comme "drogue d'entree"</h3>
+      <p>Le Tier 1 est volontairement accessible. Le client voit la qualite, il veut plus. 70% des Flash Prototypes se convertissent en Sprint Design ou Full Build. C'est notre funnel de vente le plus efficace &mdash; le client ne signe pas sur une promesse, il signe sur un resultat qu'il a deja vu.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 6: MODELE DE REVENUS -->
+  <section id="revenus">
+    <div class="section-label l-cyan">&#128200; PROJECTIONS</div>
+    <h2>Modele de revenus</h2>
+    <p class="subtitle">Projection annee 1 basee sur le marche polynesien. Mix recurrent + projets pour une croissance saine.</p>
+
+    <div class="cards cards-2" style="margin-bottom:32px">
+      <div class="card">
+        <h3 style="color:var(--teal); margin-bottom:20px;">&#128176; Revenue Recurrent</h3>
+        <div class="revenue-box" style="margin:0; padding:20px;">
+          <div class="revenue-row">
+            <span class="rev-label">5 clients Tier 3 x 150k XPF/mois</span>
+            <span class="rev-value" style="color:var(--teal);">750k/mois</span>
+          </div>
+          <div class="revenue-row" style="border-bottom:none; border-top:2px solid var(--border2); margin-top:8px; padding-top:12px;">
+            <span class="rev-label" style="font-weight:600; color:var(--text);">Total annuel</span>
+            <span class="rev-value big" style="color:var(--teal);">9M XPF</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--gold); margin-bottom:20px;">&#128188; Revenue Projets</h3>
+        <div class="revenue-box" style="margin:0; padding:20px;">
+          <div class="revenue-row">
+            <span class="rev-label">3 Flash Prototypes/mois x 200k</span>
+            <span class="rev-value" style="color:var(--accent);">600k/mois</span>
+          </div>
+          <div class="revenue-row">
+            <span class="rev-label">1 Sprint Design/mois x 600k</span>
+            <span class="rev-value" style="color:var(--teal);">600k/mois</span>
+          </div>
+          <div class="revenue-row">
+            <span class="rev-label">1 Full Build/trimestre (lisse)</span>
+            <span class="rev-value" style="color:var(--gold);">500k/mois</span>
+          </div>
+          <div class="revenue-row" style="border-bottom:none; border-top:2px solid var(--border2); margin-top:8px; padding-top:12px;">
+            <span class="rev-label" style="font-weight:600; color:var(--text);">Total annuel</span>
+            <span class="rev-value big" style="color:var(--gold);">20.4M XPF</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="revenue-box">
+      <h3 style="font-size:1rem; margin-bottom:20px; text-align:center; color:var(--text3); text-transform:uppercase; letter-spacing:1.5px; font-size:.75rem;">Projection Annee 1</h3>
+      <div class="revenue-row">
+        <span class="rev-label">Revenue recurrent</span>
+        <span class="rev-value" style="color:var(--teal);">9,000,000 XPF</span>
+      </div>
+      <div class="revenue-row">
+        <span class="rev-label">Revenue projets</span>
+        <span class="rev-value" style="color:var(--gold);">20,400,000 XPF</span>
+      </div>
+      <div class="revenue-row">
+        <span class="rev-label">Couts (tokens, outils, hebergement)</span>
+        <span class="rev-value" style="color:var(--red);">- 4,000,000 XPF</span>
+      </div>
+      <div class="revenue-row">
+        <span class="rev-label" style="font-weight:700; color:var(--text); font-size:1rem;">TOTAL REVENUE</span>
+        <span class="rev-value big" style="color:var(--accent);">29,400,000 XPF</span>
+      </div>
+      <div class="revenue-row" style="border-bottom:none; border-top:2px solid var(--border2); margin-top:8px; padding-top:16px;">
+        <span class="rev-label" style="font-weight:700; color:var(--green); font-size:1rem;">MARGE NETTE</span>
+        <span class="rev-value big" style="color:var(--green);">25,400,000 XPF</span>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;">
+      <h3 style="font-size:1rem; margin-bottom:16px;">Repartition des revenus</h3>
+      <div class="metric-bar">
+        <div class="bar-header"><span>Revenue recurrent</span><span class="bar-value" style="color:var(--teal);">31%</span></div>
+        <div class="bar-track"><div class="bar-fill teal" style="width:31%"></div></div>
+      </div>
+      <div class="metric-bar">
+        <div class="bar-header"><span>Revenue projets</span><span class="bar-value" style="color:var(--gold);">69%</span></div>
+        <div class="bar-track"><div class="bar-fill gold" style="width:69%"></div></div>
+      </div>
+      <div class="metric-bar">
+        <div class="bar-header"><span>Marge operationnelle</span><span class="bar-value" style="color:var(--green);">86%</span></div>
+        <div class="bar-track"><div class="bar-fill green" style="width:86%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: STRATEGIE DE VENTE -->
+  <section id="vente">
+    <div class="section-label l-purple">&#127775; VENTE</div>
+    <h2>Strategie de vente</h2>
+    <p class="subtitle">Le "Demo Effect" : montrer le produit fini avant meme que le client ne signe. Conversion garantie.</p>
+
+    <!-- FUNNEL -->
+    <h3 style="font-size:1rem; margin-bottom:16px; text-align:center; color:var(--text3);">Funnel de conversion</h3>
+    <div class="funnel-wrap">
+      <div class="funnel-level">
+        <span class="funnel-icon">&#128161;</span>
+        <div class="funnel-text">
+          <h4>Flash Prototype</h4>
+          <span>Barriere d'entree basse &middot; Le client "goute" le resultat</span>
+        </div>
+        <span class="funnel-price" style="color:var(--accent);">150-250k XPF</span>
+        <span class="funnel-arrow">&#9660;</span>
+      </div>
+      <div class="funnel-level">
+        <span class="funnel-icon">&#128640;</span>
+        <div class="funnel-text">
+          <h4>Sprint Design IA</h4>
+          <span>Upsell naturel &middot; Le client veut un produit fini</span>
+        </div>
+        <span class="funnel-price" style="color:var(--teal);">400-800k XPF</span>
+        <span class="funnel-arrow">&#9660;</span>
+      </div>
+      <div class="funnel-level">
+        <span class="funnel-icon">&#128081;</span>
+        <div class="funnel-text">
+          <h4>Full Build + Maintenance</h4>
+          <span>Revenu long-terme &middot; Relation client durable</span>
+        </div>
+        <span class="funnel-price" style="color:var(--gold);">800k-2M + 150k/mois</span>
+      </div>
+    </div>
+
+    <!-- SCENARIO DE VENTE -->
+    <div class="scenario-wrap" style="margin-top:40px;">
+      <div class="scenario-header">
+        <h3>&#127916; Scenario de vente en meeting</h3>
+      </div>
+      <div class="scenario-step">
+        <span class="s-num">1</span>
+        <div class="s-content">
+          <h4>Ouverture</h4>
+          <p>Tu arrives au RDV avec ton laptop. Tu ouvres Claude Code devant le prospect.</p>
+        </div>
+        <span class="s-time">0 min</span>
+      </div>
+      <div class="scenario-step">
+        <span class="s-num">2</span>
+        <div class="s-content">
+          <h4>Brief en direct</h4>
+          <p>Tu demandes au prospect de decrire son besoin. Tu tapes les instructions dans Claude Code pendant qu'il parle.</p>
+        </div>
+        <span class="s-time">5 min</span>
+      </div>
+      <div class="scenario-step">
+        <span class="s-num">3</span>
+        <div class="s-content">
+          <h4>Generation live</h4>
+          <p>Claude Code genere l'interface sous ses yeux. Le prospect voit son dashboard se construire en temps reel.</p>
+        </div>
+        <span class="s-time">10 min</span>
+      </div>
+      <div class="scenario-step">
+        <span class="s-num">4</span>
+        <div class="s-content">
+          <h4>"Send to Figma"</h4>
+          <p>Tu envoies le resultat dans Figma. Le prospect voit le design editable, professionnel, avec layers et composants.</p>
+        </div>
+        <span class="s-time">15 min</span>
+      </div>
+      <div class="scenario-step">
+        <span class="s-num">5</span>
+        <div class="s-content">
+          <h4>Variantes</h4>
+          <p>Tu generes 2 variantes supplementaires. Le prospect compare cote a cote dans Figma. Il choisit sa preference.</p>
+        </div>
+        <span class="s-time">25 min</span>
+      </div>
+      <div class="scenario-step">
+        <span class="s-num">6</span>
+        <div class="s-content">
+          <h4>Closing</h4>
+          <p>"Ca c'est en 30 minutes. On deploie cette semaine. Voici nos 3 formules." Le prospect a deja vu le resultat &mdash; il signe.</p>
+        </div>
+        <span class="s-time">30 min</span>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:32px;">
+      <h3>&#127919; Pourquoi ca marche</h3>
+      <p>Les agences classiques vendent sur une <strong>promesse</strong>. Nous, on vend sur un <strong>resultat visible</strong>. Le prospect ne fait plus un acte de foi &mdash; il a deja vu son produit. La decision d'achat passe de "est-ce que ca va ressembler a ca ?" a "je le veux, combien ca coute ?"</p>
+    </div>
+  </section>
+
+  <!-- SECTION 8: MISE EN PLACE TECHNIQUE -->
+  <section id="technique">
+    <div class="section-label l-cyan">&#128295; TECHNIQUE</div>
+    <h2>Mise en place technique</h2>
+    <p class="subtitle">Ce qu'il faut installer et configurer pour etre operationnel des cette semaine.</p>
+
+    <div class="cards cards-2" style="margin-bottom:32px;">
+      <div class="card">
+        <span class="card-icon">&#128268;</span>
+        <h3>Installation Figma MCP Server</h3>
+        <p>Commande unique pour connecter Claude Code a Figma :</p>
+        <code class="cl-code" style="font-family:'Courier New',monospace; font-size:.78rem; background:var(--bg); padding:8px 14px; border-radius:8px; color:var(--teal); display:block; margin-top:12px;">claude mcp add --transport http --scope user figma https://mcp.figma.com/mcp</code>
+        <p style="margin-top:12px;">Puis dans Claude Code : <code style="color:var(--teal);">/mcp</code> &rarr; Figma &rarr; Authenticate</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128736;</span>
+        <h3>Pre-requis</h3>
+        <ul style="list-style:none; font-size:.82rem;">
+          <li style="padding:6px 0; border-bottom:1px solid rgba(26,26,62,.3); display:flex; gap:8px; align-items:center;"><span style="color:var(--green);">&#10003;</span> Claude Code installe (deja fait)</li>
+          <li style="padding:6px 0; border-bottom:1px solid rgba(26,26,62,.3); display:flex; gap:8px; align-items:center;"><span style="color:var(--gold);">&#9679;</span> Compte Figma Pro (~$15/mois)</li>
+          <li style="padding:6px 0; border-bottom:1px solid rgba(26,26,62,.3); display:flex; gap:8px; align-items:center;"><span style="color:var(--green);">&#10003;</span> Vercel pour deploy (deja configure)</li>
+          <li style="padding:6px 0; border-bottom:1px solid rgba(26,26,62,.3); display:flex; gap:8px; align-items:center;"><span style="color:var(--green);">&#10003;</span> Stack Next.js + Supabase (deja maitrise)</li>
+          <li style="padding:6px 0; display:flex; gap:8px; align-items:center;"><span style="color:var(--green);">&#10003;</span> n8n pour les workflows (deja operationnel)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; margin-bottom:16px;">Checklist de lancement</h3>
+    <ul class="checklist">
+      <li>
+        <span class="cl-icon pending">&#128268;</span>
+        <div>
+          <strong>Installer le Figma MCP Server</strong>
+          <span class="cl-code">claude mcp add --transport http figma https://mcp.figma.com/mcp</span>
+        </div>
+      </li>
+      <li>
+        <span class="cl-icon pending">&#128273;</span>
+        <div>
+          <strong>Creer/valider le compte Figma Pro</strong>
+          <span style="font-size:.72rem; color:var(--text3); display:block; margin-top:2px;">Necessaire pour le MCP Server (Dev ou Full seat)</span>
+        </div>
+      </li>
+      <li>
+        <span class="cl-icon pending">&#128295;</span>
+        <div>
+          <strong>Tester le flow complet sur COWAN V2</strong>
+          <span style="font-size:.72rem; color:var(--text3); display:block; margin-top:2px;">Dashboard existant = cas de test ideal</span>
+        </div>
+      </li>
+      <li>
+        <span class="cl-icon pending">&#127912;</span>
+        <div>
+          <strong>Preparer 3 templates de demo</strong>
+          <span style="font-size:.72rem; color:var(--text3); display:block; margin-top:2px;">Dashboard analytics, Landing page, Booking system</span>
+        </div>
+      </li>
+      <li>
+        <span class="cl-icon pending">&#128196;</span>
+        <div>
+          <strong>Mettre a jour les offres commerciales</strong>
+          <span style="font-size:.72rem; color:var(--text3); display:block; margin-top:2px;">Ajouter Tier 1 "Flash Prototype" dans les propales</span>
+        </div>
+      </li>
+      <li>
+        <span class="cl-icon pending">&#127916;</span>
+        <div>
+          <strong>Demo live au prochain RDV prospect</strong>
+          <span style="font-size:.72rem; color:var(--text3); display:block; margin-top:2px;">OPT, Banque de Polynesie, ou Intercontinental</span>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- SECTION 9: RISQUES -->
+  <section id="risques">
+    <div class="section-label l-red">&#9888; RISQUES</div>
+    <h2>Risques &amp; Mitigations</h2>
+    <p class="subtitle">Chaque risque identifie avec sa strategie d'attenuation. Approche pragmatique.</p>
+
+    <div class="risk-card">
+      <span class="risk-icon">&#127912;</span>
+      <div class="risk-content">
+        <h4>Qualite design pas assez "pro"</h4>
+        <p>Claude Code genere du code fonctionnel mais le design pourrait manquer de polish pour certains clients exigeants.</p>
+        <div class="risk-tag"><span class="tag tag-green">Mitigation : Utiliser shadcn/ui + Tailwind presets + skill /frontend-design pour un rendu premium systematique</span></div>
+      </div>
+    </div>
+
+    <div class="risk-card">
+      <span class="risk-icon">&#128260;</span>
+      <div class="risk-content">
+        <h4>Client veut des modifs complexes post-Figma</h4>
+        <p>Le client pourrait vouloir modifier des elements dans Figma qui ne se retranscrivent pas facilement dans le code.</p>
+        <div class="risk-tag"><span class="tag tag-blue">Mitigation : Le Figma est un point de validation, pas le deliverable final. Les ajustements se font dans le code, avec re-export si necessaire</span></div>
+      </div>
+    </div>
+
+    <div class="risk-card">
+      <span class="risk-icon">&#128101;</span>
+      <div class="risk-content">
+        <h4>Concurrence qui copie l'approche</h4>
+        <p>D'autres agences polynesienne pourraient adopter les memes outils IA a terme.</p>
+        <div class="risk-tag"><span class="tag tag-purple">Mitigation : Notre avance c'est la stack complete (Claude Code + n8n + Supabase + Vercel + MCP), pas juste le design. L'expertise est notre moat</span></div>
+      </div>
+    </div>
+
+    <div class="risk-card">
+      <span class="risk-icon">&#128274;</span>
+      <div class="risk-content">
+        <h4>Dependance a Anthropic/Claude</h4>
+        <p>Si Anthropic change ses tarifs ou restreint l'acces, notre modele est impacte.</p>
+        <div class="risk-tag"><span class="tag tag-gold">Mitigation : Diversifier vers Cursor/Codex si necessaire. Le MCP est un standard ouvert, pas proprietaire</span></div>
+      </div>
+    </div>
+
+    <div class="risk-card">
+      <span class="risk-icon">&#127760;</span>
+      <div class="risk-content">
+        <h4>Connectivite internet en PF</h4>
+        <p>La latence reseau en Polynesie peut affecter l'experience "live" pendant les demos.</p>
+        <div class="risk-tag"><span class="tag tag-cyan">Mitigation : Pre-generer des templates avant les RDV. Utiliser le mode desktop Figma MCP pour un workflow local</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 10: ROADMAP -->
+  <section id="roadmap">
+    <div class="section-label l-gold">&#128197; EXECUTION</div>
+    <h2>Roadmap — 12 semaines</h2>
+    <p class="subtitle">Plan d'execution sur 3 mois pour passer de l'annonce a un business operationnel.</p>
+
+    <div class="gantt">
+      <div class="gantt-header">
+        <span></span>
+        <span>S1</span><span>S2</span><span>S3</span><span>S4</span>
+        <span>S5</span><span>S6</span><span>S7</span><span>S8</span>
+        <span>S9</span><span>S10</span><span>S11</span><span>S12</span>
+      </div>
+
+      <div class="gantt-row">
+        <span class="gantt-label" style="color:var(--accent);">&#128268; Setup technique</span>
+        <div style="grid-column:2/4;"><div class="gantt-bar b-blue">MCP + Figma</div></div>
+      </div>
+
+      <div class="gantt-row">
+        <span class="gantt-label" style="color:var(--teal);">&#127912; Templates demo</span>
+        <div style="grid-column:2/5;"><div class="gantt-bar b-teal">3 templates</div></div>
+      </div>
+
+      <div class="gantt-row">
+        <span class="gantt-label" style="color:var(--gold);">&#128196; Offres commerciales</span>
+        <div style="grid-column:3/5;"><div class="gantt-bar b-gold">Pricing + docs</div></div>
+      </div>
+
+      <div class="gantt-row">
+        <span class="gantt-label" style="color:var(--green);">&#127919; 1er Flash Prototype</span>
+        <div style="grid-column:4/6;"><div class="gantt-bar b-green">Test client reel</div></div>
+      </div>
+
+      <div class="gantt-row">
+        <span class="gantt-label" style="color:var(--purple);">&#128640; Prospection active</span>
+        <div style="grid-column:5/10;"><div class="gantt-bar b-purple">OPT, BDP, Intercon.</div></div>
+      </div>
+
+      <div class="gantt-row">
+        <span class="gantt-label" style="color:var(--orange);">&#128200; Scale (5 clients Tier 3)</span>
+        <div style="grid-column:8/13;"><div class="gantt-bar b-orange">Build + Maintenance</div></div>
+      </div>
+    </div>
+
+    <div class="cards cards-4" style="margin-top:32px;">
+      <div class="card" style="text-align:center;">
+        <span class="card-icon">&#128268;</span>
+        <h3>Semaine 1-2</h3>
+        <p>Setup technique<br>MCP + templates</p>
+        <span class="tag tag-blue">Phase 1</span>
+      </div>
+      <div class="card" style="text-align:center;">
+        <span class="card-icon">&#127919;</span>
+        <h3>Semaine 3-5</h3>
+        <p>1er Flash Prototype<br>Test client reel</p>
+        <span class="tag tag-green">Phase 2</span>
+      </div>
+      <div class="card" style="text-align:center;">
+        <span class="card-icon">&#128640;</span>
+        <h3>Semaine 5-9</h3>
+        <p>Prospection active<br>5 RDV prospects</p>
+        <span class="tag tag-purple">Phase 3</span>
+      </div>
+      <div class="card" style="text-align:center;">
+        <span class="card-icon">&#128200;</span>
+        <h3>Semaine 8-12</h3>
+        <p>Scale<br>5 clients Tier 3</p>
+        <span class="tag tag-orange">Phase 4</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="padding:40px 60px; text-align:center; border-top:1px solid var(--border);">
+    <p style="font-size:.85rem; color:var(--text3);">
+      <span style="background:linear-gradient(135deg,var(--accent),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-family:'Space Grotesk'; font-weight:700;">PACIFIK'AI</span>
+      &middot; Business Plan Code to Canvas &middot; Fevrier 2026
+    </p>
+    <p style="font-size:.72rem; color:var(--text3); margin-top:8px;">
+      Sources : Figma Blog, Anthropic, CNBC, DataReportal Digital 2026 French Polynesia
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>

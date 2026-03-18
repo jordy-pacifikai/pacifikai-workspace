@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-cream text-charcoal font-sans;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    @apply bg-gold/20 text-charcoal;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-gold;
+  }
+
+  /* Lenis */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  /* Editorial container */
+  .editorial-container {
+    @apply max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20;
+  }
+
+  .separator-line {
+    @apply w-full h-px bg-separator;
+  }
+
+  /* Tags */
+  .tag-terre {
+    @apply inline-block px-3 py-1 text-[10px] font-sans font-semibold uppercase tracking-[0.2em] text-gold;
+  }
+
+  .tag-ciel {
+    @apply inline-block px-3 py-1 text-[10px] font-sans font-semibold uppercase tracking-[0.2em] text-gold;
+  }
+
+  /* Magnetic button */
+  .btn-magnetic {
+    @apply relative inline-flex items-center justify-center overflow-hidden;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-magnetic:hover {
+    transform: scale(1.05);
+  }
+
+  .btn-primary {
+    @apply btn-magnetic px-10 py-4 bg-gold text-white font-sans text-sm font-medium uppercase tracking-[0.15em];
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 20px rgba(184, 134, 11, 0.3);
+  }
+  .btn-primary:hover {
+    @apply bg-gold-light;
+    box-shadow: 0 8px 30px rgba(184, 134, 11, 0.4);
+    transform: scale(1.05) translateY(-2px);
+  }
+
+  .btn-outline {
+    @apply btn-magnetic px-10 py-4 border border-white/30 text-white font-sans text-sm font-medium uppercase tracking-[0.15em];
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-outline:hover {
+    @apply bg-white/10 border-white/60;
+    transform: scale(1.05) translateY(-2px);
+  }
+
+  /* Sliding underline link */
+  .link-slide {
+    @apply relative inline-block;
+  }
+  .link-slide::after {
+    content: "";
+    @apply absolute bottom-0 left-0 w-0 h-px bg-gold;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .link-slide:hover::after {
+    @apply w-full;
+  }
+
+  /* Floating labels */
+  .floating-label-group {
+    @apply relative;
+  }
+  .floating-label-group input,
+  .floating-label-group textarea,
+  .floating-label-group select {
+    @apply w-full px-0 py-4 bg-transparent border-0 border-b border-separator
+           text-charcoal font-sans text-base
+           focus:outline-none focus:border-gold
+           transition-colors duration-500;
+  }
+  .floating-label-group label {
+    @apply absolute left-0 top-4 text-charcoal/40 font-sans text-base
+           pointer-events-none
+           transition-all duration-500 origin-left;
+  }
+  .floating-label-group input:focus ~ label,
+  .floating-label-group input:not(:placeholder-shown) ~ label,
+  .floating-label-group textarea:focus ~ label,
+  .floating-label-group textarea:not(:placeholder-shown) ~ label,
+  .floating-label-group select:focus ~ label,
+  .floating-label-group select:valid ~ label {
+    @apply -translate-y-6 scale-75 text-gold;
+  }
+
+  /* Clip reveal initial state */
+  .clip-reveal {
+    clip-path: inset(100% 0 0 0);
+  }
+  .clip-reveal-visible {
+    clip-path: inset(0);
+  }
+
+  /* Image container premium */
+  .img-container {
+    @apply relative overflow-hidden;
+  }
+  .img-container img {
+    @apply w-full h-full object-cover;
+    will-change: transform;
+  }
+
+  /* Parallax hero bg */
+  .hero-bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  @supports (background-attachment: fixed) {
+    .hero-bg-fixed {
+      background-attachment: fixed;
+    }
+  }
+
+  /* Scroll indicator */
+  .scroll-indicator {
+    @apply w-px h-16 overflow-hidden relative;
+  }
+  .scroll-indicator::after {
+    content: "";
+    @apply absolute top-0 left-0 w-full h-full bg-white/60;
+    animation: scroll-line 2s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .will-change-clip {
+    will-change: clip-path;
+  }
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .scroll-indicator::after {
+    animation: none !important;
+  }
+}

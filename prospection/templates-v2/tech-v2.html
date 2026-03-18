@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} : {{TAGLINE}}. {{SUBSECTOR}} a {{CITY}}.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family={{FONT_DISPLAY}}:wght@400;500;600;700&family={{FONT_BODY}}:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       RESET & VARIABLES
+    ======================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --accent-hover: #1d4ed8;
+      --accent-light: #EFF6FF;
+      --text: {{COLOR_TEXT}};
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --surface: #F8FAFC;
+      --white: #FFFFFF;
+      --font-display: '{{FONT_DISPLAY}}', 'Inter', system-ui, sans-serif;
+      --font-body: '{{FONT_BODY}}', 'Inter', -apple-system, sans-serif;
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+    body {
+      background: var(--bg);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; height: auto; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* ========================================
+       DISCLAIMER & LOADER
+    ======================================== */
+    .disclaimer {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: var(--accent); color: var(--white);
+      font-size: 11px; letter-spacing: .06em; text-align: center;
+      padding: 10px 24px; font-weight: 500;
+    }
+    .disclaimer a { color: var(--white); text-decoration: underline; font-weight: 600; }
+
+    .loader {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg);
+    }
+    .loader-inner { text-align: center; }
+    .loader-logo {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 600; letter-spacing: -.02em;
+      color: var(--text); opacity: 0;
+    }
+    .loader-bar {
+      width: 100px; height: 3px;
+      background: var(--border);
+      margin: 20px auto 0; overflow: hidden;
+      border-radius: 3px;
+    }
+    .loader-bar-fill {
+      width: 100%; height: 100%;
+      background: var(--accent);
+      transform: scaleX(0); transform-origin: left;
+      border-radius: 3px;
+    }
+
+    /* ========================================
+       SCROLL PROGRESS
+    ======================================== */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0;
+      width: 0%; height: 2px;
+      background: var(--accent);
+      z-index: 9999;
+    }
+
+    /* ========================================
+       NAVIGATION
+    ======================================== */
+    .nav {
+      position: fixed; top: 38px; left: 0; width: 100%; z-index: 1000;
+      padding: 16px 0;
+      transition: background .4s, padding .4s, box-shadow .4s;
+    }
+    .nav.scrolled {
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(16px);
+      padding: 12px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--text); letter-spacing: -.02em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: var(--text-muted); font-size: .88rem; font-weight: 500;
+      transition: color .25s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .nav-link-cta {
+      color: var(--text-muted); font-size: .88rem; font-weight: 500;
+      transition: color .25s;
+    }
+    .nav-link-cta:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: var(--white);
+      padding: 9px 20px; border-radius: 8px;
+      font-size: .85rem; font-weight: 600;
+      transition: background .3s, transform .2s;
+    }
+    .nav-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .nav-burger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .nav-burger span {
+      width: 20px; height: 2px; background: var(--text);
+      border-radius: 2px; transition: .3s;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-actions { display: none; }
+      .nav-burger { display: flex; }
+    }
+
+    /* ========================================
+       HERO — CLEAN WHITE SPLIT
+    ======================================== */
+    .hero {
+      min-height: 100vh; padding: 140px 24px 80px;
+      display: flex; align-items: center;
+      background: var(--bg);
+      position: relative;
+    }
+    .hero::before {
+      content: ''; position: absolute;
+      top: 0; right: 0;
+      width: 50%; height: 100%;
+      background: var(--surface);
+      z-index: 0;
+    }
+    .hero-inner {
+      max-width: 1200px; margin: 0 auto; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+      align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-content { max-width: 500px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-light); color: var(--accent);
+      padding: 6px 14px; border-radius: 6px;
+      font-size: .78rem; font-weight: 600;
+      letter-spacing: .02em; margin-bottom: 24px;
+    }
+    .hero-badge::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+      font-weight: 700; line-height: 1.1;
+      color: var(--text); margin-bottom: 20px;
+      letter-spacing: -.03em;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, var(--accent), #7C3AED);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.05rem; line-height: 1.7; color: var(--text-muted);
+      margin-bottom: 32px; max-width: 440px;
+    }
+    .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: var(--white);
+      padding: 13px 28px; border-radius: 10px;
+      font-size: .92rem; font-weight: 600;
+      transition: background .3s, transform .2s, box-shadow .3s;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, .25);
+    }
+    .btn-primary svg { width: 16px; height: 16px; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white); color: var(--text);
+      padding: 13px 28px; border-radius: 10px;
+      font-size: .92rem; font-weight: 600;
+      border: 1px solid var(--border);
+      transition: border-color .3s, transform .2s;
+    }
+    .btn-outline:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .btn-outline svg { width: 16px; height: 16px; }
+    .hero-image-wrapper {
+      position: relative;
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+    }
+    .hero-mockup {
+      width: 100%; border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,.08);
+      border: 1px solid var(--border);
+    }
+    .hero-mockup img {
+      width: 100%; height: auto; display: block;
+    }
+    .hero-float {
+      position: absolute; top: -16px; right: -16px;
+      background: var(--white);
+      padding: 12px 18px; border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      font-size: .82rem; font-weight: 600; color: var(--text);
+    }
+    .hero-float-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #10B981;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @media (max-width: 768px) {
+      .hero { padding: 130px 20px 60px; }
+      .hero::before { display: none; }
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+      .hero-float { display: none; }
+    }
+
+    /* ========================================
+       SECTION HELPERS
+    ======================================== */
+    .section { padding: 96px 24px; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .75rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700; line-height: 1.15;
+      color: var(--text); margin-bottom: 14px;
+      letter-spacing: -.02em;
+    }
+    .section-desc {
+      font-size: 1rem; line-height: 1.7;
+      color: var(--text-muted); max-width: 520px;
+    }
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-header .section-desc { margin: 0 auto; }
+
+    /* ========================================
+       TRUSTED BY — LOGO BAR
+    ======================================== */
+    .trusted {
+      padding: 48px 24px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .trusted-inner {
+      max-width: 1200px; margin: 0 auto;
+      text-align: center;
+    }
+    .trusted-label {
+      font-size: .75rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 24px;
+    }
+    .trusted-logos {
+      display: flex; justify-content: center; align-items: center;
+      gap: 48px; flex-wrap: wrap;
+    }
+    .trusted-logos span {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text-muted); opacity: .4;
+      letter-spacing: -.01em;
+      transition: opacity .3s;
+    }
+    .trusted-logos span:hover { opacity: .7; }
+
+    @media (max-width: 768px) {
+      .trusted-logos { gap: 24px 32px; }
+      .trusted-logos span { font-size: .95rem; }
+    }
+
+    /* ========================================
+       FEATURES — 2x3 CLEAN GRID
+    ======================================== */
+    .features { background: var(--bg); }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s, border-color .4s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.06);
+      border-color: var(--accent);
+    }
+    .feature-icon {
+      width: 44px; height: 44px; margin-bottom: 20px;
+      background: var(--accent-light);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feature-icon svg {
+      width: 22px; height: 22px; stroke: var(--accent);
+      fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .feature-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem; font-weight: 600;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .feature-desc {
+      font-size: .88rem; line-height: 1.6; color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ========================================
+       HOW IT WORKS — 3 STEPS
+    ======================================== */
+    .steps-section { background: var(--surface); }
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 32px; position: relative;
+    }
+    .steps-line {
+      position: absolute; top: 36px; left: 15%; right: 15%;
+      height: 2px; background: var(--border);
+      z-index: 0;
+    }
+    .step {
+      text-align: center; position: relative; z-index: 1;
+    }
+    .step-number {
+      width: 56px; height: 56px; margin: 0 auto 20px;
+      background: var(--white);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 700; color: var(--accent);
+    }
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .step-desc {
+      font-size: .88rem; line-height: 1.6; color: var(--text-muted);
+      max-width: 280px; margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .steps-grid { grid-template-columns: 1fr; gap: 40px; }
+      .steps-line { display: none; }
+    }
+
+    /* ========================================
+       PRICING — 3 TIERS
+    ======================================== */
+    .pricing { background: var(--bg); }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 20px; align-items: start;
+    }
+    .pricing-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+      transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
+    }
+    .pricing-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 48px rgba(0,0,0,.06);
+    }
+    .pricing-card--featured {
+      border-color: var(--accent);
+      position: relative;
+      box-shadow: 0 8px 32px rgba(37, 99, 235, .1);
+    }
+    .pricing-badge {
+      position: absolute; top: -12px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent); color: var(--white);
+      padding: 4px 16px; border-radius: 50px;
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .pricing-name {
+      font-family: var(--font-display);
+      font-size: 1.05rem; font-weight: 600;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .pricing-desc {
+      font-size: .85rem; color: var(--text-muted);
+      margin-bottom: 20px; line-height: 1.5;
+    }
+    .pricing-price {
+      font-family: var(--font-display);
+      font-size: 2.2rem; font-weight: 700;
+      color: var(--text); margin-bottom: 4px;
+      letter-spacing: -.03em;
+    }
+    .pricing-price span {
+      font-size: .9rem; font-weight: 500; color: var(--text-muted);
+    }
+    .pricing-period {
+      font-size: .82rem; color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .pricing-features {
+      list-style: none; margin-bottom: 28px;
+    }
+    .pricing-features li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: .88rem; color: var(--text);
+      padding: 6px 0;
+    }
+    .pricing-features li::before {
+      content: '';
+      width: 18px; height: 18px; flex-shrink: 0;
+      margin-top: 2px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 10px;
+    }
+    .pricing-cta {
+      display: block; width: 100%; text-align: center;
+      padding: 12px; border-radius: 10px;
+      font-size: .9rem; font-weight: 600;
+      transition: background .3s, transform .2s, color .3s;
+    }
+    .pricing-cta--primary {
+      background: var(--accent); color: var(--white);
+    }
+    .pricing-cta--primary:hover {
+      background: var(--accent-hover); transform: translateY(-1px);
+    }
+    .pricing-cta--secondary {
+      background: var(--surface); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .pricing-cta--secondary:hover {
+      border-color: var(--accent); color: var(--accent);
+    }
+
+    @media (max-width: 768px) {
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+    }
+
+    /* ========================================
+       CTA
+    ======================================== */
+    .cta-section {
+      padding: 96px 24px;
+      background: var(--text);
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: ''; position: absolute;
+      top: -30%; right: -10%;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, .08);
+      filter: blur(80px);
+    }
+    .cta-content { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700; color: var(--white);
+      margin-bottom: 16px; line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+    .cta-sub {
+      font-size: 1.02rem; line-height: 1.7; color: rgba(255,255,255,.6);
+      margin-bottom: 32px;
+    }
+    .cta-form {
+      display: flex; gap: 8px; max-width: 420px; margin: 0 auto;
+    }
+    .cta-input {
+      flex: 1; padding: 14px 18px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px; color: var(--white);
+      font-size: .92rem; outline: none;
+      transition: border-color .3s;
+    }
+    .cta-input::placeholder { color: rgba(255,255,255,.35); }
+    .cta-input:focus { border-color: var(--accent); }
+    .cta-submit {
+      background: var(--accent); color: var(--white);
+      padding: 14px 24px; border-radius: 10px;
+      font-size: .92rem; font-weight: 600;
+      border: none; cursor: pointer;
+      transition: background .3s;
+      white-space: nowrap;
+    }
+    .cta-submit:hover { background: var(--accent-hover); }
+    .cta-note {
+      margin-top: 14px; font-size: .78rem;
+      color: rgba(255,255,255,.35);
+    }
+
+    @media (max-width: 480px) {
+      .cta-form { flex-direction: column; }
+    }
+
+    /* ========================================
+       FOOTER
+    ======================================== */
+    .footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 56px 24px 32px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px; margin-bottom: 40px;
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--text); margin-bottom: 12px;
+      letter-spacing: -.02em;
+    }
+    .footer-brand span { color: var(--accent); }
+    .footer-brand-desc {
+      font-size: .88rem; line-height: 1.6; color: var(--text-muted);
+      max-width: 280px;
+    }
+    .footer-col h4 {
+      font-size: .8rem; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--text); margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 10px; }
+    .footer-col a {
+      font-size: .88rem; color: var(--text-muted);
+      transition: color .25s;
+    }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-col li:not(:has(a)) {
+      font-size: .88rem; color: var(--text-muted);
+    }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 24px; border-top: 1px solid var(--border);
+      font-size: .78rem; color: var(--text-muted);
+    }
+    .footer-bottom a { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    /* ========================================
+       REVEAL STATES
+    ======================================== */
+    .reveal { opacity: 0; transform: translateY(30px); }
+  </style>
+</head>
+<body>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">Prototype cree par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a> — Site web professionnel a 100 000 XPF</div>
+
+  <!-- Loader -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">{{BUSINESS_NAME}}</div>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">{{BUSINESS_NAME}}</a>
+      <ul class="nav-links">
+        <li><a href="#features">Fonctionnalites</a></li>
+        <li><a href="#steps">Comment ca marche</a></li>
+        <li><a href="#pricing">Tarifs</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="#" class="nav-link-cta">Connexion</a>
+        <a href="#cta" class="nav-cta">Commencer</a>
+      </div>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge" id="heroBadge">Nouveau &middot; {{CITY}}</div>
+        <h1 class="hero-title" id="heroTitle">{{TAGLINE}} avec <span>{{BUSINESS_NAME}}</span></h1>
+        <p class="hero-sub" id="heroSub">{{SUBSECTOR}} a {{CITY}}. Une plateforme simple et puissante pour transformer vos processus et gagner en efficacite.</p>
+        <div class="hero-actions" id="heroActions">
+          <a href="#cta" class="btn-primary">
+            Essai gratuit
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="#features" class="btn-outline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Voir la demo
+          </a>
+        </div>
+      </div>
+      <div class="hero-image-wrapper" id="heroImage">
+        <div class="hero-mockup">
+          <img src="{{HERO_IMAGE}}" alt="{{BUSINESS_NAME}} dashboard">
+        </div>
+        <div class="hero-float">
+          <div class="hero-float-dot"></div>
+          <span>+<strong data-count="47">0</strong>% de productivite</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trusted By -->
+  <section class="trusted">
+    <div class="trusted-inner">
+      <p class="trusted-label">Ils nous font confiance</p>
+      <div class="trusted-logos">
+        <span>Airtech PF</span>
+        <span>Mahana Corp</span>
+        <span>Pacific Digital</span>
+        <span>Fenua Labs</span>
+        <span>Tahiti Connect</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section features" id="features">
+    <div class="section-inner">
+      <div class="section-header">
+        <p class="section-tag reveal">Fonctionnalites</p>
+        <h2 class="section-title reveal">Tout ce dont vous avez besoin</h2>
+        <p class="section-desc reveal">Des outils puissants et intuitifs pour simplifier votre quotidien professionnel.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+          </div>
+          <h3 class="feature-title">{{SERVICE_1}}</h3>
+          <p class="feature-desc">Tableaux de bord en temps reel. Visualisez vos metriques cles et prenez des decisions eclairees.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <h3 class="feature-title">{{SERVICE_2}}</h3>
+          <p class="feature-desc">Automatisez vos processus repetitifs et concentrez-vous sur ce qui compte vraiment.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="feature-title">{{SERVICE_3}}</h3>
+          <p class="feature-desc">Securite de niveau entreprise. Vos donnees sont chiffrees et protegees en permanence.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3 class="feature-title">{{SERVICE_4}}</h3>
+          <p class="feature-desc">Performance optimisee pour le Pacifique. Serveurs locaux, latence minimale, disponibilite 99.9%.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3 class="feature-title">Collaboration</h3>
+          <p class="feature-desc">Travaillez en equipe en temps reel. Partagez, commentez et validez sans friction.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <h3 class="feature-title">API & Integrations</h3>
+          <p class="feature-desc">Connectez vos outils existants. API REST, webhooks et plus de 50 integrations natives.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section steps-section" id="steps">
+    <div class="section-inner">
+      <div class="section-header">
+        <p class="section-tag reveal">Comment ca marche</p>
+        <h2 class="section-title reveal">Operationnel en 3 etapes</h2>
+        <p class="section-desc reveal">De l'inscription au premier resultat en moins de 15 minutes.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="steps-line" id="stepsLine"></div>
+        <div class="step reveal">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Creez votre compte</h3>
+          <p class="step-desc">Inscription gratuite en 30 secondes. Aucune carte bancaire requise pour commencer.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Configurez vos outils</h3>
+          <p class="step-desc">Connectez vos sources de donnees et personnalisez votre espace de travail en quelques clics.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Obtenez des resultats</h3>
+          <p class="step-desc">Analysez, automatisez et optimisez. Vos premiers insights en moins d'une heure.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section pricing" id="pricing">
+    <div class="section-inner">
+      <div class="section-header">
+        <p class="section-tag reveal">Tarifs</p>
+        <h2 class="section-title reveal">Un plan pour chaque besoin</h2>
+        <p class="section-desc reveal">Commencez gratuitement, evoluez a votre rythme. Sans engagement.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card reveal">
+          <h3 class="pricing-name">Starter</h3>
+          <p class="pricing-desc">Pour les independants et petites equipes qui demarrent.</p>
+          <div class="pricing-price">{{PRICE_1}} <span>XPF</span></div>
+          <p class="pricing-period">par mois</p>
+          <ul class="pricing-features">
+            <li>Jusqu'a 3 utilisateurs</li>
+            <li>{{SERVICE_1}}</li>
+            <li>Support email</li>
+            <li>1 Go de stockage</li>
+          </ul>
+          <a href="#cta" class="pricing-cta pricing-cta--secondary">Commencer</a>
+        </div>
+        <div class="pricing-card pricing-card--featured reveal">
+          <div class="pricing-badge">Populaire</div>
+          <h3 class="pricing-name">Pro</h3>
+          <p class="pricing-desc">Pour les entreprises en croissance qui veulent aller plus loin.</p>
+          <div class="pricing-price">{{PRICE_2}} <span>XPF</span></div>
+          <p class="pricing-period">par mois</p>
+          <ul class="pricing-features">
+            <li>Jusqu'a 15 utilisateurs</li>
+            <li>{{SERVICE_1}} + {{SERVICE_2}}</li>
+            <li>{{SERVICE_3}}</li>
+            <li>Support prioritaire</li>
+            <li>10 Go de stockage</li>
+          </ul>
+          <a href="#cta" class="pricing-cta pricing-cta--primary">Essai gratuit 14j</a>
+        </div>
+        <div class="pricing-card reveal">
+          <h3 class="pricing-name">Enterprise</h3>
+          <p class="pricing-desc">Pour les grandes organisations avec des besoins specifiques.</p>
+          <div class="pricing-price">{{PRICE_3}} <span>XPF</span></div>
+          <p class="pricing-period">par mois</p>
+          <ul class="pricing-features">
+            <li>Utilisateurs illimites</li>
+            <li>Toutes les fonctionnalites</li>
+            <li>{{SERVICE_4}}</li>
+            <li>SLA 99.99%</li>
+            <li>Stockage illimite</li>
+          </ul>
+          <a href="#cta" class="pricing-cta pricing-cta--secondary">Nous contacter</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="cta">
+    <div class="cta-content">
+      <h2 class="cta-title reveal">Pret a transformer votre business ?</h2>
+      <p class="cta-sub reveal">Rejoignez les entreprises de {{CITY}} qui font confiance a {{BUSINESS_NAME}} pour leur croissance.</p>
+      <form class="cta-form reveal" onsubmit="event.preventDefault();">
+        <input type="email" class="cta-input" placeholder="votre@email.pf" aria-label="Adresse email">
+        <button type="submit" class="cta-submit">Commencer</button>
+      </form>
+      <p class="cta-note reveal">Gratuit 14 jours. Aucune carte bancaire requise.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">{{BUSINESS_NAME}}</div>
+          <p class="footer-brand-desc">{{TAGLINE}}. {{SUBSECTOR}} a {{CITY}}.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Produit</h4>
+          <ul>
+            <li><a href="#">{{SERVICE_1}}</a></li>
+            <li><a href="#">{{SERVICE_2}}</a></li>
+            <li><a href="#">Tarifs</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Entreprise</h4>
+          <ul>
+            <li><a href="#">A propos</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Carrieres</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li>{{PHONE}}</li>
+            <li>{{ADDRESS}}</li>
+            <li>{{HOURS}}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 {{BUSINESS_NAME}} — {{CITY}}</span>
+        <span>Site realise par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      /* ===== LOADER ===== */
+      var loaderTl = gsap.timeline();
+      loaderTl
+        .to('.loader-logo', { opacity: 1, duration: 0.5, ease: 'power2.out' })
+        .to('.loader-bar-fill', { scaleX: 1, duration: 1.2, ease: 'power2.inOut' }, 0.2)
+        .to('.loader', { yPercent: -100, duration: 0.7, ease: 'power3.inOut' }, 1.7);
+
+      /* ===== REDUCED MOTION ===== */
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* ===== LENIS SMOOTH SCROLL ===== */
+      var lenis;
+      if (!prefersReduced) {
+        lenis = new Lenis({
+          duration: 1.1,
+          easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+          smoothWheel: true
+        });
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* ===== GSAP REGISTER ===== */
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* ===== SCROLL PROGRESS ===== */
+      var progressBar = document.getElementById('scrollProgress');
+      gsap.to(progressBar, {
+        width: '100%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: document.body,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.3
+        }
+      });
+
+      /* ===== NAV SCROLL STATE ===== */
+      var nav = document.getElementById('mainNav');
+      ScrollTrigger.create({
+        start: 80,
+        onUpdate: function(self) {
+          nav.classList.toggle('scrolled', self.scroll() > 80);
+        }
+      });
+
+      /* ===== MOBILE BURGER ===== */
+      var burger = document.getElementById('navBurger');
+      var navLinksEl = document.querySelector('.nav-links');
+      var navActionsEl = document.querySelector('.nav-actions');
+      if (burger) {
+        burger.addEventListener('click', function() {
+          var open = navLinksEl.style.display === 'flex';
+          navLinksEl.style.display = open ? 'none' : 'flex';
+          navLinksEl.style.position = open ? '' : 'absolute';
+          navLinksEl.style.top = open ? '' : '100%';
+          navLinksEl.style.left = open ? '' : '0';
+          navLinksEl.style.right = open ? '' : '0';
+          navLinksEl.style.background = open ? '' : 'rgba(255,255,255,0.98)';
+          navLinksEl.style.flexDirection = open ? '' : 'column';
+          navLinksEl.style.padding = open ? '' : '24px';
+          navLinksEl.style.gap = open ? '' : '16px';
+          navLinksEl.style.backdropFilter = open ? '' : 'blur(16px)';
+          navLinksEl.style.borderBottom = open ? '' : '1px solid rgba(0,0,0,0.05)';
+        });
+      }
+
+      /* ===== ANCHOR SMOOTH SCROLL ===== */
+      document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            if (lenis) {
+              lenis.scrollTo(target, { offset: -60 });
+            } else {
+              target.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+            if (window.innerWidth <= 768 && navLinksEl) {
+              navLinksEl.style.display = 'none';
+            }
+          }
+        });
+      });
+
+      /* ===== SKIP ANIMATIONS IF REDUCED ===== */
+      if (prefersReduced) {
+        document.querySelectorAll('.reveal').forEach(function(el) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+        document.querySelectorAll('[data-count]').forEach(function(el) {
+          el.textContent = el.getAttribute('data-count');
+        });
+        return;
+      }
+
+      /* ===== HERO ENTRANCE ===== */
+      var heroTl = gsap.timeline({ delay: 1.9 });
+      heroTl
+        .from('#heroBadge', { y: 20, opacity: 0, duration: 0.5, ease: 'power3.out' })
+        .from('#heroTitle', { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.2')
+        .from('#heroSub', { y: 25, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.3')
+        .from('#heroActions', { y: 20, opacity: 0, duration: 0.5, ease: 'power3.out' }, '-=0.2')
+        .from('#heroImage', { x: 50, opacity: 0, duration: 0.9, ease: 'power3.out' }, '-=0.6');
+
+      /* ===== REVEAL ANIMATIONS ===== */
+      gsap.utils.toArray('.reveal').forEach(function(el) {
+        gsap.fromTo(el,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.7,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+          }
+        );
+      });
+
+      /* ===== COUNTER ANIMATION ===== */
+      document.querySelectorAll('[data-count]').forEach(function(el) {
+        var target = parseInt(el.getAttribute('data-count'), 10);
+        var obj = { val: 0 };
+        gsap.to(obj, {
+          val: target,
+          duration: 1.8,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 90%' },
+          onUpdate: function() {
+            el.textContent = Math.round(obj.val);
+          }
+        });
+      });
+
+      /* ===== TRUSTED LOGOS STAGGER ===== */
+      gsap.fromTo('.trusted-logos span',
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.5, stagger: 0.07,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: '.trusted', start: 'top 88%' }
+        }
+      );
+
+      /* ===== FEATURE CARDS STAGGER ===== */
+      gsap.fromTo('.feature-card',
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.6, stagger: 0.08,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: '.features-grid', start: 'top 82%' }
+        }
+      );
+
+      /* ===== STEPS STAGGER ===== */
+      gsap.fromTo('.step',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.6, stagger: 0.18,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: '.steps-grid', start: 'top 82%' }
+        }
+      );
+
+      /* ===== STEPS LINE DRAW ===== */
+      gsap.fromTo('#stepsLine',
+        { scaleX: 0, transformOrigin: 'left center' },
+        {
+          scaleX: 1,
+          duration: 1,
+          ease: 'power2.inOut',
+          scrollTrigger: { trigger: '.steps-grid', start: 'top 78%' }
+        }
+      );
+
+      /* ===== PRICING CARDS STAGGER ===== */
+      gsap.fromTo('.pricing-card',
+        { opacity: 0, y: 40, scale: 0.97 },
+        {
+          opacity: 1, y: 0, scale: 1,
+          duration: 0.6, stagger: 0.12,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: '.pricing-grid', start: 'top 82%' }
+        }
+      );
+
+      /* ===== HERO MOCKUP PARALLAX ===== */
+      gsap.to('.hero-image-wrapper', {
+        y: 50,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>

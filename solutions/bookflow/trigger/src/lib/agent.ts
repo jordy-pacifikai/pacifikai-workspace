@@ -16,9 +16,11 @@ import {
 } from "./supabase.js";
 import { createGCalEvent, deleteGCalEvent, listGCalEvents } from "./gcal.js";
 import { generateAvailableDates, generateTimeSlots } from "../utils/dates.js";
+import { supaHeaders } from "./supabase-headers.js";
 import type { Session } from "./supabase.js";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY!;
+const SUPABASE_URL = process.env.SUPABASE_URL!;
 
 const BOOKBOT_TOOLS: OpenAI.ChatCompletionTool[] = [
   {
@@ -599,8 +601,25 @@ export async function runBookingAgent(
   const clientNameHint = session.client_name
     ? `\n\n## Client actuel\nLe client s'appelle **${session.client_name}**. Ne lui redemande PAS son nom.`
     : "";
+
+  // Fetch prospect-specific agent instructions (if any)
+  let prospectInstructions = "";
+  try {
+    const senderId = payload.from.replace(/^messenger_/, "");
+    const piRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/messenger_prospects?sender_id=eq.${senderId}&select=agent_instructions`,
+      { headers: supaHeaders() }
+    );
+    if (piRes.ok) {
+      const piData = await piRes.json();
+      if (Array.isArray(piData) && piData[0]?.agent_instructions) {
+        prospectInstructions = `\n\n---\n\n## INSTRUCTIONS SPECIFIQUES POUR CE PROSPECT\n${piData[0].agent_instructions}`;
+      }
+    }
+  } catch { /* non-blocking */ }
+
   const messages: OpenAI.ChatCompletionMessageParam[] = [
-    { role: "system", content: systemPrompt + clientNameHint },
+    { role: "system", content: systemPrompt + clientNameHint + prospectInstructions },
     ...history,
   ];
   let finalReply = "";

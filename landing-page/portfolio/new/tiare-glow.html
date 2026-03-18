@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiare Glow — Salon Beaute & Spa Tahiti | PACIFIK'AI Portfolio</title>
+  <meta name="description" content="Tiare Glow, institut de beaute & spa de luxe a Punaauia, Tahiti. Soins du visage, massages monoi, rituels polynesiens.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --rose: #B76E79;
+      --rose-light: #c98d95;
+      --cream: #FFF8F5;
+      --mauve: #6B3A5B;
+      --white: #FFFFFF;
+      --blush: #F5E1E6;
+      --rose-glow: rgba(183, 110, 121, 0.3);
+      --rose-soft: rgba(183, 110, 121, 0.08);
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Nunito', 'Segoe UI', sans-serif;
+    }
+
+    html {
+      scroll-behavior: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--cream);
+      color: var(--mauve);
+      line-height: 1.7;
+      font-weight: 400;
+      overflow-x: hidden;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ========== SCROLL PROGRESS BAR ========== */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--rose), var(--rose-light));
+      z-index: 9999;
+      transition: none;
+    }
+
+    /* ========== FLOATING PETALS (CSS) ========== */
+    .petals-container {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .petal {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: floatPetal linear infinite;
+    }
+
+    .petal--1 { width: 10px; height: 10px; background: rgba(183, 110, 121, 0.35); left: 8%; bottom: -20px; animation-duration: 9s; animation-delay: 0s; }
+    .petal--2 { width: 8px; height: 8px; background: rgba(245, 225, 230, 0.6); left: 22%; bottom: -20px; animation-duration: 11s; animation-delay: 1.5s; }
+    .petal--3 { width: 14px; height: 14px; background: rgba(183, 110, 121, 0.25); left: 40%; bottom: -20px; animation-duration: 10s; animation-delay: 3s; }
+    .petal--4 { width: 9px; height: 9px; background: rgba(201, 141, 149, 0.4); left: 55%; bottom: -20px; animation-duration: 12s; animation-delay: 0.8s; }
+    .petal--5 { width: 12px; height: 12px; background: rgba(245, 225, 230, 0.5); left: 70%; bottom: -20px; animation-duration: 8.5s; animation-delay: 2.2s; }
+    .petal--6 { width: 8px; height: 8px; background: rgba(183, 110, 121, 0.3); left: 85%; bottom: -20px; animation-duration: 10.5s; animation-delay: 4s; }
+    .petal--7 { width: 11px; height: 11px; background: rgba(201, 141, 149, 0.35); left: 33%; bottom: -20px; animation-duration: 13s; animation-delay: 5.5s; }
+    .petal--8 { width: 15px; height: 15px; background: rgba(183, 110, 121, 0.2); left: 92%; bottom: -20px; animation-duration: 9.5s; animation-delay: 1s; }
+
+    @keyframes floatPetal {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateY(-50vh) translateX(20px) rotate(180deg);
+        opacity: 0.5;
+      }
+      90% {
+        opacity: 0.2;
+      }
+      100% {
+        transform: translateY(-110vh) translateX(-15px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* ========== BREATHING CIRCLE ========== */
+    .breathing-circle {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+    }
+
+    .breathing-circle__ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(183, 110, 121, 0.5);
+      box-shadow: 0 0 40px rgba(183, 110, 121, 0.15), inset 0 0 40px rgba(183, 110, 121, 0.05);
+      animation: breathe 4s ease-in-out infinite;
+    }
+
+    .breathing-circle__ring--outer {
+      inset: -20px;
+      border-color: rgba(183, 110, 121, 0.2);
+      box-shadow: 0 0 60px rgba(183, 110, 121, 0.1);
+      animation-delay: 0.5s;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    .breathing-circle__content {
+      text-align: center;
+      z-index: 2;
+      position: relative;
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('/portfolio/new/images/tiare-glow/hero.jpg');
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+
+    .hero__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 248, 245, 0.75) 0%,
+        rgba(245, 225, 230, 0.6) 40%,
+        rgba(183, 110, 121, 0.35) 100%
+      );
+      z-index: 1;
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero__title {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      color: var(--mauve);
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+    }
+
+    .hero__subtitle {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: clamp(0.95rem, 2vw, 1.2rem);
+      color: var(--rose);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 12px;
+    }
+
+    .hero__scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero__scroll-text {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rose);
+      opacity: 0.7;
+    }
+
+    .hero__scroll-line {
+      width: 1px;
+      height: 40px;
+      background: var(--rose);
+      opacity: 0.4;
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { transform: scaleY(1); opacity: 0.4; }
+      50% { transform: scaleY(0.5); opacity: 0.8; }
+    }
+
+    /* ========== SECTION COMMON ========== */
+    section {
+      position: relative;
+    }
+
+    .section-padding {
+      padding: 100px 24px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-weight: 500;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      color: var(--mauve);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    /* ========== PHILOSOPHY ========== */
+    .philosophy {
+      background-color: var(--cream);
+    }
+
+    .philosophy__text {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      line-height: 1.9;
+      color: var(--mauve);
+      font-weight: 300;
+    }
+
+    .philosophy__divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .philosophy__divider-line {
+      width: 60px;
+      height: 1px;
+      background: var(--rose);
+      opacity: 0.4;
+    }
+
+    .philosophy__divider-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--rose);
+      opacity: 0.6;
+    }
+
+    /* ========== SERVICES ========== */
+    .services {
+      background-color: var(--white);
+    }
+
+    .services__grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-top: 56px;
+    }
+
+    .service-card {
+      background: var(--cream);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid transparent;
+      transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+    }
+
+    .service-card:hover {
+      border-color: var(--rose-light);
+      box-shadow: 0 12px 40px rgba(183, 110, 121, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .service-card__image {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+
+    .service-card__body {
+      padding: 28px 24px;
+    }
+
+    .service-card__name {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--mauve);
+      margin-bottom: 8px;
+    }
+
+    .service-card__meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .service-card__duration {
+      font-size: 0.85rem;
+      color: var(--rose);
+      font-weight: 500;
+    }
+
+    .service-card__separator {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--rose-light);
+    }
+
+    .service-card__price {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--rose);
+    }
+
+    /* ========== AMBIANCE ========== */
+    .ambiance {
+      position: relative;
+      height: 70vh;
+      min-height: 400px;
+      overflow: hidden;
+    }
+
+    .ambiance__image {
+      position: absolute;
+      inset: -10%;
+      width: 120%;
+      height: 120%;
+      object-fit: cover;
+      will-change: transform;
+    }
+
+    .ambiance__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(255, 248, 245, 0.15) 0%,
+        rgba(183, 110, 121, 0.1) 100%
+      );
+      z-index: 1;
+    }
+
+    /* ========== TESTIMONIALS ========== */
+    .testimonials {
+      background-color: var(--blush);
+    }
+
+    .testimonials__grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 48px;
+      margin-top: 56px;
+    }
+
+    .testimonial {
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .testimonial__quote-mark {
+      font-family: var(--font-heading);
+      font-size: 4rem;
+      color: var(--rose);
+      opacity: 0.4;
+      line-height: 1;
+      margin-bottom: -12px;
+    }
+
+    .testimonial__text {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--mauve);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .testimonial__author {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--rose);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .testimonial__line {
+      width: 40px;
+      height: 1px;
+      background: var(--rose);
+      opacity: 0.4;
+      margin: 12px auto 0;
+    }
+
+    /* ========== BOOKING CTA ========== */
+    .booking {
+      background: linear-gradient(135deg, var(--rose) 0%, var(--rose-light) 50%, #d4a0a8 100%);
+      text-align: center;
+    }
+
+    .booking .section-title {
+      color: var(--white);
+    }
+
+    .booking__subtitle {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 36px;
+    }
+
+    .booking__btn {
+      display: inline-block;
+      padding: 16px 48px;
+      background: var(--white);
+      color: var(--rose);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 1.05rem;
+      border-radius: 50px;
+      letter-spacing: 0.04em;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .booking__btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(107, 58, 91, 0.25);
+    }
+
+    .booking__info {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .booking__info-item {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+
+    .booking__info-label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      background-color: var(--mauve);
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .footer__brand {
+      font-family: var(--font-heading);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 1.4rem;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    .footer__address {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .footer__social {
+      font-size: 0.85rem;
+      color: var(--rose-light);
+      margin-bottom: 24px;
+      transition: color 0.3s ease;
+    }
+
+    .footer__social:hover {
+      color: var(--white);
+    }
+
+    .footer__divider {
+      width: 40px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.15);
+      margin: 0 auto 20px;
+    }
+
+    .footer__copy {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .footer__agency {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.25);
+      margin-top: 8px;
+    }
+
+    .footer__agency a {
+      color: rgba(183, 110, 121, 0.6);
+      transition: color 0.3s ease;
+    }
+
+    .footer__agency a:hover {
+      color: var(--rose-light);
+    }
+
+    /* ========== REVEAL UTILITY ========== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .section-padding { padding: 72px 20px; }
+      .services__grid { grid-template-columns: 1fr; gap: 24px; }
+      .testimonials__grid { grid-template-columns: 1fr; gap: 40px; }
+      .service-card__image { height: 200px; }
+      .breathing-circle { width: 260px; height: 260px; }
+      .ambiance { height: 50vh; min-height: 320px; }
+      .booking__info { gap: 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .section-padding { padding: 56px 16px; }
+      .breathing-circle { width: 220px; height: 220px; }
+      .hero__subtitle { letter-spacing: 0.06em; }
+      .booking__btn { padding: 14px 36px; font-size: 0.95rem; }
+    }
+
+    /* ========== REDUCED MOTION ========== */
+    @media (prefers-reduced-motion: reduce) {
+      .breathing-circle__ring,
+      .breathing-circle__ring--outer {
+        animation: none !important;
+      }
+
+      .petal {
+        animation: none !important;
+        display: none !important;
+      }
+
+      .hero__scroll-line {
+        animation: none !important;
+      }
+
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .scroll-progress {
+        transition: none !important;
+      }
+
+      @keyframes scrollPulse { 0%, 100% { opacity: 0.4; } }
+    }
+  </style>
+<style>.ifr .loader,.ifr .custom-cursor,.ifr .cursor-dot,.ifr .cursor-ring,.ifr .scroll-progress,.ifr .disclaimer,.ifr .scroll-indicator,.ifr .scroll-hint{display:none!important}.ifr body,.ifr html{overflow:hidden!important}</style>
+<script>if(window.self!==window.top){document.documentElement.classList.add("ifr");var _f=setInterval(function(){document.querySelectorAll("*").forEach(function(e){var s=getComputedStyle(e);if(s.opacity==="0"&&!e.classList.contains("loader")){e.style.opacity="1";if(s.animationName==="none"||s.animationName==="")e.style.transform="none"}});document.body.style.overflow="hidden";window.scrollTo(0,0)},200);setTimeout(function(){clearInterval(_f)},5000)}</script></head>
+<body>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- ============================== HERO ============================== -->
+  <section class="hero" id="hero">
+    <div class="hero__bg"></div>
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <div class="breathing-circle">
+        <div class="breathing-circle__ring breathing-circle__ring--outer"></div>
+        <div class="breathing-circle__ring"></div>
+        <div class="breathing-circle__content">
+          <h1 class="hero__title">Tiare Glow</h1>
+          <p class="hero__subtitle">Sublimez Votre Beaute Naturelle</p>
+        </div>
+      </div>
+    </div>
+    <div class="hero__scroll">
+      <span class="hero__scroll-text">Decouvrir</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ============================== PHILOSOPHY ============================== -->
+  <section class="philosophy section-padding" id="philosophy">
+    <div class="container">
+      <h2 class="section-title reveal">Notre Philosophie</h2>
+      <p class="philosophy__text reveal">
+        Inspire par la fleur de tiare, symbole de beaute polynesienne,
+        notre institut vous offre une parenthese de serenite ou traditions
+        ancestrales et soins modernes se rencontrent. Chaque soin est une
+        invitation au voyage, un moment suspendu entre terre et lagon.
+      </p>
+      <div class="philosophy__divider reveal">
+        <div class="philosophy__divider-line"></div>
+        <div class="philosophy__divider-dot"></div>
+        <div class="philosophy__divider-line"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== SERVICES ============================== -->
+  <section class="services section-padding" id="services">
+    <div class="container">
+      <h2 class="section-title reveal">Nos Soins</h2>
+      <div class="services__grid">
+
+        <article class="service-card reveal">
+          <img
+            src="/portfolio/new/images/tiare-glow/soins.jpg"
+            alt="Soin visage tiare — massage facial aux huiles polynesienne"
+            class="service-card__image"
+            loading="lazy"
+          >
+          <div class="service-card__body">
+            <h3 class="service-card__name">Soin Visage Tiare</h3>
+            <div class="service-card__meta">
+              <span class="service-card__duration">60 min</span>
+              <span class="service-card__separator"></span>
+              <span class="service-card__price">8 500 XPF</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="service-card reveal">
+          <img
+            src="/portfolio/new/images/tiare-glow/detail.jpg"
+            alt="Massage monoi — soin corporel detente huile de monoi"
+            class="service-card__image"
+            loading="lazy"
+          >
+          <div class="service-card__body">
+            <h3 class="service-card__name">Massage Monoi</h3>
+            <div class="service-card__meta">
+              <span class="service-card__duration">90 min</span>
+              <span class="service-card__separator"></span>
+              <span class="service-card__price">12 000 XPF</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="service-card reveal">
+          <img
+            src="/portfolio/new/images/tiare-glow/nature.jpg"
+            alt="Rituel beaute polynesien — soin complet traditions ancestrales"
+            class="service-card__image"
+            loading="lazy"
+          >
+          <div class="service-card__body">
+            <h3 class="service-card__name">Rituel Beaute Polynesien</h3>
+            <div class="service-card__meta">
+              <span class="service-card__duration">2h</span>
+              <span class="service-card__separator"></span>
+              <span class="service-card__price">18 000 XPF</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="service-card reveal">
+          <img
+            src="/portfolio/new/images/tiare-glow/salon.jpg"
+            alt="Manucure et beaute des mains — soins ongles et peau"
+            class="service-card__image"
+            loading="lazy"
+          >
+          <div class="service-card__body">
+            <h3 class="service-card__name">Manucure & Beaute des Mains</h3>
+            <div class="service-card__meta">
+              <span class="service-card__duration">45 min</span>
+              <span class="service-card__separator"></span>
+              <span class="service-card__price">5 500 XPF</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== AMBIANCE ============================== -->
+  <section class="ambiance" id="ambiance">
+    <img
+      src="/portfolio/new/images/tiare-glow/salon.jpg"
+      alt="Ambiance du salon Tiare Glow — espace detente et bien-etre"
+      class="ambiance__image"
+      id="ambianceImage"
+    >
+    <div class="ambiance__overlay"></div>
+    <div class="petals-container">
+      <div class="petal petal--1"></div>
+      <div class="petal petal--2"></div>
+      <div class="petal petal--3"></div>
+      <div class="petal petal--4"></div>
+      <div class="petal petal--5"></div>
+      <div class="petal petal--6"></div>
+      <div class="petal petal--7"></div>
+      <div class="petal petal--8"></div>
+    </div>
+  </section>
+
+  <!-- ============================== TESTIMONIALS ============================== -->
+  <section class="testimonials section-padding" id="testimonials">
+    <div class="container">
+      <h2 class="section-title reveal">Elles Temoignent</h2>
+      <div class="testimonials__grid">
+
+        <div class="testimonial reveal">
+          <div class="testimonial__quote-mark">&ldquo;</div>
+          <p class="testimonial__text">
+            Un moment hors du temps, une peau transformee.
+            Je n'ai jamais ressenti une telle douceur apres un soin visage.
+          </p>
+          <span class="testimonial__author">Marie T.</span>
+          <div class="testimonial__line"></div>
+        </div>
+
+        <div class="testimonial reveal">
+          <div class="testimonial__quote-mark">&ldquo;</div>
+          <p class="testimonial__text">
+            Le massage monoi est une experience inoubliable.
+            On se sent transportee dans un jardin de tiare.
+          </p>
+          <span class="testimonial__author">Vaiana R.</span>
+          <div class="testimonial__line"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== BOOKING CTA ============================== -->
+  <section class="booking section-padding" id="booking">
+    <div class="container">
+      <h2 class="section-title reveal">Offrez-vous un Moment de Beaute</h2>
+      <p class="booking__subtitle reveal">
+        Reservez votre soin et laissez-vous porter par la douceur polynesienne.
+      </p>
+      <div class="reveal">
+        <button class="booking__btn" aria-label="Prendre rendez-vous chez Tiare Glow">
+          Prendre Rendez-vous
+        </button>
+      </div>
+      <div class="booking__info reveal">
+        <div class="booking__info-item">
+          <span class="booking__info-label">Telephone</span>
+          +689 40 00 00 00
+        </div>
+        <div class="booking__info-item">
+          <span class="booking__info-label">Horaires</span>
+          Mar — Sam, 9h — 18h
+        </div>
+        <div class="booking__info-item">
+          <span class="booking__info-label">Adresse</span>
+          Centre Moana, Punaauia
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== FOOTER ============================== -->
+  <footer class="footer">
+    <div class="footer__brand">Tiare Glow</div>
+    <address class="footer__address">
+      Centre Moana, Punaauia<br>
+      Tahiti, Polynesie francaise
+    </address>
+    <a href="https://instagram.com/tiareglow" class="footer__social" target="_blank" rel="noopener">
+      @tiareglow
+    </a>
+    <div class="footer__divider"></div>
+    <p class="footer__copy">&copy; 2026 Tiare Glow. Tous droits reserves.</p>
+    <p class="footer__agency">
+      Site concu par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a>
+    </p>
+  </footer>
+
+  <!-- ============================== SCRIPTS ============================== -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ========== REDUCED MOTION CHECK ========== */
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* ========== LENIS SMOOTH SCROLL ========== */
+      let lenis;
+
+      if (!prefersReducedMotion) {
+        lenis = new Lenis({
+          duration: 1.2,
+          easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+          smoothWheel: true,
+          touchMultiplier: 1.5,
+        });
+
+        lenis.on('scroll', ScrollTrigger.update);
+
+        gsap.ticker.add(function (time) {
+          lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* ========== SCROLL PROGRESS BAR ========== */
+      var progressBar = document.getElementById('scrollProgress');
+
+      function updateProgress() {
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = progress + '%';
+      }
+
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress();
+
+      /* ========== SKIP ANIMATIONS IF REDUCED MOTION ========== */
+      if (prefersReducedMotion) {
+        document.querySelectorAll('.reveal').forEach(function (el) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+        return;
+      }
+
+      /* ========== GSAP REGISTER ========== */
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* ========== HERO ENTRANCE ========== */
+      var heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      heroTl
+        .from('.breathing-circle', {
+          scale: 0.8,
+          opacity: 0,
+          duration: 1.4,
+        })
+        .from('.hero__title', {
+          y: 30,
+          opacity: 0,
+          duration: 1,
+        }, '-=0.8')
+        .from('.hero__subtitle', {
+          y: 20,
+          opacity: 0,
+          duration: 0.8,
+        }, '-=0.5')
+        .from('.hero__scroll', {
+          opacity: 0,
+          y: 15,
+          duration: 0.6,
+        }, '-=0.3');
+
+      /* ========== REVEAL ANIMATIONS ========== */
+      var reveals = gsap.utils.toArray('.reveal');
+
+      reveals.forEach(function (el) {
+        gsap.to(el, {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            once: true,
+          },
+        });
+      });
+
+      /* ========== SERVICE CARDS STAGGER ========== */
+      var cards = gsap.utils.toArray('.service-card');
+
+      if (cards.length) {
+        ScrollTrigger.create({
+          trigger: '.services__grid',
+          start: 'top 82%',
+          once: true,
+          onEnter: function () {
+            gsap.to(cards, {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              stagger: 0.15,
+              ease: 'power2.out',
+            });
+          },
+        });
+      }
+
+      /* ========== AMBIANCE PARALLAX ========== */
+      var ambianceImage = document.getElementById('ambianceImage');
+
+      if (ambianceImage) {
+        gsap.to(ambianceImage, {
+          yPercent: -15,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.ambiance',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        });
+      }
+
+      /* ========== TESTIMONIALS STAGGER ========== */
+      var testimonials = gsap.utils.toArray('.testimonial');
+
+      if (testimonials.length) {
+        ScrollTrigger.create({
+          trigger: '.testimonials__grid',
+          start: 'top 85%',
+          once: true,
+          onEnter: function () {
+            gsap.to(testimonials, {
+              opacity: 1,
+              y: 0,
+              duration: 0.9,
+              stagger: 0.2,
+              ease: 'power2.out',
+            });
+          },
+        });
+      }
+
+      /* ========== BOOKING CTA SCALE ENTRANCE ========== */
+      gsap.from('.booking__btn', {
+        scale: 0.9,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'back.out(1.4)',
+        scrollTrigger: {
+          trigger: '.booking__btn',
+          start: 'top 90%',
+          once: true,
+        },
+      });
+
+      /* ========== PHILOSOPHY DIVIDER ========== */
+      gsap.from('.philosophy__divider-line', {
+        scaleX: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: '.philosophy__divider',
+          start: 'top 90%',
+          once: true,
+        },
+      });
+
+      /* ========== FOOTER FADE ========== */
+      gsap.from('.footer', {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.footer',
+          start: 'top 95%',
+          once: true,
+        },
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

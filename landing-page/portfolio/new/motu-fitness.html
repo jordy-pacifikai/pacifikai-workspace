@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motu Fitness — Salle de Sport Tahiti | PACIFIK'AI Portfolio</title>
+  <meta name="description" content="Motu Fitness — Salle de CrossFit, HIIT, Yoga et Nutrition a Punaauia, Tahiti. Depasse tes limites.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+    :root {
+      --black: #0D0D0D;
+      --lime: #AAFF00;
+      --white: #FAFAFA;
+      --card: #1A1A1A;
+      --card-hover: #222222;
+      --font-heading: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      cursor: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Scroll Progress Bar ── */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: var(--lime);
+      z-index: 9999;
+      transition: none;
+    }
+
+    /* ── Custom Cursor ── */
+    .cursor-dot {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: var(--lime);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 2px solid var(--lime);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9997;
+      transform: translate(-50%, -50%);
+      opacity: 0.5;
+      transition: width 0.2s, height 0.2s, opacity 0.2s;
+    }
+    .cursor-ring.hover {
+      width: 56px;
+      height: 56px;
+      opacity: 1;
+    }
+
+    @media (pointer: coarse) {
+      .cursor-dot, .cursor-ring { display: none; }
+      body { cursor: auto; }
+    }
+
+    /* ── Typography ── */
+    h1, h2, h3, h4, h5 {
+      font-family: var(--font-heading);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      line-height: 1;
+    }
+    p { line-height: 1.65; }
+
+    /* ── Utility ── */
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .lime { color: var(--lime); }
+    .btn-lime {
+      display: inline-block;
+      background: var(--lime);
+      color: var(--black);
+      font-family: var(--font-heading);
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 48px;
+      border: none;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+    }
+    .btn-lime:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(170, 255, 0, 0.3);
+    }
+    .btn-lime::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.2);
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .btn-lime:hover::after { transform: translateX(0); }
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 20px 0;
+      transition: background 0.3s, padding 0.3s;
+    }
+    .nav.scrolled {
+      background: rgba(13, 13, 13, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 12px 0;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+    }
+    .nav-logo span { color: var(--lime); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--lime);
+      transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .nav-links a:hover { color: var(--lime); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: none;
+      padding: 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 28px;
+      height: 2px;
+      background: var(--white);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .nav-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100dvh;
+        flex-direction: column;
+        background: rgba(13, 13, 13, 0.97);
+        backdrop-filter: blur(20px);
+        padding: 100px 40px 40px;
+        gap: 24px;
+        transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .nav-links.open { right: 0; }
+      .nav-links a { font-size: 1.2rem; }
+      .nav-toggle { display: flex; }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      height: 100dvh;
+      min-height: 600px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('/portfolio/new/images/motu-fitness/hero.jpg') center/cover no-repeat;
+      transform: scale(1.08);
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(13, 13, 13, 0.95) 0%,
+        rgba(13, 13, 13, 0.6) 40%,
+        rgba(13, 13, 13, 0.3) 70%,
+        rgba(13, 13, 13, 0.15) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding-bottom: clamp(60px, 10vh, 120px);
+    }
+    .hero-title {
+      font-size: clamp(4rem, 12vw, 11rem);
+      line-height: 0.9;
+      margin-bottom: 16px;
+    }
+    .hero-title .line { display: block; overflow: hidden; }
+    .hero-title .line-inner {
+      display: block;
+      transform: translateY(110%);
+    }
+    .hero-subtitle {
+      font-family: var(--font-heading);
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: var(--lime);
+      letter-spacing: 0.12em;
+      margin-bottom: 32px;
+      opacity: 0;
+    }
+    .hero-cta { opacity: 0; }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+    }
+    .hero-scroll-hint span {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: rgba(250, 250, 250, 0.5);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--lime), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ── Stats Bar ── */
+    .stats {
+      padding: 48px 0;
+      border-top: 1px solid rgba(170, 255, 0, 0.15);
+      border-bottom: 1px solid rgba(170, 255, 0, 0.15);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+    .stat-item { padding: 16px 8px; }
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: var(--lime);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+      color: rgba(250, 250, 250, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── Programs ── */
+    .programs { padding: clamp(80px, 10vw, 140px) 0; }
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--lime);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      margin-bottom: clamp(40px, 5vw, 64px);
+    }
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .program-card {
+      background: var(--card);
+      border: 1px solid transparent;
+      overflow: hidden;
+      transition: border-color 0.4s, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .program-card:hover {
+      border-color: var(--lime);
+      transform: translateY(-4px);
+    }
+    .program-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .program-card:hover .program-img { transform: scale(1.05); }
+    .program-img-wrap { overflow: hidden; }
+    .program-body { padding: 24px; }
+    .program-name {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+    .program-desc {
+      font-size: 0.9rem;
+      color: rgba(250, 250, 250, 0.65);
+      line-height: 1.5;
+    }
+    @media (max-width: 900px) {
+      .programs-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .programs-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── About ── */
+    .about {
+      padding: clamp(80px, 10vw, 140px) 0;
+      border-top: 1px solid rgba(250, 250, 250, 0.06);
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 80px);
+      align-items: center;
+    }
+    .about-heading {
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      line-height: 1.05;
+    }
+    .about-heading-underline {
+      display: inline-block;
+      width: 80px;
+      height: 4px;
+      background: var(--lime);
+      margin-top: 24px;
+    }
+    .about-text {
+      font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+      color: rgba(250, 250, 250, 0.75);
+      line-height: 1.75;
+    }
+    .about-text strong { color: var(--lime); font-weight: 600; }
+    @media (max-width: 768px) {
+      .about-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Schedule ── */
+    .schedule {
+      padding: clamp(80px, 10vw, 140px) 0;
+      border-top: 1px solid rgba(250, 250, 250, 0.06);
+    }
+    .schedule-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .schedule-table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+    .schedule-table th {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 16px 12px;
+      text-align: left;
+      color: var(--lime);
+      border-bottom: 2px solid rgba(170, 255, 0, 0.2);
+    }
+    .schedule-table td {
+      padding: 14px 12px;
+      font-size: 0.88rem;
+      border-bottom: 1px solid rgba(250, 250, 250, 0.06);
+      vertical-align: top;
+    }
+    .schedule-table tr:hover td { background: rgba(170, 255, 0, 0.03); }
+    .class-name {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .class-time {
+      font-size: 0.78rem;
+      color: rgba(250, 250, 250, 0.45);
+    }
+    .popular {
+      position: relative;
+      background: rgba(170, 255, 0, 0.06);
+      border-left: 3px solid var(--lime);
+      padding-left: 12px !important;
+    }
+    .popular-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: var(--lime);
+      color: var(--black);
+      padding: 2px 6px;
+      font-weight: 700;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: clamp(80px, 12vw, 160px) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(170, 255, 0, 0.08), transparent 70%);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .cta-heading {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .cta-sub {
+      font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+      color: rgba(250, 250, 250, 0.6);
+      margin-bottom: 40px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-info {
+      margin-top: 48px;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .cta-info-item {
+      font-size: 0.9rem;
+      color: rgba(250, 250, 250, 0.5);
+    }
+    .cta-info-item strong {
+      display: block;
+      color: var(--white);
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 40px 0;
+      border-top: 1px solid rgba(250, 250, 250, 0.06);
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(250, 250, 250, 0.4);
+    }
+    .footer-copy a { color: var(--lime); text-decoration: none; }
+    .footer-socials {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-socials a {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(250, 250, 250, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .footer-socials a:hover {
+      border-color: var(--lime);
+      background: rgba(170, 255, 0, 0.08);
+    }
+    .footer-socials svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--white);
+      transition: fill 0.3s;
+    }
+    .footer-socials a:hover svg { fill: var(--lime); }
+
+    /* ── Reduced Motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .hero-bg { transform: none !important; }
+      .hero-title .line-inner { transform: none !important; }
+      .hero-subtitle, .hero-cta, .hero-scroll-hint { opacity: 1 !important; }
+      .program-card { opacity: 1 !important; transform: none !important; }
+      .scroll-line { animation: none; }
+    }
+  </style>
+<style>.ifr .loader,.ifr .custom-cursor,.ifr .cursor-dot,.ifr .cursor-ring,.ifr .scroll-progress,.ifr .disclaimer,.ifr .scroll-indicator,.ifr .scroll-hint{display:none!important}.ifr body,.ifr html{overflow:hidden!important}</style>
+<script>if(window.self!==window.top){document.documentElement.classList.add("ifr");var _f=setInterval(function(){document.querySelectorAll("*").forEach(function(e){var s=getComputedStyle(e);if(s.opacity==="0"&&!e.classList.contains("loader")){e.style.opacity="1";if(s.animationName==="none"||s.animationName==="")e.style.transform="none"}});document.body.style.overflow="hidden";window.scrollTo(0,0)},200);setTimeout(function(){clearInterval(_f)},5000)}</script></head>
+<body>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">MOTU<span>.</span>FITNESS</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#programs">Programmes</a></li>
+        <li><a href="#about">A Propos</a></li>
+        <li><a href="#schedule">Planning</a></li>
+        <li><a href="#cta" class="btn-lime" style="padding:10px 28px; font-size:0.85rem;">Essai Gratuit</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <h1 class="hero-title">
+        <span class="line"><span class="line-inner">MOTU</span></span>
+        <span class="line"><span class="line-inner">FITNESS</span></span>
+      </h1>
+      <p class="hero-subtitle" id="heroSub">Depasse tes limites</p>
+      <a href="#cta" class="btn-lime hero-cta" id="heroCta">Essai Gratuit</a>
+    </div>
+    <div class="hero-scroll-hint" id="heroHint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <section class="stats" id="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" data-count="500">0</div>
+          <div class="stat-label">Membres actifs</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="12">0</div>
+          <div class="stat-label">Coachs certifies</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="35">0</div>
+          <div class="stat-label">Cours / Semaine</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="6">0</div>
+          <div class="stat-label">Jours / 7 ouvert</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programs -->
+  <section class="programs" id="programs">
+    <div class="container">
+      <p class="section-label">Nos Programmes</p>
+      <h2 class="section-title">Trouve ton <span class="lime">programme</span></h2>
+      <div class="programs-grid">
+        <div class="program-card">
+          <div class="program-img-wrap">
+            <img src="/portfolio/new/images/motu-fitness/training.jpg" alt="CrossFit training a Motu Fitness" class="program-img" loading="lazy">
+          </div>
+          <div class="program-body">
+            <h3 class="program-name">CrossFit</h3>
+            <p class="program-desc">Mouvements fonctionnels a haute intensite. Force, endurance et communaute dans chaque WOD.</p>
+          </div>
+        </div>
+        <div class="program-card">
+          <div class="program-img-wrap">
+            <img src="/portfolio/new/images/motu-fitness/equipment.jpg" alt="Equipement HIIT" class="program-img" loading="lazy">
+          </div>
+          <div class="program-body">
+            <h3 class="program-name">HIIT</h3>
+            <p class="program-desc">30 minutes, zero excuses. Brule un max de calories avec nos circuits explosifs.</p>
+          </div>
+        </div>
+        <div class="program-card">
+          <div class="program-img-wrap">
+            <img src="/portfolio/new/images/motu-fitness/yoga.jpg" alt="Yoga en plein air Tahiti" class="program-img" loading="lazy">
+          </div>
+          <div class="program-body">
+            <h3 class="program-name">Yoga</h3>
+            <p class="program-desc">Vinyasa et Yin en plein air face au lagon. Mobilite, recuperation, equilibre.</p>
+          </div>
+        </div>
+        <div class="program-card">
+          <div class="program-img-wrap">
+            <img src="/portfolio/new/images/motu-fitness/nutrition.jpg" alt="Plan nutrition" class="program-img" loading="lazy">
+          </div>
+          <div class="program-body">
+            <h3 class="program-name">Nutrition</h3>
+            <p class="program-desc">Plans alimentaires adaptes au Fenua. Suivi personnalise avec nos coaches nutritionnistes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-left">
+          <h2 class="about-heading">Plus qu'une salle.<br><span class="lime">Un mode de vie.</span></h2>
+          <div class="about-heading-underline"></div>
+        </div>
+        <div class="about-right">
+          <p class="about-text">
+            Motu Fitness est ne d'une conviction simple : <strong>le sport doit s'adapter a notre ile, pas l'inverse</strong>.
+            Nos bootcamps tropicaux se font pieds dans le sable a Punaauia, nos sessions sunrise commencent
+            face au Moorea, et notre communaute se retrouve aussi bien sous la barre que autour d'un ma'a apres l'effort.
+            <br><br>
+            Ici, pas de jugement, pas de machines qui prennent la poussiere. Juste des <strong>coachs passionnes</strong>,
+            du materiel fonctionnel, et l'energie collective d'un crew qui se pousse a donner plus chaque jour.
+            Que tu debarques pour la premiere fois ou que tu prepares les Pacific Games, ta place est ici.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Schedule -->
+  <section class="schedule" id="schedule">
+    <div class="container">
+      <p class="section-label">Planning Hebdomadaire</p>
+      <h2 class="section-title">Ta semaine <span class="lime">type</span></h2>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Horaire</th>
+              <th>Lundi</th>
+              <th>Mardi</th>
+              <th>Mercredi</th>
+              <th>Jeudi</th>
+              <th>Vendredi</th>
+              <th>Samedi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="class-name">6h00</span></td>
+              <td class="popular">
+                <span class="class-name">CrossFit WOD <span class="popular-badge">Populaire</span></span>
+                <span class="class-time">6h00 - 7h00</span>
+              </td>
+              <td>
+                <span class="class-name">HIIT Express</span>
+                <span class="class-time">6h00 - 6h30</span>
+              </td>
+              <td class="popular">
+                <span class="class-name">CrossFit WOD <span class="popular-badge">Populaire</span></span>
+                <span class="class-time">6h00 - 7h00</span>
+              </td>
+              <td>
+                <span class="class-name">HIIT Express</span>
+                <span class="class-time">6h00 - 6h30</span>
+              </td>
+              <td class="popular">
+                <span class="class-name">CrossFit WOD <span class="popular-badge">Populaire</span></span>
+                <span class="class-time">6h00 - 7h00</span>
+              </td>
+              <td>
+                <span class="class-name">Bootcamp Plage</span>
+                <span class="class-time">6h30 - 7h30</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="class-name">8h00</span></td>
+              <td>
+                <span class="class-name">Yoga Vinyasa</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td>
+                <span class="class-name">Force & Conditioning</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td>
+                <span class="class-name">Yoga Vinyasa</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td>
+                <span class="class-name">Force & Conditioning</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td>
+                <span class="class-name">Yoga Vinyasa</span>
+                <span class="class-time">8h00 - 9h00</span>
+              </td>
+              <td class="popular">
+                <span class="class-name">CrossFit Open <span class="popular-badge">Populaire</span></span>
+                <span class="class-time">8h00 - 9h30</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="class-name">12h00</span></td>
+              <td>
+                <span class="class-name">HIIT Lunch</span>
+                <span class="class-time">12h00 - 12h30</span>
+              </td>
+              <td>
+                <span class="class-name">Mobilite</span>
+                <span class="class-time">12h00 - 12h45</span>
+              </td>
+              <td>
+                <span class="class-name">HIIT Lunch</span>
+                <span class="class-time">12h00 - 12h30</span>
+              </td>
+              <td>
+                <span class="class-name">Mobilite</span>
+                <span class="class-time">12h00 - 12h45</span>
+              </td>
+              <td>
+                <span class="class-name">HIIT Lunch</span>
+                <span class="class-time">12h00 - 12h30</span>
+              </td>
+              <td>
+                <span class="class-name">Yoga Yin</span>
+                <span class="class-time">10h00 - 11h00</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="class-name">17h30</span></td>
+              <td class="popular">
+                <span class="class-name">CrossFit WOD <span class="popular-badge">Populaire</span></span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td>
+                <span class="class-name">HIIT Power</span>
+                <span class="class-time">17h30 - 18h15</span>
+              </td>
+              <td class="popular">
+                <span class="class-name">CrossFit WOD <span class="popular-badge">Populaire</span></span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td>
+                <span class="class-name">HIIT Power</span>
+                <span class="class-time">17h30 - 18h15</span>
+              </td>
+              <td>
+                <span class="class-name">Friday Throwdown</span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><span class="class-name">19h00</span></td>
+              <td>
+                <span class="class-name">Open Gym</span>
+                <span class="class-time">19h00 - 20h30</span>
+              </td>
+              <td>
+                <span class="class-name">Open Gym</span>
+                <span class="class-time">19h00 - 20h30</span>
+              </td>
+              <td>
+                <span class="class-name">Open Gym</span>
+                <span class="class-time">19h00 - 20h30</span>
+              </td>
+              <td>
+                <span class="class-name">Open Gym</span>
+                <span class="class-time">19h00 - 20h30</span>
+              </td>
+              <td>
+                <span class="class-name">Open Gym</span>
+                <span class="class-time">19h00 - 20h30</span>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="cta">
+    <div class="container">
+      <h2 class="cta-heading">Commence ton <span class="lime">parcours</span></h2>
+      <p class="cta-sub">Premier cours offert, sans engagement. Viens tester l'energie Motu Fitness.</p>
+      <a href="#" class="btn-lime">Reserver mon essai gratuit</a>
+      <div class="cta-info">
+        <div class="cta-info-item">
+          <strong>Adresse</strong>
+          Zone Tamanu, Punaauia
+        </div>
+        <div class="cta-info-item">
+          <strong>Telephone</strong>
+          +689 40 00 00 00
+        </div>
+        <div class="cta-info-item">
+          <strong>Horaires</strong>
+          Lun-Sam 5h30 - 20h30
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p class="footer-copy">&copy; 2026 Motu Fitness — Punaauia, Tahiti. Site par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a></p>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385h-3.047v-3.47h3.047v-2.642c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385c5.736-.9 10.124-5.864 10.124-11.854z"/></svg>
+        </a>
+        <a href="#" aria-label="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      /* ── Reduced Motion Check ── */
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* ── Lenis Smooth Scroll ── */
+      let lenis;
+      if (!prefersReducedMotion) {
+        lenis = new Lenis({
+          duration: 1.2,
+          easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+          smooth: true,
+        });
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+        // Sync Lenis with GSAP ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* ── GSAP Register ── */
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* ── Custom Cursor ── */
+      var cursorDot = document.getElementById('cursorDot');
+      var cursorRing = document.getElementById('cursorRing');
+      var mouseX = 0, mouseY = 0;
+      var ringX = 0, ringY = 0;
+
+      if (!window.matchMedia('(pointer: coarse)').matches) {
+        document.addEventListener('mousemove', function (e) {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          cursorDot.style.left = mouseX + 'px';
+          cursorDot.style.top = mouseY + 'px';
+        });
+
+        function animateRing() {
+          ringX += (mouseX - ringX) * 0.15;
+          ringY += (mouseY - ringY) * 0.15;
+          cursorRing.style.left = ringX + 'px';
+          cursorRing.style.top = ringY + 'px';
+          requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        // Hover effect on interactive elements
+        var hoverTargets = document.querySelectorAll('a, button, .program-card');
+        hoverTargets.forEach(function (el) {
+          el.addEventListener('mouseenter', function () { cursorRing.classList.add('hover'); });
+          el.addEventListener('mouseleave', function () { cursorRing.classList.remove('hover'); });
+        });
+      }
+
+      /* ── Scroll Progress Bar ── */
+      var scrollProgress = document.getElementById('scrollProgress');
+      window.addEventListener('scroll', function () {
+        var scrollTop = window.scrollY;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        var progress = (scrollTop / docHeight) * 100;
+        scrollProgress.style.width = progress + '%';
+      });
+
+      /* ── Navigation ── */
+      var nav = document.getElementById('nav');
+      var navToggle = document.getElementById('navToggle');
+      var navLinks = document.getElementById('navLinks');
+
+      window.addEventListener('scroll', function () {
+        nav.classList.toggle('scrolled', window.scrollY > 60);
+      });
+
+      navToggle.addEventListener('click', function () {
+        navToggle.classList.toggle('active');
+        navLinks.classList.toggle('open');
+      });
+
+      // Close mobile nav on link click
+      navLinks.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          navToggle.classList.remove('active');
+          navLinks.classList.remove('open');
+        });
+      });
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            if (lenis) {
+              lenis.scrollTo(target, { offset: -60 });
+            } else {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      /* ── Skip Animations if Reduced Motion ── */
+      if (prefersReducedMotion) {
+        // Make everything visible immediately
+        document.querySelectorAll('.hero-title .line-inner').forEach(function (el) {
+          el.style.transform = 'none';
+        });
+        document.getElementById('heroSub').style.opacity = '1';
+        document.getElementById('heroCta').style.opacity = '1';
+        document.getElementById('heroHint').style.opacity = '1';
+        document.querySelectorAll('.program-card').forEach(function (el) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+        // Set counters to final values
+        document.querySelectorAll('.stat-number').forEach(function (el) {
+          var target = parseInt(el.getAttribute('data-count'));
+          el.textContent = target === 500 ? '500+' : target.toString();
+        });
+        return; // Exit — no GSAP animations
+      }
+
+      /* ── Hero Animations ── */
+      var heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      heroTl
+        .to('.hero-title .line-inner', {
+          y: '0%',
+          duration: 1.2,
+          stagger: 0.15,
+          delay: 0.3,
+        })
+        .to('#heroSub', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
+        .to('#heroCta', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
+        .to('#heroHint', { opacity: 1, duration: 0.6 }, '-=0.3');
+
+      // Parallax hero bg
+      gsap.to('#heroBg', {
+        yPercent: 20,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
+
+      /* ── Counter Animation ── */
+      var statNumbers = document.querySelectorAll('.stat-number');
+      statNumbers.forEach(function (el) {
+        var target = parseInt(el.getAttribute('data-count'));
+        var suffix = target === 500 ? '+' : '';
+        var obj = { val: 0 };
+
+        gsap.to(obj, {
+          val: target,
+          duration: 2,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            once: true,
+          },
+          onUpdate: function () {
+            el.textContent = Math.round(obj.val) + suffix;
+          },
+        });
+      });
+
+      /* ── Programs Stagger ── */
+      gsap.to('.program-card', {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.programs-grid',
+          start: 'top 80%',
+          once: true,
+        },
+      });
+
+      /* ── About Section Reveal ── */
+      gsap.from('.about-left', {
+        x: -60,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.about-grid',
+          start: 'top 75%',
+          once: true,
+        },
+      });
+
+      gsap.from('.about-right', {
+        x: 60,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.about-grid',
+          start: 'top 75%',
+          once: true,
+        },
+      });
+
+      gsap.from('.about-heading-underline', {
+        scaleX: 0,
+        transformOrigin: 'left center',
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.about-heading-underline',
+          start: 'top 85%',
+          once: true,
+        },
+      });
+
+      /* ── Schedule Reveal ── */
+      gsap.from('.schedule-table', {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.schedule',
+          start: 'top 75%',
+          once: true,
+        },
+      });
+
+      /* ── CTA Section ── */
+      gsap.from('.cta-heading', {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.cta-section',
+          start: 'top 80%',
+          once: true,
+        },
+      });
+
+      gsap.from('.cta-sub', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.cta-section',
+          start: 'top 80%',
+          once: true,
+        },
+      });
+
+      /* ── Section Labels Reveal (clip-path) ── */
+      document.querySelectorAll('.section-label').forEach(function (label) {
+        gsap.from(label, {
+          clipPath: 'inset(0 100% 0 0)',
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: label,
+            start: 'top 88%',
+            once: true,
+          },
+        });
+      });
+
+      /* ── Section Titles Reveal ── */
+      document.querySelectorAll('.section-title').forEach(function (title) {
+        gsap.from(title, {
+          y: 40,
+          opacity: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: title,
+            start: 'top 85%',
+            once: true,
+          },
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>

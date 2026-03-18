@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}. {{TAGLINE}}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family={{FONT_DISPLAY}}:wght@400;500;600;700&family={{FONT_BODY}}:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ================================================================
+       SPORT V3 — Zen Wellness Pastel
+       Soft lavender, mindful, premium wellness.
+       BAB framework: Before > After > Bridge
+       Gradient mesh + 3D tilt cards + breathing circle
+       ================================================================ */
+
+    /* -- Reset & Base -- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --text: {{COLOR_TEXT}};
+      --pop: #F97066;
+      --accent-soft: rgba(109, 40, 217, 0.08);
+      --accent-mid: rgba(109, 40, 217, 0.15);
+      --card-bg: #FFFFFF;
+      --card-border: rgba(109, 40, 217, 0.1);
+      --muted: #7C7291;
+      --font-display: '{{FONT_DISPLAY}}', 'Clash Display', sans-serif;
+      --font-body: '{{FONT_BODY}}', 'Satoshi', sans-serif;
+      --radius: 16px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.7;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    /* -- Disclaimer & Loader -- */
+    .disclaimer{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--accent);color:#fff;font-size:11px;letter-spacing:.06em;text-align:center;padding:10px 24px;font-weight:500}
+    .disclaimer a{color:#fff;text-decoration:underline;font-weight:600}
+    .loader{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+    .loader-inner{text-align:center}
+    .loader-logo{font-family:var(--font-display);font-size:clamp(28px,5vw,48px);font-weight:700;letter-spacing:.04em;color:var(--accent);opacity:0}
+    .loader-bar{width:120px;height:2px;background:var(--accent-soft);margin:24px auto 0;overflow:hidden;border-radius:2px}
+    .loader-bar-fill{width:100%;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;border-radius:2px}
+
+    /* -- Scroll Progress -- */
+    .scroll-progress{position:fixed;top:38px;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--pop));z-index:9998;transition:none}
+
+    /* -- Gradient Mesh Background -- */
+    .gradient-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 20%, rgba(109,40,217,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 90% 80%, rgba(249,112,102,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 50% 50%, rgba(109,40,217,0.04) 0%, transparent 70%),
+        var(--bg);
+      animation: meshShift 20s ease-in-out infinite alternate;
+    }
+    @keyframes meshShift {
+      0% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+      50% { background-position: 20% 30%, 80% 60%, 40% 70%; }
+      100% { background-position: 10% 60%, 90% 20%, 60% 40%; }
+    }
+
+    /* -- Container -- */
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* -- Typography -- */
+    h1, h2, h3, h4, h5 { font-family: var(--font-display); line-height: 1.1; color: var(--text); }
+    p { line-height: 1.7; }
+    .accent { color: var(--accent); }
+    .pop { color: var(--pop); }
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: clamp(16px, 3vw, 24px);
+      letter-spacing: -0.02em;
+    }
+    .section-desc {
+      font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.8;
+    }
+
+    /* -- Navigation -- */
+    .nav {
+      position: fixed;
+      top: 38px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1rem 2rem;
+      background: rgba(245, 240, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: padding 0.3s ease, box-shadow 0.3s ease;
+    }
+    .nav.scrolled {
+      padding: 0.6rem 2rem;
+      box-shadow: 0 4px 30px rgba(109,40,217,0.06);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.3rem;
+      letter-spacing: -0.01em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-links a {
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 10px 24px;
+      border-radius: 60px;
+      font-weight: 600;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(109,40,217,0.2); }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; width: 28px; cursor: pointer; background: none; border: none; }
+    .nav-toggle span { display: block; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
+    .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: var(--bg);
+        flex-direction: column;
+        justify-content: center;
+        gap: 28px;
+        transition: right 0.4s cubic-bezier(0.22,1,0.36,1);
+        box-shadow: -8px 0 40px rgba(0,0,0,0.08);
+      }
+      .nav-links.open { right: 0; }
+      .nav-toggle { display: flex; }
+    }
+
+    /* -- Buttons -- */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 16px 36px;
+      border-radius: 60px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(109,40,217,0.25); }
+    .btn-primary svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--accent);
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 16px 36px;
+      border-radius: 60px;
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+    .btn-outline:hover { background: var(--accent); color: #fff; }
+
+    /* ══════════════════════════════════════
+       HERO — Centered, lavender gradient mesh
+       ══════════════════════════════════════ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: clamp(140px, 18vh, 200px) 24px clamp(80px, 12vh, 120px);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-content { max-width: 800px; position: relative; z-index: 2; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 60px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .hero-badge svg { width: 16px; height: 16px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .hero-title {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .hero-title .line { display: block; overflow: hidden; }
+    .hero-title .line-inner { display: block; transform: translateY(110%); }
+    .hero-desc {
+      font-size: clamp(1rem, 1.5vw, 1.15rem);
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    /* Breathing Circle */
+    .breathing-circle {
+      position: absolute;
+      width: clamp(300px, 40vw, 500px);
+      height: clamp(300px, 40vw, 500px);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(109,40,217,0.08), rgba(249,112,102,0.04), transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: breathe 6s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+    @keyframes breathe {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+    }
+
+    /* ══════════════════════════════════════
+       BAB — Before / After / Bridge
+       ══════════════════════════════════════ */
+    .bab {
+      padding: clamp(80px, 10vw, 140px) 0;
+      position: relative;
+    }
+    .bab-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .bab-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .bab-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 32px;
+      right: 32px;
+      height: 3px;
+      border-radius: 0 0 3px 3px;
+    }
+    .bab-card:nth-child(1)::before { background: var(--muted); }
+    .bab-card:nth-child(2)::before { background: var(--accent); }
+    .bab-card:nth-child(3)::before { background: var(--pop); }
+    .bab-step {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+    }
+    .bab-card:nth-child(1) .bab-step { color: var(--muted); }
+    .bab-card:nth-child(2) .bab-step { color: var(--accent); }
+    .bab-card:nth-child(3) .bab-step { color: var(--pop); }
+    .bab-heading {
+      font-size: clamp(1.3rem, 2vw, 1.6rem);
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+    .bab-text {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .bab-grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+
+    /* ══════════════════════════════════════
+       PROGRAMS — 3D Tilt Cards
+       ══════════════════════════════════════ */
+    .programs {
+      padding: clamp(80px, 10vw, 140px) 0;
+    }
+    .programs-header {
+      text-align: center;
+      margin-bottom: clamp(48px, 6vw, 72px);
+    }
+    .programs-header .section-desc { margin: 0 auto; }
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .tilt-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: box-shadow 0.4s ease;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    .tilt-card:hover {
+      box-shadow: 0 20px 60px rgba(109,40,217,0.12);
+    }
+    .tilt-card-inner {
+      transition: transform 0.15s ease-out;
+      transform-style: preserve-3d;
+    }
+    .tilt-card-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+    .tilt-card-body {
+      padding: 24px;
+    }
+    .tilt-card-tag {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 60px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .tilt-card-tag.pop { background: rgba(249,112,102,0.1); color: var(--pop); }
+    .tilt-card-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .tilt-card-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .tilt-card-price {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    @media (max-width: 1024px) {
+      .programs-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .programs-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ══════════════════════════════════════
+       SCHEDULE — Weekly Table
+       ══════════════════════════════════════ */
+    .schedule {
+      padding: clamp(80px, 10vw, 140px) 0;
+      background: var(--card-bg);
+    }
+    .schedule-header {
+      text-align: center;
+      margin-bottom: clamp(40px, 5vw, 64px);
+    }
+    .schedule-header .section-desc { margin: 0 auto; }
+    .schedule-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .schedule-table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .schedule-table th {
+      background: var(--accent);
+      color: #fff;
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .schedule-table td {
+      padding: 16px;
+      border-bottom: 1px solid var(--card-border);
+      vertical-align: top;
+    }
+    .schedule-table tr:last-child td { border-bottom: none; }
+    .class-name { font-weight: 600; display: block; }
+    .class-time { font-size: 0.78rem; color: var(--muted); display: block; margin-top: 4px; }
+    .popular-badge {
+      display: inline-block;
+      background: var(--pop);
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 60px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    /* ══════════════════════════════════════
+       CTA — Full accent band
+       ══════════════════════════════════════ */
+    .cta-section {
+      padding: clamp(80px, 12vw, 160px) 0;
+      background: var(--accent);
+      color: #fff;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-mesh {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 70% at 20% 30%, rgba(249,112,102,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .cta-heading {
+      font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+      font-weight: 700;
+      margin-bottom: 16px;
+      position: relative;
+      letter-spacing: -0.02em;
+    }
+    .cta-sub {
+      font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 40px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      color: var(--accent);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 18px 44px;
+      border-radius: 60px;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
+    .cta-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .cta-info {
+      margin-top: 56px;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .cta-info-item { font-size: 0.9rem; color: rgba(255,255,255,0.7); }
+    .cta-info-item strong {
+      display: block;
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      opacity: 0.7;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════ */
+    .footer {
+      padding: 48px 0;
+      background: var(--text);
+      color: #fff;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-brand { font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; }
+    .footer-brand span { color: var(--pop); }
+    .footer-copy { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+    .footer-copy a { color: var(--pop); text-decoration: none; }
+    .footer-socials { display: flex; gap: 12px; }
+    .footer-socials a {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .footer-socials a:hover { border-color: var(--pop); background: rgba(249,112,102,0.1); }
+    .footer-socials svg { width: 16px; height: 16px; fill: #fff; transition: fill 0.3s; }
+    .footer-socials a:hover svg { fill: var(--pop); }
+
+    /* -- Reveal utility -- */
+    .reveal { opacity: 0; transform: translateY(40px); }
+
+    /* -- Reduced Motion -- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .gradient-mesh { animation: none !important; }
+      .breathing-circle { animation: none !important; }
+      .hero-title .line-inner { transform: none !important; }
+      .hero-badge, .hero-desc, .hero-actions { opacity: 1 !important; transform: none !important; }
+      .tilt-card, .bab-card, .reveal { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Gradient Mesh Background -->
+  <div class="gradient-mesh"></div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    Prototype cree par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a> — Site web professionnel a 100 000 XPF
+  </div>
+
+  <!-- Loader -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">{{BUSINESS_NAME}}</div>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">{{BUSINESS_NAME}}<span>.</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#programs">Programmes</a></li>
+        <li><a href="#schedule">Planning</a></li>
+        <li><a href="#cta" class="nav-cta">Reserver</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       HERO — Centered, breathing circle
+       ══════════════════════════════════════ -->
+  <section class="hero" id="hero">
+    <div class="breathing-circle"></div>
+    <div class="hero-content">
+      <div class="hero-badge" id="heroBadge">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        {{SUBSECTOR}} a {{CITY}}
+      </div>
+      <h1 class="hero-title">
+        <span class="line"><span class="line-inner">Trouvez votre</span></span>
+        <span class="line"><span class="line-inner"><span class="accent">equilibre</span>,</span></span>
+        <span class="line"><span class="line-inner">trouvez-<span class="pop">vous</span>.</span></span>
+      </h1>
+      <p class="hero-desc" id="heroDesc">
+        {{TAGLINE}}. Chez {{BUSINESS_NAME}}, chaque seance est un voyage vers vous-meme. Respirer, bouger, exister.
+      </p>
+      <div class="hero-actions" id="heroActions">
+        <a href="#cta" class="btn-primary">
+          Decouvrir
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#programs" class="btn-outline">Nos seances</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       BAB — Before / After / Bridge
+       ══════════════════════════════════════ -->
+  <section class="bab" id="bab">
+    <div class="container">
+      <div class="bab-grid">
+        <div class="bab-card">
+          <p class="bab-step">Avant</p>
+          <h3 class="bab-heading">Fatigue, stress, deconnexion.</h3>
+          <p class="bab-text">Vous courez apres le temps. Votre corps accumule les tensions, votre esprit s'emballe. Le bien-etre est devenu un mot vide — vous avez besoin d'un espace pour souffler, pas d'un enieme programme generique.</p>
+        </div>
+        <div class="bab-card">
+          <p class="bab-step">Apres</p>
+          <h3 class="bab-heading">Calme, energie, alignement.</h3>
+          <p class="bab-text">Imaginez sortir de chaque seance plus legere. Le souffle pose, le corps delie, l'esprit clair. Un rituel hebdomadaire qui vous reconnecte a vous-meme — et ca se voit dans votre quotidien a {{CITY}}.</p>
+        </div>
+        <div class="bab-card">
+          <p class="bab-step">Le Pont</p>
+          <h3 class="bab-heading">{{BUSINESS_NAME}} vous y emmene.</h3>
+          <p class="bab-text">Des seances concues pour votre rythme, encadrees par des coachs certifies, dans un cadre qui respire la serenite. Pas de performance forcee — juste votre progression, a votre tempo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       PROGRAMS — 4 Cards with 3D Tilt
+       ══════════════════════════════════════ -->
+  <section class="programs" id="programs">
+    <div class="container">
+      <div class="programs-header">
+        <p class="section-label">Nos Seances</p>
+        <h2 class="section-title">Choisissez votre <span class="accent">chemin</span>.</h2>
+        <p class="section-desc">Chaque programme est pense pour vous accompagner, pas vous forcer. Trouvez celui qui resonne avec vous.</p>
+      </div>
+      <div class="programs-grid">
+        <article class="tilt-card" data-tilt>
+          <img src="{{IMAGE_1}}" alt="{{SERVICE_1}}" class="tilt-card-img" loading="lazy">
+          <div class="tilt-card-body">
+            <span class="tilt-card-tag pop">Populaire</span>
+            <h3 class="tilt-card-name">{{SERVICE_1}}</h3>
+            <p class="tilt-card-desc">Mouvement doux et respiration profonde pour retrouver calme et souplesse.</p>
+            <span class="tilt-card-price">{{PRICE_1}}</span>
+          </div>
+        </article>
+        <article class="tilt-card" data-tilt>
+          <img src="{{IMAGE_2}}" alt="{{SERVICE_2}}" class="tilt-card-img" loading="lazy">
+          <div class="tilt-card-body">
+            <span class="tilt-card-tag">Bien-etre</span>
+            <h3 class="tilt-card-name">{{SERVICE_2}}</h3>
+            <p class="tilt-card-desc">Renforcement en douceur, equilibre et conscience corporelle.</p>
+            <span class="tilt-card-price">{{PRICE_2}}</span>
+          </div>
+        </article>
+        <article class="tilt-card" data-tilt>
+          <img src="{{IMAGE_3}}" alt="{{SERVICE_3}}" class="tilt-card-img" loading="lazy">
+          <div class="tilt-card-body">
+            <span class="tilt-card-tag">Energie</span>
+            <h3 class="tilt-card-name">{{SERVICE_3}}</h3>
+            <p class="tilt-card-desc">Cardio maîtrise et dynamisme, pour celles et ceux qui veulent se depasser avec serenite.</p>
+            <span class="tilt-card-price">{{PRICE_3}}</span>
+          </div>
+        </article>
+        <article class="tilt-card" data-tilt>
+          <img src="{{IMAGE_4}}" alt="{{SERVICE_4}}" class="tilt-card-img" loading="lazy">
+          <div class="tilt-card-body">
+            <span class="tilt-card-tag">Premium</span>
+            <h3 class="tilt-card-name">{{SERVICE_4}}</h3>
+            <p class="tilt-card-desc">Coaching prive, programme sur-mesure adapte a vos besoins uniques.</p>
+            <span class="tilt-card-price">{{PRICE_4}}</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SCHEDULE — Weekly planning
+       ══════════════════════════════════════ -->
+  <section class="schedule" id="schedule">
+    <div class="container">
+      <div class="schedule-header">
+        <p class="section-label">Planning</p>
+        <h2 class="section-title">Votre semaine <span class="accent">zen</span></h2>
+        <p class="section-desc">Tous les cours sont inclus. Venez quand vous le sentez, repartez plus legere.</p>
+      </div>
+      <div class="schedule-table-wrap reveal">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Horaire</th>
+              <th>Lundi</th>
+              <th>Mardi</th>
+              <th>Mercredi</th>
+              <th>Jeudi</th>
+              <th>Vendredi</th>
+              <th>Samedi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="class-name">6h30</span></td>
+              <td>
+                <span class="class-name">{{SERVICE_1}} <span class="popular-badge">Top</span></span>
+                <span class="class-time">6h30 - 7h30</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_2}}</span>
+                <span class="class-time">6h30 - 7h15</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_1}}</span>
+                <span class="class-time">6h30 - 7h30</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_3}}</span>
+                <span class="class-time">6h30 - 7h15</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_1}} <span class="popular-badge">Top</span></span>
+                <span class="class-time">6h30 - 7h30</span>
+              </td>
+              <td>
+                <span class="class-name">Sunrise Session</span>
+                <span class="class-time">7h00 - 8h00</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="class-name">9h00</span></td>
+              <td>
+                <span class="class-name">{{SERVICE_3}}</span>
+                <span class="class-time">9h00 - 10h00</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_4}}</span>
+                <span class="class-time">9h00 - 9h45</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_3}}</span>
+                <span class="class-time">9h00 - 10h00</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_4}}</span>
+                <span class="class-time">9h00 - 9h45</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_2}}</span>
+                <span class="class-time">9h00 - 9h45</span>
+              </td>
+              <td>
+                <span class="class-name">Open Flow <span class="popular-badge">Top</span></span>
+                <span class="class-time">9h00 - 10h30</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="class-name">17h30</span></td>
+              <td>
+                <span class="class-name">{{SERVICE_2}} <span class="popular-badge">Top</span></span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_1}}</span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_2}}</span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td>
+                <span class="class-name">{{SERVICE_1}}</span>
+                <span class="class-time">17h30 - 18h30</span>
+              </td>
+              <td>
+                <span class="class-name">Sound Healing</span>
+                <span class="class-time">17h30 - 18h15</span>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       CTA — Full accent band
+       ══════════════════════════════════════ -->
+  <section class="cta-section" id="cta">
+    <div class="cta-mesh"></div>
+    <div class="container">
+      <h2 class="cta-heading reveal">Prete a <span style="opacity:0.7">respirer</span> ?</h2>
+      <p class="cta-sub reveal">Premiere seance offerte, sans engagement. Venez decouvrir l'energie {{BUSINESS_NAME}} a {{CITY}}.</p>
+      <div class="reveal">
+        <a href="#" class="cta-btn">
+          Reserver ma seance
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="cta-info reveal">
+        <div class="cta-info-item">
+          <strong>Adresse</strong>
+          {{ADDRESS}}
+        </div>
+        <div class="cta-info-item">
+          <strong>Telephone</strong>
+          {{PHONE}}
+        </div>
+        <div class="cta-info-item">
+          <strong>Horaires</strong>
+          {{HOURS}}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">{{BUSINESS_NAME}}<span>.</span></div>
+      <p class="footer-copy">&copy; 2026 {{BUSINESS_NAME}} — {{CITY}}. Site par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a></p>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385h-3.047v-3.47h3.047v-2.642c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385c5.736-.9 10.124-5.864 10.124-11.854z"/></svg>
+        </a>
+        <a href="#" aria-label="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      /* -- Loader -- */
+      var loaderTl = gsap.timeline();
+      loaderTl
+        .to('.loader-logo', { opacity: 1, duration: 0.6, ease: 'power2.out' })
+        .to('.loader-bar-fill', { scaleX: 1, duration: 1.2, ease: 'power2.inOut' }, 0.3)
+        .to('.loader', { yPercent: -100, duration: 0.8, ease: 'power3.inOut' }, 1.8);
+
+      /* -- Reduced Motion Check -- */
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* -- Lenis Smooth Scroll -- */
+      var lenis;
+      if (!prefersReducedMotion) {
+        lenis = new Lenis({
+          duration: 1.4,
+          easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+          smoothWheel: true,
+        });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* -- GSAP Register -- */
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* -- Scroll Progress Bar -- */
+      var scrollProgress = document.getElementById('scrollProgress');
+      window.addEventListener('scroll', function () {
+        var scrollTop = window.scrollY;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 0) {
+          scrollProgress.style.width = ((scrollTop / docHeight) * 100) + '%';
+        }
+      }, { passive: true });
+
+      /* -- Navigation -- */
+      var nav = document.getElementById('nav');
+      var navToggle = document.getElementById('navToggle');
+      var navLinks = document.getElementById('navLinks');
+
+      window.addEventListener('scroll', function () {
+        nav.classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
+
+      navToggle.addEventListener('click', function () {
+        navToggle.classList.toggle('active');
+        navLinks.classList.toggle('open');
+      });
+
+      navLinks.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          navToggle.classList.remove('active');
+          navLinks.classList.remove('open');
+        });
+      });
+
+      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            if (lenis) { lenis.scrollTo(target, { offset: -80 }); }
+            else { target.scrollIntoView({ behavior: 'smooth' }); }
+          }
+        });
+      });
+
+      /* -- Skip Animations if Reduced Motion -- */
+      if (prefersReducedMotion) {
+        document.querySelectorAll('.hero-title .line-inner').forEach(function (el) { el.style.transform = 'none'; });
+        document.querySelectorAll('.hero-badge, .hero-desc, .hero-actions, .reveal, .tilt-card, .bab-card').forEach(function (el) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+        return;
+      }
+
+      /* ══════════════════════════════
+         HERO — Text reveals
+         ══════════════════════════════ */
+      var heroTl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 2.0 });
+      heroTl
+        .to('.hero-title .line-inner', { y: '0%', duration: 1, stagger: 0.12 })
+        .to('#heroBadge', { opacity: 1, y: 0, duration: 0.7 }, '-=0.6')
+        .to('#heroDesc', { opacity: 1, y: 0, duration: 0.7 }, '-=0.4')
+        .to('#heroActions', { opacity: 1, y: 0, duration: 0.7 }, '-=0.3');
+
+      /* ══════════════════════════════
+         BAB — Card stagger
+         ══════════════════════════════ */
+      gsap.to('.bab-card', {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: '.bab-grid', start: 'top 82%', once: true },
+      });
+
+      /* ══════════════════════════════
+         PROGRAMS — 3D Tilt Cards
+         ══════════════════════════════ */
+      gsap.to('.tilt-card', {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: '.programs-grid', start: 'top 82%', once: true },
+      });
+
+      /* 3D Tilt effect */
+      document.querySelectorAll('[data-tilt]').forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+          var rect = card.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          var centerX = rect.width / 2;
+          var centerY = rect.height / 2;
+          var rotateX = ((y - centerY) / centerY) * -8;
+          var rotateY = ((x - centerX) / centerX) * 8;
+          card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale3d(1.02, 1.02, 1.02)';
+        });
+        card.addEventListener('mouseleave', function () {
+          card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        });
+      });
+
+      /* ══════════════════════════════
+         GENERIC REVEALS
+         ══════════════════════════════ */
+      gsap.utils.toArray('.reveal').forEach(function (el) {
+        gsap.to(el, {
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+        });
+      });
+
+      /* ══════════════════════════════
+         SECTION LABELS — Clip reveal
+         ══════════════════════════════ */
+      document.querySelectorAll('.section-label').forEach(function (label) {
+        gsap.from(label, {
+          clipPath: 'inset(0 100% 0 0)',
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: label, start: 'top 90%', once: true },
+        });
+      });
+
+      /* ══════════════════════════════
+         SECTION TITLES — Rise up
+         ══════════════════════════════ */
+      document.querySelectorAll('.section-title').forEach(function (title) {
+        gsap.from(title, {
+          y: 40,
+          opacity: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: title, start: 'top 86%', once: true },
+        });
+      });
+
+      /* ══════════════════════════════
+         CTA & FOOTER
+         ══════════════════════════════ */
+      gsap.from('.cta-heading', {
+        y: 50, opacity: 0, duration: 1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.cta-section', start: 'top 80%', once: true },
+      });
+
+      gsap.from('.footer', {
+        opacity: 0, y: 20, duration: 0.8, ease: 'power2.out',
+        scrollTrigger: { trigger: '.footer', start: 'top 95%', once: true },
+      });
+
+    })();
+  </script>
+</body>
+</html>

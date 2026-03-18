@@ -1,0 +1,184 @@
+{
+  "meta": {
+    "templateId": "chatbot-client",
+    "templateName": "Chatbot Client IA",
+    "description": "Chatbot intelligent avec RAG, memoire conversationnelle et personnalite adaptee",
+    "category": "customer-service",
+    "tier": "starter",
+    "variables": [
+      "CLIENT_NAME",
+      "CLIENT_SLUG",
+      "PERSONALITY",
+      "TONE",
+      "FAQ_TABLE",
+      "SUPABASE_SCHEMA"
+    ]
+  },
+  "name": "{{CLIENT_NAME}} - Chatbot Client",
+  "nodes": [
+    {
+      "id": "webhook-chat",
+      "name": "Chat Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "parameters": {
+        "path": "{{CLIENT_SLUG}}-chat",
+        "httpMethod": "POST",
+        "responseMode": "responseNode"
+      }
+    },
+    {
+      "id": "extract-message",
+      "name": "Extract Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300],
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\nconst sessionId = body.sessionId || 'anonymous-' + Date.now();\nconst message = body.message || '';\nconst userId = body.userId || null;\n\nreturn { sessionId, message, userId, timestamp: new Date().toISOString() };"
+      }
+    },
+    {
+      "id": "fetch-history",
+      "name": "Fetch Conversation History",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://{{SUPABASE_HOST}}/rest/v1/rpc/get_conversation_history",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "{{SUPABASE_ANON_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{SUPABASE_ANON_KEY}}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ p_session_id: $json.sessionId, p_limit: 10 }) }}"
+      }
+    },
+    {
+      "id": "search-faq",
+      "name": "Search FAQ (RAG)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 500],
+      "parameters": {
+        "method": "POST",
+        "url": "https://{{SUPABASE_HOST}}/rest/v1/rpc/search_faq",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "{{SUPABASE_ANON_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{SUPABASE_ANON_KEY}}"},
+            {"name": "Content-Type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ query_text: $('Extract Message').first().json.message, match_count: 3 }) }}"
+      }
+    },
+    {
+      "id": "merge-context",
+      "name": "Merge Context",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [840, 400],
+      "parameters": {
+        "mode": "combine",
+        "mergeByPosition": "multiplex"
+      }
+    },
+    {
+      "id": "prepare-prompt",
+      "name": "Prepare Claude Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 400],
+      "parameters": {
+        "jsCode": "const message = $('Extract Message').first().json.message;\nconst sessionId = $('Extract Message').first().json.sessionId;\nconst history = $('Fetch Conversation History').first().json || [];\nconst faqResults = $('Search FAQ (RAG)').first().json || [];\n\nconst systemPrompt = `Tu es l'assistant virtuel de {{CLIENT_NAME}}.\n\nPERSONNALITE: {{PERSONALITY}}\nTON: {{TONE}}\n\nREGLES:\n1. Reponds toujours en francais\n2. Sois concis (3-4 phrases max)\n3. Si tu ne sais pas, dis-le et propose de contacter un humain\n4. Utilise les informations FAQ ci-dessous si pertinentes\n\nFAQ PERTINENTE:\n${faqResults.map(f => `Q: ${f.question}\\nR: ${f.answer}`).join('\\n\\n')}\n\nHISTORIQUE CONVERSATION:\n${history.map(h => `${h.role}: ${h.content}`).join('\\n')}`;\n\nconst claudeBody = {\n  model: 'claude-sonnet-4-5-20250929',\n  max_tokens: 500,\n  messages: [\n    ...history.map(h => ({ role: h.role, content: h.content })),\n    { role: 'user', content: message }\n  ],\n  system: systemPrompt\n};\n\nreturn { claudeBody: JSON.stringify(claudeBody), sessionId, message };"
+      }
+    },
+    {
+      "id": "claude-response",
+      "name": "Claude - Generate Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1240, 400],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "x-api-key", "value": "{{ANTHROPIC_API_KEY}}"},
+            {"name": "anthropic-version", "value": "2023-06-01"},
+            {"name": "content-type", "value": "application/json"}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.claudeBody }}"
+      }
+    },
+    {
+      "id": "parse-response",
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1440, 400],
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst sessionId = $('Prepare Claude Prompt').first().json.sessionId;\nconst userMessage = $('Prepare Claude Prompt').first().json.message;\nconst assistantMessage = response.content[0].text;\n\nreturn { sessionId, userMessage, assistantMessage };"
+      }
+    },
+    {
+      "id": "log-conversation",
+      "name": "Log Conversation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1640, 400],
+      "parameters": {
+        "method": "POST",
+        "url": "https://{{SUPABASE_HOST}}/rest/v1/{{SUPABASE_SCHEMA}}_conversations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "apikey", "value": "{{SUPABASE_SERVICE_KEY}}"},
+            {"name": "Authorization", "value": "Bearer {{SUPABASE_SERVICE_KEY}}"},
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Prefer", "value": "return=minimal"}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ session_id: $json.sessionId, role: 'user', content: $json.userMessage }, { session_id: $json.sessionId, role: 'assistant', content: $json.assistantMessage }]) }}"
+      }
+    },
+    {
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1840, 400],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"sessionId\": \"{{ $('Parse Response').first().json.sessionId }}\",\n  \"message\": {{ JSON.stringify($('Parse Response').first().json.assistantMessage) }}\n}"
+      }
+    }
+  ],
+  "connections": {
+    "Chat Webhook": {"main": [[{"node": "Extract Message", "type": "main", "index": 0}]]},
+    "Extract Message": {"main": [[{"node": "Fetch Conversation History", "type": "main", "index": 0}, {"node": "Search FAQ (RAG)", "type": "main", "index": 0}]]},
+    "Fetch Conversation History": {"main": [[{"node": "Merge Context", "type": "main", "index": 0}]]},
+    "Search FAQ (RAG)": {"main": [[{"node": "Merge Context", "type": "main", "index": 1}]]},
+    "Merge Context": {"main": [[{"node": "Prepare Claude Prompt", "type": "main", "index": 0}]]},
+    "Prepare Claude Prompt": {"main": [[{"node": "Claude - Generate Response", "type": "main", "index": 0}]]},
+    "Claude - Generate Response": {"main": [[{"node": "Parse Response", "type": "main", "index": 0}]]},
+    "Parse Response": {"main": [[{"node": "Log Conversation", "type": "main", "index": 0}]]},
+    "Log Conversation": {"main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]}
+  }
+}

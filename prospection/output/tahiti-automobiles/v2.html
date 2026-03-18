@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tahiti Automobiles — Concessionnaire Automobile | Papeete</title>
+<meta name="description" content="Tahiti Automobiles : concessionnaire multi-marques a Papeete depuis 60 ans. Vehicules neufs et d'occasion, SAV certifie, financement sur place.">
+<meta name="author" content="PACIFIK'AI">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#121009;
+  --bg-card:#1A1810;
+  --bg-glass:rgba(26,24,16,0.65);
+  --accent:#E8A838;
+  --accent-dark:#C48A20;
+  --accent-glow:rgba(232,168,56,0.12);
+  --text:#F5F0E8;
+  --text-muted:#9C9585;
+  --border:rgba(232,168,56,0.15);
+  --radius:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.brand{font-family:'Cormorant Garamond',serif}
+img{max-width:100%;height:auto;display:block}
+a{text-decoration:none;color:inherit}
+
+/* ── Reveal Animations ── */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s cubic-bezier(.16,1,.3,1),transform 0.8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+}
+
+/* ── Disclaimer ── */
+.disclaimer{background:var(--accent);color:var(--bg);text-align:center;padding:10px 20px;font-size:12px;font-weight:600;letter-spacing:0.5px;line-height:1.5}
+.disclaimer a{color:var(--bg);text-decoration:underline;font-weight:700}
+
+/* ── Navigation ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s ease;background:transparent}
+.nav.scrolled{background:var(--bg-glass);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-bottom:1px solid var(--border);padding:14px 48px}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;letter-spacing:1px;color:var(--text)}
+.nav-brand span{color:var(--accent)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:var(--text-muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:2px;transition:color 0.3s}
+.nav-links a:hover{color:var(--accent)}
+.nav-cta{background:var(--accent);color:var(--bg)!important;padding:10px 28px;border-radius:4px;font-weight:700;font-size:11px!important;letter-spacing:1.5px;transition:all 0.3s}
+.nav-cta:hover{background:var(--accent-dark);transform:translateY(-1px)}
+.nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:8px}
+.nav-toggle span{width:24px;height:2px;background:var(--text);transition:all 0.3s}
+
+/* ── Hero ── */
+.hero{position:relative;height:100vh;min-height:700px;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(18,16,9,0.85) 0%,rgba(18,16,9,0.5) 50%,rgba(18,16,9,0.75) 100%)}
+.hero-content{position:relative;z-index:2;max-width:780px;padding:0 48px;margin-left:clamp(20px,6vw,100px)}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:12px;font-size:12px;text-transform:uppercase;letter-spacing:4px;color:var(--accent);font-weight:600;margin-bottom:28px}
+.hero-eyebrow::before{content:'';width:40px;height:1px;background:var(--accent)}
+.hero h1{font-size:clamp(40px,5.5vw,76px);font-weight:700;line-height:1.08;margin-bottom:24px;letter-spacing:-1px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{font-size:17px;color:var(--text-muted);line-height:1.8;margin-bottom:40px;max-width:500px}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:var(--bg);padding:16px 40px;border-radius:4px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;transition:all 0.3s;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px}
+.btn-primary:hover{background:var(--accent-dark);transform:translateY(-2px);box-shadow:0 12px 40px rgba(232,168,56,0.3)}
+.btn-outline{border:1px solid var(--border);color:var(--text);padding:16px 40px;border-radius:4px;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;transition:all 0.3s;background:transparent;cursor:pointer}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-muted);font-size:10px;letter-spacing:3px;text-transform:uppercase}
+.hero-scroll::after{content:'';width:1px;height:40px;background:linear-gradient(to bottom,var(--accent),transparent);animation:scrollPulse 2s ease infinite}
+@keyframes scrollPulse{0%,100%{opacity:0.3;transform:scaleY(0.6)}50%{opacity:1;transform:scaleY(1)}}
+
+/* ── Section ── */
+.section{padding:clamp(64px,10vw,120px) clamp(20px,5vw,48px)}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-label{display:inline-flex;align-items:center;gap:12px;font-size:11px;text-transform:uppercase;letter-spacing:4px;color:var(--accent);font-weight:600;margin-bottom:16px}
+.section-label::before{content:'';width:24px;height:1px;background:var(--accent)}
+.section-title{font-size:clamp(32px,4vw,56px);font-weight:700;line-height:1.1;margin-bottom:20px;letter-spacing:-0.5px}
+.section-desc{font-size:16px;color:var(--text-muted);line-height:1.7;max-width:560px;margin-bottom:48px}
+
+/* ── Services ── */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.service-card{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:3/4;cursor:pointer;group:true}
+.service-card img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s cubic-bezier(.16,1,.3,1)}
+.service-card:hover img{transform:scale(1.08)}
+.service-card-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(18,16,9,0.95) 0%,rgba(18,16,9,0.1) 60%);padding:32px;display:flex;flex-direction:column;justify-content:flex-end;transition:background 0.4s}
+.service-card:hover .service-card-overlay{background:linear-gradient(0deg,rgba(18,16,9,0.98) 0%,rgba(18,16,9,0.3) 50%)}
+.service-card h3{font-size:24px;font-weight:700;margin-bottom:8px}
+.service-card p{font-size:14px;color:var(--text-muted);line-height:1.6;max-width:280px;opacity:0;transform:translateY(12px);transition:all 0.4s ease}
+.service-card:hover p{opacity:1;transform:translateY(0)}
+.service-card-number{position:absolute;top:24px;right:24px;font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:700;color:rgba(232,168,56,0.15);line-height:1}
+
+/* ── Quote ── */
+.quote-section{background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.quote-inner{max-width:900px;margin:0 auto;text-align:center}
+.quote-mark{font-family:'Cormorant Garamond',serif;font-size:120px;color:var(--accent);line-height:0.6;opacity:0.3;margin-bottom:-20px}
+.quote-text{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,3vw,36px);font-style:italic;line-height:1.5;margin-bottom:32px;color:var(--text)}
+.quote-author{font-size:14px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:2px}
+
+/* ── Stats + Info ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-bottom:48px}
+.stat-card{text-align:center;padding:40px 24px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-card);transition:border-color 0.3s}
+.stat-card:hover{border-color:var(--accent)}
+.stat-number{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,4vw,56px);font-weight:700;color:var(--accent);line-height:1;margin-bottom:8px}
+.stat-label{font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:500}
+
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.info-card{padding:40px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-card);transition:all 0.3s}
+.info-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.3)}
+.info-card h3{font-size:22px;margin-bottom:12px;font-weight:600}
+.info-card p{font-size:14px;color:var(--text-muted);line-height:1.7}
+
+/* ── Gallery ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gallery-item{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s cubic-bezier(.16,1,.3,1);filter:brightness(0.85)}
+.gallery-item:hover img{transform:scale(1.06);filter:brightness(1)}
+
+/* ── CTA ── */
+.cta-section{position:relative;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%)}
+.cta-content{position:relative;z-index:2;max-width:700px;margin:0 auto;text-align:center}
+.cta-content h2{color:var(--bg);margin-bottom:16px}
+.cta-content p{color:rgba(18,16,9,0.7);font-size:17px;line-height:1.7;margin-bottom:40px}
+.btn-dark{background:var(--bg);color:var(--text);padding:16px 48px;border-radius:4px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;transition:all 0.3s;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px}
+.btn-dark:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+
+/* ── Footer ── */
+.footer{background:var(--bg-card);border-top:1px solid var(--border);padding:64px clamp(20px,5vw,48px) 32px}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;margin-bottom:16px}
+.footer-brand span{color:var(--accent)}
+.footer-tagline{font-size:14px;color:var(--text-muted);line-height:1.6}
+.footer-col h4{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-weight:600;margin-bottom:20px}
+.footer-col a{display:block;font-size:14px;color:var(--text-muted);margin-bottom:12px;transition:color 0.3s}
+.footer-col a:hover{color:var(--accent)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-muted)}
+.footer-bottom a{color:var(--accent);transition:color 0.3s}
+.footer-bottom a:hover{text-decoration:underline}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .nav{padding:16px 20px}
+  .nav.scrolled{padding:12px 20px}
+  .nav-links{display:none}
+  .nav-toggle{display:flex}
+  .hero-content{margin-left:0;padding:0 24px}
+  .hero-scroll{display:none}
+  .services-grid{grid-template-columns:1fr}
+  .service-card{aspect-ratio:16/10}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .info-grid{grid-template-columns:1fr}
+  .gallery-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-top{grid-template-columns:1fr 1fr;gap:32px}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr}
+  .gallery-grid{grid-template-columns:1fr}
+  .hero-btns{flex-direction:column}
+  .hero-btns .btn-primary,.hero-btns .btn-outline{width:100%;justify-content:center}
+  .footer-top{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Disclaimer -->
+<div class="disclaimer">
+  Site de demonstration — Concept realise par <a href="https://pacifikai.com/offre-site-web">PACIFIK'AI</a>. Ce site n'est pas affilie a l'entreprise presentee.
+</div>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-brand">Tahiti <span>Automobiles</span></a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#apropos">A Propos</a>
+    <a href="#galerie">Galerie</a>
+    <a href="#contact" class="nav-cta">Nous Contacter</a>
+  </div>
+  <button class="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="hero.jpg" alt="Tahiti Automobiles showroom Papeete" width="1920" height="1080">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Depuis 1965</div>
+    <h1>L'excellence <em>automobile</em> a Tahiti</h1>
+    <p>Concessionnaire multi-marques de reference a Papeete. Vehicules neufs, occasions certifiees et un service apres-vente d'exception.</p>
+    <div class="hero-btns">
+      <a href="#services" class="btn-primary">Decouvrir nos services &#8594;</a>
+      <a href="#contact" class="btn-outline">Prendre rendez-vous</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- Services -->
+<section class="section" id="services">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Nos Services</div>
+      <h2 class="section-title">Un accompagnement<br>a chaque etape</h2>
+      <p class="section-desc">De l'achat a l'entretien, nous vous offrons une experience automobile complete et haut de gamme.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal reveal-delay-1">
+        <img src="showroom.jpg" alt="Showroom vehicules neufs" width="600" height="800">
+        <div class="service-card-overlay">
+          <span class="service-card-number">01</span>
+          <h3>Vehicules Neufs</h3>
+          <p>Showroom 12 marques avec essai routier. Configurez votre vehicule ideal avec nos conseillers.</p>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <img src="detail.jpg" alt="Vehicules d'occasion certifies" width="600" height="800">
+        <div class="service-card-overlay">
+          <span class="service-card-number">02</span>
+          <h3>Vehicules d'Occasion</h3>
+          <p>Chaque vehicule passe par 120 points de controle. Garantie incluse, tranquillite assuree.</p>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <img src="service.jpg" alt="Service apres-vente certifie" width="600" height="800">
+        <div class="service-card-overlay">
+          <span class="service-card-number">03</span>
+          <h3>Service Apres-Vente</h3>
+          <p>Atelier equipe aux standards constructeurs. Techniciens certifies, pieces d'origine.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quote -->
+<section class="section quote-section">
+  <div class="quote-inner reveal">
+    <div class="quote-mark">"</div>
+    <p class="quote-text">Depuis plus de 60 ans, nous accompagnons les familles polynesiennes dans leur mobilite. Chaque client est unique, chaque vehicule est une promesse de qualite.</p>
+    <div class="quote-author">Tahiti Automobiles — Papeete</div>
+  </div>
+</section>
+
+<!-- Stats + Info -->
+<section class="section" id="apropos">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Tahiti Automobiles</div>
+      <h2 class="section-title">La reference automobile<br>en Polynesie</h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card reveal reveal-delay-1">
+        <div class="stat-number">60+</div>
+        <div class="stat-label">Ans d'experience</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-2">
+        <div class="stat-number">12</div>
+        <div class="stat-label">Marques representees</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-3">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Financement sur place</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-4">
+        <div class="stat-number">SAV</div>
+        <div class="stat-label">Certifie constructeur</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card reveal">
+        <h3>Pieces Detachees</h3>
+        <p>Stock permanent de pieces d'origine et adaptables. Service de commande express pour les references specifiques. Livraison sur toute la Polynesie.</p>
+      </div>
+      <div class="info-card reveal reveal-delay-1">
+        <h3>Financement Sur Mesure</h3>
+        <p>Solutions de credit adaptees a votre budget. Etude personnalisee, reponse rapide. Partenariats avec les principaux etablissements financiers de Polynesie.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery -->
+<section class="section" id="galerie">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Galerie</div>
+      <h2 class="section-title">Notre univers</h2>
+      <p class="section-desc">Decouvrez nos installations et notre passion pour l'automobile.</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal reveal-delay-1"><img src="showroom.jpg" alt="Showroom Tahiti Automobiles" width="600" height="450"></div>
+      <div class="gallery-item reveal reveal-delay-2"><img src="exterior.jpg" alt="Concession exterieur" width="600" height="450"></div>
+      <div class="gallery-item reveal reveal-delay-3"><img src="detail.jpg" alt="Detail vehicule" width="600" height="450"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section" id="contact">
+  <div class="cta-bg"></div>
+  <div class="cta-content reveal">
+    <div class="section-label" style="color:var(--bg)">Contact</div>
+    <h2 class="section-title" style="color:var(--bg)">Prenez rendez-vous</h2>
+    <p>Visitez notre concession a Papeete ou appelez-nous pour un essai routier. Nos conseillers sont a votre disposition du lundi au samedi.</p>
+    <a href="tel:+68940549171" class="btn-dark">Appeler le 40 54 91 71 &#8594;</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Tahiti <span>Automobiles</span></div>
+        <p class="footer-tagline">L'excellence automobile a Tahiti depuis plus de 60 ans. Concessionnaire multi-marques a Papeete.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="#services">Vehicules Neufs</a>
+        <a href="#services">Occasions</a>
+        <a href="#services">Service Apres-Vente</a>
+        <a href="#services">Pieces Detachees</a>
+      </div>
+      <div class="footer-col">
+        <h4>Concession</h4>
+        <a href="#apropos">A Propos</a>
+        <a href="#galerie">Galerie</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="tel:+68940549171">+689 40 54 91 71</a>
+        <a>Papeete, Tahiti</a>
+        <a>Polynesie Francaise</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Tahiti Automobiles. Tous droits reserves.</span>
+      <span>Site realise par <a href="https://pacifikai.com">PACIFIK'AI</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- IntersectionObserver for reveals — no external libs -->
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  // Nav scroll
+  var nav=document.getElementById('nav');
+  window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>60)});
+  // Reveal
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+    },{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+    document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+  }else{document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('visible')})}
+});
+</script>
+
+</body>
+</html>

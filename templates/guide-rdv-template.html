@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide RDV - {{company.name}} | PACIFIK'AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2CCCD4;
+            --primary-dark: #1aa3aa;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .page {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .page:last-child {
+            page-break-after: avoid;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 32px;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .header-left .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .header-right .date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .header-right .badge {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--bg-dark);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        /* Section titles */
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h2::before {
+            content: "";
+            width: 4px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Info grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .info-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Score meters */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .score-item {
+            text-align: center;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .score-value {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .score-value.high { color: var(--success); }
+        .score-value.medium { color: var(--warning); }
+        .score-value.low { color: var(--danger); }
+
+        .score-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Script sections */
+        .script-box {
+            background: linear-gradient(135deg, rgba(44, 204, 212, 0.1), transparent);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .script-box.hook {
+            font-size: 18px;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* Lists */
+        ul {
+            list-style: none;
+        }
+
+        ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        ul li:last-child {
+            border-bottom: none;
+        }
+
+        ul li::before {
+            content: "→";
+            color: var(--primary);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* Objections */
+        .objection {
+            margin-bottom: 16px;
+            padding: 16px;
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid var(--warning);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .objection-q {
+            font-weight: 600;
+            color: var(--warning);
+            margin-bottom: 8px;
+        }
+
+        .objection-a {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Checklist */
+        .checklist li::before {
+            content: "☐";
+            color: var(--text-muted);
+        }
+
+        .checklist li.checked::before {
+            content: "☑";
+            color: var(--success);
+        }
+
+        /* Pain points */
+        .pain-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .pain-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .pain-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .pain-content p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Solutions */
+        .solution-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .solution-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 4px;
+        }
+
+        .solution-content p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .solution-roi {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 8px;
+        }
+
+        /* Pricing summary */
+        .pricing-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .pricing-option {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .pricing-option.recommended {
+            border-color: var(--primary);
+            background: rgba(44, 204, 212, 0.1);
+        }
+
+        .pricing-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .pricing-amount {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .pricing-period {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Timeline */
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .timeline-day {
+            width: 60px;
+            text-align: center;
+            padding: 8px;
+            background: var(--primary);
+            color: var(--bg-dark);
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding: 8px 0;
+        }
+
+        .timeline-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            margin-top: 32px;
+        }
+
+        .footer-logo {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .footer-contact {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .card, .info-item, .score-item, .pricing-option {
+                background: #f8fafc;
+                border-color: #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PAGE 1: BRIEFING -->
+    <div class="page">
+        <header class="header">
+            <div class="header-left">
+                <h1>Guide RDV</h1>
+                <div class="subtitle">{{company.name}} | {{company.sector}}</div>
+            </div>
+            <div class="header-right">
+                <div class="date">{{metadata.generatedAt}}</div>
+                <div class="badge">Confidentiel</div>
+            </div>
+        </header>
+
+        <h2>Briefing Prospect</h2>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Entreprise</div>
+                <div class="info-value">{{company.name}}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Secteur</div>
+                <div class="info-value">{{company.sector}}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Taille</div>
+                <div class="info-value">{{company.size}} - {{company.employees}} employés</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Localisation</div>
+                <div class="info-value">{{company.location.city}}, {{company.location.country}}</div>
+            </div>
+        </div>
+
+        <h3>Scoring</h3>
+        <div class="score-grid">
+            <div class="score-item">
+                <div class="score-value {{#scoreClass scores.global}}{{/scoreClass}}">{{scores.global}}</div>
+                <div class="score-label">Global</div>
+            </div>
+            <div class="score-item">
+                <div class="score-value {{#scoreClass scores.urgency}}{{/scoreClass}}">{{scores.urgency}}</div>
+                <div class="score-label">Urgence</div>
+            </div>
+            <div class="score-item">
+                <div class="score-value {{#scoreClass scores.budget}}{{/scoreClass}}">{{scores.budget}}</div>
+                <div class="score-label">Budget</div>
+            </div>
+            <div class="score-item">
+                <div class="score-value {{#scoreClass scores.fit}}{{/scoreClass}}">{{scores.fit}}</div>
+                <div class="score-label">Fit</div>
+            </div>
+        </div>
+
+        <h3>Faits clés à retenir</h3>
+        <div class="card">
+            <ul>
+                {{#each keyFacts}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </div>
+
+        <h3>Contact(s) RDV</h3>
+        <div class="info-grid">
+            {{#each company.contacts}}
+            <div class="info-item">
+                <div class="info-label">{{role}}</div>
+                <div class="info-value">{{name}}</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                    {{#if email}}📧 {{email}}{{/if}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <!-- PAGE 2: SCRIPT -->
+    <div class="page">
+        <header class="header">
+            <div class="header-left">
+                <h1>Script de vente</h1>
+                <div class="subtitle">{{company.name}}</div>
+            </div>
+            <div class="header-right">
+                <div class="badge">Page 2/5</div>
+            </div>
+        </header>
+
+        <h2>Accroche</h2>
+        <div class="script-box hook">
+            "{{salesScript.hook}}"
+        </div>
+
+        <h2>Questions de qualification</h2>
+        <div class="card">
+            <ul>
+                {{#each salesScript.questions}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </div>
+
+        <h2>Points de douleur à aborder</h2>
+        {{#each painPoints}}
+        <div class="pain-item">
+            <div class="pain-icon">{{icon}}</div>
+            <div class="pain-content">
+                <h4>{{title}}</h4>
+                <p>{{description}}</p>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    <!-- PAGE 3: OBJECTIONS -->
+    <div class="page">
+        <header class="header">
+            <div class="header-left">
+                <h1>Gestion des objections</h1>
+                <div class="subtitle">{{company.name}}</div>
+            </div>
+            <div class="header-right">
+                <div class="badge">Page 3/5</div>
+            </div>
+        </header>
+
+        <h2>Objections anticipées</h2>
+        {{#each salesScript.objections}}
+        <div class="objection">
+            <div class="objection-q">💬 "{{objection}}"</div>
+            <div class="objection-a">→ {{response}}</div>
+        </div>
+        {{/each}}
+
+        <h2>Solutions à présenter</h2>
+        {{#each solutions}}
+        <div class="solution-item">
+            <div class="solution-content">
+                <h4>{{title}}</h4>
+                <p>{{description}}</p>
+                <div class="solution-roi">ROI: {{roi}}% | Économie: {{savings.amount}} {{savings.currency}}/{{savings.period}}</div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    <!-- PAGE 4: PRICING & NEXT STEPS -->
+    <div class="page">
+        <header class="header">
+            <div class="header-left">
+                <h1>Pricing & Next Steps</h1>
+                <div class="subtitle">{{company.name}}</div>
+            </div>
+            <div class="header-right">
+                <div class="badge">Page 4/5</div>
+            </div>
+        </header>
+
+        <h2>Options tarifaires</h2>
+        <div class="pricing-summary">
+            <div class="pricing-option {{#if (eq pricing.recommended 'starter')}}recommended{{/if}}">
+                <div class="pricing-name">{{pricing.tiers.starter.name}}</div>
+                <div class="pricing-amount">{{pricing.tiers.starter.monthly}}</div>
+                <div class="pricing-period">{{pricing.currency}}/mois</div>
+            </div>
+            <div class="pricing-option {{#if (eq pricing.recommended 'business')}}recommended{{/if}}">
+                <div class="pricing-name">{{pricing.tiers.business.name}}</div>
+                <div class="pricing-amount">{{pricing.tiers.business.monthly}}</div>
+                <div class="pricing-period">{{pricing.currency}}/mois</div>
+            </div>
+            <div class="pricing-option {{#if (eq pricing.recommended 'enterprise')}}recommended{{/if}}">
+                <div class="pricing-name">{{pricing.tiers.enterprise.name}}</div>
+                <div class="pricing-amount">{{pricing.tiers.enterprise.monthly}}</div>
+                <div class="pricing-period">{{pricing.currency}}/mois</div>
+            </div>
+        </div>
+
+        <h2 style="margin-top: 32px;">Plan de déploiement</h2>
+        {{#each timeline}}
+        <div class="timeline-item">
+            <div class="timeline-day">{{day}}</div>
+            <div class="timeline-content">
+                <h4>{{title}}</h4>
+                <p>{{description}}</p>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    <!-- PAGE 5: CHECKLIST -->
+    <div class="page">
+        <header class="header">
+            <div class="header-left">
+                <h1>Checklist RDV</h1>
+                <div class="subtitle">{{company.name}}</div>
+            </div>
+            <div class="header-right">
+                <div class="badge">Page 5/5</div>
+            </div>
+        </header>
+
+        <h2>Avant le RDV</h2>
+        <div class="card">
+            <ul class="checklist">
+                <li>Relire cette fiche (5 min)</li>
+                <li>Vérifier LinkedIn des participants</li>
+                <li>Préparer démo personnalisée</li>
+                <li>Tester le lien visio/confirmer le lieu</li>
+            </ul>
+        </div>
+
+        <h2>Pendant le RDV</h2>
+        <div class="card">
+            <ul class="checklist">
+                <li>Utiliser l'accroche préparée</li>
+                <li>Poser les questions de qualification</li>
+                <li>Identifier le pain point principal</li>
+                <li>Présenter 2-3 solutions max</li>
+                <li>Montrer les case studies secteur</li>
+                <li>Proposer le pricing adapté</li>
+                <li>Définir les next steps</li>
+            </ul>
+        </div>
+
+        <h2>Après le RDV</h2>
+        <div class="card">
+            <ul class="checklist">
+                <li>Envoyer email de suivi (même jour)</li>
+                <li>Envoyer proposition formelle si intéressé</li>
+                <li>Mettre à jour CRM</li>
+                <li>Planifier relance J+3 si pas de réponse</li>
+            </ul>
+        </div>
+
+        <h2>Email de suivi suggéré</h2>
+        <div class="card" style="background: rgba(44, 204, 212, 0.1); border-color: var(--primary);">
+            <div style="margin-bottom: 12px;">
+                <strong>Objet:</strong> {{emailTemplate.subject}}
+            </div>
+            <div style="font-size: 13px; white-space: pre-wrap;">{{emailTemplate.body}}</div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-logo">PACIFIK'AI</div>
+            <div class="footer-contact">
+                jordy@pacifikai.com | +689 89 55 81 89 | pacifikai.com
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>

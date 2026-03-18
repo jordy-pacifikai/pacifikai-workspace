@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}. {{TAGLINE}}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ================================================================
+       TECH V3 — Brutalist Developer
+       Raw, code-aesthetic, unconventional.
+       BAB framework: Before > After > Bridge
+       Gradient mesh subtle + raw grid cards + terminal pricing
+       ================================================================ */
+
+    /* -- Reset & Base -- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --text: {{COLOR_TEXT}};
+      --pop: #84CC16;
+      --pop-dark: #65A30D;
+      --pop-light: #A3E635;
+      --gray-100: #EDEDEA;
+      --gray-200: #D4D4CF;
+      --gray-300: #A3A39E;
+      --card-bg: #FFFFFF;
+      --card-border: #D4D4CF;
+      --font-display: '{{FONT_DISPLAY}}', 'Space Grotesk', sans-serif;
+      --font-body: '{{FONT_BODY}}', 'JetBrains Mono', monospace;
+      --radius: 0px;
+      --radius-sm: 0px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    /* -- Disclaimer & Loader -- */
+    .disclaimer{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--accent);color:var(--bg);font-family:var(--font-body);font-size:11px;letter-spacing:.06em;text-align:center;padding:10px 24px;font-weight:500}
+    .disclaimer a{color:var(--pop);text-decoration:underline;font-weight:600}
+    .loader{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+    .loader-inner{text-align:center}
+    .loader-logo{font-family:var(--font-body);font-size:clamp(16px,3vw,24px);font-weight:500;letter-spacing:.02em;color:var(--accent);opacity:0}
+    .loader-logo::before{content:'> ';color:var(--pop)}
+    .loader-logo::after{content:'_';animation:blink 1s step-end infinite;color:var(--pop)}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .loader-bar{width:200px;height:2px;background:var(--gray-200);margin:20px auto 0;overflow:hidden}
+    .loader-bar-fill{width:100%;height:100%;background:var(--pop);transform:scaleX(0);transform-origin:left}
+
+    /* -- Scroll Progress -- */
+    .scroll-progress{position:fixed;top:38px;left:0;width:0%;height:2px;background:var(--pop);z-index:9998;transition:none}
+
+    /* -- Gradient Mesh Background -- */
+    .gradient-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 70% 50% at 0% 0%, rgba(132,204,22,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 70% at 100% 100%, rgba(10,10,10,0.03) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 40% at 50% 50%, rgba(212,212,207,0.15) 0%, transparent 70%),
+        var(--bg);
+      animation: meshRaw 30s ease-in-out infinite alternate;
+    }
+    @keyframes meshRaw {
+      0% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+      100% { background-position: 10% 20%, 90% 80%, 55% 45%; }
+    }
+
+    /* -- Container -- */
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* -- Typography -- */
+    h1, h2, h3, h4, h5 { font-family: var(--font-display); line-height: 1.05; color: var(--accent); }
+    p { line-height: 1.7; }
+    .accent { color: var(--accent); }
+    .pop { color: var(--pop); }
+    .mono { font-family: var(--font-body); }
+
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .05em;
+      color: var(--pop);
+      margin-bottom: 12px;
+    }
+    .section-label::before { content: '// '; }
+
+    /* ========================================
+       NAVIGATION — BRUTALIST
+    ======================================== */
+    .nav {
+      position: fixed; top: 38px; left: 0; width: 100%;
+      z-index: 1000; padding: 16px 0;
+      transition: background .3s, padding .3s, border-color .3s;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+      background: rgba(245, 245, 240, .95);
+      backdrop-filter: blur(8px);
+      padding: 12px 0;
+      border-bottom-color: var(--gray-200);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-body);
+      font-size: 14px; font-weight: 600;
+      letter-spacing: .02em; color: var(--accent);
+    }
+    .nav-logo::before { content: '$ '; color: var(--pop); }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 12px; font-weight: 500;
+      color: var(--text); transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--pop); }
+    .nav-links a::before { content: '/'; color: var(--gray-300); margin-right: 4px; }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--pop); color: var(--accent);
+      padding: 8px 20px;
+      font-family: var(--font-body);
+      font-size: 12px; font-weight: 700; letter-spacing: .02em;
+      text-transform: uppercase; border: none; cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .nav-cta:hover { background: var(--pop-dark); transform: translateY(-1px); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+
+    /* ========================================
+       HERO — BRUTALIST LARGE TEXT (NO IMAGE)
+    ======================================== */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: calc(38px + 60px + 40px) 24px 60px;
+      max-width: 1200px; margin: 0 auto;
+      position: relative;
+    }
+    .hero-meta {
+      font-family: var(--font-body);
+      font-size: 12px; color: var(--text);
+      margin-bottom: 32px; opacity: .5;
+    }
+    .hero-meta span { color: var(--pop); }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 10vw, 120px);
+      line-height: .92; letter-spacing: -.02em;
+      font-weight: 700; color: var(--accent);
+      max-width: 1000px;
+    }
+    .hero-title .pop-word {
+      color: var(--pop);
+      text-decoration: underline;
+      text-decoration-thickness: 4px;
+      text-underline-offset: 8px;
+    }
+    .hero-desc {
+      font-size: 14px; line-height: 1.8;
+      color: var(--text); opacity: .6;
+      max-width: 560px; margin-top: 32px;
+    }
+    .hero-separator {
+      width: 100%; height: 1px;
+      background: var(--gray-200);
+      margin: 40px 0;
+    }
+    .hero-stats {
+      display: flex; gap: 48px;
+      flex-wrap: wrap;
+    }
+    .hero-stat-value {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700; color: var(--accent);
+      line-height: 1;
+    }
+    .hero-stat-value .pop-char { color: var(--pop); }
+    .hero-stat-label {
+      font-family: var(--font-body);
+      font-size: 11px; color: var(--text);
+      opacity: .4; margin-top: 8px;
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+
+    /* ========================================
+       BAB SECTION — BEFORE / AFTER / BRIDGE
+    ======================================== */
+    .bab {
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .section { padding: 100px 24px; }
+    .bab-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 0; align-items: stretch;
+    }
+    .bab-col {
+      padding: 48px 40px;
+      display: flex; flex-direction: column;
+      justify-content: center;
+    }
+    .bab-before { text-align: right; }
+    .bab-after { text-align: left; }
+    .bab-line-container {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 0; position: relative;
+    }
+    .bab-line {
+      width: 2px; height: 0;
+      background: var(--pop);
+    }
+    .bab-dot {
+      width: 10px; height: 10px;
+      background: var(--pop);
+      margin: 12px 0;
+      flex-shrink: 0;
+    }
+    .bab-tag {
+      font-family: var(--font-body);
+      font-size: 10px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--pop);
+      margin-bottom: 12px;
+    }
+    .bab-tag::before { content: '# '; }
+    .bab-text {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 3vw, 30px);
+      line-height: 1.15; font-weight: 700;
+      color: var(--accent);
+    }
+    .bab-bridge {
+      max-width: 1000px; margin: 0 auto;
+      text-align: center; padding: 48px 40px 0;
+    }
+    .bab-bridge-tag {
+      font-family: var(--font-body);
+      font-size: 10px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--pop);
+      margin-bottom: 12px;
+    }
+    .bab-bridge-tag::before { content: '>> '; }
+    .bab-bridge-text {
+      font-size: 14px; line-height: 1.8;
+      color: var(--text); opacity: .65;
+      max-width: 640px; margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .bab-inner { grid-template-columns: 1fr; }
+      .bab-before, .bab-after { text-align: center; padding: 32px 24px; }
+      .bab-line-container { flex-direction: row; padding: 0 24px; }
+      .bab-line { width: 0; height: 2px; }
+      .bab-bridge { padding: 32px 24px 0; }
+    }
+
+    /* ========================================
+       FEATURES — RAW GRID CARDS
+    ======================================== */
+    .features-header {
+      max-width: 1200px; margin: 0 auto;
+      padding-bottom: 48px;
+    }
+    .features-grid {
+      max-width: 1200px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      background: var(--gray-200);
+      border: 1px solid var(--gray-200);
+    }
+    .feature-card {
+      background: var(--card-bg);
+      padding: 40px 32px;
+      transition: background .3s;
+      cursor: default;
+      transform-style: preserve-3d;
+      perspective: 800px;
+    }
+    .feature-card:hover {
+      background: var(--accent);
+    }
+    .feature-card:hover .feature-card-name,
+    .feature-card:hover .feature-card-desc,
+    .feature-card:hover .feature-card-num { color: var(--bg); }
+    .feature-card:hover .feature-card-icon { color: var(--pop); }
+    .feature-card-inner {
+      transform-style: preserve-3d;
+      transition: transform .15s ease-out;
+    }
+    .feature-card-num {
+      font-family: var(--font-display);
+      font-size: 48px; font-weight: 700;
+      color: var(--gray-200);
+      line-height: 1; margin-bottom: 24px;
+      transition: color .3s;
+    }
+    .feature-card-icon {
+      width: 32px; height: 32px;
+      color: var(--pop);
+      margin-bottom: 20px;
+      transition: color .3s;
+    }
+    .feature-card-name {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+      transition: color .3s;
+    }
+    .feature-card-desc {
+      font-size: 13px; line-height: 1.7;
+      color: var(--text); opacity: .6;
+      transition: color .3s;
+    }
+    .feature-card:hover .feature-card-desc { opacity: .7; }
+
+    @media (max-width: 768px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card { padding: 32px 24px; }
+    }
+
+    /* ========================================
+       TERMINAL PRICING — MONOSPACE
+    ======================================== */
+    .pricing {
+      background: var(--accent);
+      border-top: 1px solid rgba(132,204,22,.15);
+    }
+    .pricing-header {
+      max-width: 1200px; margin: 0 auto;
+      padding-bottom: 48px;
+    }
+    .pricing .section-label { color: var(--pop); }
+    .pricing .section-label::before { content: '// '; }
+    .pricing-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1; font-weight: 700;
+      color: var(--bg);
+    }
+    .pricing-grid {
+      max-width: 1200px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+    }
+    .pricing-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(132,204,22,.1);
+      padding: 40px 32px;
+      transition: border-color .3s, background .3s;
+    }
+    .pricing-card:hover {
+      border-color: var(--pop);
+      background: rgba(132,204,22,.06);
+    }
+    .pricing-card-name {
+      font-family: var(--font-body);
+      font-size: 12px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--pop);
+      margin-bottom: 16px;
+    }
+    .pricing-card-name::before { content: '> '; }
+    .pricing-card-price {
+      font-family: var(--font-display);
+      font-size: 40px; font-weight: 700;
+      color: var(--bg);
+      line-height: 1; margin-bottom: 24px;
+    }
+    .pricing-card-features {
+      list-style: none;
+    }
+    .pricing-card-features li {
+      font-size: 13px; color: rgba(245,245,240,.5);
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .pricing-card-features li::before {
+      content: '+ '; color: var(--pop); font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .pricing-card { padding: 32px 24px; }
+    }
+
+    /* ========================================
+       CTA — LIME POP
+    ======================================== */
+    .cta-section {
+      background: var(--pop);
+      padding: 100px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-mesh {
+      position: absolute; inset: 0;
+      opacity: .1;
+      background:
+        radial-gradient(ellipse 60% 60% at 30% 40%, var(--pop-dark), transparent),
+        radial-gradient(ellipse 50% 50% at 70% 60%, rgba(255,255,255,.1), transparent);
+      animation: meshRaw 20s ease-in-out infinite alternate;
+    }
+    .cta-inner {
+      position: relative; z-index: 1;
+      max-width: 700px; margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: .95; font-weight: 700;
+      color: var(--accent);
+    }
+    .cta-subtitle {
+      font-family: var(--font-body);
+      font-size: 14px; line-height: 1.8;
+      color: rgba(10,10,10,.7);
+      margin-top: 20px;
+    }
+    .cta-info {
+      display: flex; justify-content: center;
+      gap: 32px; margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .cta-info-item {
+      display: flex; align-items: center; gap: 10px;
+      color: rgba(10,10,10,.6); font-size: 13px;
+    }
+    .cta-info-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--accent); color: var(--pop);
+      padding: 14px 32px;
+      font-family: var(--font-body);
+      font-size: 13px; font-weight: 700; letter-spacing: .02em;
+      text-transform: uppercase; border: none; cursor: pointer;
+      margin-top: 40px;
+      transition: background .2s, transform .15s;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(10,10,10,.2);
+    }
+    .cta-btn::before { content: '> '; }
+
+    /* ========================================
+       FOOTER — DARK MONOSPACE
+    ======================================== */
+    .footer {
+      background: var(--accent);
+      padding: 48px 24px 24px;
+      border-top: 1px solid rgba(132,204,22,.1);
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      font-family: var(--font-body);
+      font-size: 14px; font-weight: 600;
+      color: var(--bg);
+    }
+    .footer-brand::before { content: '$ '; color: var(--pop); }
+    .footer-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .footer-links a {
+      font-family: var(--font-body);
+      font-size: 12px; color: rgba(245,245,240,.35);
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--pop); }
+    .footer-bottom {
+      max-width: 1200px; margin: 32px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      display: flex; justify-content: space-between;
+      font-size: 11px; color: rgba(245,245,240,.2);
+    }
+    .footer-bottom a { color: var(--pop); }
+
+    @media (max-width: 768px) {
+      .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    /* ========================================
+       SECTION SHARED
+    ======================================== */
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1; font-weight: 700;
+      color: var(--accent);
+    }
+    .section-desc {
+      font-size: 14px; line-height: 1.8;
+      color: var(--text); opacity: .55;
+      max-width: 560px; margin-top: 16px;
+    }
+
+    /* ========================================
+       REDUCED MOTION
+    ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .gradient-mesh, .cta-mesh { animation: none; }
+      .loader-logo::after { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GRADIENT MESH BG -->
+  <div class="gradient-mesh"></div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    Prototype offert par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a> — Site web professionnel a 100 000 XPF
+  </div>
+
+  <!-- LOADER -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">loading {{BUSINESS_NAME}}</div>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- SCROLL PROGRESS -->
+  <div class="scroll-progress"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">{{BUSINESS_NAME}}</a>
+      <ul class="nav-links">
+        <li><a href="#features">features</a></li>
+        <li><a href="#pricing">pricing</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>
+      <a href="tel:{{PHONE}}" class="nav-cta">START</a>
+    </div>
+  </nav>
+
+  <!-- ========================================
+       HERO — BRUTALIST LARGE TEXT
+  ======================================== -->
+  <section class="hero">
+    <div class="hero-meta reveal-up">
+      <span>$</span> {{SUBSECTOR}} <span>--location</span> {{CITY}} <span>--status</span> ready
+    </div>
+    <h1 class="hero-title reveal">{{BUSINESS_NAME}}</h1>
+    <p class="hero-desc reveal-up">{{TAGLINE}}</p>
+    <div class="hero-separator"></div>
+    <div class="hero-stats reveal-up">
+      <div>
+        <div class="hero-stat-value">{{STAT_1}}<span class="pop-char">+</span></div>
+        <div class="hero-stat-label">{{STAT_LABEL_1}}</div>
+      </div>
+      <div>
+        <div class="hero-stat-value">{{STAT_2}}<span class="pop-char">%</span></div>
+        <div class="hero-stat-label">{{STAT_LABEL_2}}</div>
+      </div>
+      <div>
+        <div class="hero-stat-value">{{STAT_3}}<span class="pop-char">x</span></div>
+        <div class="hero-stat-label">{{STAT_LABEL_3}}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       BAB SECTION — BEFORE / AFTER / BRIDGE
+  ======================================== -->
+  <section class="section bab" id="transformation">
+    <div class="bab-inner">
+      <div class="bab-col bab-before">
+        <span class="bab-tag reveal-up">before</span>
+        <p class="bab-text reveal">{{BAB_BEFORE}}</p>
+      </div>
+      <div class="bab-line-container">
+        <div class="bab-dot"></div>
+        <div class="bab-line"></div>
+        <div class="bab-dot"></div>
+      </div>
+      <div class="bab-col bab-after">
+        <span class="bab-tag reveal-up">after</span>
+        <p class="bab-text reveal">{{BAB_AFTER}}</p>
+      </div>
+    </div>
+    <div class="bab-bridge reveal-up">
+      <span class="bab-bridge-tag">bridge</span>
+      <p class="bab-bridge-text">{{BAB_BRIDGE}}</p>
+    </div>
+  </section>
+
+  <!-- ========================================
+       FEATURES — RAW GRID
+  ======================================== -->
+  <section class="section" id="features">
+    <div class="features-header">
+      <span class="section-label reveal-up">features</span>
+      <h2 class="section-title reveal">{{FEATURES_TITLE}}</h2>
+      <p class="section-desc reveal-up">{{FEATURES_DESCRIPTION}}</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" data-tilt>
+        <div class="feature-card-inner">
+          <div class="feature-card-num">01</div>
+          <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <h3 class="feature-card-name">{{SERVICE_1}}</h3>
+          <p class="feature-card-desc">{{SERVICE_DESC_1}}</p>
+        </div>
+      </div>
+      <div class="feature-card" data-tilt>
+        <div class="feature-card-inner">
+          <div class="feature-card-num">02</div>
+          <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <h3 class="feature-card-name">{{SERVICE_2}}</h3>
+          <p class="feature-card-desc">{{SERVICE_DESC_2}}</p>
+        </div>
+      </div>
+      <div class="feature-card" data-tilt>
+        <div class="feature-card-inner">
+          <div class="feature-card-num">03</div>
+          <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          <h3 class="feature-card-name">{{SERVICE_3}}</h3>
+          <p class="feature-card-desc">{{SERVICE_DESC_3}}</p>
+        </div>
+      </div>
+      <div class="feature-card" data-tilt>
+        <div class="feature-card-inner">
+          <div class="feature-card-num">04</div>
+          <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          <h3 class="feature-card-name">{{SERVICE_4}}</h3>
+          <p class="feature-card-desc">{{SERVICE_DESC_4}}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       TERMINAL PRICING
+  ======================================== -->
+  <section class="section pricing" id="pricing">
+    <div class="pricing-header">
+      <span class="section-label reveal-up">pricing</span>
+      <h2 class="pricing-title reveal">Tarifs</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal-up">
+        <div class="pricing-card-name">{{SERVICE_1}}</div>
+        <div class="pricing-card-price">{{PRICE_1}}</div>
+        <ul class="pricing-card-features">
+          <li>{{SERVICE_DESC_1}}</li>
+          <li>Support inclus</li>
+          <li>Mise a jour reguliere</li>
+        </ul>
+      </div>
+      <div class="pricing-card reveal-up">
+        <div class="pricing-card-name">{{SERVICE_2}}</div>
+        <div class="pricing-card-price">{{PRICE_2}}</div>
+        <ul class="pricing-card-features">
+          <li>{{SERVICE_DESC_2}}</li>
+          <li>Priorite haute</li>
+          <li>Acces complet</li>
+        </ul>
+      </div>
+      <div class="pricing-card reveal-up">
+        <div class="pricing-card-name">{{SERVICE_3}}</div>
+        <div class="pricing-card-price">{{PRICE_3}}</div>
+        <ul class="pricing-card-features">
+          <li>{{SERVICE_DESC_3}}</li>
+          <li>Sur mesure</li>
+          <li>SLA garanti</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       CTA — LIME POP
+  ======================================== -->
+  <section class="cta-section" id="contact">
+    <div class="cta-mesh"></div>
+    <div class="cta-inner">
+      <h2 class="cta-title reveal">Lancez Votre Projet</h2>
+      <p class="cta-subtitle reveal-up">{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}. Passez a l'action.</p>
+      <div class="cta-info reveal-up">
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>{{PHONE}}</span>
+        </div>
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>{{ADDRESS}}</span>
+        </div>
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>{{HOURS}}</span>
+        </div>
+      </div>
+      <a href="tel:{{PHONE}}" class="cta-btn reveal-up">
+        Demarrer maintenant
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">{{BUSINESS_NAME}}</div>
+      <ul class="footer-links">
+        <li><a href="#features">features</a></li>
+        <li><a href="#pricing">pricing</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>Prototype realise par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a></span>
+      <span>{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}</span>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    /* ========================================
+       INIT — REDUCED MOTION
+    ======================================== */
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ========================================
+       LOADER
+    ======================================== */
+    if (!prefersReducedMotion) {
+      const loaderTL = gsap.timeline();
+      loaderTL
+        .to('.loader-logo', { opacity: 1, duration: .6, ease: 'power2.out' })
+        .to('.loader-bar-fill', { scaleX: 1, duration: .8, ease: 'none' }, '-=.3')
+        .to('.loader', { opacity: 0, duration: .3, ease: 'power2.inOut', onComplete() {
+          document.querySelector('.loader').style.display = 'none';
+        }}, '+=.1');
+    } else {
+      document.querySelector('.loader').style.display = 'none';
+    }
+
+    /* ========================================
+       LENIS SMOOTH SCROLL
+    ======================================== */
+    let lenis;
+    if (!prefersReducedMotion) {
+      lenis = new Lenis({
+        duration: 1.0,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        touchMultiplier: 1.5
+      });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    /* ========================================
+       SCROLL PROGRESS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.to('.scroll-progress', {
+        width: '100%',
+        ease: 'none',
+        scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: .3 }
+      });
+    }
+
+    /* ========================================
+       NAV SHRINK
+    ======================================== */
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    /* ========================================
+       REVEAL ANIMATIONS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.registerPlugin(ScrollTrigger);
+
+      document.querySelectorAll('.reveal').forEach(el => {
+        gsap.fromTo(el,
+          { clipPath: 'inset(0 0 100% 0)', opacity: 0 },
+          {
+            clipPath: 'inset(0 0 0% 0)', opacity: 1,
+            duration: .8, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+          }
+        );
+      });
+
+      document.querySelectorAll('.reveal-up').forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 24, opacity: 0 },
+          {
+            y: 0, opacity: 1,
+            duration: .6, ease: 'power3.out',
+            delay: i * .03,
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+          }
+        );
+      });
+
+      /* BAB line animation */
+      const babLine = document.querySelector('.bab-line');
+      if (babLine) {
+        gsap.fromTo(babLine,
+          { height: 0 },
+          {
+            height: 100,
+            duration: 1, ease: 'power2.out',
+            scrollTrigger: { trigger: '.bab-inner', start: 'top 75%', once: true }
+          }
+        );
+      }
+
+      /* Feature cards stagger */
+      gsap.fromTo('.feature-card', { y: 30, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .5, ease: 'power3.out',
+        stagger: .08,
+        scrollTrigger: { trigger: '.features-grid', start: 'top 85%', once: true }
+      });
+
+      /* Pricing cards stagger */
+      gsap.fromTo('.pricing-card', { y: 30, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .5, ease: 'power3.out',
+        stagger: .08,
+        scrollTrigger: { trigger: '.pricing-grid', start: 'top 85%', once: true }
+      });
+    }
+
+    /* ========================================
+       3D TILT ON FEATURE CARDS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      document.querySelectorAll('[data-tilt]').forEach(card => {
+        const inner = card.querySelector('.feature-card-inner');
+        if (!inner) return;
+        const maxTilt = 6;
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          const rotateX = (0.5 - y) * maxTilt;
+          const rotateY = (x - 0.5) * maxTilt;
+          inner.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          inner.style.transform = 'perspective(800px) rotateX(0) rotateY(0)';
+        });
+      });
+    }
+
+    /* ========================================
+       SMOOTH SCROLL ANCHOR LINKS
+    ======================================== */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          if (lenis) lenis.scrollTo(target, { offset: -80 });
+          else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

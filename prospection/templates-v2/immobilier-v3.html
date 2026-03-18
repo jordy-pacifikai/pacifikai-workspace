@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}. Prototype PACIFIK'AI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Satoshi:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       RESET & VARIABLES — V3 MONOCHROME BLUE
+    ======================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --text: {{COLOR_TEXT}};
+      --pop: #059669;
+      --pop-light: #10B981;
+      --pop-dark: #047857;
+      --blue-50: #EFF6FF;
+      --blue-100: #DBEAFE;
+      --blue-200: #BFDBFE;
+      --blue-800: #1E3A6E;
+      --gray-100: #F1F5F9;
+      --gray-200: #E2E8F0;
+      --gray-300: #CBD5E1;
+      --white: #FFFFFF;
+      --font-display: '{{FONT_DISPLAY}}', 'Clash Display', Impact, sans-serif;
+      --font-body: '{{FONT_BODY}}', 'Satoshi', -apple-system, sans-serif;
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+    body { background: var(--bg); overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; height: auto; }
+
+    /* ========================================
+       GRADIENT MESH HERO BG
+    ======================================== */
+    .hero-mesh {
+      position: absolute; inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 70% at 15% 20%, rgba(30, 64, 175, .12), transparent),
+        radial-gradient(ellipse 60% 60% at 85% 75%, rgba(5, 150, 105, .06), transparent),
+        radial-gradient(ellipse 70% 50% at 50% 40%, rgba(30, 64, 175, .08), transparent);
+      animation: meshFloat 22s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshFloat {
+      0% { opacity: 1; background-size: 100% 100%, 100% 100%, 100% 100%; }
+      50% { opacity: .85; background-size: 120% 110%, 90% 110%, 110% 100%; }
+      100% { opacity: 1; background-size: 100% 100%, 100% 100%, 100% 100%; }
+    }
+
+    /* ========================================
+       DISCLAIMER & LOADER
+    ======================================== */
+    .disclaimer {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: var(--accent); color: var(--white);
+      font-size: 11px; letter-spacing: .06em; text-align: center;
+      padding: 10px 24px; font-weight: 500;
+    }
+    .disclaimer a { text-decoration: underline; font-weight: 600; }
+
+    .loader {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent);
+    }
+    .loader-inner { text-align: center; }
+    .loader-logo {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 6vw, 64px);
+      font-weight: 700; letter-spacing: .02em;
+      color: var(--white); opacity: 0;
+    }
+    .loader-line {
+      width: 80px; height: 3px;
+      background: rgba(255,255,255,.15);
+      margin: 20px auto 0; overflow: hidden;
+      border-radius: 3px;
+    }
+    .loader-line-fill {
+      width: 100%; height: 100%;
+      background: var(--pop);
+      transform: scaleX(0); transform-origin: left;
+    }
+
+    /* ========================================
+       SCROLL PROGRESS
+    ======================================== */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; width: 0%;
+      background: var(--accent);
+      z-index: 10000;
+    }
+
+    /* ========================================
+       NAVIGATION
+    ======================================== */
+    .nav {
+      position: fixed; top: 38px; left: 0; width: 100%;
+      z-index: 1000; padding: 20px 0;
+      transition: background .4s, padding .4s, box-shadow .4s;
+    }
+    .nav.scrolled {
+      background: rgba(248, 250, 251, .95);
+      backdrop-filter: blur(16px);
+      padding: 14px 0;
+      box-shadow: 0 1px 0 var(--gray-200);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 700;
+      color: var(--accent);
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500;
+      color: var(--text); opacity: .7;
+      transition: opacity .2s, color .2s;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--accent); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: var(--white);
+      padding: 10px 22px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 600;
+      border: none; cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .nav-cta:hover { background: var(--blue-800); transform: translateY(-1px); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-logo { font-size: 20px; }
+    }
+
+    /* ========================================
+       HERO — GRADIENT MESH + BOLD CLASH
+    ======================================== */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: calc(38px + 80px + 40px) 24px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--blue-50) 0%, var(--bg) 100%);
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 100px; padding: 8px 20px;
+      font-size: 13px; font-weight: 500; color: var(--accent);
+      margin-bottom: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .hero-badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--pop);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .6; transform: scale(1.3); }
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(44px, 9vw, 96px);
+      font-weight: 700; line-height: 1;
+      color: var(--accent);
+      max-width: 800px; margin: 0 auto;
+    }
+    .hero-title span { color: var(--pop); }
+    .hero-subtitle {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--text); opacity: .6;
+      max-width: 500px; margin: 24px auto 0;
+      line-height: 1.7;
+    }
+    .hero-ctas {
+      display: flex; gap: 16px;
+      justify-content: center;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+    .hero-cta-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--accent); color: var(--white);
+      padding: 14px 32px; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 600;
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .hero-cta-primary:hover {
+      background: var(--blue-800);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(30, 64, 175, .25);
+    }
+    .hero-cta-secondary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--white); color: var(--accent);
+      padding: 14px 32px; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 600;
+      border: 1px solid var(--gray-200);
+      transition: border-color .2s, transform .15s;
+    }
+    .hero-cta-secondary:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .hero-cta-secondary svg,
+    .hero-cta-primary svg { width: 18px; height: 18px; }
+
+    /* ========================================
+       SECTION SHARED
+    ======================================== */
+    .section { padding: 100px 24px; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-size: 12px; font-weight: 600; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--accent);
+      opacity: .6; margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 700; line-height: 1.1;
+      color: var(--text);
+    }
+    .section-desc {
+      font-size: 16px; line-height: 1.7;
+      color: var(--text); opacity: .55;
+      max-width: 520px; margin-top: 16px;
+    }
+
+    /* ========================================
+       BAB SECTION — BEFORE / AFTER / BRIDGE
+    ======================================== */
+    .bab { background: var(--white); }
+    .bab-grid {
+      max-width: 1000px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 0;
+      margin-top: 48px;
+    }
+    .bab-card {
+      padding: 40px;
+      border-radius: var(--radius);
+      display: flex; flex-direction: column;
+      justify-content: center;
+    }
+    .bab-card-before {
+      background: var(--gray-100);
+      text-align: right;
+    }
+    .bab-card-after {
+      background: var(--blue-50);
+      text-align: left;
+    }
+    .bab-connector {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      position: relative;
+    }
+    .bab-connector-line {
+      width: 2px; height: 0;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    .bab-connector-arrow {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      margin: 10px 0;
+      flex-shrink: 0;
+    }
+    .bab-connector-arrow svg { width: 14px; height: 14px; color: var(--white); }
+    .bab-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .bab-card-before .bab-tag { color: var(--gray-300); }
+    .bab-card-after .bab-tag { color: var(--accent); }
+    .bab-heading {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 600; line-height: 1.2;
+      color: var(--text);
+    }
+    .bab-card-before .bab-heading { opacity: .5; }
+    .bab-bridge-row {
+      max-width: 1000px; margin: 32px auto 0;
+      text-align: center;
+      padding: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--blue-800));
+      border-radius: var(--radius);
+      color: var(--white);
+    }
+    .bab-bridge-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; opacity: .7;
+      margin-bottom: 12px;
+    }
+    .bab-bridge-text {
+      font-size: clamp(16px, 2.2vw, 20px);
+      line-height: 1.6; max-width: 600px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .bab-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .bab-card { text-align: center; padding: 32px 24px; }
+      .bab-connector {
+        flex-direction: row; padding: 0 24px;
+        height: 60px;
+      }
+      .bab-connector-line { width: 0; height: 2px; }
+    }
+
+    /* ========================================
+       PROPERTIES — HORIZONTAL SCROLL + 3D TILT
+    ======================================== */
+    .properties-header {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: flex-end; gap: 24px;
+      padding-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .properties-scroll-wrapper {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 0 24px 24px;
+    }
+    .properties-scroll-wrapper::-webkit-scrollbar { display: none; }
+    .properties-track {
+      display: flex; gap: 24px;
+      width: max-content;
+      padding: 12px 0;
+    }
+    .property-card {
+      width: 340px; flex-shrink: 0;
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+      transform-style: preserve-3d;
+      perspective: 900px;
+      transition: box-shadow .3s;
+      cursor: default;
+    }
+    .property-card:hover {
+      box-shadow: 0 20px 60px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.04);
+    }
+    .property-card-inner {
+      transform-style: preserve-3d;
+      transition: transform .15s ease-out;
+    }
+    .property-card-img {
+      width: 100%; aspect-ratio: 16/10;
+      overflow: hidden; position: relative;
+    }
+    .property-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .property-card:hover .property-card-img img { transform: scale(1.05); }
+    .property-badge {
+      position: absolute; top: 16px; left: 16px;
+      background: var(--pop); color: var(--white);
+      padding: 4px 12px; border-radius: 4px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .05em; text-transform: uppercase;
+    }
+    .property-card-body { padding: 24px; }
+    .property-card-price {
+      font-family: var(--font-display);
+      font-size: 28px; font-weight: 700;
+      color: var(--accent);
+    }
+    .property-card-location {
+      font-size: 14px; color: var(--text); opacity: .5;
+      margin-top: 4px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .property-card-location svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .property-card-specs {
+      display: flex; gap: 16px;
+      margin-top: 16px; padding-top: 16px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .property-spec {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--text); opacity: .6;
+    }
+    .property-spec svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .5; }
+    .properties-hint {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 500;
+      color: var(--text); opacity: .35;
+      margin-top: 20px;
+      max-width: 1200px; margin-left: auto; margin-right: auto;
+      padding: 0 24px;
+    }
+    .properties-hint svg { flex-shrink: 0; }
+
+    @media (max-width: 768px) {
+      .property-card { width: 280px; }
+      .properties-header { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ========================================
+       SERVICES — 3 FEATURE CARDS
+    ======================================== */
+    .services { background: var(--white); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .service-card {
+      padding: 40px 32px;
+      border-radius: var(--radius);
+      background: var(--bg);
+      border: 1px solid var(--gray-200);
+      transition: border-color .3s, box-shadow .3s, transform .15s;
+    }
+    .service-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 12px 40px rgba(30, 64, 175, .08);
+      transform: translateY(-4px);
+    }
+    .service-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: var(--blue-50);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+    }
+    .service-icon svg { width: 24px; height: 24px; color: var(--accent); }
+    .service-card-title {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 600;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .service-card-desc {
+      font-size: 15px; line-height: 1.6;
+      color: var(--text); opacity: .55;
+    }
+
+    @media (max-width: 768px) {
+      .services-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ========================================
+       STATS — ANIMATED COUNTERS
+    ======================================== */
+    .stats-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+    .stat-item { padding: 32px 16px; }
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 700; color: var(--accent);
+      line-height: 1;
+    }
+    .stat-number .counter-suffix {
+      font-size: .6em; opacity: .7;
+    }
+    .stat-label {
+      font-size: 14px; color: var(--text);
+      opacity: .45; margin-top: 8px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ========================================
+       CTA — DEEP BLUE GRADIENT + SEARCH
+    ======================================== */
+    .cta-section {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--blue-800) 100%);
+      padding: 100px 24px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-mesh {
+      position: absolute; inset: 0;
+      opacity: .12;
+      background:
+        radial-gradient(ellipse 50% 50% at 20% 30%, var(--pop), transparent),
+        radial-gradient(ellipse 60% 60% at 80% 70%, rgba(255,255,255,.1), transparent);
+      animation: meshFloat 20s ease-in-out infinite alternate;
+    }
+    .cta-inner {
+      position: relative; z-index: 1;
+      max-width: 640px; margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700; line-height: 1.1;
+      color: var(--white);
+    }
+    .cta-subtitle {
+      font-size: 16px; line-height: 1.7;
+      color: rgba(255,255,255,.65);
+      margin-top: 20px;
+    }
+    .cta-search {
+      display: flex; gap: 0;
+      margin-top: 36px;
+      max-width: 480px; margin-left: auto; margin-right: auto;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,.2);
+    }
+    .cta-search-input {
+      flex: 1;
+      padding: 16px 20px;
+      border: none; outline: none;
+      font-family: var(--font-body);
+      font-size: 15px; color: var(--text);
+      background: var(--white);
+    }
+    .cta-search-input::placeholder { color: var(--gray-300); }
+    .cta-search-btn {
+      background: var(--pop); color: var(--white);
+      border: none; padding: 16px 28px;
+      font-family: var(--font-body);
+      font-size: 15px; font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .cta-search-btn:hover { background: var(--pop-dark); }
+    .cta-info {
+      display: flex; justify-content: center;
+      gap: 32px; margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .cta-info-item {
+      display: flex; align-items: center; gap: 10px;
+      color: rgba(255,255,255,.7); font-size: 14px;
+    }
+    .cta-info-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    @media (max-width: 480px) {
+      .cta-search { flex-direction: column; }
+      .cta-search-btn { padding: 14px; }
+    }
+
+    /* ========================================
+       FOOTER
+    ======================================== */
+    .footer {
+      background: var(--text);
+      padding: 48px 24px 24px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 700;
+      color: var(--white);
+    }
+    .footer-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .footer-links a {
+      font-size: 13px; color: rgba(255,255,255,.4);
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--pop-light); }
+    .footer-bottom {
+      max-width: 1200px; margin: 32px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: rgba(255,255,255,.25);
+    }
+    .footer-bottom a { color: var(--pop-light); }
+
+    @media (max-width: 768px) {
+      .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    /* ========================================
+       REDUCED MOTION
+    ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .hero-mesh, .cta-mesh { animation: none; }
+      .hero-badge-dot { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    Prototype offert par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a> — Votre site professionnel sur mesure
+  </div>
+
+  <!-- LOADER -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">{{BUSINESS_NAME}}</div>
+      <div class="loader-line"><div class="loader-line-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- SCROLL PROGRESS -->
+  <div class="scroll-progress"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">{{BUSINESS_NAME}}</a>
+      <ul class="nav-links">
+        <li><a href="#biens">Nos Biens</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#chiffres">Chiffres</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="#contact" class="nav-cta">Estimer mon bien</a>
+    </div>
+  </nav>
+
+  <!-- ========================================
+       HERO — GRADIENT MESH + CLASH DISPLAY
+  ======================================== -->
+  <section class="hero">
+    <div class="hero-mesh"></div>
+    <div class="hero-content">
+      <div class="hero-badge reveal-up">
+        <span class="hero-badge-dot"></span>
+        {{STAT_1}} biens vendus en {{YEAR}}
+      </div>
+      <h1 class="hero-title reveal">Votre Bien<br>Merite <span>Mieux</span></h1>
+      <p class="hero-subtitle reveal-up">{{HERO_DESCRIPTION}}</p>
+      <div class="hero-ctas reveal-up">
+        <a href="#biens" class="hero-cta-primary">
+          Voir les biens
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#contact" class="hero-cta-secondary">
+          Estimation gratuite
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       BAB — BEFORE / AFTER / BRIDGE
+  ======================================== -->
+  <section class="section bab" id="transformation">
+    <div class="section-inner">
+      <span class="section-label reveal-up">La transformation</span>
+      <h2 class="section-title reveal">Pourquoi Nous Choisir</h2>
+    </div>
+    <div class="bab-grid">
+      <div class="bab-card bab-card-before">
+        <span class="bab-tag reveal-up">Avant</span>
+        <p class="bab-heading reveal">{{BAB_BEFORE}}</p>
+      </div>
+      <div class="bab-connector">
+        <div class="bab-connector-line"></div>
+        <div class="bab-connector-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="bab-connector-line"></div>
+      </div>
+      <div class="bab-card bab-card-after">
+        <span class="bab-tag reveal-up">Apres</span>
+        <p class="bab-heading reveal">{{BAB_AFTER}}</p>
+      </div>
+    </div>
+    <div class="bab-bridge-row reveal-scale">
+      <span class="bab-bridge-tag">Le Pont</span>
+      <p class="bab-bridge-text">{{BAB_BRIDGE}}</p>
+    </div>
+  </section>
+
+  <!-- ========================================
+       PROPERTIES — HORIZONTAL SCROLL + 3D TILT
+  ======================================== -->
+  <section class="section" id="biens">
+    <div class="properties-header">
+      <div>
+        <span class="section-label reveal-up">Biens Disponibles</span>
+        <h2 class="section-title reveal">Nos Exclusivites</h2>
+        <p class="section-desc reveal-up">{{PROPERTIES_DESCRIPTION}}</p>
+      </div>
+    </div>
+    <div class="properties-scroll-wrapper">
+      <div class="properties-track">
+
+        <div class="property-card" data-tilt>
+          <div class="property-card-inner">
+            <div class="property-card-img">
+              <img src="{{SERVICE_IMAGE_1}}" alt="{{SERVICE_1}}" loading="lazy">
+              <span class="property-badge">{{BADGE_1}}</span>
+            </div>
+            <div class="property-card-body">
+              <div class="property-card-price">{{PRICE_1}}</div>
+              <div class="property-card-location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{SERVICE_1}}
+              </div>
+              <div class="property-card-specs">
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                  {{SPEC_1A}}
+                </span>
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                  {{SPEC_1B}}
+                </span>
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                  {{SPEC_1C}}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="property-card" data-tilt>
+          <div class="property-card-inner">
+            <div class="property-card-img">
+              <img src="{{SERVICE_IMAGE_2}}" alt="{{SERVICE_2}}" loading="lazy">
+              <span class="property-badge">{{BADGE_2}}</span>
+            </div>
+            <div class="property-card-body">
+              <div class="property-card-price">{{PRICE_2}}</div>
+              <div class="property-card-location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{SERVICE_2}}
+              </div>
+              <div class="property-card-specs">
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                  {{SPEC_2A}}
+                </span>
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                  {{SPEC_2B}}
+                </span>
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                  {{SPEC_2C}}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="property-card" data-tilt>
+          <div class="property-card-inner">
+            <div class="property-card-img">
+              <img src="{{SERVICE_IMAGE_3}}" alt="{{SERVICE_3}}" loading="lazy">
+              <span class="property-badge">{{BADGE_3}}</span>
+            </div>
+            <div class="property-card-body">
+              <div class="property-card-price">{{PRICE_3}}</div>
+              <div class="property-card-location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{SERVICE_3}}
+              </div>
+              <div class="property-card-specs">
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                  {{SPEC_3A}}
+                </span>
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                  {{SPEC_3B}}
+                </span>
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                  {{SPEC_3C}}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="property-card" data-tilt>
+          <div class="property-card-inner">
+            <div class="property-card-img">
+              <img src="{{SERVICE_IMAGE_4}}" alt="{{SERVICE_4}}" loading="lazy">
+              <span class="property-badge">{{BADGE_4}}</span>
+            </div>
+            <div class="property-card-body">
+              <div class="property-card-price">{{PRICE_4}}</div>
+              <div class="property-card-location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{SERVICE_4}}
+              </div>
+              <div class="property-card-specs">
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                  {{SPEC_4A}}
+                </span>
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                  {{SPEC_4B}}
+                </span>
+                <span class="property-spec">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                  {{SPEC_4C}}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="properties-hint">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Glissez pour decouvrir nos biens
+    </div>
+  </section>
+
+  <!-- ========================================
+       SERVICES — 3 FEATURE CARDS
+  ======================================== -->
+  <section class="section services" id="services">
+    <div class="section-inner">
+      <span class="section-label reveal-up">Nos Services</span>
+      <h2 class="section-title reveal">Un Accompagnement Complet</h2>
+      <div class="services-grid">
+        <div class="service-card reveal-up">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <h3 class="service-card-title">{{FEATURE_1_TITLE}}</h3>
+          <p class="service-card-desc">{{FEATURE_1_DESC}}</p>
+        </div>
+        <div class="service-card reveal-up">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3 class="service-card-title">{{FEATURE_2_TITLE}}</h3>
+          <p class="service-card-desc">{{FEATURE_2_DESC}}</p>
+        </div>
+        <div class="service-card reveal-up">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="service-card-title">{{FEATURE_3_TITLE}}</h3>
+          <p class="service-card-desc">{{FEATURE_3_DESC}}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       STATS — ANIMATED COUNTERS
+  ======================================== -->
+  <section class="section" id="chiffres">
+    <div class="stats-inner">
+      <div class="stat-item reveal-up">
+        <div class="stat-number"><span class="counter" data-target="{{STAT_1}}">0</span><span class="counter-suffix">+</span></div>
+        <div class="stat-label">{{STAT_LABEL_1}}</div>
+      </div>
+      <div class="stat-item reveal-up">
+        <div class="stat-number"><span class="counter" data-target="{{STAT_2}}">0</span><span class="counter-suffix">%</span></div>
+        <div class="stat-label">{{STAT_LABEL_2}}</div>
+      </div>
+      <div class="stat-item reveal-up">
+        <div class="stat-number"><span class="counter" data-target="{{STAT_3}}">0</span><span class="counter-suffix">+</span></div>
+        <div class="stat-label">{{STAT_LABEL_3}}</div>
+      </div>
+      <div class="stat-item reveal-up">
+        <div class="stat-number"><span class="counter" data-target="{{STAT_4}}">0</span><span class="counter-suffix">j</span></div>
+        <div class="stat-label">{{STAT_LABEL_4}}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       CTA — DEEP BLUE + SEARCH
+  ======================================== -->
+  <section class="cta-section" id="contact">
+    <div class="cta-mesh"></div>
+    <div class="cta-inner">
+      <h2 class="cta-title reveal">Trouvez Votre Prochain Bien</h2>
+      <p class="cta-subtitle reveal-up">{{BUSINESS_NAME}} vous accompagne a chaque etape. Estimation gratuite et sans engagement.</p>
+      <div class="cta-search reveal-up">
+        <input type="text" class="cta-search-input" placeholder="Quartier, type de bien, budget...">
+        <button class="cta-search-btn">Rechercher</button>
+      </div>
+      <div class="cta-info reveal-up">
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>{{PHONE}}</span>
+        </div>
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>{{ADDRESS}}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">{{BUSINESS_NAME}}</div>
+      <ul class="footer-links">
+        <li><a href="#biens">Nos Biens</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#chiffres">Chiffres</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>Prototype realise par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a></span>
+      <span>{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}</span>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    /* ========================================
+       INIT — REDUCED MOTION
+    ======================================== */
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ========================================
+       LOADER
+    ======================================== */
+    if (!prefersReducedMotion) {
+      const loaderTL = gsap.timeline();
+      loaderTL
+        .to('.loader-logo', { opacity: 1, duration: .5, ease: 'power2.out' })
+        .to('.loader-line-fill', { scaleX: 1, duration: 1, ease: 'power2.inOut' }, '-=.2')
+        .to('.loader', { opacity: 0, duration: .4, ease: 'power2.inOut', onComplete() {
+          document.querySelector('.loader').style.display = 'none';
+        }}, '+=.15');
+    } else {
+      document.querySelector('.loader').style.display = 'none';
+    }
+
+    /* ========================================
+       LENIS SMOOTH SCROLL
+    ======================================== */
+    let lenis;
+    if (!prefersReducedMotion) {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        touchMultiplier: 1.5
+      });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    /* ========================================
+       SCROLL PROGRESS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.to('.scroll-progress', {
+        width: '100%',
+        ease: 'none',
+        scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: .3 }
+      });
+    }
+
+    /* ========================================
+       NAV SHRINK
+    ======================================== */
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    /* ========================================
+       REVEAL ANIMATIONS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* Clip-path text reveals */
+      document.querySelectorAll('.reveal').forEach(el => {
+        gsap.fromTo(el,
+          { clipPath: 'inset(0 0 100% 0)', opacity: 0 },
+          {
+            clipPath: 'inset(0 0 0% 0)', opacity: 1,
+            duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+          }
+        );
+      });
+
+      /* Translate-up reveals */
+      document.querySelectorAll('.reveal-up').forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 30, opacity: 0 },
+          {
+            y: 0, opacity: 1,
+            duration: .7, ease: 'power3.out',
+            delay: i * .04,
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+          }
+        );
+      });
+
+      /* Scale reveals */
+      document.querySelectorAll('.reveal-scale').forEach(el => {
+        gsap.fromTo(el,
+          { scale: .93, opacity: 0 },
+          {
+            scale: 1, opacity: 1,
+            duration: .8, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+          }
+        );
+      });
+
+      /* BAB connector line animation */
+      document.querySelectorAll('.bab-connector-line').forEach(line => {
+        gsap.fromTo(line,
+          { height: 0 },
+          {
+            height: 60,
+            duration: .8, ease: 'power2.out',
+            scrollTrigger: { trigger: '.bab-grid', start: 'top 75%', once: true }
+          }
+        );
+      });
+
+      /* Property cards stagger */
+      gsap.fromTo('.property-card', { y: 40, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .6, ease: 'power3.out',
+        stagger: .1,
+        scrollTrigger: { trigger: '.properties-track', start: 'top 85%', once: true }
+      });
+
+      /* Service cards stagger */
+      gsap.fromTo('.service-card', { y: 40, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .6, ease: 'power3.out',
+        stagger: .12,
+        scrollTrigger: { trigger: '.services-grid', start: 'top 85%', once: true }
+      });
+    }
+
+    /* ========================================
+       COUNTER ANIMATION
+    ======================================== */
+    if (!prefersReducedMotion) {
+      document.querySelectorAll('.counter').forEach(counter => {
+        const target = +counter.dataset.target;
+        gsap.fromTo(counter, { innerText: 0 }, {
+          innerText: target,
+          duration: 2,
+          ease: 'power2.out',
+          snap: { innerText: 1 },
+          scrollTrigger: { trigger: counter, start: 'top 85%', once: true }
+        });
+      });
+    } else {
+      document.querySelectorAll('.counter').forEach(c => { c.textContent = c.dataset.target; });
+    }
+
+    /* ========================================
+       3D TILT ON PROPERTY CARDS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      document.querySelectorAll('[data-tilt]').forEach(card => {
+        const inner = card.querySelector('.property-card-inner');
+        const maxTilt = 6;
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          const rotateX = (0.5 - y) * maxTilt;
+          const rotateY = (x - 0.5) * maxTilt;
+          inner.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.015, 1.015, 1.015)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          inner.style.transform = 'perspective(900px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        });
+      });
+    }
+
+    /* ========================================
+       SMOOTH SCROLL ANCHOR LINKS
+    ======================================== */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          if (lenis) lenis.scrollTo(target, { offset: -80 });
+          else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

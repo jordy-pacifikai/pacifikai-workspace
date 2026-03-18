@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mana Dental — Cabinet Dentaire Papeete | PACIFIK'AI Portfolio</title>
+    <meta name="description" content="Mana Dental : cabinet dentaire moderne au cœur de Papeete. Soins de qualité, dernières technologies, équipe bienveillante.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #FAFCFF;
+            color: #1E293B;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+        /* ========== SCROLL PROGRESS ========== */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; z-index: 9000;
+            height: 3px; width: 0%;
+            background: linear-gradient(90deg, #4A90D9, #7CB68E);
+        }
+
+        /* ========== NAVIGATION ========== */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(250, 252, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(74, 144, 217, 0.08);
+            display: flex; align-items: center; justify-content: space-between;
+            transition: padding 0.3s ease, box-shadow 0.3s ease;
+        }
+        .nav.scrolled { padding: 0.6rem 2rem; box-shadow: 0 2px 20px rgba(30, 41, 59, 0.06); }
+        .nav-logo {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800; font-size: 1.4rem;
+            color: #4A90D9;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .nav-logo svg { width: 28px; height: 28px; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            font-size: 0.9rem; font-weight: 500; color: #475569;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: #4A90D9; }
+        .nav-cta {
+            background: #4A90D9; color: #fff !important;
+            padding: 0.5rem 1.2rem; border-radius: 8px;
+            font-weight: 600; font-size: 0.85rem;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .nav-cta:hover { background: #3A7BC8; transform: translateY(-1px); }
+        .nav-mobile-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+        .nav-mobile-toggle span { display: block; width: 24px; height: 2px; background: #1E293B; border-radius: 2px; transition: 0.3s; }
+
+        /* ========== CONTAINER ========== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* ========== HERO ========== */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center;
+            padding-top: 5rem;
+            background: #FAFCFF;
+        }
+        .hero-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 4rem; align-items: center;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: #F0F4F8; border: 1px solid rgba(74, 144, 217, 0.15);
+            padding: 0.4rem 1rem; border-radius: 100px;
+            font-size: 0.8rem; font-weight: 600; color: #4A90D9;
+            margin-bottom: 1.5rem;
+        }
+        .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: #7CB68E; }
+        .hero h1 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800; font-size: clamp(2.2rem, 4vw, 3.4rem);
+            line-height: 1.1; color: #1E293B;
+            margin-bottom: 1.2rem;
+        }
+        .hero h1 em {
+            font-style: normal; color: #4A90D9;
+        }
+        .hero-sub {
+            font-size: 1.1rem; color: #64748B; line-height: 1.7;
+            margin-bottom: 2rem; max-width: 480px;
+        }
+        .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: #4A90D9; color: #fff;
+            padding: 0.85rem 2rem; border-radius: 12px;
+            font-weight: 600; font-size: 1rem;
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(74, 144, 217, 0.25);
+        }
+        .btn-primary:hover { background: #3A7BC8; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74, 144, 217, 0.35); }
+        .btn-outline {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: transparent; color: #4A90D9;
+            padding: 0.85rem 2rem; border-radius: 12px;
+            font-weight: 600; font-size: 1rem;
+            border: 2px solid #4A90D9;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn-outline:hover { background: rgba(74, 144, 217, 0.06); transform: translateY(-2px); }
+        .hero-image {
+            position: relative; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(30, 41, 59, 0.1);
+        }
+        .hero-image img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/3; }
+        .hero-image::after {
+            content: ''; position: absolute; inset: 0;
+            border-radius: 20px;
+            box-shadow: inset 0 0 0 1px rgba(74, 144, 217, 0.1);
+            pointer-events: none;
+        }
+
+        /* ========== TRUST BAR ========== */
+        .trust-bar {
+            background: #F0F4F8; padding: 3.5rem 0;
+            border-top: 1px solid rgba(74, 144, 217, 0.06);
+            border-bottom: 1px solid rgba(74, 144, 217, 0.06);
+        }
+        .trust-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+            text-align: center;
+        }
+        .trust-item { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+        .trust-icon {
+            width: 52px; height: 52px; border-radius: 14px;
+            background: rgba(74, 144, 217, 0.1);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .trust-icon svg { width: 26px; height: 26px; color: #4A90D9; }
+        .trust-number {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800; font-size: 1.8rem; color: #1E293B;
+        }
+        .trust-label { font-size: 0.9rem; color: #64748B; font-weight: 500; }
+
+        /* ========== SECTION COMMON ========== */
+        .section { padding: 5rem 0; }
+        .section-alt { background: #F0F4F8; }
+        .section-header {
+            text-align: center; margin-bottom: 3.5rem;
+        }
+        .section-header h2 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700; font-size: clamp(1.8rem, 3vw, 2.4rem);
+            color: #1E293B; margin-bottom: 0.75rem;
+        }
+        .section-header p { font-size: 1.05rem; color: #64748B; max-width: 560px; margin: 0 auto; }
+        .section-tag {
+            display: inline-block; font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: #4A90D9; margin-bottom: 0.75rem;
+        }
+
+        /* ========== SERVICES ========== */
+        .services-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+        }
+        .service-card {
+            background: #fff; border-radius: 16px;
+            padding: 2rem; border-left: 4px solid #4A90D9;
+            box-shadow: 0 2px 12px rgba(30, 41, 59, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0; transform: translateY(30px);
+        }
+        .service-card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(30, 41, 59, 0.1); }
+        .service-icon {
+            width: 44px; height: 44px; border-radius: 10px;
+            background: rgba(74, 144, 217, 0.08);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .service-icon svg { width: 22px; height: 22px; color: #4A90D9; }
+        .service-card h3 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700; font-size: 1.1rem; color: #1E293B;
+            margin-bottom: 0.3rem;
+        }
+        .service-price {
+            font-weight: 700; font-size: 0.95rem; color: #4A90D9;
+            margin-bottom: 0.75rem;
+        }
+        .service-card p { font-size: 0.9rem; color: #64748B; line-height: 1.5; }
+
+        /* ========== TECHNOLOGY ========== */
+        .tech-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 4rem; align-items: center;
+        }
+        .tech-image { border-radius: 20px; overflow: hidden; box-shadow: 0 16px 48px rgba(30, 41, 59, 0.08); }
+        .tech-image img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+        .tech-content h2 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700; font-size: clamp(1.6rem, 2.5vw, 2rem);
+            color: #1E293B; margin-bottom: 1rem;
+        }
+        .tech-content > p { font-size: 1rem; color: #64748B; margin-bottom: 1.5rem; line-height: 1.7; }
+        .tech-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+        .tech-list li {
+            display: flex; align-items: flex-start; gap: 0.75rem;
+            font-size: 0.95rem; color: #475569;
+        }
+        .tech-list li svg { width: 20px; height: 20px; color: #7CB68E; flex-shrink: 0; margin-top: 2px; }
+
+        /* ========== TEAM ========== */
+        .team-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+        }
+        .team-card {
+            text-align: center; background: #fff; border-radius: 16px;
+            padding: 2.5rem 1.5rem;
+            box-shadow: 0 2px 12px rgba(30, 41, 59, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .team-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(30, 41, 59, 0.08); }
+        .team-avatar {
+            width: 100px; height: 100px; border-radius: 50%;
+            margin: 0 auto 1.2rem; overflow: hidden;
+            border: 3px solid rgba(74, 144, 217, 0.15);
+        }
+        .team-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .team-card h3 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700; font-size: 1.1rem; color: #1E293B;
+            margin-bottom: 0.25rem;
+        }
+        .team-card .team-specialty { font-size: 0.9rem; color: #4A90D9; font-weight: 500; }
+
+        /* ========== TESTIMONIALS ========== */
+        .testimonials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .testimonial-card {
+            background: #fff; border-radius: 16px; padding: 2.5rem;
+            box-shadow: 0 2px 12px rgba(30, 41, 59, 0.04);
+            position: relative;
+        }
+        .testimonial-quote {
+            font-family: 'Manrope', sans-serif;
+            font-size: 3rem; font-weight: 800; color: #7CB68E;
+            line-height: 1; margin-bottom: 0.5rem;
+        }
+        .testimonial-card blockquote {
+            font-size: 1.05rem; color: #475569; line-height: 1.7;
+            font-style: italic; margin-bottom: 1.2rem;
+        }
+        .testimonial-author { font-weight: 600; color: #1E293B; font-size: 0.95rem; }
+        .testimonial-stars { color: #F59E0B; margin-bottom: 0.75rem; letter-spacing: 2px; }
+
+        /* ========== BOOKING CTA ========== */
+        .booking-cta {
+            background: linear-gradient(135deg, #4A90D9 0%, #3A7BC8 50%, #4A90D9 100%);
+            padding: 5rem 0; text-align: center; color: #fff;
+        }
+        .booking-cta h2 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800; font-size: clamp(1.8rem, 3vw, 2.6rem);
+            margin-bottom: 1rem;
+        }
+        .booking-cta .booking-sub { font-size: 1.05rem; opacity: 0.9; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .booking-phone {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.8rem; font-weight: 700;
+            margin-bottom: 1.5rem; letter-spacing: 0.02em;
+        }
+        .booking-phone a { color: #fff; text-decoration: none; }
+        .btn-white {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: #fff; color: #4A90D9;
+            padding: 0.85rem 2.5rem; border-radius: 12px;
+            font-weight: 700; font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
+        .booking-hours { margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.85; line-height: 1.8; }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: #1E293B; color: #94A3B8; padding: 3rem 0 1.5rem;
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        }
+        .footer-brand .footer-logo {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800; font-size: 1.2rem; color: #fff;
+            margin-bottom: 0.75rem;
+        }
+        .footer-brand p { font-size: 0.9rem; line-height: 1.6; }
+        .footer h4 {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700; font-size: 0.95rem; color: #fff;
+            margin-bottom: 1rem;
+        }
+        .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+        .footer-links a { font-size: 0.9rem; transition: color 0.2s; }
+        .footer-links a:hover { color: #4A90D9; }
+        .footer-contact-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .footer-contact-item svg { width: 16px; height: 16px; color: #4A90D9; flex-shrink: 0; }
+        .footer-bottom {
+            padding-top: 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.8rem;
+        }
+        .footer-credit a { color: #4A90D9; font-weight: 600; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
+            .hero-sub { margin-left: auto; margin-right: auto; }
+            .hero-actions { justify-content: center; }
+            .hero-image { max-width: 550px; margin: 0 auto; }
+            .tech-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+            .tech-image { order: -1; max-width: 550px; margin: 0 auto; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-mobile-toggle { display: flex; }
+            .nav-links.active {
+                display: flex; flex-direction: column;
+                position: absolute; top: 100%; left: 0; right: 0;
+                background: rgba(250, 252, 255, 0.98);
+                backdrop-filter: blur(12px);
+                padding: 1.5rem 2rem; gap: 1rem;
+                border-bottom: 1px solid rgba(74, 144, 217, 0.1);
+            }
+            .services-grid { grid-template-columns: 1fr; }
+            .trust-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+            .team-grid { grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .trust-grid { grid-template-columns: 1fr 1fr; }
+            .hero-actions { flex-direction: column; align-items: stretch; }
+            .btn-primary, .btn-outline { justify-content: center; }
+            .booking-phone { font-size: 1.4rem; }
+        }
+
+        /* ========== REDUCED MOTION ========== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .service-card { opacity: 1; transform: none; }
+        }
+    </style>
+<style>.ifr .loader,.ifr .custom-cursor,.ifr .cursor-dot,.ifr .cursor-ring,.ifr .scroll-progress,.ifr .disclaimer,.ifr .scroll-indicator,.ifr .scroll-hint{display:none!important}.ifr body,.ifr html{overflow:hidden!important}</style>
+<script>if(window.self!==window.top){document.documentElement.classList.add("ifr");var _f=setInterval(function(){document.querySelectorAll("*").forEach(function(e){var s=getComputedStyle(e);if(s.opacity==="0"&&!e.classList.contains("loader")){e.style.opacity="1";if(s.animationName==="none"||s.animationName==="")e.style.transform="none"}});document.body.style.overflow="hidden";window.scrollTo(0,0)},200);setTimeout(function(){clearInterval(_f)},5000)}</script></head>
+<body>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-logo">
+            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2C7.37 2 2 7.37 2 14s5.37 12 12 12 12-5.37 12-12S20.63 2 14 2zm0 21c-1.1 0-2-.45-2-1h4c0 .55-.9 1-2 1zm4.5-3H9.5v-1.5l1-.75V14c0-2.65 1.36-4.83 3.75-5.41V8a.75.75 0 111.5 0v.59C18.14 9.17 19.5 11.35 19.5 14v3.75l1 .75V20z" fill="currentColor"/>
+            </svg>
+            Mana Dental
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#services">Services</a>
+            <a href="#technology">Technologies</a>
+            <a href="#team">Équipe</a>
+            <a href="#testimonials">Avis</a>
+            <a href="#booking" class="nav-cta">Rendez-vous</a>
+        </div>
+        <div class="nav-mobile-toggle" id="navToggle" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge"><span></span> Cabinet dentaire — Papeete, Tahiti</div>
+                    <h1>Votre <em>Sourire</em>,<br>Notre Priorité</h1>
+                    <p class="hero-sub">Cabinet dentaire moderne au cœur de Papeete. Soins de qualité dans un environnement apaisant.</p>
+                    <div class="hero-actions">
+                        <a href="#booking" class="btn-primary">
+                            Prendre Rendez-vous
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="#services" class="btn-outline">Nos Services</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="/portfolio/new/images/mana-dental/hero.jpg" alt="Accueil lumineux du cabinet Mana Dental à Papeete" width="600" height="450" loading="eager">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <section class="trust-bar" id="trustBar">
+        <div class="container">
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 6 5 6 8c0 4 6 10 6 10s6-6 6-10c0-3-2-6-6-6z"/><circle cx="12" cy="8" r="2"/></svg>
+                    </div>
+                    <div class="trust-number"><span class="counter" data-target="15">0</span>+</div>
+                    <div class="trust-label">Ans d'Expérience</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    </div>
+                    <div class="trust-number"><span class="counter" data-target="8000">0</span>+</div>
+                    <div class="trust-label">Patients</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <div class="trust-number">Dernière</div>
+                    <div class="trust-label">Technologie</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    </div>
+                    <div class="trust-number">Sans</div>
+                    <div class="trust-label">Douleur</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="section" id="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Nos soins</span>
+                <h2>Des Services pour Toute la Famille</h2>
+                <p>Des soins préventifs aux traitements spécialisés, nous prenons soin de votre santé bucco-dentaire.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C7 3 4 7 4 10c0 5 8 11 8 11s8-6 8-11c0-3-3-7-8-7z"/></svg>
+                    </div>
+                    <h3>Détartrage & Nettoyage</h3>
+                    <div class="service-price">8 500 XPF</div>
+                    <p>Nettoyage professionnel complet pour des gencives saines et un sourire éclatant.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    </div>
+                    <h3>Blanchiment Dentaire</h3>
+                    <div class="service-price">35 000 XPF</div>
+                    <p>Retrouvez la blancheur naturelle de vos dents avec notre traitement en cabinet.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                    </div>
+                    <h3>Implants</h3>
+                    <div class="service-price">Sur devis</div>
+                    <p>Implants de dernière génération pour remplacer durablement les dents manquantes.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <h3>Orthodontie</h3>
+                    <div class="service-price">Sur devis</div>
+                    <p>Alignement dentaire invisible et classique pour enfants et adultes.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+                    </div>
+                    <h3>Soins Enfants</h3>
+                    <div class="service-price">6 000 XPF</div>
+                    <p>Consultations adaptées aux petits, dans un environnement rassurant et ludique.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <h3>Urgences</h3>
+                    <div class="service-price">Sans RDV</div>
+                    <p>Prise en charge rapide pour les douleurs aiguës, fractures et abcès.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology -->
+    <section class="section section-alt" id="technology">
+        <div class="container">
+            <div class="tech-grid">
+                <div class="tech-image">
+                    <img src="/portfolio/new/images/mana-dental/tech.jpg" alt="Scanner dentaire 3D de dernière génération" width="600" height="450" loading="lazy">
+                </div>
+                <div class="tech-content">
+                    <span class="section-tag">Technologies</span>
+                    <h2>Équipements de Pointe</h2>
+                    <p>Équipé des dernières technologies de radiographie 3D et d'empreintes numériques pour des soins précis et confortables.</p>
+                    <ul class="tech-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Radiographie panoramique 3D (CBCT)
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Empreintes numériques sans pâte
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Laser pour soins sans douleur
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Stérilisation aux normes européennes
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section" id="team">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Notre équipe</span>
+                <h2>Une Équipe à Votre Écoute</h2>
+                <p>Des praticiens qualifiés, passionnés et bienveillants pour vous accompagner.</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <img src="/portfolio/new/images/mana-dental/equipe.jpg" alt="Dr. Teva Raihere" width="100" height="100" loading="lazy">
+                    </div>
+                    <h3>Dr. Teva Raihere</h3>
+                    <span class="team-specialty">Implantologie & Chirurgie</span>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <img src="/portfolio/new/images/mana-dental/equipe.jpg" alt="Dr. Moea Temarii" width="100" height="100" loading="lazy">
+                    </div>
+                    <h3>Dr. Moea Temarii</h3>
+                    <span class="team-specialty">Orthodontie</span>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <img src="/portfolio/new/images/mana-dental/equipe.jpg" alt="Dr. Hina Potiron" width="100" height="100" loading="lazy">
+                    </div>
+                    <h3>Dr. Hina Potiron</h3>
+                    <span class="team-specialty">Pédodontie & Soins Généraux</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section section-alt" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Témoignages</span>
+                <h2>Ce Que Disent Nos Patients</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <blockquote>Plus aucune peur du dentiste grâce à cette équipe exceptionnelle. Le cabinet est moderne, l'accueil chaleureux, et les soins toujours sans douleur.</blockquote>
+                    <div class="testimonial-author">Maeva P.</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <blockquote>Le blanchiment a changé mon sourire et ma confiance. Résultat naturel et professionnel. Je recommande Mana Dental sans hésiter.</blockquote>
+                    <div class="testimonial-author">Teiki R.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking CTA -->
+    <section class="booking-cta" id="booking">
+        <div class="container">
+            <h2>Prenez Soin de Votre Sourire</h2>
+            <p class="booking-sub">Prenez rendez-vous dès aujourd'hui pour une consultation personnalisée.</p>
+            <div class="booking-phone"><a href="tel:+68940500000">40 50 XX XX</a></div>
+            <a href="#" class="btn-white">
+                Prendre Rendez-vous
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <div class="booking-hours">
+                Lun — Ven : 7h30 — 16h30<br>
+                Sam : 8h — 12h
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">Mana Dental</div>
+                    <p>Cabinet dentaire moderne au cœur de Papeete. Des soins de qualité dans un environnement apaisant et bienveillant.</p>
+                </div>
+                <div>
+                    <h4>Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">Détartrage & Nettoyage</a></li>
+                        <li><a href="#services">Blanchiment Dentaire</a></li>
+                        <li><a href="#services">Implants</a></li>
+                        <li><a href="#services">Orthodontie</a></li>
+                        <li><a href="#services">Urgences</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Contact</h4>
+                    <div class="footer-contact-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Rue du Général de Gaulle, Papeete
+                    </div>
+                    <div class="footer-contact-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                        40 50 XX XX
+                    </div>
+                    <div class="footer-contact-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        contact@manadental.pf
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Mana Dental. Tous droits réservés.</span>
+                <span class="footer-credit">Site conçu par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- GSAP + ScrollTrigger + Lenis -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+
+    <script>
+    (function() {
+        'use strict';
+
+        /* ========== REDUCED MOTION CHECK ========== */
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ========== LENIS SMOOTH SCROLL ========== */
+        let lenis;
+        if (!prefersReducedMotion) {
+            lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smoothWheel: true,
+            });
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+            gsap.ticker.lagSmoothing(0);
+        }
+
+        /* ========== SCROLL PROGRESS BAR ========== */
+        const scrollProgress = document.getElementById('scrollProgress');
+        if (!prefersReducedMotion) {
+            gsap.to(scrollProgress, {
+                width: '100%',
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: document.body,
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 0.3,
+                }
+            });
+        }
+
+        /* ========== NAV SHRINK ========== */
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 50);
+        }, { passive: true });
+
+        /* ========== MOBILE NAV TOGGLE ========== */
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        navLinks.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', () => { navLinks.classList.remove('active'); });
+        });
+
+        /* ========== SKIP ANIMATIONS IF REDUCED MOTION ========== */
+        if (prefersReducedMotion) {
+            document.querySelectorAll('.service-card').forEach(c => {
+                c.style.opacity = '1';
+                c.style.transform = 'none';
+            });
+            return;
+        }
+
+        /* ========== GSAP REGISTER ========== */
+        gsap.registerPlugin(ScrollTrigger);
+
+        /* ========== HERO ANIMATIONS ========== */
+        const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        heroTl
+            .from('.hero-badge', { opacity: 0, y: 20, duration: 0.6 }, 0.2)
+            .from('.hero h1', { opacity: 0, y: 40, duration: 0.8 }, 0.3)
+            .from('.hero-sub', { opacity: 0, y: 30, duration: 0.7 }, 0.5)
+            .from('.hero-actions', { opacity: 0, y: 20, duration: 0.6 }, 0.65)
+            .from('.hero-image', { opacity: 0, x: 60, duration: 1, ease: 'power2.out' }, 0.4);
+
+        /* ========== TRUST BAR — COUNTER ANIMATION ========== */
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            gsap.to(counter, {
+                innerText: target,
+                duration: 2,
+                ease: 'power2.out',
+                snap: { innerText: 1 },
+                scrollTrigger: {
+                    trigger: counter,
+                    start: 'top 85%',
+                    once: true,
+                }
+            });
+        });
+
+        gsap.from('.trust-item', {
+            opacity: 0, y: 30, duration: 0.6, stagger: 0.12,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: '.trust-bar', start: 'top 80%', once: true }
+        });
+
+        /* ========== SERVICES — STAGGER REVEAL ========== */
+        gsap.to('.service-card', {
+            opacity: 1, y: 0, duration: 0.6, stagger: 0.1,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: '.services-grid', start: 'top 80%', once: true }
+        });
+
+        /* ========== TECHNOLOGY SECTION ========== */
+        gsap.from('.tech-image', {
+            opacity: 0, x: -50, duration: 0.8, ease: 'power2.out',
+            scrollTrigger: { trigger: '.tech-grid', start: 'top 75%', once: true }
+        });
+        gsap.from('.tech-content > *', {
+            opacity: 0, x: 40, duration: 0.6, stagger: 0.12, ease: 'power2.out',
+            scrollTrigger: { trigger: '.tech-content', start: 'top 80%', once: true }
+        });
+
+        /* ========== TEAM CARDS ========== */
+        gsap.from('.team-card', {
+            opacity: 0, y: 40, duration: 0.7, stagger: 0.15,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: '.team-grid', start: 'top 80%', once: true }
+        });
+
+        /* ========== TESTIMONIALS ========== */
+        gsap.from('.testimonial-card', {
+            opacity: 0, y: 30, duration: 0.7, stagger: 0.2,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: '.testimonials-grid', start: 'top 80%', once: true }
+        });
+
+        /* ========== BOOKING CTA ========== */
+        gsap.from('.booking-cta h2, .booking-cta .booking-sub, .booking-cta .booking-phone, .booking-cta .btn-white, .booking-cta .booking-hours', {
+            opacity: 0, y: 30, duration: 0.6, stagger: 0.1,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: '.booking-cta', start: 'top 80%', once: true }
+        });
+
+        /* ========== SECTION HEADERS ========== */
+        document.querySelectorAll('.section-header').forEach(header => {
+            gsap.from(header.children, {
+                opacity: 0, y: 25, duration: 0.6, stagger: 0.1,
+                ease: 'power2.out',
+                scrollTrigger: { trigger: header, start: 'top 85%', once: true }
+            });
+        });
+
+        /* ========== SMOOTH ANCHOR SCROLL ========== */
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', (e) => {
+                const target = document.querySelector(anchor.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    if (lenis) {
+                        lenis.scrollTo(target, { offset: -80, duration: 1.2 });
+                    } else {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+
+    })();
+    </script>
+</body>
+</html>

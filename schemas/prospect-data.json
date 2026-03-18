@@ -1,0 +1,294 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProspectData",
+  "description": "Schema complet pour la generation de dossiers commerciaux B2B PACIFIK'AI",
+  "type": "object",
+  "required": ["company", "scores", "sectorContext", "painPoints", "solutions", "pricing", "timeline"],
+  "properties": {
+    "company": {
+      "type": "object",
+      "description": "Profil de l'entreprise prospect",
+      "required": ["name", "sector", "description"],
+      "properties": {
+        "name": { "type": "string" },
+        "sector": { "type": "string" },
+        "description": { "type": "string", "maxLength": 500 },
+        "website": { "type": "string", "format": "uri" },
+        "logo": { "type": "string", "format": "uri" },
+        "size": {
+          "type": "string",
+          "enum": ["TPE", "PME", "ETI", "GE"],
+          "description": "TPE < 1M EUR, PME 1-10M, ETI 10-250M, GE > 250M"
+        },
+        "employees": { "type": "integer", "minimum": 1 },
+        "revenue": {
+          "type": "object",
+          "properties": {
+            "amount": { "type": "number" },
+            "currency": { "type": "string", "default": "XPF" }
+          }
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "country": { "type": "string" },
+            "city": { "type": "string" },
+            "region": { "type": "string" }
+          }
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "role": { "type": "string" },
+              "email": { "type": "string", "format": "email" },
+              "phone": { "type": "string" },
+              "linkedin": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      }
+    },
+    "scores": {
+      "type": "object",
+      "description": "Scoring automatique du prospect",
+      "required": ["global", "urgency", "budget", "fit"],
+      "properties": {
+        "global": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Score global = moyenne ponderee des 3 autres"
+        },
+        "urgency": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Niveau d'urgence du besoin"
+        },
+        "budget": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Capacite budgetaire estimee"
+        },
+        "fit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Adequation avec notre offre"
+        }
+      }
+    },
+    "sectorContext": {
+      "type": "object",
+      "description": "Contexte marche et secteur",
+      "properties": {
+        "marketSize": { "type": "string" },
+        "growthRate": { "type": "string" },
+        "trends": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 5
+        },
+        "challenges": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 5
+        },
+        "opportunities": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 5
+        }
+      }
+    },
+    "keyFacts": {
+      "type": "array",
+      "description": "5 faits cles sur l'entreprise",
+      "items": { "type": "string" },
+      "minItems": 3,
+      "maxItems": 5
+    },
+    "painPoints": {
+      "type": "array",
+      "description": "Problemes identifies chez le prospect",
+      "items": {
+        "type": "object",
+        "required": ["title", "description", "impact"],
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "impact": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          },
+          "icon": { "type": "string" }
+        }
+      },
+      "minItems": 3,
+      "maxItems": 5
+    },
+    "solutions": {
+      "type": "array",
+      "description": "Solutions recommandees avec ROI",
+      "items": {
+        "type": "object",
+        "required": ["title", "description", "savings", "roi"],
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "savings": {
+            "type": "object",
+            "properties": {
+              "amount": { "type": "number" },
+              "currency": { "type": "string", "default": "XPF" },
+              "period": { "type": "string", "default": "month" }
+            }
+          },
+          "roi": {
+            "type": "number",
+            "description": "ROI en pourcentage"
+          },
+          "workflowId": {
+            "type": "string",
+            "description": "Reference au workflow n8n a deployer"
+          }
+        }
+      },
+      "minItems": 3,
+      "maxItems": 6
+    },
+    "caseStudies": {
+      "type": "array",
+      "description": "Etudes de cas secteur avec metriques",
+      "items": {
+        "type": "object",
+        "properties": {
+          "company": { "type": "string" },
+          "sector": { "type": "string" },
+          "metric": { "type": "string" },
+          "value": { "type": "string" },
+          "source": { "type": "string", "format": "uri" }
+        }
+      },
+      "minItems": 3,
+      "maxItems": 6
+    },
+    "pricing": {
+      "type": "object",
+      "description": "Grille tarifaire dynamique",
+      "required": ["recommended", "tiers"],
+      "properties": {
+        "recommended": {
+          "type": "string",
+          "enum": ["starter", "business", "enterprise"]
+        },
+        "tiers": {
+          "type": "object",
+          "properties": {
+            "starter": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "default": "Starter" },
+                "setup": { "type": "number" },
+                "monthly": { "type": "number" },
+                "features": { "type": "array", "items": { "type": "string" } },
+                "workflows": { "type": "integer" }
+              }
+            },
+            "business": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "default": "Business" },
+                "setup": { "type": "number" },
+                "monthly": { "type": "number" },
+                "features": { "type": "array", "items": { "type": "string" } },
+                "workflows": { "type": "integer" }
+              }
+            },
+            "enterprise": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "default": "Enterprise" },
+                "setup": { "type": "number" },
+                "monthly": { "type": "number" },
+                "features": { "type": "array", "items": { "type": "string" } },
+                "workflows": { "type": "integer" }
+              }
+            }
+          }
+        },
+        "currency": { "type": "string", "default": "XPF" },
+        "sizeMultiplier": { "type": "number", "default": 1 },
+        "sectorMultiplier": { "type": "number", "default": 1 }
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "description": "Plan d'action avec jalons",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "minItems": 4,
+      "maxItems": 6
+    },
+    "salesScript": {
+      "type": "object",
+      "description": "Script de vente",
+      "properties": {
+        "hook": { "type": "string", "description": "Accroche initiale" },
+        "questions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Questions de qualification"
+        },
+        "objections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objection": { "type": "string" },
+              "response": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "emailTemplate": {
+      "type": "object",
+      "description": "Template email de prospection",
+      "properties": {
+        "subject": { "type": "string" },
+        "body": { "type": "string" }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "description": "Toutes les URLs utilisees pour la recherche",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "snippet": { "type": "string" }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "version": { "type": "string" },
+        "qualityScore": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    }
+  }
+}

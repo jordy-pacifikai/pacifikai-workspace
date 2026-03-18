@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}. {{TAGLINE}}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family={{FONT_DISPLAY}}&family={{FONT_BODY}}:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ================================================================
+       SURF V3 — Tropical Fun Vibrant
+       Bright sand, playful, youth energy.
+       BAB framework: Before > After > Bridge
+       Gradient mesh warm + 3D tilt cards + horizontal scroll courses
+       ================================================================ */
+
+    /* -- Reset & Base -- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --text: {{COLOR_TEXT}};
+      --pop: #F97316;
+      --pop-dark: #EA580C;
+      --pop-light: #FB923C;
+      --accent-soft: rgba(8, 145, 178, 0.08);
+      --accent-mid: rgba(8, 145, 178, 0.15);
+      --card-bg: #FFFFFF;
+      --card-border: rgba(8, 145, 178, 0.12);
+      --muted: #8A7D6B;
+      --sand-light: #FFF5D6;
+      --font-display: '{{FONT_DISPLAY}}', 'Bebas Neue', Impact, sans-serif;
+      --font-body: '{{FONT_BODY}}', 'DM Sans', -apple-system, sans-serif;
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.7;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    /* -- Disclaimer & Loader -- */
+    .disclaimer{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--accent);color:#fff;font-size:11px;letter-spacing:.06em;text-align:center;padding:10px 24px;font-weight:500}
+    .disclaimer a{color:#fff;text-decoration:underline;font-weight:600}
+    .loader{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+    .loader-inner{text-align:center}
+    .loader-logo{font-family:var(--font-display);font-size:clamp(36px,7vw,72px);font-weight:400;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);opacity:0}
+    .loader-bar{width:120px;height:3px;background:var(--accent-soft);margin:20px auto 0;overflow:hidden;border-radius:3px}
+    .loader-bar-fill{width:100%;height:100%;background:var(--pop);transform:scaleX(0);transform-origin:left;border-radius:3px}
+
+    /* -- Scroll Progress -- */
+    .scroll-progress{position:fixed;top:38px;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--pop));z-index:9998;transition:none}
+
+    /* -- Gradient Mesh Background -- */
+    .gradient-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 60% at 5% 15%, rgba(249,115,22,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 80% at 95% 85%, rgba(8,145,178,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 50% 50%, rgba(255,245,214,0.4) 0%, transparent 70%),
+        var(--bg);
+      animation: meshWarm 22s ease-in-out infinite alternate;
+    }
+    @keyframes meshWarm {
+      0% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+      50% { background-position: 15% 25%, 85% 70%, 45% 55%; }
+      100% { background-position: 8% 40%, 92% 30%, 55% 48%; }
+    }
+
+    /* -- Container -- */
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* -- Typography -- */
+    h1, h2, h3, h4, h5 { font-family: var(--font-display); line-height: 1.05; color: var(--text); }
+    p { line-height: 1.7; }
+    .accent { color: var(--accent); }
+    .pop { color: var(--pop); }
+
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--pop);
+      margin-bottom: 12px;
+    }
+
+    /* ========================================
+       NAVIGATION
+    ======================================== */
+    .nav {
+      position: fixed; top: 38px; left: 0; width: 100%;
+      z-index: 1000; padding: 20px 0;
+      transition: background .4s, padding .4s, box-shadow .4s;
+    }
+    .nav.scrolled {
+      background: rgba(255, 249, 230, .92);
+      backdrop-filter: blur(16px);
+      padding: 14px 0;
+      box-shadow: 0 1px 0 rgba(0,0,0,.06);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 30px; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-size: 13px; font-weight: 500; letter-spacing: .04em;
+      text-transform: uppercase; color: var(--text);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--pop); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--pop); color: #fff;
+      padding: 10px 22px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 700; letter-spacing: .04em;
+      text-transform: uppercase; border: none; cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .nav-cta:hover { background: var(--pop-dark); transform: translateY(-1px); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-logo { font-size: 24px; }
+    }
+
+    /* ========================================
+       HERO — WARM GRADIENT MESH
+    ======================================== */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: calc(38px + 80px + 40px) 24px 40px;
+      text-align: center;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--pop); color: #fff;
+      padding: 8px 18px; border-radius: 40px;
+      font-size: 12px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; margin-bottom: 24px;
+    }
+    .hero-badge svg { width: 16px; height: 16px; }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(56px, 13vw, 150px);
+      line-height: .9; letter-spacing: .02em;
+      text-transform: uppercase; color: var(--accent);
+      max-width: 900px; margin: 0 auto;
+    }
+    .hero-title .pop-word { color: var(--pop); }
+    .hero-subtitle {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--text); font-weight: 400;
+      max-width: 520px; margin: 24px auto 0;
+      line-height: 1.6; opacity: .7;
+    }
+    .hero-wave {
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--pop));
+      margin: 32px auto;
+      border-radius: 3px;
+    }
+    .hero-image {
+      width: 100%; max-width: 1100px;
+      margin: 40px auto 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 16/7;
+    }
+    .hero-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* ========================================
+       BAB SECTION — BEFORE / AFTER / BRIDGE
+    ======================================== */
+    .bab { background: var(--sand-light); }
+    .section { padding: 100px 24px; }
+    .bab-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 0; align-items: stretch;
+    }
+    .bab-col {
+      padding: 48px 40px;
+      display: flex; flex-direction: column;
+      justify-content: center;
+    }
+    .bab-before { text-align: right; }
+    .bab-after { text-align: left; }
+    .bab-line-container {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 0; position: relative;
+    }
+    .bab-line {
+      width: 3px; height: 0;
+      background: linear-gradient(to bottom, var(--accent), var(--pop));
+      border-radius: 3px;
+    }
+    .bab-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--pop);
+      margin: 12px 0;
+      flex-shrink: 0;
+    }
+    .bab-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--pop);
+      margin-bottom: 12px;
+    }
+    .bab-text {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 3.5vw, 34px);
+      line-height: 1.1; letter-spacing: .02em;
+      text-transform: uppercase; color: var(--text);
+    }
+    .bab-bridge {
+      max-width: 1000px; margin: 0 auto;
+      text-align: center; padding: 48px 40px 0;
+    }
+    .bab-bridge-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .bab-bridge-text {
+      font-size: clamp(16px, 2.5vw, 20px);
+      line-height: 1.6; color: var(--text); opacity: .7;
+      max-width: 640px; margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .bab-inner {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .bab-before, .bab-after { text-align: center; padding: 32px 24px; }
+      .bab-line-container { flex-direction: row; padding: 0 24px; }
+      .bab-line { width: 0; height: 3px; }
+      .bab-bridge { padding: 32px 24px 0; }
+    }
+
+    /* ========================================
+       COURSES — HORIZONTAL SCROLL + 3D TILT
+    ======================================== */
+    .courses-header {
+      max-width: 1200px; margin: 0 auto;
+      padding-bottom: 48px;
+    }
+    .courses-scroll-wrapper {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 0 24px 24px;
+    }
+    .courses-scroll-wrapper::-webkit-scrollbar { display: none; }
+    .courses-track {
+      display: flex; gap: 24px;
+      width: max-content;
+      padding: 12px 0;
+    }
+    .course-card {
+      width: 320px; flex-shrink: 0;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      transform-style: preserve-3d;
+      perspective: 800px;
+      transition: box-shadow .3s, transform .15s;
+      cursor: default;
+    }
+    .course-card:hover {
+      box-shadow: 0 20px 60px rgba(8,145,178,.1), 0 4px 16px rgba(0,0,0,.04);
+    }
+    .course-card-inner {
+      transform-style: preserve-3d;
+      transition: transform .15s ease-out;
+    }
+    .course-card-img {
+      width: 100%; aspect-ratio: 4/3;
+      overflow: hidden; position: relative;
+    }
+    .course-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .course-card:hover .course-card-img img { transform: scale(1.05); }
+    .course-card-level {
+      position: absolute; top: 16px; left: 16px;
+      background: var(--pop); color: #fff;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .course-card-body { padding: 24px; }
+    .course-card-name {
+      font-family: var(--font-display);
+      font-size: 26px; letter-spacing: .03em;
+      text-transform: uppercase; color: var(--text);
+    }
+    .course-card-desc {
+      font-size: 14px; color: var(--text); opacity: .6;
+      line-height: 1.5; margin-top: 8px;
+    }
+    .course-card-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 16px; padding-top: 16px;
+      border-top: 1px solid var(--card-border);
+    }
+    .course-card-price {
+      font-family: var(--font-display);
+      font-size: 24px; color: var(--pop);
+      letter-spacing: .02em;
+    }
+    .course-card-duration {
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      letter-spacing: .05em; text-transform: uppercase;
+    }
+    .courses-scroll-hint {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 500; color: var(--text);
+      opacity: .4; margin-top: 20px;
+      max-width: 1200px; margin-left: auto; margin-right: auto;
+      padding: 0 24px;
+    }
+    .courses-scroll-hint svg { flex-shrink: 0; }
+
+    @media (max-width: 768px) {
+      .course-card { width: 280px; }
+    }
+
+    /* ========================================
+       SPOT INFO — SPLIT LAYOUT
+    ======================================== */
+    .spot {
+      background: var(--sand-light);
+      position: relative; overflow: hidden;
+    }
+    .spot-mesh {
+      position: absolute; inset: 0;
+      opacity: .06;
+      background:
+        radial-gradient(ellipse 60% 60% at 80% 20%, var(--accent), transparent),
+        radial-gradient(ellipse 50% 50% at 20% 80%, var(--pop), transparent);
+      animation: meshWarm 20s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    .spot-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .spot-image {
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 4/5;
+    }
+    .spot-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .spot-content { padding: 24px 0; }
+    .spot-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1; letter-spacing: .02em;
+      text-transform: uppercase; color: var(--text);
+    }
+    .spot-desc {
+      font-size: 16px; line-height: 1.7;
+      color: var(--text); opacity: .65;
+      margin-top: 20px;
+    }
+    .spot-details {
+      display: flex; flex-direction: column; gap: 16px;
+      margin-top: 32px;
+    }
+    .spot-detail {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 14px; color: var(--text);
+    }
+    .spot-detail-icon {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent-soft);
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .spot-detail-icon svg { width: 18px; height: 18px; color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .spot-inner { grid-template-columns: 1fr; gap: 32px; }
+    }
+
+    /* ========================================
+       CTA — POP ORANGE
+    ======================================== */
+    .cta-section {
+      background: var(--pop);
+      padding: 100px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-mesh {
+      position: absolute; inset: 0;
+      opacity: .15;
+      background:
+        radial-gradient(ellipse 60% 60% at 30% 40%, var(--pop-dark), transparent),
+        radial-gradient(ellipse 50% 50% at 70% 60%, rgba(255,255,255,.15), transparent);
+      animation: meshWarm 18s ease-in-out infinite alternate;
+    }
+    .cta-inner {
+      position: relative; z-index: 1;
+      max-width: 640px; margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 7vw, 72px);
+      line-height: .95; letter-spacing: .02em;
+      text-transform: uppercase; color: #fff;
+    }
+    .cta-subtitle {
+      font-size: 16px; line-height: 1.7;
+      color: rgba(255,255,255,.8);
+      margin-top: 20px;
+    }
+    .cta-info {
+      display: flex; justify-content: center;
+      gap: 32px; margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .cta-info-item {
+      display: flex; align-items: center; gap: 10px;
+      color: rgba(255,255,255,.85); font-size: 14px;
+    }
+    .cta-info-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #fff; color: var(--pop);
+      padding: 16px 36px; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; border: none; cursor: pointer;
+      margin-top: 40px;
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .cta-btn:hover {
+      background: var(--sand-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,.15);
+    }
+    .cta-btn svg { width: 18px; height: 18px; }
+
+    /* ========================================
+       FOOTER
+    ======================================== */
+    .footer {
+      background: var(--text);
+      padding: 48px 24px 24px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 26px; letter-spacing: .06em;
+      text-transform: uppercase; color: #fff;
+    }
+    .footer-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .footer-links a {
+      font-size: 13px; color: rgba(255,255,255,.45);
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--pop); }
+    .footer-bottom {
+      max-width: 1200px; margin: 32px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: rgba(255,255,255,.25);
+    }
+    .footer-bottom a { color: var(--pop); }
+
+    @media (max-width: 768px) {
+      .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    /* ========================================
+       SECTION SHARED
+    ======================================== */
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1; letter-spacing: .02em;
+      text-transform: uppercase; color: var(--text);
+    }
+    .section-desc {
+      font-size: 16px; line-height: 1.7;
+      color: var(--text); opacity: .6;
+      max-width: 560px; margin-top: 16px;
+    }
+
+    /* ========================================
+       REDUCED MOTION
+    ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .gradient-mesh, .spot-mesh, .cta-mesh { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GRADIENT MESH BG -->
+  <div class="gradient-mesh"></div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <span>Prototype offert par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a> — Site web professionnel a 100 000 XPF</span>
+  </div>
+
+  <!-- LOADER -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">{{BUSINESS_NAME}}</div>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- SCROLL PROGRESS -->
+  <div class="scroll-progress"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">{{BUSINESS_NAME}}</a>
+      <ul class="nav-links">
+        <li><a href="#cours">Cours</a></li>
+        <li><a href="#spot">Le Spot</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="tel:{{PHONE}}" class="nav-cta">Reserver</a>
+    </div>
+  </nav>
+
+  <!-- ========================================
+       HERO — WARM GRADIENT MESH
+  ======================================== -->
+  <section class="hero">
+    <div class="hero-badge reveal-up">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      {{SUBSECTOR}} — {{CITY}}
+    </div>
+    <h1 class="hero-title reveal">{{BUSINESS_NAME}}</h1>
+    <p class="hero-subtitle reveal-up">{{TAGLINE}}</p>
+    <div class="hero-wave reveal-up"></div>
+    <div class="hero-image reveal-scale">
+      <img src="{{HERO_IMAGE}}" alt="{{BUSINESS_NAME}} — {{SUBSECTOR}}" loading="eager">
+    </div>
+  </section>
+
+  <!-- ========================================
+       BAB SECTION — BEFORE / AFTER / BRIDGE
+  ======================================== -->
+  <section class="section bab" id="transformation">
+    <div class="bab-inner">
+      <div class="bab-col bab-before">
+        <span class="bab-tag reveal-up">Avant</span>
+        <p class="bab-text reveal">{{BAB_BEFORE}}</p>
+      </div>
+      <div class="bab-line-container">
+        <div class="bab-dot"></div>
+        <div class="bab-line"></div>
+        <div class="bab-dot"></div>
+      </div>
+      <div class="bab-col bab-after">
+        <span class="bab-tag reveal-up">Apres</span>
+        <p class="bab-text reveal">{{BAB_AFTER}}</p>
+      </div>
+    </div>
+    <div class="bab-bridge reveal-up">
+      <span class="bab-bridge-tag">Le Pont</span>
+      <p class="bab-bridge-text">{{BAB_BRIDGE}}</p>
+    </div>
+  </section>
+
+  <!-- ========================================
+       COURSES — HORIZONTAL SCROLL + 3D TILT
+  ======================================== -->
+  <section class="section" id="cours">
+    <div class="courses-header">
+      <span class="section-label reveal-up">Nos Cours</span>
+      <h2 class="section-title reveal">Trouvez Votre Vague</h2>
+      <p class="section-desc reveal-up">{{COURSES_DESCRIPTION}}</p>
+    </div>
+    <div class="courses-scroll-wrapper">
+      <div class="courses-track">
+        <div class="course-card" data-tilt>
+          <div class="course-card-inner">
+            <div class="course-card-img">
+              <img src="{{IMAGE_1}}" alt="{{SERVICE_1}}" loading="lazy">
+              <span class="course-card-level">Debutant</span>
+            </div>
+            <div class="course-card-body">
+              <h3 class="course-card-name">{{SERVICE_1}}</h3>
+              <p class="course-card-desc">{{SERVICE_DESC_1}}</p>
+              <div class="course-card-bottom">
+                <span class="course-card-price">{{PRICE_1}}</span>
+                <span class="course-card-duration">{{DURATION_1}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="course-card" data-tilt>
+          <div class="course-card-inner">
+            <div class="course-card-img">
+              <img src="{{IMAGE_2}}" alt="{{SERVICE_2}}" loading="lazy">
+              <span class="course-card-level">Intermediaire</span>
+            </div>
+            <div class="course-card-body">
+              <h3 class="course-card-name">{{SERVICE_2}}</h3>
+              <p class="course-card-desc">{{SERVICE_DESC_2}}</p>
+              <div class="course-card-bottom">
+                <span class="course-card-price">{{PRICE_2}}</span>
+                <span class="course-card-duration">{{DURATION_2}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="course-card" data-tilt>
+          <div class="course-card-inner">
+            <div class="course-card-img">
+              <img src="{{IMAGE_3}}" alt="{{SERVICE_3}}" loading="lazy">
+              <span class="course-card-level">Avance</span>
+            </div>
+            <div class="course-card-body">
+              <h3 class="course-card-name">{{SERVICE_3}}</h3>
+              <p class="course-card-desc">{{SERVICE_DESC_3}}</p>
+              <div class="course-card-bottom">
+                <span class="course-card-price">{{PRICE_3}}</span>
+                <span class="course-card-duration">{{DURATION_3}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="course-card" data-tilt>
+          <div class="course-card-inner">
+            <div class="course-card-img">
+              <img src="{{IMAGE_4}}" alt="{{SERVICE_4}}" loading="lazy">
+              <span class="course-card-level">Prive</span>
+            </div>
+            <div class="course-card-body">
+              <h3 class="course-card-name">{{SERVICE_4}}</h3>
+              <p class="course-card-desc">{{SERVICE_DESC_4}}</p>
+              <div class="course-card-bottom">
+                <span class="course-card-price">{{PRICE_4}}</span>
+                <span class="course-card-duration">{{DURATION_4}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="courses-scroll-hint">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Glissez pour decouvrir les cours
+    </div>
+  </section>
+
+  <!-- ========================================
+       SPOT INFO — SPLIT LAYOUT
+  ======================================== -->
+  <section class="section spot" id="spot">
+    <div class="spot-mesh"></div>
+    <div class="spot-inner">
+      <div class="spot-image reveal-scale">
+        <img src="{{IMAGE_1}}" alt="{{BUSINESS_NAME}} spot" loading="lazy">
+      </div>
+      <div class="spot-content">
+        <span class="section-label reveal-up">Le Spot</span>
+        <h2 class="spot-title reveal">{{CITY}}</h2>
+        <p class="spot-desc reveal-up">{{SPOT_DESCRIPTION}}</p>
+        <div class="spot-details">
+          <div class="spot-detail reveal-up">
+            <div class="spot-detail-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <span>{{ADDRESS}}</span>
+          </div>
+          <div class="spot-detail reveal-up">
+            <div class="spot-detail-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <span>{{HOURS}}</span>
+          </div>
+          <div class="spot-detail reveal-up">
+            <div class="spot-detail-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            </div>
+            <span>{{PHONE}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       CTA — POP ORANGE
+  ======================================== -->
+  <section class="cta-section" id="contact">
+    <div class="cta-mesh"></div>
+    <div class="cta-inner">
+      <h2 class="cta-title reveal">Prenez La Vague</h2>
+      <p class="cta-subtitle reveal-up">Rejoignez {{BUSINESS_NAME}} et vivez l'experience {{SUBSECTOR}} a {{CITY}}. Tous niveaux bienvenus.</p>
+      <div class="cta-info reveal-up">
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>{{PHONE}}</span>
+        </div>
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>{{ADDRESS}}</span>
+        </div>
+      </div>
+      <a href="tel:{{PHONE}}" class="cta-btn reveal-up">
+        Reserver maintenant
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">{{BUSINESS_NAME}}</div>
+      <ul class="footer-links">
+        <li><a href="#cours">Cours</a></li>
+        <li><a href="#spot">Le Spot</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>Prototype realise par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a></span>
+      <span>{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}</span>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    /* ========================================
+       INIT — REDUCED MOTION CHECK
+    ======================================== */
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ========================================
+       LOADER
+    ======================================== */
+    if (!prefersReducedMotion) {
+      const loaderTL = gsap.timeline();
+      loaderTL
+        .to('.loader-logo', { opacity: 1, duration: .5, ease: 'power2.out' })
+        .to('.loader-bar-fill', { scaleX: 1, duration: 1, ease: 'power2.inOut' }, '-=.2')
+        .to('.loader', { opacity: 0, duration: .4, ease: 'power2.inOut', onComplete() {
+          document.querySelector('.loader').style.display = 'none';
+        }}, '+=.15');
+    } else {
+      document.querySelector('.loader').style.display = 'none';
+    }
+
+    /* ========================================
+       LENIS SMOOTH SCROLL
+    ======================================== */
+    let lenis;
+    if (!prefersReducedMotion) {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        touchMultiplier: 1.5
+      });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    /* ========================================
+       SCROLL PROGRESS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.to('.scroll-progress', {
+        width: '100%',
+        ease: 'none',
+        scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: .3 }
+      });
+    }
+
+    /* ========================================
+       NAV SHRINK
+    ======================================== */
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    /* ========================================
+       REVEAL ANIMATIONS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.registerPlugin(ScrollTrigger);
+
+      document.querySelectorAll('.reveal').forEach(el => {
+        gsap.fromTo(el,
+          { clipPath: 'inset(0 0 100% 0)', opacity: 0 },
+          {
+            clipPath: 'inset(0 0 0% 0)', opacity: 1,
+            duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+          }
+        );
+      });
+
+      document.querySelectorAll('.reveal-up').forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 30, opacity: 0 },
+          {
+            y: 0, opacity: 1,
+            duration: .7, ease: 'power3.out',
+            delay: i * .04,
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+          }
+        );
+      });
+
+      document.querySelectorAll('.reveal-scale').forEach(el => {
+        gsap.fromTo(el,
+          { scale: .93, opacity: 0 },
+          {
+            scale: 1, opacity: 1,
+            duration: .8, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+          }
+        );
+      });
+
+      /* BAB line animation */
+      const babLine = document.querySelector('.bab-line');
+      if (babLine) {
+        gsap.fromTo(babLine,
+          { height: 0 },
+          {
+            height: 120,
+            duration: 1.2, ease: 'power2.out',
+            scrollTrigger: { trigger: '.bab-inner', start: 'top 75%', once: true }
+          }
+        );
+      }
+
+      /* Course cards stagger */
+      gsap.fromTo('.course-card', { y: 40, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .6, ease: 'power3.out',
+        stagger: .1,
+        scrollTrigger: { trigger: '.courses-track', start: 'top 85%', once: true }
+      });
+    }
+
+    /* ========================================
+       3D TILT ON COURSE CARDS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      document.querySelectorAll('[data-tilt]').forEach(card => {
+        const inner = card.querySelector('.course-card-inner');
+        if (!inner) return;
+        const maxTilt = 8;
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          const rotateX = (0.5 - y) * maxTilt;
+          const rotateY = (x - 0.5) * maxTilt;
+          inner.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          inner.style.transform = 'perspective(800px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        });
+      });
+    }
+
+    /* ========================================
+       SMOOTH SCROLL ANCHOR LINKS
+    ======================================== */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          if (lenis) lenis.scrollTo(target, { offset: -80 });
+          else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

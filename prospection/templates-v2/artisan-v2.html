@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} : {{TAGLINE}}. {{SUBSECTOR}} a {{CITY}}.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family={{FONT_DISPLAY}}:wght@400;500;600;700&family={{FONT_BODY}}:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       RESET & VARIABLES
+    ======================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --text: {{COLOR_TEXT}};
+      --accent-light: #8DB393;
+      --accent-dark: #4A7350;
+      --surface: #FFFFFF;
+      --surface-warm: #F4F2ED;
+      --border: #E8E6E1;
+      --text-muted: #6B6B6B;
+      --font-display: '{{FONT_DISPLAY}}', 'Space Grotesk', system-ui, sans-serif;
+      --font-body: '{{FONT_BODY}}', 'DM Sans', system-ui, sans-serif;
+      --radius: 12px;
+      --radius-lg: 20px;
+    }
+
+    html {
+      scroll-behavior: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.7;
+      font-weight: 400;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; height: auto; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    /* ========================================
+       DISCLAIMER & LOADER
+    ======================================== */
+    .disclaimer {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: var(--accent); color: #fff;
+      font-size: 11px; letter-spacing: .06em; text-align: center;
+      padding: 10px 24px; font-weight: 500;
+    }
+    .disclaimer a { text-decoration: underline; font-weight: 600; }
+
+    .loader {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg);
+    }
+    .loader-inner { text-align: center; }
+    .loader-logo {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 4vw, 42px);
+      font-weight: 500; letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text); opacity: 0;
+    }
+    .loader-bar {
+      width: 100px; height: 2px;
+      background: var(--border);
+      margin: 20px auto 0; overflow: hidden;
+      border-radius: 2px;
+    }
+    .loader-bar-fill {
+      width: 100%; height: 100%;
+      background: var(--accent);
+      transform: scaleX(0); transform-origin: left;
+    }
+
+    /* ========================================
+       SCROLL PROGRESS
+    ======================================== */
+    .scroll-progress {
+      position: fixed; top: 38px; left: 0; z-index: 9000;
+      height: 2px; width: 0%;
+      background: var(--accent);
+      transition: none;
+    }
+
+    /* ========================================
+       NAVIGATION
+    ======================================== */
+    .nav {
+      position: fixed; top: 38px; left: 0; width: 100%; z-index: 100;
+      padding: 0 clamp(20px, 4vw, 48px);
+      display: flex; justify-content: space-between; align-items: center;
+      height: 72px;
+      background: transparent;
+      transition: background .4s ease, box-shadow .4s ease;
+    }
+    .nav.scrolled {
+      background: rgba(250, 250, 247, .95);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 600;
+      letter-spacing: .04em; text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex; gap: 32px; list-style: none;
+    }
+    .nav-links a {
+      font-size: .85rem; font-weight: 500;
+      letter-spacing: .02em; color: var(--text-muted);
+      transition: color .3s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 24px; border-radius: 50px;
+      background: var(--accent); color: #fff;
+      font-size: .85rem; font-weight: 600;
+      transition: transform .3s, box-shadow .3s;
+    }
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(107, 143, 113, .25);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-cta { padding: 8px 18px; font-size: .8rem; }
+    }
+
+    /* ========================================
+       TYPOGRAPHY
+    ======================================== */
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 600; line-height: 1.2;
+    }
+    .section-label {
+      font-size: .7rem; font-weight: 600;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: .75rem;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-label::before {
+      content: ''; display: block;
+      width: 24px; height: 1px; background: var(--accent);
+    }
+    .section-title {
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      margin-bottom: 1rem;
+    }
+    .section-desc {
+      font-size: clamp(.95rem, 1.5vw, 1.1rem);
+      color: var(--text-muted); max-width: 560px;
+      line-height: 1.8;
+    }
+
+    /* ========================================
+       CONTAINER
+    ======================================== */
+    .container {
+      max-width: 1160px; margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 48px);
+    }
+
+    /* ========================================
+       HERO — MINIMAL WHITE SPLIT
+    ======================================== */
+    .hero {
+      margin-top: 38px;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+      padding: 120px clamp(20px, 4vw, 48px) 80px;
+      max-width: 1280px; margin-left: auto; margin-right: auto;
+    }
+    .hero-content { max-width: 520px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 50px;
+      background: rgba(107, 143, 113, .08);
+      color: var(--accent);
+      font-size: .75rem; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-badge::before {
+      content: ''; display: block;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+    }
+    .hero-title {
+      font-size: clamp(2.25rem, 5vw, 3.75rem);
+      font-weight: 700; line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .hero-title em {
+      font-style: italic; color: var(--accent);
+      font-weight: 500;
+    }
+    .hero-desc {
+      font-size: clamp(1rem, 1.5vw, 1.15rem);
+      color: var(--text-muted); line-height: 1.8;
+      margin-bottom: 36px;
+    }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 50px;
+      background: var(--accent); color: #fff;
+      font-size: .95rem; font-weight: 600;
+      transition: transform .3s, box-shadow .3s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(107, 143, 113, .25);
+    }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 50px;
+      border: 1.5px solid var(--border); color: var(--text);
+      font-size: .95rem; font-weight: 500;
+      transition: border-color .3s, color .3s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-image-wrapper {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      aspect-ratio: 4/5;
+    }
+    .hero-image {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .hero-image-accent {
+      position: absolute; bottom: -20px; right: -20px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .08;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        min-height: auto;
+        padding-top: 140px;
+      }
+      .hero-image-wrapper { max-height: 400px; }
+    }
+
+    /* ========================================
+       STORY — SPLIT SECTION
+    ======================================== */
+    .story {
+      padding: clamp(80px, 10vw, 140px) 0;
+      background: var(--surface);
+    }
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    .story-image {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      aspect-ratio: 3/4;
+    }
+    .story-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .6s ease;
+    }
+    .story-image:hover img { transform: scale(1.03); }
+    .story-text p {
+      color: var(--text-muted);
+      font-size: clamp(.95rem, 1.3vw, 1.05rem);
+      line-height: 1.9; margin-bottom: 20px;
+    }
+    .story-quote {
+      margin-top: 32px; padding-left: 24px;
+      border-left: 2px solid var(--accent);
+    }
+    .story-quote p {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+      font-weight: 500; font-style: italic;
+      color: var(--text); line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .story-grid { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    /* ========================================
+       PROCESS — TIMELINE
+    ======================================== */
+    .process {
+      padding: clamp(80px, 10vw, 140px) 0;
+    }
+    .process-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+    .process-header .section-label { justify-content: center; }
+    .process-header .section-label::before { display: none; }
+    .process-header .section-desc { margin: 0 auto; }
+
+    .timeline {
+      position: relative;
+      max-width: 800px; margin: 0 auto;
+    }
+    .timeline-line {
+      position: absolute;
+      left: 24px; top: 0;
+      width: 2px; height: 100%;
+      background: var(--border);
+    }
+    .timeline-line-fill {
+      width: 100%; height: 0%;
+      background: var(--accent);
+      transition: none;
+    }
+    .timeline-step {
+      position: relative;
+      padding-left: 72px;
+      padding-bottom: 60px;
+    }
+    .timeline-step:last-child { padding-bottom: 0; }
+    .timeline-dot {
+      position: absolute;
+      left: 12px; top: 4px;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .4s, background .4s;
+      z-index: 2;
+    }
+    .timeline-dot.active {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+    .timeline-dot-inner {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      transition: background .4s;
+    }
+    .timeline-dot.active .timeline-dot-inner {
+      background: #fff;
+    }
+    .timeline-number {
+      font-family: var(--font-display);
+      font-size: .7rem; font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .timeline-title {
+      font-size: clamp(1.15rem, 2vw, 1.4rem);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .timeline-desc {
+      font-size: .95rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+
+    @media (max-width: 600px) {
+      .timeline-step { padding-left: 56px; }
+      .timeline-line { left: 16px; }
+      .timeline-dot { left: 4px; }
+    }
+
+    /* ========================================
+       PRODUCTS — CARD GRID
+    ======================================== */
+    .products {
+      padding: clamp(80px, 10vw, 140px) 0;
+      background: var(--surface);
+    }
+    .products-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-end; flex-wrap: wrap; gap: 20px;
+      margin-bottom: 60px;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .product-card {
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: transform .4s ease, box-shadow .4s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .06);
+    }
+    .product-image {
+      aspect-ratio: 4/3;
+      overflow: hidden;
+    }
+    .product-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .product-card:hover .product-image img {
+      transform: scale(1.05);
+    }
+    .product-body {
+      padding: 24px;
+    }
+    .product-tag {
+      display: inline-block;
+      padding: 4px 12px; border-radius: 50px;
+      background: rgba(107, 143, 113, .08);
+      color: var(--accent);
+      font-size: .7rem; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .product-name {
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .product-desc {
+      font-size: .9rem; color: var(--text-muted);
+      line-height: 1.6; margin-bottom: 16px;
+    }
+    .product-price {
+      font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--accent);
+    }
+
+    @media (max-width: 900px) {
+      .products-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ========================================
+       TERROIR
+    ======================================== */
+    .terroir {
+      padding: clamp(80px, 10vw, 140px) 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .terroir-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 60px; align-items: center;
+    }
+    .terroir-visual {
+      position: relative;
+    }
+    .terroir-img-main {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      aspect-ratio: 16/10;
+    }
+    .terroir-img-main img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .terroir-img-float {
+      position: absolute;
+      bottom: -30px; right: -20px;
+      width: 180px; height: 180px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 4px solid var(--bg);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .08);
+    }
+    .terroir-img-float img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .terroir-features {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; margin-top: 32px;
+    }
+    .terroir-feature {
+      padding: 20px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .terroir-feature-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: rgba(107, 143, 113, .1);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+      color: var(--accent); font-size: 1rem;
+    }
+    .terroir-feature h4 {
+      font-size: .9rem; font-weight: 600; margin-bottom: 4px;
+    }
+    .terroir-feature p {
+      font-size: .8rem; color: var(--text-muted); line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .terroir-grid { grid-template-columns: 1fr; }
+      .terroir-img-float { display: none; }
+      .terroir-features { grid-template-columns: 1fr; }
+    }
+
+    /* ========================================
+       CTA SECTION
+    ======================================== */
+    .cta-section {
+      padding: clamp(80px, 10vw, 120px) 0;
+      background: var(--accent);
+      color: #fff;
+      text-align: center;
+    }
+    .cta-title {
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      font-weight: 700; margin-bottom: 16px;
+      color: #fff;
+    }
+    .cta-desc {
+      font-size: clamp(.95rem, 1.5vw, 1.1rem);
+      opacity: .85; max-width: 500px;
+      margin: 0 auto 36px; line-height: 1.7;
+    }
+    .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .cta-btn-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 16px 36px; border-radius: 50px;
+      background: #fff; color: var(--accent);
+      font-size: 1rem; font-weight: 600;
+      transition: transform .3s, box-shadow .3s;
+    }
+    .cta-btn-white:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .15);
+    }
+    .cta-btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 16px 36px; border-radius: 50px;
+      border: 1.5px solid rgba(255, 255, 255, .4); color: #fff;
+      font-size: 1rem; font-weight: 500;
+      transition: border-color .3s, background .3s;
+    }
+    .cta-btn-ghost:hover {
+      border-color: #fff;
+      background: rgba(255, 255, 255, .1);
+    }
+    .cta-info {
+      margin-top: 40px;
+      display: flex; gap: 40px; justify-content: center; flex-wrap: wrap;
+      font-size: .85rem; opacity: .75;
+    }
+    .cta-info-item { display: flex; align-items: center; gap: 8px; }
+
+    /* ========================================
+       FOOTER
+    ======================================== */
+    .footer {
+      background: var(--text);
+      color: rgba(255, 255, 255, .6);
+      padding: 48px 24px 28px;
+    }
+    .footer-inner {
+      max-width: 1160px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 20px;
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 600;
+      color: #fff;
+    }
+    .footer-brand span { color: var(--accent-light); }
+    .footer-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .footer-links a {
+      font-size: .82rem;
+      transition: color .3s;
+    }
+    .footer-links a:hover { color: var(--accent-light); }
+    .footer-bottom {
+      max-width: 1160px; margin: 24px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, .08);
+      display: flex; justify-content: space-between;
+      font-size: .72rem; flex-wrap: wrap; gap: 10px;
+    }
+    .footer-bottom a { color: var(--accent-light); text-decoration: underline; }
+
+    /* ========================================
+       REVEAL ANIMATIONS
+    ======================================== */
+    .reveal-up {
+      opacity: 0; transform: translateY(32px);
+    }
+    .reveal-scale {
+      opacity: 0; transform: scale(.95);
+    }
+    .reveal-left {
+      opacity: 0; transform: translateX(-32px);
+    }
+    .reveal-right {
+      opacity: 0; transform: translateX(32px);
+    }
+
+    /* ========================================
+       PREFERS-REDUCED-MOTION
+    ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+      .reveal-up, .reveal-scale, .reveal-left, .reveal-right {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .loader { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">Prototype cree par <a href="https://pacifikai.com/offre-site-web" target="_blank">PACIFIK'AI</a> — Site web professionnel a 100 000 XPF</div>
+
+  <!-- LOADER -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">{{BUSINESS_NAME}}</div>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- SCROLL PROGRESS -->
+  <div class="scroll-progress"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="nav-logo">{{BUSINESS_NAME}}</div>
+    <ul class="nav-links">
+      <li><a href="#story">Notre histoire</a></li>
+      <li><a href="#process">Savoir-faire</a></li>
+      <li><a href="#products">Produits</a></li>
+      <li><a href="#terroir">Terroir</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Contact</a>
+  </nav>
+
+  <!-- ========================================
+       HERO
+  ======================================== -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge reveal-up">{{SUBSECTOR}} - {{CITY}}</div>
+      <h1 class="hero-title reveal-up">{{BUSINESS_NAME}}</h1>
+      <p class="hero-desc reveal-up">{{TAGLINE}}</p>
+      <div class="hero-actions reveal-up">
+        <a href="#products" class="btn-primary">Decouvrir nos produits</a>
+        <a href="#story" class="btn-outline">Notre histoire</a>
+      </div>
+    </div>
+    <div class="hero-image-wrapper reveal-scale">
+      <img class="hero-image" src="{{HERO_IMAGE}}" alt="{{BUSINESS_NAME}} — {{SUBSECTOR}}" loading="eager">
+      <div class="hero-image-accent"></div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       STORY
+  ======================================== -->
+  <section class="story" id="story">
+    <div class="container">
+      <div class="story-grid">
+        <div class="story-image reveal-left">
+          <img src="{{IMAGE_1}}" alt="L'histoire de {{BUSINESS_NAME}}">
+        </div>
+        <div class="story-text">
+          <div class="section-label reveal-up">Notre histoire</div>
+          <h2 class="section-title reveal-up">Un savoir-faire<br>qui a du sens</h2>
+          <p class="reveal-up">Chez {{BUSINESS_NAME}}, chaque creation est le fruit d'une passion transmise et d'un engagement envers la qualite. Installes a {{CITY}}, nous perpetuons des gestes authentiques avec une vision resolument moderne.</p>
+          <p class="reveal-up">Notre approche allie tradition et innovation, en selectionnant les meilleurs ingredients et materiaux pour offrir des produits d'exception.</p>
+          <div class="story-quote reveal-up">
+            <p>{{TESTIMONIAL_1}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       PROCESS — TIMELINE
+  ======================================== -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="process-header">
+        <div class="section-label reveal-up">Savoir-faire</div>
+        <h2 class="section-title reveal-up">Notre processus<br>de creation</h2>
+        <p class="section-desc reveal-up">Chaque etape est realisee avec precision et passion, du choix des matieres premieres jusqu'au produit final.</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-line">
+          <div class="timeline-line-fill"></div>
+        </div>
+
+        <div class="timeline-step reveal-up">
+          <div class="timeline-dot"><div class="timeline-dot-inner"></div></div>
+          <div class="timeline-number">Etape 01</div>
+          <h3 class="timeline-title">{{SERVICE_1}}</h3>
+          <p class="timeline-desc">Selection rigoureuse des matieres premieres et ingredients, privilegiant les producteurs locaux et les circuits courts.</p>
+        </div>
+
+        <div class="timeline-step reveal-up">
+          <div class="timeline-dot"><div class="timeline-dot-inner"></div></div>
+          <div class="timeline-number">Etape 02</div>
+          <h3 class="timeline-title">{{SERVICE_2}}</h3>
+          <p class="timeline-desc">Preparation minutieuse selon des techniques eprouvees, alliant gestes traditionnels et outils modernes.</p>
+        </div>
+
+        <div class="timeline-step reveal-up">
+          <div class="timeline-dot"><div class="timeline-dot-inner"></div></div>
+          <div class="timeline-number">Etape 03</div>
+          <h3 class="timeline-title">{{SERVICE_3}}</h3>
+          <p class="timeline-desc">Controle qualite a chaque etape pour garantir un resultat irreprochable et conforme a nos standards.</p>
+        </div>
+
+        <div class="timeline-step reveal-up">
+          <div class="timeline-dot"><div class="timeline-dot-inner"></div></div>
+          <div class="timeline-number">Etape 04</div>
+          <h3 class="timeline-title">{{SERVICE_4}}</h3>
+          <p class="timeline-desc">Presentation soignee et livraison dans les meilleures conditions pour preserver toute la fraicheur et la qualite.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       PRODUCTS
+  ======================================== -->
+  <section class="products" id="products">
+    <div class="container">
+      <div class="products-header">
+        <div>
+          <div class="section-label reveal-up">Nos creations</div>
+          <h2 class="section-title reveal-up">Produits phares</h2>
+        </div>
+        <a href="#contact" class="btn-outline reveal-up">Tout decouvrir</a>
+      </div>
+
+      <div class="products-grid">
+        <div class="product-card reveal-up">
+          <div class="product-image">
+            <img src="{{IMAGE_2}}" alt="{{SERVICE_1}}">
+          </div>
+          <div class="product-body">
+            <span class="product-tag">Populaire</span>
+            <h3 class="product-name">{{SERVICE_1}}</h3>
+            <p class="product-desc">Realise avec soin a partir d'ingredients selectionnes pour leur qualite et leur provenance.</p>
+            <span class="product-price">{{PRICE_1}}</span>
+          </div>
+        </div>
+
+        <div class="product-card reveal-up">
+          <div class="product-image">
+            <img src="{{IMAGE_3}}" alt="{{SERVICE_2}}">
+          </div>
+          <div class="product-body">
+            <span class="product-tag">Signature</span>
+            <h3 class="product-name">{{SERVICE_2}}</h3>
+            <p class="product-desc">Notre creation signature, fruit de nombreuses annees de perfectionnement et d'experimentation.</p>
+            <span class="product-price">{{PRICE_2}}</span>
+          </div>
+        </div>
+
+        <div class="product-card reveal-up">
+          <div class="product-image">
+            <img src="{{IMAGE_4}}" alt="{{SERVICE_3}}">
+          </div>
+          <div class="product-body">
+            <span class="product-tag">Nouveaute</span>
+            <h3 class="product-name">{{SERVICE_3}}</h3>
+            <p class="product-desc">Derniere creation de notre atelier, melee de tradition et d'une touche de modernite.</p>
+            <span class="product-price">{{PRICE_3}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       TERROIR
+  ======================================== -->
+  <section class="terroir" id="terroir">
+    <div class="container">
+      <div class="terroir-grid">
+        <div class="terroir-visual">
+          <div class="terroir-img-main reveal-scale">
+            <img src="{{IMAGE_1}}" alt="Terroir de {{CITY}}">
+          </div>
+          <div class="terroir-img-float reveal-up">
+            <img src="{{IMAGE_2}}" alt="{{SUBSECTOR}} artisanal">
+          </div>
+        </div>
+        <div>
+          <div class="section-label reveal-up">Notre terroir</div>
+          <h2 class="section-title reveal-up">Ancres a {{CITY}}</h2>
+          <p class="section-desc reveal-up">Notre engagement envers le territoire se traduit par des choix concrets : approvisionnement local, respect des saisons, et valorisation du patrimoine artisanal polynesien.</p>
+
+          <div class="terroir-features">
+            <div class="terroir-feature reveal-up">
+              <div class="terroir-feature-icon">&#9679;</div>
+              <h4>Local</h4>
+              <p>Ingredients et materiaux issus du territoire</p>
+            </div>
+            <div class="terroir-feature reveal-up">
+              <div class="terroir-feature-icon">&#9679;</div>
+              <h4>Artisanal</h4>
+              <p>Chaque piece est unique et faite main</p>
+            </div>
+            <div class="terroir-feature reveal-up">
+              <div class="terroir-feature-icon">&#9679;</div>
+              <h4>Durable</h4>
+              <p>Pratiques respectueuses de l'environnement</p>
+            </div>
+            <div class="terroir-feature reveal-up">
+              <div class="terroir-feature-icon">&#9679;</div>
+              <h4>Authentique</h4>
+              <p>Savoir-faire transmis et preserve</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       CTA
+  ======================================== -->
+  <section class="cta-section" id="contact">
+    <div class="container">
+      <h2 class="cta-title reveal-up">Envie de decouvrir ?</h2>
+      <p class="cta-desc reveal-up">Rendez-nous visite a {{CITY}} ou contactez-nous pour une commande sur mesure.</p>
+      <div class="cta-actions reveal-up">
+        <a href="tel:{{PHONE}}" class="cta-btn-white">Appeler le {{PHONE}}</a>
+        <a href="#products" class="cta-btn-ghost">Voir les produits</a>
+      </div>
+      <div class="cta-info reveal-up">
+        <span class="cta-info-item">{{ADDRESS}}</span>
+        <span class="cta-info-item">{{HOURS}}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       FOOTER
+  ======================================== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">{{BUSINESS_NAME}} <span>&middot;</span> {{CITY}}</div>
+      <ul class="footer-links">
+        <li><a href="#story">Histoire</a></li>
+        <li><a href="#products">Produits</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 {{BUSINESS_NAME}}. Tous droits reserves.</span>
+      <span>Prototype par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a></span>
+    </div>
+  </footer>
+
+  <!-- ========================================
+       SCRIPTS
+  ======================================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ========================================
+       LOADER
+    ======================================== */
+    const loader = document.querySelector('.loader');
+    const loaderLogo = document.querySelector('.loader-logo');
+    const loaderFill = document.querySelector('.loader-bar-fill');
+
+    if (prefersReducedMotion) {
+      loader.style.display = 'none';
+    } else {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.to(loader, { opacity: 0, duration: .4, onComplete: () => loader.remove() });
+        }
+      });
+      tl.to(loaderLogo, { opacity: 1, duration: .6, ease: 'power2.out' })
+        .to(loaderFill, { scaleX: 1, duration: 1.2, ease: 'power2.inOut' }, '-=.3')
+        .to(loaderLogo, { opacity: 0, y: -12, duration: .3 }, '-=.2');
+    }
+
+    /* ========================================
+       LENIS SMOOTH SCROLL
+    ======================================== */
+    let lenis = null;
+    if (!prefersReducedMotion) {
+      lenis = new Lenis({ duration: 1.1, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+      function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    /* ========================================
+       SCROLL PROGRESS BAR
+    ======================================== */
+    const scrollProgress = document.querySelector('.scroll-progress');
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => { scrollProgress.style.width = (self.progress * 100) + '%'; }
+    });
+
+    /* ========================================
+       NAV SCROLL EFFECT
+    ======================================== */
+    const nav = document.getElementById('nav');
+    ScrollTrigger.create({
+      start: 80,
+      onUpdate: (self) => {
+        if (self.scroll() > 80) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+      }
+    });
+
+    /* ========================================
+       REVEAL ANIMATIONS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.utils.toArray('.reveal-up').forEach(el => {
+        gsap.to(el, {
+          opacity: 1, y: 0, duration: .8, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+        });
+      });
+
+      gsap.utils.toArray('.reveal-scale').forEach(el => {
+        gsap.to(el, {
+          opacity: 1, scale: 1, duration: .9, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+        });
+      });
+
+      gsap.utils.toArray('.reveal-left').forEach(el => {
+        gsap.to(el, {
+          opacity: 1, x: 0, duration: .8, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+        });
+      });
+
+      gsap.utils.toArray('.reveal-right').forEach(el => {
+        gsap.to(el, {
+          opacity: 1, x: 0, duration: .8, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+        });
+      });
+
+      /* Product cards stagger */
+      gsap.fromTo('.product-card', { y: 40, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .7, ease: 'power3.out',
+        stagger: .12,
+        scrollTrigger: { trigger: '.products-grid', start: 'top 85%', once: true }
+      });
+
+      /* Terroir features stagger */
+      gsap.fromTo('.terroir-feature', { y: 24, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .6, ease: 'power3.out',
+        stagger: .1,
+        scrollTrigger: { trigger: '.terroir-features', start: 'top 88%', once: true }
+      });
+    }
+
+    /* ========================================
+       TIMELINE LINE DRAW
+    ======================================== */
+    if (!prefersReducedMotion) {
+      const lineFill = document.querySelector('.timeline-line-fill');
+      const dots = document.querySelectorAll('.timeline-dot');
+
+      ScrollTrigger.create({
+        trigger: '.timeline',
+        start: 'top 70%',
+        end: 'bottom 60%',
+        scrub: .6,
+        onUpdate: (self) => {
+          lineFill.style.height = (self.progress * 100) + '%';
+          dots.forEach((dot, i) => {
+            const threshold = (i + 1) / dots.length;
+            if (self.progress >= threshold - .15) dot.classList.add('active');
+            else dot.classList.remove('active');
+          });
+        }
+      });
+    }
+
+    /* ========================================
+       SMOOTH SCROLL ANCHOR LINKS
+    ======================================== */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          if (lenis) lenis.scrollTo(target, { offset: -80 });
+          else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

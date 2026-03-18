@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{BUSINESS_NAME}} — {{SUBSECTOR}} {{CITY}} | Prototype PACIFIK'AI</title>
+  <meta name="description" content="{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}. Prototype PACIFIK'AI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       RESET & VARIABLES — V3 MONOCHROME
+    ======================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: {{COLOR_BG}};
+      --accent: {{COLOR_ACCENT}};
+      --text: {{COLOR_TEXT}};
+      --pop: #FF6B5A;
+      --pop-dark: #E85A4A;
+      --pop-light: #FF8577;
+      --gray-100: #F5F5F5;
+      --gray-200: #E8E8E8;
+      --gray-300: #D1D1D1;
+      --font-display: '{{FONT_DISPLAY}}', 'Bebas Neue', Impact, sans-serif;
+      --font-body: '{{FONT_BODY}}', 'DM Sans', -apple-system, sans-serif;
+      --radius: 12px;
+      --radius-sm: 6px;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+    body { background: var(--bg); overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; height: auto; }
+
+    /* ========================================
+       GRADIENT MESH BACKGROUND
+    ======================================== */
+    .gradient-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: .08;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 20%, var(--gray-300), transparent),
+        radial-gradient(ellipse 60% 80% at 90% 80%, var(--gray-200), transparent),
+        radial-gradient(ellipse 50% 50% at 50% 50%, var(--gray-100), transparent);
+      animation: meshDrift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshDrift {
+      0% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+      33% { background-position: 20% 10%, 80% 90%, 40% 60%; }
+      66% { background-position: 10% 30%, 90% 70%, 60% 40%; }
+      100% { background-position: 5% 15%, 95% 85%, 55% 45%; }
+    }
+
+    /* ========================================
+       DISCLAIMER & LOADER
+    ======================================== */
+    .disclaimer {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: var(--accent); color: var(--bg);
+      font-size: 11px; letter-spacing: .06em; text-align: center;
+      padding: 10px 24px; font-weight: 500;
+    }
+    .disclaimer a { text-decoration: underline; font-weight: 600; }
+
+    .loader {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg);
+    }
+    .loader-inner { text-align: center; }
+    .loader-logo {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 7vw, 72px);
+      font-weight: 400; letter-spacing: .04em;
+      text-transform: uppercase; color: var(--accent);
+      opacity: 0;
+    }
+    .loader-line {
+      width: 80px; height: 3px;
+      background: var(--gray-200);
+      margin: 20px auto 0; overflow: hidden;
+      border-radius: 3px;
+    }
+    .loader-line-fill {
+      width: 100%; height: 100%;
+      background: var(--pop);
+      transform: scaleX(0); transform-origin: left;
+    }
+
+    /* ========================================
+       SCROLL PROGRESS
+    ======================================== */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; width: 0%;
+      background: var(--pop);
+      z-index: 10000;
+    }
+
+    /* ========================================
+       NAVIGATION
+    ======================================== */
+    .nav {
+      position: fixed; top: 38px; left: 0; width: 100%;
+      z-index: 1000; padding: 20px 0;
+      transition: background .4s, padding .4s, box-shadow .4s;
+    }
+    .nav.scrolled {
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(16px);
+      padding: 14px 0;
+      box-shadow: 0 1px 0 var(--gray-200);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 28px; letter-spacing: .04em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-size: 13px; font-weight: 500; letter-spacing: .04em;
+      text-transform: uppercase; color: var(--text);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--pop); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--pop); color: #fff;
+      padding: 10px 20px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600; letter-spacing: .03em;
+      text-transform: uppercase; border: none; cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .nav-cta:hover { background: var(--pop-dark); transform: translateY(-1px); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-logo { font-size: 22px; }
+    }
+
+    /* ========================================
+       HERO — EDITORIAL MONOCHROME
+    ======================================== */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: calc(38px + 80px + 40px) 24px 40px;
+      text-align: center;
+      position: relative;
+    }
+    .hero-overline {
+      font-size: 12px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--pop);
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 12vw, 140px);
+      line-height: .92; letter-spacing: .02em;
+      text-transform: uppercase; color: var(--accent);
+      max-width: 900px; margin: 0 auto;
+    }
+    .hero-subtitle {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--text); font-weight: 400;
+      max-width: 520px; margin: 24px auto 0;
+      line-height: 1.6; opacity: .7;
+    }
+    .hero-divider {
+      width: 40px; height: 3px;
+      background: var(--pop);
+      margin: 32px auto;
+    }
+    .hero-image {
+      width: 100%; max-width: 1100px;
+      margin: 48px auto 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 16/7;
+    }
+    .hero-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* ========================================
+       SECTION SHARED
+    ======================================== */
+    .section { padding: 100px 24px; }
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--pop);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1; letter-spacing: .02em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .section-desc {
+      font-size: 16px; line-height: 1.7;
+      color: var(--text); opacity: .65;
+      max-width: 560px; margin-top: 16px;
+    }
+
+    /* ========================================
+       BAB SECTION — BEFORE / AFTER / BRIDGE
+    ======================================== */
+    .bab { background: var(--gray-100); }
+    .bab-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 0; align-items: stretch;
+    }
+    .bab-col {
+      padding: 48px 40px;
+      display: flex; flex-direction: column;
+      justify-content: center;
+    }
+    .bab-before { text-align: right; }
+    .bab-after { text-align: left; }
+    .bab-line-container {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 0; position: relative;
+    }
+    .bab-line {
+      width: 2px; height: 0;
+      background: var(--pop);
+      border-radius: 2px;
+    }
+    .bab-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--pop);
+      margin: 12px 0;
+      flex-shrink: 0;
+    }
+    .bab-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--pop);
+      margin-bottom: 12px;
+    }
+    .bab-text {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 3.5vw, 32px);
+      line-height: 1.15; letter-spacing: .01em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .bab-bridge {
+      max-width: 1000px; margin: 0 auto;
+      text-align: center; padding: 48px 40px 0;
+    }
+    .bab-bridge-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--pop);
+      margin-bottom: 12px;
+    }
+    .bab-bridge-text {
+      font-size: clamp(16px, 2.5vw, 20px);
+      line-height: 1.6; color: var(--text); opacity: .75;
+      max-width: 640px; margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .bab-inner {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .bab-before, .bab-after { text-align: center; padding: 32px 24px; }
+      .bab-line-container {
+        flex-direction: row; padding: 0 24px;
+      }
+      .bab-line { width: 0; height: 2px; }
+      .bab-bridge { padding: 32px 24px 0; }
+    }
+
+    /* ========================================
+       MENU — HORIZONTAL SCROLL + 3D TILT
+    ======================================== */
+    .menu-header {
+      max-width: 1200px; margin: 0 auto;
+      padding-bottom: 48px;
+    }
+    .menu-scroll-wrapper {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 0 24px 24px;
+    }
+    .menu-scroll-wrapper::-webkit-scrollbar { display: none; }
+    .menu-track {
+      display: flex; gap: 24px;
+      width: max-content;
+      padding: 12px 0;
+    }
+    .menu-card {
+      width: 300px; flex-shrink: 0;
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+      transform-style: preserve-3d;
+      perspective: 800px;
+      transition: box-shadow .3s, transform .15s;
+      cursor: default;
+    }
+    .menu-card:hover {
+      box-shadow: 0 20px 60px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.04);
+    }
+    .menu-card-inner {
+      transform-style: preserve-3d;
+      transition: transform .15s ease-out;
+    }
+    .menu-card-img {
+      width: 100%; aspect-ratio: 4/3;
+      overflow: hidden;
+    }
+    .menu-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .menu-card:hover .menu-card-img img { transform: scale(1.05); }
+    .menu-card-body { padding: 24px; }
+    .menu-card-name {
+      font-family: var(--font-display);
+      font-size: 24px; letter-spacing: .02em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .menu-card-desc {
+      font-size: 14px; color: var(--text); opacity: .6;
+      line-height: 1.5; margin-top: 8px;
+    }
+    .menu-card-price {
+      font-family: var(--font-display);
+      font-size: 22px; color: var(--pop);
+      margin-top: 16px; letter-spacing: .02em;
+    }
+    .menu-scroll-hint {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 500; color: var(--text);
+      opacity: .4; margin-top: 20px;
+      max-width: 1200px; margin-left: auto; margin-right: auto;
+      padding: 0 24px;
+    }
+    .menu-scroll-hint svg { flex-shrink: 0; }
+
+    @media (max-width: 768px) {
+      .menu-card { width: 260px; }
+    }
+
+    /* ========================================
+       GALLERY — FULL BLEED + GRADIENT MESH BG
+    ======================================== */
+    .gallery {
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-mesh {
+      position: absolute; inset: 0;
+      opacity: .06;
+      background:
+        radial-gradient(ellipse 70% 50% at 20% 30%, var(--accent), transparent),
+        radial-gradient(ellipse 50% 70% at 80% 70%, var(--gray-300), transparent);
+      animation: meshDrift 25s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    .gallery-inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+    .gallery-item {
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+    .gallery-item:first-child {
+      grid-column: span 2;
+      grid-row: span 2;
+      aspect-ratio: auto;
+    }
+    .gallery-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .6s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.04); }
+
+    @media (max-width: 768px) {
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .gallery-item:first-child {
+        grid-column: span 2;
+        grid-row: span 1;
+        aspect-ratio: 16/9;
+      }
+    }
+
+    /* ========================================
+       TESTIMONIALS
+    ======================================== */
+    .testimonials-inner {
+      max-width: 900px; margin: 0 auto;
+      text-align: center;
+    }
+    .testimonial-quote {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.2; letter-spacing: .01em;
+      text-transform: uppercase; color: var(--accent);
+      margin-top: 48px;
+    }
+    .testimonial-quote::before {
+      content: '\201C';
+      display: block;
+      font-size: 72px; line-height: 1;
+      color: var(--pop); opacity: .4;
+      margin-bottom: 8px;
+    }
+    .testimonial-author {
+      font-size: 14px; font-weight: 500;
+      color: var(--text); opacity: .5;
+      margin-top: 24px; letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .testimonial-divider {
+      width: 30px; height: 2px;
+      background: var(--pop);
+      margin: 40px auto;
+    }
+    .testimonial-quote-2 {
+      font-size: clamp(17px, 2.5vw, 22px);
+      line-height: 1.6; color: var(--text);
+      font-style: italic; opacity: .65;
+      max-width: 600px; margin: 0 auto;
+    }
+    .testimonial-author-2 {
+      font-size: 13px; font-weight: 600;
+      color: var(--text); opacity: .4;
+      margin-top: 16px; letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    /* ========================================
+       CTA — CORAL POP
+    ======================================== */
+    .cta-section {
+      background: var(--accent);
+      padding: 100px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-mesh {
+      position: absolute; inset: 0;
+      opacity: .15;
+      background:
+        radial-gradient(ellipse 60% 60% at 30% 40%, var(--pop), transparent),
+        radial-gradient(ellipse 50% 50% at 70% 60%, rgba(255,255,255,.1), transparent);
+      animation: meshDrift 18s ease-in-out infinite alternate;
+    }
+    .cta-inner {
+      position: relative; z-index: 1;
+      max-width: 640px; margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1; letter-spacing: .02em;
+      text-transform: uppercase; color: #fff;
+    }
+    .cta-subtitle {
+      font-size: 16px; line-height: 1.7;
+      color: rgba(255,255,255,.7);
+      margin-top: 20px;
+    }
+    .cta-info {
+      display: flex; justify-content: center;
+      gap: 32px; margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .cta-info-item {
+      display: flex; align-items: center; gap: 10px;
+      color: rgba(255,255,255,.8); font-size: 14px;
+    }
+    .cta-info-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--pop); color: #fff;
+      padding: 16px 36px; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; border: none; cursor: pointer;
+      margin-top: 40px;
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .cta-btn:hover {
+      background: var(--pop-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255, 107, 90, .35);
+    }
+    .cta-btn svg { width: 18px; height: 18px; }
+
+    /* ========================================
+       FOOTER
+    ======================================== */
+    .footer {
+      background: var(--accent);
+      padding: 48px 24px 24px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 24px; letter-spacing: .04em;
+      text-transform: uppercase; color: #fff;
+    }
+    .footer-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .footer-links a {
+      font-size: 13px; color: rgba(255,255,255,.5);
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--pop); }
+    .footer-bottom {
+      max-width: 1200px; margin: 32px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: rgba(255,255,255,.3);
+    }
+    .footer-bottom a { color: var(--pop); }
+
+    @media (max-width: 768px) {
+      .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    /* ========================================
+       REDUCED MOTION
+    ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .gradient-mesh, .gallery-mesh, .cta-mesh { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GRADIENT MESH BG -->
+  <div class="gradient-mesh"></div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    Prototype offert par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a> — Votre site professionnel sur mesure
+  </div>
+
+  <!-- LOADER -->
+  <div class="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">{{BUSINESS_NAME}}</div>
+      <div class="loader-line"><div class="loader-line-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- SCROLL PROGRESS -->
+  <div class="scroll-progress"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">{{BUSINESS_NAME}}</a>
+      <ul class="nav-links">
+        <li><a href="#carte">La Carte</a></li>
+        <li><a href="#galerie">Galerie</a></li>
+        <li><a href="#avis">Avis</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="tel:{{PHONE}}" class="nav-cta">Reserver</a>
+    </div>
+  </nav>
+
+  <!-- ========================================
+       HERO — EDITORIAL MONOCHROME
+  ======================================== -->
+  <section class="hero">
+    <span class="hero-overline reveal-up">{{SUBSECTOR}} — {{CITY}}</span>
+    <h1 class="hero-title reveal">{{BUSINESS_NAME}}</h1>
+    <p class="hero-subtitle reveal-up">{{HERO_DESCRIPTION}}</p>
+    <div class="hero-divider reveal-up"></div>
+    <div class="hero-image reveal-scale">
+      <img src="{{HERO_IMAGE}}" alt="{{BUSINESS_NAME}} — {{SUBSECTOR}}" loading="eager">
+    </div>
+  </section>
+
+  <!-- ========================================
+       BAB SECTION — BEFORE / AFTER / BRIDGE
+  ======================================== -->
+  <section class="section bab" id="transformation">
+    <div class="bab-inner">
+      <div class="bab-col bab-before">
+        <span class="bab-tag reveal-up">Avant</span>
+        <p class="bab-text reveal">{{BAB_BEFORE}}</p>
+      </div>
+      <div class="bab-line-container">
+        <div class="bab-dot"></div>
+        <div class="bab-line"></div>
+        <div class="bab-dot"></div>
+      </div>
+      <div class="bab-col bab-after">
+        <span class="bab-tag reveal-up">Apres</span>
+        <p class="bab-text reveal">{{BAB_AFTER}}</p>
+      </div>
+    </div>
+    <div class="bab-bridge reveal-up">
+      <span class="bab-bridge-tag">Le pont</span>
+      <p class="bab-bridge-text">{{BAB_BRIDGE}}</p>
+    </div>
+  </section>
+
+  <!-- ========================================
+       MENU — HORIZONTAL SCROLL + 3D TILT
+  ======================================== -->
+  <section class="section" id="carte">
+    <div class="menu-header">
+      <span class="section-label reveal-up">La Carte</span>
+      <h2 class="section-title reveal">Nos Specialites</h2>
+      <p class="section-desc reveal-up">{{MENU_DESCRIPTION}}</p>
+    </div>
+    <div class="menu-scroll-wrapper">
+      <div class="menu-track">
+        <div class="menu-card" data-tilt>
+          <div class="menu-card-inner">
+            <div class="menu-card-img">
+              <img src="{{SERVICE_IMAGE_1}}" alt="{{SERVICE_1}}" loading="lazy">
+            </div>
+            <div class="menu-card-body">
+              <h3 class="menu-card-name">{{SERVICE_1}}</h3>
+              <p class="menu-card-desc">{{SERVICE_DESC_1}}</p>
+              <span class="menu-card-price">{{PRICE_1}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" data-tilt>
+          <div class="menu-card-inner">
+            <div class="menu-card-img">
+              <img src="{{SERVICE_IMAGE_2}}" alt="{{SERVICE_2}}" loading="lazy">
+            </div>
+            <div class="menu-card-body">
+              <h3 class="menu-card-name">{{SERVICE_2}}</h3>
+              <p class="menu-card-desc">{{SERVICE_DESC_2}}</p>
+              <span class="menu-card-price">{{PRICE_2}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" data-tilt>
+          <div class="menu-card-inner">
+            <div class="menu-card-img">
+              <img src="{{SERVICE_IMAGE_3}}" alt="{{SERVICE_3}}" loading="lazy">
+            </div>
+            <div class="menu-card-body">
+              <h3 class="menu-card-name">{{SERVICE_3}}</h3>
+              <p class="menu-card-desc">{{SERVICE_DESC_3}}</p>
+              <span class="menu-card-price">{{PRICE_3}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-card" data-tilt>
+          <div class="menu-card-inner">
+            <div class="menu-card-img">
+              <img src="{{SERVICE_IMAGE_4}}" alt="{{SERVICE_4}}" loading="lazy">
+            </div>
+            <div class="menu-card-body">
+              <h3 class="menu-card-name">{{SERVICE_4}}</h3>
+              <p class="menu-card-desc">{{SERVICE_DESC_4}}</p>
+              <span class="menu-card-price">{{PRICE_4}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="menu-scroll-hint">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Glissez pour decouvrir la carte
+    </div>
+  </section>
+
+  <!-- ========================================
+       GALLERY — FULL BLEED
+  ======================================== -->
+  <section class="section gallery" id="galerie">
+    <div class="gallery-mesh"></div>
+    <div class="gallery-inner">
+      <span class="section-label reveal-up">Galerie</span>
+      <h2 class="section-title reveal">L'Experience</h2>
+      <div class="gallery-grid">
+        <div class="gallery-item reveal-scale">
+          <img src="{{GALLERY_1}}" alt="{{BUSINESS_NAME}} galerie" loading="lazy">
+        </div>
+        <div class="gallery-item reveal-scale">
+          <img src="{{GALLERY_2}}" alt="{{BUSINESS_NAME}} galerie" loading="lazy">
+        </div>
+        <div class="gallery-item reveal-scale">
+          <img src="{{GALLERY_3}}" alt="{{BUSINESS_NAME}} galerie" loading="lazy">
+        </div>
+        <div class="gallery-item reveal-scale">
+          <img src="{{GALLERY_4}}" alt="{{BUSINESS_NAME}} galerie" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       TESTIMONIALS
+  ======================================== -->
+  <section class="section" id="avis">
+    <div class="testimonials-inner">
+      <span class="section-label reveal-up">Avis Clients</span>
+      <div class="testimonial-quote reveal">{{TESTIMONIAL_1}}</div>
+      <div class="testimonial-author reveal-up">{{TESTIMONIAL_AUTHOR_1}}</div>
+      <div class="testimonial-divider"></div>
+      <div class="testimonial-quote-2 reveal-up">{{TESTIMONIAL_2}}</div>
+      <div class="testimonial-author-2 reveal-up">{{TESTIMONIAL_AUTHOR_2}}</div>
+    </div>
+  </section>
+
+  <!-- ========================================
+       CTA — CORAL POP ON CHARCOAL
+  ======================================== -->
+  <section class="cta-section" id="contact">
+    <div class="cta-mesh"></div>
+    <div class="cta-inner">
+      <h2 class="cta-title reveal">Reservez Votre Table</h2>
+      <p class="cta-subtitle reveal-up">{{BUSINESS_NAME}} vous accueille. Venez decouvrir notre cuisine, notre ambiance et notre passion.</p>
+      <div class="cta-info reveal-up">
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>{{PHONE}}</span>
+        </div>
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>{{ADDRESS}}</span>
+        </div>
+        <div class="cta-info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>{{HOURS}}</span>
+        </div>
+      </div>
+      <a href="tel:{{PHONE}}" class="cta-btn reveal-up">
+        Appeler maintenant
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="18" height="18"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">{{BUSINESS_NAME}}</div>
+      <ul class="footer-links">
+        <li><a href="#carte">La Carte</a></li>
+        <li><a href="#galerie">Galerie</a></li>
+        <li><a href="#avis">Avis</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>Prototype realise par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a></span>
+      <span>{{BUSINESS_NAME}} — {{SUBSECTOR}} a {{CITY}}</span>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    /* ========================================
+       INIT — REDUCED MOTION
+    ======================================== */
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ========================================
+       LOADER
+    ======================================== */
+    if (!prefersReducedMotion) {
+      const loaderTL = gsap.timeline();
+      loaderTL
+        .to('.loader-logo', { opacity: 1, duration: .5, ease: 'power2.out' })
+        .to('.loader-line-fill', { scaleX: 1, duration: 1, ease: 'power2.inOut' }, '-=.2')
+        .to('.loader', { opacity: 0, duration: .4, ease: 'power2.inOut', onComplete() {
+          document.querySelector('.loader').style.display = 'none';
+        }}, '+=.15');
+    } else {
+      document.querySelector('.loader').style.display = 'none';
+    }
+
+    /* ========================================
+       LENIS SMOOTH SCROLL
+    ======================================== */
+    let lenis;
+    if (!prefersReducedMotion) {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        touchMultiplier: 1.5
+      });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    /* ========================================
+       SCROLL PROGRESS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.to('.scroll-progress', {
+        width: '100%',
+        ease: 'none',
+        scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: .3 }
+      });
+    }
+
+    /* ========================================
+       NAV SHRINK
+    ======================================== */
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 80);
+    });
+
+    /* ========================================
+       REVEAL ANIMATIONS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* Clip-path text reveals */
+      document.querySelectorAll('.reveal').forEach(el => {
+        gsap.fromTo(el,
+          { clipPath: 'inset(0 0 100% 0)', opacity: 0 },
+          {
+            clipPath: 'inset(0 0 0% 0)', opacity: 1,
+            duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+          }
+        );
+      });
+
+      /* Translate-up reveals */
+      document.querySelectorAll('.reveal-up').forEach((el, i) => {
+        gsap.fromTo(el,
+          { y: 30, opacity: 0 },
+          {
+            y: 0, opacity: 1,
+            duration: .7, ease: 'power3.out',
+            delay: i * .04,
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+          }
+        );
+      });
+
+      /* Scale reveals */
+      document.querySelectorAll('.reveal-scale').forEach(el => {
+        gsap.fromTo(el,
+          { scale: .93, opacity: 0 },
+          {
+            scale: 1, opacity: 1,
+            duration: .8, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true }
+          }
+        );
+      });
+
+      /* BAB line animation */
+      const babLine = document.querySelector('.bab-line');
+      if (babLine) {
+        gsap.fromTo(babLine,
+          { height: 0 },
+          {
+            height: 120,
+            duration: 1.2, ease: 'power2.out',
+            scrollTrigger: { trigger: '.bab-inner', start: 'top 75%', once: true }
+          }
+        );
+      }
+
+      /* Menu cards stagger */
+      gsap.fromTo('.menu-card', { y: 40, opacity: 0 }, {
+        y: 0, opacity: 1, duration: .6, ease: 'power3.out',
+        stagger: .1,
+        scrollTrigger: { trigger: '.menu-track', start: 'top 85%', once: true }
+      });
+
+      /* Gallery stagger */
+      gsap.fromTo('.gallery-item', { scale: .9, opacity: 0 }, {
+        scale: 1, opacity: 1, duration: .7, ease: 'power3.out',
+        stagger: .1,
+        scrollTrigger: { trigger: '.gallery-grid', start: 'top 85%', once: true }
+      });
+    }
+
+    /* ========================================
+       3D TILT ON MENU CARDS
+    ======================================== */
+    if (!prefersReducedMotion) {
+      document.querySelectorAll('[data-tilt]').forEach(card => {
+        const inner = card.querySelector('.menu-card-inner');
+        const maxTilt = 8;
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          const rotateX = (0.5 - y) * maxTilt;
+          const rotateY = (x - 0.5) * maxTilt;
+          inner.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          inner.style.transform = 'perspective(800px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        });
+      });
+    }
+
+    /* ========================================
+       SMOOTH SCROLL ANCHOR LINKS
+    ======================================== */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          if (lenis) lenis.scrollTo(target, { offset: -80 });
+          else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
