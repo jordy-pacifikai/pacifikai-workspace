@@ -75,17 +75,48 @@ async function sendViaTwilio(
   }
 }
 
-async function sendViaMeta(
-  to: string,
-  message: string,
-  config: BusinessConfig
-): Promise<void> {
+interface MetaApiError {
+  error: { message: string; type: string; code: number; fbtrace_id?: string };
+}
+
+interface MetaApiSuccess {
+  messaging_product: string;
+  contacts: Array<{ input: string; wa_id: string }>;
+  messages: Array<{ id: string }>;
+}
+
+function getMetaCredentials(config: BusinessConfig) {
   const { metaPhoneNumberId, metaAccessToken } = config;
   if (!metaPhoneNumberId || !metaAccessToken) {
     throw new Error("Meta credentials missing in business config");
   }
+  return { metaPhoneNumberId, metaAccessToken };
+}
 
-  const phone = to.replace("whatsapp:", "").replace("+", "");
+function formatPhone(to: string): string {
+  return to.replace("whatsapp:", "").replace("+", "");
+}
+
+async function parseMetaResponse(res: Response): Promise<string> {
+  const body = await res.json();
+  if (!res.ok) {
+    const err = body as MetaApiError;
+    const msg = err.error?.message ?? JSON.stringify(body);
+    const code = err.error?.code ?? res.status;
+    const type = err.error?.type ?? "unknown";
+    throw new Error(`Meta API error ${code} (${type}): ${msg}`);
+  }
+  const success = body as MetaApiSuccess;
+  return success.messages?.[0]?.id ?? "";
+}
+
+async function sendViaMeta(
+  to: string,
+  message: string,
+  config: BusinessConfig
+): Promise<string> {
+  const { metaPhoneNumberId, metaAccessToken } = getMetaCredentials(config);
+  const phone = formatPhone(to);
 
   const res = await fetch(
     `https://graph.facebook.com/v22.0/${metaPhoneNumberId}/messages`,
@@ -104,10 +135,7 @@ async function sendViaMeta(
     }
   );
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Meta API error ${res.status}: ${text}`);
-  }
+  return parseMetaResponse(res);
 }
 
 /**
@@ -191,4 +219,196 @@ async function getPageToken(businessId: string): Promise<string | null> {
     return data[0].meta_page_token ?? null;
   }
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// Interactive Messages — WhatsApp only
+// ---------------------------------------------------------------------------
+
+/**
+ * Send WhatsApp reply buttons (max 3 buttons).
+ * Use for: confirmation prompts, yes/no, service selection (<=3 options).
+ */
+export async function sendWhatsAppButtons(
+  to: string,
+  body: string,
+  buttons: Array<{ id: string; title: string }>,
+  config: BusinessConfig,
+  header?: string,
+  footer?: string,
+): Promise<string> {
+  if (buttons.length === 0 || buttons.length > 3) {
+    throw new Error(
+      `WhatsApp buttons must have 1-3 items, got ${buttons.length}`,
+    );
+  }
+  for (const btn of buttons) {
+    if (btn.title.length > 20) {
+      throw new Error(
+        `Button title "${btn.title}" exceeds 20 chars (${btn.title.length})`,
+      );
+    }
+  }
+
+  const { metaPhoneNumberId, metaAccessToken } = getMetaCredentials(config);
+  const phone = formatPhone(to);
+
+  const interactive: Record<string, unknown> = {
+    type: "button",
+    body: { text: body },
+    action: {
+      buttons: buttons.map((b) => ({
+        type: "reply",
+        reply: { id: b.id, title: b.title },
+      })),
+    },
+  };
+
+  if (header) interactive.header = { type: "text", text: header };
+  if (footer) interactive.footer = { text: footer };
+
+  const res = await fetch(
+    `https://graph.facebook.com/v22.0/${metaPhoneNumberId}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${metaAccessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: phone,
+        type: "interactive",
+        interactive,
+      }),
+    },
+  );
+
+  return parseMetaResponse(res);
+}
+
+/**
+ * Send WhatsApp list message (max 10 items in 1 section).
+ * Use for: service selection, time slot selection, date selection.
+ */
+export async function sendWhatsAppList(
+  to: string,
+  body: string,
+  buttonText: string,
+  items: Array<{ id: string; title: string; description?: string }>,
+  config: BusinessConfig,
+  header?: string,
+  footer?: string,
+): Promise<string> {
+  if (items.length === 0 || items.length > 10) {
+    throw new Error(
+      `WhatsApp list must have 1-10 items, got ${items.length}`,
+    );
+  }
+  if (buttonText.length > 20) {
+    throw new Error(
+      `List buttonText "${buttonText}" exceeds 20 chars (${buttonText.length})`,
+    );
+  }
+
+  const { metaPhoneNumberId, metaAccessToken } = getMetaCredentials(config);
+  const phone = formatPhone(to);
+
+  const interactive: Record<string, unknown> = {
+    type: "list",
+    body: { text: body },
+    action: {
+      button: buttonText,
+      sections: [
+        {
+          title: "Options",
+          rows: items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            ...(item.description ? { description: item.description } : {}),
+          })),
+        },
+      ],
+    },
+  };
+
+  if (header) interactive.header = { type: "text", text: header };
+  if (footer) interactive.footer = { text: footer };
+
+  const res = await fetch(
+    `https://graph.facebook.com/v22.0/${metaPhoneNumberId}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${metaAccessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: phone,
+        type: "interactive",
+        interactive,
+      }),
+    },
+  );
+
+  return parseMetaResponse(res);
+}
+
+/**
+ * Send a pre-approved WhatsApp template message.
+ * Use for: appointment reminders, confirmations (outside 24h window).
+ */
+export async function sendWhatsAppTemplate(
+  to: string,
+  templateName: string,
+  languageCode: string,
+  components: Array<{
+    type: string;
+    parameters: Array<{ type: string; text: string }>;
+  }>,
+  config: BusinessConfig,
+): Promise<string> {
+  const { metaPhoneNumberId, metaAccessToken } = getMetaCredentials(config);
+  const phone = formatPhone(to);
+
+  const res = await fetch(
+    `https://graph.facebook.com/v22.0/${metaPhoneNumberId}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${metaAccessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: phone,
+        type: "template",
+        template: {
+          name: templateName,
+          language: { code: languageCode },
+          components,
+        },
+      }),
+    },
+  );
+
+  return parseMetaResponse(res);
+}
+
+// ---------------------------------------------------------------------------
+// Channel detection utility
+// ---------------------------------------------------------------------------
+
+/**
+ * Detect which channel a recipient uses based on the `to` address format.
+ * WhatsApp supports buttons/lists, Messenger supports quick_replies,
+ * Instagram supports text only.
+ */
+export function supportsInteractive(
+  to: string,
+): "whatsapp" | "messenger" | "instagram" {
+  if (to.startsWith("messenger_")) return "messenger";
+  if (to.startsWith("instagram_")) return "instagram";
+  return "whatsapp";
 }

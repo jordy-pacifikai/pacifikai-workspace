@@ -368,18 +368,23 @@ function CaseStudies() {
 
 const PLANS = [
   {
-    name: 'Essentiel', desc: 'L\'automatisation qui change tout', price: '9 900',
-    features: ['Messenger IA conversationnel', 'Jusqu\'a 200 conversations/mois', 'Tableau de bord complet', 'Configuration personnalisee', 'Support par email'],
+    name: 'Starter', desc: 'Pour demarrer sans risque', price: '4 900',
+    features: ['Messenger IA conversationnel', 'Jusqu\'a 50 conversations/mois', 'Tableau de bord', 'Configuration guidee', 'Support par email'],
     featured: false,
   },
   {
-    name: 'Premium', desc: 'Le pack complet multi-canal', price: '19 900',
-    features: ['Tout le plan Essentiel', 'Jusqu\'a 500 conversations/mois', 'Instagram + WhatsApp', 'Google Calendar sync', 'Support prioritaire', 'Statistiques avancees'],
+    name: 'Essentiel', desc: 'L\'automatisation qui change tout', price: '9 900',
+    features: ['Tout le plan Starter', 'Jusqu\'a 200 conversations/mois', 'Instagram + WhatsApp', 'Google Calendar sync', 'Rappels automatiques'],
     featured: true,
   },
   {
+    name: 'Premium', desc: 'Le pack complet multi-canal', price: '19 900',
+    features: ['Tout le plan Essentiel', 'Jusqu\'a 500 conversations/mois', 'Statistiques avancees', 'Support prioritaire', 'Campagnes acquisition'],
+    featured: false,
+  },
+  {
     name: 'Business', desc: 'Sur mesure pour votre entreprise', price: null as string | null,
-    features: ['Tout le plan Premium', 'Conversations illimitees', 'Multi-sites / franchises', 'Campagnes acquisition', 'Onboarding dedie', 'SLA garanti'],
+    features: ['Tout le plan Premium', 'Conversations illimitees', 'Multi-sites / franchises', 'Onboarding dedie', 'SLA garanti'],
     featured: false,
   },
 ];
@@ -393,7 +398,7 @@ function Pricing() {
           <h2 className="text-3xl sm:text-4xl font-bold text-white">Tarification transparente</h2>
           <p className="mt-3 text-gray-400">Sans engagement. Annuel : 2 mois offerts.</p>
         </div>
-        <div className="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
           {PLANS.map((plan) => (
             <div key={plan.name}
               className={`rounded-xl p-6 flex flex-col ${plan.featured ? 'bg-gray-900 border-2 landing-breathing-border' : 'bg-gray-900/50 border border-gray-800'}`}

@@ -16,6 +16,7 @@ interface Appointment {
   appointment_date: string;
   time_slot: string;
   reminder_sent: string | null;
+  status: string;
 }
 
 interface Business {
@@ -54,13 +55,17 @@ function buildBusinessConfig(biz: Business): BusinessConfig {
  * Appointment reminders — runs every 30 minutes.
  *
  * Checks for upcoming confirmed appointments and sends WhatsApp reminders:
- * - 24h before (if business has reminder_24h enabled)
- * - 2h before (if business has reminder_2h enabled)
+ * - Evening before (~19:00 business TZ) — most effective timing
+ * - 2h before — last-chance confirmation request
+ *
+ * Also detects no-shows (confirmed appointments 15+ min past their time).
  *
  * Tracks sent reminders via `reminder_sent` column:
  * - null = no reminder sent
- * - "24h" = 24h reminder sent
- * - "2h" = both reminders sent (or only 2h if 24h disabled)
+ * - "evening" = evening-before reminder sent
+ * - "2h" = 2h reminder sent
+ *
+ * Backward compat: "24h" is treated same as "evening" for the 2h check.
  */
 export const sendReminders = schedules.task({
   id: "send-appointment-reminders",
@@ -79,28 +84,40 @@ export const sendReminders = schedules.task({
     }
 
     let totalSent = 0;
+    let eveningCount = 0;
+    let twoHourCount = 0;
+    let noShowCount = 0;
 
     for (const biz of businesses) {
       const cfg = (biz.config ?? {}) as Record<string, unknown>;
-      const reminder24h = cfg.reminder_24h !== false; // default true
+      const reminderEvening = cfg.reminder_24h !== false; // reuse existing config flag
       const reminder2h = cfg.reminder_2h !== false; // default true
 
-      if (!reminder24h && !reminder2h) continue;
+      if (!reminderEvening && !reminder2h) continue;
 
       const tz = biz.timezone ?? "Pacific/Tahiti";
       const now = new Date();
 
-      // Calculate time windows in business timezone
-      // 24h window: appointments between 23h and 25h from now
+      // Current hour in business timezone (for evening window check)
+      const localTimeStr = now.toLocaleString("en-US", { timeZone: tz, hour: "numeric", minute: "numeric", hour12: false });
+      const [localHour = 0, localMin = 0] = localTimeStr.split(":").map(Number);
+      const localMinutes = localHour * 60 + localMin;
+      const isEveningWindow = localMinutes >= 18 * 60 + 30 && localMinutes <= 19 * 60 + 30; // 18:30–19:30
+
+      // Tomorrow's date in business timezone (for evening reminder)
+      const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+      const tomorrowStr = tomorrow.toLocaleDateString("en-CA", { timeZone: tz }); // YYYY-MM-DD
+
       // 2h window: appointments between 1.5h and 2.5h from now
-      const h24_min = new Date(now.getTime() + 23 * 60 * 60 * 1000);
-      const h24_max = new Date(now.getTime() + 25 * 60 * 60 * 1000);
       const h2_min = new Date(now.getTime() + 1.5 * 60 * 60 * 1000);
       const h2_max = new Date(now.getTime() + 2.5 * 60 * 60 * 1000);
 
-      // 2. Get confirmed appointments for this business in the next 25h
+      // No-show cutoff: 15 minutes ago
+      const noShowCutoff = new Date(now.getTime() - 15 * 60 * 1000);
+
+      // 2. Get appointments for this business (confirmed, with phone)
       const apptRes = await fetch(
-        `${SUPABASE_URL}/rest/v1/bookbot_appointments?business_id=eq.${biz.id}&status=eq.confirmed&client_phone=not.is.null&select=id,business_id,client_name,client_phone,service,appointment_date,time_slot,reminder_sent`,
+        `${SUPABASE_URL}/rest/v1/bookbot_appointments?business_id=eq.${biz.id}&status=eq.confirmed&client_phone=not.is.null&select=id,business_id,client_name,client_phone,service,appointment_date,time_slot,reminder_sent,status`,
         { headers: supaHeaders() }
       );
       const appointments: Appointment[] = await apptRes.json();
@@ -112,34 +129,52 @@ export const sendReminders = schedules.task({
       for (const appt of appointments) {
         if (!appt.client_phone || !appt.appointment_date || !appt.time_slot) continue;
 
-        // Build appointment datetime in business timezone
         const apptDateTime = parseApptDateTime(appt.appointment_date, appt.time_slot, tz);
         if (!apptDateTime) continue;
 
-        // Skip past appointments
+        // --- No-show detection: appointment time + 15min < now, still confirmed ---
+        if (apptDateTime.getTime() < noShowCutoff.getTime()) {
+          try {
+            const marked = await markNoShow(appt.id);
+            if (marked && businessConfig.humanPhone) {
+              const msg = formatNoShowBusiness(appt);
+              await sendWhatsApp(businessConfig.humanPhone, msg, businessConfig);
+              noShowCount++;
+              logger.info(`No-show detected: ${appt.client_name} for ${appt.appointment_date} ${appt.time_slot}`);
+            }
+          } catch (err) {
+            logger.error(`Failed no-show handling for appointment ${appt.id}`, {
+              error: err instanceof Error ? err.message : String(err),
+            });
+          }
+          continue; // past appointment, skip reminder checks
+        }
+
+        // Skip past appointments (within 15min grace — handled above)
         if (apptDateTime.getTime() < now.getTime()) continue;
 
-        // Check 24h reminder
+        // --- Evening reminder (J-1 at ~19:00 local) ---
         if (
-          reminder24h &&
+          reminderEvening &&
+          isEveningWindow &&
           !appt.reminder_sent &&
-          apptDateTime.getTime() >= h24_min.getTime() &&
-          apptDateTime.getTime() <= h24_max.getTime()
+          appt.appointment_date === tomorrowStr
         ) {
-          const msg = formatReminder24h(appt, biz.name);
+          const msg = formatReminderEvening(appt, biz.name);
           try {
             await sendWhatsApp(appt.client_phone, msg, businessConfig);
-            await markReminderSent(appt.id, "24h");
+            await markReminderSent(appt.id, "evening");
             totalSent++;
-            logger.info(`24h reminder sent to ${appt.client_phone} for ${appt.appointment_date} ${appt.time_slot}`);
+            eveningCount++;
+            logger.info(`Evening reminder sent to ${appt.client_phone} for ${appt.appointment_date} ${appt.time_slot}`);
           } catch (err) {
-            logger.error(`Failed to send 24h reminder for appointment ${appt.id}`, {
+            logger.error(`Failed to send evening reminder for appointment ${appt.id}`, {
               error: err instanceof Error ? err.message : String(err),
             });
           }
         }
 
-        // Check 2h reminder
+        // --- 2h reminder ---
         if (
           reminder2h &&
           appt.reminder_sent !== "2h" &&
@@ -151,6 +186,7 @@ export const sendReminders = schedules.task({
             await sendWhatsApp(appt.client_phone, msg, businessConfig);
             await markReminderSent(appt.id, "2h");
             totalSent++;
+            twoHourCount++;
             logger.info(`2h reminder sent to ${appt.client_phone} for ${appt.appointment_date} ${appt.time_slot}`);
           } catch (err) {
             logger.error(`Failed to send 2h reminder for appointment ${appt.id}`, {
@@ -161,8 +197,14 @@ export const sendReminders = schedules.task({
       }
     }
 
-    logger.info(`Reminders sent: ${totalSent}`);
-    return { sent: totalSent, businesses: businesses.length };
+    logger.info(`Reminders sent: ${totalSent} (evening: ${eveningCount}, 2h: ${twoHourCount}), no-shows: ${noShowCount}`);
+    return {
+      sent: totalSent,
+      eveningReminders: eveningCount,
+      twoHourReminders: twoHourCount,
+      noShows: noShowCount,
+      businesses: businesses.length,
+    };
   },
 });
 
@@ -200,21 +242,30 @@ function parseApptDateTime(date: string, time: string, tz: string): Date | null 
   }
 }
 
-function formatReminder24h(appt: Appointment, businessName: string): string {
+function formatReminderEvening(appt: Appointment, businessName: string): string {
   const name = appt.client_name || "Bonjour";
   const service = appt.service || "votre rendez-vous";
-  return `${name}, petit rappel : vous avez rendez-vous demain a ${appt.time_slot} chez ${businessName} pour ${service}. A demain !`;
+  return `${name}, petit rappel pour demain : ${service} à ${appt.time_slot} chez ${businessName}. Réponds OK pour confirmer ou ANNULER si empêché. À demain !`;
 }
 
 function formatReminder2h(appt: Appointment, businessName: string): string {
   const name = appt.client_name || "Bonjour";
   const service = appt.service || "votre rendez-vous";
-  return `${name}, rappel : votre rendez-vous chez ${businessName} pour ${service} est dans 2 heures (${appt.time_slot}). A tout a l'heure !`;
+  return `${name}, ton RDV chez ${businessName} pour ${service} est dans 2h (${appt.time_slot}). Réponds OK pour confirmer ou ANNULER si empêché. À tout à l'heure !`;
 }
 
-async function markReminderSent(appointmentId: string, level: "24h" | "2h"): Promise<boolean> {
+function formatNoShowBusiness(appt: Appointment): string {
+  const clientName = appt.client_name || "Client";
+  const service = appt.service || "rendez-vous";
+  return `⚠️ No-show : ${clientName} n'est pas venu pour ${service} à ${appt.time_slot}. Souhaitez-vous le recontacter ?`;
+}
+
+async function markReminderSent(appointmentId: string, level: "evening" | "2h"): Promise<boolean> {
   // Conditional PATCH: only update if reminder_sent is still at the expected previous state
-  const expectedPrev = level === "24h" ? "is.null" : "eq.24h";
+  // Backward compat: for 2h, accept both "evening" and legacy "24h" as valid previous states
+  const expectedPrev = level === "evening"
+    ? "is.null"
+    : "in.(evening,24h)"; // accept both evening and legacy 24h
   const res = await fetch(
     `${SUPABASE_URL}/rest/v1/bookbot_appointments?id=eq.${appointmentId}&reminder_sent=${expectedPrev}`,
     {
@@ -223,8 +274,23 @@ async function markReminderSent(appointmentId: string, level: "24h" | "2h"): Pro
       body: JSON.stringify({ reminder_sent: level }),
     }
   );
-  // Check if any row was actually updated (Content-Range header)
   const range = res.headers.get("content-range");
   if (range && range.includes("0")) return false; // no rows matched
+  return res.ok;
+}
+
+/** Mark a confirmed appointment as no-show. Returns true if the row was updated. */
+async function markNoShow(appointmentId: string): Promise<boolean> {
+  // Conditional PATCH: only update if status is still "confirmed"
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?id=eq.${appointmentId}&status=eq.confirmed`,
+    {
+      method: "PATCH",
+      headers: { ...supaHeaders(), Prefer: "return=headers-only" },
+      body: JSON.stringify({ status: "no_show" }),
+    }
+  );
+  const range = res.headers.get("content-range");
+  if (range && range.includes("0")) return false;
   return res.ok;
 }
