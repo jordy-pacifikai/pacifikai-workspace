@@ -1,4 +1,6 @@
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ogsimsfqwibcmotaeevb.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -155,6 +157,15 @@ const TOOLS = [
 
 const ALLOWED_TOOLS = ['update_prospect', 'set_temperature', 'create_task'];
 
+const TOOLS_OPENAI = TOOLS.map(t => ({
+  type: 'function',
+  function: {
+    name: t.name,
+    description: t.description,
+    parameters: t.input_schema
+  }
+}));
+
 async function supabaseRequest(method, path, body, headers = {}) {
   const url = `${SUPABASE_URL}/rest/v1/${path}`;
   const opts = {
@@ -206,41 +217,141 @@ async function getHistory(sessionId) {
   }
 }
 
-async function callClaude(messages, systemPrompt) {
+function parseOpenAIResponse(data) {
+  const choice = data.choices?.[0]?.message;
+  if (!choice) return { error: 'no_choice' };
+  const content = [];
+  if (choice.content) content.push({ type: 'text', text: choice.content });
+  if (choice.tool_calls) {
+    for (const tc of choice.tool_calls) {
+      content.push({
+        type: 'tool_use',
+        name: tc.function.name,
+        input: JSON.parse(tc.function.arguments || '{}')
+      });
+    }
+  }
+  return { content };
+}
+
+async function callGemini(messages, systemPrompt) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25000);
+  const timeout = setTimeout(() => controller.abort(), 20000);
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('https://generativelanguage.googleapis.com/v1beta/chat/completions', {
       method: 'POST',
       headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json'
+        'Authorization': `Bearer ${GEMINI_API_KEY}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'gemini-2.5-flash',
         max_tokens: 800,
-        system: systemPrompt,
-        tools: TOOLS,
-        messages
+        messages: [{ role: 'system', content: systemPrompt }, ...messages],
+        tools: TOOLS_OPENAI
       }),
       signal: controller.signal
     });
     const data = await resp.json();
-    if (!resp.ok || data.type === 'error') {
-      console.error('Claude API error:', resp.status, data);
-      return { error: data?.error?.type || `HTTP ${resp.status}` };
+    if (!resp.ok) {
+      console.error('[Gemini] API error:', resp.status, data);
+      return { error: data?.error?.message || `HTTP ${resp.status}` };
     }
-    return data;
+    return parseOpenAIResponse(data);
   } catch (err) {
-    if (err.name === 'AbortError') {
-      console.error('Claude API timeout after 25s');
-      return { error: 'timeout' };
-    }
-    throw err;
+    console.error('[Gemini] Error:', err?.message);
+    return { error: err?.message || 'gemini_error' };
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function callGroq(messages, systemPrompt) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  try {
+    const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 800,
+        messages: [{ role: 'system', content: systemPrompt }, ...messages],
+        tools: TOOLS_OPENAI
+      }),
+      signal: controller.signal
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      console.error('[Groq] API error:', resp.status, data);
+      return { error: data?.error?.message || `HTTP ${resp.status}` };
+    }
+    return parseOpenAIResponse(data);
+  } catch (err) {
+    console.error('[Groq] Error:', err?.message);
+    return { error: err?.message || 'groq_error' };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function callDeepSeek(messages, systemPrompt) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 25000);
+  try {
+    const resp = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        max_tokens: 800,
+        messages: [{ role: 'system', content: systemPrompt }, ...messages],
+        tools: TOOLS_OPENAI
+      }),
+      signal: controller.signal
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      console.error('[DeepSeek] API error:', resp.status, data);
+      return { error: data?.error?.message || `HTTP ${resp.status}` };
+    }
+    return parseOpenAIResponse(data);
+  } catch (err) {
+    console.error('[DeepSeek] Error:', err?.message);
+    return { error: err?.message || 'deepseek_error' };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function callLLM(messages, systemPrompt) {
+  // 1. Primary: Gemini 2.5 Flash (free tier — 250 req/jour)
+  if (GEMINI_API_KEY) {
+    const result = await callGemini(messages, systemPrompt);
+    if (!result.error) return result;
+    console.warn('[Fallback] Gemini failed, trying Cerebras...', result.error);
+  }
+  // 2. Fallback: Groq Llama 3.3 70B (free tier — 500K tok/jour)
+  if (GROQ_API_KEY) {
+    const result = await callGroq(messages, systemPrompt);
+    if (!result.error) return result;
+    console.warn('[Fallback] Groq failed, trying DeepSeek...', result.error);
+  }
+  // 3. Last resort: DeepSeek V3 (paid — $0.14/M)
+  if (DEEPSEEK_API_KEY) {
+    const result = await callDeepSeek(messages, systemPrompt);
+    if (!result.error) return result;
+    console.error('[Fallback] All 3 providers failed:', result.error);
+    notifyTelegram(['MANA DOWN — Gemini + Groq + DeepSeek en erreur'], 'CRITICAL').catch(() => {});
+    return result;
+  }
+  return { error: 'no_api_key_configured' };
 }
 
 async function saveMessages(sessionId, userMsg, botMsg) {
@@ -359,7 +470,7 @@ export default async function handler(req, res) {
     }
 
     // 3. Call Claude (with 25s timeout)
-    const claudeResponse = await callClaude(messages, systemPrompt);
+    const claudeResponse = await callLLM(messages, systemPrompt);
     if (claudeResponse.error) {
       return res.status(200).json({
         success: false,
