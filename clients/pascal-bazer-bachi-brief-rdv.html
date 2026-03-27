@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brief RDV — Pascal BAZER-BACHI | 27 mars 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page {
+    size: A4;
+    margin: 12mm 14mm;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 10.5px;
+    line-height: 1.55;
+    color: #1a1a2e;
+    background: #f0f0f5;
+    padding: 20px;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: #fff;
+    padding: 24px 28px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  }
+
+  /* Header — ink-friendly: no colored backgrounds */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #222;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+  }
+  .header-left h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: -0.5px;
+  }
+  .header-left .subtitle {
+    font-size: 10.5px;
+    color: #555;
+    margin-top: 2px;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 10px;
+    color: #555;
+  }
+  .header-right .date {
+    font-size: 13px;
+    font-weight: 600;
+    color: #000;
+  }
+
+  /* Prospect card — border only, no bg gradient */
+  .prospect-card {
+    display: flex;
+    gap: 20px;
+    border: 1.5px solid #999;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+  }
+  .prospect-card .col { flex: 1; }
+  .prospect-card .label {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #777;
+    font-weight: 600;
+    margin-bottom: 1px;
+  }
+  .prospect-card .value {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: #111;
+  }
+  .prospect-card .value a {
+    color: #111;
+    text-decoration: underline;
+  }
+
+  /* Status bar — outline chips, no filled backgrounds */
+  .status-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border: 1.5px solid #444;
+    color: #222;
+    background: transparent;
+  }
+  .chip-waiting { border-style: dashed; }
+  .chip-chosen { }
+  .chip-amount { font-weight: 700; }
+  .chip-deadline { border-color: #000; font-weight: 700; }
+
+  /* Sections */
+  .section {
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #bbb;
+  }
+
+  /* Q&A blocks — no color fills */
+  .qa-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .qa-block {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 10px;
+    border-left: 3px solid #333;
+    background: transparent;
+  }
+  .qa-block.full { grid-column: 1 / -1; }
+  .qa-question {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .qa-answer {
+    font-size: 9.5px;
+    color: #111;
+    line-height: 1.5;
+  }
+  .qa-answer strong {
+    color: #000;
+    font-weight: 700;
+  }
+  .qa-answer ul {
+    margin: 3px 0 0 14px;
+    padding: 0;
+  }
+  .qa-answer li {
+    margin-bottom: 1px;
+  }
+
+  /* Pricing table — no colored header, borders only */
+  .pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5px;
+    margin-top: 4px;
+  }
+  .pricing-table th {
+    background: transparent;
+    color: #000;
+    padding: 5px 8px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 8.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #333;
+  }
+  .pricing-table td {
+    padding: 4px 8px;
+    border-bottom: 1px solid #ddd;
+  }
+  .pricing-table tr:nth-child(even) td {
+    background: transparent;
+  }
+  .pricing-table .highlight {
+    font-weight: 700;
+    color: #000;
+  }
+  .pricing-table .cost {
+    font-weight: 700;
+    color: #000;
+  }
+
+  /* Checklist */
+  .checklist {
+    list-style: none;
+    padding: 0;
+  }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 10px;
+    border-bottom: 1px dotted #ccc;
+  }
+  .checklist li:last-child { border: none; }
+  .check-box {
+    width: 13px;
+    height: 13px;
+    border: 1.5px solid #555;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Timeline — outline dots, no color fills */
+  .timeline {
+    display: flex;
+    gap: 0;
+    margin-top: 4px;
+  }
+  .timeline-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+  }
+  .timeline-step::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: -50%;
+    width: 100%;
+    height: 1px;
+    background: #999;
+    z-index: 0;
+  }
+  .timeline-step:last-child::after { display: none; }
+  .timeline-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1.5px solid #555;
+    color: #333;
+    font-size: 8px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+  .timeline-dot.done {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
+  .timeline-dot.current {
+    background: #fff;
+    border: 2.5px solid #000;
+    color: #000;
+    font-weight: 900;
+  }
+  .timeline-label {
+    font-size: 7.5px;
+    color: #555;
+    margin-top: 2px;
+    font-weight: 500;
+  }
+
+  /* Iban box — dashed border, no fill */
+  .iban-box {
+    border: 1.5px dashed #555;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    font-size: 9.5px;
+    background: transparent;
+  }
+  .iban-box .iban-title {
+    font-weight: 700;
+    color: #000;
+    font-size: 8.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+  .iban-box code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 0.5px;
+  }
+
+  /* Notes — border only, no yellow fill */
+  .notes-box {
+    border: 1.5px solid #555;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    font-size: 9.5px;
+    color: #222;
+    background: transparent;
+  }
+  .notes-box .notes-title {
+    font-weight: 700;
+    font-size: 8.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+    color: #000;
+  }
+
+  @media print {
+    body { background: none; padding: 0; }
+    .page { box-shadow: none; padding: 0; width: 100%; min-height: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Brief RDV — Pascal BAZER-BACHI</h1>
+      <div class="subtitle">Pacific Blue Consulting &middot; Projet Site Web 100K</div>
+    </div>
+    <div class="header-right">
+      <div class="date">27 mars 2026</div>
+      <div>Devis N&deg; 2026-003</div>
+      <div>PACIFIK'AI</div>
+    </div>
+  </div>
+
+  <!-- PROSPECT CARD -->
+  <div class="prospect-card">
+    <div class="col">
+      <div class="label">Prospect</div>
+      <div class="value">Pascal BAZER-BACHI</div>
+    </div>
+    <div class="col">
+      <div class="label">Entreprise</div>
+      <div class="value">Pacific Blue Consulting</div>
+    </div>
+    <div class="col">
+      <div class="label">Email</div>
+      <div class="value"><a href="mailto:pacificblueconsulting@zoho.com">pacificblueconsulting@zoho.com</a></div>
+    </div>
+    <div class="col">
+      <div class="label">T&eacute;l&eacute;phone</div>
+      <div class="value">+689 87 747 284</div>
+    </div>
+    <div class="col">
+      <div class="label">Activit&eacute;</div>
+      <div class="value">Conseil a&eacute;rien, environnement, AMO</div>
+    </div>
+    <div class="col">
+      <div class="label">LinkedIn</div>
+      <div class="value"><a href="#">Pacific Blue Consulting</a></div>
+    </div>
+  </div>
+
+  <!-- STATUS -->
+  <div class="status-bar">
+    <span class="status-chip chip-amount">100 000 XPF</span>
+    <span class="status-chip chip-waiting">Acompte 50K en attente</span>
+    <span class="status-chip chip-chosen">Maquette #1 Aviation Heritage</span>
+    <span class="status-chip chip-deadline">Deadline : mi-avril</span>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section">
+    <div class="section-title">Pipeline du projet</div>
+    <div class="timeline">
+      <div class="timeline-step"><span class="timeline-dot done">1</span><div class="timeline-label">Contact<br>15 mars</div></div>
+      <div class="timeline-step"><span class="timeline-dot done">2</span><div class="timeline-label">Maquettes<br>15 mars</div></div>
+      <div class="timeline-step"><span class="timeline-dot done">3</span><div class="timeline-label">Choix maquette<br>16 mars</div></div>
+      <div class="timeline-step"><span class="timeline-dot done">4</span><div class="timeline-label">Devis envoy&eacute;<br>17 mars</div></div>
+      <div class="timeline-step"><span class="timeline-dot done">5</span><div class="timeline-label">Questions r&eacute;pondues<br>18 mars</div></div>
+      <div class="timeline-step"><span class="timeline-dot current">6</span><div class="timeline-label">RDV<br>27 mars</div></div>
+      <div class="timeline-step"><span class="timeline-dot">7</span><div class="timeline-label">Acompte<br>&nbsp;</div></div>
+      <div class="timeline-step"><span class="timeline-dot">8</span><div class="timeline-label">Production<br>7 jours</div></div>
+      <div class="timeline-step"><span class="timeline-dot">9</span><div class="timeline-label">Livraison<br>&nbsp;</div></div>
+    </div>
+  </div>
+
+  <!-- QUESTIONS & REPONSES -->
+  <div class="section">
+    <div class="section-title">Questions de Pascal &amp; R&eacute;ponses pr&ecirc;tes</div>
+
+    <div class="qa-grid">
+
+      <div class="qa-block">
+        <div class="qa-question">Nom de domaine : qu'en est-il apr&egrave;s la 1&egrave;re ann&eacute;e ?</div>
+        <div class="qa-answer">
+          Il a d&eacute;j&agrave; <strong>pacificblueconsulting.org</strong> &mdash; migration gratuite, +1 an ajout&eacute;.<br>
+          Apr&egrave;s : renouvellement .org &asymp; <strong>2 100 XPF/an</strong>.<br>
+          On g&egrave;re tout : transfert, config DNS, renouvellement annuel. Z&eacute;ro gestion de son c&ocirc;t&eacute;.
+        </div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-question">Y a-t-il d'autres frais aupr&egrave;s d'op&eacute;rateurs tiers ?</div>
+        <div class="qa-answer">
+          <strong>Non.</strong> On est l'interlocuteur unique. Pas de frais cach&eacute;s, pas d'op&eacute;rateur tiers &agrave; payer. Le seul co&ucirc;t r&eacute;current = domaine (~2 100 XPF/an pour .org). H&eacute;bergement = gratuit &agrave; vie.
+        </div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-question">H&eacute;bergement : dur&eacute;e, robustesse, s&eacute;curit&eacute; ?</div>
+        <div class="qa-answer">
+          <strong>Inclus sans limite de dur&eacute;e, z&eacute;ro frais.</strong><br>
+          Infrastructure Vercel : serveurs Europe (Paris), CDN mondial, SSL automatique, 99.99% uptime, sauvegardes auto, protection DDoS. M&ecirc;me techno que les sites de grandes entreprises.
+        </div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-question">Support &amp; maintenance apr&egrave;s 3 mois ?</div>
+        <div class="qa-answer">
+          3 premiers mois inclus (r&eacute;visions, corrections, modifications).<br>
+          Au-del&agrave; : <strong>15 000 XPF/mois</strong> (optionnel).<br>
+          Si le site tourne bien sans modifs &rarr; aucun frais. C'est lui qui d&eacute;cide.
+        </div>
+      </div>
+
+      <div class="qa-block full">
+        <div class="qa-question">Email Zoho &amp; domaine professionnel</div>
+        <div class="qa-answer">
+          Pascal utilise actuellement <strong>pacificblueconsulting@zoho.com</strong> (Zoho Mail gratuit).<br><br>
+          <strong>Ce qu'on peut faire :</strong> configurer son domaine (ex: pacificblueconsulting.org) pour fonctionner avec Zoho Mail. Il gardera la m&ecirc;me interface Zoho, mais avec une adresse <strong>pascal@pacificblueconsulting.org</strong> au lieu de @zoho.com. Les deux cohabitent sans probl&egrave;me.<br><br>
+          <strong>Comment &ccedil;a marche :</strong> on ajoute les enregistrements MX et SPF/DKIM de Zoho sur son domaine. Op&eacute;ration incluse dans la livraison, aucun surco&ucirc;t. Zoho Mail Free = 5 utilisateurs gratuits, largement suffisant pour lui.<br><br>
+          <strong>Phrase cl&eacute; :</strong> &laquo; On te configure pascal@pacificblueconsulting.org, tu gardes Zoho exactement pareil, juste l'adresse qui change. C'est inclus. &raquo;
+        </div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-question">S'il demande d'autres options de domaine</div>
+        <div class="qa-answer">
+          <ul>
+            <li><strong>.org</strong> (son actuel) &mdash; ~2 100 XPF/an</li>
+            <li><strong>.consulting</strong> &mdash; ~7 500 XPF/an</li>
+            <li><strong>.net</strong> &mdash; ~2 100 XPF/an</li>
+            <li><strong>.pro</strong> &mdash; ~3 400 XPF/an</li>
+          </ul>
+          Recommandation : garder le <strong>.org</strong> existant, le plus simple et le moins cher.
+        </div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-question">S'il demande &laquo; pourquoi pas un .pf ? &raquo;</div>
+        <div class="qa-answer">
+          Les domaines .pf ne sont attribu&eacute;s qu'aux r&eacute;sidents PF via l'OPT. Co&ucirc;t : ~5 000 XPF/an. Proc&eacute;dure plus lourde (justificatifs). <strong>Possible mais pas n&eacute;cessaire</strong> vu qu'il a d&eacute;j&agrave; son .org et que son activit&eacute; est internationale (consulting a&eacute;rien).
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RECAPITULATIF FINANCIER -->
+  <div class="section">
+    <div class="section-title">R&eacute;capitulatif financier</div>
+    <table class="pricing-table">
+      <thead>
+        <tr>
+          <th>Poste</th>
+          <th>Montant</th>
+          <th>Fr&eacute;quence</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cost">Site web complet (5 pages)</td>
+          <td class="cost">100 000 XPF</td>
+          <td>Unique</td>
+          <td>Acompte 50K + solde livraison</td>
+        </tr>
+        <tr>
+          <td>H&eacute;bergement Vercel</td>
+          <td class="highlight">Gratuit</td>
+          <td>&Agrave; vie</td>
+          <td>CDN, SSL, backups inclus</td>
+        </tr>
+        <tr>
+          <td>Domaine .org (renouvellement)</td>
+          <td>~2 100 XPF</td>
+          <td>/an</td>
+          <td>1&egrave;re ann&eacute;e incluse</td>
+        </tr>
+        <tr>
+          <td>Email pro (Zoho config)</td>
+          <td class="highlight">Inclus</td>
+          <td>&mdash;</td>
+          <td>pascal@pacificblueconsulting.org</td>
+        </tr>
+        <tr>
+          <td>Support &amp; maintenance</td>
+          <td>15 000 XPF</td>
+          <td>/mois (optionnel)</td>
+          <td>3 premiers mois inclus</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- COORDONNEES BANCAIRES -->
+  <div class="iban-box">
+    <div class="iban-title">Coordonn&eacute;es bancaires pour l'acompte</div>
+    <div><strong>Titulaire :</strong> ENT INDIVIDUELLE PACIFIK AI</div>
+    <div><strong>Banque :</strong> Banque de Tahiti</div>
+    <div><strong>IBAN :</strong> <code>FR76 1223 9000 1571 5144 0100 014</code></div>
+    <div><strong>BIC :</strong> <code>CEPAPFTPXXX</code></div>
+  </div>
+
+  <!-- A RECUPERER -->
+  <div class="section" style="margin-top: 14px;">
+    <div class="section-title">Contenus &agrave; r&eacute;cup&eacute;rer (bloquants pour production)</div>
+    <ul class="checklist">
+      <li><span class="check-box"></span><strong>Acompte 50 000 XPF</strong> &mdash; virement sur le compte Banque de Tahiti</li>
+      <li><span class="check-box"></span><strong>Logo HD</strong> &mdash; format vectoriel SVG ou AI de pr&eacute;f&eacute;rence, sinon PNG haute r&eacute;solution</li>
+      <li><span class="check-box"></span><strong>Photos professionnelles</strong> &mdash; interventions, &eacute;quipe, bureaux, avions, terrain</li>
+      <li><span class="check-box"></span><strong>Liste des missions prioritaires</strong> &mdash; quelles expertises mettre en avant en premier</li>
+      <li><span class="check-box"></span><strong>Confirmation du domaine</strong> &mdash; garder pacificblueconsulting.org ou autre ?</li>
+      <li><span class="check-box"></span><strong>Textes / bio</strong> &mdash; pr&eacute;sentation de l'entreprise, parcours, valeurs (ou on r&eacute;dige pour lui)</li>
+    </ul>
+  </div>
+
+  <!-- NOTES -->
+  <div class="notes-box">
+    <div class="notes-title">Notes pour le RDV</div>
+    <ul style="margin-left: 14px;">
+      <li><strong>Ton :</strong> Pascal est formel dans ses emails (vouvoiement), mais a propos&eacute; de passer au tutoiement. Adapter au feeling du RDV.</li>
+      <li><strong>Maquette choisie :</strong> Variante #1 &laquo; Aviation Heritage &raquo; (sombre, premium) avec des &eacute;l&eacute;ments des 2 autres. Noter ce qu'il veut mixer.</li>
+      <li><strong>Deadline :</strong> Il veut &laquo; avant la mi-avril &raquo;. Si acompte + contenus cette semaine &rarr; livraison ~3 avril, largement dans les temps.</li>
+      <li><strong>Pas de r&eacute;ponse depuis le 23 mars</strong> (relance coordonn&eacute;es bancaires). Ce RDV est l'occasion de d&eacute;bloquer.</li>
+      <li><strong>Il a une page LinkedIn</strong> r&eacute;cente &mdash; montrer qu'on peut l'int&eacute;grer au site (widget, lien, feed).</li>
+      <li><strong>Upsell possible :</strong> r&eacute;f&eacute;rencement Google (SEO), r&eacute;seaux sociaux, chatbot IA pour prise de RDV. Ne pas pousser au 1er RDV, planter la graine.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
