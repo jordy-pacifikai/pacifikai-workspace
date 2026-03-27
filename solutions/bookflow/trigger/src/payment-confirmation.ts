@@ -68,9 +68,9 @@ export const paymentConfirmation = schemaTask({
 </html>`.trim();
 
     await sendBrevoEmail({
-      to: payload.email,
+      to: [{ email: payload.email }],
       subject: `Confirmation de paiement — Ve'a (${safePlan})`,
-      html,
+      htmlContent: html,
     });
 
     logger.info("Payment confirmation email sent", {
