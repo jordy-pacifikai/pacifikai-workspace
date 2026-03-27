@@ -32,6 +32,7 @@ import {
   Home,
   UserCircle,
   CreditCard,
+  Bot,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -62,6 +63,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: 'Calendrier',    href: '/calendar',      icon: Calendar      },
       { label: 'Clients',       href: '/clients',       icon: Users         },
       { label: 'Conversations', href: '/conversations', icon: MessageCircle },
+      { label: 'Agent IA',      href: '/agent',         icon: Bot             },
     ],
   },
   {

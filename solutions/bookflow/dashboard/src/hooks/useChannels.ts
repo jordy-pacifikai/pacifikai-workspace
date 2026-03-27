@@ -11,6 +11,7 @@ export interface ConnectedPage {
   pageName: string | null;
   igAccountId: string | null;
   connectedAt: string | null;
+  tokenStatus: string | null;
 }
 
 export interface FacebookPageOption {
@@ -32,7 +33,7 @@ export const channelKeys = {
 async function fetchConnectedChannels(businessId: string): Promise<ConnectedPage | null> {
   const { data, error } = await supabase
     .from('bookbot_businesses')
-    .select('meta_page_id, meta_page_name, meta_ig_account_id, meta_connected_at')
+    .select('meta_page_id, meta_page_name, meta_ig_account_id, meta_connected_at, meta_token_status')
     .eq('id', businessId)
     .single();
 
@@ -43,6 +44,7 @@ async function fetchConnectedChannels(businessId: string): Promise<ConnectedPage
     pageName: data.meta_page_name,
     igAccountId: data.meta_ig_account_id,
     connectedAt: data.meta_connected_at,
+    tokenStatus: data.meta_token_status,
   };
 }
 

@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireBusinessAccess } from '@/lib/auth';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
+import { isValidEmail } from '@/lib/utils';
 
 // ─── Column mapping (case-insensitive, flexible) ──────────────────────────────
 
@@ -141,7 +142,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { success } = rateLimit(`clients-import:${businessId}`, { interval: 60_000, limit: 3 })
+    const { success } = await rateLimitAsync(`clients-import:${businessId}`, { interval: 60_000, limit: 3 })
     if (!success) {
       return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
     }
@@ -227,7 +228,11 @@ export async function POST(req: NextRequest) {
         errors.push(`Ligne ${lineNum}: numéro de téléphone invalide pour "${name}" — doit commencer par + ou un chiffre et faire au moins 6 caractères`);
         phone = null;
       }
-      const email = record.email || null;
+      let email: string | null = record.email || null;
+      if (email && !isValidEmail(email)) {
+        errors.push(`Ligne ${lineNum}: adresse email invalide pour "${name}" — ignorée`);
+        email = null;
+      }
       const notes = record.notes || null;
 
       // Upsert logic: if same phone + business_id exists → update

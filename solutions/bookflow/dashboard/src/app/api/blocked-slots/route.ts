@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireBusinessAccess } from '@/lib/auth';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 const insertSchema = z.object({
@@ -25,7 +25,7 @@ const deleteSchema = z.object({
 export async function POST(req: Request) {
   try {
     const ip = getClientIp(req);
-    const { success: rlOk } = rateLimit(`blocked-slots:${ip}`, { interval: 60_000, limit: 30 });
+    const { success: rlOk } = await rateLimitAsync(`blocked-slots:${ip}`, { interval: 60_000, limit: 30 });
     if (!rlOk) {
       return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
     }
@@ -81,7 +81,7 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const ip = getClientIp(req);
-    const { success: rlOk } = rateLimit(`blocked-slots:${ip}`, { interval: 60_000, limit: 30 });
+    const { success: rlOk } = await rateLimitAsync(`blocked-slots:${ip}`, { interval: 60_000, limit: 30 });
     if (!rlOk) {
       return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
     }

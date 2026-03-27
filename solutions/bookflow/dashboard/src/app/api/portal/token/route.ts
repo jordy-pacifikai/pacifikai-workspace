@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireBusinessAccess } from '@/lib/auth';
 import { generatePortalToken } from '@/lib/portal-token';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
+import { logAuthEvent, extractRequestMeta } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 
 const clientIdSchema = z.string().uuid();
@@ -16,8 +17,10 @@ const clientIdSchema = z.string().uuid();
 export async function GET(req: Request) {
   // Rate limit: 10/min per IP
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`portal-token:${ip}`, { interval: 60_000, limit: 10 });
+  const { success: rlOk } = await rateLimitAsync(`portal-token:${ip}`, { interval: 60_000, limit: 10 });
   if (!rlOk) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'rate_limited', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'GET /api/portal/token' } });
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
   }
 
@@ -51,7 +54,13 @@ export async function GET(req: Request) {
     try {
       await requireBusinessAccess(client.business_id);
     } catch (authError) {
-      if (authError instanceof NextResponse) return authError;
+      if (authError instanceof NextResponse) {
+        const meta = extractRequestMeta(req);
+        void logAuthEvent({ eventType: 'unauthorized_access', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'GET /api/portal/token', businessId: client.business_id } });
+        return authError;
+      }
+      const meta = extractRequestMeta(req);
+      void logAuthEvent({ eventType: 'unauthorized_access', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'GET /api/portal/token', businessId: client.business_id } });
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

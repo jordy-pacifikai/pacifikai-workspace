@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { createSupabaseServer } from '@/lib/auth';
 import { logger } from '@/lib/logger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Rate limit: 2/hour per user (one-time action anyway, but guard against abuse)
-    const { success: rlOk } = rateLimit(`extend-trial:${user.id}`, { interval: 3_600_000, limit: 2 });
+    const { success: rlOk } = await rateLimitAsync(`extend-trial:${user.id}`, { interval: 3_600_000, limit: 2 });
     if (!rlOk) {
       return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
     }

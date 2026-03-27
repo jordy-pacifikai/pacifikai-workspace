@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { verifyUnsubscribeToken } from '@/lib/portal-token';
 
 /**
@@ -9,7 +9,7 @@ import { verifyUnsubscribeToken } from '@/lib/portal-token';
  */
 export async function POST(req: Request) {
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`unsub:${ip}`, { interval: 60_000, limit: 10 });
+  const { success: rlOk } = await rateLimitAsync(`unsub:${ip}`, { interval: 60_000, limit: 10 });
   if (!rlOk) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireAuth, getUserBusinessId } from '@/lib/auth';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 // POST /api/account/delete
@@ -14,7 +14,7 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json({ error: 'Non autorise' }, { status: 401 });
   }
 
-  const { success } = rateLimit(`account-delete:${user.id}`, { interval: 60_000, limit: 3 })
+  const { success } = await rateLimitAsync(`account-delete:${user.id}`, { interval: 60_000, limit: 3 })
   if (!success) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }

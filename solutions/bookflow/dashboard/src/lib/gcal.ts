@@ -1,5 +1,6 @@
 import { logger } from '@/lib/logger';
 import { supabaseAdmin } from '@/lib/supabase';
+import crypto from 'crypto';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
@@ -36,7 +37,32 @@ export async function getAccessToken(businessId: string): Promise<string | null>
   });
 
   if (!res.ok) {
-    logger.error('Token refresh failed', { action: 'gcal_token', businessId, status: res.status });
+    const errBody = await res.text().catch(() => '');
+    logger.error('Token refresh failed', { action: 'gcal_token', businessId, status: res.status, body: errBody });
+
+    // Detect revoked/expired refresh token → mark GCal as disconnected
+    if (res.status === 400 && errBody.includes('invalid_grant')) {
+      logger.warn('GCal refresh token revoked, marking as disconnected', { action: 'gcal_token_revoked', businessId });
+      await sb.from('bookbot_businesses').update({
+        gcal_connected_at: null,
+        gcal_refresh_token: null,
+        gcal_watch_channel_id: null,
+        gcal_watch_resource_id: null,
+        gcal_watch_expiration: null,
+        gcal_webhook_secret: null,
+      }).eq('id', businessId);
+
+      // Create in-app notification
+      await sb.from('bookbot_notifications').insert({
+        business_id: businessId,
+        type: 'gcal_disconnected',
+        title: 'Google Calendar déconnecté',
+        message: "L'accès à votre Google Calendar a été révoqué. Reconnectez-le depuis la page Canaux pour continuer la synchronisation.",
+        is_read: false,
+        metadata: { reason: 'invalid_grant' },
+      });
+    }
+
     return null;
   }
 
@@ -112,7 +138,7 @@ export async function createCalendarEvent(
 export async function watchCalendar(
   businessId: string,
   webhookUrl: string,
-): Promise<{ channelId: string; resourceId: string; expiration: string } | null> {
+): Promise<{ channelId: string; resourceId: string; expiration: string; webhookSecret: string } | null> {
   const sb = supabaseAdmin();
   const { data: biz } = await sb
     .from('bookbot_businesses')
@@ -126,6 +152,7 @@ export async function watchCalendar(
   if (!accessToken) return null;
 
   const channelId = `vea-${businessId}-${Date.now()}`;
+  const webhookSecret = crypto.randomUUID();
 
   const res = await fetch(
     `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(biz.gcal_calendar_id)}/events/watch`,
@@ -139,6 +166,7 @@ export async function watchCalendar(
         id: channelId,
         type: 'web_hook',
         address: webhookUrl,
+        token: webhookSecret,
         params: { ttl: '604800' }, // 7 days
       }),
     },
@@ -154,6 +182,7 @@ export async function watchCalendar(
     channelId: data.id,
     resourceId: data.resourceId,
     expiration: data.expiration,
+    webhookSecret,
   };
 }
 

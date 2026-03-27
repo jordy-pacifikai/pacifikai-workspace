@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useState, useRef, useEffect } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { ArrowLeft, Wrench } from 'lucide-react';
+import { ArrowLeft, Wrench, Send, Loader2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useConversation, type ConversationMessage } from '@/hooks/useConversation';
+import { useSendReply } from '@/hooks/useSendReply';
+import { toast } from '@/components/ui/Toast';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -87,14 +90,78 @@ function Bubble({ msg }: { msg: ConversationMessage }) {
   );
 }
 
+// ── Reply bar ────────────────────────────────────────────────────────────────
+
+function ReplyBar({ sessionId }: { sessionId: string }) {
+  const [text, setText] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { mutate: send, isPending } = useSendReply(sessionId);
+
+  function handleSend() {
+    const trimmed = text.trim();
+    if (!trimmed || isPending) return;
+    send(
+      { sessionId, message: trimmed },
+      {
+        onSuccess: () => setText(''),
+        onError: (err) => toast.error(err.message || 'Erreur lors de l\'envoi'),
+      },
+    );
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  }
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+  }, [text]);
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-3 flex items-end gap-2">
+      <textarea
+        ref={textareaRef}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Ecrire une reponse..."
+        rows={1}
+        disabled={isPending}
+        className="flex-1 bg-gray-800 text-white text-sm rounded-lg px-3 py-2 resize-none outline-none placeholder-gray-500 disabled:opacity-50 border border-gray-700 focus:border-gray-600 transition-colors"
+      />
+      <button
+        onClick={handleSend}
+        disabled={!text.trim() || isPending}
+        className="shrink-0 w-9 h-9 flex items-center justify-center rounded-lg bg-[#25D366] text-white disabled:opacity-40 hover:bg-[#1fb855] transition-colors"
+        title="Envoyer (Entree)"
+      >
+        {isPending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+      </button>
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function ConversationDetailPage() {
   const params = useParams<{ id: string }>();
   const { data: session, isLoading, isError } = useConversation(params.id ?? null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const messages = session?.context?.messages ?? [];
-  const visibleMessages = messages.filter((m) => m.role !== 'tool' || true); // keep all, tool collapsed inline
+  const visibleMessages = messages.filter(() => true); // keep all, tool collapsed inline
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [visibleMessages.length]);
   const totalMessages = messages.length;
   const userMessages = messages.filter((m) => m.role === 'user').length;
   const state = session ? stateLabel(session.state) : null;
@@ -210,10 +277,14 @@ export default function ConversationDetailPage() {
               {visibleMessages.map((msg, i) => (
                 <Bubble key={i} msg={msg} />
               ))}
+              <div ref={messagesEndRef} />
             </div>
           )}
 
         </div>
+
+        {/* Reply input */}
+        {session && <ReplyBar sessionId={session.id} />}
 
       </div>
     </DashboardLayout>

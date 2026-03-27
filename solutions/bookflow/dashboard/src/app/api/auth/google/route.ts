@@ -4,7 +4,8 @@ import { z } from 'zod';
 import { watchCalendar, stopWatch } from '@/lib/gcal';
 import { requireAuth, requireBusinessAccess } from '@/lib/auth';
 import { logger } from '@/lib/logger';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
+import { logAuthEvent, extractRequestMeta } from '@/lib/audit';
 import crypto from 'crypto';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
@@ -29,8 +30,10 @@ function oauthRedirect(url: string): NextResponse {
  */
 export async function GET(req: NextRequest) {
   const ip = getClientIp(req)
-  const { success } = rateLimit(`auth-google-get:${ip}`, { interval: 60_000, limit: 5 })
+  const { success } = await rateLimitAsync(`auth-google-get:${ip}`, { interval: 60_000, limit: 5 })
   if (!success) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'rate_limited', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'GET /api/auth/google' } });
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
 
@@ -56,6 +59,8 @@ export async function GET(req: NextRequest) {
 
     const cookieNonce = req.cookies.get('gcal_oauth_nonce')?.value;
     if (!cookieNonce || cookieNonce !== nonce) {
+      const meta = extractRequestMeta(req);
+      void logAuthEvent({ eventType: 'csrf_failure', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'GET /api/auth/google', provider: 'google' } });
       return oauthRedirect(`${SITE_URL}/channels?gcal_error=csrf_failed`);
     }
 
@@ -108,6 +113,8 @@ async function handleCallback(req: NextRequest, code: string, businessId: string
   try {
     await requireBusinessAccess(businessId);
   } catch {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'unauthorized_access', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'GET /api/auth/google callback', businessId } });
     return oauthRedirect(`${SITE_URL}/channels?gcal_error=unauthorized`);
   }
 
@@ -173,6 +180,7 @@ async function handleCallback(req: NextRequest, code: string, businessId: string
         gcal_watch_channel_id: watch.channelId,
         gcal_watch_resource_id: watch.resourceId,
         gcal_watch_expiration: new Date(Number(watch.expiration)).toISOString(),
+        gcal_webhook_secret: watch.webhookSecret,
       }).eq('id', businessId);
       logger.info(`Watch channel created: ${watch.channelId}`, { action: 'gcal-oauth-watch', businessId, expiration: watch.expiration });
     }
@@ -306,8 +314,10 @@ async function handleCallback(req: NextRequest, code: string, businessId: string
  */
 export async function POST(req: Request) {
   const ip = getClientIp(req)
-  const { success } = rateLimit(`auth-google-post:${ip}`, { interval: 60_000, limit: 5 })
+  const { success } = await rateLimitAsync(`auth-google-post:${ip}`, { interval: 60_000, limit: 5 })
   if (!success) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'rate_limited', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'POST /api/auth/google' } });
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
 
@@ -371,8 +381,10 @@ export async function POST(req: Request) {
  */
 export async function DELETE(req: Request) {
   const ip = getClientIp(req)
-  const { success } = rateLimit(`auth-google-delete:${ip}`, { interval: 60_000, limit: 5 })
+  const { success } = await rateLimitAsync(`auth-google-delete:${ip}`, { interval: 60_000, limit: 5 })
   if (!success) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'rate_limited', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'DELETE /api/auth/google' } });
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
 
@@ -421,6 +433,7 @@ export async function DELETE(req: Request) {
   const clearColumns = sb.from('bookbot_businesses').update({
     gcal_refresh_token: null, gcal_calendar_id: null, gcal_connected_at: null,
     gcal_watch_channel_id: null, gcal_watch_resource_id: null, gcal_watch_expiration: null,
+    gcal_webhook_secret: null,
   }).eq('id', businessId);
 
   if (!keepSlots) {

@@ -4,7 +4,7 @@ import OpenAI from 'openai'
 import { supabaseAdmin } from '@/lib/supabase'
 import { createCalendarEvent } from '@/lib/gcal'
 import { requireBusinessAccess } from '@/lib/auth'
-import { rateLimit, getClientIp } from '@/lib/rate-limit'
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit'
 import { logger } from '@/lib/logger'
 import { computeEndTime } from '@/lib/utils'
 
@@ -431,7 +431,7 @@ async function executeTool(
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request)
-  const { success } = rateLimit(`chat-test-post:${ip}`, { interval: 60_000, limit: 5 })
+  const { success } = await rateLimitAsync(`chat-test-post:${ip}`, { interval: 60_000, limit: 5 })
   if (!success) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
@@ -563,7 +563,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const ip = getClientIp(request)
-  const { success } = rateLimit(`chat-test-delete:${ip}`, { interval: 60_000, limit: 10 })
+  const { success } = await rateLimitAsync(`chat-test-delete:${ip}`, { interval: 60_000, limit: 10 })
   if (!success) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }

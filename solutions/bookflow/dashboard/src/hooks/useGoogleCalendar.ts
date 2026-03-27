@@ -13,11 +13,19 @@ export function useGoogleCalendarStatus(businessId: string | null) {
       if (!businessId) return null;
       const { data, error } = await supabase
         .from('bookbot_businesses')
-        .select('gcal_calendar_id, gcal_connected_at')
+        .select('gcal_calendar_id, gcal_connected_at, gcal_refresh_token')
         .eq('id', businessId)
         .single();
       if (error) throw error;
-      return data as { gcal_calendar_id: string | null; gcal_connected_at: string | null } | null;
+      const row = data as { gcal_calendar_id: string | null; gcal_connected_at: string | null; gcal_refresh_token: string | null } | null;
+      if (!row) return null;
+      // "disconnected" = calendar_id is set (was connected) but connected_at is null (token revoked)
+      const isDisconnected = Boolean(row.gcal_calendar_id) && !row.gcal_connected_at;
+      return {
+        gcal_calendar_id: row.gcal_calendar_id,
+        gcal_connected_at: row.gcal_connected_at,
+        gcal_disconnected: isDisconnected,
+      };
     },
     enabled: Boolean(businessId),
   });

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 import { supabaseAdmin } from '@/lib/supabase';
 import { resolveBusinessId } from '@/lib/resolve-business';
 import { triggerTask } from '@/lib/trigger';
-import { computeEndTime } from '@/lib/utils';
+import { computeEndTime, isValidEmail } from '@/lib/utils';
 
 interface BookPayload {
   service: string;
@@ -23,7 +23,7 @@ export async function POST(
   { params }: { params: Promise<{ businessId: string }> },
 ) {
   const ip = getClientIp(req);
-  const rl = rateLimit(`appointments:${ip}`, { interval: 60_000, limit: 20 });
+  const rl = await rateLimitAsync(`appointments:${ip}`, { interval: 60_000, limit: 20 });
   if (!rl.success) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
@@ -79,7 +79,7 @@ export async function POST(
 
   // Validate email format if provided
   if (clientEmail !== undefined && clientEmail !== '') {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
+    if (!isValidEmail(clientEmail)) {
       return NextResponse.json({ error: 'Invalid clientEmail format' }, { status: 400 });
     }
   }

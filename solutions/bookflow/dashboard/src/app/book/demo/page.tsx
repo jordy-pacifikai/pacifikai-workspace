@@ -5,6 +5,7 @@ import Link from 'next/link';
 import BookingProgress from '@/components/booking/BookingProgress';
 import BookingBusinessCard from '@/components/booking/BookingBusinessCard';
 import DemoBanner from '@/components/booking/DemoBanner';
+import { isValidEmail } from '@/lib/utils';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -360,7 +361,7 @@ function InfoStep({
   function validate(): boolean {
     const errs: { name?: string; email?: string } = {};
     if (!clientName.trim()) errs.name = 'Votre prénom est requis.';
-    if (clientEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail.trim())) {
+    if (clientEmail.trim() && !isValidEmail(clientEmail.trim())) {
       errs.email = 'Adresse email invalide.';
     }
     setFieldErrors(errs);

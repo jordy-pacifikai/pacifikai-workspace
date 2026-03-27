@@ -1,4 +1,4 @@
-import { schemaTask, schedules, logger, wait } from "@trigger.dev/sdk";
+import { schemaTask, logger, wait } from "@trigger.dev/sdk";
 import { z } from "zod";
 import { sendWhatsApp } from "./lib/whatsapp.js";
 import { supaHeaders } from "./lib/supabase-headers.js";
@@ -218,27 +218,3 @@ export const sendCampaignTask = schemaTask({
   },
 });
 
-/**
- * Daily cleanup: reset campaigns stuck in "sending" for >1 hour.
- * Belt-and-suspenders with the onFailure hook above.
- */
-export const cleanupStuckCampaigns = schedules.task({
-  id: "cleanup-stuck-campaigns",
-  cron: "0 6 * * *", // daily at 6:00 UTC (20:00 Tahiti)
-  run: async () => {
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/bookbot_campaigns?status=eq.sending&updated_at=lt.${oneHourAgo}&select=id`,
-      { headers: supaHeaders() },
-    );
-    const stuck: Array<{ id: string }> = await res.json();
-    if (!Array.isArray(stuck) || stuck.length === 0) {
-      return { cleaned: 0 };
-    }
-    for (const c of stuck) {
-      await updateCampaign(c.id, { status: "failed", updated_at: new Date().toISOString() });
-      logger.warn(`Reset stuck campaign ${c.id} from sending to failed`);
-    }
-    return { cleaned: stuck.length };
-  },
-});

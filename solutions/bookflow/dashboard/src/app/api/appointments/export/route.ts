@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireBusinessAccess } from '@/lib/auth';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 const STATUS_LABELS: Record<string, string> = {
   pending:   'En attente',
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Rate limit: 5/min per user
-  const { success: rlOk } = rateLimit(`appointments-export:${businessId}`, { interval: 60_000, limit: 5 });
+  const { success: rlOk } = await rateLimitAsync(`appointments-export:${businessId}`, { interval: 60_000, limit: 5 });
   if (!rlOk) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
   }

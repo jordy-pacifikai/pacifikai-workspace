@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
 
@@ -10,7 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ businessId: string }> },
 ) {
   const ip = getClientIp(_req);
-  const rl = rateLimit(`business:${ip}`, { interval: 60_000, limit: 100 });
+  const rl = await rateLimitAsync(`business:${ip}`, { interval: 60_000, limit: 100 });
   if (!rl.success) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }

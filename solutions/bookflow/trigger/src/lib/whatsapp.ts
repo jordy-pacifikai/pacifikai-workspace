@@ -1,7 +1,18 @@
+import { logger } from "@trigger.dev/sdk";
 import type { BusinessConfig } from "./config.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY!;
+
+const MAX_RETRIES = 3;
+const MAX_5XX_RETRIES = 2;
+const DEFAULT_RETRY_AFTER_S = 60;
+const SERVER_ERROR_RETRY_MS = 5000; // 5s delay for 5xx retries
+const RATE_LIMIT_CODE_WAIT_MS = 5 * 60 * 1000; // 5 minutes for Meta error 130472
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 /**
  * Send a message to the correct channel based on the `to` address format.
@@ -118,24 +129,87 @@ async function sendViaMeta(
   const { metaPhoneNumberId, metaAccessToken } = getMetaCredentials(config);
   const phone = formatPhone(to);
 
-  const res = await fetch(
-    `https://graph.facebook.com/v22.0/${metaPhoneNumberId}/messages`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${metaAccessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to: phone,
-        type: "text",
-        text: { body: message },
-      }),
-    }
-  );
+  let lastError: Error | undefined;
 
-  return parseMetaResponse(res);
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const res = await fetch(
+      `https://graph.facebook.com/v22.0/${metaPhoneNumberId}/messages`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${metaAccessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          to: phone,
+          type: "text",
+          text: { body: message },
+        }),
+      }
+    );
+
+    // Non-429 responses
+    if (res.status !== 429) {
+      // 5xx server errors — retry up to MAX_5XX_RETRIES with fixed delay
+      if (res.status >= 500 && attempt < MAX_5XX_RETRIES) {
+        logger.warn(`Meta API ${res.status} (server error), retrying in ${SERVER_ERROR_RETRY_MS / 1000}s`, {
+          attempt: attempt + 1,
+          maxRetries: MAX_5XX_RETRIES,
+          to: phone,
+        });
+        lastError = new Error(`Meta API server error ${res.status}`);
+        await sleep(SERVER_ERROR_RETRY_MS);
+        continue;
+      }
+
+      // Clone to allow reading body twice: once for Meta error code check, once for parseMetaResponse
+      const cloned = res.clone();
+      if (!res.ok) {
+        const body = await cloned.json().catch(() => null) as { error?: { code?: number } } | null;
+        const metaCode = body?.error?.code;
+
+        // Meta error 130472 = rate limit exceeded at app level
+        if (metaCode === 130472 && attempt < MAX_RETRIES) {
+          logger.warn(`Meta API error 130472 (rate limit exceeded), waiting 5 min before retry`, {
+            attempt: attempt + 1,
+            maxRetries: MAX_RETRIES,
+            to: phone,
+          });
+          lastError = new Error(`Meta API error 130472: rate limit exceeded`);
+          await sleep(RATE_LIMIT_CODE_WAIT_MS);
+          continue;
+        }
+
+        // Other 4xx errors — throw immediately, no retry
+      }
+      return parseMetaResponse(res);
+    }
+
+    // HTTP 429 — rate limited
+    if (attempt >= MAX_RETRIES) {
+      // Exhausted all retries, read body for error message
+      const body = await res.json().catch(() => null);
+      const msg = (body as { error?: { message?: string } })?.error?.message ?? `HTTP 429`;
+      lastError = new Error(`Meta API rate limit after ${MAX_RETRIES} retries: ${msg}`);
+      break;
+    }
+
+    const retryAfterHeader = res.headers.get("Retry-After");
+    const waitSeconds = retryAfterHeader ? parseInt(retryAfterHeader, 10) || DEFAULT_RETRY_AFTER_S : DEFAULT_RETRY_AFTER_S;
+
+    logger.warn(`Meta API 429 — retrying in ${waitSeconds}s`, {
+      attempt: attempt + 1,
+      maxRetries: MAX_RETRIES,
+      retryAfterHeader,
+      to: phone,
+    });
+
+    lastError = new Error(`Meta API 429: rate limited`);
+    await sleep(waitSeconds * 1000);
+  }
+
+  throw lastError ?? new Error("Meta API: retries exhausted");
 }
 
 /**

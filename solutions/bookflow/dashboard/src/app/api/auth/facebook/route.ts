@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { z } from 'zod';
 import { requireBusinessAccess } from '@/lib/auth';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
+import { logAuthEvent, extractRequestMeta } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 
 const FB_APP_ID = (process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '').trim();
@@ -54,6 +55,7 @@ async function autoConnectPage(page: FacebookPage, businessId: string) {
       meta_page_name: page.name ?? null,
       meta_ig_account_id: page.instagram_business_account?.id ?? null,
       meta_connected_at: new Date().toISOString(),
+      meta_token_status: 'valid',
     })
     .eq('id', businessId);
 }
@@ -67,8 +69,10 @@ async function autoConnectPage(page: FacebookPage, businessId: string) {
  */
 export async function GET(req: NextRequest) {
   const ip = getClientIp(req)
-  const { success } = rateLimit(`auth-facebook-get:${ip}`, { interval: 60_000, limit: 5 })
+  const { success } = await rateLimitAsync(`auth-facebook-get:${ip}`, { interval: 60_000, limit: 5 })
   if (!success) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'rate_limited', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'GET /api/auth/facebook' } });
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
 
@@ -93,6 +97,8 @@ export async function GET(req: NextRequest) {
       const nonce = state.slice(separatorIdx + 1);
       const cookieNonce = req.cookies.get('fb_oauth_nonce')?.value;
       if (!cookieNonce || cookieNonce !== nonce) {
+        const meta = extractRequestMeta(req);
+        void logAuthEvent({ eventType: 'csrf_failure', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'GET /api/auth/facebook', provider: 'facebook' } });
         return oauthRedirect(`${SITE_URL}/channels?fb_error=csrf_failed`);
       }
 
@@ -234,8 +240,10 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req)
-  const { success } = rateLimit(`auth-facebook-post:${ip}`, { interval: 60_000, limit: 5 })
+  const { success } = await rateLimitAsync(`auth-facebook-post:${ip}`, { interval: 60_000, limit: 5 })
   if (!success) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'rate_limited', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'POST /api/auth/facebook' } });
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
 
@@ -252,8 +260,10 @@ export async function POST(req: NextRequest) {
  */
 export async function PUT(req: NextRequest) {
   const ip = getClientIp(req)
-  const { success } = rateLimit(`auth-facebook-put:${ip}`, { interval: 60_000, limit: 5 })
+  const { success } = await rateLimitAsync(`auth-facebook-put:${ip}`, { interval: 60_000, limit: 5 })
   if (!success) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'rate_limited', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'PUT /api/auth/facebook' } });
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
 
@@ -318,6 +328,7 @@ export async function PUT(req: NextRequest) {
         meta_page_name: pageName ?? null,
         meta_ig_account_id: igAccountId ?? null,
         meta_connected_at: new Date().toISOString(),
+        meta_token_status: 'valid',
       })
       .eq('id', businessId);
 
@@ -351,8 +362,10 @@ export async function PUT(req: NextRequest) {
  */
 export async function DELETE(req: NextRequest) {
   const ip = getClientIp(req)
-  const { success } = rateLimit(`auth-facebook-delete:${ip}`, { interval: 60_000, limit: 5 })
+  const { success } = await rateLimitAsync(`auth-facebook-delete:${ip}`, { interval: 60_000, limit: 5 })
   if (!success) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'rate_limited', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'DELETE /api/auth/facebook' } });
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
 
@@ -402,6 +415,7 @@ export async function DELETE(req: NextRequest) {
         meta_page_name: null,
         meta_ig_account_id: null,
         meta_connected_at: null,
+        meta_token_status: 'unknown',
       })
       .eq('id', businessId);
 

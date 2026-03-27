@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { listCalendarEvents, watchCalendar, syncGCalEventsForBusiness } from '@/lib/gcal';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 /**
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
   // Rate limit: 1/min per IP (cron endpoint)
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`gcal-sync:${ip}`, { interval: 60_000, limit: 1 });
+  const { success: rlOk } = await rateLimitAsync(`gcal-sync:${ip}`, { interval: 60_000, limit: 1 });
   if (!rlOk) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
   }
@@ -57,6 +57,7 @@ export async function GET(req: Request) {
             gcal_watch_channel_id: watch.channelId,
             gcal_watch_resource_id: watch.resourceId,
             gcal_watch_expiration: new Date(Number(watch.expiration)).toISOString(),
+            gcal_webhook_secret: watch.webhookSecret,
           }).eq('id', biz.id);
         }
       }
@@ -67,7 +68,14 @@ export async function GET(req: Request) {
       const tz = biz.timezone ?? 'Pacific/Tahiti';
       totalSynced += await syncGCalEventsForBusiness(biz.id, tz, events);
     } catch (e) {
-      logger.error('Sync error for business', { action: 'gcal_sync_cron', businessId: biz.id, error: String(e) });
+      const errMsg = String(e);
+      logger.error('Sync error for business', { action: 'gcal_sync_cron', businessId: biz.id, error: errMsg });
+
+      // If token was revoked, getAccessToken already handles marking disconnected + notification
+      // Log explicitly for cron visibility
+      if (errMsg.includes('invalid_grant') || errMsg.includes('revoked')) {
+        logger.warn('GCal token revoked detected in cron', { action: 'gcal_sync_cron_revoked', businessId: biz.id });
+      }
     }
   }
 

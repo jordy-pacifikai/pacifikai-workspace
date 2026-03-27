@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { logger } from '@/lib/logger';
 import { requireBusinessAccess } from '@/lib/auth';
 import { triggerTask } from '@/lib/trigger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 const embeddingsSchema = z.object({
   knowledgeId: z.string().uuid(),
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Rate limit: 10/min per user (compute-heavy)
-    const { success } = rateLimit(`embeddings:${businessId}`, { interval: 60_000, limit: 10 });
+    const { success } = await rateLimitAsync(`embeddings:${businessId}`, { interval: 60_000, limit: 10 });
     if (!success) {
       return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
     }

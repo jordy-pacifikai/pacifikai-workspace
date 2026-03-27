@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireBusinessAccess } from '@/lib/auth';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 function escapeCsv(value: string | null | undefined): string {
   if (value == null) return '';
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { success } = rateLimit(`clients-export:${businessId}`, { interval: 60_000, limit: 5 })
+  const { success } = await rateLimitAsync(`clients-export:${businessId}`, { interval: 60_000, limit: 5 })
   if (!success) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }

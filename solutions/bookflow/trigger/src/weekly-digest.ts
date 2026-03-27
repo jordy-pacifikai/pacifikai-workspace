@@ -1,4 +1,4 @@
-import { schedules, logger } from "@trigger.dev/sdk";
+import { logger } from "@trigger.dev/sdk";
 import { supaHeaders } from "./lib/supabase-headers.js";
 import { sendBrevoEmail } from "./lib/brevo.js";
 import { escapeHtml } from "./utils/html.js";
@@ -26,17 +26,17 @@ interface WeekStats {
   top_service: string | null;
 }
 
-/** Monday 8:00 Tahiti (UTC-10) = Monday 18:00 UTC */
-export const weeklyDigest = schedules.task({
-  id: "weekly-digest",
-  cron: "0 18 * * 1",
-  run: async (payload) => {
-    // Reference timestamp from the trigger (Monday 18:00 UTC = Monday 8:00 Tahiti)
-    const runAt = payload.timestamp ?? new Date();
+/**
+ * Weekly digest logic — callable from trial-expiration (Monday check).
+ * Previously a standalone schedules.task("weekly-digest", cron: "0 18 * * 1").
+ * Merged into trial-expiration to free a Trigger.dev schedule slot.
+ */
+export async function runWeeklyDigest(runAt?: Date): Promise<{ sent: number; skipped: number; weekStart?: string; weekEnd?: string }> {
+    const effectiveRunAt = runAt ?? new Date();
 
     // Week range: last Monday 00:00 to last Sunday 23:59 (Tahiti time = UTC-10)
     // runAt is Monday. "Last week" = the 7 days ending yesterday (Sunday).
-    const runDay = new Date(runAt);
+    const runDay = new Date(effectiveRunAt);
     // Go back 7 days to get last Monday (start of last week)
     const lastMonday = new Date(runDay);
     lastMonday.setUTCDate(lastMonday.getUTCDate() - 7);
@@ -91,8 +91,7 @@ export const weeklyDigest = schedules.task({
 
     logger.info(`Weekly digest complete: ${sent} sent, ${skipped} skipped`);
     return { sent, skipped, weekStart, weekEnd };
-  },
-});
+}
 
 // ─── Stats ────────────────────────────────────────────────────────────────────
 

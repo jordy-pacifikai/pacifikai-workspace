@@ -8,9 +8,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import crypto from 'crypto';
+import { isValidEmail } from '@/lib/utils';
 import { supabaseAdmin } from '@/lib/supabase';
 import { logger } from '@/lib/logger';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { PLAN_RANK } from '@/lib/freemius';
 
 // ─── Signature verification ──────────────────────────────────────────────────
@@ -38,7 +39,7 @@ function verifyFreemiusSignature(rawBody: string, signature: string): boolean {
 // ─── Zod schemas ─────────────────────────────────────────────────────────────
 
 const FreemiusUserSchema = z.object({
-  email: z.string().email().optional(),
+  email: z.string().email().refine((v) => isValidEmail(v), 'Invalid email').optional(),
   id: z.number().optional(),
 });
 
@@ -429,7 +430,7 @@ async function handleLicenseCreated(data: Record<string, unknown>): Promise<void
 export async function POST(req: NextRequest): Promise<NextResponse> {
   // Rate limit : 60 webhooks/min par IP (protection anti-flood)
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`freemius-webhook:${ip}`, {
+  const { success: rlOk } = await rateLimitAsync(`freemius-webhook:${ip}`, {
     interval: 60_000,
     limit: 60,
   });

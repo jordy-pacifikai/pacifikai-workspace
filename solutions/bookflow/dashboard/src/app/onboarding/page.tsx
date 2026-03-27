@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getSupabaseBrowser } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
@@ -142,11 +142,25 @@ function OnboardingContent() {
   const urlPlan = searchParams.get('plan') ?? 'starter'
   const urlBusinessName = searchParams.get('businessName') ?? ''
 
-  const [step, setStep] = useState(1)
+  const STORAGE_KEY = 'vea_onboarding'
+
+  // Restore persisted state from localStorage (if any)
+  const getInitialState = useCallback(() => {
+    if (typeof window === 'undefined') return null
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) return JSON.parse(saved) as { step: number; data: OnboardingData }
+    } catch { /* corrupted data — ignore */ }
+    return null
+  }, [])
+
+  const persisted = getInitialState()
+
+  const [step, setStep] = useState(persisted?.step ?? 1)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
-  const [data, setData] = useState<OnboardingData>({
+  const [data, setData] = useState<OnboardingData>(persisted?.data ?? {
     businessName: urlBusinessName,
     category: 'salon',
     description: '',
@@ -161,6 +175,13 @@ function OnboardingContent() {
     language: 'fr',
     greeting: 'Ia ora na ! Bienvenue chez {business}. Comment puis-je vous aider ?',
   })
+
+  // Persist wizard state to localStorage after each change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ step, data }))
+    } catch { /* storage full — ignore */ }
+  }, [step, data])
 
   const update = <K extends keyof OnboardingData>(key: K, value: OnboardingData[K]) =>
     setData(prev => ({ ...prev, [key]: value }))
@@ -356,7 +377,8 @@ function OnboardingContent() {
         console.warn('Knowledge docs generation (non-critical):', e)
       }
 
-      // Done — redirect to dashboard
+      // Done — clear persisted onboarding state and redirect
+      try { localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
       router.push('/stats')
     } catch (err: unknown) {
       console.error('Onboarding error:', err)

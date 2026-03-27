@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { listCalendarEvents, syncGCalEventsForBusiness } from '@/lib/gcal';
 import { logger } from '@/lib/logger';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 
 // ------- Zod Schemas -------
 
@@ -12,6 +12,7 @@ const gcalWebhookHeadersSchema = z.object({
   channelId: z.string().min(1),
   resourceState: z.enum(['sync', 'exists', 'not_exists']),
   resourceId: z.string().min(1).optional(),
+  channelToken: z.string().optional(),
 });
 
 /**
@@ -23,7 +24,7 @@ const gcalWebhookHeadersSchema = z.object({
 export async function POST(req: Request) {
   // Rate limit: 100/min per IP (webhook)
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`webhook-gcal:${ip}`, { interval: 60_000, limit: 100 });
+  const { success: rlOk } = await rateLimitAsync(`webhook-gcal:${ip}`, { interval: 60_000, limit: 100 });
   if (!rlOk) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
   }
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
     channelId: req.headers.get('x-goog-channel-id') ?? undefined,
     resourceState: req.headers.get('x-goog-resource-state') ?? undefined,
     resourceId: req.headers.get('x-goog-resource-id') ?? undefined,
+    channelToken: req.headers.get('x-goog-channel-token') ?? undefined,
   };
 
   const parsed = gcalWebhookHeadersSchema.safeParse(headerData);
@@ -39,7 +41,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid webhook headers' }, { status: 400 });
   }
 
-  const { channelId, resourceState, resourceId } = parsed.data;
+  const { channelId, resourceState, resourceId, channelToken } = parsed.data;
 
   // Google sends a "sync" message when the watch is first created — ignore it
   if (resourceState === 'sync') {
@@ -51,13 +53,21 @@ export async function POST(req: Request) {
   // Find the business associated with this watch channel
   const { data: biz } = await sb
     .from('bookbot_businesses')
-    .select('id, timezone, gcal_calendar_id, gcal_watch_resource_id')
+    .select('id, timezone, gcal_calendar_id, gcal_watch_resource_id, gcal_webhook_secret')
     .eq('gcal_watch_channel_id', channelId)
     .single();
 
   if (!biz) {
     logger.warn('No business for channel', { action: 'gcal_webhook', channelId });
     return NextResponse.json({ error: 'Unknown channel' }, { status: 404 });
+  }
+
+  // Validate webhook secret (X-Goog-Channel-Token must match stored secret)
+  if (biz.gcal_webhook_secret) {
+    if (!channelToken || channelToken !== biz.gcal_webhook_secret) {
+      logger.warn('Webhook secret mismatch', { action: 'gcal_webhook', channelId });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
   }
 
   // Validate resource ID if both the header and stored value are present
@@ -67,7 +77,7 @@ export async function POST(req: Request) {
   }
 
   // Per-business rate limit: max 1 sync per 30 seconds to prevent forced sync DoS
-  const { success: bizRl } = rateLimit(`gcal-sync:${biz.id}`, { interval: 30_000, limit: 1 });
+  const { success: bizRl } = await rateLimitAsync(`gcal-sync:${biz.id}`, { interval: 30_000, limit: 1 });
   if (!bizRl) {
     return NextResponse.json({ ok: true, throttled: true });
   }

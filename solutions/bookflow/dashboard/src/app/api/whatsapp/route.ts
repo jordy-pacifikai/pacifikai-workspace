@@ -4,7 +4,8 @@ import { parseWhatsAppMessage } from "./parse";
 import { verifyMetaSignature } from "@/lib/meta-signature";
 import { triggerTask } from "@/lib/trigger";
 import { logger } from "@/lib/logger";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitAsync, getClientIp } from "@/lib/rate-limit";
+import { insertWebhookEvent, markWebhookProcessed, markWebhookFailed } from "@/lib/webhook-dlq";
 
 /**
  * Extract phone_number_id from Meta Cloud API webhook payload.
@@ -42,7 +43,7 @@ async function resolveBusinessId(phoneNumberId: string | null): Promise<string> 
 export async function POST(req: Request) {
   // Rate limit: 200/min per IP (webhook)
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`webhook-whatsapp:${ip}`, { interval: 60_000, limit: 200 });
+  const { success: rlOk } = await rateLimitAsync(`webhook-whatsapp:${ip}`, { interval: 60_000, limit: 200 });
   if (!rlOk) {
     return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
   }
@@ -76,20 +77,37 @@ export async function POST(req: Request) {
     const phoneNumberId = extractPhoneNumberId(body);
     const businessId = await resolveBusinessId(phoneNumberId);
 
-    // Trigger task with idempotencyKey to prevent duplicate processing on Meta retries
-    await triggerTask(
-      "bookbot-whatsapp-handler",
-      {
-        from: parsed.from,
-        message: parsed.message,
-        buttonPayload: parsed.buttonPayload,
-        messageType: parsed.messageType,
-        businessId,
-        channel: "whatsapp",
-        messageId: parsed.messageId ?? undefined,
-      },
-      parsed.messageId ? { idempotencyKey: parsed.messageId } : undefined,
-    );
+    // Dead Letter Queue: persist webhook event before triggering
+    const taskPayload = {
+      from: parsed.from,
+      message: parsed.message,
+      buttonPayload: parsed.buttonPayload,
+      messageType: parsed.messageType,
+      businessId,
+      channel: "whatsapp" as const,
+      messageId: parsed.messageId ?? undefined,
+    };
+
+    const eventId = await insertWebhookEvent(businessId, "whatsapp", taskPayload);
+
+    try {
+      // Trigger task with idempotencyKey to prevent duplicate processing on Meta retries
+      const triggered = await triggerTask(
+        "bookbot-whatsapp-handler",
+        taskPayload,
+        parsed.messageId ? { idempotencyKey: parsed.messageId } : undefined,
+      );
+      if (triggered && eventId) {
+        await markWebhookProcessed(eventId);
+      } else if (eventId) {
+        await markWebhookFailed(eventId, "triggerTask returned false");
+      }
+    } catch (triggerErr) {
+      if (eventId) {
+        await markWebhookFailed(eventId, String(triggerErr));
+      }
+      logger.error("Trigger task failed (event saved to DLQ)", { action: "whatsapp_webhook", eventId });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

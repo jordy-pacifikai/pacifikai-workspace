@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireBusinessAccess } from '@/lib/auth';
 import { getAccessToken } from '@/lib/gcal';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 const deleteAppointmentSchema = z.object({
@@ -21,7 +21,7 @@ export async function DELETE(req: Request) {
   try {
   // Rate limit first — before any DB access
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`appointments-delete:${ip}`, { interval: 60_000, limit: 10 });
+  const { success: rlOk } = await rateLimitAsync(`appointments-delete:${ip}`, { interval: 60_000, limit: 10 });
   if (!rlOk) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
   }

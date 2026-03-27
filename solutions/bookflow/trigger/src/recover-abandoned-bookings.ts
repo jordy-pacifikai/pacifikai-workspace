@@ -29,6 +29,31 @@ export const recoverAbandonedBookings = schedules.task({
   id: "recover-abandoned-bookings",
   cron: "30 2,6,10,14,18,22 * * *", // Every 4h at :30 (staggered from other crons)
   run: async () => {
+    // ── Cleanup stuck campaigns (previously separate daily cron) ──
+    {
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+      const stuckRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/bookbot_campaigns?status=eq.sending&updated_at=lt.${oneHourAgo}&select=id`,
+        { headers: supaHeaders() },
+      );
+      const stuck: Array<{ id: string }> = await stuckRes.json();
+      if (Array.isArray(stuck) && stuck.length > 0) {
+        for (const c of stuck) {
+          await fetch(
+            `${SUPABASE_URL}/rest/v1/bookbot_campaigns?id=eq.${c.id}`,
+            {
+              method: "PATCH",
+              headers: supaHeaders(),
+              body: JSON.stringify({ status: "failed", updated_at: new Date().toISOString() }),
+            },
+          );
+          logger.warn(`Reset stuck campaign ${c.id} from sending to failed`);
+        }
+        logger.info(`Cleaned ${stuck.length} stuck campaign(s)`);
+      }
+    }
+
+    // ── Abandoned booking recovery ──
     const now = new Date();
     const windowStart = new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString();
     const windowEnd = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { logger } from '@/lib/logger';
 import { requireBusinessAccess } from '@/lib/auth';
 import { triggerTask } from '@/lib/trigger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 const sendCampaignSchema = z.object({
   campaignId: z.string().uuid(),
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { success } = rateLimit(`campaigns-send:${businessId}`, { interval: 60_000, limit: 2 })
+    const { success } = await rateLimitAsync(`campaigns-send:${businessId}`, { interval: 60_000, limit: 2 })
     if (!success) {
       return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
     }

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireBusinessAccess } from '@/lib/auth';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 const schema = z.object({
@@ -18,7 +18,7 @@ const schema = z.object({
 export async function PATCH(req: Request) {
   try {
     const ip = getClientIp(req);
-    const { success: rlOk } = rateLimit(`client-notes:${ip}`, { interval: 60_000, limit: 60 });
+    const { success: rlOk } = await rateLimitAsync(`client-notes:${ip}`, { interval: 60_000, limit: 60 });
     if (!rlOk) {
       return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
     }

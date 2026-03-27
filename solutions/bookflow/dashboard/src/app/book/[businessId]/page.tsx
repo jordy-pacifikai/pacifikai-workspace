@@ -7,7 +7,7 @@ import { useBookingI18n, type BookingLocale, type BookingTranslations } from '@/
 import BookingProgress from '@/components/booking/BookingProgress';
 import BookingBusinessCard from '@/components/booking/BookingBusinessCard';
 import { useBookingPersist, clearBookingState } from '@/lib/useBookingPersist';
-import { sanitizeColor } from '@/lib/utils';
+import { sanitizeColor, isValidEmail } from '@/lib/utils';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -426,7 +426,7 @@ function InfoStep({ businessId, service, date, time, businessName, cancellationH
     if (clientPhone.trim() && !isPhoneValid(clientPhone)) {
       errs.phone = t.phoneInvalid;
     }
-    if (clientEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail.trim())) {
+    if (clientEmail.trim() && !isValidEmail(clientEmail.trim())) {
       errs.email = 'Adresse email invalide.';
     }
     setFieldErrors(errs);

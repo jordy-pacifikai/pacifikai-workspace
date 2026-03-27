@@ -12,7 +12,8 @@ export type NotificationType =
   | 'review'
   | 'no_show'
   | 'campaign_complete'
-  | 'waitlist_update';
+  | 'waitlist_update'
+  | 'gcal_disconnected';
 
 export interface AppNotification {
   id: string;
@@ -40,6 +41,7 @@ export const DEFAULT_PREFS: NotificationPrefs = {
   no_show:           { whatsapp: true,  email: false, in_app: true },
   campaign_complete: { whatsapp: false, email: false, in_app: true },
   waitlist_update:   { whatsapp: false, email: false, in_app: true },
+  gcal_disconnected: { whatsapp: false, email: true,  in_app: true },
 };
 
 // ─── Query keys ───────────────────────────────────────────────────────────────

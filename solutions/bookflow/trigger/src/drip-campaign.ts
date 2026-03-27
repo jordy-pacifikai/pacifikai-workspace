@@ -1,4 +1,4 @@
-import { schedules, logger } from "@trigger.dev/sdk";
+import { logger } from "@trigger.dev/sdk";
 import { supaHeaders } from "./lib/supabase-headers.js";
 import { sendBrevoEmail } from "./lib/brevo.js";
 import { buildUnsubscribeUrl } from "./lib/unsubscribe-token.js";
@@ -24,22 +24,21 @@ const SENDER = { email: "vea@pacifikai.com", name: "Ve'a by PACIFIK'AI" };
 // escapeHtml imported from utils/html.ts
 
 /**
- * Drip campaign for Ve'a prospects.
+ * Drip campaign logic for Ve'a prospects.
  * Sends 3 emails over 7 days to prospects in bookbot_prospects table.
  *
  * Day 0: Introduction + value proposition
  * Day 3: Social proof + case studies
  * Day 7: Urgency + special offer
  *
- * Runs every hour. Idempotent: checks sent_at columns before sending.
+ * Previously a standalone schedules.task("vea-drip-campaign", cron: "0 *\/1 * * *").
+ * Merged into auto-review-request (runs on :10 pass only = ~hourly).
+ * Idempotent: checks sent_at columns before sending.
  */
-export const dripCampaign = schedules.task({
-  id: "vea-drip-campaign",
-  cron: "0 */1 * * *", // every hour
-  run: async () => {
+export async function runDripCampaign(): Promise<{ sent: number; prospects: number; reason?: string }> {
     if (!process.env.BREVO_API_KEY) {
       logger.warn("BREVO_API_KEY not set, skipping drip campaign");
-      return { sent: 0, reason: "no_api_key" };
+      return { sent: 0, prospects: 0, reason: "no_api_key" };
     }
 
     // Get all prospects not yet fully dripped and not unsubscribed
@@ -90,8 +89,7 @@ export const dripCampaign = schedules.task({
 
     logger.info(`Drip campaign: ${totalSent} emails sent to ${prospects.length} prospects`);
     return { sent: totalSent, prospects: prospects.length };
-  },
-});
+}
 
 async function sendDripEmail(prospect: Prospect, day: 0 | 3 | 7): Promise<boolean> {
   const { subject, html } = getDripContent(prospect, day);

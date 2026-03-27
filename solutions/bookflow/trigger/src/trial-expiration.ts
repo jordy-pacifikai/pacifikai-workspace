@@ -3,8 +3,20 @@ import { supaHeaders } from "./lib/supabase-headers.js";
 import { sendBrevoEmail } from "./lib/brevo.js";
 import { createNotification } from "./lib/notify.js";
 import { escapeHtml } from "./utils/html.js";
+import { sendWhatsApp } from "./lib/whatsapp.js";
+import { buildBusinessConfig } from "./lib/config.js";
+import type { BusinessRow } from "./lib/config.js";
+import { runWeeklyDigest } from "./weekly-digest.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
+
+interface BirthdayClient {
+  id: string;
+  name: string;
+  phone: string;
+  birthday: string;
+  birthday_msg_sent_at: string | null;
+}
 
 interface ExpiredBusiness {
   id: string;
@@ -23,6 +35,86 @@ export const trialExpiration = schedules.task({
   run: async () => {
     const nowDate = new Date();
     const now = nowDate.toISOString();
+
+    // ── Birthday messages ──
+    {
+      const bizRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/bookbot_businesses?select=id,name,config,phone,twilio_sid,twilio_token,twilio_from,phone_number_id,meta_access_token,timezone,booking_slug`,
+        { headers: supaHeaders() },
+      );
+      const businesses: BusinessRow[] = await bizRes.json();
+
+      if (Array.isArray(businesses) && businesses.length > 0) {
+        const tahitiDate = nowDate.toLocaleDateString("en-CA", { timeZone: "Pacific/Tahiti" });
+        const parts = tahitiDate.split("-");
+        const todayMonth = parseInt(parts[1] ?? "0", 10);
+        const todayDay = parseInt(parts[2] ?? "0", 10);
+        const elevenMonthsAgo = new Date(nowDate.getTime() - 11 * 30 * 24 * 60 * 60 * 1000).toISOString();
+
+        let totalBirthdaySent = 0;
+        let birthdayBizCount = 0;
+
+        for (const biz of businesses) {
+          const cfg = (biz.config ?? {}) as Record<string, unknown>;
+          if (cfg.birthday_messages === false) continue;
+
+          const clientRes = await fetch(
+            `${SUPABASE_URL}/rest/v1/bookbot_clients?business_id=eq.${biz.id}&birthday=not.is.null&phone=not.is.null&marketing_opt_out=eq.false&select=id,name,phone,birthday,birthday_msg_sent_at`,
+            { headers: supaHeaders() },
+          );
+          const clients: BirthdayClient[] = await clientRes.json();
+          if (!Array.isArray(clients) || clients.length === 0) continue;
+
+          const birthdayClients = clients.filter((c) => {
+            if (!c.birthday || !c.phone) return false;
+            const bParts = c.birthday.split("-");
+            if (parseInt(bParts[1] ?? "0", 10) !== todayMonth || parseInt(bParts[2] ?? "0", 10) !== todayDay) return false;
+            if (c.birthday_msg_sent_at) {
+              const sentAt = new Date(c.birthday_msg_sent_at);
+              if (sentAt.toISOString() > elevenMonthsAgo) return false;
+            }
+            return true;
+          });
+
+          if (birthdayClients.length === 0) continue;
+
+          const businessConfig = buildBusinessConfig(biz);
+          const slug = biz.booking_slug ?? biz.id;
+          const bookingUrl = `https://vea.pacifikai.com/book/${slug}`;
+          let bizSent = 0;
+
+          for (const client of birthdayClients) {
+            const firstName = client.name.split(" ")[0] || client.name;
+            const message =
+              `Joyeux anniversaire ${firstName} ! 🎂 Toute l'equipe de ${biz.name} vous souhaite une excellente journee. ` +
+              `Pour celebrer, profitez de -10% sur votre prochain rendez-vous : ${bookingUrl}`;
+
+            try {
+              await sendWhatsApp(client.phone, message, businessConfig);
+              await fetch(
+                `${SUPABASE_URL}/rest/v1/bookbot_clients?id=eq.${client.id}`,
+                {
+                  method: "PATCH",
+                  headers: { ...supaHeaders(), Prefer: "return=minimal" },
+                  body: JSON.stringify({ birthday_msg_sent_at: new Date().toISOString() }),
+                },
+              );
+              bizSent++;
+              logger.info(`Birthday message sent to ${client.name} (${client.phone}) for ${biz.name}`);
+            } catch (err) {
+              logger.error(`Failed birthday message for ${client.name} at ${biz.name}`, {
+                error: err instanceof Error ? err.message : String(err),
+              });
+            }
+          }
+
+          totalBirthdaySent += bizSent;
+          if (bizSent > 0) birthdayBizCount++;
+        }
+
+        logger.info(`Birthday messages: ${totalBirthdaySent} sent across ${birthdayBizCount} businesses`);
+      }
+    }
 
     // ── Monthly conversation_count reset (1st of month) ──
     if (nowDate.getUTCDate() === 1) {
@@ -305,6 +397,16 @@ export const trialExpiration = schedules.task({
         } catch (err) {
           logger.error(`Post-expiry J+7 error for ${biz.email}`, { error: String(err) });
         }
+      }
+    }
+
+    // ── Weekly digest (Monday only — merged from weekly-digest schedule) ──
+    if (nowDate.getUTCDay() === 1) {
+      try {
+        const digestResult = await runWeeklyDigest(nowDate);
+        logger.info("Weekly digest (merged)", digestResult);
+      } catch (err) {
+        logger.error("Weekly digest failed", { error: err instanceof Error ? err.message : String(err) });
       }
     }
 

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { createSupabaseServer } from '@/lib/auth';
 import { logger } from '@/lib/logger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import { isUpgrade } from '@/lib/freemius';
 
 const VALID_PLANS = ['decouverte', 'starter', 'pro', 'business'] as const;
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Rate limit: 3/min per user
-    const { success: rlOk } = rateLimit(`billing-change:${user.id}`, { interval: 60_000, limit: 3 });
+    const { success: rlOk } = await rateLimitAsync(`billing-change:${user.id}`, { interval: 60_000, limit: 3 });
     if (!rlOk) {
       return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
     }

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireBusinessAccess } from '@/lib/auth';
 import { triggerTask } from '@/lib/trigger';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 const notifySchema = z.object({
@@ -17,7 +17,7 @@ const notifySchema = z.object({
  */
 export async function POST(req: Request) {
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`waitlist-notify:${ip}`, { interval: 60_000, limit: 10 });
+  const { success: rlOk } = await rateLimitAsync(`waitlist-notify:${ip}`, { interval: 60_000, limit: 10 });
   if (!rlOk) {
     return NextResponse.json({ error: 'Trop de requetes' }, { status: 429 });
   }

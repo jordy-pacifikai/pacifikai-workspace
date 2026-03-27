@@ -9,7 +9,8 @@ export type NotificationType =
   | "review"
   | "no_show"
   | "campaign_complete"
-  | "waitlist_update";
+  | "waitlist_update"
+  | "gcal_disconnected";
 
 /**
  * Insert a notification into bookbot_notifications.

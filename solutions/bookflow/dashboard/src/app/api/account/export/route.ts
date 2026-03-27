@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { requireAuth, getUserBusinessId } from '@/lib/auth';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 // GET /api/account/export
@@ -14,7 +14,7 @@ export async function GET(_req: NextRequest) {
     return NextResponse.json({ error: 'Non autorise' }, { status: 401 });
   }
 
-  const { success } = rateLimit(`account-export:${user.id}`, { interval: 3600_000, limit: 3 })
+  const { success } = await rateLimitAsync(`account-export:${user.id}`, { interval: 3600_000, limit: 3 })
   if (!success) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }

@@ -3,7 +3,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { verifyMetaSignature } from "@/lib/meta-signature";
 import { triggerTask } from "@/lib/trigger";
 import { logger } from "@/lib/logger";
-import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { rateLimitAsync, getClientIp } from "@/lib/rate-limit";
+import { insertWebhookEvent, markWebhookProcessed, markWebhookFailed } from "@/lib/webhook-dlq";
 
 /**
  * Instagram DM Webhook — multi-tenant.
@@ -14,7 +15,7 @@ import { rateLimit, getClientIp } from "@/lib/rate-limit";
 export async function POST(req: Request) {
   // Rate limit: 200/min per IP (webhook)
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`webhook-instagram:${ip}`, { interval: 60_000, limit: 200 });
+  const { success: rlOk } = await rateLimitAsync(`webhook-instagram:${ip}`, { interval: 60_000, limit: 200 });
   if (!rlOk) {
     return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
   }
@@ -125,22 +126,38 @@ export async function POST(req: Request) {
           }
         }
 
-        // Trigger the same Ve'a handler (multi-channel) with idempotencyKey
-        const idempotencyKey = messageId ?? `ig_${senderId}_${Date.now()}`;
-        await triggerTask(
-          "bookbot-whatsapp-handler",
-          {
-            from: `instagram_${senderId}`,
-            message: messageText,
-            buttonPayload: null,
-            messageType: "text",
-            businessId: business.id,
-            pageAccessToken: business.meta_page_token ?? undefined,
-            channel: "instagram",
-            senderName,
-          },
-          { idempotencyKey },
-        );
+        // Dead Letter Queue: persist webhook event before triggering
+        const taskPayload = {
+          from: `instagram_${senderId}`,
+          message: messageText,
+          buttonPayload: null,
+          messageType: "text" as const,
+          businessId: business.id,
+          pageAccessToken: business.meta_page_token ?? undefined,
+          channel: "instagram" as const,
+          senderName,
+        };
+
+        const eventId = await insertWebhookEvent(business.id, "instagram", taskPayload);
+
+        try {
+          const idempotencyKey = messageId ?? `ig_${senderId}_${Date.now()}`;
+          const triggered = await triggerTask(
+            "bookbot-whatsapp-handler",
+            taskPayload,
+            { idempotencyKey },
+          );
+          if (triggered && eventId) {
+            await markWebhookProcessed(eventId);
+          } else if (eventId) {
+            await markWebhookFailed(eventId, "triggerTask returned false");
+          }
+        } catch (triggerErr) {
+          if (eventId) {
+            await markWebhookFailed(eventId, String(triggerErr));
+          }
+          logger.error("Trigger task failed (event saved to DLQ)", { action: "instagram_webhook", eventId });
+        }
       }
     }
 

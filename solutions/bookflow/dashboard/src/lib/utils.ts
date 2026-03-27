@@ -27,6 +27,17 @@ export function sanitizeColor(value: string | null | undefined, fallback = '#0d9
  * Compute end time from start time + duration, capped at 23:59.
  * Prevents invalid "24:00" or later when appointments cross midnight.
  */
+/**
+ * Strict email validation (RFC 5322 simplified).
+ * Rejects: overly long addresses (>254), single-char TLDs, missing dots in domain,
+ * and common invalid patterns that the old permissive regex allowed.
+ */
+export function isValidEmail(email: string): boolean {
+  if (email.length > 254) return false;
+  const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
+  return re.test(email);
+}
+
 export function computeEndTime(startTime: string, durationMin: number): string {
   const parts = startTime.split(':').map(Number);
   const h = parts[0] ?? 0;

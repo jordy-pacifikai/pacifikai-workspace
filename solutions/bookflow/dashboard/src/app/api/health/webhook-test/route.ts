@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 import { z } from 'zod';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 type ChannelName = "whatsapp" | "messenger" | "instagram" | "chatbot" | "gcal";
@@ -28,7 +28,7 @@ const bodySchema = z.object({
 
 export async function POST(req: Request) {
   const ip = getClientIp(req);
-  const rl = rateLimit(`webhook-test:${ip}`, { interval: 60_000, limit: 10 });
+  const rl = await rateLimitAsync(`webhook-test:${ip}`, { interval: 60_000, limit: 10 });
   if (!rl.success) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }

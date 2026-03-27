@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 import { supabaseAdmin } from '@/lib/supabase';
 import { resolveBusinessId } from '@/lib/resolve-business';
@@ -20,7 +20,7 @@ export async function PATCH(
 ) {
   // Rate limit: 5/min per IP (public endpoint)
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`reschedule:${ip}`, { interval: 60_000, limit: 5 });
+  const { success: rlOk } = await rateLimitAsync(`reschedule:${ip}`, { interval: 60_000, limit: 5 });
   if (!rlOk) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
   }

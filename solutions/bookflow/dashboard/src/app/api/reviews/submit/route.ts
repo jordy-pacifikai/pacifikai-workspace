@@ -1,19 +1,20 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseAdmin } from '@/lib/supabase';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
+import { isValidEmail } from '@/lib/utils';
 
 const reviewSchema = z.object({
   token: z.string().min(1, 'Token requis'),
   rating: z.number().int().min(1).max(5, 'Note entre 1 et 5 requise'),
   comment: z.string().max(2000, 'Commentaire limité à 2000 caractères').optional(),
-  email: z.string().email('Format email invalide').optional().or(z.literal('')),
+  email: z.string().email('Format email invalide').refine((v) => isValidEmail(v), 'Invalid email').optional().or(z.literal('')),
 });
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
-  const rl = rateLimit(`reviews:${ip}`, { interval: 60_000, limit: 5 });
+  const rl = await rateLimitAsync(`reviews:${ip}`, { interval: 60_000, limit: 5 });
   if (!rl.success) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }

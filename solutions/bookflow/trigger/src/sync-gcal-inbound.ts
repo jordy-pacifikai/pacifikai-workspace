@@ -1,6 +1,7 @@
 import { schedules, logger } from "@trigger.dev/sdk";
 import { listGCalEvents } from "./lib/gcal.js";
 import { supaHeaders } from "./lib/supabase-headers.js";
+import { createNotification } from "./lib/notify.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 
@@ -211,9 +212,39 @@ export const syncGCalInbound = schedules.task({
           }
         }
       } catch (err) {
-        logger.error(`GCal sync failed for business ${biz.id}`, {
-          error: err instanceof Error ? err.message : String(err),
-        });
+        const errMsg = err instanceof Error ? err.message : String(err);
+        logger.error(`GCal sync failed for business ${biz.id}`, { error: errMsg });
+
+        // Detect revoked/expired refresh token → mark GCal as disconnected
+        if (errMsg.includes("invalid_grant") || errMsg.includes("refresh token expired") || errMsg.includes("revoked")) {
+          logger.warn(`GCal token revoked for business ${biz.id}, marking as disconnected`);
+
+          // Null out gcal_connected_at to signal disconnection (keep calendar_id for "was connected" detection)
+          await fetch(
+            `${SUPABASE_URL}/rest/v1/bookbot_businesses?id=eq.${biz.id}`,
+            {
+              method: "PATCH",
+              headers: supaHeaders(),
+              body: JSON.stringify({
+                gcal_connected_at: null,
+                gcal_refresh_token: null,
+                gcal_watch_channel_id: null,
+                gcal_watch_resource_id: null,
+                gcal_watch_expiration: null,
+                gcal_webhook_secret: null,
+              }),
+            }
+          );
+
+          // Create in-app notification
+          await createNotification({
+            businessId: biz.id,
+            type: "gcal_disconnected",
+            title: "Google Calendar deconnecte",
+            message: "L'acces a votre Google Calendar a ete revoque. Reconnectez-le depuis la page Canaux pour continuer la synchronisation.",
+            metadata: { reason: "invalid_grant" },
+          });
+        }
       }
     }
 

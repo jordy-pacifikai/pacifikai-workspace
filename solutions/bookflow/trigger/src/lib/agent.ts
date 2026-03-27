@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import { logger } from "@trigger.dev/sdk";
 import type { BusinessConfig } from "./config.js";
 import { parseAllServices } from "./config.js";
@@ -24,7 +25,133 @@ import { supaHeaders } from "./supabase-headers.js";
 import type { Session } from "./supabase.js";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY!;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY ?? "";
+const GROQ_API_KEY = process.env.GROQ_API_KEY ?? "";
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY ?? "";
 const SUPABASE_URL = process.env.SUPABASE_URL!;
+
+const DEEPSEEK_TIMEOUT_MS = 8000;
+
+const FALLBACK_MESSAGE =
+  "Désolé, notre assistant est momentanément indisponible. Veuillez réessayer dans quelques instants.";
+
+/** Call a fallback LLM via OpenAI-compatible API (same pattern as MANA chatbot).
+ *  Cascade: Gemini Flash (free) → Groq Llama (free) → Claude Haiku (paid) → gives up.
+ *  Gemini/Groq use OpenAI-compatible format. Claude Haiku uses native Anthropic SDK. */
+async function callFallbackLLM(
+  messages: OpenAI.ChatCompletionMessageParam[],
+  tools: OpenAI.ChatCompletionTool[]
+): Promise<OpenAI.ChatCompletion | null> {
+  const providers = [
+    ...(GEMINI_API_KEY
+      ? [{
+          name: "Gemini Flash",
+          url: "https://generativelanguage.googleapis.com/v1beta/chat/completions",
+          key: GEMINI_API_KEY,
+          model: "gemini-2.5-flash",
+        }]
+      : []),
+    ...(GROQ_API_KEY
+      ? [{
+          name: "Groq Llama",
+          url: "https://api.groq.com/openai/v1/chat/completions",
+          key: GROQ_API_KEY,
+          model: "llama-3.3-70b-versatile",
+        }]
+      : []),
+  ];
+
+  for (const provider of providers) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+      const res = await fetch(provider.url, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${provider.key}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: provider.model,
+          max_tokens: 1024,
+          messages,
+          tools: tools.length > 0 ? tools : undefined,
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (!res.ok) {
+        logger.warn(`[Agent] ${provider.name} fallback HTTP ${res.status}`);
+        continue;
+      }
+      const data = (await res.json()) as OpenAI.ChatCompletion;
+      if (data.choices?.[0]) {
+        logger.info(`[Agent] ${provider.name} fallback succeeded`);
+        return data;
+      }
+    } catch (err) {
+      logger.warn(`[Agent] ${provider.name} fallback error: ${String(err)}`);
+    }
+  }
+
+  // Last resort: Claude Haiku via Anthropic SDK
+  if (ANTHROPIC_API_KEY) {
+    try {
+      logger.info("[Agent] Trying Claude Haiku fallback");
+      const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
+
+      // Convert OpenAI messages to Anthropic format
+      const systemMsg = messages.find((m) => m.role === "system");
+      const nonSystemMsgs = messages.filter((m) => m.role !== "system");
+      const anthropicMessages: Anthropic.MessageParam[] = nonSystemMsgs
+        .filter((m) => m.role === "user" || m.role === "assistant")
+        .map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: (typeof m.content === "string" ? m.content : "") || "",
+        }));
+
+      // Ensure messages alternate and start with user
+      if (anthropicMessages.length === 0 || anthropicMessages[0]!.role !== "user") {
+        anthropicMessages.unshift({ role: "user", content: "Bonjour" });
+      }
+
+      const response = await anthropic.messages.create({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 1024,
+        system: typeof systemMsg?.content === "string" ? systemMsg.content : "",
+        messages: anthropicMessages,
+      });
+
+      const textBlock = response.content.find((b) => b.type === "text");
+      if (textBlock && textBlock.type === "text") {
+        logger.info("[Agent] Claude Haiku fallback succeeded");
+        // Convert Anthropic response to OpenAI ChatCompletion format
+        return {
+          id: response.id,
+          object: "chat.completion",
+          created: Math.floor(Date.now() / 1000),
+          model: "claude-haiku-4-5-20251001",
+          choices: [{
+            index: 0,
+            message: { role: "assistant", content: textBlock.text },
+            finish_reason: "stop",
+            logprobs: null,
+          }],
+          usage: {
+            prompt_tokens: response.usage?.input_tokens ?? 0,
+            completion_tokens: response.usage?.output_tokens ?? 0,
+            total_tokens: (response.usage?.input_tokens ?? 0) + (response.usage?.output_tokens ?? 0),
+          },
+        } as OpenAI.ChatCompletion;
+      }
+    } catch (err) {
+      logger.warn(`[Agent] Claude Haiku fallback error: ${String(err)}`);
+    }
+  }
+
+  return null;
+}
 
 /** Sanitize user-provided instructions before injecting into LLM system prompt */
 function sanitizeInstruction(raw: string, businessId?: string): string {
@@ -721,6 +848,7 @@ export async function runBookingAgent(
   const client = new OpenAI({
     apiKey: DEEPSEEK_API_KEY,
     baseURL: "https://api.deepseek.com",
+    timeout: DEEPSEEK_TIMEOUT_MS,
   });
 
   // Restore conversation history from session context
@@ -777,12 +905,25 @@ export async function runBookingAgent(
   const maxIterations = 5;
 
   for (let i = 0; i < maxIterations; i++) {
-    const response = await client.chat.completions.create({
-      model: "deepseek-chat",
-      max_tokens: 1024,
-      tools: activeTools,
-      messages,
-    });
+    let response: OpenAI.ChatCompletion;
+    try {
+      response = await client.chat.completions.create({
+        model: "deepseek-chat",
+        max_tokens: 1024,
+        tools: activeTools,
+        messages,
+      });
+    } catch (deepseekError) {
+      logger.warn("[Agent] DeepSeek failed, trying Gemini/Groq fallback", {
+        error: String(deepseekError),
+      });
+      const fallbackResponse = await callFallbackLLM(messages, activeTools);
+      if (!fallbackResponse) {
+        logger.error("[Agent] All LLM providers failed (DeepSeek + Gemini + Groq + Claude Haiku)");
+        return FALLBACK_MESSAGE;
+      }
+      response = fallbackResponse;
+    }
 
     const choice = response.choices[0];
     if (!choice) break;

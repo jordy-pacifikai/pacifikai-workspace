@@ -10,6 +10,7 @@ import {
   Megaphone,
   ListOrdered,
   CheckCheck,
+  Unplug,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -32,6 +33,7 @@ const TYPE_ICON: Record<NotificationType, React.ElementType> = {
   no_show:           UserX,
   campaign_complete: Megaphone,
   waitlist_update:   ListOrdered,
+  gcal_disconnected: Unplug,
 };
 
 const TYPE_COLOR: Record<NotificationType, string> = {
@@ -41,6 +43,7 @@ const TYPE_COLOR: Record<NotificationType, string> = {
   no_show:           'text-orange-400 bg-orange-500/10',
   campaign_complete: 'text-blue-400 bg-blue-500/10',
   waitlist_update:   'text-purple-400 bg-purple-500/10',
+  gcal_disconnected: 'text-red-400 bg-red-500/10',
 };
 
 // ─── Single notification row ──────────────────────────────────────────────────

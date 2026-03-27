@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 
 /**
  * GET /api/auth/facebook/pages?session=<id>
@@ -10,7 +10,7 @@ import { rateLimit, getClientIp } from '@/lib/rate-limit';
  */
 export async function GET(req: NextRequest) {
   const ip = getClientIp(req);
-  const { success } = rateLimit(`fb-pages-get:${ip}`, { interval: 60_000, limit: 10 });
+  const { success } = await rateLimitAsync(`fb-pages-get:${ip}`, { interval: 60_000, limit: 10 });
   if (!success) {
     return NextResponse.json({ error: 'Trop de requetes' }, { status: 429 });
   }

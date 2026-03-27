@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { verifyPortalToken } from '@/lib/portal-token';
 import { triggerTask } from '@/lib/trigger';
-import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
+import { logAuthEvent, extractRequestMeta } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { z } from 'zod';
 
@@ -18,8 +19,10 @@ import { z } from 'zod';
 export async function POST(req: Request) {
   // Rate limit: 5/min per IP
   const ip = getClientIp(req);
-  const { success: rlOk } = rateLimit(`portal-cancel:${ip}`, { interval: 60_000, limit: 5 });
+  const { success: rlOk } = await rateLimitAsync(`portal-cancel:${ip}`, { interval: 60_000, limit: 5 });
   if (!rlOk) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'rate_limited', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'POST /api/portal/cancel' } });
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
   }
 
@@ -38,6 +41,8 @@ export async function POST(req: Request) {
 
   const clientId = verifyPortalToken(token);
   if (!clientId) {
+    const meta = extractRequestMeta(req);
+    void logAuthEvent({ eventType: 'invalid_token', ip: meta.ip, userAgent: meta.userAgent, details: { route: 'POST /api/portal/cancel' } });
     return NextResponse.json({ error: 'Token invalide ou expiré' }, { status: 401 });
   }
 
