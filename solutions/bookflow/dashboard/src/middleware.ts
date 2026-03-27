@@ -1,29 +1,36 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { createHmac } from 'crypto'
 
 const DASHBOARD_HOST = 'dashboard.vea.pacifikai.com'
 const LANDING_HOST = 'vea.pacifikai.com'
 const BIZ_CACHE_COOKIE = 'vea_biz'
 const BIZ_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
-/** Sign a value with HMAC to prevent tampering */
-function signValue(val: string): string {
-  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'dev-secret'
-  return createHmac('sha256', secret).update(val).digest('hex').slice(0, 16)
+// Edge-compatible HMAC using Web Crypto API
+const _encoder = new TextEncoder()
+let _cryptoKey: CryptoKey | null = null
+async function getCryptoKey(): Promise<CryptoKey> {
+  if (_cryptoKey) return _cryptoKey
+  const secret = _encoder.encode(process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'dev-secret')
+  _cryptoKey = await crypto.subtle.importKey('raw', secret, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify'])
+  return _cryptoKey
+}
+
+async function signValue(val: string): Promise<string> {
+  const key = await getCryptoKey()
+  const sig = await crypto.subtle.sign('HMAC', key, _encoder.encode(val))
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16)
 }
 
 /** Parse and verify the cached business cookie */
-function parseBizCache(cookie: string | undefined): { businessId: string; status: string; plan: string; trialEndsAt: string | null } | null {
+async function parseBizCache(cookie: string | undefined): Promise<{ businessId: string; status: string; plan: string; trialEndsAt: string | null } | null> {
   if (!cookie) return null
   try {
     const [payload, sig, ts] = cookie.split('.')
     if (!payload || !sig || !ts) return null
-    // Check TTL
     if (Date.now() - Number(ts) > BIZ_CACHE_TTL) return null
-    // Verify signature
-    if (signValue(`${payload}.${ts}`) !== sig) return null
-    const decoded = JSON.parse(Buffer.from(payload, 'base64url').toString())
+    if (await signValue(`${payload}.${ts}`) !== sig) return null
+    const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')))
     return decoded
   } catch {
     return null
@@ -31,10 +38,10 @@ function parseBizCache(cookie: string | undefined): { businessId: string; status
 }
 
 /** Create a signed cache cookie value */
-function createBizCache(data: { businessId: string; status: string; plan: string; trialEndsAt: string | null }): string {
-  const payload = Buffer.from(JSON.stringify(data)).toString('base64url')
+async function createBizCache(data: { businessId: string; status: string; plan: string; trialEndsAt: string | null }): Promise<string> {
+  const payload = btoa(JSON.stringify(data)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
   const ts = String(Date.now())
-  const sig = signValue(`${payload}.${ts}`)
+  const sig = await signValue(`${payload}.${ts}`)
   return `${payload}.${sig}.${ts}`
 }
 
@@ -98,7 +105,7 @@ export async function middleware(request: NextRequest) {
   // Dashboard root "/" → redirect to stats or login
   if (pathname === '/') {
     if (user) {
-      const cached = parseBizCache(request.cookies.get(BIZ_CACHE_COOKIE)?.value)
+      const cached = await parseBizCache(request.cookies.get(BIZ_CACHE_COOKIE)?.value)
       if (cached?.businessId) {
         const url = request.nextUrl.clone()
         url.pathname = '/stats'
@@ -122,7 +129,7 @@ export async function middleware(request: NextRequest) {
 
   // If already authenticated and visiting login/signup, redirect to dashboard
   if (user && (pathname === '/login' || pathname === '/signup')) {
-    const cached = parseBizCache(request.cookies.get(BIZ_CACHE_COOKIE)?.value)
+    const cached = await parseBizCache(request.cookies.get(BIZ_CACHE_COOKIE)?.value)
     if (cached?.businessId) {
       const url = request.nextUrl.clone()
       url.pathname = '/stats'
@@ -155,7 +162,7 @@ export async function middleware(request: NextRequest) {
   // Authenticated — check if onboarding is done (has a business)
   if (pathname !== '/onboarding') {
     // Try cached cookie first to avoid DB queries on every navigation
-    let bizCache = parseBizCache(request.cookies.get(BIZ_CACHE_COOKIE)?.value)
+    let bizCache = await parseBizCache(request.cookies.get(BIZ_CACHE_COOKIE)?.value)
 
     if (!bizCache) {
       // Cache miss — query DB (2 queries)
@@ -186,7 +193,7 @@ export async function middleware(request: NextRequest) {
       }
 
       // Set cache cookie on response (5min TTL, signed)
-      supabaseResponse.cookies.set(BIZ_CACHE_COOKIE, createBizCache(bizCache), {
+      supabaseResponse.cookies.set(BIZ_CACHE_COOKIE, await createBizCache(bizCache), {
         httpOnly: true,
         secure: true,
         sameSite: 'lax',
