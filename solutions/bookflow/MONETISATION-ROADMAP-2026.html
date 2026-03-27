@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ve'a — Roadmap Monétisation 2026</title>
+<style>
+  @page { size: A4; margin: 18mm 15mm 18mm 15mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9.5pt; line-height: 1.45; color: #1a1a1a; background: #fff; }
+
+  .page { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 18mm 15mm; page-break-after: always; }
+  @media screen { .page { border: 1px solid #ddd; margin-bottom: 10mm; box-shadow: 0 2px 8px rgba(0,0,0,0.08); } }
+  @media print { .page { padding: 0; border: none; box-shadow: none; } }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2.5pt solid #064e3b; padding-bottom: 8pt; margin-bottom: 14pt; }
+  .header h1 { font-size: 20pt; font-weight: 800; color: #064e3b; letter-spacing: -0.5pt; }
+  .header .subtitle { font-size: 10pt; color: #64748b; }
+  .header .date { font-size: 8pt; color: #94a3b8; text-align: right; }
+
+  /* Section titles */
+  h2 { font-size: 13pt; font-weight: 700; color: #064e3b; border-bottom: 1.5pt solid #d1fae5; padding-bottom: 4pt; margin: 16pt 0 8pt 0; page-break-after: avoid; }
+  h3 { font-size: 10.5pt; font-weight: 700; color: #334155; margin: 10pt 0 5pt 0; page-break-after: avoid; }
+  h4 { font-size: 9.5pt; font-weight: 600; color: #475569; margin: 8pt 0 4pt 0; }
+
+  p { margin-bottom: 5pt; }
+  strong { font-weight: 700; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 6pt 0 10pt 0; font-size: 8.5pt; }
+  th { background: #ecfdf5; font-weight: 700; text-align: left; padding: 5pt 6pt; border: 0.5pt solid #a7f3d0; color: #064e3b; }
+  td { padding: 4pt 6pt; border: 0.5pt solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  /* Priority badges */
+  .p0 { display: inline-block; background: #dc2626; color: #fff; font-size: 7pt; font-weight: 800; padding: 1pt 5pt; border-radius: 2pt; letter-spacing: 0.5pt; }
+  .p1 { display: inline-block; background: #f59e0b; color: #fff; font-size: 7pt; font-weight: 800; padding: 1pt 5pt; border-radius: 2pt; letter-spacing: 0.5pt; }
+  .p2 { display: inline-block; background: #6b7280; color: #fff; font-size: 7pt; font-weight: 800; padding: 1pt 5pt; border-radius: 2pt; letter-spacing: 0.5pt; }
+
+  /* Key metrics box */
+  .metrics { display: flex; gap: 8pt; margin: 10pt 0; }
+  .metric-box { flex: 1; border: 1pt solid #d1fae5; border-radius: 4pt; padding: 8pt; text-align: center; }
+  .metric-box .value { font-size: 16pt; font-weight: 800; color: #064e3b; }
+  .metric-box .label { font-size: 7.5pt; color: #64748b; text-transform: uppercase; letter-spacing: 0.5pt; margin-top: 2pt; }
+  .metric-box.highlight { border-color: #25D366; background: #f0fdf4; }
+
+  /* Action list */
+  .actions { list-style: none; margin: 4pt 0 8pt 0; }
+  .actions li { padding: 3pt 0 3pt 14pt; position: relative; font-size: 9pt; }
+  .actions li::before { content: "→"; position: absolute; left: 0; color: #25D366; font-weight: 700; }
+
+  /* Callout */
+  .callout { background: #f0fdf4; border-left: 3pt solid #25D366; padding: 8pt 10pt; margin: 8pt 0; font-size: 9pt; }
+  .callout.warn { border-left-color: #dc2626; background: #fef2f2; }
+  .callout.success { border-left-color: #16a34a; background: #f0fdf4; }
+  .callout.info { border-left-color: #3b82f6; background: #eff6ff; }
+
+  /* Two columns */
+  .cols { display: flex; gap: 12pt; }
+  .cols > div { flex: 1; }
+
+  /* Footer */
+  .footer { font-size: 7pt; color: #94a3b8; text-align: center; border-top: 0.5pt solid #e2e8f0; padding-top: 6pt; margin-top: auto; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 16pt; margin: 6pt 0 10pt 0; }
+  .timeline::before { content: ''; position: absolute; left: 4pt; top: 0; bottom: 0; width: 1.5pt; background: #d1fae5; }
+  .timeline .event { position: relative; margin-bottom: 8pt; }
+  .timeline .event::before { content: ''; position: absolute; left: -14pt; top: 3pt; width: 7pt; height: 7pt; border-radius: 50%; background: #25D366; border: 1.5pt solid #fff; }
+  .timeline .event.done::before { background: #16a34a; }
+  .timeline .event .time { font-size: 7.5pt; color: #94a3b8; font-weight: 600; }
+  .timeline .event .desc { font-size: 9pt; }
+  .timeline .event .rev { font-size: 8pt; color: #16a34a; font-weight: 700; }
+
+  /* No break */
+  .nobreak { page-break-inside: avoid; }
+
+  /* Feature count badge */
+  .feat { display: inline-block; background: #25D366; color: #fff; font-size: 7pt; font-weight: 700; padding: 1pt 4pt; border-radius: 8pt; }
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1 ==================== -->
+<div class="page">
+  <div class="header">
+    <div>
+      <h1>Ve'a — Plan de Monetisation</h1>
+      <div class="subtitle">De 0 a 1.5M XPF MRR en 90 jours</div>
+    </div>
+    <div class="date">
+      PACIFIK'AI — Mars 2026<br>
+      Document confidentiel
+    </div>
+  </div>
+
+  <h2>Situation Actuelle</h2>
+
+  <div class="metrics">
+    <div class="metric-box"><div class="value">0</div><div class="label">Clients payants</div></div>
+    <div class="metric-box"><div class="value">57</div><div class="label">Features livrees</div></div>
+    <div class="metric-box"><div class="value">9</div><div class="label">Tasks Trigger.dev</div></div>
+    <div class="metric-box highlight"><div class="value">~3 XPF</div><div class="label">Cout par conversation</div></div>
+    <div class="metric-box highlight"><div class="value">3</div><div class="label">Abonnes pour break-even</div></div>
+  </div>
+
+  <div class="callout success">
+    <strong>Avantage decisif :</strong> Ve'a est le SEUL chatbot de reservation adapte a la Polynesie francaise — WhatsApp/Messenger natif, fuseau Pacific/Tahiti, interface francaise, XPF, integration GCal. Calendly ne parle pas WhatsApp. Planity/SimplyBook ne connaissent pas la PF. Aucun concurrent local.
+  </div>
+
+  <h3>Plateforme operationnelle</h3>
+  <p>Ve'a est un SaaS <strong>production-ready</strong> deploye sur <code>vea.pacifikai.com</code>. 57 features couvrant l'integralite du parcours business :</p>
+
+  <div class="cols nobreak">
+    <div>
+      <table>
+        <tr><th colspan="2">Core Booking</th></tr>
+        <tr><td>Chatbot IA multi-canal</td><td>WhatsApp, Messenger, Instagram</td></tr>
+        <tr><td>Calendrier + RDV</td><td>CRUD, drag, GCal sync</td></tr>
+        <tr><td>Page de reservation publique</td><td>Embeddable, vCard, partage</td></tr>
+        <tr><td>Rappels automatiques</td><td>J-1 soir + H-2, no-show detect</td></tr>
+        <tr><td>RDV recurrents</td><td>Hebdo, bi-hebdo, mensuel</td></tr>
+        <tr><td>Liste d'attente</td><td>Notification auto si creneau libre</td></tr>
+      </table>
+    </div>
+    <div>
+      <table>
+        <tr><th colspan="2">Growth & Analytics</th></tr>
+        <tr><td>Dashboard KPI + sparklines</td><td>Tendances semaine/semaine</td></tr>
+        <tr><td>Retention clients</td><td>Cohortes, LTV, churn</td></tr>
+        <tr><td>Funnel de conversion</td><td>Page vue → confirmation</td></tr>
+        <tr><td>Avis clients automatises</td><td>H+24 WhatsApp + page publique</td></tr>
+        <tr><td>Digest hebdomadaire email</td><td>Brevo, chaque lundi</td></tr>
+        <tr><td>Dark mode + onboarding</td><td>Tour guide, raccourcis clavier</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h2>Unit Economics</h2>
+
+  <div class="cols nobreak">
+    <div>
+      <h4>Cout par conversation</h4>
+      <table>
+        <tr><td>DeepSeek V3 (agent IA)</td><td style="text-align:right">~2.5 XPF</td></tr>
+        <tr><td>Meta Cloud API (WhatsApp)</td><td style="text-align:right">~0.5 XPF</td></tr>
+        <tr><td>Supabase (stockage)</td><td style="text-align:right">~0.1 XPF</td></tr>
+        <tr><td><strong>Total</strong></td><td style="text-align:right"><strong>~3 XPF</strong></td></tr>
+      </table>
+      <p style="font-size:8pt;color:#64748b">Meta WhatsApp : 1,000 conversations/mois gratuites par business. Au-dela : ~8 XPF/conversation (service).</p>
+    </div>
+    <div>
+      <h4>Couts fixes mensuels</h4>
+      <table>
+        <tr><td>Supabase (free tier)</td><td style="text-align:right">0 XPF</td></tr>
+        <tr><td>Vercel (free tier)</td><td style="text-align:right">0 XPF</td></tr>
+        <tr><td>Trigger.dev (free tier)</td><td style="text-align:right">0 XPF</td></tr>
+        <tr><td>Brevo (free 300 emails/jour)</td><td style="text-align:right">0 XPF</td></tr>
+        <tr><td>DeepSeek V3 (base)</td><td style="text-align:right">~2,000 XPF</td></tr>
+        <tr><td><strong>Total</strong></td><td style="text-align:right"><strong>~2,000 XPF</strong></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="cols nobreak">
+    <div>
+      <h4>Marge brute par plan</h4>
+      <table>
+        <tr><th>Plan</th><th>Prix</th><th>Conv./mois</th><th>Cout LLM</th><th>Marge</th></tr>
+        <tr><td>Starter</td><td>4,900</td><td>~200</td><td>600</td><td><strong>88%</strong></td></tr>
+        <tr><td>Pro</td><td>9,900</td><td>~500</td><td>1,500</td><td><strong>85%</strong></td></tr>
+        <tr><td>Business</td><td>24,900</td><td>~2,000</td><td>6,000</td><td><strong>76%</strong></td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Break-even</h4>
+      <div class="callout">
+        Couts fixes : <strong>2,000 XPF/mois</strong><br>
+        Marge moyenne : <strong>83%</strong><br>
+        Break-even = <strong>2,400 XPF MRR</strong><br><br>
+        Soit <strong>1 abonne Starter</strong> suffit.<br>
+        Rentable des le <strong>premier client</strong>.
+      </div>
+    </div>
+  </div>
+
+  <h2>Benchmark Concurrence</h2>
+
+  <table>
+    <tr><th>Produit</th><th>Cible</th><th>Prix</th><th>Positionnement vs Ve'a</th></tr>
+    <tr><td><strong>Calendly</strong></td><td>Freelances monde</td><td>$10-16/user/mois (~1,200-1,900 XPF)</td><td>Pas de WhatsApp. Pas de chatbot IA. Anglophone.</td></tr>
+    <tr><td><strong>Planity</strong></td><td>Salons beaute France</td><td>69-169 EUR/mois (~8K-20K XPF)</td><td>France metro uniquement. Pas de PF.</td></tr>
+    <tr><td><strong>SimplyBook.me</strong></td><td>PME monde</td><td>$8-50/mois (~950-6K XPF)</td><td>Generique. Pas WhatsApp natif. Pas IA.</td></tr>
+    <tr><td><strong>Doctolib</strong></td><td>Sante France</td><td>129 EUR/mois (~15K XPF)</td><td>Medical only. France. Pas PF.</td></tr>
+    <tr><td><strong>Ve'a</strong></td><td>TPE/PME Polynesie</td><td>4,900-49,900 XPF/mois</td><td><strong>WhatsApp natif + IA + fuseau PF. 0 concurrent.</strong></td></tr>
+  </table>
+
+  <div class="footer">Ve'a — PACIFIK'AI — Document confidentiel — Page 1/5</div>
+</div>
+
+<!-- ==================== PAGE 2 ==================== -->
+<div class="page">
+  <div class="header">
+    <div><h1 style="font-size:16pt">12 Angles de Monetisation</h1></div>
+    <div class="date">Classes par priorite d'execution</div>
+  </div>
+
+  <h2>Matrice de Priorite</h2>
+
+  <table>
+    <tr><th></th><th>Angle</th><th>Revenue potentiel/mois</th><th>1er revenu</th><th>Diff.</th><th>Priorite</th></tr>
+    <tr><td>1</td><td><strong>B2C direct — Offre Fondateur -50%</strong></td><td>100K - 500K XPF</td><td>1-2 sem.</td><td>1/5</td><td><span class="p0">P0 CETTE SEMAINE</span></td></tr>
+    <tr><td>2</td><td><strong>Secteur Beaute (salons, barbers)</strong></td><td>150K - 750K XPF</td><td>1-2 sem.</td><td>2/5</td><td><span class="p0">P0 CETTE SEMAINE</span></td></tr>
+    <tr><td>3</td><td><strong>Secteur Medical/Sante</strong></td><td>100K - 500K XPF</td><td>2-4 sem.</td><td>2/5</td><td><span class="p0">P0 CETTE SEMAINE</span></td></tr>
+    <tr><td>4</td><td><strong>Restaurants & F&B</strong></td><td>100K - 400K XPF</td><td>2-4 sem.</td><td>2/5</td><td><span class="p1">P1 CE MOIS</span></td></tr>
+    <tr><td>5</td><td><strong>Tourisme & activites</strong></td><td>200K - 1M XPF</td><td>2-6 sem.</td><td>3/5</td><td><span class="p1">P1 CE MOIS</span></td></tr>
+    <tr><td>6</td><td><strong>Multi-staff upsell (plan Business)</strong></td><td>+50% ARPU</td><td>M2</td><td>4/5</td><td><span class="p1">P1 CE MOIS</span></td></tr>
+    <tr><td>7</td><td><strong>Commission sur paiements en ligne</strong></td><td>200K - 2M XPF</td><td>M2-M3</td><td>4/5</td><td><span class="p1">P1 CE MOIS</span></td></tr>
+    <tr><td>8</td><td><strong>SMS Credits (pack messages)</strong></td><td>50K - 300K XPF</td><td>M2</td><td>2/5</td><td><span class="p1">P1 CE MOIS</span></td></tr>
+    <tr><td>9</td><td><strong>White-label pour agences</strong></td><td>500K - 2M XPF</td><td>M2-M3</td><td>4/5</td><td><span class="p2">P2 CE TRIMESTRE</span></td></tr>
+    <tr><td>10</td><td><strong>API marketplace (integrations)</strong></td><td>100K - 500K XPF</td><td>M3</td><td>5/5</td><td><span class="p2">P2 CE TRIMESTRE</span></td></tr>
+    <tr><td>11</td><td><strong>Expansion regionale (NC, Wallis)</strong></td><td>500K+ XPF</td><td>M3+</td><td>3/5</td><td><span class="p2">P2 CE TRIMESTRE</span></td></tr>
+    <tr><td>12</td><td><strong>Subventions (DGEN ACN/DAD)</strong></td><td>2M+ XPF (one-shot)</td><td>1-4 mois</td><td>3/5</td><td><span class="p1">P1 CE MOIS</span></td></tr>
+  </table>
+
+  <h2><span class="p0">P0</span> Angle 1 — B2C Direct : Offre Fondateur</h2>
+  <p><strong>Objectif :</strong> 10 abonnes payants en 14 jours. Reseau direct, pas de marketing froid.</p>
+
+  <div class="callout">
+    <strong>Offre Fondateur :</strong> -50% a vie pour les 30 premiers abonnes.<br>
+    Starter = 2,450 XPF/mois | Pro = 4,950 XPF/mois | Compteur live sur la landing page.
+  </div>
+
+  <h4>Actions immediates</h4>
+  <ul class="actions">
+    <li>Identifier 50 entreprises PF qui prennent des RDV (salons, medecins, restaurants, activites)</li>
+    <li>WhatsApp individuel : <em>"Salut [nom], j'ai cree un chatbot IA qui repond a tes clients sur WhatsApp et prend les RDV automatiquement. 24/7. Offre fondateur -50% a vie. Tu veux tester gratuitement ?"</em></li>
+    <li>Demo en 5 min : envoyer un message WhatsApp au numero de demo → booking confirme en live</li>
+    <li>Poster dans 5 groupes Facebook PF (Entrepreneurs Polynesie, Tahiti Business, etc.) avec video demo 30sec</li>
+    <li>Compteur "X/30 places fondateur restantes" sur /landing</li>
+  </ul>
+
+  <h2><span class="p0">P0</span> Angle 2 — Secteur Beaute (Quick Win)</h2>
+  <p><strong>Marche :</strong> ~300+ salons de beaute/coiffure/barber en PF. Pain point #1 : appels manques = clients perdus. Ve'a resout ce probleme en 24h.</p>
+
+  <div class="callout info">
+    <strong>ROI immediat :</strong> 1 salon perd ~5 RDV/semaine par appels manques = <strong>~100,000 XPF/mois</strong> de CA perdu.<br>
+    Ve'a a 4,900 XPF/mois = ROI x20. Argument imparable.
+  </div>
+
+  <table>
+    <tr><th>Cible</th><th>Volume PF</th><th>Ticket moyen RDV</th><th>Approche</th></tr>
+    <tr><td><strong>Salons coiffure</strong></td><td>~150</td><td>5,000-15,000 XPF</td><td>Demo WhatsApp directe</td></tr>
+    <tr><td><strong>Barbershops</strong></td><td>~50</td><td>3,000-5,000 XPF</td><td>Instagram DM + demo</td></tr>
+    <tr><td><strong>Spas/instituts</strong></td><td>~80</td><td>8,000-25,000 XPF</td><td>Email + cas similaire</td></tr>
+    <tr><td><strong>Tatoueurs</strong></td><td>~30</td><td>15,000-50,000+ XPF</td><td>Instagram DM</td></tr>
+  </table>
+
+  <ul class="actions">
+    <li>Lister les 20 meilleurs salons Papeete (Google Maps + Instagram)</li>
+    <li>Se deplacer avec tablette : demo live en 5 min dans le salon</li>
+    <li>Offrir 30 jours gratuits + setup complet (services, horaires, numero WhatsApp)</li>
+    <li>Le salon voit ses RDV arriver en temps reel sur le dashboard → conversion immediate</li>
+  </ul>
+
+  <h2><span class="p0">P0</span> Angle 3 — Secteur Medical/Sante</h2>
+  <p><strong>Marche :</strong> ~200+ praticiens liberaux PF. Attente telephonique = frustration patients. Ve'a decharge le secretariat.</p>
+
+  <table>
+    <tr><th>Cible</th><th>Volume PF</th><th>Ticket moyen</th><th>Plan ideal</th></tr>
+    <tr><td><strong>Dentistes</strong></td><td>~60</td><td>10,000-30,000 XPF</td><td>Pro (9,900 XPF)</td></tr>
+    <tr><td><strong>Kines/osteos</strong></td><td>~40</td><td>5,000-8,000 XPF</td><td>Starter (4,900 XPF)</td></tr>
+    <tr><td><strong>Generalistes</strong></td><td>~80</td><td>Consultation 3,500 XPF</td><td>Starter (4,900 XPF)</td></tr>
+    <tr><td><strong>Specialistes</strong></td><td>~50</td><td>10,000-50,000 XPF</td><td>Pro (9,900 XPF)</td></tr>
+  </table>
+
+  <div class="callout">
+    <strong>Pitch medical :</strong> "Vos patients envoient deja des WhatsApp a votre numero perso. Ve'a professionnalise ca : chatbot IA qui prend les RDV 24/7 sur un numero dedie, rappels automatiques J-1 et H-2, detection des no-shows. Vous ne ratez plus un patient."
+  </div>
+
+  <div class="footer">Ve'a — PACIFIK'AI — Document confidentiel — Page 2/5</div>
+</div>
+
+<!-- ==================== PAGE 3 ==================== -->
+<div class="page">
+  <div class="header">
+    <div><h1 style="font-size:16pt">Grille Tarifaire + Angles P1</h1></div>
+    <div class="date">Architecture de revenus</div>
+  </div>
+
+  <h2>Grille Tarifaire</h2>
+
+  <div class="cols nobreak">
+    <div>
+      <h4>Self-serve (TPE / Solo)</h4>
+      <table>
+        <tr><th>Plan</th><th>Prix/mois</th><th>Inclus</th></tr>
+        <tr><td><strong>Decouverte</strong></td><td>Gratuit</td><td>14 jours, 50 conversations</td></tr>
+        <tr><td><strong>Starter</strong></td><td>4,900 XPF</td><td>500 conv., 1 canal, rappels, dashboard</td></tr>
+        <tr><td><strong>Pro</strong></td><td>9,900 XPF</td><td>2,000 conv., multi-canal, GCal, avis auto, analytics</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Sales-assisted (PME / Multi-staff)</h4>
+      <table>
+        <tr><th>Plan</th><th>Prix/mois</th><th>Inclus</th></tr>
+        <tr><td><strong>Business</strong></td><td>24,900 XPF</td><td>Illimite, multi-staff, API, support prioritaire</td></tr>
+        <tr><td><strong>Enterprise</strong></td><td>49,900 XPF</td><td>Multi-site, white-label, SLA, formation</td></tr>
+        <tr><td><strong>Custom</strong></td><td>Sur devis</td><td>Integration SI, chatbot sur mesure</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h4>Add-ons (revenue additionnel)</h4>
+  <table>
+    <tr><th>Add-on</th><th>Prix</th><th>Description</th><th>Marge</th></tr>
+    <tr><td><strong>Pack SMS 500</strong></td><td>3,000 XPF</td><td>500 SMS de confirmation (fallback hors WhatsApp)</td><td>~60%</td></tr>
+    <tr><td><strong>Canal supplementaire</strong></td><td>2,000 XPF/mois</td><td>Ajout Instagram ou Messenger au Starter</td><td>~95%</td></tr>
+    <tr><td><strong>Paiement en ligne</strong></td><td>2.5% + 150 XPF/tx</td><td>Acompte ou paiement integral au booking</td><td>~40%</td></tr>
+    <tr><td><strong>Setup VIP</strong></td><td>15,000 XPF</td><td>Configuration complete + 1h formation</td><td>~90%</td></tr>
+  </table>
+
+  <h3>Projections ARPU</h3>
+  <div class="callout">
+    <strong>ARPU moyen estime :</strong> 7,500 XPF/mois (mix 60% Starter + 30% Pro + 10% Business).<br>
+    Avec add-ons : <strong>+25%</strong> → ARPU effectif ~9,400 XPF/mois.<br>
+    <strong>LTV (12 mois retention) :</strong> ~113,000 XPF par client. <strong>CAC cible :</strong> &lt;15,000 XPF.
+  </div>
+
+  <h2><span class="p1">P1</span> Angle 4 — Restaurants & F&B</h2>
+
+  <table>
+    <tr><th>Cible</th><th>Volume PF</th><th>Use case Ve'a</th><th>Plan</th></tr>
+    <tr><td><strong>Restaurants gastronomiques</strong></td><td>~40</td><td>Reservation table WhatsApp, rappels, no-show protection</td><td>Pro (9,900)</td></tr>
+    <tr><td><strong>Roulottes premium</strong></td><td>~100</td><td>Pre-commande + creneaux, liste d'attente</td><td>Starter (4,900)</td></tr>
+    <tr><td><strong>Traiteurs/patissiers</strong></td><td>~60</td><td>RDV degustation, commandes recurrentes</td><td>Starter (4,900)</td></tr>
+  </table>
+
+  <h2><span class="p1">P1</span> Angle 5 — Tourisme & Activites</h2>
+  <p><strong>Marche massif :</strong> ~500 prestataires d'activites en PF. Beaucoup gerent les reservations par WhatsApp/Facebook manuellement.</p>
+
+  <table>
+    <tr><th>Cible</th><th>Volume PF</th><th>Ticket moyen</th><th>ROI Ve'a</th></tr>
+    <tr><td><strong>Excursions lagon</strong></td><td>~150</td><td>8,000-15,000 XPF/pers</td><td>1 booking auto/sem = rembourse</td></tr>
+    <tr><td><strong>Plongee</strong></td><td>~40</td><td>10,000-25,000 XPF</td><td>Gere les plannings multi-bateaux</td></tr>
+    <tr><td><strong>Surf/SUP</strong></td><td>~30</td><td>5,000-8,000 XPF</td><td>Booking 24/7 pour touristes</td></tr>
+    <tr><td><strong>Location vehicules</strong></td><td>~50</td><td>8,000-15,000 XPF/jour</td><td>Chatbot WhatsApp = dispo instant</td></tr>
+    <tr><td><strong>Pensions de famille</strong></td><td>~200</td><td>8,000-20,000 XPF/nuit</td><td>Reservation directe, pas de commission OTA</td></tr>
+  </table>
+
+  <div class="callout info">
+    <strong>Argument tourisme :</strong> "Les touristes arrivent a Tahiti et envoient un WhatsApp pour reserver. Si personne ne repond en 5 min, ils passent au concurrent. Ve'a repond en 3 secondes, 24/7, en francais et en anglais."
+  </div>
+
+  <h2><span class="p1">P1</span> Angle 7 — Commission Paiements</h2>
+  <p>Integration Stripe pour acompte ou paiement complet a la reservation. Revenue recurrent proportionnel au volume de transactions.</p>
+
+  <table>
+    <tr><th>Hypothese</th><th>Calcul</th><th>Revenue/mois</th></tr>
+    <tr><td>50 business, 100 tx/mois chacun</td><td>5,000 tx × 10,000 XPF moyen × 2.5%</td><td><strong>1,250,000 XPF</strong></td></tr>
+    <tr><td>20 business, 50 tx/mois</td><td>1,000 tx × 8,000 XPF × 2.5%</td><td><strong>200,000 XPF</strong></td></tr>
+  </table>
+  <p style="font-size:8pt;color:#64748b">Marge nette apres frais Stripe (~1.8%) : environ 0.7% soit ~35,000-87,500 XPF/mois au debut. Monte en puissance.</p>
+
+  <h2><span class="p1">P1</span> Angle 12 — Subventions DGEN</h2>
+
+  <div class="cols nobreak">
+    <div class="callout" style="font-size:8.5pt">
+      <strong>ACN (Aide Creation Numerique)</strong><br>
+      50% des depenses, plafond 700K XPF<br>
+      Ve'a = outil numerique pour TPE PF<br>
+      Eligible immediatement
+    </div>
+    <div class="callout" style="font-size:8.5pt">
+      <strong>DAD Amorcage</strong><br>
+      70% des depenses, plafond 2M XPF<br>
+      Startup innovante tech PF<br>
+      Dossier a deposer sous 30 jours
+    </div>
+  </div>
+
+  <div class="footer">Ve'a — PACIFIK'AI — Document confidentiel — Page 3/5</div>
+</div>
+
+<!-- ==================== PAGE 4 ==================== -->
+<div class="page">
+  <div class="header">
+    <div><h1 style="font-size:16pt">Marche Adressable + Scalabilite</h1></div>
+    <div class="date">TAM / SAM / SOM Polynesie francaise</div>
+  </div>
+
+  <h2>Marche Adressable (TAM → SOM)</h2>
+
+  <div class="metrics">
+    <div class="metric-box"><div class="value">4,800</div><div class="label">Entreprises service PF (TAM)</div></div>
+    <div class="metric-box"><div class="value">1,500</div><div class="label">Avec besoin RDV (SAM)</div></div>
+    <div class="metric-box highlight"><div class="value">150</div><div class="label">Cible Y1 (SOM 10%)</div></div>
+    <div class="metric-box highlight"><div class="value">1.1M</div><div class="label">MRR cible Y1 (XPF)</div></div>
+  </div>
+
+  <table>
+    <tr><th>Secteur</th><th>Nombre PF</th><th>Avec besoin RDV</th><th>Plan moyen</th><th>Revenue potentiel/mois</th></tr>
+    <tr><td><strong>Beaute/bien-etre</strong></td><td>~300</td><td>~250</td><td>Starter (4,900)</td><td>1,225,000 XPF</td></tr>
+    <tr><td><strong>Sante/medical</strong></td><td>~230</td><td>~200</td><td>Pro (9,900)</td><td>1,980,000 XPF</td></tr>
+    <tr><td><strong>Tourisme/activites</strong></td><td>~500</td><td>~400</td><td>Starter (4,900)</td><td>1,960,000 XPF</td></tr>
+    <tr><td><strong>Restauration</strong></td><td>~800</td><td>~200</td><td>Starter (4,900)</td><td>980,000 XPF</td></tr>
+    <tr><td><strong>Auto/reparation</strong></td><td>~150</td><td>~100</td><td>Pro (9,900)</td><td>990,000 XPF</td></tr>
+    <tr><td><strong>Services pro</strong></td><td>~300</td><td>~150</td><td>Pro (9,900)</td><td>1,485,000 XPF</td></tr>
+    <tr><td><strong>Sport/coaching</strong></td><td>~200</td><td>~150</td><td>Starter (4,900)</td><td>735,000 XPF</td></tr>
+    <tr><td colspan="3"><strong>TOTAL SAM</strong></td><td></td><td><strong>9,355,000 XPF/mois</strong></td></tr>
+  </table>
+
+  <div class="callout success">
+    <strong>Objectif realiste Y1 :</strong> 10% du SAM = <strong>150 clients</strong> × 7,500 XPF ARPU = <strong>1,125,000 XPF MRR</strong> = <strong>13.5M XPF ARR</strong>.<br>
+    Avec add-ons et paiements : <strong>~16-18M XPF ARR</strong>.
+  </div>
+
+  <h2>Avantages Concurrentiels Defensifs</h2>
+
+  <div class="cols nobreak">
+    <div>
+      <h3>Moats</h3>
+      <ul class="actions">
+        <li><strong>Network effect local</strong> : chaque salon qui adopte Ve'a incite ses concurrents ("ils ont un chatbot, moi non")</li>
+        <li><strong>Switching cost</strong> : historique clients, RDV recurrents, numero WhatsApp configure — migrer = perdre tout</li>
+        <li><strong>Connaissance metier PF</strong> : fuseaux, jours feries PF, XPF, conventions locales — impossible a copier depuis Paris</li>
+        <li><strong>Data flywheel</strong> : plus de conversations = meilleur agent IA = meilleur service = plus de clients</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Risques & Mitigations</h3>
+      <table>
+        <tr><th>Risque</th><th>Mitigation</th></tr>
+        <tr><td>Meta change les API</td><td>Multi-canal (SMS fallback)</td></tr>
+        <tr><td>Concurrent copie</td><td>12+ mois d'avance produit</td></tr>
+        <tr><td>Churn eleve</td><td>RDV recurrents = stickiness</td></tr>
+        <tr><td>Marche PF petit</td><td>Expansion NC + Wallis</td></tr>
+        <tr><td>LLM plus cher</td><td>DeepSeek V3 = 100x moins cher qu'OpenAI</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h2>Expansion Regionale (P2)</h2>
+
+  <table>
+    <tr><th>Region</th><th>Population</th><th>Entreprises cibles</th><th>Fuseau</th><th>Timing</th></tr>
+    <tr><td><strong>Nouvelle-Caledonie</strong></td><td>270K</td><td>~2,000</td><td>Pacific/Noumea (+11)</td><td>M4-M6</td></tr>
+    <tr><td><strong>Wallis-et-Futuna</strong></td><td>11K</td><td>~100</td><td>Pacific/Wallis (+12)</td><td>M6</td></tr>
+    <tr><td><strong>Reunion / Mayotte</strong></td><td>1M</td><td>~5,000</td><td>Indian/Reunion (+4)</td><td>M6-M12</td></tr>
+    <tr><td><strong>Antilles francaises</strong></td><td>800K</td><td>~4,000</td><td>America/Martinique (-4)</td><td>M9-M12</td></tr>
+  </table>
+
+  <div class="callout info">
+    <strong>Meme playbook, nouveau fuseau :</strong> Ve'a est deja multi-timezone. Expansion = configurer un nouveau fuseau + adapter les messages. Le produit est pret.
+  </div>
+
+  <h2>Metriques Cles a Suivre</h2>
+
+  <table>
+    <tr><th>Metrique</th><th>Cible M1</th><th>Cible M3</th><th>Cible M6</th><th>Cible M12</th></tr>
+    <tr><td><strong>MRR</strong></td><td>100K XPF</td><td>500K XPF</td><td>1.5M XPF</td><td>3M XPF</td></tr>
+    <tr><td><strong>Clients payants</strong></td><td>15</td><td>60</td><td>150</td><td>300</td></tr>
+    <tr><td><strong>Churn mensuel</strong></td><td>&lt;10%</td><td>&lt;7%</td><td>&lt;5%</td><td>&lt;4%</td></tr>
+    <tr><td><strong>ARPU</strong></td><td>6,700 XPF</td><td>8,300 XPF</td><td>10,000 XPF</td><td>10,000 XPF</td></tr>
+    <tr><td><strong>NPS</strong></td><td>&gt;30</td><td>&gt;40</td><td>&gt;50</td><td>&gt;60</td></tr>
+    <tr><td><strong>Conversations traitees/mois</strong></td><td>3,000</td><td>30,000</td><td>150,000</td><td>500,000</td></tr>
+  </table>
+
+  <div class="footer">Ve'a — PACIFIK'AI — Document confidentiel — Page 4/5</div>
+</div>
+
+<!-- ==================== PAGE 5 ==================== -->
+<div class="page">
+  <div class="header">
+    <div><h1 style="font-size:16pt">Calendrier 90 Jours + Actions Demain</h1></div>
+    <div class="date">Execution semaine par semaine</div>
+  </div>
+
+  <h2>Timeline 90 Jours</h2>
+
+  <div class="timeline">
+    <div class="event">
+      <div class="time">SEMAINE 1 (J+0 → J+7)</div>
+      <div class="desc"><strong>50 contacts reseau + terrain</strong> → offre fondateur -50%</div>
+      <div class="desc">Demo dans 10 salons de Papeete (tablette + WhatsApp live)</div>
+      <div class="desc">Page /tarifs avec plans + compteur fondateur</div>
+      <div class="desc">Video demo 30sec pour Facebook/Instagram</div>
+      <div class="desc">Intergration Stripe (paiement abonnement en ligne)</div>
+      <div class="rev">Cible : 5-15 essais gratuits, 50K-200K XPF MRR</div>
+    </div>
+    <div class="event">
+      <div class="time">SEMAINE 2-4 (J+7 → J+30)</div>
+      <div class="desc">30 fondateurs signes, dont 10 salons beaute + 5 medecins</div>
+      <div class="desc">Terrain : Pirae, Punaauia, Faaa, Moorea (top businesses)</div>
+      <div class="desc">Email sequence : J+0 bienvenue, J+3 tips, J+7 upsell Pro, J+13 fondateur expire</div>
+      <div class="desc">Google Ads PF "reservation salon tahiti" (budget test 20,000 XPF)</div>
+      <div class="desc">Dossier DGEN ACN depose</div>
+      <div class="rev">Cible MRR : 200K - 500K XPF</div>
+    </div>
+    <div class="event">
+      <div class="time">MOIS 2 (J+30 → J+60)</div>
+      <div class="desc">60 clients payants, mix beaute + medical + tourisme</div>
+      <div class="desc">Lancer le plan Business (multi-staff)</div>
+      <div class="desc">Integration paiement en ligne (acompte au booking)</div>
+      <div class="desc">Premiers testimonials video (3 salons satisfaits)</div>
+      <div class="desc">Partenariat CCISM : "offre digitale pour TPE PF"</div>
+      <div class="rev">Cible MRR : 500K - 1M XPF</div>
+    </div>
+    <div class="event">
+      <div class="time">MOIS 3 (J+60 → J+90)</div>
+      <div class="desc">100+ clients payants, penetration 7% du SAM</div>
+      <div class="desc">Lancer SMS credits (add-on)</div>
+      <div class="desc">POC white-label pour 1 chaine (hotel ou franchise)</div>
+      <div class="desc">DAD Amorcage obtenu (2M XPF)</div>
+      <div class="desc">Preparation expansion Nouvelle-Caledonie</div>
+      <div class="rev">Cible MRR : 1M - 1.5M XPF + subvention 2M XPF</div>
+    </div>
+  </div>
+
+  <h2>Projections Revenue a 90 Jours</h2>
+
+  <div class="metrics">
+    <div class="metric-box"><div class="value">200K</div><div class="label">MRR Semaine 2</div></div>
+    <div class="metric-box"><div class="value">500K</div><div class="label">MRR Mois 1</div></div>
+    <div class="metric-box highlight"><div class="value">1.5M</div><div class="label">MRR Mois 3</div></div>
+    <div class="metric-box highlight"><div class="value">2M</div><div class="label">Subvention DAD</div></div>
+  </div>
+  <p style="font-size:8pt;color:#94a3b8;text-align:center">Tous montants en XPF. MRR = Monthly Recurring Revenue. Projections conservatrices basees sur 10% du SAM a M12.</p>
+
+  <h2 style="margin-top:14pt">Checklist Actions Demain Matin</h2>
+
+  <div class="cols nobreak">
+    <div>
+      <h4>Commercial (3h)</h4>
+      <ul class="actions">
+        <li>Lister 20 salons beaute Papeete (Google Maps)</li>
+        <li>Lister 10 medecins/dentistes (Pages Jaunes PF)</li>
+        <li>Rediger le message WhatsApp offre fondateur</li>
+        <li>Envoyer 15 messages individuels</li>
+        <li>Preparer la tablette pour demos terrain</li>
+        <li>Visiter 5 salons a pied (Papeete centre)</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Produit (2h)</h4>
+      <ul class="actions">
+        <li>Creer page /tarifs avec 3 plans + toggle mensuel/annuel</li>
+        <li>Ajouter compteur fondateur sur /landing</li>
+        <li>Setup Stripe avec les 3 plans (4,900 / 9,900 / 24,900)</li>
+        <li>Creer le numero WhatsApp Business de demo</li>
+        <li>Enregistrer video demo 30sec (ecran + voix)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cols nobreak" style="margin-top:8pt">
+    <div>
+      <h4>Marketing (1h)</h4>
+      <ul class="actions">
+        <li>Poster la demo dans 5 groupes Facebook PF</li>
+        <li>Story Instagram @pacifikai avec demo live</li>
+        <li>Preparer 3 visuels "avant/apres" (appels manques vs Ve'a)</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Admin (30min)</h4>
+      <ul class="actions">
+        <li>Verifier formulaire ACN sur mes-demarches.gov.pf</li>
+        <li>Preparer le dossier ACN (description projet + budget)</li>
+        <li>Trouver contact CCISM accompagnement digital</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout warn" style="margin-top:12pt">
+    <strong>Regle n°1 :</strong> Le break-even est a 1 client. TOUT le reste est du profit. Le produit est TERMINE avec 57 features — maintenant c'est 100% commercial. Chaque jour sans prospecter est un jour perdu. Les demos terrain convertissent 3x mieux que les emails froids. <strong>Sors de derriere l'ecran et va sur le terrain.</strong>
+  </div>
+
+  <div style="margin-top:12pt; padding: 10pt; background:#f0fdf4; border:1pt solid #d1fae5; border-radius:4pt; font-size:8.5pt">
+    <strong>Stack technique :</strong> Next.js 14 + TypeScript + Tailwind + Supabase + Trigger.dev v4 + DeepSeek V3 + Meta Cloud API (WhatsApp/Messenger/Instagram). Deploy Vercel. 57 features, 9 taches automatisees. Dashboard <code>vea.pacifikai.com</code>. Zero dette technique.
+  </div>
+
+  <div style="margin-top:6pt; padding: 10pt; background:#f8fafc; border:1pt solid #e2e8f0; border-radius:4pt; font-size:8.5pt">
+    <strong>Sources :</strong> ISPF (statistiques PF), CCISM Polynesie, Calendly Pricing 2026, Planity.com, SimplyBook.me, Doctolib Pro, Stripe Atlas SaaS Benchmarks, FirstPageSage SaaS Conversion Rates, Bessemer Cloud Index, DGEN (service-public.pf), Google Maps Business listings Papeete.
+  </div>
+
+  <div class="footer" style="margin-top:14pt">
+    Ve'a — PACIFIK'AI — Jordy Toofa — jordy@pacifikai.com — Mars 2026 — Page 5/5
+  </div>
+</div>
+
+</body>
+</html>

@@ -5,7 +5,8 @@ import { format } from 'date-fns';
 import { X } from 'lucide-react';
 import { useCreateAppointment } from '@/hooks/useAppointments';
 import { useServices } from '@/hooks/useServices';
-import { cn } from '@/lib/utils';
+import { cn, computeEndTime } from '@/lib/utils';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import type { Appointment } from '@/types/database';
 
 type Source = string;
@@ -25,6 +26,7 @@ export function CreateAppointmentModal({
 }: CreateAppointmentModalProps) {
   const { data: services } = useServices(businessId);
   const createMutation = useCreateAppointment();
+  const trapRef = useFocusTrap(true);
 
   const [form, setForm] = useState({
     client_name: '',
@@ -39,13 +41,7 @@ export function CreateAppointmentModal({
 
   const selectedService = services?.find((s) => s.name === form.service);
 
-  function calcEndTime(start: string, duration: number): string {
-    const parts = start.split(':').map(Number);
-    const h = parts[0] ?? 0;
-    const m = parts[1] ?? 0;
-    const totalMins = h * 60 + m + duration;
-    return `${String(Math.floor(totalMins / 60)).padStart(2, '0')}:${String(totalMins % 60).padStart(2, '0')}`;
-  }
+  // Use shared computeEndTime (capped at 23:59)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -54,7 +50,7 @@ export function CreateAppointmentModal({
       return;
     }
     const duration = selectedService?.duration ?? 30;
-    const end_time = calcEndTime(form.time_slot, duration);
+    const end_time = computeEndTime(form.time_slot, duration);
 
     try {
       await createMutation.mutateAsync({
@@ -85,12 +81,13 @@ export function CreateAppointmentModal({
     <>
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onClose} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl">
+        <div ref={trapRef} className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="create-appointment-title">
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
-            <h2 className="text-white font-semibold">Nouveau rendez-vous</h2>
+            <h2 id="create-appointment-title" className="text-white font-semibold">Nouveau rendez-vous</h2>
             <button
               onClick={onClose}
+              aria-label="Fermer"
               className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
             >
               <X size={18} />

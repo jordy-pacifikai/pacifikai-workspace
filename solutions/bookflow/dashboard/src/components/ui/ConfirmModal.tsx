@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { AlertTriangle, Trash2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 export interface ConfirmModalProps {
   open: boolean;
@@ -49,6 +50,7 @@ export function ConfirmModal({
   loading = false,
 }: ConfirmModalProps) {
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const trapRef = useFocusTrap(open);
 
   useEffect(() => {
     if (open) {
@@ -83,12 +85,18 @@ export function ConfirmModal({
       {/* Modal */}
       <div className="fixed inset-0 z-[61] flex items-center justify-center p-4">
         <div
+          ref={trapRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="confirm-modal-title"
+          aria-describedby={description ? 'confirm-modal-desc' : undefined}
           className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-sm shadow-2xl animate-in fade-in zoom-in-95 duration-150"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close button */}
           <button
             onClick={onCancel}
+            aria-label="Fermer"
             className="absolute top-3 right-3 p-1 rounded-lg text-gray-600 hover:text-gray-300 hover:bg-gray-800 transition-colors"
           >
             <X size={16} />
@@ -101,11 +109,11 @@ export function ConfirmModal({
             </div>
 
             {/* Title */}
-            <h3 className="text-white font-semibold text-base mb-1">{title}</h3>
+            <h3 id="confirm-modal-title" className="text-white font-semibold text-base mb-1">{title}</h3>
 
             {/* Description */}
             {description && (
-              <p className="text-gray-400 text-sm leading-relaxed">{description}</p>
+              <p id="confirm-modal-desc" className="text-gray-400 text-sm leading-relaxed">{description}</p>
             )}
           </div>
 

@@ -13,6 +13,8 @@ import {
   ChevronDown,
   Filter,
   CalendarDays,
+  Link2,
+  ClipboardCheck,
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonRow } from '@/components/ui/Skeleton';
@@ -21,56 +23,27 @@ import { useAppStore } from '@/lib/store';
 import { useAppointments, useUpdateAppointment, useDeleteAppointment } from '@/hooks/useAppointments';
 import { CreateAppointmentModal } from '@/components/CreateAppointmentModal';
 import { cn } from '@/lib/utils';
-import type { Appointment } from '@/types/database';
-
-// ─── Status config ─────────────────────────────────────────────────────────────
-
-type Status = Appointment['status'];
-type Source = string;
-
-const STATUS_CONFIG: Record<Status, { label: string; bg: string; text: string; border: string }> = {
-  pending:   { label: 'En attente', bg: 'bg-yellow-500/15', text: 'text-yellow-400',  border: 'border-yellow-500/40'  },
-  confirmed: { label: 'Confirmé',   bg: 'bg-[#25D366]/15',  text: 'text-[#25D366]',   border: 'border-[#25D366]/40'   },
-  completed: { label: 'Terminé',    bg: 'bg-blue-500/15',   text: 'text-blue-400',    border: 'border-blue-500/40'    },
-  cancelled: { label: 'Annulé',    bg: 'bg-gray-500/15',   text: 'text-gray-400',    border: 'border-gray-500/40'    },
-  no_show:   { label: 'No-show',   bg: 'bg-red-500/15',    text: 'text-red-400',     border: 'border-red-500/40'     },
-};
-
-const SOURCE_CONFIG: Record<Source, { label: string; bg: string; text: string }> = {
-  chatbot:  { label: 'Chatbot',  bg: 'bg-[#25D366]/15', text: 'text-[#25D366]' },
-  whatsapp: { label: 'WhatsApp', bg: 'bg-[#25D366]/15', text: 'text-[#25D366]' },
-  web:      { label: 'Web',      bg: 'bg-blue-500/15',  text: 'text-blue-400'  },
-  app:      { label: 'App',      bg: 'bg-purple-500/15',text: 'text-purple-400'},
-  manual:   { label: 'Manuel',   bg: 'bg-gray-500/15',  text: 'text-gray-400'  },
-  guest:    { label: 'Invité',   bg: 'bg-orange-500/15',text: 'text-orange-400'},
-  gcal:     { label: 'Google',   bg: 'bg-sky-500/15',   text: 'text-sky-400'   },
-  messenger:{ label: 'Messenger',bg: 'bg-violet-500/15',text: 'text-violet-400'},
-  instagram:{ label: 'Instagram',bg: 'bg-pink-500/15', text: 'text-pink-400'  },
-};
-
-const STATUS_FILTERS: { value: Status | 'all'; label: string }[] = [
-  { value: 'all',       label: 'Tous'      },
-  { value: 'pending',   label: 'En attente'},
-  { value: 'confirmed', label: 'Confirmés' },
-  { value: 'completed', label: 'Terminés'  },
-  { value: 'cancelled', label: 'Annulés'   },
-  { value: 'no_show',   label: 'No-show'   },
-];
+import { toast } from '@/components/ui/Toast';
+import { APPOINTMENT_STATUS, APPOINTMENT_STATUS_FILTERS, SOURCE_CONFIG } from '@/lib/appointment-status';
+import type { Appointment, AppointmentStatus } from '@/types/database';
 
 const PAGE_SIZE = 20;
 
 // ─── Status Badge ──────────────────────────────────────────────────────────────
 
-function StatusBadge({ status }: { status: Status }) {
-  const cfg = STATUS_CONFIG[status];
+function StatusBadge({ status }: { status: AppointmentStatus }) {
+  const cfg = APPOINTMENT_STATUS[status];
   return (
-    <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border', cfg.bg, cfg.text, cfg.border)}>
+    <span
+      aria-label={`Statut : ${cfg.label}`}
+      className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border', cfg.bg, cfg.text, cfg.border)}
+    >
       {cfg.label}
     </span>
   );
 }
 
-function SourceBadge({ source }: { source: Source }) {
+function SourceBadge({ source }: { source: string }) {
   const cfg = SOURCE_CONFIG[source] ?? SOURCE_CONFIG.manual;
   return (
     <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium', cfg.bg, cfg.text)}>
@@ -84,12 +57,22 @@ function SourceBadge({ source }: { source: Source }) {
 export default function AppointmentsPage() {
   const { businessId, businessName } = useAppStore();
 
-  const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<AppointmentStatus | 'all'>('all');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [page, setPage] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  function handleCopyBookingLink() {
+    if (!businessId) return;
+    const url = `${window.location.origin}/book/${businessId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2500);
+    });
+  }
 
   const filters = useMemo(() => ({
     status: statusFilter !== 'all' ? statusFilter : undefined,
@@ -104,12 +87,22 @@ export default function AppointmentsPage() {
   const paginated = useMemo(() => (appointments ?? []).slice(0, page * PAGE_SIZE), [appointments, page]);
   const hasMore = (appointments?.length ?? 0) > page * PAGE_SIZE;
 
-  function handleStatusChange(id: string, status: Status) {
+  function handleStatusChange(id: string, status: AppointmentStatus) {
     updateMutation.mutate({ id, updates: { status } });
   }
 
   function handleDelete(id: string, clientName: string) {
     setDeleteTarget({ id, name: clientName });
+  }
+
+  function handleCopyConfirmationLink(appointmentId: string) {
+    if (!businessId) return;
+    const url = `${window.location.origin}/book/${businessId}/confirmation?id=${appointmentId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      toast.success('Lien de confirmation copié');
+    }).catch(() => {
+      toast.error('Impossible de copier le lien');
+    });
   }
 
   return (
@@ -120,7 +113,7 @@ export default function AppointmentsPage() {
           {/* Filters */}
           <div className="flex items-center gap-2 flex-wrap">
             <Filter size={14} className="text-gray-500 shrink-0" />
-            {STATUS_FILTERS.map((f) => (
+            {APPOINTMENT_STATUS_FILTERS.map((f) => (
               <button
                 key={f.value}
                 onClick={() => { setStatusFilter(f.value); setPage(1); }}
@@ -151,20 +144,24 @@ export default function AppointmentsPage() {
         <div className="flex items-center gap-3 flex-wrap">
           <CalendarDays size={14} className="text-gray-500 shrink-0" />
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-500">Du</label>
+            <label htmlFor="date-from" className="text-xs text-gray-500">Du</label>
             <input
+              id="date-from"
               type="date"
               value={dateFrom}
               onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+              aria-label="Filtrer du date"
               className="bg-gray-900 border border-gray-800 text-white rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-[#25D366] transition-colors"
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-500">Au</label>
+            <label htmlFor="date-to" className="text-xs text-gray-500">Au</label>
             <input
+              id="date-to"
               type="date"
               value={dateTo}
               onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+              aria-label="Filtrer au date"
               className="bg-gray-900 border border-gray-800 text-white rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-[#25D366] transition-colors"
             />
           </div>
@@ -178,17 +175,187 @@ export default function AppointmentsPage() {
           )}
         </div>
 
-        {/* Table */}
-        <div className="rounded-xl bg-gray-900 border border-gray-800 overflow-hidden">
+        {/* ── Mobile card view ── */}
+        <div className="md:hidden space-y-3">
+          {/* Skeleton mobile */}
+          {isLoading && Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-4 animate-pulse space-y-3">
+              <div className="h-3 bg-gray-800 rounded w-1/3" />
+              <div className="h-4 bg-gray-800 rounded w-2/3" />
+              <div className="h-3 bg-gray-800 rounded w-1/2" />
+            </div>
+          ))}
+
+          {/* Empty state mobile */}
+          {!isLoading && paginated.length === 0 && (
+            <div className="bg-gray-900 border border-gray-800 rounded-xl py-14 flex flex-col items-center text-center px-6">
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                style={{ backgroundColor: 'rgba(37, 211, 102, 0.08)', border: '1px solid rgba(37, 211, 102, 0.15)' }}
+              >
+                <CalendarDays size={26} style={{ color: '#25D366' }} />
+              </div>
+              {statusFilter !== 'all' || dateFrom || dateTo ? (
+                <>
+                  <p className="text-sm font-medium text-gray-300 mb-1">Aucun rendez-vous trouvé</p>
+                  <p className="text-xs text-gray-500 max-w-xs">
+                    Aucun résultat pour ces filtres. Modifiez les critères ou réinitialisez la recherche.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-gray-300 mb-1">Aucun rendez-vous pour le moment</p>
+                  <p className="text-xs text-gray-500 max-w-xs leading-relaxed">
+                    Partagez votre lien de réservation avec vos clients pour recevoir vos premiers rendez-vous.
+                  </p>
+                  <button
+                    onClick={handleCopyBookingLink}
+                    className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
+                    style={
+                      linkCopied
+                        ? { backgroundColor: 'rgba(37, 211, 102, 0.12)', borderColor: 'rgba(37, 211, 102, 0.3)', color: '#25D366' }
+                        : { backgroundColor: 'rgba(255,255,255,0.04)', borderColor: '#374151', color: '#d1d5db' }
+                    }
+                  >
+                    {linkCopied ? (
+                      <>
+                        <ClipboardCheck size={15} />
+                        Lien copié !
+                      </>
+                    ) : (
+                      <>
+                        <Link2 size={15} />
+                        Copier le lien de réservation
+                      </>
+                    )}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Cards */}
+          {!isLoading && paginated.map((appt) => {
+            const clientName = appt.client_name ?? '—';
+            const serviceName = appt.service ?? '—';
+            const isPending = appt.status === 'pending';
+            const isActive = appt.status === 'pending' || appt.status === 'confirmed';
+
+            return (
+              <div key={appt.id} className="bg-gray-900 border border-gray-800 rounded-xl p-4 space-y-3">
+                {/* Date + Status */}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-gray-400">
+                    {format(parseISO(appt.appointment_date), 'd MMM yyyy', { locale: fr })} — {appt.time_slot?.slice(0, 5) ?? '—'}
+                  </span>
+                  <StatusBadge status={appt.status} />
+                </div>
+
+                {/* Client */}
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-gray-200 truncate">{clientName}</p>
+                  {appt.client_phone && (
+                    <p className="text-xs text-gray-500 truncate">{appt.client_phone}</p>
+                  )}
+                </div>
+
+                {/* Service + Source */}
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm text-gray-300 truncate">{serviceName}</p>
+                  <SourceBadge source={appt.source ?? 'manual'} />
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-1 pt-1 border-t border-gray-800">
+                  {isPending && (
+                    <button
+                      onClick={() => handleStatusChange(appt.id, 'confirmed')}
+                      disabled={updateMutation.isPending}
+                      title="Confirmer"
+                      aria-label={`Confirmer le rendez-vous de ${clientName}`}
+                      className="p-1.5 rounded-lg text-[#25D366] hover:bg-[#25D366]/10 transition-colors disabled:opacity-50"
+                    >
+                      <Check size={15} />
+                    </button>
+                  )}
+                  {isActive && (
+                    <button
+                      onClick={() => handleStatusChange(appt.id, 'completed')}
+                      disabled={updateMutation.isPending}
+                      title="Marquer terminé"
+                      aria-label={`Marquer le rendez-vous de ${clientName} comme terminé`}
+                      className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-500/10 transition-colors disabled:opacity-50"
+                    >
+                      <CheckCheck size={15} />
+                    </button>
+                  )}
+                  {isActive && (
+                    <button
+                      onClick={() => handleStatusChange(appt.id, 'no_show')}
+                      disabled={updateMutation.isPending}
+                      title="No-show"
+                      aria-label={`Marquer le rendez-vous de ${clientName} comme no-show`}
+                      className="p-1.5 rounded-lg text-orange-400 hover:bg-orange-500/10 transition-colors disabled:opacity-50"
+                    >
+                      <UserX size={15} />
+                    </button>
+                  )}
+                  {isActive && (
+                    <button
+                      onClick={() => handleStatusChange(appt.id, 'cancelled')}
+                      disabled={updateMutation.isPending}
+                      title="Annuler"
+                      aria-label={`Annuler le rendez-vous de ${clientName}`}
+                      className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                    >
+                      <XCircle size={15} />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleCopyConfirmationLink(appt.id)}
+                    title="Renvoyer confirmation (copier lien)"
+                    aria-label={`Copier le lien de confirmation pour ${clientName}`}
+                    className="p-1.5 rounded-lg text-gray-500 hover:text-[#25D366] hover:bg-[#25D366]/10 transition-colors"
+                  >
+                    <Link2 size={15} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(appt.id, clientName)}
+                    disabled={deleteMutation.isPending}
+                    title="Supprimer"
+                    aria-label={`Supprimer le rendez-vous de ${clientName}`}
+                    className="p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50 ml-auto"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Load more mobile */}
+          {hasMore && !isLoading && (
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              className="flex items-center gap-1.5 mx-auto text-sm text-gray-400 hover:text-white transition-colors py-2"
+            >
+              <ChevronDown size={16} />
+              Voir plus ({(appointments?.length ?? 0) - page * PAGE_SIZE} restants)
+            </button>
+          )}
+        </div>
+
+        {/* ── Desktop table view ── */}
+        <div role="table" aria-label="Liste des rendez-vous" className="hidden md:block rounded-xl bg-gray-900 border border-gray-800 overflow-hidden">
           {/* Table header */}
-          <div className="grid grid-cols-[1fr_80px_1.5fr_1.5fr_100px_80px_120px] gap-3 px-4 py-3 border-b border-gray-800 text-xs font-medium text-gray-500 uppercase tracking-wider">
-            <span>Date</span>
-            <span>Heure</span>
-            <span>Client</span>
-            <span>Service</span>
-            <span>Statut</span>
-            <span>Source</span>
-            <span className="text-right">Actions</span>
+          <div role="row" className="grid grid-cols-[1fr_80px_1.5fr_1.5fr_100px_80px_140px] gap-3 px-4 py-3 border-b border-gray-800 text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <span role="columnheader">Date</span>
+            <span role="columnheader">Heure</span>
+            <span role="columnheader">Client</span>
+            <span role="columnheader">Service</span>
+            <span role="columnheader">Statut</span>
+            <span role="columnheader">Source</span>
+            <span role="columnheader" className="text-right">Actions</span>
           </div>
 
           {/* Skeleton */}
@@ -204,10 +371,49 @@ export default function AppointmentsPage() {
 
           {/* Empty state */}
           {!isLoading && paginated.length === 0 && (
-            <div className="py-16 text-center">
-              <CalendarDays size={32} className="text-gray-700 mx-auto mb-3" />
-              <p className="text-gray-500 text-sm">Aucun rendez-vous trouvé</p>
-              <p className="text-gray-600 text-xs mt-1">Modifie les filtres ou crée un nouveau RDV</p>
+            <div className="py-14 flex flex-col items-center text-center px-6">
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                style={{ backgroundColor: 'rgba(37, 211, 102, 0.08)', border: '1px solid rgba(37, 211, 102, 0.15)' }}
+              >
+                <CalendarDays size={26} style={{ color: '#25D366' }} />
+              </div>
+              {statusFilter !== 'all' || dateFrom || dateTo ? (
+                <>
+                  <p className="text-sm font-medium text-gray-300 mb-1">Aucun rendez-vous trouvé</p>
+                  <p className="text-xs text-gray-500 max-w-xs">
+                    Aucun résultat pour ces filtres. Modifiez les critères ou réinitialisez la recherche.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-gray-300 mb-1">Aucun rendez-vous pour le moment</p>
+                  <p className="text-xs text-gray-500 max-w-xs leading-relaxed">
+                    Partagez votre lien de réservation avec vos clients pour recevoir vos premiers rendez-vous.
+                  </p>
+                  <button
+                    onClick={handleCopyBookingLink}
+                    className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors border"
+                    style={
+                      linkCopied
+                        ? { backgroundColor: 'rgba(37, 211, 102, 0.12)', borderColor: 'rgba(37, 211, 102, 0.3)', color: '#25D366' }
+                        : { backgroundColor: 'rgba(255,255,255,0.04)', borderColor: '#374151', color: '#d1d5db' }
+                    }
+                  >
+                    {linkCopied ? (
+                      <>
+                        <ClipboardCheck size={15} />
+                        Lien copié !
+                      </>
+                    ) : (
+                      <>
+                        <Link2 size={15} />
+                        Copier le lien de réservation
+                      </>
+                    )}
+                  </button>
+                </>
+              )}
             </div>
           )}
 
@@ -223,7 +429,8 @@ export default function AppointmentsPage() {
                 return (
                   <div
                     key={appt.id}
-                    className="grid grid-cols-[1fr_80px_1.5fr_1.5fr_100px_80px_120px] gap-3 items-center px-4 py-3 hover:bg-gray-800/40 transition-colors"
+                    role="row"
+                    className="grid grid-cols-[1fr_80px_1.5fr_1.5fr_100px_80px_140px] gap-3 items-center px-4 py-3 hover:bg-gray-800/40 transition-colors"
                   >
                     {/* Date */}
                     <span className="text-sm text-gray-200">
@@ -261,6 +468,7 @@ export default function AppointmentsPage() {
                           onClick={() => handleStatusChange(appt.id, 'confirmed')}
                           disabled={updateMutation.isPending}
                           title="Confirmer"
+                          aria-label={`Confirmer le rendez-vous de ${clientName}`}
                           className="p-1.5 rounded-lg text-[#25D366] hover:bg-[#25D366]/10 transition-colors disabled:opacity-50"
                         >
                           <Check size={15} />
@@ -271,6 +479,7 @@ export default function AppointmentsPage() {
                           onClick={() => handleStatusChange(appt.id, 'completed')}
                           disabled={updateMutation.isPending}
                           title="Marquer terminé"
+                          aria-label={`Marquer le rendez-vous de ${clientName} comme terminé`}
                           className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-500/10 transition-colors disabled:opacity-50"
                         >
                           <CheckCheck size={15} />
@@ -281,6 +490,7 @@ export default function AppointmentsPage() {
                           onClick={() => handleStatusChange(appt.id, 'no_show')}
                           disabled={updateMutation.isPending}
                           title="No-show"
+                          aria-label={`Marquer le rendez-vous de ${clientName} comme no-show`}
                           className="p-1.5 rounded-lg text-orange-400 hover:bg-orange-500/10 transition-colors disabled:opacity-50"
                         >
                           <UserX size={15} />
@@ -291,15 +501,25 @@ export default function AppointmentsPage() {
                           onClick={() => handleStatusChange(appt.id, 'cancelled')}
                           disabled={updateMutation.isPending}
                           title="Annuler"
+                          aria-label={`Annuler le rendez-vous de ${clientName}`}
                           className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
                         >
                           <XCircle size={15} />
                         </button>
                       )}
                       <button
+                        onClick={() => handleCopyConfirmationLink(appt.id)}
+                        title="Renvoyer confirmation (copier lien)"
+                        aria-label={`Copier le lien de confirmation pour ${clientName}`}
+                        className="p-1.5 rounded-lg text-gray-500 hover:text-[#25D366] hover:bg-[#25D366]/10 transition-colors"
+                      >
+                        <Link2 size={15} />
+                      </button>
+                      <button
                         onClick={() => handleDelete(appt.id, clientName)}
                         disabled={deleteMutation.isPending}
                         title="Supprimer"
+                        aria-label={`Supprimer le rendez-vous de ${clientName}`}
                         className="p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
                       >
                         <Trash2 size={15} />

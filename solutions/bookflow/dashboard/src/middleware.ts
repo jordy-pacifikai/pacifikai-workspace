@@ -37,12 +37,14 @@ export async function middleware(request: NextRequest) {
   // Only serve landing page, legal pages, and API routes.
   // All auth/dashboard routes redirect to dashboard subdomain.
   if (isLandingHost) {
-    const landingRoutes = ['/', '/landing', '/privacy', '/terms', '/data-deletion']
+    const landingRoutes = ['/', '/landing', '/privacy', '/terms', '/data-deletion', '/status', '/pricing', '/faq', '/unsubscribe']
     const isLandingRoute = landingRoutes.includes(pathname)
+    const isSecteurRoute = pathname.startsWith('/secteur/')
+    const isBookRoute = pathname.startsWith('/book/')
     const isApi = pathname.startsWith('/api/')
     const isAsset = pathname.startsWith('/_next/') || pathname.startsWith('/icons/') || pathname.startsWith('/logos/')
 
-    if (isLandingRoute || isApi || isAsset) {
+    if (isLandingRoute || isSecteurRoute || isBookRoute || isApi || isAsset) {
       return supabaseResponse
     }
 
@@ -55,7 +57,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Public routes on dashboard — no auth required
-  const publicRoutes = ['/login', '/signup', '/auth/callback', '/privacy', '/terms', '/data-deletion']
+  const publicRoutes = ['/login', '/signup', '/auth/callback', '/privacy', '/terms', '/data-deletion', '/book', '/status', '/review', '/pricing', '/faq', '/offline', '/unsubscribe']
   const isPublic = publicRoutes.some(r => pathname.startsWith(r))
   const isWebhook = pathname.startsWith('/api/')
 

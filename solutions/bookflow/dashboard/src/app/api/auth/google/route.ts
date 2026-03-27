@@ -1,13 +1,11 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
+import { z } from 'zod';
 import { watchCalendar, stopWatch } from '@/lib/gcal';
-
-function getAdmin() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-}
+import { requireAuth, requireBusinessAccess } from '@/lib/auth';
+import { logger } from '@/lib/logger';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import crypto from 'crypto';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
@@ -15,11 +13,27 @@ const REDIRECT_URI = process.env.NEXT_PUBLIC_SITE_URL
   ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google`
   : 'https://dashboard.vea.pacifikai.com/api/auth/google';
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vea.pacifikai.com';
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Redirect and clear the OAuth nonce cookie */
+function oauthRedirect(url: string): NextResponse {
+  const res = NextResponse.redirect(url);
+  res.cookies.delete({ name: 'gcal_oauth_nonce', path: '/api/auth/google' });
+  return res;
+}
+
 /**
  * GET — Generate Google OAuth URL (called from frontend to start flow).
  * Query params: ?business_id=xxx
  */
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
+  const ip = getClientIp(req)
+  const { success } = rateLimit(`auth-google-get:${ip}`, { interval: 60_000, limit: 5 })
+  if (!success) {
+    return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
+  }
+
   const url = new URL(req.url);
   const businessId = url.searchParams.get('business_id');
 
@@ -28,13 +42,35 @@ export async function GET(req: Request) {
   const state = url.searchParams.get('state');
 
   if (code && state) {
-    // This is the OAuth callback from Google
-    return handleCallback(code, state);
+    // This is the OAuth callback from Google — validate CSRF nonce
+    const separatorIdx = state.indexOf(':');
+    if (separatorIdx === -1) {
+      return oauthRedirect(`${SITE_URL}/channels?gcal_error=invalid_state`);
+    }
+    const stateBizId = state.slice(0, separatorIdx);
+    const nonce = state.slice(separatorIdx + 1);
+
+    if (!UUID_RE.test(stateBizId)) {
+      return oauthRedirect(`${SITE_URL}/channels?gcal_error=invalid_state`);
+    }
+
+    const cookieNonce = req.cookies.get('gcal_oauth_nonce')?.value;
+    if (!cookieNonce || cookieNonce !== nonce) {
+      return oauthRedirect(`${SITE_URL}/channels?gcal_error=csrf_failed`);
+    }
+
+    return handleCallback(req, code, stateBizId);
   }
 
   if (!businessId) {
     return NextResponse.json({ error: 'business_id required' }, { status: 400 });
   }
+
+  if (!UUID_RE.test(businessId)) {
+    return NextResponse.json({ error: 'Invalid business_id' }, { status: 400 });
+  }
+
+  const nonce = crypto.randomUUID();
 
   const scopes = [
     'https://www.googleapis.com/auth/calendar.events',
@@ -48,18 +84,33 @@ export async function GET(req: Request) {
     scope: scopes.join(' '),
     access_type: 'offline',
     prompt: 'consent',
-    state: businessId, // pass business_id as state
+    state: `${businessId}:${nonce}`,
   });
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     url: `https://accounts.google.com/o/oauth2/v2/auth?${params}`,
   });
+  response.cookies.set('gcal_oauth_nonce', nonce, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    maxAge: 600,
+    path: '/api/auth/google',
+  });
+  return response;
 }
 
 /**
  * Handle the OAuth callback from Google.
  */
-async function handleCallback(code: string, businessId: string) {
+async function handleCallback(req: NextRequest, code: string, businessId: string) {
+  // Verify caller owns this business
+  try {
+    await requireBusinessAccess(businessId);
+  } catch {
+    return oauthRedirect(`${SITE_URL}/channels?gcal_error=unauthorized`);
+  }
+
   // Exchange code for tokens
   const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
@@ -75,11 +126,9 @@ async function handleCallback(code: string, businessId: string) {
 
   if (!tokenRes.ok) {
     const err = await tokenRes.text();
-    console.error('[GCal OAuth] Token exchange failed:', err);
+    logger.error('Token exchange failed', { action: 'gcal_oauth', error: String(err) });
     // Redirect back to channels page with error
-    return NextResponse.redirect(
-      new URL('/channels?gcal_error=token_exchange_failed', REDIRECT_URI.replace('/api/auth/google', ''))
-    );
+    return oauthRedirect(`${SITE_URL}/channels?gcal_error=token_exchange_failed`);
   }
 
   const tokens = await tokenRes.json();
@@ -87,9 +136,7 @@ async function handleCallback(code: string, businessId: string) {
   const refreshToken = tokens.refresh_token;
 
   if (!refreshToken) {
-    return NextResponse.redirect(
-      new URL('/channels?gcal_error=no_refresh_token', REDIRECT_URI.replace('/api/auth/google', ''))
-    );
+    return oauthRedirect(`${SITE_URL}/channels?gcal_error=no_refresh_token`);
   }
 
   // List calendars to find primary
@@ -103,13 +150,11 @@ async function handleCallback(code: string, businessId: string) {
   const calendarId = primary?.id ?? calendars[0]?.id;
 
   if (!calendarId) {
-    return NextResponse.redirect(
-      new URL('/channels?gcal_error=no_calendar_found', REDIRECT_URI.replace('/api/auth/google', ''))
-    );
+    return oauthRedirect(`${SITE_URL}/channels?gcal_error=no_calendar_found`);
   }
 
   // Store in Supabase
-  const sb = getAdmin();
+  const sb = supabaseAdmin();
   await sb
     .from('bookbot_businesses')
     .update({
@@ -129,10 +174,10 @@ async function handleCallback(code: string, businessId: string) {
         gcal_watch_resource_id: watch.resourceId,
         gcal_watch_expiration: new Date(Number(watch.expiration)).toISOString(),
       }).eq('id', businessId);
-      console.log(`[GCal OAuth] Watch channel created: ${watch.channelId}, expires: ${watch.expiration}`);
+      logger.info(`Watch channel created: ${watch.channelId}`, { action: 'gcal-oauth-watch', businessId, expiration: watch.expiration });
     }
   } catch (e) {
-    console.error('[GCal OAuth] Watch setup failed (non-blocking):', e);
+    logger.warn('Watch setup failed (non-blocking)', { action: 'gcal_oauth_watch', error: String(e) });
   }
 
   // Initial sync — import existing calendar events immediately
@@ -172,10 +217,15 @@ async function handleCallback(code: string, businessId: string) {
 
       const tz = biz?.timezone ?? 'Pacific/Tahiti';
 
+      // Batch-prepare inserts to avoid N+1 DB calls
+      const blockedBatch: Array<Record<string, unknown>> = [];
+      const appointmentBatch: Array<Record<string, unknown>> = [];
+      const clientNames = new Set<string>();
+      const clientBatch: Array<Record<string, unknown>> = [];
+
       for (const item of items) {
         if (item.start?.date) {
-          // All-day → blocked_slots
-          await sb.from('bookbot_blocked_slots').insert({
+          blockedBatch.push({
             business_id: businessId,
             date: item.start.date,
             time_from: null,
@@ -186,7 +236,6 @@ async function handleCallback(code: string, businessId: string) {
             gcal_event_id: item.id,
           });
         } else if (item.start?.dateTime && item.end?.dateTime) {
-          // Timed → appointments + client
           const startDt = new Date(item.start.dateTime);
           const endDt = new Date(item.end.dateTime);
           const startLocal = new Date(startDt.toLocaleString('en-US', { timeZone: tz }));
@@ -196,32 +245,22 @@ async function handleCallback(code: string, businessId: string) {
           const timeSlot = `${String(startLocal.getHours()).padStart(2, '0')}:${String(startLocal.getMinutes()).padStart(2, '0')}`;
           const endTime = `${String(endLocal.getHours()).padStart(2, '0')}:${String(endLocal.getMinutes()).padStart(2, '0')}`;
 
-          // Resolve client from attendees
           const attendee = (item.attendees ?? []).find((a) => a.email && !a.self);
           const clientName = attendee?.displayName ?? item.summary ?? '(sans titre)';
           const clientEmail = attendee?.email ?? null;
 
-          // Create client if not exists
-          if (clientName) {
-            const { data: existingClient } = await sb
-              .from('bookbot_clients')
-              .select('id')
-              .eq('business_id', businessId)
-              .eq('name', clientName)
-              .maybeSingle();
-
-            if (!existingClient) {
-              await sb.from('bookbot_clients').insert({
-                business_id: businessId,
-                name: clientName,
-                email: clientEmail,
-                source: 'gcal',
-                tags: ['gcal'],
-              });
-            }
+          if (clientName && !clientNames.has(clientName)) {
+            clientNames.add(clientName);
+            clientBatch.push({
+              business_id: businessId,
+              name: clientName,
+              email: clientEmail,
+              source: 'gcal',
+              tags: ['gcal'],
+            });
           }
 
-          await sb.from('bookbot_appointments').insert({
+          appointmentBatch.push({
             business_id: businessId,
             client_name: clientName,
             client_email: clientEmail,
@@ -235,28 +274,58 @@ async function handleCallback(code: string, businessId: string) {
           });
         }
       }
-      console.log(`[GCal OAuth] Initial sync: ${items.length} events imported for business ${businessId}`);
+
+      // Batch inserts (3 queries instead of up to 750)
+      if (blockedBatch.length > 0) {
+        await sb.from('bookbot_blocked_slots').insert(blockedBatch);
+      }
+      if (clientBatch.length > 0) {
+        await sb.from('bookbot_clients').upsert(clientBatch, {
+          onConflict: 'business_id,name',
+          ignoreDuplicates: true,
+        });
+      }
+      if (appointmentBatch.length > 0) {
+        await sb.from('bookbot_appointments').upsert(appointmentBatch, {
+          onConflict: 'business_id,gcal_event_id',
+          ignoreDuplicates: true,
+        });
+      }
+      logger.info(`Initial sync: ${items.length} events imported`, { action: 'gcal-oauth-sync', businessId, count: items.length });
     }
   } catch (e) {
-    console.error('[GCal OAuth] Initial sync failed (non-blocking):', e);
+    logger.warn('Initial sync failed (non-blocking)', { action: 'gcal_oauth_sync', error: String(e) });
   }
 
   // Redirect back to channels page with success
-  return NextResponse.redirect(
-    new URL('/channels?gcal_connected=true', REDIRECT_URI.replace('/api/auth/google', ''))
-  );
+  return oauthRedirect(`${SITE_URL}/channels?gcal_connected=true`);
 }
 
 /**
  * POST — Exchange code for tokens and list calendars (alternative flow).
  */
 export async function POST(req: Request) {
-  const body = await req.json();
-  const { code } = body;
+  const ip = getClientIp(req)
+  const { success } = rateLimit(`auth-google-post:${ip}`, { interval: 60_000, limit: 5 })
+  if (!success) {
+    return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
+  }
 
-  if (!code) {
+  // Require authenticated user
+  try {
+    await requireAuth()
+  } catch (authError) {
+    if (authError instanceof NextResponse) return authError
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+  const postSchema = z.object({ code: z.string().min(1) });
+  const parsed = postSchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) {
     return NextResponse.json({ error: 'code required' }, { status: 400 });
   }
+  const { code } = parsed.data;
 
   // Exchange code for tokens
   const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
@@ -273,7 +342,8 @@ export async function POST(req: Request) {
 
   const tokens = await tokenRes.json();
   if (!tokenRes.ok) {
-    return NextResponse.json({ error: 'token_exchange_failed', details: tokens }, { status: 400 });
+    logger.error('Token exchange failed', { action: 'gcal_oauth_post', error: JSON.stringify(tokens) });
+    return NextResponse.json({ error: 'token_exchange_failed' }, { status: 400 });
   }
 
   // List calendars
@@ -289,22 +359,44 @@ export async function POST(req: Request) {
       summary: c.summary,
       primary: Boolean(c.primary),
     })),
-    refreshToken: tokens.refresh_token,
   });
+  } catch (err) {
+    logger.error('Google OAuth POST error', { action: 'gcal_oauth_post', error: String(err) });
+    return NextResponse.json({ error: 'Erreur interne' }, { status: 500 });
+  }
 }
 
 /**
  * DELETE — Disconnect Google Calendar.
  */
 export async function DELETE(req: Request) {
-  const body = await req.json();
-  const { businessId } = body;
-
-  if (!businessId) {
-    return NextResponse.json({ error: 'businessId required' }, { status: 400 });
+  const ip = getClientIp(req)
+  const { success } = rateLimit(`auth-google-delete:${ip}`, { interval: 60_000, limit: 5 })
+  if (!success) {
+    return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
 
-  const sb = getAdmin();
+  try {
+  const disconnectSchema = z.object({
+    businessId: z.string().uuid(),
+    keepSlots: z.boolean().optional(),
+  });
+  const parsed = disconnectSchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid input', details: parsed.error.flatten() }, { status: 400 });
+  }
+
+  const { businessId } = parsed.data;
+
+  // Auth: verify caller owns this business
+  try {
+    await requireBusinessAccess(businessId);
+  } catch (authError) {
+    if (authError instanceof NextResponse) return authError;
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const sb = supabaseAdmin();
 
   // Get current data to revoke token + stop watch
   const { data } = await sb
@@ -324,35 +416,26 @@ export async function DELETE(req: Request) {
     }).catch(() => {});
   }
 
-  // Clear columns
-  await sb
-    .from('bookbot_businesses')
-    .update({
-      gcal_refresh_token: null,
-      gcal_calendar_id: null,
-      gcal_connected_at: null,
-      gcal_watch_channel_id: null,
-      gcal_watch_resource_id: null,
-      gcal_watch_expiration: null,
-    })
-    .eq('id', businessId);
+  // Clear columns + optionally remove synced data (parallel)
+  const keepSlots = parsed.data.keepSlots ?? false;
+  const clearColumns = sb.from('bookbot_businesses').update({
+    gcal_refresh_token: null, gcal_calendar_id: null, gcal_connected_at: null,
+    gcal_watch_channel_id: null, gcal_watch_resource_id: null, gcal_watch_expiration: null,
+  }).eq('id', businessId);
 
-  // Optionally remove synced data
-  const keepSlots = body.keepSlots ?? false;
   if (!keepSlots) {
-    // Remove gcal blocked slots (all-day events)
-    await sb
-      .from('bookbot_blocked_slots')
-      .delete()
-      .eq('business_id', businessId)
-      .eq('source', 'gcal');
-    // Remove gcal appointments (timed events)
-    await sb
-      .from('bookbot_appointments')
-      .delete()
-      .eq('business_id', businessId)
-      .eq('source', 'gcal');
+    await Promise.all([
+      clearColumns,
+      sb.from('bookbot_blocked_slots').delete().eq('business_id', businessId).eq('source', 'gcal'),
+      sb.from('bookbot_appointments').delete().eq('business_id', businessId).eq('source', 'gcal'),
+    ]);
+  } else {
+    await clearColumns;
   }
 
   return NextResponse.json({ ok: true });
+  } catch (err) {
+    logger.error('Google disconnect error', { action: 'gcal_disconnect', error: String(err) });
+    return NextResponse.json({ error: 'Erreur interne' }, { status: 500 });
+  }
 }

@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/Toast';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -114,6 +115,9 @@ export function useCreateKnowledge(businessId: string | null) {
       queryClient.invalidateQueries({ queryKey: knowledgeKeys.list(id) });
       triggerEmbeddings(doc.id, id, 'upsert');
     },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la création du document');
+    },
   });
 }
 
@@ -128,6 +132,9 @@ export function useUpdateKnowledge(businessId: string | null) {
       queryClient.invalidateQueries({ queryKey: knowledgeKeys.list(bid) });
       triggerEmbeddings(doc.id, bid, 'upsert');
     },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la mise à jour du document');
+    },
   });
 }
 
@@ -140,6 +147,9 @@ export function useDeleteKnowledge(businessId: string | null) {
     onSuccess: (deletedId) => {
       queryClient.invalidateQueries({ queryKey: knowledgeKeys.list(bid) });
       triggerEmbeddings(deletedId, bid, 'delete');
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la suppression du document');
     },
   });
 }

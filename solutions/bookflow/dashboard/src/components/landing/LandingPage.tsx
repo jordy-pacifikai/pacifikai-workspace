@@ -7,8 +7,9 @@ import {
   MessageCircle, CalendarCheck, Clock, BarChart3, Smartphone, Bot,
   ArrowRight, Check, ChevronDown, Zap, Shield, Globe,
   Scissors, UtensilsCrossed, Stethoscope, TrendingUp, Users, Star,
+  Share2, Play,
 } from 'lucide-react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const GREEN = '#25D366';
 
@@ -88,10 +89,10 @@ function Nav() {
           <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
         </div>
         <div className="flex items-center gap-3">
-          <a href="https://dashboard.vea.pacifikai.com/login" className="text-sm text-gray-400 hover:text-white transition-colors hidden sm:block">Connexion</a>
-          <a href="https://dashboard.vea.pacifikai.com/signup" className="text-sm font-semibold px-4 py-2 rounded-lg text-gray-950 hover:opacity-90 transition-opacity" style={{ backgroundColor: GREEN }}>
+          <Link href="/login" className="text-sm text-gray-400 hover:text-white transition-colors hidden sm:block">Connexion</Link>
+          <Link href="/signup" className="text-sm font-semibold px-4 py-2 rounded-lg text-gray-950 hover:opacity-90 transition-opacity" style={{ backgroundColor: GREEN }}>
             Essayer gratuitement
-          </a>
+          </Link>
         </div>
       </div>
     </nav>
@@ -102,7 +103,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="relative pt-28 pb-16 lg:pt-32 lg:pb-20 px-6 overflow-hidden">
+    <section role="banner" aria-labelledby="hero-heading" className="relative pt-28 pb-16 lg:pt-32 lg:pb-20 px-6 overflow-hidden">
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full opacity-15"
           style={{ background: `radial-gradient(circle, ${GREEN}40 0%, transparent 60%)` }} />
@@ -111,24 +112,32 @@ function Hero() {
       <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
         {/* Left — copy */}
         <div className="text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/60 border border-gray-700/50 text-xs text-gray-300 mb-6">
-            <Zap size={12} style={{ color: GREEN }} />
-            Assistant IA pour la Polynesie francaise
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-800/60 border border-gray-700/50 text-xs text-gray-300 mb-4">
+            <span>🇵🇫</span>
+            Concu pour la Polynesie francaise
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-white leading-[1.1] tracking-tight">
+          <h1 id="hero-heading" className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-white leading-[1.1] tracking-tight">
             Ne perdez plus<br className="hidden sm:block" /> de clients{' '}
             <span className="landing-glow-text" style={{ color: GREEN }}>quand vous ne pouvez pas repondre</span>
           </h1>
 
-          <p className="mt-6 text-lg text-gray-400 max-w-xl leading-relaxed">
+          <p className="mt-5 text-base font-medium" style={{ color: GREEN }}>
+            Automatisez vos reservations par WhatsApp en 5 minutes
+          </p>
+
+          <p className="mt-3 text-lg text-gray-400 max-w-xl leading-relaxed">
             Ve&apos;a repond a vos clients sur Messenger, Instagram et WhatsApp, propose les creneaux et confirme les rendez-vous. <strong className="text-gray-200">24h/24, 7j/7.</strong>
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start gap-4">
-            <a href="https://dashboard.vea.pacifikai.com/signup" className="landing-breathing-border flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-gray-950 hover:opacity-90 transition-all" style={{ backgroundColor: GREEN }}>
-              Commencer gratuitement
+            <a href="/signup?plan=starter" aria-label="Essayer Ve'a gratuitement pendant 14 jours, sans carte bancaire" className="landing-breathing-border flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-gray-950 hover:opacity-90 transition-all" style={{ backgroundColor: GREEN }}>
+              Essayer gratuitement — 14 jours offerts
               <ArrowRight size={18} />
+            </a>
+            <a href="/book/demo" aria-label="Voir une demonstration de Ve'a" className="flex items-center gap-2 px-6 py-3.5 rounded-lg text-base font-semibold text-gray-300 bg-gray-800/60 border border-gray-700/50 hover:bg-gray-700/60 hover:text-white transition-all">
+              <Play size={15} />
+              Voir une demo
             </a>
           </div>
           <p className="mt-3 text-xs text-gray-600 lg:text-left text-center">
@@ -240,10 +249,10 @@ const FEATURES = [
 function Features() {
   const fade = useFadeIn();
   return (
-    <section id="features" className="py-16 px-6">
+    <section id="features" role="region" aria-labelledby="features-heading" className="py-16 px-6">
       <div ref={fade.ref} className={`max-w-6xl mx-auto ${fade.className}`} style={fade.style}>
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">Tout ce qu&apos;il vous faut</h2>
+          <h2 id="features-heading" className="text-3xl sm:text-4xl font-bold text-white">Tout ce qu&apos;il vous faut</h2>
           <p className="mt-3 text-gray-400 max-w-xl mx-auto">Un assistant complet qui gere vos rendez-vous de A a Z.</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -274,9 +283,9 @@ function Industries() {
         </div>
         <div className="grid sm:grid-cols-3 gap-5">
           {[
-            { icon: Scissors, name: 'Salons & Beaute', gain: '+70 000 F/mois', desc: 'Coupe, couleur, barbe, soins. Creneaux proposes selon la duree du service.', examples: 'Coiffeurs, estheticiennes, barbiers, spas' },
-            { icon: UtensilsCrossed, name: 'Restaurants & Cafes', gain: '+91 000 F/mois', desc: 'Tables, nombre de couverts, preferences. Reservation automatique.', examples: 'Restaurants, snacks, roulottes, bars' },
-            { icon: Stethoscope, name: 'Cabinets Medicaux', gain: '+136 000 F/mois', desc: 'Consultations, suivis, urgences. Respect de la confidentialite.', examples: 'Medecins, dentistes, kines, osteos' },
+            { icon: Scissors, name: 'Salons & Beaute', gain: '+70 000 XPF/mois', desc: 'Coupe, couleur, barbe, soins. Creneaux proposes selon la duree du service.', examples: 'Coiffeurs, estheticiennes, barbiers, spas' },
+            { icon: UtensilsCrossed, name: 'Restaurants & Cafes', gain: '+91 000 XPF/mois', desc: 'Tables, nombre de couverts, preferences. Reservation automatique.', examples: 'Restaurants, snacks, roulottes, bars' },
+            { icon: Stethoscope, name: 'Cabinets Medicaux', gain: '+136 000 XPF/mois', desc: 'Consultations, suivis, urgences. Respect de la confidentialite.', examples: 'Medecins, dentistes, kines, osteos' },
           ].map((sector) => (
             <div key={sector.name} className="rounded-xl bg-gray-900/50 border border-gray-800 p-6 hover:border-gray-700 transition-colors">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: `${GREEN}15` }}>
@@ -301,24 +310,46 @@ function Industries() {
 
 function HowItWorks() {
   const fade = useFadeIn();
+  const steps = [
+    {
+      step: '1',
+      icon: Smartphone,
+      title: 'Creez votre page de reservation',
+      desc: 'Ajoutez vos services, vos horaires et votre logo. Votre page est prete en 5 minutes. Aucune carte bancaire.',
+    },
+    {
+      step: '2',
+      icon: Share2,
+      title: 'Partagez le lien avec vos clients',
+      desc: 'Envoyez le lien par Instagram, WhatsApp, Messenger ou collez-le dans votre bio. Vos clients reservent en quelques secondes.',
+    },
+    {
+      step: '3',
+      icon: CalendarCheck,
+      title: 'Recevez et gerez vos RDV automatiquement',
+      desc: 'Ve\'a confirme chaque reservation, envoie des rappels et synchronise votre Google Calendar. Zero effort de votre cote.',
+    },
+  ];
   return (
-    <section className="py-16 px-6">
-      <div ref={fade.ref} className={`max-w-4xl mx-auto ${fade.className}`} style={fade.style}>
+    <section id="how-it-works" className="py-16 px-6">
+      <div ref={fade.ref} className={`max-w-5xl mx-auto ${fade.className}`} style={fade.style}>
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">Pret en 3 etapes</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">Comment ca marche</h2>
+          <p className="mt-3 text-gray-400 max-w-xl mx-auto">Pret a accepter des reservations en 3 etapes simples.</p>
         </div>
         <div className="grid sm:grid-cols-3 gap-8">
-          {[
-            { step: '1', title: 'Inscrivez-vous', desc: 'Creez votre compte en 30 secondes. Aucune carte bancaire.' },
-            { step: '2', title: 'Configurez', desc: 'Ajoutez vos services, horaires et preferences. 5 minutes.' },
-            { step: '3', title: 'C\'est parti', desc: 'Votre assistant IA prend les rendez-vous pour vous.' },
-          ].map((item) => (
-            <div key={item.step} className="text-center">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold text-gray-950" style={{ backgroundColor: GREEN }}>
-                {item.step}
+          {steps.map((item) => (
+            <div key={item.step} className="relative text-center">
+              <div className="relative inline-flex items-center justify-center mb-5">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${GREEN}15` }}>
+                  <item.icon size={28} style={{ color: GREEN }} />
+                </div>
+                <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-gray-950" style={{ backgroundColor: GREEN }}>
+                  {item.step}
+                </span>
               </div>
               <h3 className="text-base font-semibold text-white mb-2">{item.title}</h3>
-              <p className="text-sm text-gray-500">{item.desc}</p>
+              <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -368,22 +399,22 @@ function CaseStudies() {
 
 const PLANS = [
   {
-    name: 'Starter', desc: 'Pour demarrer sans risque', price: '4 900',
+    name: 'Starter', slug: 'starter', desc: 'Pour demarrer sans risque', price: '4 900',
     features: ['Messenger IA conversationnel', 'Jusqu\'a 50 conversations/mois', 'Tableau de bord', 'Configuration guidee', 'Support par email'],
     featured: false,
   },
   {
-    name: 'Essentiel', desc: 'L\'automatisation qui change tout', price: '9 900',
+    name: 'Essentiel', slug: 'essentiel', desc: 'L\'automatisation qui change tout', price: '9 900',
     features: ['Tout le plan Starter', 'Jusqu\'a 200 conversations/mois', 'Instagram + WhatsApp', 'Google Calendar sync', 'Rappels automatiques'],
     featured: true,
   },
   {
-    name: 'Premium', desc: 'Le pack complet multi-canal', price: '19 900',
+    name: 'Premium', slug: 'premium', desc: 'Le pack complet multi-canal', price: '19 900',
     features: ['Tout le plan Essentiel', 'Jusqu\'a 500 conversations/mois', 'Statistiques avancees', 'Support prioritaire', 'Campagnes acquisition'],
     featured: false,
   },
   {
-    name: 'Business', desc: 'Sur mesure pour votre entreprise', price: null as string | null,
+    name: 'Business', slug: 'business', desc: 'Sur mesure pour votre entreprise', price: null as string | null,
     features: ['Tout le plan Premium', 'Conversations illimitees', 'Multi-sites / franchises', 'Onboarding dedie', 'SLA garanti'],
     featured: false,
   },
@@ -392,11 +423,12 @@ const PLANS = [
 function Pricing() {
   const fade = useFadeIn();
   return (
-    <section id="pricing" className="py-16 px-6">
+    <section id="pricing" role="region" aria-labelledby="pricing-heading" className="py-16 px-6">
       <div ref={fade.ref} className={`max-w-6xl mx-auto ${fade.className}`} style={fade.style}>
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">Tarification transparente</h2>
+          <h2 id="pricing-heading" className="text-3xl sm:text-4xl font-bold text-white">Tarification transparente</h2>
           <p className="mt-3 text-gray-400">Sans engagement. Annuel : 2 mois offerts.</p>
+          <p className="mt-2 text-sm font-medium" style={{ color: GREEN }}>14 jours d&apos;essai gratuit, sans engagement</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
           {PLANS.map((plan) => (
@@ -404,14 +436,17 @@ function Pricing() {
               className={`rounded-xl p-6 flex flex-col ${plan.featured ? 'bg-gray-900 border-2 landing-breathing-border' : 'bg-gray-900/50 border border-gray-800'}`}
               style={plan.featured ? { borderColor: GREEN } : undefined}
             >
-              {plan.featured && (
-                <div className="text-xs font-semibold px-2 py-0.5 rounded-full self-start mb-3" style={{ backgroundColor: `${GREEN}20`, color: GREEN }}>Populaire</div>
-              )}
+              {plan.featured ? (
+                <div className="text-xs font-semibold px-2.5 py-1 rounded-full self-start mb-3 flex items-center gap-1.5" style={{ backgroundColor: `${GREEN}25`, color: GREEN }}>
+                  <Star size={11} fill="currentColor" />
+                  Le plus populaire
+                </div>
+              ) : <div className="mb-3 h-6" />}
               <h3 className="text-lg font-bold text-white">{plan.name}</h3>
               <p className="text-sm text-gray-500 mt-1">{plan.desc}</p>
               <div className="mt-5">
                 {plan.price ? (
-                  <><span className="text-3xl font-bold text-white">{plan.price}</span><span className="text-sm text-gray-500 ml-1">F/mois</span></>
+                  <><span className="text-3xl font-bold text-white">{plan.price}</span><span className="text-sm text-gray-500 ml-1">XPF/mois</span></>
                 ) : (
                   <><span className="text-2xl font-bold text-white">Sur devis</span><p className="text-xs text-gray-600 mt-1">Tarif personnalise</p></>
                 )}
@@ -423,11 +458,17 @@ function Pricing() {
                   </li>
                 ))}
               </ul>
-              <a href={plan.price ? 'https://dashboard.vea.pacifikai.com/signup' : 'mailto:support@vea.pacifikai.com?subject=Plan%20Business%20Ve%27a'}
+              <a
+                href={
+                  plan.price
+                    ? `/signup?plan=${plan.slug}`
+                    : 'mailto:support@vea.pacifikai.com?subject=Plan%20Business%20Ve%27a'
+                }
+                aria-label={plan.price ? `Commencer avec le plan ${plan.name} a ${plan.price} XPF par mois` : `Nous contacter pour le plan ${plan.name}`}
                 className={`mt-6 block text-center py-2.5 rounded-lg text-sm font-semibold transition-all ${plan.featured ? 'text-gray-950 hover:opacity-90' : 'bg-gray-800 text-gray-200 hover:bg-gray-700'}`}
                 style={plan.featured ? { backgroundColor: GREEN } : undefined}
               >
-                {plan.price ? 'Commencer' : 'Nous contacter'}
+                {plan.price ? `Commencer avec ${plan.name}` : 'Nous contacter'}
               </a>
             </div>
           ))}
@@ -446,25 +487,37 @@ const FAQS = [
   { q: 'Est-ce que ca marche en Polynesie francaise ?', a: 'Oui ! Ve\'a est concu pour les entreprises polynesiennes. Prix en XPF, bot en francais, specificites locales integrees.' },
   { q: 'Je peux annuler quand je veux ?', a: 'Oui, sans engagement. Annulez a tout moment depuis votre tableau de bord. Pas de frais caches.' },
   { q: 'Ca fonctionne avec Google Calendar ?', a: 'Oui ! Connectez votre Google Calendar pour synchroniser les rendez-vous automatiquement. Les events bloquent aussi les creneaux dans Ve\'a.' },
+  { q: 'Combien coute Ve\'a ?', a: 'A partir de 4 900 XPF/mois pour le plan Starter. Vous pouvez tester Ve\'a gratuitement pendant 14 jours, sans carte bancaire. Si vous choisissez un abonnement annuel, vous beneficiez de 2 mois offerts.' },
+  { q: 'Comment mes clients prennent rendez-vous ?', a: 'Via un lien de reservation unique que vous partagez sur vos reseaux sociaux, votre site web ou directement par message. Le client clique, choisit un creneau et confirme. Ve\'a lui envoie automatiquement une confirmation et des rappels.' },
+  { q: 'Ve\'a fonctionne-t-il avec Instagram et Messenger ?', a: 'Oui, Ve\'a se connecte a Messenger, Instagram Direct et WhatsApp. Vos clients peuvent vous contacter sur n\'importe lequel de ces canaux et Ve\'a repond automatiquement et prend le rendez-vous en temps reel.' },
 ];
 
 function FAQ() {
   const fade = useFadeIn();
   const [open, setOpen] = useState<number | null>(null);
   return (
-    <section id="faq" className="py-16 px-6">
+    <section id="faq" role="region" aria-labelledby="faq-heading" className="py-16 px-6">
       <div ref={fade.ref} className={`max-w-3xl mx-auto ${fade.className}`} style={fade.style}>
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">Questions frequentes</h2>
+          <h2 id="faq-heading" className="text-3xl sm:text-4xl font-bold text-white">Questions frequentes</h2>
         </div>
         <div className="space-y-3">
           {FAQS.map((faq, i) => (
             <div key={i} className="rounded-xl bg-gray-900/50 border border-gray-800 overflow-hidden">
-              <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between px-6 py-4 text-left">
+              <button
+                onClick={() => setOpen(open === i ? null : i)}
+                aria-expanded={open === i}
+                aria-controls={`faq-answer-${i}`}
+                className="w-full flex items-center justify-between px-6 py-4 text-left"
+              >
                 <span className="text-sm font-medium text-white pr-4">{faq.q}</span>
                 <ChevronDown size={16} className={`shrink-0 text-gray-500 transition-transform ${open === i ? 'rotate-180' : ''}`} />
               </button>
-              {open === i && <div className="px-6 pb-4"><p className="text-sm text-gray-400 leading-relaxed">{faq.a}</p></div>}
+              {open === i && (
+                <div id={`faq-answer-${i}`} className="px-6 pb-4">
+                  <p className="text-sm text-gray-400 leading-relaxed">{faq.a}</p>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -484,9 +537,47 @@ function CTAFinal() {
         <p className="mt-4 text-gray-400 max-w-lg mx-auto">
           Rejoignez les commerces polynesiens qui automatisent leurs reservations avec Ve&apos;a.
         </p>
-        <div className="mt-8">
-          <a href="https://dashboard.vea.pacifikai.com/signup" className="landing-breathing-border inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-base font-semibold text-gray-950 hover:opacity-90 transition-all" style={{ backgroundColor: GREEN }}>
-            Commencer maintenant <ArrowRight size={18} />
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href="/signup?plan=essentiel"
+            aria-label="Essayer Ve'a gratuitement pendant 14 jours, sans carte bancaire"
+            className="landing-breathing-border inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-base font-semibold text-gray-950 hover:opacity-90 transition-all"
+            style={{ backgroundColor: GREEN }}
+          >
+            Essayer gratuitement — 14 jours offerts <ArrowRight size={18} />
+          </a>
+        </div>
+        <p className="mt-3 text-xs text-gray-600">Aucune carte bancaire requise &bull; Annulez quand vous voulez</p>
+      </div>
+    </section>
+  );
+}
+
+// ─── WhatsApp CTA ─────────────────────────────────────────────────────────────
+
+function WhatsAppCTA() {
+  const WA_GREEN = '#25D366';
+  return (
+    <section className="py-12 px-6">
+      <div className="max-w-xl mx-auto text-center">
+        <div className="rounded-2xl bg-gray-900/60 border border-gray-800 p-8">
+          <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: `${WA_GREEN}20` }}>
+            <MessageCircle size={24} style={{ color: WA_GREEN }} />
+          </div>
+          <h3 className="text-lg font-semibold text-white mb-2">Besoin d&apos;aide ?</h3>
+          <p className="text-sm text-gray-400 mb-5">
+            Une question sur Ve&apos;a ? Notre equipe repond sous 24h.
+          </p>
+          <a
+            href={`https://wa.me/68989558189?text=${encodeURIComponent("Bonjour, je suis intéressé par Ve'a")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-95"
+            style={{ backgroundColor: WA_GREEN }}
+            aria-label="Contacter Ve'a sur WhatsApp"
+          >
+            <MessageCircle size={18} />
+            Contactez-nous sur WhatsApp
           </a>
         </div>
       </div>
@@ -528,7 +619,7 @@ function Footer() {
         </div>
         <div className="mt-10 pt-6 border-t border-gray-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-600">&copy; 2026 PACIFIK&apos;AI. Tous droits reserves.</p>
-          <a href="mailto:support@vea.pacifikai.com" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">support@vea.pacifikai.com</a>
+          <a href="mailto:support@vea.pacifikai.com" aria-label="Envoyer un email au support Ve'a : support@vea.pacifikai.com" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">support@vea.pacifikai.com</a>
         </div>
       </div>
     </footer>
@@ -558,11 +649,45 @@ function LandingStyles() {
   );
 }
 
+// ─── JSON-LD Schema.org ──────────────────────────────────────────────────────
+
+function LandingJsonLd() {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: "Ve'a",
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    description:
+      'Chatbot IA de reservation par WhatsApp pour les entreprises en Polynesie francaise',
+    url: 'https://vea.pacifikai.com',
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'XPF',
+      lowPrice: 0,
+      highPrice: 49900,
+    },
+    creator: {
+      '@type': 'Organization',
+      name: "PACIFIK'AI",
+      url: 'https://pacifikai.com',
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 // ─── Main Export ───────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
+      <LandingJsonLd />
       <LandingStyles />
       <Nav />
       <Hero />
@@ -576,6 +701,7 @@ export default function LandingPage() {
       <Pricing />
       <FAQ />
       <CTAFinal />
+      <WhatsAppCTA />
       <Footer />
     </div>
   );

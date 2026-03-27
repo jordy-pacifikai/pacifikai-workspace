@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { getSupabaseBrowser } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
-import { ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Check, Loader2, Sparkles, X, AlertTriangle } from 'lucide-react'
 
 const GREEN = '#25D366'
 
@@ -14,6 +14,40 @@ interface ServiceDraft {
   name: string
   duration: number
   price: number
+}
+
+// ─── Sector Presets ─────────────────────────────────────────────────────────────
+
+const SECTOR_PRESETS: Record<string, ServiceDraft[]> = {
+  salon: [
+    { name: 'Coupe homme', duration: 30, price: 3000 },
+    { name: 'Coupe femme', duration: 45, price: 4500 },
+    { name: 'Coloration', duration: 90, price: 8000 },
+    { name: 'Brushing', duration: 30, price: 2500 },
+    { name: 'Barbe', duration: 20, price: 1500 },
+  ],
+  restaurant: [
+    { name: 'Réservation déjeuner', duration: 90, price: 0 },
+    { name: 'Réservation dîner', duration: 120, price: 0 },
+    { name: 'Événement privé', duration: 180, price: 0 },
+  ],
+  medical: [
+    { name: 'Consultation générale', duration: 30, price: 5000 },
+    { name: 'Consultation spécialiste', duration: 45, price: 8000 },
+    { name: 'Bilan complet', duration: 60, price: 15000 },
+  ],
+  sport: [
+    { name: 'Massage relaxant', duration: 60, price: 8000 },
+    { name: 'Massage sportif', duration: 45, price: 7000 },
+    { name: 'Yoga', duration: 60, price: 3000 },
+    { name: 'Coaching', duration: 45, price: 5000 },
+  ],
+  tatoueur: [
+    { name: 'Petit tatouage', duration: 60, price: 8000 },
+    { name: 'Moyen tatouage', duration: 120, price: 15000 },
+    { name: 'Grand tatouage', duration: 240, price: 30000 },
+    { name: 'Retouche', duration: 30, price: 3000 },
+  ],
 }
 
 interface HourSlot {
@@ -30,7 +64,7 @@ type Hours = Record<string, HourSlot>
 interface OnboardingData {
   // Step 1 — Business
   businessName: string
-  category: 'salon' | 'restaurant' | 'medical' | 'sport' | 'autre'
+  category: 'salon' | 'restaurant' | 'medical' | 'sport' | 'tatoueur' | 'autre'
   description: string
   address: string
   phone: string
@@ -69,7 +103,8 @@ const CATEGORIES = [
   { value: 'salon', label: 'Salon / Beauté' },
   { value: 'restaurant', label: 'Restaurant / Café' },
   { value: 'medical', label: 'Médical / Santé' },
-  { value: 'sport', label: 'Sport / Fitness' },
+  { value: 'sport', label: 'Sport / Bien-être' },
+  { value: 'tatoueur', label: 'Tatoueur / Piercing' },
   { value: 'autre', label: 'Autre' },
 ] as const
 
@@ -84,22 +119,35 @@ const DESCRIPTION_PLACEHOLDERS: Record<string, string> = {
   restaurant: 'Ex: Restaurant de cuisine fusion polynésienne et asiatique, terrasse vue mer à Punaauia. Ouvert midi et soir, brunch le dimanche. Réservation recommandée le week-end.',
   medical: 'Ex: Cabinet de kinésithérapie et ostéopathie à Pirae. Spécialisé en rééducation sportive et douleurs chroniques. Consultations sur rendez-vous uniquement.',
   sport: 'Ex: Salle de CrossFit et coaching personnalisé à Faa\'a. Cours collectifs matin et soir, programme débutant disponible. Premier cours d\'essai gratuit.',
+  tatoueur: 'Ex: Studio de tatouage et piercing à Papeete. Spécialisé en polynésien traditionnel et réalisme. Rendez-vous obligatoire, consultations gratuites.',
   autre: 'Ex: Décrivez en quelques mots votre activité, vos spécialités, et ce qui vous différencie. Le chatbot utilisera ces infos pour mieux répondre à vos clients.',
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────────
 
 export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-950" />}>
+      <OnboardingContent />
+    </Suspense>
+  )
+}
+
+function OnboardingContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, businessId: existingBizId } = useAuth()
   const supabase = getSupabaseBrowser()
+
+  const urlPlan = searchParams.get('plan') ?? 'starter'
+  const urlBusinessName = searchParams.get('businessName') ?? ''
 
   const [step, setStep] = useState(1)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   const [data, setData] = useState<OnboardingData>({
-    businessName: '',
+    businessName: urlBusinessName,
     category: 'salon',
     description: '',
     address: '',
@@ -193,7 +241,7 @@ export default function OnboardingPage() {
             phone: data.phone || '',
             sector: data.category,
             owner_user_id: user.id,
-            plan: 'starter',
+            plan: urlPlan,
             services: servicesArray,
             hours: openingHoursRecord,
             timezone: 'Pacific/Tahiti',
@@ -276,7 +324,7 @@ export default function OnboardingPage() {
             hours: openingHoursObj,
             services: servicesJsonb,
             owner_user_id: user.id,
-            plan: 'starter',
+            plan: urlPlan,
             slot_duration_min: 30,
             config: {
               address: data.address || null,
@@ -550,6 +598,8 @@ function Step2Services({
   data: OnboardingData
   update: <K extends keyof OnboardingData>(key: K, value: OnboardingData[K]) => void
 }) {
+  const [showPresetConfirm, setShowPresetConfirm] = useState(false)
+
   const addService = () => {
     update('services', [...data.services, { name: '', duration: 30, price: 3000 }])
   }
@@ -565,8 +615,37 @@ function Step2Services({
     update('services', updated)
   }
 
+  const preset = SECTOR_PRESETS[data.category] ?? null
+  const hasUserServices = data.services.some(s => s.name.trim().length > 0)
+
+  const applyPreset = () => {
+    if (!preset) return
+    update('services', preset.map(s => ({ ...s })))
+    setShowPresetConfirm(false)
+  }
+
+  const handlePresetClick = () => {
+    if (hasUserServices) {
+      setShowPresetConfirm(true)
+    } else {
+      applyPreset()
+    }
+  }
+
   return (
     <div className="space-y-4">
+      {/* Preset button */}
+      {preset && (
+        <button
+          onClick={handlePresetClick}
+          type="button"
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-green-500/30 bg-green-500/5 text-sm font-medium text-green-400 hover:bg-green-500/10 hover:border-green-500/50 transition-all"
+        >
+          <Sparkles size={15} />
+          Utiliser un modèle {CATEGORIES.find(c => c.value === data.category)?.label ?? ''}
+        </button>
+      )}
+
       {data.services.map((s, i) => (
         <div key={i} className="rounded-xl bg-gray-900 border border-gray-800 p-4 space-y-3">
           <div className="flex items-center justify-between">
@@ -624,6 +703,15 @@ function Step2Services({
       >
         + Ajouter un service
       </button>
+
+      {/* Confirmation modal — custom, NOT window.confirm */}
+      {showPresetConfirm && (
+        <PresetConfirmModal
+          onConfirm={applyPreset}
+          onCancel={() => setShowPresetConfirm(false)}
+          sectorLabel={CATEGORIES.find(c => c.value === data.category)?.label ?? data.category}
+        />
+      )}
     </div>
   )
 }
@@ -887,6 +975,65 @@ function Step5Personality({
         </div>
         <p className="mt-1.5 text-xs text-gray-600">Modifiable plus tard dans Agent IA</p>
       </Field>
+    </div>
+  )
+}
+
+// ─── Preset Confirm Modal ────────────────────────────────────────────────────────
+
+function PresetConfirmModal({
+  onConfirm,
+  onCancel,
+  sectorLabel,
+}: {
+  onConfirm: () => void
+  onCancel: () => void
+  sectorLabel: string
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="relative mx-4 w-full max-w-sm rounded-xl bg-gray-900 border border-gray-800 p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="sector-modal-title">
+        {/* Close button */}
+        <button
+          onClick={onCancel}
+          className="absolute top-3 right-3 text-gray-600 hover:text-gray-400 transition-colors"
+          aria-label="Fermer"
+        >
+          <X size={16} />
+        </button>
+
+        {/* Icon */}
+        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-500/10 mb-4">
+          <AlertTriangle size={20} className="text-orange-400" />
+        </div>
+
+        {/* Content */}
+        <h3 id="sector-modal-title" className="text-base font-semibold text-white mb-1.5">
+          Remplacer vos services ?
+        </h3>
+        <p className="text-sm text-gray-400 leading-relaxed">
+          Vous avez deja des services saisis. Utiliser le modele{' '}
+          <span className="text-gray-300 font-medium">{sectorLabel}</span>{' '}
+          va remplacer tous vos services actuels.
+        </p>
+
+        {/* Actions */}
+        <div className="flex items-center gap-3 mt-5">
+          <button
+            onClick={onCancel}
+            className="flex-1 py-2 rounded-lg text-sm font-medium text-gray-400 border border-gray-700 hover:border-gray-600 hover:text-gray-300 transition-all"
+          >
+            Annuler
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 py-2 rounded-lg text-sm font-semibold text-gray-950 hover:opacity-90 transition-all"
+            style={{ backgroundColor: GREEN }}
+          >
+            Remplacer
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

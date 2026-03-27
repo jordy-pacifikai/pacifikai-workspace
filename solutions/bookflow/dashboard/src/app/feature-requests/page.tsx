@@ -8,6 +8,7 @@ import { useAppStore } from '@/lib/store';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabaseBrowser } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { toast } from '@/components/ui/Toast';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -89,6 +90,9 @@ export default function FeatureRequestsPage() {
       setDescription('');
       setCategory('general');
       setShowForm(false);
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la soumission');
     },
   });
 

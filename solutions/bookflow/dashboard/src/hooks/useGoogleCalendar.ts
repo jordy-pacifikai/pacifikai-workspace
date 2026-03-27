@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/Toast';
 
 const gcalKeys = {
   status: (businessId: string | null) => ['gcal-status', businessId] as const,
@@ -32,6 +33,9 @@ export function useConnectGoogle(businessId: string | null) {
       // Redirect to Google consent screen
       window.location.href = data.url;
     },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la connexion à Google Calendar');
+    },
   });
 }
 
@@ -50,6 +54,9 @@ export function useDisconnectGoogle(businessId: string | null) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: gcalKeys.status(businessId) });
       qc.invalidateQueries({ queryKey: ['blocked-slots'] });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la déconnexion de Google Calendar');
     },
   });
 }

@@ -1,43 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { logger } from '@/lib/logger';
+import { requireBusinessAccess } from '@/lib/auth';
+import { triggerTask } from '@/lib/trigger';
+import { rateLimit } from '@/lib/rate-limit';
 
-const TRIGGER_API_URL = process.env.TRIGGER_API_URL ?? 'https://api.trigger.dev';
-const TRIGGER_SECRET_KEY = process.env.TRIGGER_SECRET_KEY ?? '';
+const embeddingsSchema = z.object({
+  knowledgeId: z.string().uuid(),
+  businessId: z.string().uuid(),
+  action: z.enum(['upsert', 'delete']).optional().default('upsert'),
+});
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { knowledgeId, businessId, action } = body;
+    const parsed = embeddingsSchema.safeParse(body);
 
-    if (!knowledgeId || !businessId) {
-      return NextResponse.json({ error: 'Missing knowledgeId or businessId' }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: parsed.error.flatten() },
+        { status: 400 },
+      );
+    }
+
+    const { knowledgeId, businessId, action } = parsed.data;
+
+    // Verify user owns this business
+    try {
+      await requireBusinessAccess(businessId);
+    } catch (authError) {
+      if (authError instanceof NextResponse) return authError;
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limit: 10/min per user (compute-heavy)
+    const { success } = rateLimit(`embeddings:${businessId}`, { interval: 60_000, limit: 10 });
+    if (!success) {
+      return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
     }
 
     // Trigger the generate-embeddings task
-    const res = await fetch(`${TRIGGER_API_URL}/api/v1/tasks/generate-embeddings/trigger`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${TRIGGER_SECRET_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        payload: {
-          knowledgeId,
-          businessId,
-          action: action ?? 'upsert',
-        },
-      }),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error('Trigger.dev error:', res.status, errText);
-      return NextResponse.json({ error: 'Failed to trigger embeddings' }, { status: 500 });
+    const ok = await triggerTask('generate-embeddings', { knowledgeId, businessId, action });
+    if (!ok) {
+      return NextResponse.json({ error: 'Failed to trigger embeddings' }, { status: 502 });
     }
 
-    const data = await res.json();
-    return NextResponse.json({ ok: true, runId: data.id });
+    return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('Embeddings API error:', err);
+    logger.error('Embeddings API error', { action: 'generate_embeddings_trigger', error: String(err) });
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

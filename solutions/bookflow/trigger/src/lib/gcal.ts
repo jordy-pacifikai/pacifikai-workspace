@@ -31,6 +31,10 @@ export async function refreshAccessToken(refreshToken: string): Promise<string> 
 
   if (!res.ok) {
     const err = await res.text();
+    // Detect expired/revoked refresh token (user revoked access or token too old)
+    if (res.status === 400 && err.includes("invalid_grant")) {
+      throw new Error(`GCal refresh token expired or revoked. Business must re-authorize. Raw: ${err}`);
+    }
     throw new Error(`GCal token refresh failed: ${res.status} ${err}`);
   }
 

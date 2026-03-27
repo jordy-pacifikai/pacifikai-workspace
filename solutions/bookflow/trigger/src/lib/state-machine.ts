@@ -1,8 +1,9 @@
 import type { BusinessConfig } from "./config.js";
 import { parseService, parseAllServices } from "./config.js";
 import type { Session } from "./supabase.js";
-import { createAppointment, cancelActiveAppointment } from "./supabase.js";
+import { createAppointment, cancelActiveAppointment, getClientAppointments, setMarketingOptOut } from "./supabase.js";
 import { classifyIntent } from "./classifier.js";
+import { computeEndTime } from "./time-utils.js";
 import {
   generateAvailableDates,
   generateTimeSlots,
@@ -38,6 +39,8 @@ export async function processState(
       return handleTimeSelection(session, payload, config);
     case "confirmation":
       return handleConfirmation(session, payload, config);
+    case "modification_choice":
+      return handleModificationChoice(session, payload, config);
     default:
       return handleIdle(session, payload, config);
   }
@@ -57,10 +60,16 @@ async function handleIdle(
       return sendServiceList(config);
     case "annulation":
       return handleCancellation(payload.from, config);
+    case "modification":
+      return handleModification(payload.from, config);
+    case "remerciement":
+      return handleAcknowledgement(payload.from, config);
     case "faq":
       return handleFaq(payload.message, config);
     case "greeting":
       return handleGreeting(config);
+    case "opt_out":
+      return handleOptOut(payload.from, config, payload.message);
     default:
       return {
         reply:
@@ -94,6 +103,103 @@ async function handleCancellation(
   return { reply, newState: "idle", sessionUpdates: {} };
 }
 
+/** When client replies "OK"/"d'accord"/etc — acknowledge upcoming appointment if exists */
+async function handleAcknowledgement(
+  phone: string,
+  config: BusinessConfig
+): Promise<StateResult> {
+  const appts = await getClientAppointments(phone, config.businessId);
+  const next = appts[0];
+  if (next) {
+    return {
+      reply: `C'est note, merci ! Ton prochain RDV : ${next.service} le ${next.appointment_date} a ${next.time_slot}. A bientot !`,
+      newState: "idle",
+      sessionUpdates: {},
+    };
+  }
+  return {
+    reply: `Merci ! N'hesite pas si tu as besoin de prendre un RDV.`,
+    newState: "idle",
+    sessionUpdates: {},
+  };
+}
+
+/** When client asks to modify — check for upcoming appointment, offer reschedule/cancel */
+async function handleModification(
+  phone: string,
+  config: BusinessConfig
+): Promise<StateResult> {
+  const appts = await getClientAppointments(phone, config.businessId);
+  const next = appts[0];
+  if (next) {
+    return {
+      reply: `Tu souhaites modifier ton RDV du ${next.appointment_date} a ${next.time_slot} (${next.service}) ?\n\n1. Reporter a une autre date\n2. Annuler\n\nReponds avec 1 ou 2.`,
+      newState: "modification_choice",
+      sessionUpdates: {},
+    };
+  }
+  return {
+    reply: `Je n'ai pas trouve de RDV actif a ton nom. Tu veux en prendre un nouveau ? Reponds OUI.`,
+    newState: "idle",
+    sessionUpdates: {},
+  };
+}
+
+/** Handle "1" (reschedule) or "2" (cancel) after modification prompt */
+async function handleModificationChoice(
+  session: Session,
+  payload: Payload,
+  config: BusinessConfig
+): Promise<StateResult> {
+  const input = (payload.buttonPayload ?? payload.message).trim();
+  const num = parseInt(input, 10);
+
+  if (num === 1 || /reporter|autre date|changer/i.test(input)) {
+    // Redirect to booking flow (reschedule = new booking for the same service)
+    return sendServiceList(config);
+  }
+
+  if (num === 2 || /annuler|cancel/i.test(input)) {
+    const result = await cancelActiveAppointment(payload.from, config.businessId);
+    const reply = result.found
+      ? `Ton RDV du ${result.details} a ete annule.\n\nTu veux reprendre un nouveau RDV ? Reponds OUI.`
+      : "Je n'ai pas trouve de RDV actif a annuler.";
+    return { reply, newState: "idle", sessionUpdates: {} };
+  }
+
+  // Invalid response — re-prompt
+  return {
+    reply: "Reponds 1 pour reporter ou 2 pour annuler.",
+    newState: "modification_choice",
+    sessionUpdates: {},
+  };
+}
+
+/** Handle STOP / opt-out / re-subscribe — toggle marketing_opt_out on the client record */
+async function handleOptOut(
+  phone: string,
+  config: BusinessConfig,
+  message: string,
+): Promise<StateResult> {
+  const isResubscribe = /inscri|réabonn|reabonn|réinscri|reinscri/i.test(message);
+
+  if (isResubscribe) {
+    await setMarketingOptOut(phone, config.businessId, false);
+    return {
+      reply: "Tu es reinscrit aux messages promotionnels. Merci !",
+      newState: "idle",
+      sessionUpdates: {},
+    };
+  }
+
+  await setMarketingOptOut(phone, config.businessId, true);
+  return {
+    reply: "Tu as ete desinscrit des messages promotionnels. Tu continueras a recevoir les rappels de RDV.\n\nPour te reinscrire, reponds INSCRIS-MOI.",
+    newState: "idle",
+    sessionUpdates: {},
+  };
+}
+
 async function handleFaq(
   message: string,
   config: BusinessConfig
@@ -107,21 +213,29 @@ async function handleFaq(
     .join(", ");
 
   try {
-    const res = await fetch("https://api.deepseek.com/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY!}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        max_tokens: 300,
-        messages: [
-          { role: "system", content: `Tu es l'assistant WhatsApp de ${config.businessName}. Reponds en 2-3 phrases max, en francais.\n\nServices:\n${serviceList}\n\nHoraires: ${hours}\n\nSi tu ne connais pas la reponse, dis "Je vais verifier avec l'equipe et revenir vers vous."` },
-          { role: "user", content: message },
-        ],
-      }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10_000);
+    let res: Response;
+    try {
+      res = await fetch("https://api.deepseek.com/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY!}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          max_tokens: 300,
+          messages: [
+            { role: "system", content: `Tu es l'assistant WhatsApp de ${config.businessName}. Reponds en 2-3 phrases max, en francais.\n\nServices:\n${serviceList}\n\nHoraires: ${hours}\n\nSi tu ne connais pas la reponse, dis "Je vais verifier avec l'equipe et revenir vers vous."` },
+            { role: "user", content: message },
+          ],
+        }),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     const data = await res.json();
     const reply =
@@ -322,19 +436,24 @@ async function handleConfirmation(
   if (CONFIRM.some((w) => input.includes(w))) {
     const service = parseService(session.selected_service ?? "");
 
+    // Compute end_time from service duration (capped at 23:59)
+    const timeStr = session.selected_time ?? "00:00";
+    const endTime = computeEndTime(timeStr, service.duration);
+
     await createAppointment({
       businessId: config.businessId,
       clientPhone: payload.from,
       service: service.name,
       date: session.selected_date ?? "",
-      time: session.selected_time ?? "",
+      time: timeStr,
+      endTime,
     });
 
     const dateLabel = ctx.selected_date_label ?? session.selected_date ?? "";
     const timeLabel = ctx.selected_time_label ?? session.selected_time ?? "";
 
     return {
-      reply: `RDV confirme !\n\n${config.businessName}\n${service.name}\n${dateLabel} a ${timeLabel}\n\nVous recevrez un rappel la veille. A bientot !`,
+      reply: `RDV confirme !\n\n${config.businessName}\n${service.name}\n${dateLabel} a ${timeLabel}\n\nTu recevras des rappels avant ton RDV. A bientot !`,
       newState: "idle",
       sessionUpdates: resetUpdates,
     };

@@ -14,6 +14,9 @@
 | **Page ID** | 935123186355701 |
 | **Page Email** | jordy@pacifikai.com |
 | **API Version** | v24.0 |
+| **Page Token (short-lived)** | `EAASGcSZBI9i4BRDbVpUkfAXeK8R5FiEZAQ6np3QB0BcntZC9zU9YmoASgrWvFzSp0xtgGsZBR0WE1WB8lUNtNudg0zP1RjkgpoR5bzwdcMlJ9GQpgG1gnZBTOhdLfNVakJinJQdxQt3ZAidN4FaQ9QPRSv0vnYjwTUfdBkd1F2KhSoohFmx0g6MqhNLXIoV3y7vEOtd2bYQS1O9e738hMDxtbnvMZBoiZBq9IGJ4bizGMypyNW5qs2ZBmLtSziEIZD` |
+| **Token Date** | 2026-03-26 |
+| **Token Expiry** | ~2h (short-lived, convertir en long-lived) |
 
 ---
 

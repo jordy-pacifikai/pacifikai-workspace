@@ -13,30 +13,33 @@ const DAY_NAMES = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
 export function generateAvailableDates(
   openingHours: Record<string, string>,
   count = 3,
-  blockedDates?: Set<string>
+  blockedDates?: Set<string>,
+  timezone = "Pacific/Tahiti",
 ): DateOption[] {
   const now = new Date();
   const dates: DateOption[] = [];
   const dayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
   for (let d = 1; dates.length < count && d < 14; d++) {
-    const date = new Date(now);
-    date.setDate(date.getDate() + d);
-    const dayKey = dayKeys[date.getDay()];
+    // Use business timezone to compute "today + d days" correctly
+    const future = new Date(now);
+    future.setDate(future.getDate() + d);
+    const dateStr = future.toLocaleDateString("en-CA", { timeZone: timezone }); // YYYY-MM-DD
+    const dayIdx = new Date(`${dateStr}T12:00:00Z`).getUTCDay(); // noon UTC avoids DST edge
+    const dayKey = dayKeys[dayIdx];
 
     // Skip if business closed that day
     if (!dayKey || !openingHours[dayKey] || openingHours[dayKey] === "closed") continue;
 
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-
     // Skip if entire day is blocked (vacations, all-day GCal events)
     if (blockedDates?.has(dateStr)) continue;
 
-    const dayName = DAY_NAMES[date.getDay()];
+    const dayName = DAY_NAMES[dayIdx];
+    const [, mm, dd] = dateStr.split("-");
 
     dates.push({
       value: dateStr,
-      label: `${dayName} ${date.getDate()}/${date.getMonth() + 1}`,
+      label: `${dayName} ${parseInt(dd ?? "1", 10)}/${parseInt(mm ?? "1", 10)}`,
     });
   }
 

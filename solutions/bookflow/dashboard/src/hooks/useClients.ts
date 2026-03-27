@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/Toast';
 import type { Client, Appointment } from '@/types/database';
 
 // ─── Keys ─────────────────────────────────────────────────────────────────────
@@ -84,6 +85,9 @@ export function useCreateClient(businessId: string | null) {
     mutationFn: (input: ClientInput) => createClient(id, input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: clientKeys.list(id) });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Une erreur est survenue');
     },
   });
 }

@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/Toast';
 import { statsKeys } from './useStats';
 import type { Appointment } from '@/types/database';
 
@@ -104,6 +105,9 @@ export function useCreateAppointment() {
       payload: Partial<Appointment> & { business_id: string; client_name: string; appointment_date: string; time_slot: string },
     ) => createAppointment(payload),
     onSuccess: () => invalidateAll(queryClient),
+    onError: (error: Error) => {
+      toast.error(error.message || 'Erreur lors de la création du rendez-vous');
+    },
   });
 }
 
@@ -114,6 +118,9 @@ export function useUpdateAppointment() {
     mutationFn: ({ id, updates }: { id: string; updates: Partial<Appointment> }) =>
       updateAppointmentById(id, updates),
     onSuccess: () => invalidateAll(queryClient),
+    onError: (error: Error) => {
+      toast.error(error.message || 'Une erreur est survenue');
+    },
   });
 }
 
@@ -134,5 +141,8 @@ export function useDeleteAppointment() {
       }
     },
     onSuccess: () => invalidateAll(queryClient),
+    onError: (error: Error) => {
+      toast.error(error.message || 'Une erreur est survenue');
+    },
   });
 }

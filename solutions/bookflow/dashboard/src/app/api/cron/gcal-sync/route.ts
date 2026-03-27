@@ -1,13 +1,8 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { listCalendarEvents, watchCalendar } from '@/lib/gcal';
-
-function getAdmin() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-}
+import { supabaseAdmin } from '@/lib/supabase';
+import { listCalendarEvents, watchCalendar, syncGCalEventsForBusiness } from '@/lib/gcal';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { logger } from '@/lib/logger';
 
 /**
  * GET /api/cron/gcal-sync
@@ -17,13 +12,22 @@ function getAdmin() {
  * Called by Vercel Cron every 15 minutes.
  */
 export async function GET(req: Request) {
+  // Auth first — O(1) check, prevents unauthenticated requests from consuming rate-limit slots
   const authHeader = req.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const sb = getAdmin();
+  // Rate limit: 1/min per IP (cron endpoint)
+  const ip = getClientIp(req);
+  const { success: rlOk } = rateLimit(`gcal-sync:${ip}`, { interval: 60_000, limit: 1 });
+  if (!rlOk) {
+    return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
+  }
+
+  try {
+  const sb = supabaseAdmin();
 
   const { data: businesses, error } = await sb
     .from('bookbot_businesses')
@@ -61,159 +65,15 @@ export async function GET(req: Request) {
       if (!events) continue;
 
       const tz = biz.timezone ?? 'Pacific/Tahiti';
-
-      // Get existing gcal appointments (timed events)
-      const { data: existingAppts } = await sb
-        .from('bookbot_appointments')
-        .select('gcal_event_id')
-        .eq('business_id', biz.id)
-        .eq('source', 'gcal')
-        .not('gcal_event_id', 'is', null);
-
-      // Get existing gcal blocked slots (all-day events)
-      const { data: existingSlots } = await sb
-        .from('bookbot_blocked_slots')
-        .select('gcal_event_id')
-        .eq('business_id', biz.id)
-        .eq('source', 'gcal')
-        .not('gcal_event_id', 'is', null);
-
-      // Get dismissed event IDs (user deleted from dashboard → don't re-import)
-      const { data: dismissed } = await sb
-        .from('bookbot_gcal_dismissed')
-        .select('gcal_event_id')
-        .eq('business_id', biz.id);
-
-      const dismissedIds = new Set((dismissed ?? []).map((d: { gcal_event_id: string }) => d.gcal_event_id));
-      const existingApptIds = new Set((existingAppts ?? []).map((a: { gcal_event_id: string }) => a.gcal_event_id));
-      const existingSlotIds = new Set((existingSlots ?? []).map((s: { gcal_event_id: string }) => s.gcal_event_id));
-      const seenApptIds = new Set<string>();
-      const seenSlotIds = new Set<string>();
-
-      for (const event of events) {
-        // Skip events the user explicitly dismissed from the dashboard
-        if (dismissedIds.has(event.id)) continue;
-        if (event.allDay) {
-          // All-day → blocked_slots
-          seenSlotIds.add(event.id);
-
-          if (existingSlotIds.has(event.id)) {
-            // Update reason if changed
-            await sb.from('bookbot_blocked_slots')
-              .update({ reason: event.summary, date: event.start })
-              .eq('business_id', biz.id)
-              .eq('gcal_event_id', event.id)
-              .eq('source', 'gcal');
-            continue;
-          }
-
-          await sb.from('bookbot_blocked_slots').insert({
-            business_id: biz.id,
-            date: event.start,
-            time_from: null,
-            time_to: null,
-            all_day: true,
-            reason: event.summary,
-            source: 'gcal',
-            gcal_event_id: event.id,
-          });
-          totalSynced++;
-        } else {
-          // Timed → appointments
-          seenApptIds.add(event.id);
-
-          const startDt = new Date(event.start);
-          const endDt = new Date(event.end);
-          const startLocal = new Date(startDt.toLocaleString('en-US', { timeZone: tz }));
-          const endLocal = new Date(endDt.toLocaleString('en-US', { timeZone: tz }));
-
-          const date = `${startLocal.getFullYear()}-${String(startLocal.getMonth() + 1).padStart(2, '0')}-${String(startLocal.getDate()).padStart(2, '0')}`;
-          const timeSlot = `${String(startLocal.getHours()).padStart(2, '0')}:${String(startLocal.getMinutes()).padStart(2, '0')}`;
-          const endTime = `${String(endLocal.getHours()).padStart(2, '0')}:${String(endLocal.getMinutes()).padStart(2, '0')}`;
-
-          // Resolve client name & email from attendees (first non-self attendee)
-          const attendee = event.attendees[0];
-          const clientName = attendee?.displayName ?? event.summary;
-          const clientEmail = attendee?.email ?? null;
-
-          // Create client if not exists
-          if (clientName) {
-            const { data: existingClient } = await sb
-              .from('bookbot_clients')
-              .select('id')
-              .eq('business_id', biz.id)
-              .eq('name', clientName)
-              .maybeSingle();
-
-            if (!existingClient) {
-              await sb.from('bookbot_clients').insert({
-                business_id: biz.id,
-                name: clientName,
-                email: clientEmail,
-                source: 'gcal',
-                tags: ['gcal'],
-              });
-            }
-          }
-
-          if (existingApptIds.has(event.id)) {
-            // Update existing appointment (title/time may have changed on GCal)
-            await sb.from('bookbot_appointments')
-              .update({
-                client_name: clientName,
-                client_email: clientEmail,
-                appointment_date: date,
-                time_slot: timeSlot,
-                end_time: endTime,
-                updated_at: new Date().toISOString(),
-              })
-              .eq('business_id', biz.id)
-              .eq('gcal_event_id', event.id)
-              .eq('source', 'gcal');
-            continue;
-          }
-
-          await sb.from('bookbot_appointments').insert({
-            business_id: biz.id,
-            client_name: clientName,
-            client_email: clientEmail,
-            service: null,
-            appointment_date: date,
-            time_slot: timeSlot,
-            end_time: endTime,
-            status: 'confirmed',
-            source: 'gcal',
-            gcal_event_id: event.id,
-          });
-          totalSynced++;
-        }
-      }
-
-      // Cleanup: remove appointments for deleted GCal timed events
-      const apptToRemove = Array.from(existingApptIds).filter((id) => !seenApptIds.has(id));
-      if (apptToRemove.length > 0) {
-        await sb
-          .from('bookbot_appointments')
-          .delete()
-          .eq('business_id', biz.id)
-          .eq('source', 'gcal')
-          .in('gcal_event_id', apptToRemove);
-      }
-
-      // Cleanup: remove blocked slots for deleted GCal all-day events
-      const slotToRemove = Array.from(existingSlotIds).filter((id) => !seenSlotIds.has(id));
-      if (slotToRemove.length > 0) {
-        await sb
-          .from('bookbot_blocked_slots')
-          .delete()
-          .eq('business_id', biz.id)
-          .eq('source', 'gcal')
-          .in('gcal_event_id', slotToRemove);
-      }
+      totalSynced += await syncGCalEventsForBusiness(biz.id, tz, events);
     } catch (e) {
-      console.error(`[GCal Sync] Error for business ${biz.id}:`, e);
+      logger.error('Sync error for business', { action: 'gcal_sync_cron', businessId: biz.id, error: String(e) });
     }
   }
 
   return NextResponse.json({ synced: totalSynced, businesses: businesses.length });
+  } catch (err) {
+    logger.error('GCal sync cron error', { action: 'gcal_sync_cron', error: String(err) });
+    return NextResponse.json({ error: 'Sync failed' }, { status: 500 });
+  }
 }

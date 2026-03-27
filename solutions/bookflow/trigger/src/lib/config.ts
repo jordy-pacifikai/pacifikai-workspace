@@ -45,3 +45,38 @@ export function parseService(raw: string): ParsedService {
 export function parseAllServices(services: string[]): ParsedService[] {
   return services.map(parseService);
 }
+
+/** Row shape from bookbot_businesses query */
+export interface BusinessRow {
+  id: string;
+  name: string;
+  config: Record<string, unknown> | null;
+  phone?: string;
+  twilio_sid?: string;
+  twilio_token?: string;
+  twilio_from?: string;
+  phone_number_id?: string;
+  meta_access_token?: string;
+  timezone?: string;
+  booking_slug?: string;
+}
+
+/** Convert a DB business row to BusinessConfig */
+export function buildBusinessConfig(biz: BusinessRow): BusinessConfig {
+  const cfg = (biz.config ?? {}) as Record<string, unknown>;
+  return {
+    businessId: biz.id,
+    businessName: biz.name ?? "",
+    services: [],
+    openingHours: {},
+    timezone: biz.timezone ?? "Pacific/Tahiti",
+    humanPhone: (cfg.human_phone as string) ?? (biz.phone as string) ?? "",
+    provider: biz.phone_number_id ? "meta" : "twilio",
+    twilioSid: biz.twilio_sid,
+    twilioToken: biz.twilio_token,
+    twilioFrom: biz.twilio_from,
+    metaPhoneNumberId: biz.phone_number_id,
+    metaAccessToken: biz.meta_access_token,
+    chatbotConfig: cfg,
+  };
+}

@@ -89,12 +89,12 @@ function KnowledgeFormModal({ businessId, doc, onClose }: KnowledgeFormModalProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-lg mx-4 p-6">
+      <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-lg mx-4 p-6" role="dialog" aria-modal="true" aria-labelledby="knowledge-add-modal-title">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-white">
+          <h3 id="knowledge-add-modal-title" className="text-lg font-semibold text-white">
             {isEdit ? 'Modifier le document' : 'Nouveau document'}
           </h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-300 transition">
+          <button onClick={onClose} aria-label="Fermer" className="text-gray-500 hover:text-gray-300 transition">
             <X size={20} />
           </button>
         </div>
@@ -182,8 +182,8 @@ function DeleteConfirm({ doc, businessId, onClose }: DeleteConfirmProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-sm mx-4 p-6">
-        <h3 className="text-lg font-semibold text-white mb-2">Supprimer ?</h3>
+      <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-sm mx-4 p-6" role="dialog" aria-modal="true" aria-labelledby="knowledge-edit-modal-title">
+        <h3 id="knowledge-edit-modal-title" className="text-lg font-semibold text-white mb-2">Supprimer ?</h3>
         <p className="text-sm text-gray-400 mb-6">
           Le document &quot;{doc.title}&quot; sera supprimé définitivement. Le chatbot ne pourra plus utiliser ces informations.
         </p>

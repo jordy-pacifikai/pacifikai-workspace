@@ -1,14 +1,10 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/lib/supabase";
 import { parseWhatsAppMessage } from "./parse";
 import { verifyMetaSignature } from "@/lib/meta-signature";
-
-function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-}
+import { triggerTask } from "@/lib/trigger";
+import { logger } from "@/lib/logger";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 /**
  * Extract phone_number_id from Meta Cloud API webhook payload.
@@ -29,7 +25,7 @@ async function resolveBusinessId(phoneNumberId: string | null): Promise<string> 
   const defaultBizId = process.env.BOOKBOT_BUSINESS_ID!;
   if (!phoneNumberId) return defaultBizId;
 
-  const { data } = await getSupabase()
+  const { data } = await supabaseAdmin()
     .from("bookbot_businesses")
     .select("id")
     .eq("phone_number_id", phoneNumberId)
@@ -44,21 +40,28 @@ async function resolveBusinessId(phoneNumberId: string | null): Promise<string> 
  * Routes to correct business by phone_number_id (Meta) or defaults (Twilio).
  */
 export async function POST(req: Request) {
+  // Rate limit: 200/min per IP (webhook)
+  const ip = getClientIp(req);
+  const { success: rlOk } = rateLimit(`webhook-whatsapp:${ip}`, { interval: 60_000, limit: 200 });
+  if (!rlOk) {
+    return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
+  }
+
   try {
     const contentType = req.headers.get("content-type") ?? "";
     let body: Record<string, unknown>;
     let rawBody: string | undefined;
 
     if (contentType.includes("application/x-www-form-urlencoded")) {
-      // Twilio format — no Meta signature check needed
-      const formData = await req.formData();
-      body = Object.fromEntries(formData.entries()) as Record<string, unknown>;
+      // Twilio format deprecated — reject without signature validation
+      logger.warn("Rejected form-encoded WhatsApp webhook (Twilio format unsupported)", { action: "whatsapp_webhook" });
+      return new Response("Unsupported content type", { status: 415 });
     } else {
-      // Meta Cloud API — verify signature
+      // Meta Cloud API — verify signature (always — missing header = rejected)
       rawBody = await req.text();
       const signature = req.headers.get("x-hub-signature-256");
-      if (signature && !verifyMetaSignature(rawBody, signature)) {
-        console.error("[Ve'a] Invalid Meta signature — rejecting");
+      if (!verifyMetaSignature(rawBody, signature)) {
+        logger.error("Invalid or missing Meta signature", { action: "whatsapp_webhook" });
         return new Response("Unauthorized", { status: 401 });
       }
       body = JSON.parse(rawBody);
@@ -74,38 +77,23 @@ export async function POST(req: Request) {
     const businessId = await resolveBusinessId(phoneNumberId);
 
     // Trigger task with idempotencyKey to prevent duplicate processing on Meta retries
-    const triggerApiUrl = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev";
-    const triggerKey = process.env.TRIGGER_SECRET_KEY!;
-    const triggerRes = await fetch(
-      `${triggerApiUrl}/api/v1/tasks/bookbot-whatsapp-handler/trigger`,
+    await triggerTask(
+      "bookbot-whatsapp-handler",
       {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${triggerKey}`,
-          "Content-Type": "application/json",
-          ...(parsed.messageId ? { "Idempotency-Key": parsed.messageId } : {}),
-        },
-        body: JSON.stringify({
-          payload: {
-            from: parsed.from,
-            message: parsed.message,
-            buttonPayload: parsed.buttonPayload,
-            messageType: parsed.messageType,
-            businessId,
-            channel: "whatsapp",
-          },
-          options: parsed.messageId ? { idempotencyKey: parsed.messageId } : undefined,
-        }),
-      }
+        from: parsed.from,
+        message: parsed.message,
+        buttonPayload: parsed.buttonPayload,
+        messageType: parsed.messageType,
+        businessId,
+        channel: "whatsapp",
+        messageId: parsed.messageId ?? undefined,
+      },
+      parsed.messageId ? { idempotencyKey: parsed.messageId } : undefined,
     );
-
-    if (!triggerRes.ok) {
-      console.error("[Ve'a] Trigger.dev error:", triggerRes.status, await triggerRes.text());
-    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[Ve'a] Webhook error:", err);
+    logger.error("WhatsApp webhook error", { action: "whatsapp_webhook", error: String(err) });
     return NextResponse.json({ ok: true });
   }
 }
@@ -121,7 +109,7 @@ export async function GET(req: Request) {
 
   const verifyToken = process.env.META_VERIFY_TOKEN;
   if (!verifyToken) {
-    console.error("[Ve'a] META_VERIFY_TOKEN not set");
+    logger.error("META_VERIFY_TOKEN not set", { action: "whatsapp_verify" });
     return new Response("Server Error", { status: 500 });
   }
 

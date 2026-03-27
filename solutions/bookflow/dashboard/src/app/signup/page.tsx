@@ -1,22 +1,39 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { getSupabaseBrowser } from '@/lib/supabase'
 
 const TEAL = '#0d9488'
 
 export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-950" />}>
+      <SignupContent />
+    </Suspense>
+  )
+}
+
+function SignupContent() {
   const [step, setStep] = useState<'form' | 'code'>('form')
   const [email, setEmail] = useState('')
   const [businessName, setBusinessName] = useState('')
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [cooldown, setCooldown] = useState(0)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const id = setInterval(() => setCooldown(c => c <= 1 ? 0 : c - 1), 1000)
+    return () => clearInterval(id)
+  }, [cooldown])
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const plan = searchParams.get('plan') ?? 'starter'
 
   const supabase = getSupabaseBrowser()
 
@@ -40,6 +57,7 @@ export default function SignupPage() {
 
     setStep('code')
     setLoading(false)
+    setCooldown(60)
     setTimeout(() => inputRefs.current[0]?.focus(), 100)
   }
 
@@ -69,7 +87,7 @@ export default function SignupPage() {
       return
     }
 
-    router.push(`/onboarding?businessName=${encodeURIComponent(businessName)}`)
+    router.push(`/onboarding?businessName=${encodeURIComponent(businessName)}&plan=${encodeURIComponent(plan)}`)
   }
 
   function handleOtpChange(index: number, value: string) {
@@ -146,10 +164,10 @@ export default function SignupPage() {
           <div className="flex flex-col gap-2 mt-4">
             <button
               onClick={() => handleSignup()}
-              disabled={loading}
+              disabled={loading || cooldown > 0}
               className="text-sm text-gray-500 hover:text-gray-300 transition-colors disabled:opacity-50"
             >
-              Renvoyer le code
+              {cooldown > 0 ? `Renvoyer le code (${cooldown}s)` : 'Renvoyer le code'}
             </button>
             <button
               onClick={() => { setStep('form'); setOtp(['', '', '', '', '', '']); setError('') }}
@@ -183,11 +201,16 @@ export default function SignupPage() {
               id="businessName"
               type="text"
               required
+              minLength={2}
+              maxLength={50}
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
               placeholder="Ex: Salon Moana, Restaurant Le Lagon..."
               className="w-full rounded-lg bg-gray-900 border border-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/25 transition-all"
             />
+            {businessName.length > 0 && businessName.trim().length < 2 && (
+              <p className="text-xs text-red-400 mt-1">Le nom doit faire au moins 2 caractères.</p>
+            )}
           </div>
 
           <div>
@@ -211,7 +234,7 @@ export default function SignupPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || businessName.trim().length < 2}
             className="w-full rounded-lg py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50"
             style={{ backgroundColor: TEAL }}
           >

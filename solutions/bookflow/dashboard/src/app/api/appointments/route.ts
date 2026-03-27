@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { z } from 'zod';
+import { supabaseAdmin } from '@/lib/supabase';
+import { requireBusinessAccess } from '@/lib/auth';
 import { getAccessToken } from '@/lib/gcal';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { logger } from '@/lib/logger';
 
-function getAdmin() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-}
+const deleteAppointmentSchema = z.object({
+  appointmentId: z.string().uuid(),
+});
 
 /**
  * DELETE /api/appointments
@@ -17,14 +18,27 @@ function getAdmin() {
  *   3. Deletes from bookbot_appointments
  */
 export async function DELETE(req: Request) {
-  const body = await req.json();
-  const { appointmentId } = body;
-
-  if (!appointmentId) {
-    return NextResponse.json({ error: 'appointmentId required' }, { status: 400 });
+  try {
+  // Rate limit first — before any DB access
+  const ip = getClientIp(req);
+  const { success: rlOk } = rateLimit(`appointments-delete:${ip}`, { interval: 60_000, limit: 10 });
+  if (!rlOk) {
+    return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 });
   }
 
-  const sb = getAdmin();
+  const body = await req.json().catch(() => null);
+  const parsed = deleteAppointmentSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Invalid input', details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const { appointmentId } = parsed.data;
+
+  const sb = supabaseAdmin();
 
   // Fetch the appointment to check if it's from GCal
   const { data: appt, error } = await sb
@@ -35,6 +49,14 @@ export async function DELETE(req: Request) {
 
   if (error || !appt) {
     return NextResponse.json({ error: 'Appointment not found' }, { status: 404 });
+  }
+
+  // Verify the user owns this business
+  try {
+    await requireBusinessAccess(appt.business_id);
+  } catch (authError) {
+    if (authError instanceof NextResponse) return authError;
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   // If GCal-sourced, try to delete from Google Calendar + prevent re-import
@@ -67,12 +89,20 @@ export async function DELETE(req: Request) {
       }
     } catch {
       // Non-blocking — event stays on GCal but won't be re-imported
-      console.error(`[GCal] Failed to delete event ${appt.gcal_event_id} from Google Calendar`);
+      logger.warn('GCal event delete failed', { action: 'gcal_delete', eventId: appt.gcal_event_id });
     }
   }
 
   // Delete from DB
-  await sb.from('bookbot_appointments').delete().eq('id', appointmentId);
+  const { error: deleteErr } = await sb.from('bookbot_appointments').delete().eq('id', appointmentId);
+  if (deleteErr) {
+    logger.error('Appointment delete failed', { action: 'appointment_delete', error: deleteErr.message });
+    return NextResponse.json({ error: 'Erreur lors de la suppression' }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
+  } catch (err) {
+    logger.error('Appointment delete error', { action: 'appointment_delete', error: String(err) });
+    return NextResponse.json({ error: 'Erreur interne' }, { status: 500 });
+  }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Plus, Pencil, Trash2, X, Clock, Tag, ToggleLeft, ToggleRight, Scissors } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonCard } from '@/components/ui/Skeleton';
@@ -14,23 +14,30 @@ import {
   type ServiceInput,
   type ServiceItem,
 } from '@/hooks/useServices';
+import { toast } from '@/components/ui/Toast';
 import { cn } from '@/lib/utils';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
-const CATEGORY_OPTIONS = ['Coupe', 'Coloration', 'Soin', 'Barbe', 'Autre'];
+// Category color palette — cycles through for any custom category
+const CATEGORY_PALETTE: { bg: string; text: string }[] = [
+  { bg: 'bg-blue-500/15',   text: 'text-blue-400'   },
+  { bg: 'bg-purple-500/15', text: 'text-purple-400' },
+  { bg: 'bg-[#25D366]/15',  text: 'text-[#25D366]'  },
+  { bg: 'bg-orange-500/15', text: 'text-orange-400' },
+  { bg: 'bg-cyan-500/15',   text: 'text-cyan-400'   },
+  { bg: 'bg-pink-500/15',   text: 'text-pink-400'   },
+  { bg: 'bg-amber-500/15',  text: 'text-amber-400'  },
+];
 
-const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
-  Coupe:      { bg: 'bg-blue-500/15',   text: 'text-blue-400'   },
-  Coloration: { bg: 'bg-purple-500/15', text: 'text-purple-400' },
-  Soin:       { bg: 'bg-[#25D366]/15',  text: 'text-[#25D366]'  },
-  Barbe:      { bg: 'bg-orange-500/15', text: 'text-orange-400' },
-  Autre:      { bg: 'bg-gray-500/15',   text: 'text-gray-400'   },
-};
+const DEFAULT_STYLE = { bg: 'bg-gray-500/15', text: 'text-gray-400' };
 
 function getCategoryStyle(category: string | undefined | null) {
-  if (!category) return { bg: 'bg-gray-500/15', text: 'text-gray-400' };
-  return CATEGORY_COLORS[category] ?? { bg: 'bg-gray-500/15', text: 'text-gray-400' };
+  if (!category) return DEFAULT_STYLE;
+  // Stable color based on string hash
+  let hash = 0;
+  for (let i = 0; i < category.length; i++) hash = ((hash << 5) - hash + category.charCodeAt(i)) | 0;
+  return CATEGORY_PALETTE[Math.abs(hash) % CATEGORY_PALETTE.length];
 }
 
 // ─── Form Modal ────────────────────────────────────────────────────────────────
@@ -55,10 +62,11 @@ interface ServiceFormModalProps {
   businessId: string;
   service?: ServiceItem;
   serviceIndex?: number;
+  existingCategories?: string[];
   onClose: () => void;
 }
 
-function ServiceFormModal({ businessId, service, serviceIndex, onClose }: ServiceFormModalProps) {
+function ServiceFormModal({ businessId, service, serviceIndex, existingCategories = [], onClose }: ServiceFormModalProps) {
   const isEdit = service !== undefined && serviceIndex !== undefined;
   const createMutation = useCreateService(businessId);
   const updateMutation = useUpdateService(businessId);
@@ -93,16 +101,27 @@ function ServiceFormModal({ businessId, service, serviceIndex, onClose }: Servic
     try {
       if (isEdit) {
         await updateMutation.mutateAsync({ index: serviceIndex, input });
+        toast.success('Service mis a jour');
       } else {
         await createMutation.mutateAsync(input);
+        toast.success('Service cree');
       }
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la sauvegarde');
+      const msg = err instanceof Error ? err.message : 'Erreur lors de la sauvegarde';
+      setError(msg);
+      toast.error(msg);
     }
   }
 
   const isPending = createMutation.isPending || updateMutation.isPending;
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [onClose]);
 
   const inputCls = 'w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:border-[#25D366] transition-colors';
   const labelCls = 'block text-xs text-gray-400 mb-1.5';
@@ -111,14 +130,15 @@ function ServiceFormModal({ businessId, service, serviceIndex, onClose }: Servic
     <>
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={onClose} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="service-modal-title">
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
-            <h2 className="text-white font-semibold">
+            <h2 id="service-modal-title" className="text-white font-semibold">
               {isEdit ? 'Modifier le service' : 'Nouveau service'}
             </h2>
             <button
               onClick={onClose}
+              aria-label="Fermer"
               className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
             >
               <X size={18} />
@@ -184,8 +204,8 @@ function ServiceFormModal({ businessId, service, serviceIndex, onClose }: Servic
             {/* Category */}
             <div>
               <label className={labelCls}>Catégorie</label>
-              <div className="flex flex-wrap gap-2">
-                {CATEGORY_OPTIONS.map((cat) => {
+              <div className="flex flex-wrap gap-2 mb-2">
+                {existingCategories.map((cat) => {
                   const style = getCategoryStyle(cat);
                   const active = form.category === cat;
                   return (
@@ -205,6 +225,13 @@ function ServiceFormModal({ businessId, service, serviceIndex, onClose }: Servic
                   );
                 })}
               </div>
+              <input
+                type="text"
+                value={form.category}
+                onChange={(e) => setField('category', e.target.value)}
+                placeholder="Ou saisir une catégorie..."
+                className={inputCls}
+              />
             </div>
 
             {error && (
@@ -354,21 +381,36 @@ export default function ServicesPage() {
   const [deletingService, setDeletingService] = useState<{ service: ServiceItem; index: number } | null>(null);
 
   function handleToggle(service: ServiceItem, index: number) {
-    updateMutation.mutate({
-      index,
-      input: { is_active: service.is_active === false },
-    });
+    const willActivate = service.is_active === false;
+    updateMutation.mutate(
+      { index, input: { is_active: willActivate } },
+      {
+        onSuccess: () => toast.success(willActivate ? 'Service active' : 'Service desactive'),
+        onError: (err) => toast.error(err instanceof Error ? err.message : 'Erreur lors de la mise a jour'),
+      },
+    );
   }
 
   function handleDeleteConfirm() {
     if (!deletingService) return;
     deleteMutation.mutate(deletingService.index, {
-      onSuccess: () => setDeletingService(null),
+      onSuccess: () => {
+        toast.success('Service supprime');
+        setDeletingService(null);
+      },
+      onError: (err) => toast.error(err instanceof Error ? err.message : 'Erreur lors de la suppression'),
     });
   }
 
   const activeServices = services?.filter((s) => s.is_active !== false) ?? [];
   const totalCount = services?.length ?? 0;
+
+  // Derive unique categories from existing services
+  const existingCategories = useMemo(() => {
+    const cats = new Set<string>();
+    services?.forEach((s) => { if (s.category) cats.add(s.category); });
+    return Array.from(cats).sort();
+  }, [services]);
 
   return (
     <DashboardLayout title="Services" businessName={businessName ?? undefined}>
@@ -437,6 +479,7 @@ export default function ServicesPage() {
       {showCreateModal && businessId && (
         <ServiceFormModal
           businessId={businessId}
+          existingCategories={existingCategories}
           onClose={() => setShowCreateModal(false)}
         />
       )}
@@ -447,6 +490,7 @@ export default function ServicesPage() {
           businessId={businessId}
           service={editingService.service}
           serviceIndex={editingService.index}
+          existingCategories={existingCategories}
           onClose={() => setEditingService(null)}
         />
       )}

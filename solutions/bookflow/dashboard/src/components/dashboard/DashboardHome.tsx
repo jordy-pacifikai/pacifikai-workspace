@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { format, addDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
@@ -11,14 +11,16 @@ import {
   TrendingUp,
   UserPlus,
   ChevronRight,
-  AlertCircle,
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonCard, SkeletonRow } from '@/components/ui/Skeleton';
+import { SetupChecklist } from '@/components/dashboard/SetupChecklist';
+import { QueryErrorReset } from '@/components/ui/QueryErrorReset';
 import { useAppStore } from '@/lib/store';
-import { useDashboardStats } from '@/hooks/useStats';
+import { useDashboardStats, statsKeys } from '@/hooks/useStats';
 import { useAppointments } from '@/hooks/useAppointments';
 import { cn } from '@/lib/utils';
+import { APPOINTMENT_STATUS } from '@/lib/appointment-status';
 import type { Appointment, AppointmentStatus } from '@/types/database';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
@@ -27,24 +29,13 @@ const GREEN = '#25D366';
 
 // ─── Status badge ──────────────────────────────────────────────────────────────
 
-const STATUS_CONFIG: Record<
-  AppointmentStatus,
-  { label: string; className: string }
-> = {
-  pending:   { label: 'En attente', className: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/25' },
-  confirmed: { label: 'Confirmé',   className: 'bg-green-500/15  text-green-400  border-green-500/25'  },
-  cancelled: { label: 'Annulé',     className: 'bg-red-500/15    text-red-400    border-red-500/25'    },
-  completed: { label: 'Terminé',    className: 'bg-blue-500/15   text-blue-400   border-blue-500/25'   },
-  no_show:   { label: 'No show',    className: 'bg-orange-500/15 text-orange-400 border-orange-500/25' },
-};
-
 function StatusBadge({ status }: { status: AppointmentStatus }) {
-  const cfg = STATUS_CONFIG[status];
+  const cfg = APPOINTMENT_STATUS[status];
   return (
     <span
       className={cn(
         'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border',
-        cfg.className,
+        cfg.bg, cfg.text, cfg.border,
       )}
     >
       {cfg.label}
@@ -141,17 +132,6 @@ function EmptyAppointments() {
   );
 }
 
-// ─── Error state ───────────────────────────────────────────────────────────────
-
-function ErrorState({ message }: { message: string }) {
-  return (
-    <div className="flex items-center gap-2 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3">
-      <AlertCircle size={16} className="text-red-400 shrink-0" />
-      <p className="text-sm text-red-400">{message}</p>
-    </div>
-  );
-}
-
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function DashboardHome() {
@@ -176,11 +156,13 @@ export default function DashboardHome() {
   const {
     data: todayAppts,
     isLoading: todayLoading,
+    error: todayError,
   } = useAppointments(businessId, today);
 
   const {
     data: tomorrowAppts,
     isLoading: tomorrowLoading,
+    error: tomorrowError,
   } = useAppointments(businessId, tomorrow);
 
   // ── Derived data ──────────────────────────────────────────────────────────
@@ -218,7 +200,6 @@ export default function DashboardHome() {
     <DashboardLayout
       title="Tableau de bord"
       businessName={businessName}
-      notificationCount={stats?.pendingCount}
     >
       {/* ── Date header ──────────────────────────────────────────────── */}
       <div className="mb-6">
@@ -228,9 +209,15 @@ export default function DashboardHome() {
         </p>
       </div>
 
+      {/* ── Setup checklist (hidden once complete or dismissed) ───────── */}
+      <SetupChecklist businessId={businessId} />
+
       {/* ── Stat cards grid ──────────────────────────────────────────── */}
       {statsError ? (
-        <ErrorState message="Impossible de charger les statistiques." />
+        <QueryErrorReset
+          queryKey={statsKeys.dashboard(businessId ?? '')}
+          message="Impossible de charger les statistiques."
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
           {statsLoading ? (
@@ -296,7 +283,13 @@ export default function DashboardHome() {
 
           {/* Panel body */}
           <div className="px-5 pb-2">
-            {upcomingLoading ? (
+            {(todayError || tomorrowError) ? (
+              <div className="py-4">
+                <QueryErrorReset
+                  message="Impossible de charger les rendez-vous."
+                />
+              </div>
+            ) : upcomingLoading ? (
               <div className="divide-y divide-gray-800/60">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <SkeletonRow key={i} className="py-3" />
@@ -345,13 +338,13 @@ export default function DashboardHome() {
 
             <div className="flex flex-col gap-2">
               <QuickActionButton
-                href="/appointments/new"
+                href="/appointments"
                 icon={CalendarCheck}
                 label="Nouveau rendez-vous"
                 primary
               />
               <QuickActionButton
-                href="/clients/new"
+                href="/clients"
                 icon={UserPlus}
                 label="Nouveau client"
               />

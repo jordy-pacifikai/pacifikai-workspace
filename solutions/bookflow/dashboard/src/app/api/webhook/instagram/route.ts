@@ -1,13 +1,9 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/lib/supabase";
 import { verifyMetaSignature } from "@/lib/meta-signature";
-
-function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-}
+import { triggerTask } from "@/lib/trigger";
+import { logger } from "@/lib/logger";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 /**
  * Instagram DM Webhook — multi-tenant.
@@ -16,12 +12,19 @@ function getSupabase() {
  * Meta sends: { object: "instagram", entry: [{ id: IG_USER_ID, messaging: [{ sender, message }] }] }
  */
 export async function POST(req: Request) {
+  // Rate limit: 200/min per IP (webhook)
+  const ip = getClientIp(req);
+  const { success: rlOk } = rateLimit(`webhook-instagram:${ip}`, { interval: 60_000, limit: 200 });
+  if (!rlOk) {
+    return NextResponse.json({ error: "Trop de requêtes" }, { status: 429 });
+  }
+
   try {
-    // Verify Meta signature
+    // Verify Meta signature (always — missing header = rejected)
     const rawBody = await req.text();
     const signature = req.headers.get("x-hub-signature-256");
-    if (signature && !verifyMetaSignature(rawBody, signature)) {
-      console.error("[Instagram] Invalid Meta signature — rejecting");
+    if (!verifyMetaSignature(rawBody, signature)) {
+      logger.error("Invalid or missing Meta signature", { action: "instagram_webhook" });
       return new Response("Unauthorized", { status: 401 });
     }
 
@@ -47,7 +50,7 @@ export async function POST(req: Request) {
       // Falls back to JSONB config scan for legacy entries
       let business: { id: string; meta_page_token?: string | null } | null = null;
 
-      const { data: directMatch } = await getSupabase()
+      const { data: directMatch } = await supabaseAdmin()
         .from("bookbot_businesses")
         .select("id, meta_page_token")
         .eq("meta_ig_account_id", igUserId)
@@ -57,21 +60,37 @@ export async function POST(req: Request) {
       if (directMatch) {
         business = directMatch;
       } else {
-        // Legacy fallback: scan config JSONB
-        const { data: businesses } = await getSupabase()
+        // Legacy fallback: scan config JSONB (only fetch id + config for matching, then fetch token separately)
+        const { data: businesses } = await supabaseAdmin()
           .from("bookbot_businesses")
-          .select("id, config, meta_page_token")
-          .limit(50);
+          .select("id, config")
+          .not("config", "is", "null")
+          .limit(100);
 
         const legacy = (businesses ?? []).find((b) => {
           const cfg = b.config as Record<string, unknown> | null;
           return cfg?.instagram_page_id === igUserId;
         });
-        if (legacy) business = legacy;
+        if (legacy) {
+          // Fetch token separately only for the matched business (avoid loading all tokens into memory)
+          const { data: bizToken } = await supabaseAdmin()
+            .from("bookbot_businesses")
+            .select("id, meta_page_token")
+            .eq("id", legacy.id)
+            .single();
+          if (bizToken) {
+            business = bizToken;
+            // Auto-fix: populate meta_ig_account_id so the legacy fallback is no longer needed
+            await supabaseAdmin()
+              .from("bookbot_businesses")
+              .update({ meta_ig_account_id: igUserId })
+              .eq("id", legacy.id);
+          }
+        }
       }
 
       if (!business) {
-        console.warn(`[Instagram] No business found for ig_user_id: ${igUserId}`);
+        logger.warn("No business found for ig_user_id", { action: "instagram_webhook", igUserId });
         continue;
       }
 
@@ -91,7 +110,11 @@ export async function POST(req: Request) {
         if (business.meta_page_token) {
           try {
             const profileRes = await fetch(
-              `https://graph.facebook.com/v22.0/${senderId}?fields=name,username&access_token=${business.meta_page_token}`
+              `https://graph.facebook.com/v22.0/${senderId}?fields=name,username`,
+              {
+                headers: { Authorization: `Bearer ${business.meta_page_token}` },
+                signal: AbortSignal.timeout(5000),
+              },
             );
             if (profileRes.ok) {
               const profile = await profileRes.json();
@@ -103,42 +126,27 @@ export async function POST(req: Request) {
         }
 
         // Trigger the same Ve'a handler (multi-channel) with idempotencyKey
-        const triggerApiUrl = process.env.TRIGGER_API_URL ?? "https://api.trigger.dev";
-        const triggerKey = process.env.TRIGGER_SECRET_KEY!;
         const idempotencyKey = messageId ?? `ig_${senderId}_${Date.now()}`;
-        const triggerRes = await fetch(
-          `${triggerApiUrl}/api/v1/tasks/bookbot-whatsapp-handler/trigger`,
+        await triggerTask(
+          "bookbot-whatsapp-handler",
           {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${triggerKey}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              payload: {
-                from: `instagram_${senderId}`,
-                message: messageText,
-                buttonPayload: null,
-                messageType: "text",
-                businessId: business.id,
-                pageAccessToken: business.meta_page_token ?? undefined,
-                channel: "instagram",
-                senderName,
-              },
-              options: { idempotencyKey },
-            }),
-          }
+            from: `instagram_${senderId}`,
+            message: messageText,
+            buttonPayload: null,
+            messageType: "text",
+            businessId: business.id,
+            pageAccessToken: business.meta_page_token ?? undefined,
+            channel: "instagram",
+            senderName,
+          },
+          { idempotencyKey },
         );
-
-        if (!triggerRes.ok) {
-          console.error("[Instagram] Trigger.dev error:", triggerRes.status, await triggerRes.text());
-        }
       }
     }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[Instagram] Webhook error:", err);
+    logger.error("Instagram webhook error", { action: "instagram_webhook", error: String(err) });
     return NextResponse.json({ ok: true });
   }
 }
@@ -154,7 +162,7 @@ export async function GET(req: Request) {
 
   const verifyToken = process.env.META_VERIFY_TOKEN;
   if (!verifyToken) {
-    console.error("[Instagram] META_VERIFY_TOKEN not set");
+    logger.error("META_VERIFY_TOKEN not set", { action: "instagram_verify" });
     return new Response("Server Error", { status: 500 });
   }
 

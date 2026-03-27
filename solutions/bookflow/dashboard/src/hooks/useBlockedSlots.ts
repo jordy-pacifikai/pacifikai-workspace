@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/Toast';
 
 export interface BlockedSlot {
   id: string;
@@ -62,6 +63,9 @@ export function useCreateBlockedSlot(businessId: string | null) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: blockedSlotKeys.all });
     },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la création du créneau bloqué');
+    },
   });
 }
 
@@ -77,6 +81,9 @@ export function useDeleteBlockedSlot(businessId: string | null) {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: blockedSlotKeys.all });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la suppression du créneau bloqué');
     },
   });
 }

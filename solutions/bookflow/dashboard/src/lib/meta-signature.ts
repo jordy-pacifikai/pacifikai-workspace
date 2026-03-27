@@ -1,4 +1,5 @@
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
+import { logger } from "@/lib/logger";
 
 /**
  * Verify Meta webhook signature (X-Hub-Signature-256).
@@ -12,8 +13,8 @@ export function verifyMetaSignature(
 ): boolean {
   const appSecret = process.env.META_APP_SECRET;
   if (!appSecret) {
-    console.warn("[Meta] META_APP_SECRET not set — skipping signature verification");
-    return true;
+    logger.error("META_APP_SECRET not set — rejecting all requests", { action: "meta_signature" });
+    return false;
   }
 
   if (!signatureHeader) return false;
@@ -29,5 +30,5 @@ export function verifyMetaSignature(
   if (expected.length !== signature.length) return false;
   const a = Buffer.from(expected, "hex");
   const b = Buffer.from(signature, "hex");
-  return a.length === b.length && require("crypto").timingSafeEqual(a, b);
+  return a.length === b.length && timingSafeEqual(a, b);
 }

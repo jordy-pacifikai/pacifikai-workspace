@@ -1,12 +1,15 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { createBrowserClient } from '@supabase/ssr'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnySupabaseClient = SupabaseClient<any, 'public', any>
+
 // Server-side admin client (lazy — avoids build-time crash when SUPABASE_SERVICE_ROLE_KEY is missing)
-let _adminClient: ReturnType<typeof createClient> | null = null
-export function supabaseAdmin() {
+let _adminClient: AnySupabaseClient | null = null
+export function supabaseAdmin(): AnySupabaseClient {
   if (!_adminClient) {
     _adminClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,5 +28,10 @@ export function getSupabaseBrowser() {
   return browserClient
 }
 
-// Legacy export for existing hooks — use the same singleton as getSupabaseBrowser()
-export const supabase = supabaseUrl ? getSupabaseBrowser() : (null as never)
+// Legacy export — proxy defers to getSupabaseBrowser() on first property access
+// Safe during SSR/prerender: createBrowserClient works server-side (no window dependency)
+export const supabase = new Proxy({} as ReturnType<typeof createBrowserClient>, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getSupabaseBrowser(), prop, receiver);
+  },
+})

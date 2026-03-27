@@ -6,6 +6,7 @@ export type Intent =
   | "remerciement"
   | "modification"
   | "reclamation"
+  | "opt_out"
   | "autre";
 
 export interface ClassifyResult {
@@ -15,7 +16,7 @@ export interface ClassifyResult {
 
 const VALID_INTENTS: Intent[] = [
   "reservation", "annulation", "faq", "greeting",
-  "remerciement", "modification", "reclamation", "autre",
+  "remerciement", "modification", "reclamation", "opt_out", "autre",
 ];
 
 // --- Keyword maps (order = priority) ---
@@ -36,13 +37,19 @@ const KEYWORD_MAP: [Intent, string[]][] = [
     "changer", "décaler", "reporter", "autre créneau", "autre date",
     "plutôt", "finalement", "décaler le rdv", "modifier",
   ]],
+  ["opt_out", [
+    "stop", "desinscription", "désinscription", "desabonner", "désabonner",
+    "ne plus recevoir", "plus de messages", "unsubscribe",
+    "inscris-moi", "réinscrire", "reinscrire", "re-inscrire", "réabonner",
+  ]],
   ["reclamation", [
-    "problème", "pas content", "nul", "plainte", "rembourser",
+    "problème", "probleme", "pas content", "nul", "plainte", "rembourser",
     "arnaque", "scandale", "inadmissible", "honteux",
   ]],
   ["remerciement", [
     "merci", "parfait", "super", "top", "génial", "nickel", "c'est bon",
     "au revoir", "bonne journée", "à bientôt", "mauruuru", "nana",
+    "ok", "d'accord", "c'est noté", "entendu", "compris", "confirmer",
   ]],
   ["faq", [
     "prix", "tarif", "combien", "coute", "coûte", "horaire", "heure",
@@ -52,7 +59,8 @@ const KEYWORD_MAP: [Intent, string[]][] = [
   ]],
   ["greeting", [
     "bonjour", "salut", "hello", "bonsoir", "coucou", "ia ora na",
-    "maeva", "ça va", "hey", "yo", "bsr", "bjr",
+    "maeva", "ça va", "hey", "yo", "bsr", "bjr", "ia orana",
+    "e aha te huru", "manava",
   ]],
 ];
 
@@ -96,8 +104,11 @@ Exemples:
 
 async function classifyWithDeepSeek(message: string): Promise<ClassifyResult> {
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
     const res = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
+      signal: controller.signal,
       headers: {
         Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY!}`,
         "Content-Type": "application/json",
@@ -112,6 +123,7 @@ async function classifyWithDeepSeek(message: string): Promise<ClassifyResult> {
         ],
       }),
     });
+    clearTimeout(timeout);
 
     const data: { choices?: { message?: { content?: string } }[] } =
       await res.json();
@@ -133,7 +145,9 @@ export async function classifyIntentWithConfidence(
   message: string,
   buttonPayload: string | null,
 ): Promise<ClassifyResult> {
-  if (buttonPayload === "book_now" || buttonPayload) {
+  // Only treat explicitly booking-related payloads as reservation intent
+  // Other payloads (confirm_yes, confirm_no, slot_*, date_*, svc_*) should fall through to message classification
+  if (buttonPayload === "book_now") {
     return { intent: "reservation", confidence: "high" };
   }
 

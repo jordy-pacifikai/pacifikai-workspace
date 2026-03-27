@@ -1,15 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Plus, ChevronDown, ChevronUp, Phone, Mail, Calendar, Star, X } from 'lucide-react';
+import { Search, Plus, ChevronDown, ChevronUp, Phone, Mail, Calendar, Star, X, Users, Upload, Loader2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 import { useAppStore } from '@/lib/store';
 import { useClients, useClientHistory, useCreateClient } from '@/hooks/useClients';
+import { useClientSegments } from '@/hooks/useSegments';
+import { SegmentFilter } from '@/components/clients/SegmentFilter';
+import { SegmentBadges } from '@/components/clients/SegmentBadges';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import type { Client } from '@/types/database';
+import type { SegmentId } from '@/lib/segments';
 
 // ─── Tag badge ───────────────────────────────────────────────────────────────
 
@@ -118,16 +122,23 @@ function CreateClientModal({ businessId, onClose }: CreateClientModalProps) {
     notes: '',
     tags: '',
   });
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setErrorMsg(null);
     const tags = form.tags
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean);
     createClient(
       { name: form.name, phone: form.phone || undefined, email: form.email || undefined, notes: form.notes || undefined, tags: tags.length ? tags : undefined },
-      { onSuccess: () => onClose() },
+      {
+        onSuccess: () => onClose(),
+        onError: (err) => {
+          setErrorMsg(err instanceof Error ? err.message : 'Une erreur est survenue. Veuillez réessayer.');
+        },
+      },
     );
   }
 
@@ -136,10 +147,10 @@ function CreateClientModal({ businessId, onClose }: CreateClientModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md shadow-2xl">
+      <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="client-modal-title">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
-          <h2 className="text-white font-semibold text-lg">Nouveau client</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+          <h2 id="client-modal-title" className="text-white font-semibold text-lg">Nouveau client</h2>
+          <button onClick={onClose} aria-label="Fermer" className="text-gray-400 hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -196,6 +207,12 @@ function CreateClientModal({ businessId, onClose }: CreateClientModalProps) {
             />
           </div>
 
+          {errorMsg && (
+            <p className="text-sm text-red-400 bg-red-900/20 border border-red-800/50 rounded-lg px-3 py-2">
+              {errorMsg}
+            </p>
+          )}
+
           <div className="flex gap-3 pt-2">
             <button
               type="button"
@@ -207,9 +224,16 @@ function CreateClientModal({ businessId, onClose }: CreateClientModalProps) {
             <button
               type="submit"
               disabled={isPending || !form.name.trim()}
-              className="flex-1 bg-[#25D366] text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 inline-flex items-center justify-center gap-2 bg-[#25D366] text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isPending ? 'Creation...' : 'Creer le client'}
+              {isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Création...
+                </>
+              ) : (
+                'Créer le client'
+              )}
             </button>
           </div>
         </form>
@@ -223,18 +247,31 @@ function CreateClientModal({ businessId, onClose }: CreateClientModalProps) {
 export default function ClientsPage() {
   const { businessId, businessName } = useAppStore();
   const { data: clients, isLoading } = useClients(businessId);
+  const { counts, getSegmentsForClient } = useClientSegments(businessId);
 
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [selectedSegments, setSelectedSegments] = useState<SegmentId[]>([]);
+
+  function toggleSegment(id: SegmentId) {
+    setSelectedSegments((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id],
+    );
+  }
 
   const filtered = (clients ?? []).filter((c: Client) => {
     const q = search.toLowerCase();
-    return (
+    const matchesSearch =
       c.name.toLowerCase().includes(q) ||
       (c.phone ?? '').toLowerCase().includes(q) ||
-      (c.email ?? '').toLowerCase().includes(q)
-    );
+      (c.email ?? '').toLowerCase().includes(q);
+
+    const matchesSegment =
+      selectedSegments.length === 0 ||
+      selectedSegments.some((seg) => getSegmentsForClient(c.id).includes(seg));
+
+    return matchesSearch && matchesSegment;
   });
 
   function toggleRow(id: string) {
@@ -264,18 +301,170 @@ export default function ClientsPage() {
           </button>
         </div>
 
+        {/* Segment filter */}
+        <SegmentFilter
+          counts={counts}
+          selected={selectedSegments}
+          onToggle={toggleSegment}
+          onClear={() => setSelectedSegments([])}
+        />
+
         {/* Count */}
         {!isLoading && (
           <p className="text-sm text-gray-400">
             <span className="text-white font-medium">{filtered.length}</span>
-            {search ? ` resultat${filtered.length !== 1 ? 's' : ''} pour "${search}"` : ` client${filtered.length !== 1 ? 's' : ''} au total`}
+            {search || selectedSegments.length > 0
+              ? ` resultat${filtered.length !== 1 ? 's' : ''}`
+              : ` client${filtered.length !== 1 ? 's' : ''} au total`}
           </p>
         )}
 
-        {/* Table */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+        {/* ── Mobile card view ── */}
+        <div className="md:hidden space-y-3">
+          {/* Loading skeleton mobile */}
+          {isLoading && Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-4 animate-pulse space-y-3">
+              <div className="h-4 bg-gray-800 rounded w-2/3" />
+              <div className="h-3 bg-gray-800 rounded w-1/2" />
+              <div className="h-3 bg-gray-800 rounded w-1/3" />
+            </div>
+          ))}
+
+          {/* Empty state mobile */}
+          {!isLoading && filtered.length === 0 && (
+            <div className="bg-gray-900 border border-gray-800 rounded-xl py-14 flex flex-col items-center text-center px-6">
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                style={{ backgroundColor: 'rgba(37, 211, 102, 0.08)', border: '1px solid rgba(37, 211, 102, 0.15)' }}
+              >
+                <Users size={26} style={{ color: '#25D366' }} />
+              </div>
+              {search ? (
+                <>
+                  <p className="text-sm font-medium text-gray-300 mb-1">Aucun résultat</p>
+                  <p className="text-xs text-gray-500 max-w-xs">
+                    Aucun client ne correspond à <span className="text-gray-400 font-medium">&quot;{search}&quot;</span>. Vérifiez l&apos;orthographe ou essayez un autre terme.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-gray-300 mb-1">Votre liste de clients est vide</p>
+                  <p className="text-xs text-gray-500 max-w-xs leading-relaxed">
+                    Votre liste se remplira automatiquement lors des réservations. Vous pouvez aussi ajouter vos contacts manuellement.
+                  </p>
+                  <div className="mt-4 flex items-center gap-2 flex-wrap justify-center">
+                    <button
+                      onClick={() => setShowModal(true)}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: '#25D366' }}
+                    >
+                      <Plus size={15} />
+                      Ajouter un client
+                    </button>
+                    <button
+                      disabled
+                      title="Import CSV — bientot disponible"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-gray-700 text-gray-500 cursor-not-allowed"
+                    >
+                      <Upload size={15} />
+                      Importer des contacts
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Client cards */}
+          {!isLoading && filtered.map((client: Client) => (
+            <div key={client.id} className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+              <button
+                type="button"
+                onClick={() => toggleRow(client.id)}
+                className="w-full text-left p-4 hover:bg-gray-800/40 transition-colors"
+              >
+                {/* Name + chevron */}
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-[#25D366]/20 border border-[#25D366]/30 flex items-center justify-center text-[#25D366] text-sm font-semibold shrink-0">
+                      {client.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-white font-medium text-sm truncate">{client.name}</span>
+                    <SegmentBadges segmentIds={getSegmentsForClient(client.id)} compact />
+                  </div>
+                  {expandedId === client.id ? (
+                    <ChevronUp className="w-4 h-4 text-gray-500 shrink-0" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-500 shrink-0" />
+                  )}
+                </div>
+
+                {/* Phone */}
+                {client.phone && (
+                  <div className="flex items-center gap-1.5 text-sm text-gray-300 mb-1">
+                    <Phone className="w-3.5 h-3.5 text-gray-500 shrink-0" />
+                    <span className="truncate">{client.phone}</span>
+                  </div>
+                )}
+
+                {/* Tags */}
+                {(client.tags ?? []).length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {(client.tags ?? []).map((tag) => (
+                      <TagBadge key={tag} tag={tag} />
+                    ))}
+                  </div>
+                )}
+
+                {/* Stats row */}
+                <div className="flex items-center gap-4 text-xs text-gray-400 pt-2 border-t border-gray-800">
+                  <span className="text-gray-300 font-medium">{client.total_visits ?? 0} visites</span>
+                  <div className="flex items-center gap-1 text-amber-400">
+                    <Star className="w-3 h-3" />
+                    <span>{client.loyalty_points ?? 0} pts</span>
+                  </div>
+                  <span>
+                    {client.last_visit_at
+                      ? format(new Date(client.last_visit_at), 'd MMM yyyy', { locale: fr })
+                      : 'Jamais'}
+                  </span>
+                </div>
+              </button>
+
+              {/* Expanded details */}
+              {expandedId === client.id && (
+                <div className="bg-gray-900/50 border-t border-gray-800/50">
+                  <div className="px-4 pt-4 grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-gray-500 text-xs mb-0.5">Total depense</p>
+                      <p className="text-white font-medium">
+                        {client.total_spent != null
+                          ? `${client.total_spent.toLocaleString('fr-FR')} XPF`
+                          : '—'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500 text-xs mb-0.5">No-shows</p>
+                      <p className="text-white font-medium">{client.no_show_count ?? 0}</p>
+                    </div>
+                    {client.notes && (
+                      <div className="col-span-2">
+                        <p className="text-gray-500 text-xs mb-0.5">Notes</p>
+                        <p className="text-gray-300">{client.notes}</p>
+                      </div>
+                    )}
+                  </div>
+                  <ClientExpandedPanel clientPhone={client.phone ?? null} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* ── Desktop table view ── */}
+        <div className="hidden md:block bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
           {/* Table header */}
-          <div className="hidden md:grid grid-cols-[2fr_1.5fr_1.5fr_80px_100px_130px_1fr] gap-4 px-6 py-3 border-b border-gray-800 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <div className="grid grid-cols-[2fr_1.5fr_1.5fr_80px_100px_130px_1fr] gap-4 px-6 py-3 border-b border-gray-800 text-xs font-semibold text-gray-400 uppercase tracking-wider">
             <span>Nom</span>
             <span>Telephone</span>
             <span>Email</span>
@@ -296,12 +485,48 @@ export default function ClientsPage() {
             </div>
           )}
 
-          {/* Rows */}
+          {/* Empty state */}
           {!isLoading && filtered.length === 0 && (
-            <div className="px-6 py-16 text-center">
-              <p className="text-gray-500 text-sm">
-                {search ? 'Aucun client ne correspond a votre recherche.' : 'Aucun client enregistre.'}
-              </p>
+            <div className="py-14 flex flex-col items-center text-center px-6">
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                style={{ backgroundColor: 'rgba(37, 211, 102, 0.08)', border: '1px solid rgba(37, 211, 102, 0.15)' }}
+              >
+                <Users size={26} style={{ color: '#25D366' }} />
+              </div>
+              {search ? (
+                <>
+                  <p className="text-sm font-medium text-gray-300 mb-1">Aucun résultat</p>
+                  <p className="text-xs text-gray-500 max-w-xs">
+                    Aucun client ne correspond à <span className="text-gray-400 font-medium">"{search}"</span>. Vérifiez l'orthographe ou essayez un autre terme.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-gray-300 mb-1">Votre liste de clients est vide</p>
+                  <p className="text-xs text-gray-500 max-w-xs leading-relaxed">
+                    Votre liste se remplira automatiquement lors des réservations. Vous pouvez aussi ajouter vos contacts manuellement.
+                  </p>
+                  <div className="mt-4 flex items-center gap-2 flex-wrap justify-center">
+                    <button
+                      onClick={() => setShowModal(true)}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-white transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: '#25D366' }}
+                    >
+                      <Plus size={15} />
+                      Ajouter un client
+                    </button>
+                    <button
+                      disabled
+                      title="Import CSV — bientot disponible"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-gray-700 text-gray-500 cursor-not-allowed"
+                    >
+                      <Upload size={15} />
+                      Importer des contacts
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -313,13 +538,17 @@ export default function ClientsPage() {
                 onClick={() => toggleRow(client.id)}
                 className="w-full text-left hover:bg-gray-800/40 transition-colors"
               >
-                <div className="grid md:grid-cols-[2fr_1.5fr_1.5fr_80px_100px_130px_1fr] gap-4 px-6 py-4 items-center">
+                <div className="grid grid-cols-[2fr_1.5fr_1.5fr_80px_100px_130px_1fr] gap-4 px-6 py-4 items-center">
                   {/* Name */}
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-[#25D366]/20 border border-[#25D366]/30 flex items-center justify-center text-[#25D366] text-sm font-semibold shrink-0">
                       {client.name.charAt(0).toUpperCase()}
                     </div>
                     <span className="text-white font-medium text-sm truncate">{client.name}</span>
+                    <SegmentBadges
+                      segmentIds={getSegmentsForClient(client.id)}
+                      compact
+                    />
                     {expandedId === client.id ? (
                       <ChevronUp className="w-4 h-4 text-gray-500 shrink-0" />
                     ) : (

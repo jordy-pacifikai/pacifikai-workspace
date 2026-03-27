@@ -139,16 +139,20 @@ function FacebookConnectedCard({
       window.history.replaceState({}, '', '/channels');
     }
 
-    const fbPages = params.get('fb_pages');
-    if (fbPages) {
-      try {
-        const parsed = JSON.parse(fbPages) as FacebookPageOption[];
-        setPages(parsed);
-        setShowPagePicker(true);
-      } catch {
-        setError('Erreur lors du chargement des pages Facebook');
-      }
+    const fbSession = params.get('fb_session');
+    if (fbSession) {
       window.history.replaceState({}, '', '/channels');
+      fetch(`/api/auth/facebook/pages?session=${encodeURIComponent(fbSession)}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.pages) {
+            setPages(data.pages as FacebookPageOption[]);
+            setShowPagePicker(true);
+          } else {
+            setError(data.error ?? 'Session expiree');
+          }
+        })
+        .catch(() => setError('Erreur lors du chargement des pages Facebook'));
     }
   }, []);
 
@@ -573,9 +577,9 @@ function GoogleCalendarSection({ businessId }: { businessId: string | null }) {
             <>
               <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setShowDisconnectModal(false)} />
               <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl">
+                <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="channel-modal-title">
                   <div className="px-5 py-4 border-b border-gray-800">
-                    <h2 className="text-white font-semibold">Deconnecter Google Calendar</h2>
+                    <h2 id="channel-modal-title" className="text-white font-semibold">Deconnecter Google Calendar</h2>
                     <p className="text-xs text-gray-500 mt-1">
                       Que souhaitez-vous faire avec les creneaux synchronises depuis Google Calendar ?
                     </p>

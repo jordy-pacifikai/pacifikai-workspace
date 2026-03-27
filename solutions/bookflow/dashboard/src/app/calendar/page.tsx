@@ -26,6 +26,7 @@ import { useAppointments, useDeleteAppointment } from '@/hooks/useAppointments';
 import { useBlockedSlots, useCreateBlockedSlot, useDeleteBlockedSlot, type BlockedSlot } from '@/hooks/useBlockedSlots';
 import { cn } from '@/lib/utils';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { APPOINTMENT_STATUS, SOURCE_CONFIG } from '@/lib/appointment-status';
 import type { Appointment } from '@/types/database';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -36,19 +37,9 @@ const SLOT_HEIGHT = 48; // px per 30-min slot
 const SLOTS_PER_HOUR = 2;
 const TOTAL_SLOTS = (HOUR_END - HOUR_START) * SLOTS_PER_HOUR;
 
-// ─── Status config ─────────────────────────────────────────────────────────────
-
-const STATUS_CONFIG = {
-  pending:   { bg: 'bg-yellow-500/20',  border: 'border-yellow-500',  text: 'text-yellow-400',  dot: 'bg-yellow-500',  label: 'En attente' },
-  confirmed: { bg: 'bg-[#25D366]/20',   border: 'border-[#25D366]',   text: 'text-[#25D366]',   dot: 'bg-[#25D366]',   label: 'Confirmé'   },
-  cancelled: { bg: 'bg-gray-500/20',    border: 'border-gray-500',    text: 'text-gray-400',    dot: 'bg-gray-500',    label: 'Annulé'     },
-  completed: { bg: 'bg-blue-500/20',    border: 'border-blue-500',    text: 'text-blue-400',    dot: 'bg-blue-500',    label: 'Terminé'    },
-  no_show:   { bg: 'bg-red-500/20',     border: 'border-red-500',     text: 'text-red-400',     dot: 'bg-red-500',     label: 'No-show'    },
-} satisfies Record<Appointment['status'], { bg: string; border: string; text: string; dot: string; label: string }>;
-
-const SOURCE_LABELS: Record<string, string> = {
-  app: 'App', web: 'Web', manual: 'Manuel', chatbot: 'Chatbot', guest: 'Invité', whatsapp: 'WhatsApp', gcal: 'Google', messenger: 'Messenger', instagram: 'Instagram',
-};
+const SOURCE_LABELS: Record<string, string> = Object.fromEntries(
+  Object.entries(SOURCE_CONFIG).map(([k, v]) => [k, v.label]),
+) as Record<string, string>;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -70,7 +61,7 @@ interface AppointmentBlockProps {
 }
 
 function AppointmentBlock({ appointment, onClick }: AppointmentBlockProps) {
-  const cfg = STATUS_CONFIG[appointment.status];
+  const cfg = APPOINTMENT_STATUS[appointment.status];
   const top = timeToSlotOffset(appointment.time_slot);
   // Estimate duration from time_slot → end_time, fallback 30min
   const durationMin = appointment.end_time
@@ -87,6 +78,7 @@ function AppointmentBlock({ appointment, onClick }: AppointmentBlockProps) {
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
+      aria-label={`Rendez-vous ${appointment.time_slot?.slice(0, 5) ?? ''} — ${clientName} — ${serviceName} (${APPOINTMENT_STATUS[appointment.status].label})`}
       className={cn(
         'absolute left-1 right-1 rounded-md border-l-2 px-2 py-1 text-left overflow-hidden cursor-pointer transition-opacity hover:opacity-80 z-[2]',
         cfg.bg,
@@ -117,7 +109,7 @@ function DetailDrawer({ appointment, onClose, onDelete, isDeleting }: DetailDraw
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   if (!appointment) return null;
-  const cfg = STATUS_CONFIG[appointment.status];
+  const cfg = APPOINTMENT_STATUS[appointment.status];
   const clientName = appointment.client_name ?? 'Inconnu';
 
   return (
@@ -134,6 +126,7 @@ function DetailDrawer({ appointment, onClose, onDelete, isDeleting }: DetailDraw
           <h2 className="text-white font-semibold">Detail du RDV</h2>
           <button
             onClick={onClose}
+            aria-label="Fermer le detail du rendez-vous"
             className="p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
           >
             <X size={18} />
@@ -325,12 +318,14 @@ export default function CalendarPage() {
             <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
               <button
                 onClick={() => setCurrentDate(view === 'week' ? subWeeks(currentDate, 1) : subMonths(currentDate, 1))}
+                aria-label={view === 'week' ? 'Semaine precedente' : 'Mois precedent'}
                 className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors shrink-0"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={() => setCurrentDate(view === 'week' ? addWeeks(currentDate, 1) : addMonths(currentDate, 1))}
+                aria-label={view === 'week' ? 'Semaine suivante' : 'Mois suivant'}
                 className="p-2 rounded-lg bg-gray-900 border border-gray-800 text-gray-400 hover:text-white hover:border-gray-700 transition-colors shrink-0"
               >
                 <ChevronRight size={16} />
@@ -347,6 +342,8 @@ export default function CalendarPage() {
               <div className="flex items-center bg-gray-900 border border-gray-800 rounded-lg p-0.5">
                 <button
                   onClick={() => setView('week')}
+                  aria-label="Vue semaine"
+                  aria-pressed={view === 'week'}
                   className={cn(
                     'p-1.5 rounded-md transition-colors',
                     view === 'week' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300',
@@ -357,6 +354,8 @@ export default function CalendarPage() {
                 </button>
                 <button
                   onClick={() => setView('month')}
+                  aria-label="Vue mois"
+                  aria-pressed={view === 'month'}
                   className={cn(
                     'p-1.5 rounded-md transition-colors',
                     view === 'month' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300',
@@ -399,10 +398,10 @@ export default function CalendarPage() {
 
         {/* Legend */}
         <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-          {(Object.keys(STATUS_CONFIG) as Appointment['status'][]).map((s) => (
+          {(Object.keys(APPOINTMENT_STATUS) as Appointment['status'][]).map((s) => (
             <div key={s} className="flex items-center gap-1.5">
-              <span className={cn('w-2 h-2 rounded-full', STATUS_CONFIG[s].dot)} />
-              <span className="text-xs text-gray-500">{STATUS_CONFIG[s].label}</span>
+              <span className={cn('w-2 h-2 rounded-full', APPOINTMENT_STATUS[s].dot)} />
+              <span className="text-xs text-gray-500">{APPOINTMENT_STATUS[s].label}</span>
             </div>
           ))}
           <div className="flex items-center gap-1.5">
@@ -435,7 +434,7 @@ export default function CalendarPage() {
               </div>
 
               {/* Day columns */}
-              <div className="flex flex-1 gap-px">
+              <div role="grid" aria-label="Calendrier semaine" className="flex flex-1 gap-px">
                 {weekDays.map((day) => {
                   const dayStr = format(day, 'yyyy-MM-dd');
                   const dayAppointments = (appointments ?? []).filter(
@@ -444,7 +443,7 @@ export default function CalendarPage() {
                   const isToday = isSameDay(day, today);
 
                   return (
-                    <div key={dayStr} className="flex-1 min-w-[100px] flex flex-col">
+                    <div key={dayStr} role="gridcell" aria-label={format(day, 'EEEE d MMMM yyyy', { locale: fr })} className="flex-1 min-w-[100px] flex flex-col">
                       <div
                         className={cn(
                           'h-12 flex flex-col items-center justify-center rounded-t-lg border-x border-t text-center mb-px',
@@ -544,7 +543,7 @@ export default function CalendarPage() {
                 ))}
               </div>
               {/* Day cells grid */}
-              <div className="grid grid-cols-7 gap-px">
+              <div role="grid" aria-label="Calendrier mensuel" className="grid grid-cols-7 gap-px">
                 {monthGridDays.map((day) => {
                   const dayStr = format(day, 'yyyy-MM-dd');
                   const isToday = isSameDay(day, today);
@@ -560,9 +559,19 @@ export default function CalendarPage() {
                   return (
                     <div
                       key={dayStr}
+                      role="gridcell"
+                      aria-label={`${format(day, 'EEEE d MMMM yyyy', { locale: fr })}${dayAppointments.length > 0 ? `, ${dayAppointments.length} rendez-vous` : ''}`}
+                      tabIndex={0}
                       onClick={() => {
                         setView('week');
                         setCurrentDate(day);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setView('week');
+                          setCurrentDate(day);
+                        }
                       }}
                       className={cn(
                         'min-h-[90px] sm:min-h-[110px] border rounded-lg p-1.5 sm:p-2 cursor-pointer transition-colors group',
@@ -590,7 +599,7 @@ export default function CalendarPage() {
                       {/* Event pills — show up to 3 */}
                       <div className="space-y-0.5">
                         {dayAppointments.slice(0, 3).map((appt) => {
-                          const cfg = STATUS_CONFIG[appt.status];
+                          const cfg = APPOINTMENT_STATUS[appt.status];
                           return (
                             <div
                               key={appt.id}
@@ -723,10 +732,10 @@ export default function CalendarPage() {
         <>
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setShowBlockModal(false)} />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="calendar-modal-title">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
-                <h2 className="text-white font-semibold">Bloquer un creneau</h2>
-                <button onClick={() => setShowBlockModal(false)} className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+                <h2 id="calendar-modal-title" className="text-white font-semibold">Bloquer un creneau</h2>
+                <button onClick={() => setShowBlockModal(false)} aria-label="Fermer" className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
                   <X size={18} />
                 </button>
               </div>

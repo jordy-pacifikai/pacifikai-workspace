@@ -33,7 +33,7 @@ const FAQS = [
   },
   {
     q: 'Combien ca coute ?',
-    a: "Trois formules sans engagement : Essentiel a 9 900 F/mois (WhatsApp, 200 conversations), Business a 19 900 F/mois (multi-canal, 500 conversations, Google Calendar), et Premium sur devis (conversations illimitees, multi-sites). Abonnement annuel : 2 mois offerts.",
+    a: "Trois formules sans engagement : Essentiel a 9 900 XPF/mois (WhatsApp, 200 conversations), Business a 19 900 XPF/mois (multi-canal, 500 conversations, Google Calendar), et Premium sur devis (conversations illimitees, multi-sites). Abonnement annuel : 2 mois offerts.",
   },
   {
     q: 'Est-ce que le bot comprend le tahitien ?',

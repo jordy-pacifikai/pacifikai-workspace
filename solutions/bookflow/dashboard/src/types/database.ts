@@ -32,6 +32,8 @@ export interface Business {
   gcal_refresh_token: string | null
   gcal_calendar_id: string | null
   gcal_connected_at: string | null
+  trial_ends_at: string | null
+  subscription_status: 'trial' | 'active' | 'expired' | 'cancelled' | null
 }
 
 export interface OpeningHours {
@@ -59,6 +61,8 @@ export interface Client {
   email: string | null
   notes: string | null
   tags: string[] | null
+  birthday: string | null
+  birthday_msg_sent_at: string | null
   loyalty_points?: number
   total_visits?: number
   total_spent?: number
@@ -84,6 +88,8 @@ export interface Appointment {
   gcal_event_id: string | null
   client_email: string | null
   client_notes: string | null
+  price: number | null
+  followup_sent_at: string | null
   created_at: string
   updated_at: string
 }
@@ -109,6 +115,28 @@ export interface ChatMessage {
 }
 
 export type AppointmentStatus = Appointment['status']
+
+export type WaitlistStatus = 'waiting' | 'notified' | 'booked' | 'expired' | 'cancelled'
+
+export interface WaitlistEntry {
+  id: string
+  business_id: string
+  client_name: string
+  client_phone: string | null
+  client_email: string | null
+  service: string | null
+  preferred_days: number[] | null
+  preferred_time: string | null
+  preferred_time_start: string | null
+  preferred_time_end: string | null
+  position: number | null
+  status: WaitlistStatus
+  notes: string | null
+  notified_at: string | null
+  booked_appointment_id: string | null
+  created_at: string
+  updated_at: string
+}
 
 // Insert types
 export type BusinessInsert = Omit<Business, 'id' | 'created_at' | 'updated_at'> & {

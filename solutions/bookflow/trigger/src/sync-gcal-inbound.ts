@@ -141,29 +141,33 @@ export const syncGCalInbound = schedules.task({
             continue;
           }
 
-          // Insert blocked slot if not already exists
-          if (!existingSlotIds.has(event.id)) {
-            await fetch(`${SUPABASE_URL}/rest/v1/bookbot_blocked_slots`, {
-              method: "POST",
-              headers: { ...supaHeaders(), Prefer: "return=minimal" },
-              body: JSON.stringify({
-                business_id: biz.id,
-                date,
-                time_from: timeFrom,
-                time_to: timeTo,
-                all_day: allDay,
-                reason: event.summary ?? "Google Calendar",
-                source: "gcal",
-                gcal_event_id: event.id,
-              }),
-            });
-          }
+          // Upsert blocked slot (idempotent — unique index on business_id + gcal_event_id)
+          await fetch(`${SUPABASE_URL}/rest/v1/bookbot_blocked_slots`, {
+            method: "POST",
+            headers: {
+              ...supaHeaders(),
+              Prefer: "return=minimal,resolution=merge-duplicates",
+            },
+            body: JSON.stringify({
+              business_id: biz.id,
+              date,
+              time_from: timeFrom,
+              time_to: timeTo,
+              all_day: allDay,
+              reason: event.summary ?? "Google Calendar",
+              source: "gcal",
+              gcal_event_id: event.id,
+            }),
+          });
 
-          // Insert appointment for dashboard visibility (timed events only)
-          if (!allDay && timeFrom && !existingApptIds.has(event.id)) {
+          // Upsert appointment for dashboard visibility (timed events only)
+          if (!allDay && timeFrom) {
             await fetch(`${SUPABASE_URL}/rest/v1/bookbot_appointments`, {
               method: "POST",
-              headers: { ...supaHeaders(), Prefer: "return=minimal" },
+              headers: {
+                ...supaHeaders(),
+                Prefer: "return=minimal,resolution=merge-duplicates",
+              },
               body: JSON.stringify({
                 business_id: biz.id,
                 client_name: event.summary ?? "Google Calendar",

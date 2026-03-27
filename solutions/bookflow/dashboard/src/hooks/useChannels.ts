@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/Toast';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -90,6 +91,9 @@ export function useSelectPage(businessId: string | null) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: channelKeys.connected(businessId ?? '') });
     },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la connexion de la page Facebook');
+    },
   });
 }
 
@@ -113,6 +117,9 @@ export function useDisconnectFacebook(businessId: string | null) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: channelKeys.connected(businessId ?? '') });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la déconnexion de Facebook');
     },
   });
 }

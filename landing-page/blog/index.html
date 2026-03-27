@@ -939,9 +939,58 @@
                     filterByCategory(activeBtn.dataset.category);
                 }
             } catch (err) {
-                console.error('Error loading articles:', err);
-                if (loading) { loading.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:4rem 0;color:var(--text-dim);">Erreur de chargement des articles.</p>'; }
+                console.error('API unavailable, loading static articles');
+                loadStaticArticles();
             }
+        }
+
+        function loadStaticArticles() {
+            const container = document.getElementById('dynamic-articles');
+            const loading = document.getElementById('articles-loading');
+            if (loading) loading.remove();
+
+            const staticArticles = [
+                { title: "Creation site internet a Tahiti : guide complet 2026", slug: "creation-site-internet-tahiti", category: "seo-local", excerpt: "Guide complet pour creer un site internet a Tahiti. Prix, etapes, conseils et prestataires en Polynesie francaise.", published_date: "2026-03-25", reading_time: "8 min" },
+                { title: "Chatbot IA pour entreprises en Polynesie francaise", slug: "chatbot-ia-polynesie", category: "seo-local", excerpt: "Comment un chatbot IA peut transformer votre entreprise en Polynesie. Disponible 24/7, multilingue, sur WhatsApp et Messenger.", published_date: "2026-03-25", reading_time: "7 min" },
+                { title: "Automatisation entreprise Tahiti : gagner 10h/semaine", slug: "automatisation-entreprise-tahiti", category: "seo-local", excerpt: "Decouvrez comment l'automatisation IA permet aux entreprises de Tahiti de gagner 10 heures par semaine.", published_date: "2026-03-25", reading_time: "6 min" },
+                { title: "Combien coute un site web en Polynesie francaise ?", slug: "prix-site-web-polynesie", category: "seo-local", excerpt: "Tous les tarifs de creation de site web en Polynesie : vitrine, e-commerce, application. Comparatif et devis.", published_date: "2026-03-25", reading_time: "7 min" },
+                { title: "Application mobile sur mesure en Polynesie", slug: "application-mobile-polynesie", category: "seo-local", excerpt: "PWA ou native ? Guide pour creer une application mobile adaptee aux entreprises polynesiennes.", published_date: "2026-03-25", reading_time: "6 min" },
+                { title: "Marketing digital Tahiti : strategies qui marchent", slug: "marketing-digital-tahiti", category: "seo-local", excerpt: "Les meilleures strategies de marketing digital pour les entreprises a Tahiti et en Polynesie francaise.", published_date: "2026-03-25", reading_time: "8 min" },
+                { title: "Intelligence artificielle pour PME polynesiennes", slug: "intelligence-artificielle-polynesie", category: "seo-local", excerpt: "L'IA est accessible aux PME en Polynesie francaise. Decouvrez les outils et solutions pour votre entreprise.", published_date: "2026-03-25", reading_time: "7 min" },
+                { title: "Digitaliser son entreprise a Tahiti en 2026", slug: "digitalisation-entreprise-tahiti", category: "seo-local", excerpt: "Par ou commencer la transformation digitale de votre entreprise a Tahiti ? Guide etape par etape.", published_date: "2026-03-25", reading_time: "6 min" },
+                { title: "Agence digitale a Tahiti : comment choisir en 2026", slug: "agence-digitale-tahiti-guide", category: "seo-local", excerpt: "Guide ultime pour choisir la meilleure agence digitale a Tahiti. Criteres, tarifs, comparatif IA vs traditionnel.", published_date: "2026-03-27", reading_time: "10 min" },
+                { title: "Automatisation IA pour entreprises en Polynesie", slug: "automatisation-ia-entreprise-polynesie", category: "seo-local", excerpt: "Guide pratique d'automatisation IA pour les PME polynesiennes. 10 processus a automatiser, couts, etude de cas.", published_date: "2026-03-27", reading_time: "10 min" },
+                { title: "Agence web a Tahiti : top prestataires et tarifs 2026", slug: "agence-web-tahiti-2026", category: "seo-local", excerpt: "Trouver le bon prestataire web a Tahiti. Types de sites, tarifs, sur mesure vs template, etapes de creation.", published_date: "2026-03-27", reading_time: "10 min" },
+                { title: "Comparatif agences digitales Tahiti 2026", slug: "agences-digitales-tahiti-comparatif", category: "comparatifs", excerpt: "Comparaison des meilleures agences digitales a Tahiti : services, tarifs, specialites et avis.", published_date: "2026-03-25", reading_time: "10 min" },
+                { title: "Chatbot IA vs standard telephonique : le match", slug: "chatbot-ia-vs-standard-telephonique", category: "comparatifs", excerpt: "Comparaison detaillee entre un chatbot IA et un standard telephonique pour votre entreprise.", published_date: "2026-03-25", reading_time: "6 min" },
+                { title: "Site web sur mesure vs template a Tahiti", slug: "site-web-sur-mesure-vs-template-tahiti", category: "comparatifs", excerpt: "Faut-il un site sur mesure ou un template ? Avantages, inconvenients et tarifs en Polynesie.", published_date: "2026-03-25", reading_time: "7 min" },
+                { title: "Automatisation IA vs employe : que choisir ?", slug: "automatisation-ia-vs-employe-polynesie", category: "comparatifs", excerpt: "L'automatisation IA remplace-t-elle les employes ? Analyse objective pour les entreprises polynesiennes.", published_date: "2026-03-25", reading_time: "8 min" },
+                { title: "Comment Starbucks utilise l'IA Deep Brew", slug: "starbucks-deep-brew-ia", category: "case-study", excerpt: "Etude de cas : comment Starbucks a deploye l'IA Deep Brew pour personnaliser l'experience client.", published_date: "2026-03-24", reading_time: "5 min" },
+                { title: "KLM : service client IA a grande echelle", slug: "klm-service-client-ia", category: "case-study", excerpt: "Comment KLM a automatise son service client avec l'IA pour 100 000 demandes par semaine.", published_date: "2026-03-24", reading_time: "5 min" },
+                { title: "Marriott : chatbot reservation hoteliere", slug: "marriott-chatbot-reservation", category: "case-study", excerpt: "Etude de cas : le chatbot de reservation de Marriott qui a augmente les conversions de 30%.", published_date: "2026-03-24", reading_time: "5 min" },
+                { title: "HSBC : extraction intelligente de documents", slug: "hsbc-extraction-documents", category: "case-study", excerpt: "Comment HSBC utilise l'IA pour extraire et traiter des millions de documents financiers.", published_date: "2026-03-24", reading_time: "5 min" }
+            ];
+
+            staticArticles.forEach((article, i) => {
+                const card = document.createElement('a');
+                card.href = `/blog/articles/${article.slug}.html`;
+                card.className = `article-card${i === 0 ? ' featured-article' : ''}`;
+                card.dataset.category = article.category;
+                card.style.animationDelay = `${0.08 * i}s`;
+                card.innerHTML = `
+                    <div class="article-image"><span class="article-category">${article.category === 'seo-local' ? 'Guide SEO' : article.category === 'comparatifs' ? 'Comparatif' : 'Case Study'}</span></div>
+                    <div class="article-content">
+                        ${i === 0 ? '<span class="featured-badge">A la une</span>' : ''}
+                        <div class="article-meta"><span>${formatDate(article.published_date)}</span><span>${article.reading_time}</span></div>
+                        <h2 class="article-title">${article.title}</h2>
+                        <p class="article-excerpt">${article.excerpt}</p>
+                        <span class="article-read-more">Lire l'article <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+                    </div>`;
+                container.appendChild(card);
+            });
+
+            const activeBtn = document.querySelector('.category-btn.active');
+            if (activeBtn && activeBtn.dataset.category !== 'all') filterByCategory(activeBtn.dataset.category);
         }
 
         loadDynamicArticles();

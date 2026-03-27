@@ -1,14 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { z } from 'zod'
 import OpenAI from 'openai'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase'
 import { createCalendarEvent } from '@/lib/gcal'
-
-function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-}
+import { requireBusinessAccess } from '@/lib/auth'
+import { rateLimit, getClientIp } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
+import { computeEndTime } from '@/lib/utils'
 
 function getDeepSeekClient() {
   return new OpenAI({
@@ -17,13 +15,13 @@ function getDeepSeekClient() {
   })
 }
 
-// ─── Types ──────────────────────────────────────────────────────────────────────
+// ─── Validation ─────────────────────────────────────────────────────────────────
 
-interface ChatTestPayload {
-  businessId: string
-  message: string
-  sessionId?: string
-}
+const chatTestSchema = z.object({
+  businessId: z.string().uuid(),
+  message: z.string().min(1).max(2000),
+  sessionId: z.string().max(100).optional(),
+})
 
 // ─── Tools ──────────────────────────────────────────────────────────────────────
 
@@ -115,9 +113,9 @@ interface BizConfig {
 }
 
 async function loadBizConfig(businessId: string): Promise<BizConfig | null> {
-  const { data } = await getSupabase()
+  const { data } = await supabaseAdmin()
     .from('bookbot_businesses')
-    .select('*')
+    .select('id, name, services, hours, timezone, config, phone')
     .eq('id', businessId)
     .single()
 
@@ -242,7 +240,7 @@ async function executeTool(
   switch (name) {
     case 'search_knowledge_base': {
       const query = input.query as string
-      const { data } = await getSupabase().rpc('bookbot_search', {
+      const { data } = await supabaseAdmin().rpc('bookbot_search', {
         p_business_id: config.businessId,
         p_query: query,
         p_limit: 5,
@@ -311,13 +309,14 @@ async function executeTool(
       }
 
       // Get existing bookings
-      const sb = getSupabase()
+      const sb = supabaseAdmin()
       const { data: bookings } = await sb
         .from('bookbot_appointments')
         .select('time_slot,end_time')
         .eq('business_id', config.businessId)
         .eq('appointment_date', date)
         .in('status', ['confirmed', 'pending'])
+        .neq('source', 'test')
 
       // Get blocked slots (manual + GCal synced)
       const { data: blockedSlots } = await sb
@@ -377,14 +376,12 @@ async function executeTool(
       const time = input.time as string
       const clientName = input.client_name as string
 
-      // Calculate end_time from service duration
+      // Calculate end_time from service duration (capped at 23:59)
       const svc = config.services.find(s => s.name.toLowerCase() === service.toLowerCase())
       const dur = svc?.duration ?? 30
-      const timeParts = String(time).split(':').map(Number)
-      const endMins = (timeParts[0] ?? 0) * 60 + (timeParts[1] ?? 0) + dur
-      const endTime = `${String(Math.floor(endMins / 60)).padStart(2, '0')}:${String(endMins % 60).padStart(2, '0')}`
+      const endTime = computeEndTime(String(time), dur)
 
-      const { data: apptData } = await getSupabase().from('bookbot_appointments').insert({
+      const { data: apptData } = await supabaseAdmin().from('bookbot_appointments').insert({
         business_id: config.businessId,
         client_name: clientName,
         client_phone: 'test_dashboard',
@@ -393,7 +390,7 @@ async function executeTool(
         time_slot: time,
         end_time: endTime,
         status: 'confirmed',
-        source: 'chatbot',
+        source: 'test',
       }).select('id').single()
 
       // Create Google Calendar event (best-effort, don't block booking)
@@ -407,13 +404,13 @@ async function executeTool(
           timezone: config.timezone,
         })
         if (gcalEventId && apptData?.id) {
-          await getSupabase()
+          await supabaseAdmin()
             .from('bookbot_appointments')
             .update({ gcal_event_id: gcalEventId })
             .eq('id', apptData.id)
         }
       } catch (e) {
-        console.error('[GCal] Event creation failed (non-blocking):', e)
+        logger.warn('GCal event creation failed (non-blocking)', { action: 'chat_test_gcal', error: String(e) })
       }
 
       return `Rendez-vous confirmé ! ${service} le ${date} à ${time} pour ${clientName}.`
@@ -433,11 +430,31 @@ async function executeTool(
 // ─── POST handler ───────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
-  try {
-  const body = (await request.json()) as ChatTestPayload
+  const ip = getClientIp(request)
+  const { success } = rateLimit(`chat-test-post:${ip}`, { interval: 60_000, limit: 5 })
+  if (!success) {
+    return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
+  }
 
-  if (!body.businessId || !body.message) {
-    return NextResponse.json({ error: 'businessId and message required' }, { status: 400 })
+  try {
+  const raw = await request.json()
+  const parsed = chatTestSchema.safeParse(raw)
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Invalid input', details: parsed.error.flatten() },
+      { status: 400 },
+    )
+  }
+
+  const body = parsed.data
+
+  // Verify user owns this business
+  try {
+    await requireBusinessAccess(body.businessId)
+  } catch (authError) {
+    if (authError instanceof NextResponse) return authError
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const config = await loadBizConfig(body.businessId)
@@ -447,10 +464,10 @@ export async function POST(request: NextRequest) {
 
   // Load or create test session
   const testPhone = `test_${body.sessionId ?? 'default'}`
-  const sb = getSupabase()
+  const sb = supabaseAdmin()
   const { data: existingSession } = await sb
     .from('bookbot_sessions')
-    .select('*')
+    .select('id, phone, business_id, state, context')
     .eq('phone', testPhone)
     .eq('business_id', body.businessId)
     .limit(1)
@@ -534,9 +551,9 @@ export async function POST(request: NextRequest) {
     toolCalls,
   })
   } catch (err) {
-    console.error('[chat-test] Error:', err)
+    logger.error('Chat test error', { action: 'chat_test', error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json(
-      { error: 'Internal error', detail: err instanceof Error ? err.message : String(err) },
+      { error: 'Erreur interne. Veuillez réessayer.' },
       { status: 500 },
     )
   }
@@ -545,6 +562,12 @@ export async function POST(request: NextRequest) {
 // ─── DELETE handler — reset session ─────────────────────────────────────────────
 
 export async function DELETE(request: NextRequest) {
+  const ip = getClientIp(request)
+  const { success } = rateLimit(`chat-test-delete:${ip}`, { interval: 60_000, limit: 10 })
+  if (!success) {
+    return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
+  }
+
   const { searchParams } = request.nextUrl
   const businessId = searchParams.get('businessId')
   const sessionId = searchParams.get('sessionId') ?? 'default'
@@ -553,11 +576,36 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'businessId required' }, { status: 400 })
   }
 
-  await getSupabase()
+  // Validate UUID format
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (!uuidRegex.test(businessId)) {
+    return NextResponse.json({ error: 'Invalid businessId format' }, { status: 400 })
+  }
+
+  // Verify user owns this business
+  try {
+    await requireBusinessAccess(businessId)
+  } catch (authError) {
+    if (authError instanceof NextResponse) return authError
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const sb = supabaseAdmin()
+
+  // Delete test session
+  await sb
     .from('bookbot_sessions')
     .delete()
     .eq('phone', `test_${sessionId}`)
     .eq('business_id', businessId)
+
+  // Clean up test appointments created during this session
+  await sb
+    .from('bookbot_appointments')
+    .delete()
+    .eq('client_phone', 'test_dashboard')
+    .eq('business_id', businessId)
+    .eq('source', 'test')
 
   return NextResponse.json({ ok: true })
 }

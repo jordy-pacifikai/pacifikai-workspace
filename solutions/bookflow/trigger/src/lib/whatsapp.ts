@@ -154,10 +154,13 @@ async function sendViaMessenger(
   }
 
   const res = await fetch(
-    `https://graph.facebook.com/v22.0/me/messages?access_token=${pageToken}`,
+    `https://graph.facebook.com/v22.0/me/messages`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${pageToken}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         recipient: { id: recipientId },
         message: { text: message },
@@ -166,8 +169,9 @@ async function sendViaMessenger(
   );
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Messenger API error ${res.status}: ${text}`);
+    const body = await res.json().catch(() => null);
+    const detail = (body as { error?: { message?: string } })?.error?.message ?? "unknown";
+    throw new Error(`Messenger API error ${res.status}: ${detail}`);
   }
 }
 
@@ -187,10 +191,13 @@ async function sendViaInstagram(
   }
 
   const res = await fetch(
-    `https://graph.facebook.com/v22.0/me/messages?access_token=${pageToken}`,
+    `https://graph.facebook.com/v22.0/me/messages`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${pageToken}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         recipient: { id: recipientId },
         message: { text: message },
@@ -199,8 +206,9 @@ async function sendViaInstagram(
   );
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Instagram DM API error ${res.status}: ${text}`);
+    const body = await res.json().catch(() => null);
+    const detail = (body as { error?: { message?: string } })?.error?.message ?? "unknown";
+    throw new Error(`Instagram DM API error ${res.status}: ${detail}`);
   }
 }
 
@@ -219,6 +227,75 @@ async function getPageToken(businessId: string): Promise<string | null> {
     return data[0].meta_page_token ?? null;
   }
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// Read receipts + Typing indicators — WhatsApp only
+// ---------------------------------------------------------------------------
+
+/**
+ * Mark an incoming message as read (blue double-check).
+ * Fire-and-forget — never throws.
+ */
+export async function markAsRead(
+  messageId: string,
+  config: BusinessConfig,
+): Promise<void> {
+  try {
+    const { metaPhoneNumberId, metaAccessToken } = getMetaCredentials(config);
+    await fetch(
+      `https://graph.facebook.com/v22.0/${metaPhoneNumberId}/messages`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${metaAccessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messaging_product: "whatsapp",
+          status: "read",
+          message_id: messageId,
+        }),
+      },
+    );
+  } catch {
+    // Best-effort — don't fail the flow
+  }
+}
+
+/**
+ * Show "typing..." indicator to the user.
+ * - WhatsApp: Not officially supported in Cloud API — skipped
+ * - Messenger/Instagram: sender_action: "typing_on"
+ * Fire-and-forget — never throws.
+ */
+export async function sendTypingIndicator(
+  to: string,
+  config: BusinessConfig,
+  pageAccessToken?: string,
+): Promise<void> {
+  try {
+    // Messenger/Instagram support sender_action natively
+    if (to.startsWith("messenger_") || to.startsWith("instagram_")) {
+      const recipientId = to.replace(/^(messenger_|instagram_)/, "");
+      const pageToken = pageAccessToken || await getPageToken(config.businessId);
+      if (!pageToken) return;
+      await fetch("https://graph.facebook.com/v22.0/me/messages", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${pageToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipient: { id: recipientId },
+          sender_action: "typing_on",
+        }),
+      });
+    }
+    // WhatsApp Cloud API doesn't have a public typing indicator endpoint
+  } catch {
+    // Best-effort — don't fail the flow
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -323,9 +400,9 @@ export async function sendWhatsAppList(
         {
           title: "Options",
           rows: items.map((item) => ({
-            id: item.id,
-            title: item.title,
-            ...(item.description ? { description: item.description } : {}),
+            id: item.id.slice(0, 200),
+            title: item.title.slice(0, 24),
+            ...(item.description ? { description: item.description.slice(0, 72) } : {}),
           })),
         },
       ],

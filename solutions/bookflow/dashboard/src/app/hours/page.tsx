@@ -8,6 +8,7 @@ import { useAppStore } from '@/lib/store';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabaseBrowser } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { toast } from '@/components/ui/Toast';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -281,6 +282,10 @@ export default function HoursPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookbot-business', businessId] });
+      toast.success('Horaires mis a jour');
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la sauvegarde');
     },
   });
 

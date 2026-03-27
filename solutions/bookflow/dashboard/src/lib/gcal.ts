@@ -1,11 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-
-function getAdmin() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-}
+import { logger } from '@/lib/logger';
+import { supabaseAdmin } from '@/lib/supabase';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
@@ -21,7 +15,7 @@ interface TokenResponse {
  * Returns null if no GCal is connected.
  */
 export async function getAccessToken(businessId: string): Promise<string | null> {
-  const sb = getAdmin();
+  const sb = supabaseAdmin();
   const { data } = await sb
     .from('bookbot_businesses')
     .select('gcal_refresh_token')
@@ -42,7 +36,7 @@ export async function getAccessToken(businessId: string): Promise<string | null>
   });
 
   if (!res.ok) {
-    console.error('[GCal] Token refresh failed:', await res.text());
+    logger.error('Token refresh failed', { action: 'gcal_token', businessId, status: res.status });
     return null;
   }
 
@@ -64,7 +58,7 @@ export async function createCalendarEvent(
     timezone: string;
   },
 ): Promise<string | null> {
-  const sb = getAdmin();
+  const sb = supabaseAdmin();
   const { data: biz } = await sb
     .from('bookbot_businesses')
     .select('gcal_calendar_id')
@@ -102,7 +96,7 @@ export async function createCalendarEvent(
   );
 
   if (!res.ok) {
-    console.error('[GCal] Create event failed:', await res.text());
+    logger.error('Create event failed', { action: 'gcal_create_event', businessId, status: res.status });
     return null;
   }
 
@@ -119,7 +113,7 @@ export async function watchCalendar(
   businessId: string,
   webhookUrl: string,
 ): Promise<{ channelId: string; resourceId: string; expiration: string } | null> {
-  const sb = getAdmin();
+  const sb = supabaseAdmin();
   const { data: biz } = await sb
     .from('bookbot_businesses')
     .select('gcal_calendar_id')
@@ -151,7 +145,7 @@ export async function watchCalendar(
   );
 
   if (!res.ok) {
-    console.error('[GCal Watch] Failed:', await res.text());
+    logger.error('Watch setup failed', { action: 'gcal_watch', businessId, status: res.status });
     return null;
   }
 
@@ -202,12 +196,112 @@ export interface GCalEvent {
   attendees: GCalAttendee[];
 }
 
+/**
+ * Sync GCal events for a single business — shared between cron and webhook.
+ * Returns the number of newly synced events.
+ */
+export async function syncGCalEventsForBusiness(
+  businessId: string,
+  tz: string,
+  events: GCalEvent[],
+): Promise<number> {
+  const sb = supabaseAdmin();
+
+  const [{ data: existingAppts }, { data: existingSlots }, { data: dismissed }] = await Promise.all([
+    sb.from('bookbot_appointments').select('gcal_event_id')
+      .eq('business_id', businessId).eq('source', 'gcal').not('gcal_event_id', 'is', null),
+    sb.from('bookbot_blocked_slots').select('gcal_event_id')
+      .eq('business_id', businessId).eq('source', 'gcal').not('gcal_event_id', 'is', null),
+    sb.from('bookbot_gcal_dismissed').select('gcal_event_id')
+      .eq('business_id', businessId),
+  ]);
+
+  const dismissedIds = new Set((dismissed ?? []).map((d: { gcal_event_id: string }) => d.gcal_event_id));
+  const existingApptIds = new Set((existingAppts ?? []).map((a: { gcal_event_id: string }) => a.gcal_event_id));
+  const existingSlotIds = new Set((existingSlots ?? []).map((s: { gcal_event_id: string }) => s.gcal_event_id));
+  const seenApptIds = new Set<string>();
+  const seenSlotIds = new Set<string>();
+  let synced = 0;
+
+  for (const event of events) {
+    if (dismissedIds.has(event.id)) continue;
+
+    if (event.allDay) {
+      seenSlotIds.add(event.id);
+      if (existingSlotIds.has(event.id)) {
+        await sb.from('bookbot_blocked_slots')
+          .update({ reason: event.summary, date: event.start })
+          .eq('business_id', businessId).eq('gcal_event_id', event.id).eq('source', 'gcal');
+        continue;
+      }
+      await sb.from('bookbot_blocked_slots').insert({
+        business_id: businessId, date: event.start, time_from: null, time_to: null,
+        all_day: true, reason: event.summary, source: 'gcal', gcal_event_id: event.id,
+      });
+      synced++;
+    } else {
+      seenApptIds.add(event.id);
+      const startDt = new Date(event.start);
+      const endDt = new Date(event.end);
+      const startLocal = new Date(startDt.toLocaleString('en-US', { timeZone: tz }));
+      const endLocal = new Date(endDt.toLocaleString('en-US', { timeZone: tz }));
+      const date = `${startLocal.getFullYear()}-${String(startLocal.getMonth() + 1).padStart(2, '0')}-${String(startLocal.getDate()).padStart(2, '0')}`;
+      const timeSlot = `${String(startLocal.getHours()).padStart(2, '0')}:${String(startLocal.getMinutes()).padStart(2, '0')}`;
+      const endTime = `${String(endLocal.getHours()).padStart(2, '0')}:${String(endLocal.getMinutes()).padStart(2, '0')}`;
+
+      const attendee = event.attendees[0];
+      const clientName = attendee?.displayName ?? event.summary;
+      const clientEmail = attendee?.email ?? null;
+
+      if (clientName) {
+        const { data: existing } = await sb.from('bookbot_clients').select('id')
+          .eq('business_id', businessId).eq('name', clientName).maybeSingle();
+        if (!existing) {
+          await sb.from('bookbot_clients').insert({
+            business_id: businessId, name: clientName, email: clientEmail, source: 'gcal', tags: ['gcal'],
+          });
+        }
+      }
+
+      if (existingApptIds.has(event.id)) {
+        await sb.from('bookbot_appointments').update({
+          client_name: clientName, client_email: clientEmail,
+          appointment_date: date, time_slot: timeSlot, end_time: endTime,
+          updated_at: new Date().toISOString(),
+        }).eq('business_id', businessId).eq('gcal_event_id', event.id).eq('source', 'gcal');
+        continue;
+      }
+
+      await sb.from('bookbot_appointments').insert({
+        business_id: businessId, client_name: clientName, client_email: clientEmail,
+        service: null, appointment_date: date, time_slot: timeSlot, end_time: endTime,
+        status: 'confirmed', source: 'gcal', gcal_event_id: event.id,
+      });
+      synced++;
+    }
+  }
+
+  // Cleanup: remove events deleted from GCal
+  const apptToRemove = Array.from(existingApptIds).filter((id) => !seenApptIds.has(id));
+  const slotToRemove = Array.from(existingSlotIds).filter((id) => !seenSlotIds.has(id));
+  if (apptToRemove.length > 0 || slotToRemove.length > 0) {
+    await Promise.all([
+      ...(apptToRemove.length > 0 ? [sb.from('bookbot_appointments').delete()
+        .eq('business_id', businessId).eq('source', 'gcal').in('gcal_event_id', apptToRemove)] : []),
+      ...(slotToRemove.length > 0 ? [sb.from('bookbot_blocked_slots').delete()
+        .eq('business_id', businessId).eq('source', 'gcal').in('gcal_event_id', slotToRemove)] : []),
+    ]);
+  }
+
+  return synced;
+}
+
 export async function listCalendarEvents(
   businessId: string,
   timeMin: string,
   timeMax: string,
 ): Promise<GCalEvent[] | null> {
-  const sb = getAdmin();
+  const sb = supabaseAdmin();
   const { data: biz } = await sb
     .from('bookbot_businesses')
     .select('gcal_calendar_id')
@@ -233,7 +327,7 @@ export async function listCalendarEvents(
   );
 
   if (!res.ok) {
-    console.error('[GCal] List events failed:', await res.text());
+    logger.error('List events failed', { action: 'gcal_list_events', businessId, status: res.status });
     return null;
   }
 

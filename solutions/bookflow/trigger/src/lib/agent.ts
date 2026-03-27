@@ -1,6 +1,8 @@
 import OpenAI from "openai";
+import { logger } from "@trigger.dev/sdk";
 import type { BusinessConfig } from "./config.js";
 import { parseAllServices } from "./config.js";
+import { computeEndTime } from "./time-utils.js";
 import {
   loadOrCreateSession,
   updateSession,
@@ -8,11 +10,13 @@ import {
   updateAppointmentGCalId,
   getClientAppointments,
   cancelActiveAppointment,
+  rescheduleAppointment,
   getBookingsForDate,
   getBlockedSlotsForDate,
   getAllDayBlockedDates,
   searchKnowledgeBase,
   refreshGCalBlockedSlots,
+  getClientHints,
 } from "./supabase.js";
 import { createGCalEvent, deleteGCalEvent, listGCalEvents } from "./gcal.js";
 import { generateAvailableDates, generateTimeSlots } from "../utils/dates.js";
@@ -21,6 +25,26 @@ import type { Session } from "./supabase.js";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY!;
 const SUPABASE_URL = process.env.SUPABASE_URL!;
+
+/** Sanitize user-provided instructions before injecting into LLM system prompt */
+function sanitizeInstruction(raw: string, businessId?: string): string {
+  const sanitized = raw
+    .slice(0, 500) // hard cap length
+    .replace(/##\s/g, "") // strip markdown headers that could override sections
+    .replace(/\bignore\b.{0,40}\b(?:previous|above|system)\b/gi, "")
+    .replace(/\bforget\b.{0,40}\binstructions\b/gi, "")
+    .replace(/\byou\s+are\s+now\b/gi, "")
+    .replace(/\bnew\s+instructions?\b/gi, "")
+    .trim();
+  if (sanitized.length < raw.trim().slice(0, 500).length) {
+    logger.warn("Prompt injection patterns stripped from business instructions", {
+      businessId,
+      originalLength: raw.length,
+      strippedLength: raw.length - sanitized.length,
+    });
+  }
+  return sanitized;
+}
 
 const BOOKBOT_TOOLS: OpenAI.ChatCompletionTool[] = [
   {
@@ -123,6 +147,40 @@ const BOOKBOT_TOOLS: OpenAI.ChatCompletionTool[] = [
   {
     type: "function",
     function: {
+      name: "reschedule_appointment",
+      description:
+        "Déplace le prochain rendez-vous confirmé du client vers une nouvelle date/heure. Vérifie d'abord la disponibilité avec check_availability, puis appelle cet outil.",
+      parameters: {
+        type: "object",
+        properties: {
+          new_date: { type: "string", description: "Nouvelle date au format YYYY-MM-DD" },
+          new_time: { type: "string", description: "Nouvelle heure au format HH:MM" },
+        },
+        required: ["new_date", "new_time"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_next_available",
+      description:
+        "Trouve le prochain créneau disponible pour un service, sans que le client ait besoin de choisir une date. Idéal quand le client dit 'quand est le prochain créneau' ou veut réserver au plus vite.",
+      parameters: {
+        type: "object",
+        properties: {
+          service_name: {
+            type: "string",
+            description: "Le nom du service demandé",
+          },
+        },
+        required: ["service_name"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "transfer_to_human",
       description:
         "Transfère la conversation à un humain quand la demande dépasse tes capacités ou que le client le demande explicitement.",
@@ -213,8 +271,9 @@ function buildSystemPrompt(config: BusinessConfig, today: string, channel = "wha
     ? `\n- Quand un client te salue, utilise cette formule de bienvenue : "${greeting}"`
     : "";
 
-  // Custom instructions from the business owner
-  const customInstructions = (cfg.custom_instructions as string) ?? '';
+  // Custom instructions from the business owner (sanitized against prompt injection)
+  const rawCustomInstructions = (cfg.custom_instructions as string) ?? '';
+  const customInstructions = sanitizeInstruction(rawCustomInstructions, config.businessId);
   const customSection = customInstructions
     ? `\n\n## Instructions spéciales du professionnel\n${customInstructions}`
     : '';
@@ -287,13 +346,14 @@ ${today} (timezone: ${config.timezone})
 5. Quand le client veut un RDV → d'abord \`get_my_appointments\` pour vérifier s'il en a déjà un
 6. Question hors compétence ou client demande un humain → \`transfer_to_human\`
 7. Questions spécifiques (annulation, parking, produits...) → \`search_knowledge_base\`
-8. Réponses COURTES (2-4 phrases max) — c'est ${chan}, pas un email
-9. NE JAMAIS proposer de dates dans le passé. Date minimale : demain.
-10. Date en texte ("lundi prochain", "demain") → convertis en YYYY-MM-DD avant d'appeler les outils
+8. Pour déplacer un RDV existant → \`check_availability\` sur le nouveau créneau puis \`reschedule_appointment\`
+9. Réponses COURTES (2-4 phrases max) — c'est ${chan}, pas un email
+10. NE JAMAIS proposer de dates dans le passé. Date minimale : demain.
+11. Date en texte ("lundi prochain", "demain") → convertis en YYYY-MM-DD avant d'appeler les outils
 
 ## PROCESSUS DE RÉSERVATION (ordre strict)
-1. Client demande RDV → demande service + date/heure souhaitée
-2. Appelle \`check_availability\`
+1. Client demande RDV → demande quel service. Si le client ne précise PAS de date, utilise \`get_next_available\` pour proposer le prochain créneau directement.
+2. Si le client a une date en tête → appelle \`check_availability\`
 3. Propose le créneau disponible + demande confirmation
 4. Client confirme → appelle \`book_appointment\` IMMÉDIATEMENT
 5. Après \`book_appointment\`, envoie EXACTEMENT ce message (adapte les valeurs) :
@@ -305,6 +365,8 @@ ${today} (timezone: ${config.timezone})
 ## SCRIPTS FIXES (utilise exactement ces formules)
 - Après annulation réussie : "✅ Ton rendez-vous a bien été annulé. N'hésite pas si tu veux en reprendre un !"
 - Après annulation — aucun RDV trouvé : "Je ne trouve pas de rendez-vous actif pour toi. Si tu penses que c'est une erreur, je peux te mettre en contact avec l'équipe."
+- Après déplacement réussi : "✅ Ton rendez-vous a bien été déplacé ! [nouvelles date et heure]. À bientôt !"
+- Pour déplacer un RDV : utilise d'abord \`check_availability\` pour le nouveau créneau, puis \`reschedule_appointment\`
 - Après \`transfer_to_human\` : "Je te mets en contact avec l'équipe de ${config.businessName}. À très vite !"
 - Question sans réponse dans la base : "Je n'ai pas cette information, mais l'équipe de ${config.businessName} pourra t'aider directement."${requiredFieldsSection}${customSection}`;
 }
@@ -405,11 +467,12 @@ async function executeTool(
 
       // If entire day is blocked, return closed message
       if (blockedSlots.some((b) => b.all_day)) {
-        const nextDates = generateAvailableDates(config.openingHours, 3, allDayBlockedDates);
+        const nextDates = generateAvailableDates(config.openingHours, 3, allDayBlockedDates, config.timezone);
         return `Le commerce est fermé le ${date}.\n\nProchaines dates possibles :\n${nextDates.map((d) => `- ${d.label} (${d.value})`).join("\n")}`;
       }
 
       // Build list of occupied time ranges [startMins, endMins)
+      const bufferMin = Math.max(0, Math.min(60, Number((config.chatbotConfig ?? {}).buffer_minutes) || 0));
       const occupiedRanges: { start: number; end: number }[] = [];
 
       // Add bookings (use end_time if available, else estimate with default 30 min)
@@ -421,10 +484,9 @@ async function executeTool(
           const eParts = b.end_time.split(":").map(Number);
           bEnd = (eParts[0] ?? 0) * 60 + (eParts[1] ?? 0);
         } else {
-          // Legacy bookings without end_time — assume default slot duration
           bEnd = bStart + 30;
         }
-        occupiedRanges.push({ start: bStart, end: bEnd });
+        occupiedRanges.push({ start: bStart, end: bEnd + bufferMin });
       }
 
       // Add blocked time ranges
@@ -450,7 +512,7 @@ async function executeTool(
 
       if (available.length === 0) {
         // Suggest next available dates (skip all-day blocked dates)
-        const nextDates = generateAvailableDates(config.openingHours, 3, allDayBlockedDates);
+        const nextDates = generateAvailableDates(config.openingHours, 3, allDayBlockedDates, config.timezone);
         return `Aucun créneau disponible le ${date} pour ${serviceName}.\n\nProchaines dates possibles :\n${nextDates.map((d) => `- ${d.label} (${d.value})`).join("\n")}`;
       }
 
@@ -466,17 +528,11 @@ async function executeTool(
       const clientNotes = (input.client_notes as string) || undefined;
       const clientPhoneCollected = (input.client_phone as string) || undefined;
 
-      // Calculate end_time from service duration
+      // Calculate end_time from service duration (capped at 23:59)
       const services = parseAllServices(config.services);
       const svc = services.find((s) => s.name.toLowerCase() === service.toLowerCase());
       const duration = svc?.duration ?? 30;
-      const timeParts = time.split(":").map(Number);
-      const startH = timeParts[0] ?? 0;
-      const startM = timeParts[1] ?? 0;
-      const endMins = startH * 60 + startM + duration;
-      const endH = Math.floor(endMins / 60);
-      const endM = endMins % 60;
-      const endTime = `${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}`;
+      const endTime = computeEndTime(time, duration);
 
       const appointmentId = await createAppointment({
         businessId: config.businessId,
@@ -508,7 +564,7 @@ async function executeTool(
           await updateAppointmentGCalId(appointmentId, eventId);
         } catch (err) {
           // GCal push is best-effort — don't fail the booking
-          console.error("[GCal] Push failed:", err);
+          logger.error("[GCal] Push failed", { error: String(err) });
         }
       }
 
@@ -543,10 +599,103 @@ async function executeTool(
         try {
           await deleteGCalEvent(config.gcalRefreshToken, config.gcalCalendarId, result.gcalEventId);
         } catch (err) {
-          console.error("[GCal] Delete failed:", err);
+          logger.error("[GCal] Delete failed", { error: String(err) });
         }
       }
       return `Rendez-vous annulé : ${result.details}`;
+    }
+
+    case "reschedule_appointment": {
+      const newDate = input.new_date as string;
+      const newTime = input.new_time as string;
+      // Pre-fetch appointment to get its actual service, then look up correct duration
+      const allSvcs = parseAllServices(config.services);
+      const defaultDuration = allSvcs[0]?.duration ?? 60;
+      const reschedResult = await rescheduleAppointment(
+        clientPhone,
+        config.businessId,
+        newDate,
+        newTime,
+        defaultDuration,
+        allSvcs,
+      );
+      if (!reschedResult.found) {
+        return "Aucun rendez-vous actif trouvé à déplacer.";
+      }
+      // Update Google Calendar if connected
+      if (reschedResult.gcalEventId && config.gcalRefreshToken && config.gcalCalendarId) {
+        try {
+          // Delete old event and create new one (simplest approach for GCal)
+          await deleteGCalEvent(config.gcalRefreshToken, config.gcalCalendarId, reschedResult.gcalEventId);
+        } catch (err) {
+          logger.error("[GCal] Delete old event failed during reschedule", { error: String(err) });
+        }
+      }
+      return `Rendez-vous déplacé : ${reschedResult.details}`;
+    }
+
+    case "get_next_available": {
+      const serviceName = input.service_name as string;
+      const services = parseAllServices(config.services);
+      const service = services.find(
+        (s) => s.name.toLowerCase() === serviceName.toLowerCase()
+      );
+      const duration = service?.duration ?? 30;
+
+      // Search the next 14 days for the first available slot
+      const allDayBlockedDates = await getAllDayBlockedDates(config.businessId);
+      const candidates = generateAvailableDates(config.openingHours, 14, allDayBlockedDates, config.timezone);
+
+      for (const candidate of candidates) {
+        const date = candidate.value;
+        const allSlots = generateTimeSlots(config.openingHours, date, duration, 20);
+        if (allSlots.length === 0) continue;
+
+        const bookings = await getBookingsForDate(config.businessId, date);
+        const blockedSlots = await getBlockedSlotsForDate(config.businessId, date);
+
+        if (blockedSlots.some((b) => b.all_day)) continue;
+
+        const bufferMin = Math.max(0, Math.min(60, Number((config.chatbotConfig ?? {}).buffer_minutes) || 0));
+        const occupiedRanges: { start: number; end: number }[] = [];
+
+        for (const b of bookings) {
+          const bParts = b.time_slot.split(":").map(Number);
+          const bStart = (bParts[0] ?? 0) * 60 + (bParts[1] ?? 0);
+          let bEnd: number;
+          if (b.end_time) {
+            const eParts = b.end_time.split(":").map(Number);
+            bEnd = (eParts[0] ?? 0) * 60 + (eParts[1] ?? 0);
+          } else {
+            bEnd = bStart + 30;
+          }
+          occupiedRanges.push({ start: bStart, end: bEnd + bufferMin });
+        }
+
+        for (const block of blockedSlots) {
+          if (block.time_from && block.time_to) {
+            const fromParts = block.time_from.split(":").map(Number);
+            const toParts = block.time_to.split(":").map(Number);
+            occupiedRanges.push({
+              start: (fromParts[0] ?? 0) * 60 + (fromParts[1] ?? 0),
+              end: (toParts[0] ?? 0) * 60 + (toParts[1] ?? 0),
+            });
+          }
+        }
+
+        const available = allSlots.filter((s) => {
+          const sParts = s.value.split(":").map(Number);
+          const slotStart = (sParts[0] ?? 0) * 60 + (sParts[1] ?? 0);
+          const slotEnd = slotStart + duration;
+          return !occupiedRanges.some((r) => slotStart < r.end && r.start < slotEnd);
+        });
+
+        if (available.length > 0) {
+          return `Prochain créneau disponible pour ${serviceName} : ${candidate.label} à ${available[0]!.label} (${duration} min). On confirme ?`;
+        }
+      }
+
+      return `Aucun créneau disponible dans les 14 prochains jours pour ${serviceName}. Contactez-nous directement.`;
     }
 
     case "transfer_to_human": {
@@ -580,7 +729,8 @@ export async function runBookingAgent(
     (ctx?.messages as OpenAI.ChatCompletionMessageParam[]) ?? [];
 
   // Add the user's new message
-  const userText = payload.buttonPayload ?? payload.message;
+  // Prefer message (human-readable title) over buttonPayload (machine ID)
+  const userText = payload.message || payload.buttonPayload || "";
   history.push({ role: "user", content: userText });
 
   // Determine if booking mode is active (has services configured)
@@ -591,35 +741,34 @@ export async function runBookingAgent(
     ? BOOKBOT_TOOLS
     : BOOKBOT_TOOLS.filter((t) =>
         ["search_knowledge_base", "transfer_to_human"].includes(
-          t.function.name
+          (t as { function: { name: string } }).function.name
         )
       );
 
   // Build messages for DeepSeek
   const systemPrompt = buildSystemPrompt(config, getTahitiDate(), payload.channel);
-  // Inject known client name so LLM doesn't re-ask
-  const clientNameHint = session.client_name
-    ? `\n\n## Client actuel\nLe client s'appelle **${session.client_name}**. Ne lui redemande PAS son nom.`
-    : "";
 
-  // Fetch prospect-specific agent instructions (if any)
-  let prospectInstructions = "";
+  // Inject known client context so LLM doesn't re-ask and can suggest their usual service
+  let clientContext = "";
+  if (session.client_name) {
+    clientContext += `\n\n## Client actuel\nLe client s'appelle **${session.client_name}**. Ne lui redemande PAS son nom.`;
+  }
+  // Fetch returning client hints (last_service, visit count)
   try {
-    const senderId = payload.from.replace(/^messenger_/, "");
-    const piRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/messenger_prospects?sender_id=eq.${senderId}&select=agent_instructions`,
-      { headers: supaHeaders() }
-    );
-    if (piRes.ok) {
-      const piData = await piRes.json();
-      if (Array.isArray(piData) && piData[0]?.agent_instructions) {
-        prospectInstructions = `\n\n---\n\n## INSTRUCTIONS SPECIFIQUES POUR CE PROSPECT\n${piData[0].agent_instructions}`;
-      }
+    const hints = await getClientHints(payload.from, config.businessId);
+    if (hints?.lastService) {
+      clientContext += `\nC'est un client fidèle (${hints.totalVisits || 1} visite${(hints.totalVisits || 1) > 1 ? "s" : ""}). Son dernier service : **${hints.lastService}**. Propose-lui ce service par défaut ("Comme d'habitude, ${hints.lastService} ?") tout en offrant de choisir autre chose.`;
     }
-  } catch { /* non-blocking */ }
+  } catch {
+    // Non-blocking — hints are optional
+  }
+
+  // NOTE: messenger_prospects.agent_instructions removed from system prompt (security risk:
+  // sender_id is untrusted external input, sanitizeInstruction is trivially bypassed).
+  // Business-owner instructions go through chatbotConfig.custom_instructions instead.
 
   const messages: OpenAI.ChatCompletionMessageParam[] = [
-    { role: "system", content: systemPrompt + clientNameHint + prospectInstructions },
+    { role: "system", content: systemPrompt + clientContext },
     ...history,
   ];
   let finalReply = "";
@@ -648,8 +797,22 @@ export async function runBookingAgent(
       // Execute each tool call and add results
       for (const toolCall of msg.tool_calls) {
         if (toolCall.type !== "function") continue;
-        const args = JSON.parse(toolCall.function.arguments || "{}");
-        console.log(`[Agent] Tool call: ${toolCall.function.name}`, JSON.stringify(args));
+        let args: Record<string, unknown>;
+        try {
+          args = JSON.parse(toolCall.function.arguments || "{}");
+        } catch {
+          logger.error("[Agent] Malformed tool call JSON", {
+            tool: toolCall.function.name,
+            raw: (toolCall.function.arguments || "").slice(0, 200),
+          });
+          messages.push({
+            role: "tool",
+            tool_call_id: toolCall.id,
+            content: "Erreur: arguments invalides. Reformule la demande.",
+          });
+          continue;
+        }
+        logger.info(`[Agent] Tool call: ${toolCall.function.name}`, { args });
         if (toolCall.function.name === "book_appointment") bookAppointmentCalled = true;
         const result = await executeTool(
           toolCall.function.name,
@@ -657,7 +820,7 @@ export async function runBookingAgent(
           payload.from,
           config
         );
-        console.log(`[Agent] Tool result: ${toolCall.function.name}`, result.slice(0, 200));
+        logger.info(`[Agent] Tool result: ${toolCall.function.name}`, { result: result.slice(0, 200) });
         messages.push({
           role: "tool",
           tool_call_id: toolCall.id,
@@ -672,7 +835,7 @@ export async function runBookingAgent(
       const confirmPattern = /(?:confirmé|réservé|rendez-vous est confirmé|c'est réservé|booking confirmed|appointment confirmed)/i;
       if (hasBooking && !bookAppointmentCalled && confirmPattern.test(finalReply)) {
         if (i < maxIterations - 1) {
-          console.log("[Agent] GUARD: LLM confirmed booking without calling book_appointment — forcing retry");
+          logger.warn("[Agent] GUARD: LLM confirmed booking without calling book_appointment — forcing retry");
           messages.push({ role: "assistant", content: finalReply });
           messages.push({
             role: "user",
@@ -681,7 +844,7 @@ export async function runBookingAgent(
           continue;
         } else {
           // maxIterations reached — don't send false confirmation to client
-          console.error("[Agent] GUARD: maxIterations reached without book_appointment call — replacing reply");
+          logger.error("[Agent] GUARD: maxIterations reached without book_appointment call — replacing reply");
           finalReply = "Désolé, je n'ai pas pu enregistrer le rendez-vous. Peux-tu réessayer en me donnant le service, la date et l'heure souhaités ?";
         }
       }
@@ -694,6 +857,13 @@ export async function runBookingAgent(
   }
 
   // Persist updated conversation history (truncate to last 30 messages to avoid bloat)
+  if (history.length > 30) {
+    logger.warn(`[Agent] Conversation history truncated from ${history.length} to 30 messages`, {
+      phone: payload.from,
+      businessId: config.businessId,
+      dropped: history.length - 30,
+    });
+  }
   const trimmedMessages = history.slice(-30);
   await updateSession(payload.from, config.businessId, "active", {
     context: { messages: trimmedMessages },

@@ -1,16 +1,10 @@
 import { schedules, logger } from "@trigger.dev/sdk";
+import { supaHeaders } from "./lib/supabase-headers.js";
+import { sendBrevoEmail } from "./lib/brevo.js";
+import { buildUnsubscribeUrl } from "./lib/unsubscribe-token.js";
+import { escapeHtml } from "./utils/html.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY!;
-const BREVO_API_KEY = process.env.BREVO_API_KEY!;
-
-function supaHeaders() {
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-  };
-}
 
 interface Prospect {
   id: string;
@@ -25,7 +19,9 @@ interface Prospect {
   drip_unsubscribed: boolean;
 }
 
-const SENDER = { email: "newsletter@pacifikai.com", name: "Ve'a by PACIFIK'AI" };
+const SENDER = { email: "vea@pacifikai.com", name: "Ve'a by PACIFIK'AI" };
+
+// escapeHtml imported from utils/html.ts
 
 /**
  * Drip campaign for Ve'a prospects.
@@ -41,7 +37,7 @@ export const dripCampaign = schedules.task({
   id: "vea-drip-campaign",
   cron: "0 */1 * * *", // every hour
   run: async () => {
-    if (!BREVO_API_KEY) {
+    if (!process.env.BREVO_API_KEY) {
       logger.warn("BREVO_API_KEY not set, skipping drip campaign");
       return { sent: 0, reason: "no_api_key" };
     }
@@ -101,30 +97,18 @@ async function sendDripEmail(prospect: Prospect, day: 0 | 3 | 7): Promise<boolea
   const { subject, html } = getDripContent(prospect, day);
 
   try {
-    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
+    const { messageId } = await sendBrevoEmail({
+      sender: SENDER,
+      to: [{ email: prospect.email, name: prospect.contact_name || prospect.business_name }],
+      subject,
+      htmlContent: html,
+      tags: [`drip-day-${day}`, `sector-${prospect.sector}`],
       headers: {
-        "api-key": BREVO_API_KEY,
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        "List-Unsubscribe": `<${buildUnsubscribeUrl(prospect.email)}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
       },
-      body: JSON.stringify({
-        sender: SENDER,
-        to: [{ email: prospect.email, name: prospect.contact_name || prospect.business_name }],
-        subject,
-        htmlContent: html,
-        tags: [`drip-day-${day}`, `sector-${prospect.sector}`],
-      }),
     });
-
-    if (!res.ok) {
-      const text = await res.text();
-      logger.error(`Brevo error for ${prospect.email} (day ${day}): ${res.status} ${text}`);
-      return false;
-    }
-
-    const data = await res.json();
-    logger.info(`Drip day-${day} sent to ${prospect.email}, messageId: ${data.messageId}`);
+    logger.info(`Drip day-${day} sent to ${prospect.email}, messageId: ${messageId}`);
     return true;
   } catch (err) {
     logger.error(`Failed to send drip day-${day} to ${prospect.email}`, {
@@ -147,8 +131,11 @@ async function markDripSent(prospectId: string, day: 0 | 3 | 7): Promise<void> {
 }
 
 function getDripContent(prospect: Prospect, day: 0 | 3 | 7): { subject: string; html: string } {
-  const name = prospect.contact_name || "Bonjour";
-  const biz = prospect.business_name;
+  const name = escapeHtml(prospect.contact_name || "Bonjour");
+  const biz = escapeHtml(prospect.business_name);
+  const rawName = prospect.contact_name || "Bonjour";
+  const rawBiz = prospect.business_name;
+  const email = prospect.email;
 
   const sectorBenefit: Record<string, string> = {
     salon: "reductions de 40% des no-shows et augmentation de 70 000 F/mois de chiffre d'affaires",
@@ -159,7 +146,7 @@ function getDripContent(prospect: Prospect, day: 0 | 3 | 7): { subject: string; 
 
   if (day === 0) {
     return {
-      subject: `${name}, Ve'a peut transformer la gestion de ${biz}`,
+      subject: `${rawName}, Ve'a peut transformer la gestion de ${rawBiz}`,
       html: wrapEmail(`
         <h2 style="color:#1a1a1a;margin-bottom:16px">Bonjour ${name},</h2>
         <p>Je me permets de vous contacter car <strong>${biz}</strong> pourrait beneficier enormement d'un assistant IA de reservation.</p>
@@ -176,13 +163,13 @@ function getDripContent(prospect: Prospect, day: 0 | 3 | 7): { subject: string; 
           <a href="https://vea.pacifikai.com" style="background:#25D366;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Decouvrir Ve'a</a>
         </p>
         <p style="margin-top:24px;color:#666">A bientot,<br><strong>Jordy Toofa</strong><br>PACIFIK'AI - Automatisation IA</p>
-      `),
+      `, email),
     };
   }
 
   if (day === 3) {
     return {
-      subject: `Comment Aimy a augmente ses reservations de 30% (et ce que ca signifie pour ${biz})`,
+      subject: `Comment Aimy a augmente ses reservations de 30% (et ce que ca signifie pour ${rawBiz})`,
       html: wrapEmail(`
         <h2 style="color:#1a1a1a;margin-bottom:16px">${name}, voici ce que vivent les entreprises qui ont automatise leurs reservations :</h2>
         <div style="background:#f8f9fa;padding:20px;border-radius:8px;margin:20px 0;border-left:4px solid #25D366">
@@ -200,13 +187,13 @@ function getDripContent(prospect: Prospect, day: 0 | 3 | 7): { subject: string; 
           <a href="https://vea.pacifikai.com/#pricing" style="background:#25D366;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Voir les tarifs</a>
         </p>
         <p style="margin-top:24px;color:#666">Jordy Toofa<br>PACIFIK'AI</p>
-      `),
+      `, email),
     };
   }
 
   // Day 7
   return {
-    subject: `Derniere chance : offre de lancement Ve'a pour ${biz}`,
+    subject: `Derniere chance : offre de lancement Ve'a pour ${rawBiz}`,
     html: wrapEmail(`
       <h2 style="color:#1a1a1a;margin-bottom:16px">${name},</h2>
       <p>Je vous ai presente Ve'a il y a une semaine. Depuis, 3 entreprises en Polynesie ont deja active leur assistant.</p>
@@ -226,11 +213,12 @@ function getDripContent(prospect: Prospect, day: 0 | 3 | 7): { subject: string; 
         <a href="https://vea.pacifikai.com/#contact" style="background:#25D366;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Activer mon Ve'a</a>
       </p>
       <p style="margin-top:24px;color:#666">Jordy Toofa<br>+689 89 55 81 89<br>jordy@pacifikai.com</p>
-    `),
+    `, email),
   };
 }
 
-function wrapEmail(body: string): string {
+function wrapEmail(body: string, email: string): string {
+  const unsubUrl = buildUnsubscribeUrl(email);
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -241,7 +229,7 @@ function wrapEmail(body: string): string {
     </div>
     <div style="text-align:center;margin-top:24px;font-size:12px;color:#999">
       <p>PACIFIK'AI - Paea, Tahiti, Polynesie francaise</p>
-      <p><a href="https://vea.pacifikai.com/unsubscribe?email={{email}}" style="color:#999">Se desinscrire</a></p>
+      <p><a href="${unsubUrl}" style="color:#999">Se desinscrire</a></p>
     </div>
   </div>
 </body>

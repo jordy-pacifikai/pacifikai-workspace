@@ -1,0 +1,162 @@
+import { schedules, logger } from "@trigger.dev/sdk";
+import { supaHeaders } from "./lib/supabase-headers.js";
+import { sendBrevoEmail } from "./lib/brevo.js";
+import { createNotification } from "./lib/notify.js";
+import { escapeHtml } from "./utils/html.js";
+
+const SUPABASE_URL = process.env.SUPABASE_URL!;
+
+interface ExpiredBusiness {
+  id: string;
+  name: string;
+  email: string | null;
+  owner_user_id: string | null;
+  trial_ends_at: string;
+  plan: string | null;
+}
+
+/** Daily at 08:00 Tahiti (UTC-10) = 18:00 UTC */
+export const trialExpiration = schedules.task({
+  id: "trial-expiration",
+  cron: "0 18 * * *",
+  run: async () => {
+    const now = new Date().toISOString();
+
+    // Find businesses where trial has expired but status is still 'trial'
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/bookbot_businesses?subscription_status=eq.trial&trial_ends_at=lt.${now}&select=id,name,email,owner_user_id,trial_ends_at,plan`,
+      { headers: supaHeaders() },
+    );
+
+    if (!res.ok) {
+      throw new Error(`Supabase fetch failed: ${res.status}`);
+    }
+
+    const expired: ExpiredBusiness[] = await res.json();
+
+    if (expired.length === 0) {
+      logger.info("No expired trials found");
+      return { processed: 0 };
+    }
+
+    logger.info(`Found ${expired.length} expired trial(s)`);
+
+    let processed = 0;
+    let emailsSent = 0;
+
+    for (const biz of expired) {
+      // 1. Update subscription_status to 'expired'
+      const updateRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/bookbot_businesses?id=eq.${biz.id}`,
+        {
+          method: "PATCH",
+          headers: { ...supaHeaders(), Prefer: "return=minimal" },
+          body: JSON.stringify({ subscription_status: "expired" }),
+        },
+      );
+
+      if (!updateRes.ok) {
+        logger.error(`Failed to update business ${biz.id}: ${updateRes.status}`);
+        continue;
+      }
+
+      processed++;
+
+      // 2. Send expiration notification email
+      const email = biz.email;
+      if (!email) {
+        logger.warn(`No contact email for business ${biz.id}, skipping email`);
+        continue;
+      }
+
+      const trialEndDate = new Date(biz.trial_ends_at).toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+
+      const htmlContent = buildExpirationEmail({
+        businessName: escapeHtml(biz.name),
+        trialEndDate,
+      });
+
+      try {
+        await sendBrevoEmail({
+          to: [{ email }],
+          subject: `Votre essai Ve'a a expiré — continuez avec un abonnement`,
+          htmlContent,
+        });
+        emailsSent++;
+      } catch (err) {
+        logger.error(`Brevo error for ${email}`, { error: String(err) });
+      }
+
+      // 3. Create in-app notification
+      await createNotification({
+        businessId: biz.id,
+        type: "cancellation", // closest match — trial ended = service interrupted
+        title: "Essai terminé",
+        message: `Votre période d'essai est terminée. Choisissez un abonnement pour continuer à utiliser Ve'a.`,
+        metadata: { plan: biz.plan, trialEndsAt: biz.trial_ends_at },
+      });
+    }
+
+    logger.info(`Trial expiration complete`, { processed, emailsSent });
+    return { processed, emailsSent };
+  },
+});
+
+// ─── HTML Builder ────────────────────────────────────────────────────────────
+
+function buildExpirationEmail(p: {
+  businessName: string;
+  trialEndDate: string;
+}): string {
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px 12px 0 0;padding:28px 32px;text-align:center;">
+            <p style="margin:0 0 4px;font-size:22px;font-weight:700;color:#fff;">Ve&apos;a</p>
+            <p style="margin:0;font-size:14px;color:#aaa;">Votre essai est termin&eacute;</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-top:none;padding:28px 32px;">
+            <p style="margin:0 0 20px;font-size:16px;color:#fff;">
+              Bonjour <strong>${p.businessName}</strong>,
+            </p>
+            <p style="margin:0 0 16px;font-size:14px;color:#aaa;line-height:1.6;">
+              Votre p&eacute;riode d&apos;essai gratuit s&apos;est termin&eacute;e le <strong style="color:#fff;">${p.trialEndDate}</strong>.
+            </p>
+            <p style="margin:0 0 24px;font-size:14px;color:#aaa;line-height:1.6;">
+              Pour continuer &agrave; recevoir des r&eacute;servations automatiques et utiliser votre chatbot IA, choisissez un abonnement adapt&eacute; &agrave; votre activit&eacute;.
+            </p>
+            <div style="text-align:center;">
+              <a href="https://vea.pacifikai.com/billing" style="display:inline-block;background:#0d9488;color:#fff;text-decoration:none;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;">
+                Choisir un abonnement
+              </a>
+            </div>
+            <p style="margin:24px 0 0;font-size:13px;color:#666;line-height:1.5;">
+              Vos donn&eacute;es et votre configuration sont conserv&eacute;es. Vous pouvez r&eacute;activer votre compte &agrave; tout moment.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#161616;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#555;">
+              <a href="mailto:vea@pacifikai.com" style="color:#555;text-decoration:none;">vea@pacifikai.com</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+

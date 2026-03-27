@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Building2, Bot, Bell, CreditCard, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { Save, Building2, Bot, Bell, CreditCard, ChevronRight, SlidersHorizontal, UserCircle } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton';
+import { NotificationPrefsForm } from '@/components/notifications/NotificationPrefsForm';
 import { useAppStore } from '@/lib/store';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabaseBrowser } from '@/lib/supabase';
@@ -555,6 +557,20 @@ export default function SettingsPage() {
           />
         </SectionCard>
 
+        {/* ─ 3b. Preferences de notification ─────────────────────────────── */}
+        <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+          <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-800">
+            <SlidersHorizontal className="w-4 h-4 text-[#25D366]" />
+            <h2 className="text-white font-semibold">Preferences de notification</h2>
+          </div>
+          <div className="p-6">
+            <p className="text-sm text-gray-400 mb-5">
+              Choisissez pour chaque evenement comment vous souhaitez etre notifie (WhatsApp, email ou dans l&apos;application).
+            </p>
+            <NotificationPrefsForm businessId={businessId} />
+          </div>
+        </div>
+
         {/* ─ 4. Subscription ──────────────────────────────────────────────── */}
         <SectionCard icon={CreditCard} title="Abonnement">
           <div className="flex items-center justify-between">
@@ -564,13 +580,13 @@ export default function SettingsPage() {
                 {planMeta.label}
               </span>
             </div>
-            <button
-              disabled
-              className="inline-flex items-center gap-1.5 bg-gray-800 text-gray-400 rounded-lg px-4 py-2 text-sm border border-gray-700 cursor-not-allowed opacity-60"
+            <a
+              href="/billing"
+              className="inline-flex items-center gap-1.5 bg-[#25D366] text-gray-950 rounded-lg px-4 py-2 text-sm font-medium hover:brightness-110 transition-all"
             >
               Upgrade
               <ChevronRight className="w-4 h-4" />
-            </button>
+            </a>
           </div>
 
           {/* Usage conversations */}
@@ -611,6 +627,23 @@ export default function SettingsPage() {
             </p>
           </div>
         </SectionCard>
+
+        {/* ─ 5. Account data link ─────────────────────────────────────────── */}
+        <div className="flex items-center justify-between p-4 bg-gray-900 border border-gray-800 rounded-xl">
+          <div className="flex items-center gap-3">
+            <UserCircle className="w-4 h-4 text-gray-500 shrink-0" />
+            <p className="text-sm text-gray-400">
+              Gerer mon compte, exporter mes donnees (RGPD) ou supprimer mon compte
+            </p>
+          </div>
+          <Link
+            href="/account"
+            className="inline-flex items-center gap-1.5 text-sm text-[#25D366] hover:underline shrink-0 ml-4 font-medium"
+          >
+            Mon compte
+            <ChevronRight className="w-4 h-4" />
+          </Link>
+        </div>
 
       </div>
     </DashboardLayout>

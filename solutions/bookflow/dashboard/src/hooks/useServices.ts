@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/Toast';
 import { businessKeys } from './useBusiness';
 
 // ─── Keys ─────────────────────────────────────────────────────────────────────
@@ -100,6 +101,9 @@ export function useCreateService(businessId: string | null) {
       queryClient.invalidateQueries({ queryKey: serviceKeys.list(id) });
       queryClient.invalidateQueries({ queryKey: businessKeys.all });
     },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la création du service');
+    },
   });
 }
 
@@ -119,6 +123,9 @@ export function useUpdateService(businessId: string | null) {
       queryClient.invalidateQueries({ queryKey: serviceKeys.list(bid) });
       queryClient.invalidateQueries({ queryKey: businessKeys.all });
     },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la mise à jour du service');
+    },
   });
 }
 
@@ -136,6 +143,9 @@ export function useDeleteService(businessId: string | null) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: serviceKeys.list(bid) });
       queryClient.invalidateQueries({ queryKey: businessKeys.all });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la suppression du service');
     },
   });
 }

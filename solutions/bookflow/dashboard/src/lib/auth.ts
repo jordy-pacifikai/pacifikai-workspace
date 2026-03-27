@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
@@ -25,15 +26,34 @@ export async function createSupabaseServer() {
   )
 }
 
-export async function getSession() {
-  const supabase = await createSupabaseServer()
-  const { data: { session } } = await supabase.auth.getSession()
-  return session
-}
-
 export async function getUser() {
   const supabase = await createSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
+  return user
+}
+
+export async function requireAuth() {
+  const user = await getUser()
+  if (!user) {
+    throw NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  return user
+}
+
+export async function requireBusinessAccess(businessId: string) {
+  const user = await requireAuth()
+  const supabase = await createSupabaseServer()
+  const { data } = await supabase
+    .from('bookbot_business_users')
+    .select('business_id')
+    .eq('user_id', user.id)
+    .eq('business_id', businessId)
+    .limit(1)
+    .single()
+
+  if (!data) {
+    throw NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
   return user
 }
 

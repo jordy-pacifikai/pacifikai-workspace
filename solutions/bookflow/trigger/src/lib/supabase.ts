@@ -1,7 +1,9 @@
+import { logger } from "@trigger.dev/sdk";
 import type { BusinessConfig } from "./config.js";
 import { supaHeaders as headers } from "./supabase-headers.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export interface Session {
   id: string;
@@ -28,6 +30,47 @@ export async function loadOrCreateSession(
 
   if (Array.isArray(existing) && existing.length > 0) {
     const s = existing[0];
+    const context = typeof s.context === "string" ? JSON.parse(s.context) : (s.context ?? {});
+
+    // Detect stale sessions: if last activity > 2 hours ago, reset conversation
+    // but preserve client_name so we don't re-ask for it
+    const STALE_MS = 2 * 60 * 60 * 1000; // 2 hours
+    const updatedAt = s.updated_at ? new Date(s.updated_at).getTime() : 0;
+    const isStale = Date.now() - updatedAt > STALE_MS;
+
+    if (isStale && context.messages && (context.messages as unknown[]).length > 0) {
+      logger.info("[Session] Stale session detected, resetting conversation", {
+        phone, lastActivity: s.updated_at,
+      });
+      // Reset context + booking state, keep client_name
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/bookbot_sessions?id=eq.${s.id}`,
+        {
+          method: "PATCH",
+          headers: headers(),
+          body: JSON.stringify({
+            state: "idle",
+            selected_service: null,
+            selected_date: null,
+            selected_time: null,
+            context: {},
+            updated_at: new Date().toISOString(),
+          }),
+        },
+      );
+      return {
+        id: s.id,
+        phone: s.phone,
+        business_id: s.business_id,
+        state: "idle",
+        selected_service: null,
+        selected_date: null,
+        selected_time: null,
+        client_name: s.client_name,
+        context: {},
+      };
+    }
+
     return {
       id: s.id,
       phone: s.phone,
@@ -37,14 +80,17 @@ export async function loadOrCreateSession(
       selected_date: s.selected_date,
       selected_time: s.selected_time,
       client_name: s.client_name,
-      context: typeof s.context === "string" ? JSON.parse(s.context) : (s.context ?? {}),
+      context,
     };
   }
 
-  // No session exists — create one
+  // No session exists — upsert to handle concurrent race (UNIQUE on phone+business_id)
   const postRes = await fetch(`${SUPABASE_URL}/rest/v1/bookbot_sessions`, {
     method: "POST",
-    headers: { ...headers(), Prefer: "return=representation" },
+    headers: {
+      ...headers(),
+      Prefer: "return=representation,resolution=ignore-duplicates",
+    },
     body: JSON.stringify({
       phone,
       business_id: businessId,
@@ -53,8 +99,17 @@ export async function loadOrCreateSession(
     }),
   });
 
+  // If upsert returned empty (duplicate ignored), re-fetch the existing session
   const created = await postRes.json();
-  const session = Array.isArray(created) ? created[0] : created;
+  let session = Array.isArray(created) && created.length > 0 ? created[0] : null;
+  if (!session) {
+    const refetchRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/bookbot_sessions?phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&limit=1`,
+      { headers: headers() },
+    );
+    const refetched = await refetchRes.json();
+    session = Array.isArray(refetched) && refetched.length > 0 ? refetched[0] : { phone, business_id: businessId, state: "idle", context: {} };
+  }
 
   return {
     id: session.id,
@@ -152,32 +207,38 @@ export async function createAppointment(params: {
       : params.clientPhone.startsWith("instagram_") ? "instagram"
       : "whatsapp");
 
-  const row: Record<string, unknown> = {
-    business_id: params.businessId,
-    client_name: params.clientName || params.clientPhone,
-    client_phone: params.clientPhone,
-    service: params.service,
-    appointment_date: params.date,
-    time_slot: params.time,
-    end_time: params.endTime || null,
-    status: "confirmed",
-    source,
-  };
-  if (params.clientEmail) row.client_email = params.clientEmail;
-  if (params.clientNotes) row.client_notes = params.clientNotes;
-
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/bookbot_appointments`, {
+  // Atomic booking via RPC — prevents TOCTOU race condition
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/book_appointment_atomic`, {
     method: "POST",
-    headers: { ...headers(), Prefer: "return=representation" },
-    body: JSON.stringify(row),
+    headers: headers(),
+    body: JSON.stringify({
+      p_business_id: params.businessId,
+      p_service: params.service,
+      p_appointment_date: params.date,
+      p_time_slot: params.time,
+      p_end_time: params.endTime || params.time,
+      p_client_name: params.clientName || params.clientPhone,
+      p_client_phone: params.clientPhone,
+      p_client_email: params.clientEmail || null,
+      p_price: 0,
+      p_source: source,
+      p_client_notes: params.clientNotes || null,
+    }),
   });
-  const data = await res.json();
+
   if (!res.ok) {
-    console.error("[createAppointment] Insert failed:", res.status, JSON.stringify(data));
+    const errText = await res.text().catch(() => "");
+    if (errText.includes("BOOKING_CONFLICT")) {
+      logger.warn("[createAppointment] Booking conflict (atomic)", { date: params.date, time: params.time });
+      return null;
+    }
+    logger.error("[createAppointment] RPC failed", { status: res.status, error: errText });
     return null;
   }
-  const created = Array.isArray(data) ? data[0] : data;
-  return created?.id ?? null;
+
+  // RPC returns the UUID directly as a JSON string
+  const appointmentId = await res.json();
+  return typeof appointmentId === "string" ? appointmentId : null;
 }
 
 export async function updateAppointmentGCalId(
@@ -199,7 +260,7 @@ export async function getBookingsForDate(
   date: string
 ): Promise<{ time_slot: string; end_time: string | null; service: string }[]> {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/bookbot_appointments?business_id=eq.${businessId}&appointment_date=eq.${date}&status=in.(confirmed,pending)&select=time_slot,end_time,service`,
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?business_id=eq.${businessId}&appointment_date=eq.${date}&status=in.(confirmed,pending)&source=neq.test&select=time_slot,end_time,service`,
     { headers: headers() }
   );
   const data = await res.json();
@@ -210,14 +271,20 @@ export async function searchKnowledgeBase(
   businessId: string,
   query: string
 ): Promise<{ chunk_text: string; title: string; category: string; score: number }[]> {
+  // Validate businessId to prevent PostgREST injection
+  if (!UUID_RE.test(businessId)) return [];
+
   const mistralKey = process.env.MISTRAL_API_KEY;
 
   // If we have a Mistral key, do vector search (proper RAG)
   if (mistralKey) {
     try {
-      // Generate embedding for the query
+      // Generate embedding for the query (5s timeout to avoid blocking chatbot)
+      const embController = new AbortController();
+      const embTimeout = setTimeout(() => embController.abort(), 5000);
       const embRes = await fetch("https://api.mistral.ai/v1/embeddings", {
         method: "POST",
+        signal: embController.signal,
         headers: {
           Authorization: `Bearer ${mistralKey}`,
           "Content-Type": "application/json",
@@ -227,6 +294,7 @@ export async function searchKnowledgeBase(
           input: query,
         }),
       });
+      clearTimeout(embTimeout);
       const embData = await embRes.json();
       const queryEmbedding = embData?.data?.[0]?.embedding;
 
@@ -253,7 +321,7 @@ export async function searchKnowledgeBase(
         }
       }
     } catch (err) {
-      console.warn("[RAG] Vector search failed, falling back to FTS:", String(err));
+      logger.warn("[RAG] Vector search failed, falling back to FTS", { error: String(err) });
     }
   }
 
@@ -456,5 +524,102 @@ export async function cancelActiveAppointment(
     found: true,
     details: `${appt.appointment_date} a ${appt.time_slot}`,
     gcalEventId: appt.gcal_event_id ?? undefined,
+  };
+}
+
+export async function rescheduleAppointment(
+  phone: string,
+  businessId: string,
+  newDate: string,
+  newTime: string,
+  durationMin: number,
+  services?: Array<{ name: string; duration: number }>,
+): Promise<{ found: boolean; details?: string; gcalEventId?: string; appointmentId?: string; service?: string }> {
+  const todayISO = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Pacific/Tahiti",
+    year: "numeric", month: "2-digit", day: "2-digit",
+  }).format(new Date());
+
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?client_phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&status=eq.confirmed&appointment_date=gte.${todayISO}&order=appointment_date.asc&limit=1&select=id,appointment_date,time_slot,service,gcal_event_id`,
+    { headers: headers() }
+  );
+  const data = await res.json();
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return { found: false };
+  }
+
+  const appt = data[0];
+  // Use actual appointment's service duration if available, fallback to caller-provided default
+  let actualDuration = durationMin;
+  if (appt.service && services) {
+    const matchedSvc = services.find(
+      (s) => s.name.toLowerCase() === appt.service.toLowerCase(),
+    );
+    if (matchedSvc) actualDuration = matchedSvc.duration;
+  }
+  const endH = Math.floor((parseInt(newTime.split(":")[0]!) * 60 + parseInt(newTime.split(":")[1]!) + actualDuration) / 60);
+  const endM = (parseInt(newTime.split(":")[0]!) * 60 + parseInt(newTime.split(":")[1]!) + actualDuration) % 60;
+  const endTime = `${String(Math.min(endH, 23)).padStart(2, "0")}:${String(endM).padStart(2, "0")}`;
+
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_appointments?id=eq.${appt.id}`,
+    {
+      method: "PATCH",
+      headers: headers(),
+      body: JSON.stringify({
+        appointment_date: newDate,
+        time_slot: newTime,
+        end_time: endTime,
+        updated_at: new Date().toISOString(),
+      }),
+    }
+  );
+
+  return {
+    found: true,
+    details: `ancien: ${appt.appointment_date} à ${appt.time_slot} → nouveau: ${newDate} à ${newTime}`,
+    gcalEventId: appt.gcal_event_id ?? undefined,
+    appointmentId: appt.id,
+    service: appt.service ?? undefined,
+  };
+}
+
+export async function setMarketingOptOut(
+  phone: string,
+  businessId: string,
+  optOut: boolean,
+): Promise<boolean> {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_clients?phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}`,
+    {
+      method: "PATCH",
+      headers: headers(),
+      body: JSON.stringify({ marketing_opt_out: optOut }),
+    },
+  );
+  return res.ok;
+}
+
+/**
+ * Get client hints for returning customers (last_service, last_visit, visit count).
+ * Returns null if client not found.
+ */
+export async function getClientHints(
+  phone: string,
+  businessId: string,
+): Promise<{ lastService: string | null; lastVisit: string | null; totalVisits: number } | null> {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_clients?phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&select=last_service,last_visit,total_visits`,
+    { headers: headers() },
+  );
+  const rows = await res.json();
+  if (!Array.isArray(rows) || rows.length === 0) return null;
+  const r = rows[0];
+  return {
+    lastService: r.last_service ?? null,
+    lastVisit: r.last_visit ?? null,
+    totalVisits: r.total_visits ?? 0,
   };
 }

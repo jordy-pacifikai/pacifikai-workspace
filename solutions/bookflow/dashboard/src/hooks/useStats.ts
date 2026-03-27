@@ -76,7 +76,7 @@ async function fetchDashboardStats(businessId: string): Promise<DashboardStats> 
   const monthStart = format(startOfMonth(now), 'yyyy-MM-dd');
   const monthEnd = format(endOfMonth(now), 'yyyy-MM-dd');
 
-  const [todayRes, weekRes, monthRes, pendingRes, clientsRes] = await Promise.all([
+  const results = await Promise.allSettled([
     supabase
       .from('bookbot_appointments')
       .select('id', { count: 'exact', head: true })
@@ -110,7 +110,21 @@ async function fetchDashboardStats(businessId: string): Promise<DashboardStats> 
       .eq('business_id', businessId),
   ]);
 
-  const monthData = (monthRes.data ?? []) as AppointmentSummaryRow[];
+  // Extract results with safe fallbacks per query
+  const todayRes = results[0].status === 'fulfilled' ? results[0].value : null;
+  const weekRes = results[1].status === 'fulfilled' ? results[1].value : null;
+  const monthRes = results[2].status === 'fulfilled' ? results[2].value : null;
+  const pendingRes = results[3].status === 'fulfilled' ? results[3].value : null;
+  const clientsRes = results[4].status === 'fulfilled' ? results[4].value : null;
+
+  // Log individual failures without crashing the entire dashboard
+  if (results[0].status === 'rejected') console.warn('[Stats] todayCount query failed:', results[0].reason);
+  if (results[1].status === 'rejected') console.warn('[Stats] weekCount query failed:', results[1].reason);
+  if (results[2].status === 'rejected') console.warn('[Stats] monthData query failed:', results[2].reason);
+  if (results[3].status === 'rejected') console.warn('[Stats] pendingCount query failed:', results[3].reason);
+  if (results[4].status === 'rejected') console.warn('[Stats] totalClients query failed:', results[4].reason);
+
+  const monthData = (monthRes?.data ?? []) as AppointmentSummaryRow[];
   const total = monthData.length;
 
   const monthRevenue = 0; // bookbot_appointments has no price column
@@ -119,11 +133,11 @@ async function fetchDashboardStats(businessId: string): Promise<DashboardStats> 
   const completed = monthData.filter((a) => a.status === 'completed').length;
 
   return {
-    todayCount: todayRes.count ?? 0,
-    weekCount: weekRes.count ?? 0,
+    todayCount: todayRes?.count ?? 0,
+    weekCount: weekRes?.count ?? 0,
     monthCount: total,
-    pendingCount: pendingRes.count ?? 0,
-    totalClients: clientsRes.count ?? 0,
+    pendingCount: pendingRes?.count ?? 0,
+    totalClients: clientsRes?.count ?? 0,
     monthRevenue,
     noShowRate: total > 0 ? (noShows / total) * 100 : 0,
     completionRate: total > 0 ? (completed / total) * 100 : 0,
@@ -140,7 +154,7 @@ async function fetchAdvancedStats(businessId: string): Promise<AdvancedStats> {
 
   // Fetch all appointments for the last 6 months (for trend, peak hours, source, cancel rate)
   // Also count sessions for conversion rate
-  const [apptRes, sessionsRes] = await Promise.all([
+  const advResults = await Promise.allSettled([
     supabase
       .from('bookbot_appointments')
       .select('appointment_date, time_slot, status, source')
@@ -156,8 +170,14 @@ async function fetchAdvancedStats(businessId: string): Promise<AdvancedStats> {
       .gte('created_at', sixMonthsAgo.toISOString()),
   ]);
 
-  const appointments = apptRes.data ?? [];
-  const totalSessions = sessionsRes.count ?? 0;
+  const apptRes = advResults[0].status === 'fulfilled' ? advResults[0].value : null;
+  const sessionsRes = advResults[1].status === 'fulfilled' ? advResults[1].value : null;
+
+  if (advResults[0].status === 'rejected') console.warn('[AdvancedStats] appointments query failed:', advResults[0].reason);
+  if (advResults[1].status === 'rejected') console.warn('[AdvancedStats] sessions query failed:', advResults[1].reason);
+
+  const appointments = apptRes?.data ?? [];
+  const totalSessions = sessionsRes?.count ?? 0;
 
   // --- Conversion rate ---
   // Bookings that came from chatbot/whatsapp (session-driven sources)

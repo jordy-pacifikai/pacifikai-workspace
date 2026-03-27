@@ -1,20 +1,12 @@
-import { schemaTask, logger } from "@trigger.dev/sdk/v3";
+import { schemaTask, logger } from "@trigger.dev/sdk";
 import { z } from "zod";
+import { supaHeaders } from "./lib/supabase-headers.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY!;
 
 const EMBEDDING_MODEL = "mistral-embed";
 const EMBEDDING_DIMENSIONS = 1024;
 const MAX_CHUNK_LENGTH = 1500; // characters per chunk
-
-function supaHeaders() {
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-  };
-}
 
 /**
  * Split text into chunks of ~MAX_CHUNK_LENGTH characters on sentence boundaries.

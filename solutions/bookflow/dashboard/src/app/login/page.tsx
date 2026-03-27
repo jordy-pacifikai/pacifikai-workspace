@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -14,8 +14,17 @@ function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState<'email' | 'code'>('email')
   const [error, setError] = useState('')
+  const [cooldown, setCooldown] = useState(0)
   const searchParams = useSearchParams()
-  const redirect = searchParams.get('redirect') ?? '/'
+
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const id = setInterval(() => setCooldown(c => c <= 1 ? 0 : c - 1), 1000)
+    return () => clearInterval(id)
+  }, [cooldown])
+  const rawRedirect = searchParams.get('redirect') ?? '/'
+  // Prevent open redirect — only allow relative paths
+  const redirect = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/'
   const router = useRouter()
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -36,6 +45,7 @@ function LoginForm() {
 
     setStep('code')
     setLoading(false)
+    setCooldown(60)
     setTimeout(() => inputRefs.current[0]?.focus(), 100)
   }
 
@@ -147,10 +157,10 @@ function LoginForm() {
         <div className="flex flex-col gap-2 mt-4">
           <button
             onClick={handleSendCode as unknown as () => void}
-            disabled={loading}
+            disabled={loading || cooldown > 0}
             className="text-sm text-gray-500 hover:text-gray-300 transition-colors disabled:opacity-50"
           >
-            Renvoyer le code
+            {cooldown > 0 ? `Renvoyer le code (${cooldown}s)` : 'Renvoyer le code'}
           </button>
           <button
             onClick={() => { setStep('email'); setOtp(['', '', '', '', '', '']); setError('') }}

@@ -1,18 +1,21 @@
 'use client';
 
-import { Bell, Menu } from 'lucide-react';
+import { Menu, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { useAppStore } from '@/lib/store';
+import { openCommandPalette } from '@/hooks/useCommandPalette';
 
 interface TopBarProps {
   title: string;
-  notificationCount?: number;
   onMenuToggle: () => void;
 }
 
-export function TopBar({ title, notificationCount = 0, onMenuToggle }: TopBarProps) {
+export function TopBar({ title, onMenuToggle }: TopBarProps) {
   const today = format(new Date(), "EEEE d MMMM yyyy", { locale: fr });
   const todayFormatted = today.charAt(0).toUpperCase() + today.slice(1);
+  const businessId = useAppStore((s) => s.businessId);
 
   return (
     <header
@@ -38,26 +41,28 @@ export function TopBar({ title, notificationCount = 0, onMenuToggle }: TopBarPro
       </div>
 
       {/* ── Right: actions ────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <span className="hidden md:inline-flex items-center px-3 py-1.5 rounded-lg bg-gray-800/80 border border-gray-700 text-xs text-gray-400 font-medium">
           {todayFormatted}
         </span>
 
+        {/* Search trigger — expands on md+, icon-only on mobile */}
         <button
           type="button"
-          className="relative w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800/80 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 transition-all duration-150"
-          aria-label="Notifications"
+          onClick={openCommandPalette}
+          aria-label="Ouvrir la recherche (⌘K)"
+          className="flex items-center gap-2 h-9 px-2 sm:px-3 rounded-lg bg-gray-800/80 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 transition-all duration-150"
         >
-          <Bell size={16} />
-          {notificationCount > 0 && (
-            <span
-              className="absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center rounded-full text-[10px] font-bold text-white"
-              style={{ backgroundColor: '#25D366' }}
-            >
-              {notificationCount > 9 ? '9+' : notificationCount}
-            </span>
-          )}
+          <Search size={15} className="shrink-0" />
+          <span className="hidden sm:inline text-xs text-gray-500 font-medium">
+            Rechercher…
+          </span>
+          <kbd className="hidden md:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border border-gray-600 text-[10px] text-gray-500 font-mono">
+            ⌘K
+          </kbd>
         </button>
+
+        {businessId && <NotificationBell businessId={businessId} />}
       </div>
     </header>
   );

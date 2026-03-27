@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, Suspense } from 'react';
 import {
   Calendar,
   Banknote,
@@ -12,6 +12,8 @@ import {
   MessageSquare,
   XCircle,
   Zap,
+  TrendingUp,
+  CalendarCheck,
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonCard, SkeletonRow } from '@/components/ui/Skeleton';
@@ -19,6 +21,7 @@ import { useAppStore } from '@/lib/store';
 import { useDashboardStats, useAdvancedStats } from '@/hooks/useStats';
 import { useAppointments } from '@/hooks/useAppointments';
 import { cn } from '@/lib/utils';
+import { APPOINTMENT_STATUS, SOURCE_CONFIG } from '@/lib/appointment-status';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 
 // ─── Stat card ────────────────────────────────────────────────────────────────
@@ -229,26 +232,7 @@ function MonthlyTrendChart({
   );
 }
 
-// ─── Status colors ────────────────────────────────────────────────────────────
-
-const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  confirmed: { label: 'Confirmes', color: '#3b82f6' },
-  completed: { label: 'Termines', color: '#25D366' },
-  cancelled: { label: 'Annules', color: '#ef4444' },
-  no_show: { label: 'No-show', color: '#f59e0b' },
-  pending: { label: 'En attente', color: '#6b7280' },
-};
-
-const SOURCE_CONFIG: Record<string, { label: string; color: string }> = {
-  chatbot: { label: 'Chatbot', color: '#25D366' },
-  whatsapp: { label: 'WhatsApp', color: '#22c55e' },
-  messenger: { label: 'Messenger', color: '#8b5cf6' },
-  manual: { label: 'Manuel', color: '#3b82f6' },
-  web: { label: 'Site web', color: '#06b6d4' },
-  app: { label: 'Application', color: '#f59e0b' },
-  gcal: { label: 'Google Calendar', color: '#ec4899' },
-  guest: { label: 'Invite', color: '#6b7280' },
-};
+// ─── Status & source colors (from shared module) ─────────────────────────────
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
@@ -348,11 +332,11 @@ export default function StatsPage() {
       counts[s] = (counts[s] ?? 0) + 1;
     });
     const max = Math.max(...Object.values(counts), 1);
-    return Object.entries(STATUS_CONFIG)
+    return Object.entries(APPOINTMENT_STATUS)
       .map(([key, cfg]) => ({
         key,
         label: cfg.label,
-        color: cfg.color,
+        color: cfg.hex,
         count: counts[key] ?? 0,
         max,
       }))
@@ -368,7 +352,7 @@ export default function StatsPage() {
     return advanced.sourceBreakdown.map((s) => ({
       label: SOURCE_CONFIG[s.source]?.label ?? s.source,
       value: s.count,
-      color: SOURCE_CONFIG[s.source]?.color ?? '#6b7280',
+      color: SOURCE_CONFIG[s.source]?.hex ?? '#6b7280',
     }));
   }, [advanced]);
 
@@ -399,6 +383,12 @@ export default function StatsPage() {
 
   // ─── Render ─────────────────────────────────────────────────────────────────
 
+  const hasNoData =
+    !isLoading &&
+    (stats?.monthCount ?? 0) === 0 &&
+    (stats?.totalClients ?? 0) === 0 &&
+    (advanced?.totalSessions ?? 0) === 0;
+
   if (isLoading)
     return (
       <DashboardLayout title="Statistiques" businessName={businessName ?? undefined}>
@@ -409,6 +399,30 @@ export default function StatsPage() {
   return (
     <DashboardLayout title="Statistiques" businessName={businessName ?? undefined}>
       <div className="space-y-6">
+        {/* ── Empty state banner (shown when no data yet) ─────────────── */}
+        {hasNoData && (
+          <div className="rounded-xl border border-gray-800 bg-gray-900 px-6 py-10 flex flex-col items-center text-center">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+              style={{ backgroundColor: 'rgba(37, 211, 102, 0.08)', border: '1px solid rgba(37, 211, 102, 0.15)' }}
+            >
+              <TrendingUp size={26} style={{ color: '#25D366' }} />
+            </div>
+            <p className="text-sm font-semibold text-gray-200 mb-1">Aucune statistique disponible</p>
+            <p className="text-xs text-gray-500 max-w-sm leading-relaxed">
+              Les statistiques apparaîtront après vos premières réservations. Partagez votre lien de réservation pour commencer.
+            </p>
+            <a
+              href="/appointments"
+              className="mt-5 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-90 text-white"
+              style={{ backgroundColor: '#25D366' }}
+            >
+              <CalendarCheck size={15} />
+              Voir les rendez-vous
+            </a>
+          </div>
+        )}
+
         {/* Period label */}
         <p className="text-sm text-gray-400">
           Periode:{' '}
@@ -469,11 +483,11 @@ export default function StatsPage() {
             }
           />
           <StatCard
-            label="Temps de reponse moy."
-            value="--"
+            label="Sessions chatbot"
+            value={advanced ? advanced.totalSessions : '--'}
             icon={Clock}
             accent="#06b6d4"
-            sub="Bientot disponible"
+            sub={advanced ? `${advanced.totalBookingsFromSessions} ont réservé` : undefined}
           />
           <StatCard
             label="Annulations + No-show"
@@ -495,6 +509,7 @@ export default function StatsPage() {
         </div>
 
         {/* ── Monthly trend (bar chart) ───────────────────────────────────────── */}
+        <Suspense fallback={<div className="animate-pulse bg-gray-800 rounded-xl h-64" />}>
         <Section title="Tendance mensuelle (6 derniers mois)" icon={BarChart3}>
           {advanced?.monthlyTrend && advanced.monthlyTrend.length > 0 ? (
             <MonthlyTrendChart months={advanced.monthlyTrend} />
@@ -504,8 +519,10 @@ export default function StatsPage() {
             </p>
           )}
         </Section>
+        </Suspense>
 
         {/* ── Source donut + Status bars ───────────────────────────────────────── */}
+        <Suspense fallback={<div className="animate-pulse bg-gray-800 rounded-xl h-64" />}>
         <div className="grid md:grid-cols-2 gap-6">
           {/* Source breakdown donut */}
           <Section title="Repartition par source (6 mois)" icon={MessageSquare}>
@@ -535,8 +552,10 @@ export default function StatsPage() {
             )}
           </Section>
         </div>
+        </Suspense>
 
         {/* ── Peak hours heatmap ──────────────────────────────────────────────── */}
+        <Suspense fallback={<div className="animate-pulse bg-gray-800 rounded-xl h-64" />}>
         <Section title="Heures de pointe (6 mois)" icon={Clock}>
           {advanced?.peakHours ? (
             <PeakHoursHeatmap hours={advanced.peakHours} />
@@ -544,8 +563,10 @@ export default function StatsPage() {
             <p className="text-sm text-gray-500 italic">Aucune donnee disponible.</p>
           )}
         </Section>
+        </Suspense>
 
         {/* ── Top services ────────────────────────────────────────────────────── */}
+        <Suspense fallback={<div className="animate-pulse bg-gray-800 rounded-xl h-64" />}>
         <Section title="Top 5 services (ce mois)" icon={Users}>
           {topServices.length === 0 ? (
             <p className="text-sm text-gray-500 italic">
@@ -587,6 +608,7 @@ export default function StatsPage() {
             </div>
           )}
         </Section>
+        </Suspense>
 
         {/* ── Summary footer ──────────────────────────────────────────────────── */}
         <div className="grid sm:grid-cols-3 gap-4">
