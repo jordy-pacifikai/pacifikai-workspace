@@ -84,6 +84,40 @@ function planFromFreemiusId(planId: number | undefined): string | null {
   return FREEMIUS_PLAN_ID_TO_INTERNAL[planId] ?? null;
 }
 
+// ─── Notification helper (fire-and-forget) ────────────────────────────────────
+
+async function createWebhookNotification(
+  businessId: string,
+  type: string,
+  title: string,
+  message: string,
+  metadata?: Record<string, unknown>,
+): Promise<void> {
+  try {
+    const admin = supabaseAdmin();
+    const { error } = await admin.from('bookbot_notifications').insert({
+      business_id: businessId,
+      type,
+      title,
+      message,
+      is_read: false,
+      metadata: metadata ?? {},
+    });
+    if (error) {
+      logger.warn('freemius.webhook: notification insert failed', {
+        action: 'freemius.webhook',
+        businessId,
+        error: error.message,
+      });
+    }
+  } catch (err) {
+    logger.warn('freemius.webhook: notification insert error', {
+      action: 'freemius.webhook',
+      error: String(err),
+    });
+  }
+}
+
 // ─── Helpers Supabase ─────────────────────────────────────────────────────────
 
 async function findBusinessByEmail(email: string): Promise<string | null> {
@@ -265,6 +299,109 @@ async function handlePaymentCompleted(data: Record<string, unknown>): Promise<vo
   });
 }
 
+async function handlePaymentFailed(data: Record<string, unknown>): Promise<void> {
+  const parsed = FreemiusPaymentSchema.safeParse(data);
+  if (!parsed.success) return;
+
+  const payment = parsed.data;
+  const email = payment.user?.email;
+  if (!email) return;
+
+  const businessId = await findBusinessByEmail(email);
+  if (!businessId) return;
+
+  await updateBusiness(businessId, {
+    subscription_status: 'payment_failed',
+  });
+
+  await createWebhookNotification(
+    businessId,
+    'cancellation',
+    'Echec de paiement',
+    'Votre dernier paiement a echoue. Mettez a jour vos informations de paiement pour continuer a utiliser Ve\'a.',
+    { freemiusPaymentId: payment.id },
+  );
+
+  logger.info('freemius.webhook: paiement echoue', {
+    action: 'freemius.webhook',
+    businessId,
+    freemiusPaymentId: payment.id,
+  });
+}
+
+async function handlePaymentRefunded(data: Record<string, unknown>): Promise<void> {
+  const parsed = FreemiusPaymentSchema.safeParse(data);
+  if (!parsed.success) return;
+
+  const payment = parsed.data;
+  const email = payment.user?.email;
+  if (!email) return;
+
+  const businessId = await findBusinessByEmail(email);
+  if (!businessId) return;
+
+  // Update the invoice matching this Freemius payment to 'refunded'
+  const admin = supabaseAdmin();
+  const { error } = await admin
+    .from('bookbot_invoices')
+    .update({ status: 'refunded', updated_at: new Date().toISOString() })
+    .eq('business_id', businessId)
+    .eq('freemius_payment_id', payment.id);
+
+  if (error) {
+    logger.warn('freemius.webhook: payment.refunded — impossible de mettre a jour la facture', {
+      action: 'freemius.webhook',
+      businessId,
+      freemiusPaymentId: payment.id,
+      error: error.message,
+    });
+  }
+
+  await createWebhookNotification(
+    businessId,
+    'cancellation',
+    'Remboursement effectue',
+    'Un remboursement a ete traite pour votre compte. Consultez votre historique de facturation.',
+    { freemiusPaymentId: payment.id },
+  );
+
+  logger.info('freemius.webhook: remboursement enregistre', {
+    action: 'freemius.webhook',
+    businessId,
+    freemiusPaymentId: payment.id,
+  });
+}
+
+async function handleSubscriptionUpdated(data: Record<string, unknown>): Promise<void> {
+  const parsed = FreemiusSubscriptionSchema.safeParse(data);
+  if (!parsed.success) return;
+
+  const sub = parsed.data;
+  const email = sub.user?.email;
+  if (!email) return;
+
+  const businessId = await findBusinessByEmail(email);
+  if (!businessId) return;
+
+  const internalPlan = planFromFreemiusId(sub.plan_id);
+  if (!internalPlan) {
+    logger.info('freemius.webhook: subscription.updated — plan_id absent ou inconnu, skip', {
+      action: 'freemius.webhook',
+      businessId,
+      freemiusSubId: sub.id,
+    });
+    return;
+  }
+
+  await updateBusiness(businessId, { plan: internalPlan });
+  logger.info('freemius.webhook: plan mis a jour via subscription.updated', {
+    action: 'freemius.webhook',
+    businessId,
+    plan: internalPlan,
+    freemiusSubId: sub.id,
+  });
+}
+
 async function handleLicenseCreated(data: Record<string, unknown>): Promise<void> {
   const parsed = FreemiusLicenseSchema.safeParse(data);
   if (!parsed.success) return;
@@ -328,9 +465,31 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const { type, data } = parsed.data;
 
+  // ─── Idempotency: skip si déjà traité ──────────────────────────────
+  const eventId = data?.id ? `${type}_${data.id}` : `${type}_${Date.now()}`;
+  const admin = supabaseAdmin();
+  const { data: existing } = await admin
+    .from('bookbot_webhook_events')
+    .select('id')
+    .eq('id', eventId)
+    .single();
+
+  if (existing) {
+    logger.info('freemius.webhook: événement déjà traité (idempotent skip)', {
+      action: 'freemius.webhook',
+      type,
+      eventId,
+    });
+    return NextResponse.json({ ok: true, skipped: true });
+  }
+
+  // Marquer comme traité avant processing (prevent race condition)
+  await admin.from('bookbot_webhook_events').insert({ id: eventId, event_type: type });
+
   logger.info('freemius.webhook: événement reçu', {
     action: 'freemius.webhook',
     type,
+    eventId,
   });
 
   try {
@@ -347,6 +506,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         break;
       case 'payment.completed':
         await handlePaymentCompleted(data);
+        break;
+      case 'payment.failed':
+        await handlePaymentFailed(data);
+        break;
+      case 'payment.refunded':
+        await handlePaymentRefunded(data);
+        break;
+      case 'subscription.updated':
+        await handleSubscriptionUpdated(data);
         break;
       case 'license.created':
         await handleLicenseCreated(data);

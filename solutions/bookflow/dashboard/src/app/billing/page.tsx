@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   CreditCard,
   FileText,
@@ -11,6 +12,10 @@ import {
   X,
   Loader2,
   ExternalLink,
+  MessageSquare,
+  Clock,
+  AlertTriangle,
+  Printer,
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton';
@@ -161,6 +166,21 @@ const PLAN_RANK: Record<string, number> = {
   pro: 2,
   business: 3,
 };
+
+const CONVERSATION_LIMITS: Record<string, number> = {
+  decouverte: 50,
+  starter: 500,
+  pro: 2000,
+  business: Infinity,
+};
+
+const CANCELLATION_REASONS = [
+  'Trop cher',
+  'Pas assez de fonctionnalités',
+  'Problèmes techniques',
+  "Je n'en ai plus besoin",
+  'Autre',
+] as const;
 
 function ChangePlanModal({
   currentPlan,
@@ -336,6 +356,89 @@ function ChangePlanModal({
   );
 }
 
+// ─── Cancellation Survey Modal ──────────────────────────────────────────────
+
+function CancellationSurveyModal({
+  onClose,
+  onConfirm,
+  isLoading,
+}: {
+  onClose: () => void;
+  onConfirm: (reason: string) => void;
+  isLoading: boolean;
+}) {
+  const [selected, setSelected] = useState<string | null>(null);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="relative w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cancel-survey-title"
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
+          <h2 id="cancel-survey-title" className="text-base font-bold text-white">
+            Avant de partir...
+          </h2>
+          <button
+            onClick={onClose}
+            aria-label="Fermer"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="p-6">
+          <p className="text-sm text-gray-400 mb-4">
+            Pourquoi souhaitez-vous annuler ?
+          </p>
+          <div className="space-y-2">
+            {CANCELLATION_REASONS.map((reason) => (
+              <button
+                key={reason}
+                type="button"
+                onClick={() => setSelected(reason)}
+                className={cn(
+                  'w-full text-left px-4 py-3 rounded-lg border text-sm transition-all',
+                  selected === reason
+                    ? 'border-red-500/50 bg-red-500/10 text-white'
+                    : 'border-gray-800 bg-gray-900/50 text-gray-400 hover:border-gray-700 hover:text-white',
+                )}
+              >
+                {reason}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-800">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            Garder mon abonnement
+          </button>
+          <button
+            disabled={!selected || isLoading}
+            onClick={() => selected && onConfirm(selected)}
+            className={cn(
+              'px-5 py-2 rounded-lg text-sm font-semibold transition-all',
+              selected && !isLoading
+                ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30'
+                : 'bg-gray-800 text-gray-600 cursor-not-allowed',
+            )}
+          >
+            {isLoading ? <Loader2 size={16} className="animate-spin" /> : 'Confirmer l\'annulation'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Invoice Detail Modal ───────────────────────────────────────────────────
 
 function InvoiceDetailModal({
@@ -365,13 +468,29 @@ function InvoiceDetailModal({
       <div className="relative w-full max-w-lg bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="billing-cancel-title">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
           <h2 id="billing-cancel-title" className="text-lg font-bold text-white">Facture {data.invoiceNumber}</h2>
-          <button
-            onClick={onClose}
-            aria-label="Fermer"
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
-          >
-            <X size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const printWin = window.open('', '_blank', 'width=700,height=900');
+                if (!printWin) return;
+                printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Facture ${data.invoiceNumber}</title><style>body{font-family:sans-serif;padding:40px;color:#111;max-width:600px;margin:0 auto}h1{font-size:20px;margin-bottom:4px}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{text-align:left;padding:8px 12px;border-bottom:1px solid #eee}th{background:#f5f5f5;font-size:12px;text-transform:uppercase}tfoot td{font-weight:bold;border-top:2px solid #ddd}.label{font-size:11px;color:#888;text-transform:uppercase;margin-bottom:2px}</style></head><body><h1>Ve'a — Facture</h1><p style="color:#888;margin:0">${data.invoiceNumber}</p><hr style="margin:16px 0"><div style="display:flex;gap:40px;margin-bottom:16px"><div><p class="label">Émetteur</p><strong>${data.issuer.name}</strong><br>${data.issuer.legal}<br>${data.issuer.email}</div><div><p class="label">Client</p><strong>${data.business.name}</strong>${data.business.email ? `<br>${data.business.email}` : ''}</div></div><div style="display:flex;gap:40px;margin-bottom:16px"><div><p class="label">Date d'émission</p>${data.issueDate}</div><div><p class="label">Échéance</p>${data.dueDate}</div></div><table><thead><tr><th>Description</th><th style="text-align:right">Montant</th></tr></thead><tbody>${data.lineItems.map(i => `<tr><td>${i.description}</td><td style="text-align:right">${i.total.toLocaleString('fr-FR')} XPF</td></tr>`).join('')}</tbody><tfoot><tr><td>Total</td><td style="text-align:right">${data.total.toLocaleString('fr-FR')} XPF</td></tr></tfoot></table><p style="font-size:12px;color:#888">${data.legalMentions.join(' ')}</p></body></html>`);
+                printWin.document.close();
+                printWin.focus();
+                setTimeout(() => printWin.print(), 400);
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-400 hover:text-white hover:bg-gray-800 border border-gray-800 hover:border-gray-700 transition-all"
+            >
+              <Printer size={13} />
+              Télécharger PDF
+            </button>
+            <button
+              onClick={onClose}
+              aria-label="Fermer"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
@@ -467,6 +586,9 @@ export default function BillingPage() {
   const [changePlanLoading, setChangePlanLoading] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [showCancelSurvey, setShowCancelSurvey] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [extendLoading, setExtendLoading] = useState(false);
 
   // Email de l'utilisateur pour pré-remplir le checkout Freemius
   const userEmail = business?.email ?? undefined;
@@ -523,6 +645,49 @@ export default function BillingPage() {
     [queryClient],
   );
 
+  // Handle cancellation with survey
+  const handleCancel = useCallback(
+    async (reason: string) => {
+      setCancelLoading(true);
+      try {
+        // Save cancellation reason
+        await fetch('/api/billing/change-plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planId: 'decouverte', cancellationReason: reason }),
+        });
+        queryClient.invalidateQueries({ queryKey: ['business'] });
+        setShowCancelSurvey(false);
+        setSuccessMsg('Abonnement annulé. Vous restez sur le plan Découverte.');
+        setTimeout(() => setSuccessMsg(null), 5000);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Erreur lors de l\'annulation');
+      } finally {
+        setCancelLoading(false);
+      }
+    },
+    [queryClient],
+  );
+
+  // Handle trial extension (1x 7 days)
+  const handleExtendTrial = useCallback(async () => {
+    setExtendLoading(true);
+    try {
+      const res = await fetch('/api/billing/extend-trial', { method: 'POST' });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error ?? 'Erreur');
+      }
+      queryClient.invalidateQueries({ queryKey: ['business'] });
+      setSuccessMsg('Essai étendu de 7 jours supplémentaires !');
+      setTimeout(() => setSuccessMsg(null), 5000);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Erreur lors de l\'extension');
+    } finally {
+      setExtendLoading(false);
+    }
+  }, [queryClient]);
+
   // Compute renewal date
   const renewalDate = business?.billing_cycle_start
     ? (() => {
@@ -532,13 +697,50 @@ export default function BillingPage() {
       })()
     : null;
 
+  const searchParams = useSearchParams();
+  const isExpired = searchParams.get('expired') === 'true';
+
   const currentPlan = business?.plan ?? null;
   const currentPlanData = PLANS.find((p) => p.id === (currentPlan ?? '').toLowerCase());
   const isLoading = bizLoading || invoicesLoading;
 
+  // Usage
+  const conversationCount = business?.conversation_count ?? 0;
+  const conversationLimit = CONVERSATION_LIMITS[(currentPlan ?? 'decouverte').toLowerCase()] ?? 50;
+  const usagePct = conversationLimit === Infinity ? 0 : Math.min(100, Math.round((conversationCount / conversationLimit) * 100));
+  const usageColor = usagePct >= 80 ? 'bg-red-500' : usagePct >= 50 ? 'bg-amber-400' : 'bg-emerald-500';
+  const atLimit = conversationLimit !== Infinity && conversationCount >= conversationLimit;
+
+  // Trial extension eligibility
+  const bizAny = business as (typeof business & Record<string, unknown>) | undefined;
+  const trialExtended = bizAny?.trial_extended === true;
+  const canExtend = (business?.subscription_status === 'trial' || business?.subscription_status === 'expired') && !trialExtended;
+  const scheduledPlanChange = bizAny?.scheduled_plan_change as string | undefined;
+  const planChangeDate = bizAny?.plan_change_date as string | undefined;
+
+  const subscriptionBlocked = useMemo(() => {
+    if (!business) return false;
+    const s = business.subscription_status;
+    return s === 'expired' || s === 'cancelled' || s === 'payment_failed';
+  }, [business]);
+
   return (
     <DashboardLayout title="Facturation">
       <div className="max-w-4xl mx-auto space-y-6">
+
+        {/* Expired / blocked banner */}
+        {(isExpired || subscriptionBlocked) && !isLoading && (
+          <div className="rounded-xl bg-red-500/10 border border-red-500/30 px-5 py-4">
+            <p className="text-sm font-semibold text-red-400 mb-1">
+              {business?.subscription_status === 'payment_failed'
+                ? 'Votre paiement a echoue.'
+                : 'Votre essai gratuit a expire.'}
+            </p>
+            <p className="text-xs text-red-400/80">
+              Choisissez un plan ci-dessous pour continuer a utiliser Ve&apos;a. Vos donnees sont conservees.
+            </p>
+          </div>
+        )}
 
         {/* Success message */}
         {successMsg && (
@@ -606,6 +808,105 @@ export default function BillingPage() {
                 Changer de plan
                 <ArrowUpRight size={14} />
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Usage ──────────────────────────────────────────────────────── */}
+        {!isLoading && business && (
+          <div className="rounded-xl bg-gray-900 border border-gray-800 p-6">
+            <div className="flex items-center gap-3 mb-5">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: `${GREEN}15` }}
+              >
+                <MessageSquare size={20} style={{ color: GREEN }} />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-white">Utilisation ce mois</h2>
+                <p className="text-xs text-gray-500">Conversations traitées par votre chatbot</p>
+              </div>
+            </div>
+
+            {atLimit ? (
+              <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 mb-4">
+                <AlertTriangle size={16} className="text-red-400 shrink-0" />
+                <p className="text-sm text-red-400">
+                  Limite atteinte — passez au plan supérieur pour continuer à recevoir des conversations.
+                </p>
+              </div>
+            ) : null}
+
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">
+                <span className="text-white font-semibold">{conversationCount.toLocaleString('fr-FR')}</span>
+                {conversationLimit === Infinity
+                  ? ' conversations'
+                  : ` / ${conversationLimit.toLocaleString('fr-FR')} conversations ce mois`}
+              </span>
+              {conversationLimit !== Infinity && (
+                <span className={cn(
+                  'text-xs font-medium',
+                  usagePct >= 80 ? 'text-red-400' : usagePct >= 50 ? 'text-amber-400' : 'text-emerald-400',
+                )}>
+                  {usagePct}%
+                </span>
+              )}
+            </div>
+
+            {conversationLimit !== Infinity && (
+              <div className="w-full h-2 rounded-full bg-gray-800 overflow-hidden">
+                <div
+                  className={cn('h-full rounded-full transition-all duration-500', usageColor)}
+                  style={{ width: `${usagePct}%` }}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Trial extension + Cancel ────────────────────────────────── */}
+        {!isLoading && business && (
+          <div className="rounded-xl bg-gray-900/50 border border-gray-800 p-5 space-y-3">
+            {/* Scheduled downgrade notice */}
+            {scheduledPlanChange && planChangeDate && (
+              <div className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-3">
+                <Clock size={16} className="text-amber-400 shrink-0" />
+                <p className="text-sm text-amber-400">
+                  Votre plan passera à{' '}
+                  <span className="font-semibold capitalize">{scheduledPlanChange}</span>{' '}
+                  le {new Date(planChangeDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}.
+                </p>
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Trial extension — one-time */}
+              {canExtend && (
+                <button
+                  onClick={handleExtendTrial}
+                  disabled={extendLoading}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all disabled:opacity-50"
+                >
+                  {extendLoading ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    <Clock size={14} />
+                  )}
+                  J&apos;ai besoin de plus de temps (+7 jours)
+                </button>
+              )}
+
+              {/* Cancel subscription — only for active paid plans */}
+              {business.subscription_status === 'active' && currentPlan !== 'decouverte' && (
+                <button
+                  onClick={() => setShowCancelSurvey(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-red-400 hover:bg-red-500/10 border border-gray-800 hover:border-red-500/30 transition-all"
+                >
+                  <X size={14} />
+                  Annuler l&apos;abonnement
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -748,6 +1049,14 @@ export default function BillingPage() {
           businessPhone={business.phone}
           plan={business.plan}
           onClose={() => setSelectedInvoice(null)}
+        />
+      )}
+
+      {showCancelSurvey && (
+        <CancellationSurveyModal
+          onClose={() => setShowCancelSurvey(false)}
+          onConfirm={handleCancel}
+          isLoading={cancelLoading}
         />
       )}
     </DashboardLayout>

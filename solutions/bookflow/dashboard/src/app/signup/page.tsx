@@ -24,6 +24,7 @@ function SignupContent() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [cooldown, setCooldown] = useState(0)
+  const [cguAccepted, setCguAccepted] = useState(false)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   useEffect(() => {
@@ -45,7 +46,7 @@ function SignupContent() {
     const { error: authError } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        data: { business_name: businessName },
+        data: { business_name: businessName, cgu_accepted_at: new Date().toISOString() },
       },
     })
 
@@ -232,9 +233,43 @@ function SignupContent() {
             <p className="text-sm text-red-400">{error}</p>
           )}
 
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <div className="relative mt-0.5 shrink-0">
+              <input
+                type="checkbox"
+                checked={cguAccepted}
+                onChange={(e) => setCguAccepted(e.target.checked)}
+                className="sr-only"
+              />
+              <div
+                className="w-4 h-4 rounded border transition-all"
+                style={{
+                  backgroundColor: cguAccepted ? TEAL : 'transparent',
+                  borderColor: cguAccepted ? TEAL : '#374151',
+                }}
+              >
+                {cguAccepted && (
+                  <svg viewBox="0 0 12 12" fill="none" className="w-full h-full p-0.5">
+                    <polyline points="2 6 5 9 10 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </div>
+            </div>
+            <span className="text-xs text-gray-500 leading-relaxed">
+              J&apos;accepte les{' '}
+              <a href="/terms" target="_blank" className="underline hover:text-white transition-colors" style={{ color: TEAL }}>
+                Conditions Générales
+              </a>{' '}
+              et la{' '}
+              <a href="/privacy" target="_blank" className="underline hover:text-white transition-colors" style={{ color: TEAL }}>
+                Politique de Confidentialité
+              </a>
+            </span>
+          </label>
+
           <button
             type="submit"
-            disabled={loading || businessName.trim().length < 2}
+            disabled={loading || businessName.trim().length < 2 || !cguAccepted}
             className="w-full rounded-lg py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50"
             style={{ backgroundColor: TEAL }}
           >

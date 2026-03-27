@@ -15,12 +15,147 @@ interface ExpiredBusiness {
   plan: string | null;
 }
 
-/** Daily at 08:00 Tahiti (UTC-10) = 18:00 UTC */
+/** Daily at 08:00 Tahiti (UTC-10) = 18:00 UTC
+ * Combined task: trial expiration + trial reminder (J-3) + monthly conversation_count reset */
 export const trialExpiration = schedules.task({
   id: "trial-expiration",
   cron: "0 18 * * *",
   run: async () => {
-    const now = new Date().toISOString();
+    const nowDate = new Date();
+    const now = nowDate.toISOString();
+
+    // ── Monthly conversation_count reset (1st of month) ──
+    if (nowDate.getUTCDate() === 1) {
+      const resetRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/bookbot_businesses?select=id`,
+        {
+          method: "PATCH",
+          headers: { ...supaHeaders(), Prefer: "return=minimal" },
+          body: JSON.stringify({ conversation_count: 0 }),
+        },
+      );
+      if (resetRes.ok) {
+        logger.info("Monthly conversation_count reset complete");
+      } else {
+        logger.error(`Monthly reset failed: ${resetRes.status}`);
+      }
+    }
+
+    // ── Mid-trial reminder (J7 — sent 7 days after signup) ──
+    const midTrialFrom = new Date(nowDate.getTime() - 8 * 24 * 60 * 60 * 1000);
+    const midTrialTo = new Date(nowDate.getTime() - 6 * 24 * 60 * 60 * 1000);
+    const midTrialRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/bookbot_businesses` +
+        `?subscription_status=eq.trial` +
+        `&created_at=gt.${midTrialFrom.toISOString()}` +
+        `&created_at=lt.${midTrialTo.toISOString()}` +
+        `&mid_trial_sent=not.is.true` +
+        `&select=id,name,email,owner_user_id,trial_ends_at,plan,conversation_count`,
+      { headers: supaHeaders() },
+    );
+    if (midTrialRes.ok) {
+      const midTrials: (ExpiredBusiness & { conversation_count?: number })[] = await midTrialRes.json();
+      for (const biz of midTrials) {
+        if (!biz.email) continue;
+        const conversationCount = biz.conversation_count ?? 0;
+        try {
+          await sendBrevoEmail({
+            to: [{ email: biz.email }],
+            subject: `Mi-parcours de votre essai Ve'a`,
+            htmlContent: buildMidTrialEmail({ businessName: escapeHtml(biz.name), conversationCount }),
+            tags: ["mid-trial"],
+          });
+          await fetch(`${SUPABASE_URL}/rest/v1/bookbot_businesses?id=eq.${biz.id}`, {
+            method: "PATCH",
+            headers: { ...supaHeaders(), Prefer: "return=minimal" },
+            body: JSON.stringify({ mid_trial_sent: true }),
+          });
+          logger.info(`Mid-trial email sent to ${biz.email}`);
+        } catch (err) {
+          logger.error(`Mid-trial email error for ${biz.email}`, { error: String(err) });
+        }
+      }
+    }
+
+    // ── Trial reminder (J-3) ──
+    const in3Days = new Date(nowDate.getTime() + 3 * 24 * 60 * 60 * 1000);
+    const reminderRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/bookbot_businesses` +
+        `?subscription_status=eq.trial` +
+        `&trial_ends_at=gt.${now}` +
+        `&trial_ends_at=lt.${in3Days.toISOString()}` +
+        `&trial_reminder_sent=not.is.true` +
+        `&select=id,name,email,owner_user_id,trial_ends_at,plan`,
+      { headers: supaHeaders() },
+    );
+    if (reminderRes.ok) {
+      const reminders: ExpiredBusiness[] = await reminderRes.json();
+      for (const biz of reminders) {
+        if (!biz.email) continue;
+        const trialEndDate = new Date(biz.trial_ends_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+        try {
+          await sendBrevoEmail({
+            to: [{ email: biz.email }],
+            subject: `Plus que 3 jours d'essai gratuit — Ve'a`,
+            htmlContent: buildReminderEmail({ businessName: escapeHtml(biz.name), trialEndDate }),
+            tags: ["trial-reminder"],
+          });
+          await fetch(`${SUPABASE_URL}/rest/v1/bookbot_businesses?id=eq.${biz.id}`, {
+            method: "PATCH",
+            headers: { ...supaHeaders(), Prefer: "return=minimal" },
+            body: JSON.stringify({ trial_reminder_sent: true }),
+          });
+          await createNotification({
+            businessId: biz.id,
+            type: "cancellation",
+            title: "Essai gratuit — J-3",
+            message: `Il vous reste 3 jours d'essai gratuit. Choisissez un abonnement pour continuer sans interruption.`,
+            metadata: { plan: biz.plan, trialEndsAt: biz.trial_ends_at },
+          });
+          logger.info(`Trial reminder sent to ${biz.email}`);
+        } catch (err) {
+          logger.error(`Trial reminder error for ${biz.email}`, { error: String(err) });
+        }
+      }
+    }
+
+    // ── Trial reminder (J-1) ──
+    const in1Day = new Date(nowDate.getTime() + 1 * 24 * 60 * 60 * 1000);
+    const j1Res = await fetch(
+      `${SUPABASE_URL}/rest/v1/bookbot_businesses` +
+        `?subscription_status=eq.trial` +
+        `&trial_ends_at=gt.${now}` +
+        `&trial_ends_at=lt.${in1Day.toISOString()}` +
+        `&trial_reminder_j1_sent=not.is.true` +
+        `&select=id,name,email,owner_user_id,trial_ends_at,plan`,
+      { headers: supaHeaders() },
+    );
+    if (j1Res.ok) {
+      const j1Businesses: ExpiredBusiness[] = await j1Res.json();
+      for (const biz of j1Businesses) {
+        if (!biz.email) continue;
+        const trialEndDate = new Date(biz.trial_ends_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+        try {
+          await sendBrevoEmail({
+            to: [{ email: biz.email }],
+            subject: `Dernier jour d'essai — choisissez votre plan Ve'a`,
+            htmlContent: buildJ1ReminderEmail({ businessName: escapeHtml(biz.name), trialEndDate }),
+            tags: ["trial-reminder-j1"],
+          });
+          // Best-effort tracking — column may not exist
+          await fetch(`${SUPABASE_URL}/rest/v1/bookbot_businesses?id=eq.${biz.id}`, {
+            method: "PATCH",
+            headers: { ...supaHeaders(), Prefer: "return=minimal" },
+            body: JSON.stringify({ trial_reminder_j1_sent: true }),
+          });
+          logger.info(`J-1 reminder sent to ${biz.email}`);
+        } catch (err) {
+          logger.error(`J-1 reminder error for ${biz.email}`, { error: String(err) });
+        }
+      }
+    }
+
+    // ── Trial expiration ──
 
     // Find businesses where trial has expired but status is still 'trial'
     const res = await fetch(
@@ -102,6 +237,77 @@ export const trialExpiration = schedules.task({
     }
 
     logger.info(`Trial expiration complete`, { processed, emailsSent });
+
+    // ── Post-expiry J+2 ──
+    const j2From = new Date(nowDate.getTime() - 3 * 24 * 60 * 60 * 1000);
+    const j2To = new Date(nowDate.getTime() - 1 * 24 * 60 * 60 * 1000);
+    const j2Res = await fetch(
+      `${SUPABASE_URL}/rest/v1/bookbot_businesses` +
+        `?subscription_status=eq.expired` +
+        `&trial_ends_at=gt.${j2From.toISOString()}` +
+        `&trial_ends_at=lt.${j2To.toISOString()}` +
+        `&post_expiry_j2_sent=not.is.true` +
+        `&select=id,name,email,owner_user_id,trial_ends_at,plan`,
+      { headers: supaHeaders() },
+    );
+    if (j2Res.ok) {
+      const j2Businesses: ExpiredBusiness[] = await j2Res.json();
+      for (const biz of j2Businesses) {
+        if (!biz.email) continue;
+        try {
+          await sendBrevoEmail({
+            to: [{ email: biz.email }],
+            subject: `Votre chatbot est en pause — réactivez votre compte Ve'a`,
+            htmlContent: buildPostExpiryJ2Email({ businessName: escapeHtml(biz.name) }),
+            tags: ["post-expiry-j2"],
+          });
+          await fetch(`${SUPABASE_URL}/rest/v1/bookbot_businesses?id=eq.${biz.id}`, {
+            method: "PATCH",
+            headers: { ...supaHeaders(), Prefer: "return=minimal" },
+            body: JSON.stringify({ post_expiry_j2_sent: true }),
+          });
+          logger.info(`Post-expiry J+2 sent to ${biz.email}`);
+        } catch (err) {
+          logger.error(`Post-expiry J+2 error for ${biz.email}`, { error: String(err) });
+        }
+      }
+    }
+
+    // ── Post-expiry J+7 ──
+    const j7From = new Date(nowDate.getTime() - 8 * 24 * 60 * 60 * 1000);
+    const j7To = new Date(nowDate.getTime() - 6 * 24 * 60 * 60 * 1000);
+    const j7Res = await fetch(
+      `${SUPABASE_URL}/rest/v1/bookbot_businesses` +
+        `?subscription_status=eq.expired` +
+        `&trial_ends_at=gt.${j7From.toISOString()}` +
+        `&trial_ends_at=lt.${j7To.toISOString()}` +
+        `&post_expiry_j7_sent=not.is.true` +
+        `&select=id,name,email,owner_user_id,trial_ends_at,plan`,
+      { headers: supaHeaders() },
+    );
+    if (j7Res.ok) {
+      const j7Businesses: ExpiredBusiness[] = await j7Res.json();
+      for (const biz of j7Businesses) {
+        if (!biz.email) continue;
+        try {
+          await sendBrevoEmail({
+            to: [{ email: biz.email }],
+            subject: `Dernière chance — vos données seront supprimées dans 30 jours`,
+            htmlContent: buildPostExpiryJ7Email({ businessName: escapeHtml(biz.name) }),
+            tags: ["post-expiry-j7"],
+          });
+          await fetch(`${SUPABASE_URL}/rest/v1/bookbot_businesses?id=eq.${biz.id}`, {
+            method: "PATCH",
+            headers: { ...supaHeaders(), Prefer: "return=minimal" },
+            body: JSON.stringify({ post_expiry_j7_sent: true }),
+          });
+          logger.info(`Post-expiry J+7 sent to ${biz.email}`);
+        } catch (err) {
+          logger.error(`Post-expiry J+7 error for ${biz.email}`, { error: String(err) });
+        }
+      }
+    }
+
     return { processed, emailsSent };
   },
 });
@@ -160,3 +366,188 @@ function buildExpirationEmail(p: {
 </html>`;
 }
 
+function buildMidTrialEmail(p: { businessName: string; conversationCount: number }): string {
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px 12px 0 0;padding:28px 32px;text-align:center;">
+            <p style="margin:0 0 4px;font-size:22px;font-weight:700;color:#fff;">Ve&apos;a</p>
+            <p style="margin:0;font-size:14px;color:#0d9488;">Mi-parcours de votre essai</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-top:none;padding:28px 32px;">
+            <p style="margin:0 0 20px;font-size:16px;color:#fff;">Bonjour <strong>${p.businessName}</strong>,</p>
+            <p style="margin:0 0 16px;font-size:14px;color:#aaa;line-height:1.6;">Vous &ecirc;tes &agrave; mi-parcours de votre essai gratuit Ve&apos;a.</p>
+            ${p.conversationCount > 0 ? `
+            <div style="background:#0d948815;border:1px solid #0d948830;border-radius:8px;padding:16px 20px;margin:0 0 20px;">
+              <p style="margin:0;font-size:24px;font-weight:700;color:#0d9488;text-align:center;">${p.conversationCount}</p>
+              <p style="margin:4px 0 0;font-size:13px;color:#aaa;text-align:center;">conversation${p.conversationCount > 1 ? 's' : ''} cette semaine</p>
+            </div>` : `
+            <p style="margin:0 0 20px;font-size:14px;color:#aaa;line-height:1.6;">Votre chatbot est pr&ecirc;t &agrave; recevoir vos premiers clients &mdash; il suffit de le connecter &agrave; votre page.</p>`}
+            <p style="margin:0 0 24px;font-size:14px;color:#aaa;line-height:1.6;">Il vous reste encore 7 jours pour explorer toutes les fonctionnalit&eacute;s. Choisissez votre plan d&egrave;s maintenant pour continuer sans interruption.</p>
+            <div style="text-align:center;">
+              <a href="https://vea.pacifikai.com/billing" style="display:inline-block;background:#0d9488;color:#fff;text-decoration:none;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;">Choisir mon abonnement</a>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#161616;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#555;"><a href="mailto:vea@pacifikai.com" style="color:#555;text-decoration:none;">vea@pacifikai.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+function buildJ1ReminderEmail(p: { businessName: string; trialEndDate: string }): string {
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px 12px 0 0;padding:28px 32px;text-align:center;">
+            <p style="margin:0 0 4px;font-size:22px;font-weight:700;color:#fff;">Ve&apos;a</p>
+            <p style="margin:0;font-size:14px;color:#ef4444;">Dernier jour d&apos;essai</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-top:none;padding:28px 32px;">
+            <p style="margin:0 0 20px;font-size:16px;color:#fff;">Bonjour <strong>${p.businessName}</strong>,</p>
+            <p style="margin:0 0 16px;font-size:14px;color:#aaa;line-height:1.6;">Votre essai gratuit se termine <strong style="color:#fff;">demain, le ${p.trialEndDate}</strong>.</p>
+            <p style="margin:0 0 24px;font-size:14px;color:#aaa;line-height:1.6;">C&apos;est votre derni&egrave;re chance de choisir un abonnement avant que votre chatbot soit mis en pause. Vos donn&eacute;es et configuration resteront int&eacute;gralement conserv&eacute;es.</p>
+            <div style="text-align:center;">
+              <a href="https://vea.pacifikai.com/billing" style="display:inline-block;background:#ef4444;color:#fff;text-decoration:none;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;">Choisir mon abonnement maintenant</a>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#161616;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#555;"><a href="mailto:vea@pacifikai.com" style="color:#555;text-decoration:none;">vea@pacifikai.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+function buildPostExpiryJ2Email(p: { businessName: string }): string {
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px 12px 0 0;padding:28px 32px;text-align:center;">
+            <p style="margin:0 0 4px;font-size:22px;font-weight:700;color:#fff;">Ve&apos;a</p>
+            <p style="margin:0;font-size:14px;color:#f59e0b;">Votre chatbot est en pause</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-top:none;padding:28px 32px;">
+            <p style="margin:0 0 20px;font-size:16px;color:#fff;">Bonjour <strong>${p.businessName}</strong>,</p>
+            <p style="margin:0 0 16px;font-size:14px;color:#aaa;line-height:1.6;">Votre essai gratuit est termin&eacute; depuis 2 jours. Votre chatbot est actuellement en pause &mdash; vos clients ne peuvent plus r&eacute;server via Ve&apos;a.</p>
+            <p style="margin:0 0 24px;font-size:14px;color:#aaa;line-height:1.6;">R&eacute;activez votre compte en quelques secondes. Toute votre configuration est intact&eacute;e.</p>
+            <div style="text-align:center;">
+              <a href="https://vea.pacifikai.com/billing" style="display:inline-block;background:#0d9488;color:#fff;text-decoration:none;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;">R&eacute;activer mon compte</a>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#161616;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#555;"><a href="mailto:vea@pacifikai.com" style="color:#555;text-decoration:none;">vea@pacifikai.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+function buildPostExpiryJ7Email(p: { businessName: string }): string {
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px 12px 0 0;padding:28px 32px;text-align:center;">
+            <p style="margin:0 0 4px;font-size:22px;font-weight:700;color:#fff;">Ve&apos;a</p>
+            <p style="margin:0;font-size:14px;color:#ef4444;">Derni&egrave;re chance</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-top:none;padding:28px 32px;">
+            <p style="margin:0 0 20px;font-size:16px;color:#fff;">Bonjour <strong>${p.businessName}</strong>,</p>
+            <p style="margin:0 0 16px;font-size:14px;color:#aaa;line-height:1.6;">Votre essai a expir&eacute; il y a 7 jours. <strong style="color:#fff;">Vos donn&eacute;es seront supprim&eacute;es dans 30 jours</strong> si vous ne r&eacute;activez pas votre compte.</p>
+            <p style="margin:0 0 24px;font-size:14px;color:#aaa;line-height:1.6;">Services, horaires, configuration chatbot &mdash; tout peut encore &ecirc;tre r&eacute;cup&eacute;r&eacute;. C&apos;est votre derni&egrave;re chance avant suppression d&eacute;finitive.</p>
+            <div style="text-align:center;">
+              <a href="https://vea.pacifikai.com/billing" style="display:inline-block;background:#ef4444;color:#fff;text-decoration:none;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;">R&eacute;activer avant suppression</a>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#161616;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#555;"><a href="mailto:vea@pacifikai.com" style="color:#555;text-decoration:none;">vea@pacifikai.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+function buildReminderEmail(p: { businessName: string; trialEndDate: string }): string {
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px 12px 0 0;padding:28px 32px;text-align:center;">
+            <p style="margin:0 0 4px;font-size:22px;font-weight:700;color:#fff;">Ve&apos;a</p>
+            <p style="margin:0;font-size:14px;color:#f59e0b;">Plus que 3 jours d&apos;essai</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#1a1a1a;border:1px solid #2a2a2a;border-top:none;padding:28px 32px;">
+            <p style="margin:0 0 20px;font-size:16px;color:#fff;">Bonjour <strong>${p.businessName}</strong>,</p>
+            <p style="margin:0 0 16px;font-size:14px;color:#aaa;line-height:1.6;">Votre p&eacute;riode d&apos;essai gratuit se termine le <strong style="color:#fff;">${p.trialEndDate}</strong>.</p>
+            <p style="margin:0 0 24px;font-size:14px;color:#aaa;line-height:1.6;">Pour continuer &agrave; recevoir des r&eacute;servations automatiques, choisissez un abonnement d&egrave;s maintenant.</p>
+            <div style="text-align:center;">
+              <a href="https://vea.pacifikai.com/billing" style="display:inline-block;background:#0d9488;color:#fff;text-decoration:none;font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;">Choisir mon abonnement</a>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#161616;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#555;"><a href="mailto:vea@pacifikai.com" style="color:#555;text-decoration:none;">vea@pacifikai.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}

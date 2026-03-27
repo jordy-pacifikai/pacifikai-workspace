@@ -120,6 +120,41 @@ export async function middleware(request: NextRequest) {
       url.pathname = '/onboarding'
       return NextResponse.redirect(url)
     }
+
+    // ─── Paywall: block expired/cancelled subscriptions ───────────────
+    const paywallExempt = ['/billing', '/settings', '/onboarding']
+    const isPaywallExempt = paywallExempt.some(r => pathname.startsWith(r))
+
+    if (!isPaywallExempt && link.business_id) {
+      const { data: biz } = await supabase
+        .from('bookbot_businesses')
+        .select('subscription_status, trial_ends_at, plan')
+        .eq('id', link.business_id)
+        .single()
+
+      if (biz) {
+        const status = biz.subscription_status
+        const plan = biz.plan
+
+        // Free plan (decouverte) always allowed
+        if (plan !== 'decouverte') {
+          let blocked = false
+
+          if (status === 'expired' || status === 'cancelled' || status === 'payment_failed' || !status) {
+            blocked = true
+          } else if (status === 'trial' && biz.trial_ends_at) {
+            blocked = new Date(biz.trial_ends_at) < new Date()
+          }
+
+          if (blocked) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/billing'
+            url.searchParams.set('expired', 'true')
+            return NextResponse.redirect(url)
+          }
+        }
+      }
+    }
   }
 
   return supabaseResponse

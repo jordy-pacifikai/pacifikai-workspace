@@ -5,7 +5,10 @@
 // Usage: <FreemiusCheckoutButton pricingId={57672} label="Essayer 14 jours" />
 
 import { useCallback, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Checkout } from '@freemius/checkout';
+import { toast } from '@/components/ui/Toast';
 
 interface FreemiusCheckoutButtonProps {
   pricingId: number;
@@ -58,6 +61,9 @@ export function FreemiusCheckoutButton({
     getCheckout().catch(console.error);
   }, []);
 
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   const handleClick = useCallback(async () => {
     const checkout = await getCheckout();
     checkout.open({
@@ -65,10 +71,21 @@ export function FreemiusCheckoutButton({
       trial: trial ? 'free' : undefined,
       ...(userEmail ? { user: { email: userEmail } } : {}),
       success: () => {
-        successRef.current?.();
+        // Invalidate business data so plan/status refresh everywhere
+        queryClient.invalidateQueries({ queryKey: ['business'] });
+        toast.success('Abonnement active !');
+        if (successRef.current) {
+          // Caller controls navigation
+          successRef.current();
+        } else {
+          // Default: redirect to /stats after toast
+          setTimeout(() => {
+            router.push('/stats');
+          }, 2000);
+        }
       },
     });
-  }, [pricingId, trial, userEmail]);
+  }, [pricingId, trial, userEmail, queryClient, router]);
 
   return (
     <button

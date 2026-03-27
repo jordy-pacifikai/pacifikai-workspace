@@ -33,7 +33,7 @@ export interface Business {
   gcal_calendar_id: string | null
   gcal_connected_at: string | null
   trial_ends_at: string | null
-  subscription_status: 'trial' | 'active' | 'expired' | 'cancelled' | null
+  subscription_status: 'trial' | 'active' | 'expired' | 'cancelled' | 'payment_failed' | null
 }
 
 export interface OpeningHours {

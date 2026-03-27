@@ -178,7 +178,21 @@ function OnboardingContent() {
     }
   }
 
-  const next = () => { if (step < 5 && canNext()) setStep(s => s + 1) }
+  const next = () => {
+    if (step < 5 && canNext()) {
+      const nextStep = step + 1
+      setStep(nextStep)
+      // Track step completion — best-effort, non-blocking
+      if (existingBizId) {
+        supabase
+          .from('bookbot_businesses')
+          .update({ onboarding_step: nextStep, updated_at: new Date().toISOString() })
+          .eq('id', existingBizId)
+          .then(() => {})
+          .catch(() => {})
+      }
+    }
+  }
   const prev = () => { if (step > 1) setStep(s => s - 1) }
 
   // ── Submit ────────────────────────────────────────────────────────────────
