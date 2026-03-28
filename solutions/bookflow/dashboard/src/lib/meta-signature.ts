@@ -11,7 +11,7 @@ export function verifyMetaSignature(
   rawBody: string | Buffer,
   signatureHeader: string | null,
 ): boolean {
-  const appSecret = process.env.META_APP_SECRET ?? process.env.FACEBOOK_APP_SECRET;
+  const appSecret = (process.env.FACEBOOK_APP_SECRET ?? process.env.META_APP_SECRET)?.trim();
   if (!appSecret) {
     logger.error("META_APP_SECRET not set — rejecting all requests", { action: "meta_signature" });
     return false;
