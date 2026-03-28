@@ -1,21 +1,29 @@
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
-
 // Upstash Redis-backed rate limiter — survives Vercel cold starts.
-// Falls back to in-memory Map if env vars are missing (local dev).
+// Falls back to in-memory Map if env vars are missing or packages fail.
+// Dynamic imports to avoid runtime crash on Vercel if bundling fails.
 
-// Lazy-init to avoid module-level errors during Vercel prerender
-let _redis: Redis | null | undefined;
-function getRedis(): Redis | null {
-  if (_redis !== undefined) return _redis;
-  _redis =
-    process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
-      ? new Redis({
-          url: process.env.UPSTASH_REDIS_REST_URL,
-          token: process.env.UPSTASH_REDIS_REST_TOKEN,
-        })
-      : null;
-  return _redis;
+let _upstashLoaded = false;
+let _Ratelimit: typeof import('@upstash/ratelimit').Ratelimit | null = null;
+let _redis: InstanceType<typeof import('@upstash/redis').Redis> | null = null;
+
+async function loadUpstash(): Promise<boolean> {
+  if (_upstashLoaded) return !!_redis;
+  _upstashLoaded = true;
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) return false;
+  try {
+    const [{ Redis }, { Ratelimit }] = await Promise.all([
+      import('@upstash/redis'),
+      import('@upstash/ratelimit'),
+    ]);
+    _redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    });
+    _Ratelimit = Ratelimit;
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 interface RateLimitConfig {
@@ -51,20 +59,20 @@ function fallbackRateLimit(key: string, config: RateLimitConfig): { success: boo
 
 // ── Cache of Ratelimit instances per unique config ───────────────────────────
 
-const limiters = new Map<string, Ratelimit>();
+const limiters = new Map<string, unknown>();
 
-function getLimiter(config: RateLimitConfig): Ratelimit {
+async function getLimiter(config: RateLimitConfig) {
   const cacheKey = `${config.limit}:${config.interval}`;
   let limiter = limiters.get(cacheKey);
-  if (!limiter) {
-    limiter = new Ratelimit({
-      redis: getRedis()!,
-      limiter: Ratelimit.slidingWindow(config.limit, `${config.interval} ms`),
+  if (!limiter && _Ratelimit && _redis) {
+    limiter = new _Ratelimit({
+      redis: _redis,
+      limiter: _Ratelimit.slidingWindow(config.limit, `${config.interval} ms`),
       prefix: 'vea:rl',
     });
     limiters.set(cacheKey, limiter);
   }
-  return limiter;
+  return limiter as { limit: (key: string) => Promise<{ success: boolean; remaining: number }> } | undefined;
 }
 
 // ── Public API (same interface as before) ────────────────────────────────────
@@ -94,11 +102,12 @@ export function rateLimit(key: string, config: RateLimitConfig): { success: bool
  * Returns { success, remaining } just like the sync version.
  */
 export async function rateLimitAsync(key: string, config: RateLimitConfig): Promise<{ success: boolean; remaining: number }> {
-  if (!getRedis()) {
-    return fallbackRateLimit(key, config);
-  }
+  const hasRedis = await loadUpstash();
+  if (!hasRedis) return fallbackRateLimit(key, config);
 
-  const limiter = getLimiter(config);
+  const limiter = await getLimiter(config);
+  if (!limiter) return fallbackRateLimit(key, config);
+
   const result = await limiter.limit(key);
   return { success: result.success, remaining: result.remaining };
 }
