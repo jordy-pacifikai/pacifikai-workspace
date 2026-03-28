@@ -2553,10 +2553,12 @@
     </div>
 
     <main>
-    <section class="hero">
+    <section class="hero" style="position:relative;">
         <div class="hero-glow"></div>
         <div class="hero-particles" id="particles"></div>
-        <div class="hero-content">
+        <!-- 3D Logo Canvas — scrolls with hero, behind content -->
+        <canvas id="logo3d-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+        <div class="hero-content" style="position:relative;z-index:2;">
             <span style="font-family:var(--font-display);font-size:0.85rem;letter-spacing:0.15em;color:var(--accent);text-transform:uppercase;opacity:0.8;margin-bottom:12px;display:block;">PACIFIK'AI</span>
             <h1 class="hero-title-reveal"><span class="hero-word" style="--i:0">Transformez</span> <span class="hero-word" style="--i:1">votre</span> <span class="hero-word highlight" style="--i:2">business</span> <span class="hero-word" style="--i:3">avec</span> <span class="hero-word highlight" style="--i:4">l'IA.</span></h1>
             <p class="hero-sub">
@@ -4140,6 +4142,124 @@
         }, { threshold: 0.3 });
         counters.forEach(c => observer.observe(c));
     })();
+    </script>
+
+    <!-- 3D Logo in Hero — Three.js via CDN -->
+    <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
+    }}
+    </script>
+    <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+    const canvas = document.getElementById('logo3d-canvas');
+    if (!canvas) throw new Error('No canvas');
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 0, 4.5);
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xc4d0e4, 0.35));
+    const dir1 = new THREE.DirectionalLight(0xffffff, 1.2);
+    dir1.position.set(5, 5, 5);
+    scene.add(dir1);
+    const dir2 = new THREE.DirectionalLight(0xe0e7ff, 0.3);
+    dir2.position.set(-3, 2, -2);
+    scene.add(dir2);
+    const pt1 = new THREE.PointLight(0xf97066, 0.4, 10);
+    pt1.position.set(2, 1, 3);
+    scene.add(pt1);
+    const pt2 = new THREE.PointLight(0x14b8a6, 0.3, 8);
+    pt2.position.set(-2, -1, 2);
+    scene.add(pt2);
+
+    // Rings
+    const ringMat1 = new THREE.MeshStandardMaterial({ color: 0xf97066, transparent: true, opacity: 0.25, emissive: 0xf97066, emissiveIntensity: 0.4 });
+    const ringMat2 = new THREE.MeshStandardMaterial({ color: 0x14b8a6, transparent: true, opacity: 0.18, emissive: 0x14b8a6, emissiveIntensity: 0.3 });
+    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.008, 16, 100), ringMat1);
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.0, 0.006, 16, 100), ringMat2);
+    scene.add(ring1, ring2);
+
+    // Load GLB logo
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/libs/draco/');
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.setDRACOLoader(dracoLoader);
+
+    let logoGroup = null;
+
+    gltfLoader.load('/assets/logo-3d.glb', (gltf) => {
+        logoGroup = gltf.scene;
+        logoGroup.scale.setScalar(0.45);
+
+        // Apply premium metallic material
+        logoGroup.traverse((child) => {
+            if (child.isMesh) {
+                const oldColor = child.material.color ? child.material.color.clone() : new THREE.Color(0xffffff);
+                child.material = new THREE.MeshPhysicalMaterial({
+                    color: oldColor,
+                    metalness: 0.7,
+                    roughness: 0.2,
+                    clearcoat: 0.8,
+                    clearcoatRoughness: 0.15,
+                    emissive: new THREE.Color(0xf97066),
+                    emissiveIntensity: 0.05,
+                    envMapIntensity: 1.5,
+                });
+            }
+        });
+
+        scene.add(logoGroup);
+    });
+
+    // Mouse tracking
+    let mouseX = 0, mouseY = 0;
+    document.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    // Resize
+    function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        renderer.setSize(rect.width, rect.height);
+        camera.aspect = rect.width / rect.height;
+        camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Animate
+    function animate() {
+        requestAnimationFrame(animate);
+        const t = performance.now() * 0.001;
+
+        // Rings rotation
+        ring1.rotation.x = t * 0.18;
+        ring1.rotation.z = t * 0.06;
+        ring2.rotation.y = t * 0.12;
+        ring2.rotation.x = Math.PI / 3 + t * 0.08;
+
+        // Logo rotation + mouse parallax
+        if (logoGroup) {
+            logoGroup.rotation.y = t * 0.15;
+            logoGroup.rotation.x += ((-mouseY * 0.1) - logoGroup.rotation.x) * 0.03;
+            logoGroup.children[0] && (logoGroup.position.y = Math.sin(t * 0.8) * 0.05);
+        }
+
+        renderer.render(scene, camera);
+    }
+    animate();
     </script>
 </body>
 </html>
