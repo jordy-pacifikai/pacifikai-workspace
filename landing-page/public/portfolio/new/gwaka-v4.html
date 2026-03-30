@@ -1,0 +1,2709 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GWAKA | Traiteur Brunch & Healthy - Tahiti</title>
+    <meta name="description" content="GWAKA - Traiteur Brunch & Healthy a Papeete, Tahiti. Buffets, evenements, mariages. Produits frais & faits-maison. Particuliers & professionnels.">
+    <link rel="icon" type="image/jpeg" href="https://litter.catbox.moe/66guxd.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background-color: #FDF8F0;
+            color: #3A3A3A;
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 500;
+            color: #2D2D2D;
+            line-height: 1.2;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { max-width: 100%; display: block; }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; }
+        ul { list-style: none; }
+
+        /* ========== CSS VARIABLES ========== */
+        :root {
+            --green-primary: #4A7C3F;
+            --green-accent: #7CB342;
+            --green-light: #C5D5A5;
+            --green-dark: #3A6332;
+            --peach: #E8A87C;
+            --honey: #D4A76A;
+            --cream: #FDF8F0;
+            --cream-dark: #F5EFE3;
+            --text: #3A3A3A;
+            --text-light: #6B6B6B;
+            --white: #FFFFFF;
+            --radius: 12px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 2px 8px rgba(74,124,63,0.06);
+            --shadow-md: 0 4px 20px rgba(74,124,63,0.1);
+            --shadow-lg: 0 8px 40px rgba(74,124,63,0.14);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ========== REDUCED MOTION ========== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ========== BOTANICAL SVG PATTERNS ========== */
+        .botanical-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 24px 0;
+            opacity: 0.5;
+        }
+        .botanical-divider .line {
+            flex: 1;
+            max-width: 120px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--green-light), transparent);
+        }
+        .botanical-corner {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            opacity: 0.15;
+        }
+        .botanical-corner.tl { top: 12px; left: 12px; }
+        .botanical-corner.tr { top: 12px; right: 12px; transform: scaleX(-1); }
+        .botanical-corner.bl { bottom: 12px; left: 12px; transform: scaleY(-1); }
+        .botanical-corner.br { bottom: 12px; right: 12px; transform: scale(-1); }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 16px 0;
+            transition: var(--transition);
+        }
+        .navbar.scrolled {
+            background: rgba(253, 248, 240, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 2px 20px rgba(74,124,63,0.08);
+            padding: 10px 0;
+        }
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .navbar-logo svg { height: 42px; width: auto; }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .nav-links a {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            position: relative;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: color var(--transition);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--green-primary);
+            transition: width var(--transition);
+        }
+        .nav-links a:hover { color: var(--green-primary); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-cta {
+            background: var(--green-primary);
+            color: var(--white) !important;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all var(--transition);
+        }
+        .nav-cta:hover {
+            background: var(--green-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(74,124,63,0.3);
+        }
+        .nav-cta::after { display: none !important; }
+
+        /* Burger */
+        .burger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            padding: 8px;
+            z-index: 1001;
+        }
+        .burger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all var(--transition);
+        }
+        .burger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* Mobile menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 360px;
+            height: 100vh;
+            background: var(--cream);
+            z-index: 999;
+            padding: 100px 40px 40px;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -8px 0 30px rgba(0,0,0,0.1);
+        }
+        .mobile-menu.open { right: 0; }
+        .mobile-menu a {
+            display: block;
+            padding: 16px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            border-bottom: 1px solid var(--green-light);
+            transition: color var(--transition);
+        }
+        .mobile-menu a:hover { color: var(--green-primary); }
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        .mobile-overlay.visible { opacity: 1; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .burger { display: flex; }
+            .mobile-menu { display: block; }
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            overflow: hidden;
+        }
+        .hero-botanical-frame {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            right: 40px;
+            bottom: 40px;
+            border: 1px solid rgba(74,124,63,0.12);
+            border-radius: var(--radius-lg);
+            pointer-events: none;
+        }
+        .hero-botanical-frame::before,
+        .hero-botanical-frame::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 1px solid rgba(74,124,63,0.2);
+        }
+        .hero-botanical-frame::before {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: var(--radius-lg) 0 0 0;
+        }
+        .hero-botanical-frame::after {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+            border-radius: 0 0 var(--radius-lg) 0;
+        }
+        .hero-bg-leaf {
+            position: absolute;
+            opacity: 0.04;
+            z-index: 0;
+        }
+        .hero-bg-leaf-1 {
+            top: 10%;
+            left: 5%;
+            width: 200px;
+            transform: rotate(-15deg);
+        }
+        .hero-bg-leaf-2 {
+            bottom: 15%;
+            right: 8%;
+            width: 160px;
+            transform: rotate(25deg);
+        }
+        .hero-bg-leaf-3 {
+            top: 60%;
+            left: 10%;
+            width: 120px;
+            transform: rotate(-45deg);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(74,124,63,0.08);
+            border: 1px solid rgba(74,124,63,0.15);
+            border-radius: 50px;
+            padding: 8px 20px;
+            margin-bottom: 32px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--green-primary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .hero-title {
+            font-size: clamp(3.5rem, 10vw, 7rem);
+            font-weight: 300;
+            letter-spacing: 12px;
+            color: var(--green-primary);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        .hero-title span {
+            display: inline-block;
+        }
+        .hero-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 400;
+            font-style: italic;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .hero-tagline {
+            font-size: 0.95rem;
+            color: var(--peach);
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 48px;
+        }
+        .hero-ctas {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all var(--transition);
+        }
+        .btn-primary {
+            background: var(--green-primary);
+            color: var(--white);
+        }
+        .btn-primary:hover {
+            background: var(--green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74,124,63,0.3);
+        }
+        .btn-outline {
+            border: 2px solid var(--green-primary);
+            color: var(--green-primary);
+        }
+        .btn-outline:hover {
+            background: var(--green-primary);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+        .hero-scroll {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: floatDown 2s ease-in-out infinite;
+        }
+        @keyframes floatDown {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        /* ========== SECTION STYLES ========== */
+        .section {
+            padding: 100px 24px;
+            position: relative;
+        }
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--green-accent);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            color: var(--green-primary);
+            margin-bottom: 16px;
+        }
+        .section-desc {
+            font-size: 1.05rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Botanical section divider SVG */
+        .section-botanical-divider {
+            display: flex;
+            justify-content: center;
+            margin: 0 auto 64px;
+            opacity: 0.3;
+        }
+
+        /* ========== SERVICES ========== */
+        .services-section {
+            background: linear-gradient(180deg, var(--cream) 0%, var(--cream-dark) 50%, var(--cream) 100%);
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+        .service-card {
+            position: relative;
+            background: var(--white);
+            border: 1px solid rgba(74,124,63,0.1);
+            border-radius: var(--radius-lg);
+            padding: 40px 32px;
+            text-align: center;
+            transition: all var(--transition);
+            overflow: hidden;
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green-light), var(--green-primary), var(--green-light));
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--green-light);
+        }
+        .service-card:hover::before { opacity: 1; }
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: rgba(74,124,63,0.06);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .service-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--green-primary);
+        }
+        .service-card h3 {
+            font-size: 1.4rem;
+            color: var(--green-primary);
+            margin-bottom: 12px;
+        }
+        .service-card p {
+            font-size: 0.92rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+        .service-format {
+            margin-top: 20px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .service-format span {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--green-primary);
+            background: rgba(74,124,63,0.06);
+            border: 1px solid rgba(74,124,63,0.12);
+            padding: 4px 12px;
+            border-radius: 50px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* ========== MENU — AWWWARDS CATALOG ========== */
+        .menu-section {
+            background: var(--cream);
+            overflow: hidden;
+        }
+
+        /* --- Sticky Filter Nav --- */
+        .menu-filters-track {
+            position: sticky;
+            top: 64px;
+            z-index: 50;
+            background: rgba(253,248,240,0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(74,124,63,0.08);
+            margin: 0 -24px;
+            padding: 0 24px;
+            transition: box-shadow 0.3s ease;
+        }
+        .menu-filters-track.stuck {
+            box-shadow: 0 4px 24px rgba(74,124,63,0.08);
+        }
+        .menu-filters {
+            display: flex;
+            gap: 6px;
+            padding: 14px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .menu-filter-btn {
+            position: relative;
+            padding: 10px 22px;
+            border-radius: 100px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            background: transparent;
+            border: 1.5px solid transparent;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+        .menu-filter-btn:hover {
+            color: var(--green-primary);
+            background: rgba(74,124,63,0.04);
+        }
+        .menu-filter-btn.active {
+            background: var(--green-primary);
+            color: var(--white);
+            border-color: var(--green-primary);
+            box-shadow: 0 2px 12px rgba(74,124,63,0.25);
+        }
+        .menu-filter-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            border-radius: 100px;
+            margin-left: 6px;
+            padding: 0 5px;
+            background: rgba(74,124,63,0.08);
+            color: var(--green-primary);
+            transition: all 0.35s ease;
+        }
+        .menu-filter-btn.active .menu-filter-count {
+            background: rgba(255,255,255,0.25);
+            color: var(--white);
+        }
+
+        /* --- Category panels --- */
+        .menu-category {
+            display: none;
+        }
+        .menu-category.active {
+            display: block;
+            animation: catalogReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes catalogReveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Category Header (large serif) --- */
+        .menu-cat-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(74,124,63,0.1);
+        }
+        .menu-cat-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 400;
+            color: var(--green-primary);
+            letter-spacing: -0.02em;
+        }
+        .menu-cat-header p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+        .menu-cat-count {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--peach);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* --- Subcategory titles --- */
+        .menu-subcategory {
+            margin-bottom: 48px;
+        }
+        .menu-subcategory-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--honey);
+            margin-bottom: 24px;
+            font-weight: 500;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .menu-subcategory-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--honey), transparent);
+            opacity: 0.3;
+        }
+
+        /* --- Large Card Grid --- */
+        .menu-catalog {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 28px;
+            margin-bottom: 40px;
+        }
+
+        /* --- Card (premium large) --- */
+        .menu-card {
+            position: relative;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid rgba(74,124,63,0.06);
+            transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+        .menu-card:hover {
+            box-shadow: 0 12px 40px rgba(74,124,63,0.12);
+            transform: translateY(-6px);
+        }
+
+        /* Image wrapper */
+        .menu-card__img-wrap {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16 / 10;
+            background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-accent) 100%);
+        }
+        .menu-card__img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 40%;
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .menu-card:hover .menu-card__img {
+            transform: scale(1.06);
+        }
+
+        /* Badge overlay */
+        .menu-card__badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            z-index: 2;
+        }
+
+        /* Veg indicator on image */
+        .menu-card__veg {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(124,179,66,0.9);
+            backdrop-filter: blur(6px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: white;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(124,179,66,0.3);
+        }
+
+        /* Card body */
+        .menu-card__body {
+            padding: 24px 28px 28px;
+        }
+        .menu-card__name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.375rem;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        .menu-card__desc {
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            color: var(--text-light);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Note cards */
+        .menu-note {
+            background: rgba(74,124,63,0.03);
+            border: 1px dashed rgba(74,124,63,0.2);
+            border-radius: var(--radius-lg);
+            padding: 24px 32px;
+            margin-top: 28px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        /* PDF CTA */
+        .menu-pdf-cta {
+            text-align: center;
+            margin-top: 64px;
+            padding-top: 48px;
+            border-top: 1px solid rgba(74,124,63,0.08);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 860px) {
+            .menu-catalog {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .menu-filters {
+                justify-content: center;
+                flex-wrap: wrap;
+                padding: 12px 0;
+            }
+            .menu-filters-track {
+                margin: 0 -16px;
+                padding: 0 16px;
+            }
+            .menu-card__body {
+                padding: 20px 22px 24px;
+            }
+        }
+        @media (max-width: 480px) {
+            .menu-card__img-wrap {
+                aspect-ratio: 16 / 9;
+            }
+        }
+
+        /* ========== GALLERY ========== */
+        .gallery-section {
+            background: linear-gradient(180deg, var(--cream) 0%, var(--cream-dark) 100%);
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            aspect-ratio: 1;
+            cursor: pointer;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .gallery-item:hover img { transform: scale(1.08); }
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(74,124,63,0.4) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        .gallery-item:hover::after { opacity: 1; }
+        .gallery-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            z-index: 2;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all var(--transition);
+        }
+        .gallery-item:hover .gallery-item-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .gallery-item-overlay span {
+            color: var(--white);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .gallery-fallback {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--green-light) 0%, var(--peach) 50%, var(--honey) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gallery-fallback span {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--white);
+            font-style: italic;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox.open { display: flex; opacity: 1; }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 85vh;
+            border-radius: var(--radius);
+            object-fit: contain;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            transition: background var(--transition);
+        }
+        .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+        /* ========== CONTACT ========== */
+        .contact-section {
+            background: var(--cream);
+        }
+        .contact-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 48px;
+            align-items: start;
+        }
+        .contact-info {
+            padding: 40px;
+        }
+        .contact-info h3 {
+            font-size: 2rem;
+            color: var(--green-primary);
+            margin-bottom: 16px;
+        }
+        .contact-info p {
+            color: var(--text-light);
+            margin-bottom: 32px;
+            line-height: 1.8;
+        }
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .contact-detail-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(74,124,63,0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .contact-detail-icon svg {
+            width: 18px;
+            height: 18px;
+            color: var(--green-primary);
+        }
+        .contact-detail div { font-size: 0.92rem; }
+        .contact-detail strong { color: var(--text); }
+        .contact-detail span { color: var(--text-light); }
+        .contact-form-card {
+            background: var(--white);
+            border: 1px solid rgba(74,124,63,0.1);
+            border-radius: var(--radius-lg);
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+        .contact-form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green-primary), var(--green-accent), var(--peach));
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(74,124,63,0.15);
+            border-radius: var(--radius);
+            font-family: 'Nunito Sans', sans-serif;
+            font-size: 0.92rem;
+            color: var(--text);
+            background: var(--cream);
+            transition: all var(--transition);
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--green-primary);
+            box-shadow: 0 0 0 3px rgba(74,124,63,0.08);
+            background: var(--white);
+        }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .form-group select { cursor: pointer; }
+        .form-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--green-primary);
+            color: var(--white);
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-radius: 50px;
+            transition: all var(--transition);
+            margin-top: 8px;
+        }
+        .form-submit:hover {
+            background: var(--green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74,124,63,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .contact-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .contact-info { padding: 0; }
+            .contact-form-card { padding: 32px 24px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: var(--green-primary);
+            color: rgba(255,255,255,0.8);
+            padding: 60px 24px 30px;
+        }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 48px;
+        }
+        .footer-brand p {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+        .footer h4 {
+            color: var(--white);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .footer-links a {
+            display: block;
+            padding: 6px 0;
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.7);
+            transition: color var(--transition);
+        }
+        .footer-links a:hover { color: var(--white); }
+        .footer-social {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+        }
+        .footer-social a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        .footer-social a svg { width: 18px; height: 18px; color: white; }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .footer-bottom p {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.5);
+        }
+        .footer-bottom a {
+            color: var(--peach);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+        }
+
+        /* ========== UTILITY ========== */
+        .reveal { opacity: 0; transform: translateY(30px); }
+        .reveal.revealed { opacity: 1; transform: translateY(0); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .hero-botanical-frame { top: 16px; left: 16px; right: 16px; bottom: 16px; }
+            .section { padding: 70px 16px; }
+            .hero-title { letter-spacing: 6px; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        }
+        @media (max-width: 480px) {
+            .gallery-grid { grid-template-columns: 1fr 1fr; }
+            .menu-catalog { grid-template-columns: 1fr; }
+            .hero-ctas { flex-direction: column; }
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 48px;
+            height: 48px;
+            background: var(--green-primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 900;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+        .back-to-top:hover { background: var(--green-dark); transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href="#accueil" class="navbar-logo" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+                <img src="https://litter.catbox.moe/66guxd.jpg" alt="GWAKA" style="height:40px;width:40px;border-radius:50%;object-fit:cover;">
+                <span style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:#4A7C3F;letter-spacing:3px;">gwaka</span>
+            </a>
+            <div class="nav-links">
+                <a href="#accueil">Accueil</a>
+                <a href="#services">Services</a>
+                <a href="#menu">Menu</a>
+                <a href="#galerie">Galerie</a>
+                <a href="#contact" class="nav-cta">Devis gratuit</a>
+            </div>
+            <button class="burger" id="burger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#accueil" class="mobile-link">Accueil</a>
+        <a href="#services" class="mobile-link">Services</a>
+        <a href="#menu" class="mobile-link">Menu</a>
+        <a href="#galerie" class="mobile-link">Galerie</a>
+        <a href="#contact" class="mobile-link">Contact</a>
+        <a href="#contact" class="btn btn-primary" style="margin-top: 24px; justify-content: center;">Devis gratuit</a>
+    </div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero" id="accueil">
+        <div class="hero-botanical-frame"></div>
+
+        <!-- Decorative botanical leaves -->
+        <svg class="hero-bg-leaf hero-bg-leaf-1" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 10 C40 60, 10 150, 100 290 C190 150, 160 60, 100 10Z" fill="#4A7C3F"/>
+            <path d="M100 10 C100 100, 100 200, 100 290" stroke="#FDF8F0" stroke-width="1.5"/>
+            <path d="M100 80 C70 70, 50 90, 40 120" stroke="#FDF8F0" stroke-width="0.8"/>
+            <path d="M100 80 C130 70, 150 90, 160 120" stroke="#FDF8F0" stroke-width="0.8"/>
+            <path d="M100 140 C75 130, 55 145, 45 170" stroke="#FDF8F0" stroke-width="0.8"/>
+            <path d="M100 140 C125 130, 145 145, 155 170" stroke="#FDF8F0" stroke-width="0.8"/>
+            <path d="M100 200 C80 190, 65 200, 55 220" stroke="#FDF8F0" stroke-width="0.8"/>
+            <path d="M100 200 C120 190, 135 200, 145 220" stroke="#FDF8F0" stroke-width="0.8"/>
+        </svg>
+        <svg class="hero-bg-leaf hero-bg-leaf-2" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 10 C40 60, 10 150, 100 290 C190 150, 160 60, 100 10Z" fill="#7CB342"/>
+            <path d="M100 10 C100 100, 100 200, 100 290" stroke="#FDF8F0" stroke-width="1.5"/>
+            <path d="M100 100 C70 90, 50 110, 40 140" stroke="#FDF8F0" stroke-width="0.8"/>
+            <path d="M100 100 C130 90, 150 110, 160 140" stroke="#FDF8F0" stroke-width="0.8"/>
+            <path d="M100 170 C75 160, 55 175, 45 200" stroke="#FDF8F0" stroke-width="0.8"/>
+            <path d="M100 170 C125 160, 145 175, 155 200" stroke="#FDF8F0" stroke-width="0.8"/>
+        </svg>
+        <svg class="hero-bg-leaf hero-bg-leaf-3" viewBox="0 0 120 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M60 5 C25 35, 5 90, 60 175 C115 90, 95 35, 60 5Z" fill="#C5D5A5"/>
+            <path d="M60 5 C60 60, 60 120, 60 175" stroke="#FDF8F0" stroke-width="1"/>
+        </svg>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8Z"/></svg>
+                Traiteur Brunch & Healthy
+            </div>
+            <h1 class="hero-title" id="heroTitle">
+                <span>G</span><span>W</span><span>A</span><span>K</span><span>A</span>
+            </h1>
+            <p class="hero-subtitle">Traiteur Brunch & Healthy</p>
+            <p class="hero-tagline">made with love for you</p>
+            <div class="hero-ctas">
+                <a href="#menu" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    Decouvrir notre menu
+                </a>
+                <a href="#contact" class="btn btn-outline">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                    Demander un devis
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-scroll">
+            <span>Defiler</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </div>
+    </section>
+
+    <!-- ==================== SERVICES ==================== -->
+    <section class="section services-section" id="services">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    Nos services
+                </div>
+                <h2 class="section-title">Des prestations sur mesure</h2>
+                <p class="section-desc">Du brunch gourmand au buffet signature, des produits frais & faits-maison pour chaque evenement. De 9 a 70+ personnes.</p>
+            </div>
+
+            <!-- Botanical divider -->
+            <div class="section-botanical-divider">
+                <svg width="120" height="30" viewBox="0 0 120 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 15h45" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <path d="M75 15h45" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <path d="M60 2 C50 8, 48 15, 60 28 C72 15, 70 8, 60 2Z" fill="none" stroke="#C5D5A5" stroke-width="0.8"/>
+                    <path d="M60 2 C60 10, 60 20, 60 28" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <circle cx="60" cy="18" r="3" fill="none" stroke="#C5D5A5" stroke-width="0.5"/>
+                </svg>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                    </div>
+                    <h3>Brunch Gourmand</h3>
+                    <p>Planches d'1,20m de fruits frais, jus presses, douceurs faites maison. Un moment de pur plaisir pour vos dimanches, baby showers ou anniversaires.</p>
+                    <div class="service-format">
+                        <span>Fruits frais</span>
+                        <span>Jus presses</span>
+                        <span>Fait maison</span>
+                    </div>
+                </div>
+
+                <div class="service-card reveal">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <h3>Buffet Signature</h3>
+                    <p>Buffet sale raffine avec vaisselle elegante et dressage soigne. Ideal pour seminaires, inaugurations et receptions corporate.</p>
+                    <div class="service-format">
+                        <span>Raffine</span>
+                        <span>Vaisselle elegante</span>
+                    </div>
+                </div>
+
+                <div class="service-card reveal">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+                    </div>
+                    <h3>Cocktail & Evenement</h3>
+                    <p>Bouchees et verrines pour vos cocktails, mariages et collaborations. Une formule elegante pour tous vos evenements.</p>
+                    <div class="service-format">
+                        <span>Bouchees</span>
+                        <span>Verrines</span>
+                    </div>
+                </div>
+
+                <div class="service-card reveal">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+                    </div>
+                    <h3>Plateaux & Apero Box</h3>
+                    <p>Plateaux pret a servir et apero box livres chez vous. Produits frais et faits maison, de 9 a 70+ personnes, particuliers et professionnels.</p>
+                    <div class="service-format">
+                        <span>Livraison</span>
+                        <span>Pret a servir</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MENU ==================== -->
+    <section class="section menu-section" id="menu">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    Notre carte
+                </div>
+                <h2 class="section-title">Le Menu GWAKA</h2>
+                <p class="section-desc">Des produits frais, faits maison, avec amour. Parcourez nos creations et composez votre brunch ideal.</p>
+            </div>
+
+            <!-- Botanical divider -->
+            <div class="section-botanical-divider">
+                <svg width="180" height="30" viewBox="0 0 180 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 15h60" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <path d="M120 15h60" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <path d="M90 28 C90 20, 90 10, 90 2" stroke="#C5D5A5" stroke-width="0.8"/>
+                    <path d="M90 22 C82 18, 78 14, 80 10" stroke="#C5D5A5" stroke-width="0.8" fill="none"/>
+                    <path d="M90 22 C98 18, 102 14, 100 10" stroke="#C5D5A5" stroke-width="0.8" fill="none"/>
+                    <path d="M90 14 C84 11, 82 7, 83 4" stroke="#C5D5A5" stroke-width="0.6" fill="none"/>
+                    <path d="M90 14 C96 11, 98 7, 97 4" stroke="#C5D5A5" stroke-width="0.6" fill="none"/>
+                </svg>
+            </div>
+
+            <!-- Sticky Filter Tabs -->
+            <div class="menu-filters-track" id="menuFiltersTrack">
+                <div class="menu-filters reveal">
+                    <button class="menu-filter-btn active" data-category="sales">Produits Sales <span class="menu-filter-count">26</span></button>
+                    <button class="menu-filter-btn" data-category="toasts">Toasts Signature <span class="menu-filter-count">7</span></button>
+                    <button class="menu-filter-btn" data-category="wraps">Wraps & Sandwiches <span class="menu-filter-count">8</span></button>
+                    <button class="menu-filter-btn" data-category="salades">Salades <span class="menu-filter-count">6</span></button>
+                    <button class="menu-filter-btn" data-category="plateaux">Plateaux <span class="menu-filter-count">7</span></button>
+                    <button class="menu-filter-btn" data-category="sushis">Sushis <span class="menu-filter-count">1</span></button>
+                    <button class="menu-filter-btn" data-category="mini">Mini Sales <span class="menu-filter-count">9</span></button>
+                </div>
+            </div>
+
+            <!-- ====== PRODUITS SALES ====== -->
+            <div class="menu-category active" data-cat="sales">
+
+                <!-- Egg Muffins -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Egg Muffins</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Egg Muffin</span>
+                                <img class="menu-card__img" src="images/gwaka/egg-muffin.jpg" alt="Egg Muffin Classique" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Classique</h4>
+                                <p class="menu-card__desc">OEuf et cheddar fondant, l'incontournable du brunch GWAKA.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Egg Muffin</span>
+                                <img class="menu-card__img" src="images/gwaka/egg-muffin.jpg" alt="Egg Muffin Double" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Double Cheddar Jambon Serrano</h4>
+                                <p class="menu-card__desc">Genereux double cheddar et jambon Serrano finement tranche.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bagels -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Bagels</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Bagel</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/bagel-veggie.jpg" alt="Bagel Veggie" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Veggie</h4>
+                                <p class="menu-card__desc">Garniture 100% vegetale, croquante et savoureuse.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Bagel</span>
+                                <img class="menu-card__img" src="images/gwaka/bagel-jambon.jpg" alt="Bagel Jambon Dinde" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Jambon Dinde</h4>
+                                <p class="menu-card__desc">Jambon de dinde, fromage et crudites fraicheur.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Bagel</span>
+                                <img class="menu-card__img" src="images/gwaka/bagel-thon.jpg" alt="Bagel Thon Fume" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Thon Fume Local</h4>
+                                <p class="menu-card__desc">Thon fume local, une saveur authentique du Pacifique.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Bagel</span>
+                                <img class="menu-card__img" src="images/gwaka/bagel-saumon.jpg" alt="Bagel Saumon Fume" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Saumon Fume</h4>
+                                <p class="menu-card__desc">Saumon fume, cream cheese et touches herbacees.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Black Buns -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Black Buns</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Black Bun</span>
+                                <img class="menu-card__img" src="images/gwaka/black-bun.jpg" alt="Black Bun Oeufs" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">OEufs Sriracha / Comte & Bacon</h4>
+                                <p class="menu-card__desc">Pain charbon, oeufs brouilles, sriracha, comte fondant et bacon croustillant.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Black Bun</span>
+                                <img class="menu-card__img" src="images/gwaka/black-bun-saumon.jpg" alt="Black Bun Saumon Thon" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Saumon / Thon Fume</h4>
+                                <p class="menu-card__desc">Le best-seller : poisson fume premium sur pain charbon.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Black Bun</span>
+                                <img class="menu-card__img" src="images/gwaka/black-bun-saumon.jpg" alt="Black Bun Caviar Aubergines" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Caviar d'Aubergines & Serrano</h4>
+                                <p class="menu-card__desc">Caviar d'aubergines maison et jambon Serrano, equilibre parfait.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cakes Sales -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Cakes Sales</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Cake</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/cake-feta.jpg" alt="Cake Feta" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Feta Epinards Tomates Sechees</h4>
+                                <p class="menu-card__desc">Feta, epinards et intensite des tomates sechees.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Cake</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/cake-chevre.jpg" alt="Cake Chevre" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Chevre Epinards Patates Douces</h4>
+                                <p class="menu-card__desc">Chevre frais, epinards et douceur de la patate douce roties.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Cake</span>
+                                <img class="menu-card__img" src="images/gwaka/cake-thon.jpg" alt="Cake Thon" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Thon Olives Noires Curry</h4>
+                                <p class="menu-card__desc">Thon, olives noires et pointe de curry pour un cake releve.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toasts -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Toasts</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Toast</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/toast-houmous.jpg" alt="Toast Houmous" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Houmous Poivrons Grilles</h4>
+                                <p class="menu-card__desc">Houmous onctueux et douceur des poivrons grilles.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Toast</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/toast-houmous.jpg" alt="Toast Houmous Betterave" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Houmous Betterave / Curry</h4>
+                                <p class="menu-card__desc">Houmous colore a la betterave ou parfume au curry.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Toast</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/toast-tapenade.jpg" alt="Toast Tapenade" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Tapenade Olives</h4>
+                                <p class="menu-card__desc">Tapenade d'olives noires maison, pure Mediterranee.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carpaccios -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Carpaccios</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Carpaccio</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/carpaccio-tofu.jpg" alt="Carpaccio Tofu Curry Coco" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Tofu Curry Coco</h4>
+                                <p class="menu-card__desc">Fines tranches de tofu marinee au curry et lait de coco.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Carpaccio</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/carpaccio-aubergines.jpg" alt="Carpaccio Aubergines Vapeur" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Aubergines Vapeur</h4>
+                                <p class="menu-card__desc">Aubergines cuites vapeur, delicates et fondantes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gaufres Salees -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Gaufres Salees</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Gaufre Salee</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/gaufre-salee.jpg" alt="Gaufre Salee Epinards" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Epinards Feta Cranberries</h4>
+                                <p class="menu-card__desc">Gaufre moelleuse, epinards, feta et eclats de cranberries.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Gaufre Salee</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/gaufre-patates-douces.jpg" alt="Gaufre Salee Patates Douces" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Patates Douces Feta</h4>
+                                <p class="menu-card__desc">Puree de patates douces integree a la pate, feta emiettee.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Croque-Monsieur -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Croque-Monsieur</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Croque-Monsieur</span>
+                                <img class="menu-card__img" src="images/gwaka/croque-monsieur.jpg" alt="Croque-Monsieur" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Creme Truffe Dinde Emmental</h4>
+                                <p class="menu-card__desc">Creme truffee, dinde et emmental grille a la perfection.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verrines -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Verrines</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Verrine</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/verrines.jpg" alt="Verrine Houmous" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Houmous Legumes</h4>
+                                <p class="menu-card__desc">Houmous cremeux et petits legumes croquants en verrine.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Verrine</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/gaspacho-pasteque.jpg" alt="Gaspacho Pasteque" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Gaspacho Pasteque</h4>
+                                <p class="menu-card__desc">Gaspacho glacee a la pasteque, fraicheur tropicale.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Verrine</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/gaspacho-tomates.jpg" alt="Gaspacho Tomates" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Gaspacho Tomates Mangues</h4>
+                                <p class="menu-card__desc">Tomates et mangues en gaspacho, sucre-sale tropical.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avocado Grilled Cheese -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Avocado Grilled Cheese</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Avocado Grilled Cheese</span>
+                                <img class="menu-card__img" src="images/gwaka/avocado-grilled-cheese.jpg" alt="Avocado Grilled Cheese" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Avocado Grilled Cheese</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Shakshuka -->
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Mini Shakshuka</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Mini Shakshuka</span>
+                                <img class="menu-card__img" src="images/gwaka/mini-shakshuka.jpg" alt="Mini Shakshuka" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Mini Shakshuka</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== TOASTS SIGNATURE ====== -->
+            <div class="menu-category" data-cat="toasts">
+                <div class="menu-cat-header">
+                    <h3>Toasts Signature</h3>
+                    <p>Nos creations stars, toutes disponibles en format mini</p>
+                </div>
+                <div class="menu-catalog">
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Signature</span>
+                            <img class="menu-card__img" src="images/gwaka/avocado-toast.jpg" alt="Avocado Toast" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Avocado Toast</h4>
+                            <p class="menu-card__desc">L'iconique : avocat ecrase sur pain toaste, assaisonnement secret GWAKA.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Signature</span>
+                            <img class="menu-card__img" src="images/gwaka/avocado-salmon-toast.jpg" alt="Avocado Salmon Toast" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Avocado Salmon Toast</h4>
+                            <p class="menu-card__desc">Avocat et saumon fume, le duo classique revisite.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Signature</span>
+                            <img class="menu-card__img" src="images/gwaka/feta-salmon-toast.jpg" alt="Gwaka Feta Salmon Toast" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Gwaka Feta Salmon Toast</h4>
+                            <p class="menu-card__desc">Gwakamole maison, feta emiettee et saumon fume. Notre best-seller.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Signature</span>
+                            <img class="menu-card__img" src="images/gwaka/toast-chutney-magret.jpg" alt="Toast Chutney Magret" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Toast Chutney Magret</h4>
+                            <p class="menu-card__desc">Chutney maison et fines tranches de magret seche.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Signature</span>
+                            <img class="menu-card__img" src="images/gwaka/toast-tartare-thon.jpg" alt="Toast Tartare de Thon" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Toast Gwaka & Tartare de Thon</h4>
+                            <p class="menu-card__desc">Gwakamole et tartare de thon frais, ocean et terre.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Signature</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/toast-bruschetta.jpg" alt="Toast Bruschetta" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Toast Bruschetta</h4>
+                            <p class="menu-card__desc">Tomates fraiches, basilic, ail et huile d'olive, la dolce vita.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Signature</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/toast-caviar-aubergines.jpg" alt="Toast Caviar Aubergines" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Toast Caviar d'Aubergines</h4>
+                            <p class="menu-card__desc">Caviar d'aubergines fumees, herbes fraiches et piment d'Espelette.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-note">
+                    Tous nos toasts signature sont disponibles en <strong>format mini</strong> pour vos buffets et cocktails.
+                </div>
+            </div>
+
+            <!-- ====== WRAPS & SANDWICHES ====== -->
+            <div class="menu-category" data-cat="wraps">
+                <div class="menu-cat-header">
+                    <h3>Wraps & Sandwiches</h3>
+                    <p>Genereux, pratiques et pleins de saveurs</p>
+                </div>
+
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Wraps</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Wrap</span>
+                                <img class="menu-card__img" src="images/gwaka/wraps.jpg" alt="Wrap Saumon" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Wrap Saumon</h4>
+                                <p class="menu-card__desc">Saumon fume, cream cheese, roquette et concombre.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Wrap</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/wraps.jpg" alt="Wrap Veggie" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Wrap Veggie Tofu Curcuma</h4>
+                                <p class="menu-card__desc">Tofu marine au curcuma, legumes croquants et sauce tahini.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Wrap</span>
+                                <img class="menu-card__img" src="images/gwaka/wraps.jpg" alt="Wrap Oeufs Gwakamole" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Wrap OEufs Gwakamole</h4>
+                                <p class="menu-card__desc">OEufs brouilles et gwakamole genereux, comfort food.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Club Sandwiches</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Club</span>
+                                <img class="menu-card__img" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich Saumon" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Saumon Cream Cheese</h4>
+                                <p class="menu-card__desc">Triple etage : saumon fume, cream cheese, salade.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Club</span>
+                                <img class="menu-card__img" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich Oeufs" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">OEufs Gwakamole</h4>
+                                <p class="menu-card__desc">OEufs, gwakamole maison, tomates et salade croquante.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Club</span>
+                                <img class="menu-card__img" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich Dinde" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Cheddar Dinde</h4>
+                                <p class="menu-card__desc">Dinde rotie, cheddar fondant et sauce moutarde douce.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-subcategory">
+                    <h4 class="menu-subcategory-title">Autres</h4>
+                    <div class="menu-catalog">
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Fresh</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/rouleaux-printemps.jpg" alt="Rouleaux de Printemps" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Rouleaux de Printemps Veggies</h4>
+                                <p class="menu-card__desc">Rouleaux frais de legumes croquants et herbes, sauce cacahuete.</p>
+                            </div>
+                        </div>
+                        <div class="menu-card">
+                            <div class="menu-card__img-wrap">
+                                <span class="menu-card__badge">Fresh</span>
+                                <span class="menu-card__veg">V</span>
+                                <img class="menu-card__img" src="images/gwaka/mozzarella-buffala.jpg" alt="Mozzarella Buffala" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                            </div>
+                            <div class="menu-card__body">
+                                <h4 class="menu-card__name">Mozzarella Buffala Tomates</h4>
+                                <p class="menu-card__desc">Mozzarella di Buffala, tomates et basilic, la Caprese GWAKA.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== SALADES ====== -->
+            <div class="menu-category" data-cat="salades">
+                <div class="menu-cat-header">
+                    <h3>Salades</h3>
+                    <p>Fraicheur, couleurs et energie dans chaque bouchee</p>
+                </div>
+                <div class="menu-catalog">
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Salade</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/quinoa-salad.jpg" alt="Salade Quinoa Energy" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Quinoa Energy</h4>
+                            <p class="menu-card__desc">Quinoa, legumes grilles, graines et vinaigrette aux agrumes.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Salade</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/salade-italienne.jpg" alt="Salade Italienne" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Italienne</h4>
+                            <p class="menu-card__desc">Roquette, tomates cerises, parmesan, pignons et balsamique.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Salade</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/salade-med.jpg" alt="Salade Mediterraneenne" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Mediterraneenne</h4>
+                            <p class="menu-card__desc">Feta, concombre, olives, poivrons et huile d'olive parfumee.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Salade</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/salade-lentilles.jpg" alt="Salade Lentilles" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Lentilles</h4>
+                            <p class="menu-card__desc">Lentilles vertes, echalotes, herbes fraiches et vinaigrette moutardee.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Salade</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/coleslaw-healthy.jpg" alt="Coleslaw Healthy" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Coleslaw Healthy</h4>
+                            <p class="menu-card__desc">Chou, carottes et sauce legere au yaourt, croquante et fraiche.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Salade</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/taboule-libanais.jpg" alt="Taboule Libanais" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Taboule Libanais</h4>
+                            <p class="menu-card__desc">Persil, menthe, boulgour, tomates et jus de citron frais.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== PLATEAUX ====== -->
+            <div class="menu-category" data-cat="plateaux">
+                <div class="menu-cat-header">
+                    <h3>Plateaux</h3>
+                    <p>Elegants et genereux, pour des moments de partage</p>
+                </div>
+                <div class="menu-catalog">
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Plateau</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/plateau-legumes.jpg" alt="Plateau Legumes" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Legumes Decoupes</h4>
+                            <p class="menu-card__desc">Selection de legumes frais decoupes, accompagnes de sauces maison.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Plateau</span>
+                            <span class="menu-card__veg">V</span>
+                            <img class="menu-card__img" src="images/gwaka/veggies-tacos-bar.jpg" alt="Veggies Tacos Bar" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Veggies Tacos Bar</h4>
+                            <p class="menu-card__desc">Bar a tacos vegetarien avec legumes, salsas et gwakamole.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Plateau</span>
+                            <img class="menu-card__img" src="images/gwaka/plateau-fromages.jpg" alt="Plateau Fromages" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Fromages</h4>
+                            <p class="menu-card__desc">Selection de fromages affines, fruits secs et pain artisanal.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Plateau</span>
+                            <img class="menu-card__img" src="images/gwaka/plateau-charcuterie.jpg" alt="Plateau Charcuterie" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Charcuterie</h4>
+                            <p class="menu-card__desc">Charcuteries fines, cornichons et moutardes artisanales.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Plateau</span>
+                            <img class="menu-card__img" src="images/gwaka/plateau-mixte.jpg" alt="Plateau Mixte" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Mixte</h4>
+                            <p class="menu-card__desc">Le meilleur des deux mondes : fromages et charcuteries reunis.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ====== SUSHIS ====== -->
+            <div class="menu-category" data-cat="sushis">
+                <div class="menu-cat-header">
+                    <h3>Sushis</h3>
+                    <p>Plateaux maison sur devis</p>
+                </div>
+                <div class="menu-catalog">
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Sushi</span>
+                            <img class="menu-card__img" src="images/gwaka/sushis.jpg" alt="Plateaux Sushis" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Plateaux Maison</h4>
+                            <p class="menu-card__desc">Plateaux de sushis faits maison, composes selon vos preferences. Minimum 50 pieces, sur devis uniquement.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-note">
+                    Les plateaux sushis sont realises sur devis. Minimum 50 pieces par commande. Contactez-nous pour composer votre plateau ideal.
+                </div>
+            </div>
+
+            <!-- ====== MINI SALES ====== -->
+            <div class="menu-category" data-cat="mini">
+                <div class="menu-cat-header">
+                    <h3>Mini Sales</h3>
+                    <p>Format cocktail, parfait pour buffets et receptions</p>
+                </div>
+                <div class="menu-catalog">
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Mini</span>
+                            <img class="menu-card__img" src="images/gwaka/mini-pain-lait.jpg" alt="Mini Pain au Lait 1" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Mini Pain au Lait — Variete 1</h4>
+                            <p class="menu-card__desc">Pain au lait moelleux garni, premiere variation gourmande.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Mini</span>
+                            <img class="menu-card__img" src="images/gwaka/mini-pain-lait.jpg" alt="Mini Pain au Lait 2" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Mini Pain au Lait — Variete 2</h4>
+                            <p class="menu-card__desc">Pain au lait moelleux garni, seconde variation savoureuse.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Mini</span>
+                            <img class="menu-card__img" src="images/gwaka/wrap-bite.jpg" alt="Wrap Bite" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Wrap Bite</h4>
+                            <p class="menu-card__desc">Bouchees de wrap roule, pratiques et delicieuses.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Mini</span>
+                            <img class="menu-card__img" src="images/gwaka/onigiri.jpg" alt="Onigiri" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Onigiri</h4>
+                            <p class="menu-card__desc">Boulettes de riz japonaises, garniture surprise GWAKA.</p>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <div class="menu-card__img-wrap">
+                            <span class="menu-card__badge">Mini</span>
+                            <img class="menu-card__img" src="images/gwaka/bouchees-saumon.jpg" alt="Bouchees Saumon" loading="lazy" onerror="this.style.visibility='hidden'; this.closest('.menu-card__img-wrap').style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)';">
+                        </div>
+                        <div class="menu-card__body">
+                            <h4 class="menu-card__name">Bouchees Saumon Concombre</h4>
+                            <p class="menu-card__desc">Rondes de concombre, saumon fume et cream cheese au citron.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PDF CTA -->
+            <div class="menu-pdf-cta reveal">
+                <a href="https://drive.google.com/file/d/1NKrcejsYzoHpFg1EvS5LgBj6F1qOUt6A/view" target="_blank" rel="noopener" class="btn btn-outline" style="gap: 10px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Telecharger notre catalogue PDF
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== GALERIE ==================== -->
+    <section class="section gallery-section" id="galerie">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    Galerie
+                </div>
+                <h2 class="section-title">Nos Creations en Images</h2>
+                <p class="section-desc">Chaque plat est une oeuvre, chaque assiette raconte une histoire. Decouvrez l'univers GWAKA.</p>
+            </div>
+
+            <!-- Botanical divider -->
+            <div class="section-botanical-divider">
+                <svg width="160" height="30" viewBox="0 0 160 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 15h55" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <path d="M105 15h55" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <!-- Avocado -->
+                    <ellipse cx="80" cy="16" rx="8" ry="11" fill="none" stroke="#C5D5A5" stroke-width="0.8"/>
+                    <circle cx="80" cy="20" r="3" fill="none" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <ellipse cx="75" cy="6" rx="3" ry="5" fill="none" stroke="#C5D5A5" stroke-width="0.5" transform="rotate(-15 75 6)"/>
+                    <ellipse cx="85" cy="6" rx="3" ry="5" fill="none" stroke="#C5D5A5" stroke-width="0.5" transform="rotate(15 85 6)"/>
+                </svg>
+            </div>
+
+            <div class="gallery-grid">
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/buffet-corporate.jpg" alt="Brunch GWAKA" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Brunch GWAKA</span></div>
+                </div>
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/scene-deco.jpg" alt="Toasts Signature" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Toasts Signature</span></div>
+                </div>
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/charcuterie-board.jpg" alt="Plateaux Evenement" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Plateaux Evenement</span></div>
+                </div>
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/hero-brunch.jpg" alt="Brunch Healthy" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Brunch Healthy</span></div>
+                </div>
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/chef-cuisine.jpg" alt="Saveurs GWAKA" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Saveurs GWAKA</span></div>
+                </div>
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/verrines-appetizers.jpg" alt="Verrines GWAKA" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Verrines GWAKA</span></div>
+                </div>
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/plateau-fruits.jpg" alt="Presentation Buffet" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Presentation Buffet</span></div>
+                </div>
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/plateau-fruits.jpg" alt="Table Brunch" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Table Brunch</span></div>
+                </div>
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/plateau-legumes.jpg" alt="Details Culinaires" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Details Culinaires</span></div>
+                </div>
+                <div class="gallery-item reveal" onclick="openLightbox(this)">
+                    <img src="images/gwaka/scene-tropical.jpg" alt="Fraicheur Tropicale" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="gallery-fallback" style="display:none;"><span>GWAKA</span></div>
+                    <div class="gallery-item-overlay"><span>Fraicheur Tropicale</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <img id="lightboxImg" src="" alt="GWAKA">
+    </div>
+
+    <!-- ==================== CONTACT ==================== -->
+    <section class="section contact-section" id="contact">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                    Contact
+                </div>
+                <h2 class="section-title">Demandez votre Devis</h2>
+                <p class="section-desc">Parlez-nous de votre evenement et nous composerons un menu sur mesure, avec le soin qui fait la difference.</p>
+            </div>
+
+            <!-- Botanical divider -->
+            <div class="section-botanical-divider">
+                <svg width="140" height="30" viewBox="0 0 140 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 15h50" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <path d="M90 15h50" stroke="#C5D5A5" stroke-width="0.5"/>
+                    <!-- Two small leaves -->
+                    <path d="M65 15 C60 8, 62 4, 70 2" stroke="#C5D5A5" stroke-width="0.8" fill="none"/>
+                    <path d="M75 15 C80 8, 78 4, 70 2" stroke="#C5D5A5" stroke-width="0.8" fill="none"/>
+                    <path d="M70 2 C70 8, 70 12, 70 28" stroke="#C5D5A5" stroke-width="0.5"/>
+                </svg>
+            </div>
+
+            <div class="contact-wrapper">
+                <div class="contact-info reveal">
+                    <h3>Parlons de votre Evenement</h3>
+                    <p>Corporate, anniversaires, mariages, collaborations, ecoles... Ils nous font confiance : TotalEnergies, Socredo, ICPF, Gaz de Tahiti, Direction de la Jeunesse et des Sports, Royal Automobile, UPF, Millesime Lotus, Studio Te Hau.</p>
+
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                        </div>
+                        <div>
+                            <strong>Telephone</strong><br>
+                            <span><a href="tel:+68989537570" style="color:inherit;text-decoration:none;">+689 89 53 75 70</a></span>
+                        </div>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <strong>Email</strong><br>
+                            <span><a href="mailto:gwakatahiti@gmail.com" style="color:inherit;text-decoration:none;">gwakatahiti@gmail.com</a></span>
+                        </div>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <strong>Localisation</strong><br>
+                            <span>Papeete, Tahiti</span>
+                        </div>
+                    </div>
+
+                    <div class="footer-social" style="margin-top: 32px;">
+                        <a href="https://www.instagram.com/gwaka.tahiti/" target="_blank" rel="noopener" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+                        </a>
+                        <a href="https://www.facebook.com/gwaka.tahiti/" target="_blank" rel="noopener" aria-label="Facebook">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-form-card reveal">
+                    <form id="contactForm" onsubmit="handleSubmit(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Nom complet</label>
+                                <input type="text" id="name" name="name" placeholder="Votre nom" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Telephone</label>
+                                <input type="tel" id="phone" name="phone" placeholder="+689 89 XX XX XX">
+                            </div>
+                            <div class="form-group">
+                                <label for="event">Type d'evenement</label>
+                                <select id="event" name="event" required>
+                                    <option value="" disabled selected>Choisir...</option>
+                                    <option value="mariage">Mariage</option>
+                                    <option value="seminaire">Seminaire / Entreprise</option>
+                                    <option value="anniversaire">Anniversaire</option>
+                                    <option value="brunch-prive">Brunch Prive</option>
+                                    <option value="cocktail">Cocktail / Reception</option>
+                                    <option value="baby-shower">Baby Shower</option>
+                                    <option value="autre">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="date">Date souhaitee</label>
+                                <input type="date" id="date" name="date">
+                            </div>
+                            <div class="form-group">
+                                <label for="guests">Nombre de convives</label>
+                                <input type="number" id="guests" name="guests" placeholder="Ex: 30" min="1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message / Preferences</label>
+                            <textarea id="message" name="message" placeholder="Dites-nous en plus sur votre evenement, vos preferences alimentaires, allergies..."></textarea>
+                        </div>
+                        <button type="submit" class="form-submit">
+                            Envoyer ma demande de devis
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <img src="https://litter.catbox.moe/66guxd.jpg" alt="GWAKA" style="height:48px;width:48px;border-radius:50%;object-fit:cover;">
+                    <span style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:white;letter-spacing:3px;">gwaka</span>
+                </div>
+                <p>Brunch & Pleasure | Buffets & evenements | Produits frais & faits-maison | Particuliers & professionnels. Papeete, Tahiti.</p>
+                <p style="margin-top: 8px; font-style: italic; color: rgba(255,255,255,0.5);">made with love for you</p>
+            </div>
+            <div>
+                <h4>Navigation</h4>
+                <div class="footer-links">
+                    <a href="#accueil">Accueil</a>
+                    <a href="#services">Services</a>
+                    <a href="#menu">Menu</a>
+                    <a href="#galerie">Galerie</a>
+                    <a href="#contact">Contact</a>
+                    <a href="https://drive.google.com/file/d/1NKrcejsYzoHpFg1EvS5LgBj6F1qOUt6A/view" target="_blank" rel="noopener">Catalogue PDF</a>
+                </div>
+            </div>
+            <div>
+                <h4>Suivez-nous</h4>
+                <div class="footer-links">
+                    <a href="https://www.instagram.com/gwaka.tahiti/" target="_blank" rel="noopener">Instagram</a>
+                    <a href="https://www.facebook.com/gwaka.tahiti/" target="_blank" rel="noopener">Facebook</a>
+                </div>
+                <div class="footer-social" style="margin-top: 16px;">
+                    <a href="https://www.instagram.com/gwaka.tahiti/" target="_blank" rel="noopener" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+                    </a>
+                    <a href="https://www.facebook.com/gwaka.tahiti/" target="_blank" rel="noopener" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 GWAKA. Tous droits reserves.</p>
+            <p>Site realise par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a></p>
+        </div>
+    </footer>
+
+    <!-- Back to top -->
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Retour en haut">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.3/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ========== SMOOTH SCROLL (CSS native) ==========
+        // Lenis disabled — using CSS scroll-behavior: smooth instead
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // ========== NAVBAR SCROLL ==========
+        const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            navbar.classList.toggle('scrolled', scrollY > 60);
+            backToTop.classList.toggle('visible', scrollY > 500);
+        });
+
+        // ========== BURGER MENU ==========
+        const burger = document.getElementById('burger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            burger.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+            mobileOverlay.classList.toggle('visible');
+            mobileOverlay.style.display = mobileMenu.classList.contains('open') ? 'block' : 'none';
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+        }
+
+        burger.addEventListener('click', toggleMenu);
+        mobileOverlay.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', () => {
+            if (mobileMenu.classList.contains('open')) toggleMenu();
+        }));
+
+        // ========== MENU FILTERS (Sticky + Animated) ==========
+        const filterBtns = document.querySelectorAll('.menu-filter-btn');
+        const menuCategories = document.querySelectorAll('.menu-category');
+        const filtersTrack = document.getElementById('menuFiltersTrack');
+
+        // Sticky shadow on scroll
+        if (filtersTrack) {
+            const filtersObserver = new IntersectionObserver(
+                ([e]) => filtersTrack.classList.toggle('stuck', e.intersectionRatio < 1),
+                { threshold: [1], rootMargin: '-65px 0px 0px 0px' }
+            );
+            filtersObserver.observe(filtersTrack);
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const cat = btn.dataset.category;
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Scroll active button into view on mobile
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+                menuCategories.forEach(c => {
+                    c.classList.remove('active');
+                    if (c.dataset.cat === cat) {
+                        c.classList.add('active');
+                        // Stagger card entrance
+                        const cards = c.querySelectorAll('.menu-card');
+                        cards.forEach((card, i) => {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(24px)';
+                            setTimeout(() => {
+                                card.style.transition = 'opacity 0.45s cubic-bezier(0.16,1,0.3,1), transform 0.45s cubic-bezier(0.16,1,0.3,1)';
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0)';
+                            }, 60 * i);
+                        });
+                    }
+                });
+            });
+        });
+
+        // ========== GSAP ANIMATIONS ==========
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (!prefersReducedMotion) {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Hero title letter animation
+            const heroLetters = document.querySelectorAll('.hero-title span');
+            gsap.from(heroLetters, {
+                y: 80,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.1,
+                ease: 'power3.out',
+                delay: 0.3,
+            });
+
+            // Hero badge
+            gsap.from('.hero-badge', {
+                y: 20,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out',
+                delay: 0.1,
+            });
+
+            // Hero subtitle & tagline
+            gsap.from('.hero-subtitle', {
+                y: 20,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out',
+                delay: 0.9,
+            });
+            gsap.from('.hero-tagline', {
+                y: 20,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out',
+                delay: 1.1,
+            });
+
+            // Hero CTAs
+            gsap.from('.hero-ctas', {
+                y: 20,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out',
+                delay: 1.3,
+            });
+
+            // Reveal on scroll for all .reveal elements
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach((el, i) => {
+                gsap.fromTo(el, {
+                    y: 30,
+                    opacity: 0,
+                }, {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 85%',
+                        toggleActions: 'play none none none',
+                    },
+                });
+            });
+
+            // Service cards stagger
+            gsap.fromTo('.service-card', {
+                y: 40,
+                opacity: 0,
+            }, {
+                y: 0,
+                opacity: 1,
+                duration: 0.7,
+                stagger: 0.15,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: '.services-grid',
+                    start: 'top 80%',
+                },
+            });
+
+            // Gallery items stagger
+            gsap.fromTo('.gallery-item', {
+                y: 30,
+                opacity: 0,
+                scale: 0.95,
+            }, {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 0.6,
+                stagger: 0.08,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: '.gallery-grid',
+                    start: 'top 80%',
+                },
+            });
+
+            // Menu cards animation when filter changes
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.target.classList.contains('active')) {
+                        const cards = mutation.target.querySelectorAll('.menu-card');
+                        gsap.fromTo(cards, {
+                            y: 20,
+                            opacity: 0,
+                        }, {
+                            y: 0,
+                            opacity: 1,
+                            duration: 0.4,
+                            stagger: 0.05,
+                            ease: 'power2.out',
+                        });
+                    }
+                });
+            });
+            menuCategories.forEach(cat => {
+                observer.observe(cat, { attributes: true, attributeFilter: ['class'] });
+            });
+
+            // Floating botanical leaves parallax
+            gsap.to('.hero-bg-leaf-1', {
+                y: -40,
+                rotation: -5,
+                scrollTrigger: {
+                    trigger: '.hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1,
+                },
+            });
+            gsap.to('.hero-bg-leaf-2', {
+                y: -60,
+                rotation: 10,
+                scrollTrigger: {
+                    trigger: '.hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1,
+                },
+            });
+            gsap.to('.hero-bg-leaf-3', {
+                y: -30,
+                rotation: -15,
+                scrollTrigger: {
+                    trigger: '.hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1,
+                },
+            });
+        } else {
+            // No-motion: show everything immediately
+            document.querySelectorAll('.reveal').forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+        }
+
+        // ========== LIGHTBOX ==========
+        window.openLightbox = function(item) {
+            const img = item.querySelector('img');
+            if (!img || img.style.display === 'none') return;
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+            lightbox.style.display = 'flex';
+            requestAnimationFrame(() => lightbox.classList.add('open'));
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeLightbox = function() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('open');
+            document.body.style.overflow = '';
+            setTimeout(() => { lightbox.style.display = 'none'; }, 300);
+        };
+
+        document.getElementById('lightbox').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeLightbox();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        // ========== FORM ==========
+        window.handleSubmit = function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('.form-submit');
+            const originalText = btn.textContent;
+            btn.textContent = 'Envoi en cours...';
+            btn.style.opacity = '0.7';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.textContent = 'Demande envoyee !';
+                btn.style.background = '#7CB342';
+                btn.style.opacity = '1';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                    btn.disabled = false;
+                    e.target.reset();
+                }, 2500);
+            }, 1200);
+        };
+
+        // ========== SMOOTH SCROLL for anchor links ==========
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(anchor.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+    })();
+    </script>
+</body>
+</html>

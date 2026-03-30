@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GWAKA | Brunch & Healthy Catering - Tahiti</title>
+<meta name="description" content="GWAKA - Traiteur brunch & healthy en Polynesie francaise. Made with love for you.">
+<link rel="icon" type="image/jpeg" href="https://litter.catbox.moe/66guxd.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #4A7C3F;
+    --green-accent: #7CB342;
+    --green-muted: #E8EFE3;
+    --sage: #F0F4EE;
+    --blush: #F2E6D9;
+    --sage-mist: #D4DDD4;
+    --warm-grey: #E8E4DF;
+    --bg: #FAFAFA;
+    --text: #2D3436;
+    --text-light: #636e72;
+    --white: #FFFFFF;
+    --radius: 16px;
+    --radius-lg: 24px;
+    --radius-pill: 50px;
+    --shadow-subtle: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-card: 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-hover: 0 8px 32px rgba(0,0,0,0.08);
+    --font-body: 'Inter', sans-serif;
+    --font-display: 'Libre Baskerville', serif;
+    --max-width: 1200px;
+    --gutter: 24px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  .container { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--gutter); }
+
+  /* ========== NAVIGATION ========== */
+  .nav {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--radius-pill);
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border: 1px solid rgba(74,124,63,0.08);
+    transition: all 0.3s ease;
+  }
+
+  .nav.scrolled {
+    top: 12px;
+    padding: 10px 28px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.12);
+  }
+
+  .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .nav-logo svg { width: 36px; height: 36px; }
+  .nav-logo-text { font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--green); letter-spacing: 0.5px; }
+
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--green-accent);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-cta {
+    background: var(--green);
+    color: var(--white);
+    padding: 10px 24px;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { background: var(--green-accent); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(74,124,63,0.3); }
+
+  .burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+  }
+  .burger span {
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+  .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .burger.active span:nth-child(2) { opacity: 0; }
+  .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(255,255,255,0.98);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .mobile-menu.active { display: flex; opacity: 1; }
+  .mobile-menu a {
+    text-decoration: none;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--green); }
+
+  @media (max-width: 768px) {
+    .nav { padding: 10px 20px; gap: 0; justify-content: space-between; width: calc(100% - 32px); }
+    .nav-links, .nav-cta { display: none; }
+    .burger { display: flex; }
+  }
+
+  /* ========== HERO ========== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-muted);
+    color: var(--green);
+    padding: 8px 20px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--green);
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+    color: var(--text-light);
+    line-height: 1.7;
+    margin-bottom: 36px;
+    max-width: 480px;
+    font-weight: 300;
+  }
+
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green);
+    color: var(--white);
+    padding: 16px 36px;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--green-accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,124,63,0.3); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--green);
+    padding: 16px 36px;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    border: 2px solid var(--green);
+    cursor: pointer;
+  }
+  .btn-secondary:hover { background: var(--green-muted); transform: translateY(-2px); }
+
+  .hero-image-wrapper {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 4/5;
+  }
+  .hero-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+
+  .hero-float-card {
+    position: absolute;
+    bottom: 24px;
+    left: -40px;
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 16px 24px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 3;
+  }
+  .hero-float-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--green-muted);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .hero-float-label { font-size: 12px; color: var(--text-light); font-weight: 500; }
+  .hero-float-value { font-size: 16px; font-weight: 700; color: var(--text); }
+
+  .hero-bg-shape {
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--green-muted) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 768px) {
+    .hero { padding: 100px 0 60px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-image-wrapper { aspect-ratio: 1/1; max-height: 400px; }
+    .hero-float-card { left: 16px; bottom: 16px; }
+    .hero-ctas { flex-direction: column; }
+    .btn-primary, .btn-secondary { text-align: center; justify-content: center; }
+  }
+
+  /* ========== SECTION COMMON ========== */
+  .section { padding: 100px 0; }
+  .section-sage { background: var(--sage); }
+  .section-blush { background: var(--blush); }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  .section-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--green-accent);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.5vw, 42px);
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .section-desc {
+    font-size: 16px;
+    color: var(--text-light);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ========== SERVICES ========== */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .service-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 40px 32px;
+    text-align: center;
+    box-shadow: var(--shadow-subtle);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card:nth-child(1) { background: linear-gradient(160deg, var(--white) 60%, var(--green-muted) 100%); }
+  .service-card:nth-child(2) { background: linear-gradient(160deg, var(--white) 60%, var(--blush) 100%); }
+  .service-card:nth-child(3) { background: linear-gradient(160deg, var(--white) 60%, var(--sage-mist) 100%); }
+  .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+
+  .service-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 24px;
+    background: var(--green-muted);
+  }
+
+  .service-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .service-desc {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.7;
+  }
+
+  @media (max-width: 768px) {
+    .services-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ========== MENU — Awwwards Clean Catalog ========== */
+  .menu-filters {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin-bottom: 48px;
+    position: sticky;
+    top: 72px;
+    z-index: 10;
+    background: var(--bg);
+    padding: 20px 0 16px;
+    transition: box-shadow 0.3s ease;
+  }
+  .menu-filters.stuck {
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  }
+
+  .filter-btn {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-light);
+    cursor: pointer;
+    position: relative;
+    padding: 0 0 8px;
+    transition: color 0.25s ease;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .filter-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .filter-btn:hover { color: var(--text); }
+  .filter-btn.active { color: var(--text); font-weight: 600; }
+  .filter-btn.active::after { width: 100%; left: 0; }
+
+  /* Category group headers */
+  .menu-category-header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 0 4px;
+    margin-top: 12px;
+  }
+  .menu-category-header:first-child { margin-top: 0; }
+  .menu-category-header__line {
+    flex: 1;
+    height: 1px;
+    background: rgba(0,0,0,0.07);
+  }
+  .menu-category-header__label {
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-light);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 4vw, 48px);
+  }
+
+  .menu-card {
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid rgba(0,0,0,0.06);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: default;
+  }
+  .menu-card:hover {
+    border-color: transparent;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.08);
+    transform: translateY(-6px);
+  }
+  .menu-card.hidden {
+    display: none;
+  }
+
+  .menu-card__visual {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, var(--green-muted) 0%, var(--sage-mist) 100%);
+  }
+
+  .menu-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .menu-card:hover .menu-card__img {
+    transform: scale(1.05);
+  }
+
+  .menu-card__tag {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: var(--white);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--green);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    pointer-events: none;
+  }
+
+  .menu-card__body {
+    padding: 20px 24px 24px;
+  }
+
+  .menu-card__name {
+    font-size: 1.1875rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .menu-card__desc {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--text-light);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .menu-download {
+    text-align: center;
+    margin-top: 56px;
+  }
+
+  /* Item count badge */
+  .menu-count {
+    text-align: center;
+    margin-bottom: 8px;
+    font-size: 0.8125rem;
+    color: var(--text-light);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+  .menu-count strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .menu-grid { grid-template-columns: 1fr; gap: 20px; padding: 0; }
+    .menu-filters {
+      gap: 20px;
+      justify-content: center;
+      padding: 16px var(--gutter);
+      top: 64px;
+    }
+    .filter-btn { font-size: 0.8125rem; }
+    .menu-card__body { padding: 16px 20px 20px; }
+    .menu-card__name { font-size: 1.0625rem; }
+  }
+
+  @media (max-width: 480px) {
+    .menu-filters { gap: 16px; }
+  }
+
+  /* ========== GALLERY ========== */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .gallery-item {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition: all 0.4s ease;
+  }
+  .gallery-item:hover { transform: scale(1.05); box-shadow: var(--shadow-hover); }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .gallery-item:hover img { transform: scale(1.1); }
+
+  @media (max-width: 640px) {
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .gallery-grid .gallery-item:nth-child(9) { display: none; }
+  }
+
+  /* ========== CONTACT ========== */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .contact-info h3 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .contact-info p {
+    font-size: 15px;
+    color: var(--text-light);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .contact-detail-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--green-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .contact-detail-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+  .contact-detail-label { font-size: 12px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+
+  .contact-form {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1.5px solid var(--sage-mist);
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    transition: all 0.2s ease;
+    outline: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--green-accent);
+    box-shadow: 0 0 0 3px rgba(124,179,66,0.12);
+    background: var(--white);
+  }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .form-submit {
+    width: 100%;
+    padding: 16px;
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+  }
+  .form-submit:hover { background: var(--green-accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,124,63,0.3); }
+
+  @media (max-width: 768px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .contact-form { padding: 28px; }
+  }
+
+  /* ========== FOOTER ========== */
+  .footer {
+    background: var(--text);
+    color: rgba(255,255,255,0.7);
+    padding: 60px 0 32px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 48px;
+  }
+
+  .footer-brand p {
+    font-size: 14px;
+    line-height: 1.7;
+    margin-top: 16px;
+    max-width: 280px;
+  }
+  .footer-brand svg { opacity: 0.9; }
+
+  .footer-col h4 {
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .footer-col a {
+    display: block;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 12px;
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--green-accent); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  .footer-bottom a { color: var(--green-accent); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  }
+
+  /* ========== ANIMATIONS ========== */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Placeholder for broken images */
+  .img-placeholder {
+    background: linear-gradient(135deg, var(--green-muted) 0%, var(--sage-mist) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--green);
+    font-size: 24px;
+  }
+
+  /* Scroll progress */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green), var(--green-accent));
+    z-index: 10000;
+    transition: width 0.1s linear;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Back to top */
+  .back-to-top {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 48px;
+    height: 48px;
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(74,124,63,0.3);
+  }
+  .back-to-top.visible { opacity: 1; transform: translateY(0); }
+  .back-to-top:hover { background: var(--green-accent); transform: translateY(-2px); }
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav" id="navbar">
+  <a href="#accueil" class="nav-logo">
+    <img src="https://litter.catbox.moe/66guxd.jpg" alt="GWAKA" style="height:40px;width:40px;border-radius:50%;object-fit:cover;">
+    <span class="nav-logo-text">gwaka</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#accueil">Accueil</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#galerie">Galerie</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Demander un Devis</a>
+  <button class="burger" id="burger" aria-label="Menu mobile">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#accueil" onclick="closeMobile()">Accueil</a>
+  <a href="#services" onclick="closeMobile()">Services</a>
+  <a href="#menu" onclick="closeMobile()">Menu</a>
+  <a href="#galerie" onclick="closeMobile()">Galerie</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+  <a href="#contact" onclick="closeMobile()" style="margin-top:16px;background:var(--green);color:white;padding:14px 36px;border-radius:50px;font-size:16px;">Demander un Devis</a>
+</div>
+
+<!-- ========== HERO ========== -->
+<section class="hero" id="accueil">
+  <div class="hero-bg-shape"></div>
+  <div class="hero-grid">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="7" fill="#7CB342"/><path d="M5 7l1.5 1.5L9.5 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Traiteur Brunch &amp; Healthy
+      </div>
+      <h1 class="hero-title">Des brunchs <em>faits avec amour</em> pour vous</h1>
+      <p class="hero-subtitle">Traiteur artisanal a Tahiti. Des produits frais, locaux et prepares avec soin pour vos evenements, vos matinees et vos envies gourmandes.</p>
+      <div class="hero-ctas">
+        <a href="#menu" class="btn-primary">
+          Decouvrir le Menu
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#contact" class="btn-secondary">Demander un Devis</a>
+      </div>
+    </div>
+    <div class="hero-image-wrapper">
+      <img src="images/gwaka/hero-brunch.jpg" alt="GWAKA Brunch Tahiti" loading="eager" onerror="this.style.display='none';this.parentElement.classList.add('img-placeholder');this.parentElement.innerHTML='&#127860;';">
+      <div class="hero-float-card">
+        <div class="hero-float-icon">&#127793;</div>
+        <div>
+          <div class="hero-float-label">100% Frais</div>
+          <div class="hero-float-value">Produits locaux</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SERVICES ========== -->
+<section class="section section-sage" id="services">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Nos Services</div>
+      <h2 class="section-title">Un service sur mesure pour chaque occasion</h2>
+      <p class="section-desc">Du brunch intime entre amis a l'evenement corporate, GWAKA s'adapte a vos envies avec des formules personnalisees.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon">&#127859;</div>
+        <h3 class="service-title">Brunch Gourmand</h3>
+        <p class="service-desc">Formules brunch completes livrees chez vous. Sucre, sale, boissons fraiches — tout est prevu pour un moment convivial et gourmand.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#127881;</div>
+        <h3 class="service-title">Buffet Signature</h3>
+        <p class="service-desc">Un buffet sur mesure pour vos evenements : mariages, seminaires, inaugurations. Des creations raffinées adaptees a chaque occasion.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#127864;</div>
+        <h3 class="service-title">Cocktail Evenement</h3>
+        <p class="service-desc">Verrines, bouchees et planches a partager pour vos cocktails professionnels ou prives. Elegant et gourmand.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#128188;</div>
+        <h3 class="service-title">Dejeuner d'Affaires</h3>
+        <p class="service-desc">Plateaux repas equilibres et soignes pour vos reunions, formations et dejeuners d'entreprise.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#129367;</div>
+        <h3 class="service-title">Plateaux Pret a Servir</h3>
+        <p class="service-desc">Des plateaux complets prets a etre servis : salades, wraps, sushis, mini sales et plus encore.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#127863;</div>
+        <h3 class="service-title">Apero Box</h3>
+        <p class="service-desc">Coffrets apero a partager entre amis ou collegues : planches, bouchees, dips et accompagnements gourmands.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== MENU ========== -->
+<section class="section" id="menu">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Notre Carte</div>
+      <h2 class="section-title">Des saveurs pour toutes les envies</h2>
+      <p class="section-desc">Parcourez notre catalogue complet et composez votre commande sur mesure.</p>
+    </div>
+
+    <div class="menu-filters reveal">
+      <button class="filter-btn active" data-filter="all">Tout</button>
+      <button class="filter-btn" data-filter="sales">Sales</button>
+      <button class="filter-btn" data-filter="toasts">Toasts Signature</button>
+      <button class="filter-btn" data-filter="wraps">Wraps &amp; Sandwiches</button>
+      <button class="filter-btn" data-filter="salades">Salades</button>
+      <button class="filter-btn" data-filter="plateaux">Plateaux</button>
+      <button class="filter-btn" data-filter="mini">Mini Sales</button>
+      <button class="filter-btn" data-filter="sushis">Sushis</button>
+    </div>
+
+    <div class="menu-count reveal" id="menuCount"><strong>63</strong> produits</div>
+
+    <div class="menu-grid" id="menuGrid">
+
+      <!-- ======= PRODUITS SALES ======= -->
+      <div class="menu-category-header" data-cat="sales">
+        <span class="menu-category-header__line"></span>
+        <span class="menu-category-header__label">Egg Muffins, Bagels, Black Buns &amp; plus</span>
+        <span class="menu-category-header__line"></span>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/egg-muffin.jpg" alt="Egg Muffin Classique" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Egg Muffins</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Egg Muffin Classique</div>
+          <p class="menu-card__desc">Oeuf, cheddar</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/egg-muffin.jpg" alt="Egg Muffin Double Serrano" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Egg Muffins</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Egg Muffin Double Serrano</div>
+          <p class="menu-card__desc">Double cheddar, jambon Serrano</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/bagel-veggie.jpg" alt="Bagel Veggie" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Bagels</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Bagel Veggie</div>
+          <p class="menu-card__desc">Houmous, poivrons grilles, chevre frais, epinards frais</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/bagel-jambon.jpg" alt="Bagel Jambon de Dinde" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Bagels</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Bagel Jambon de Dinde</div>
+          <p class="menu-card__desc">Bagel garni au jambon de dinde</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/bagel-thon.jpg" alt="Bagel Thon Fume Local" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Bagels</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Bagel Thon Fume Local</div>
+          <p class="menu-card__desc">Thon fume local de Tahiti</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/bagel-saumon.jpg" alt="Bagel Saumon Fume" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Bagels</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Bagel Saumon Fume</div>
+          <p class="menu-card__desc">Saumon fume premium</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/black-bun.jpg" alt="Black Bun Oeufs" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Black Buns</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Black Bun Oeufs</div>
+          <p class="menu-card__desc">Oeufs brouilles, sriracha ou comte, copeaux de bacon grille</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/black-bun-saumon.jpg" alt="Black Bun Saumon / Thon" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Black Buns</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Black Bun Saumon / Thon</div>
+          <p class="menu-card__desc">Saumon fume ou thon fume local</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/black-bun-saumon.jpg" alt="Black Bun Caviar d'Aubergines" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Black Buns</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Black Bun Caviar d'Aubergines</div>
+          <p class="menu-card__desc">Caviar d'aubergines, jambon Serrano</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/cake-feta.jpg" alt="Cake Feta" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Cakes Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Cake Feta</div>
+          <p class="menu-card__desc">Feta, epinards, tomates sechees</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/cake-chevre.jpg" alt="Cake Chevre" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Cakes Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Cake Chevre</div>
+          <p class="menu-card__desc">Chevre, epinards, patates douces</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/cake-thon.jpg" alt="Cake au Thon" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Cakes Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Cake au Thon</div>
+          <p class="menu-card__desc">Thon local, olives noires, tomates sechees, curry</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/toast-houmous.jpg" alt="Toast Houmous Poivrons" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toasts</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Toast Houmous Poivrons</div>
+          <p class="menu-card__desc">Houmous, poivrons grilles</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/toast-houmous.jpg" alt="Toast Houmous Betterave / Curry" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toasts</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Toast Houmous Betterave / Curry</div>
+          <p class="menu-card__desc">Betterave ou curry-curcuma</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/toast-tapenade.jpg" alt="Toast Tapenade" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toasts</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Toast Tapenade</div>
+          <p class="menu-card__desc">Olives vertes ou olives noires</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/carpaccio-tofu.jpg" alt="Carpaccio Tofu Curry Coco" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Carpaccios</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Carpaccio Tofu Curry Coco</div>
+          <p class="menu-card__desc">Carottes, tomates, concombres, capres</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/carpaccio-aubergines.jpg" alt="Carpaccio Aubergines Vapeur" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Carpaccios</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Carpaccio Aubergines Vapeur</div>
+          <p class="menu-card__desc">Feta, tomates sechees, olives vertes</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/gaufre-salee.jpg" alt="Gaufre Salee Feta" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Gaufres &amp; Croque</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Gaufre Salee Feta</div>
+          <p class="menu-card__desc">Epinards, feta, cranberries</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/gaufre-patates-douces.jpg" alt="Gaufre Salee Patate Douce" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Gaufres &amp; Croque</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Gaufre Salee Patate Douce</div>
+          <p class="menu-card__desc">Patates douces, feta ou oeufs brouilles, avocat, saumon</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/croque-monsieur.jpg" alt="Croque-Monsieur" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Gaufres &amp; Croque</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Croque-Monsieur</div>
+          <p class="menu-card__desc">Creme de truffe, jambon de dinde fume, emmental</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/verrines.jpg" alt="Verrine Houmous" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Verrines</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Verrine Houmous</div>
+          <p class="menu-card__desc">Houmous et batonnets de legumes crus</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/gaspacho-pasteque.jpg" alt="Verrine Gaspacho Pasteque" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Verrines</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Verrine Gaspacho Pasteque</div>
+          <p class="menu-card__desc">Pasteque, poivrons, concombres</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/gaspacho-tomates.jpg" alt="Verrine Gaspacho Tomates" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Verrines</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Verrine Gaspacho Tomates</div>
+          <p class="menu-card__desc">Tomates, mangues, basilic</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/mini-shakshuka.jpg" alt="Mini Shakshuka" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Specialites</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Mini Shakshuka</div>
+          <p class="menu-card__desc">Base de legumes, saveurs mexicaines, oeuf poche (+feta en option)</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="sales">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/avocado-grilled-cheese.jpg" alt="Avocado Grilled Cheese" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Specialites</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Avocado Grilled Cheese</div>
+          <p class="menu-card__desc">Oeufs brouilles, avocat, roquette, emmental, tomates sechees</p>
+        </div>
+      </div>
+
+      <!-- ======= TOASTS SIGNATURE ======= -->
+      <div class="menu-category-header" data-cat="toasts">
+        <span class="menu-category-header__line"></span>
+        <span class="menu-category-header__label">Toasts Signature</span>
+        <span class="menu-category-header__line"></span>
+      </div>
+
+      <div class="menu-card" data-cat="toasts">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/avocado-toast.jpg" alt="Avocado Toast" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toast Signature</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Avocado Toast</div>
+          <p class="menu-card__desc">Gwakamole maison sur pain toaste</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="toasts">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/avocado-salmon-toast.jpg" alt="Avocado Salmon Toast" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toast Signature</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Avocado Salmon Toast</div>
+          <p class="menu-card__desc">Gwakamole, saumon fume</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="toasts">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/feta-salmon-toast.jpg" alt="Gwaka Feta Salmon Toast" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toast Signature</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Gwaka Feta Salmon Toast</div>
+          <p class="menu-card__desc">Supplement: grenade (selon arrivage)</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="toasts">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/toast-chutney-magret.jpg" alt="Toast Chutney Magret" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toast Signature</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Toast Chutney Magret</div>
+          <p class="menu-card__desc">Chutney mangue-ananas, magret de canard fume, chevre frais, noix</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="toasts">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/toast-tartare-thon.jpg" alt="Toast Gwaka &amp; Tartare de Thon" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toast Signature</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Toast Gwaka &amp; Tartare de Thon</div>
+          <p class="menu-card__desc">Gwakamole, tartare de thon fume local, aneth, huile d'olive</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="toasts">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/toast-bruschetta.jpg" alt="Toast Bruschetta" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toast Signature</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Toast Bruschetta</div>
+          <p class="menu-card__desc">Supplement: mozzarella fraiche</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="toasts">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/toast-caviar-aubergines.jpg" alt="Toast Caviar d'Aubergines" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Toast Signature</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Toast Caviar d'Aubergines</div>
+          <p class="menu-card__desc">Supplements: serrano, fromage de chevre frais</p>
+        </div>
+      </div>
+
+      <!-- ======= WRAPS & SANDWICHES ======= -->
+      <div class="menu-category-header" data-cat="wraps">
+        <span class="menu-category-header__line"></span>
+        <span class="menu-category-header__label">Wraps &amp; Sandwiches</span>
+        <span class="menu-category-header__line"></span>
+      </div>
+
+      <div class="menu-card" data-cat="wraps">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/wraps.jpg" alt="Wrap Saumon" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Wraps</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Wrap Saumon</div>
+          <p class="menu-card__desc">Saumon fume, sauce citron</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="wraps">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/wraps.jpg" alt="Wrap Veggie" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Wraps</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Wrap Veggie</div>
+          <p class="menu-card__desc">Tofu grille curcuma, houmous betterave, veggies, pickles</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="wraps">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/wraps.jpg" alt="Wrap Oeufs" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Wraps</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Wrap Oeufs</div>
+          <p class="menu-card__desc">Oeufs brouilles, gwakamole</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="wraps">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich Saumon" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Club Sandwiches</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Club Sandwich Saumon</div>
+          <p class="menu-card__desc">Saumon fume, creamcheese</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="wraps">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich Gwaka" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Club Sandwiches</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Club Sandwich Gwaka</div>
+          <p class="menu-card__desc">Oeufs brouilles, gwakamole</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="wraps">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich Classique" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Club Sandwiches</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Club Sandwich Classique</div>
+          <p class="menu-card__desc">Cheddar, creamcheese, jambon de dinde</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="wraps">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/rouleaux-printemps.jpg" alt="Rouleaux de Printemps Veggies" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Wraps</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Rouleaux de Printemps Veggies</div>
+          <p class="menu-card__desc">Sauce cacahuete &amp; sesame</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="wraps">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/mozzarella-buffala.jpg" alt="Mozzarella di Buffala" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Sandwiches</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Mozzarella di Buffala</div>
+          <p class="menu-card__desc">Tomates, salade, mozzarella fraiche</p>
+        </div>
+      </div>
+
+      <!-- ======= SALADES ======= -->
+      <div class="menu-category-header" data-cat="salades">
+        <span class="menu-category-header__line"></span>
+        <span class="menu-category-header__label">Salades fraiches</span>
+        <span class="menu-category-header__line"></span>
+      </div>
+
+      <div class="menu-card" data-cat="salades">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/quinoa-salad.jpg" alt="Quinoa Energy" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Salades</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Quinoa Energy</div>
+          <p class="menu-card__desc">Trio de quinoa, feta, oranges, noix de pecan, epinards frais, vinaigrette miel citron</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="salades">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/salade-italienne.jpg" alt="Salade a l'Italienne" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Salades</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Salade a l'Italienne</div>
+          <p class="menu-card__desc">Pates torti, tomates sechees, olives vertes, mozzarella, pesto maison, roquette</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="salades">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/salade-med.jpg" alt="Salade Mediterraneenne" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Salades</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Salade Mediterraneenne</div>
+          <p class="menu-card__desc">Pates Orzo, olives, feta, concombres, tomates, poivrons, pesto maison</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="salades">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/salade-lentilles.jpg" alt="Salade de Lentilles" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Salades</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Salade de Lentilles</div>
+          <p class="menu-card__desc">Feta, tomates, mangues, concombres, oignons rouges, menthe</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="salades">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/coleslaw-healthy.jpg" alt="Coleslaw Healthy" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Salades</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Coleslaw Healthy</div>
+          <p class="menu-card__desc">Choux, carottes, sauce yaourt grecque</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="salades">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/taboule-libanais.jpg" alt="Taboule Libanais" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Salades</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Taboule Libanais</div>
+          <p class="menu-card__desc">Graines de couscous, concombres, citron, tomates, poivron jaune, menthe</p>
+        </div>
+      </div>
+
+      <!-- ======= PLATEAUX ======= -->
+      <div class="menu-category-header" data-cat="plateaux">
+        <span class="menu-category-header__line"></span>
+        <span class="menu-category-header__label">Plateaux &amp; a partager</span>
+        <span class="menu-category-header__line"></span>
+      </div>
+
+      <div class="menu-card" data-cat="plateaux">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/plateau-legumes.jpg" alt="Plateau de Legumes" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Plateaux</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Plateau de Legumes</div>
+          <p class="menu-card__desc">5 varietes par plateau selon arrivage</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="plateaux">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/veggies-tacos-bar.jpg" alt="Veggies Tacos Bar" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Plateaux</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Veggies Tacos Bar</div>
+          <p class="menu-card__desc">Minis tortillas, 5 condiments, 2 sauces, 2 herbes aromatiques</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="plateaux">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/plateau-fromages.jpg" alt="Plateau Fromages" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Plateaux</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Plateau Fromages</div>
+          <p class="menu-card__desc">5 fromages differents selon arrivage</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="plateaux">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/plateau-charcuterie.jpg" alt="Plateau Charcuterie" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Plateaux</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Plateau Charcuterie</div>
+          <p class="menu-card__desc">5 varietes differentes selon arrivage</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="plateaux">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/plateau-mixte.jpg" alt="Plateau Mixte" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Plateaux</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Plateau Mixte</div>
+          <p class="menu-card__desc">5 varietes charcuteries et fromages selon arrivage</p>
+        </div>
+      </div>
+
+
+
+      <!-- ======= MINI SALES ======= -->
+      <div class="menu-category-header" data-cat="mini">
+        <span class="menu-category-header__line"></span>
+        <span class="menu-category-header__label">Mini Sales &amp; bouchees</span>
+        <span class="menu-category-header__line"></span>
+      </div>
+
+
+      <div class="menu-card" data-cat="mini">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/mini-pain-lait.jpg" alt="Mini Pain au Lait Cheddar" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Mini Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Mini Pain au Lait Cheddar</div>
+          <p class="menu-card__desc">Cream-cheese, jambon de dinde fume, cheddar</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="mini">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/mini-pain-lait.jpg" alt="Mini Pain au Lait Brie" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Mini Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Mini Pain au Lait Brie</div>
+          <p class="menu-card__desc">Jambon de dinde fume, brie, confiture de mangue maison</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="mini">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/wrap-bite.jpg" alt="Wrap Bite" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Mini Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Wrap Bite</div>
+          <p class="menu-card__desc">Tofu grille curcuma, veggies, houmous ou saumon fume/cream cheese</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="mini">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/onigiri.jpg" alt="Onigiri" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Mini Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Onigiri</div>
+          <p class="menu-card__desc">Spicy tuna ou tuna-mayo</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="mini">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/cake-chevre.jpg" alt="Mini Cake Sale Chevre" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Mini Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Mini Cake Sale Chevre</div>
+          <p class="menu-card__desc">Patates douces, chevre et epinards</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="mini">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/cake-feta.jpg" alt="Mini Cake Sale Feta" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Mini Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Mini Cake Sale Feta</div>
+          <p class="menu-card__desc">Tomates sechees, feta et epinards</p>
+        </div>
+      </div>
+
+      <div class="menu-card" data-cat="mini">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/bouchees-saumon.jpg" alt="Bouchees Saumon" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Mini Sales</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Bouchees Saumon</div>
+          <p class="menu-card__desc">Saumon, creme aneth sur lamelle de concombre</p>
+        </div>
+      </div>
+
+      <!-- ======= SUSHIS ======= -->
+      <div class="menu-category-header" data-cat="sushis">
+        <span class="menu-category-header__line"></span>
+        <span class="menu-category-header__label">Sushis maison</span>
+        <span class="menu-category-header__line"></span>
+      </div>
+
+      <div class="menu-card" data-cat="sushis">
+        <div class="menu-card__visual">
+          <img class="menu-card__img" src="images/gwaka/sushis.jpg" alt="Plateaux de Sushis Maison" loading="lazy" onerror="this.style.display='none';">
+          <span class="menu-card__tag">Sushis</span>
+        </div>
+        <div class="menu-card__body">
+          <div class="menu-card__name">Plateaux de Sushis Maison</div>
+          <p class="menu-card__desc">Sur demande et par devis uniquement, a partir de 50 pieces. Sauce sushis maison.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="menu-download reveal">
+      <a href="https://drive.google.com/file/d/1NKrcejsYzoHpFg1EvS5LgBj6F1qOUt6A/view" target="_blank" rel="noopener" class="btn-primary" style="display:inline-flex;">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v9m0 0l-3-3m3 3l3-3M3 15h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Telecharger notre catalogue PDF
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== GALERIE ========== -->
+<section class="section section-sage" id="galerie">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Galerie</div>
+      <h2 class="section-title">Nos creations en images</h2>
+      <p class="section-desc">Chaque plat est une oeuvre d'art, prepare avec soin et presente avec amour.</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal">
+        <img src="images/gwaka/hero-brunch.jpg" alt="GWAKA creation 1" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none';this.parentElement.innerHTML='&#127860;';">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/gwaka/buffet-corporate.jpg" alt="GWAKA creation 2" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none';this.parentElement.innerHTML='&#127860;';">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/gwaka/scene-deco.jpg" alt="GWAKA creation 3" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none';this.parentElement.innerHTML='&#127860;';">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/gwaka/plateau-fruits.jpg" alt="GWAKA creation 4" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none';this.parentElement.innerHTML='&#127860;';">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/gwaka/chef-cuisine.jpg" alt="GWAKA creation 5" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none';this.parentElement.innerHTML='&#127860;';">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/gwaka/charcuterie-board.jpg" alt="GWAKA creation 6" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none';this.parentElement.innerHTML='&#127860;';">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/gwaka/verrines-appetizers.jpg" alt="GWAKA creation 7" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none';this.parentElement.innerHTML='&#127860;';">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/gwaka/rouleaux-printemps.jpg" alt="GWAKA creation 8" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none';this.parentElement.innerHTML='&#127860;';">
+      </div>
+      <div class="gallery-item reveal">
+        <img src="images/gwaka/scene-tropical.jpg" alt="GWAKA creation 9" loading="lazy" onerror="this.parentElement.classList.add('img-placeholder');this.style.display='none';this.parentElement.innerHTML='&#127860;';">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CONTACT ========== -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Demandez votre devis personnalise</h2>
+      <p class="section-desc">Decrivez votre evenement et nous vous repondrons sous 24h avec une proposition sur mesure.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h3>Parlons de votre evenement</h3>
+        <p>Que ce soit pour un brunch entre amis, un mariage ou un seminaire d'entreprise, nous adaptons nos formules a vos envies et votre budget.</p>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">&#128205;</div>
+          <div>
+            <div class="contact-detail-label">Adresse</div>
+            <div class="contact-detail-text">Papeete, Tahiti</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">&#128231;</div>
+          <div>
+            <div class="contact-detail-label">Email</div>
+            <div class="contact-detail-text">gwakatahiti@gmail.com</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">&#128222;</div>
+          <div>
+            <div class="contact-detail-label">Telephone</div>
+            <div class="contact-detail-text">+689 89 53 75 70</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon">&#128247;</div>
+          <div>
+            <div class="contact-detail-label">Instagram</div>
+            <div class="contact-detail-text">@gwaka.tahiti</div>
+          </div>
+        </div>
+
+        <div style="margin-top:40px;padding:28px;background:var(--green-muted);border-radius:var(--radius);display:flex;align-items:center;gap:16px;">
+          <div style="font-size:32px;flex-shrink:0;">&#128156;</div>
+          <div>
+            <div style="font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--green);margin-bottom:4px;">made with love for you</div>
+            <div style="font-size:13px;color:var(--text-light);line-height:1.5;">Chaque commande est preparee avec des produits frais et locaux, le jour meme de la livraison.</div>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form reveal" onsubmit="event.preventDefault();document.getElementById('formSuccess').style.display='flex';this.style.display='none';">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Nom complet</label>
+            <input type="text" id="name" placeholder="Votre nom" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="votre@email.com" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event">Type d'evenement</label>
+            <select id="event" required>
+              <option value="" disabled selected>Choisir...</option>
+              <option>Brunch prive</option>
+              <option>Mariage</option>
+              <option>Anniversaire</option>
+              <option>Seminaire / Corporate</option>
+              <option>Baby Shower</option>
+              <option>Autre evenement</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="guests">Nombre d'invites</label>
+            <input type="number" id="guests" placeholder="Ex: 25" min="1">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date">Date souhaitee</label>
+            <input type="date" id="date">
+          </div>
+          <div class="form-group">
+            <label for="budget">Budget estimatif</label>
+            <select id="budget">
+              <option value="" disabled selected>Choisir...</option>
+              <option>Moins de 30 000 XPF</option>
+              <option>30 000 - 60 000 XPF</option>
+              <option>60 000 - 100 000 XPF</option>
+              <option>Plus de 100 000 XPF</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="preferences">Preferences alimentaires</label>
+          <select id="preferences">
+            <option value="" disabled selected>Choisir...</option>
+            <option>Aucune restriction</option>
+            <option>Vegetarien</option>
+            <option>Vegan</option>
+            <option>Sans gluten</option>
+            <option>Halal</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" rows="4" placeholder="Decrivez votre evenement, vos envies, ou toute demande particuliere..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Envoyer ma demande</button>
+      </form>
+
+      <div id="formSuccess" style="display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--white);border-radius:var(--radius-lg);padding:60px 40px;box-shadow:var(--shadow-card);">
+        <div style="font-size:56px;margin-bottom:16px;">&#9989;</div>
+        <h3 style="font-family:var(--font-display);font-size:24px;margin-bottom:8px;color:var(--text);">Demande envoyee !</h3>
+        <p style="font-size:15px;color:var(--text-light);max-width:340px;">Merci pour votre interet. Nous reviendrons vers vous dans les plus brefs delais.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#accueil" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;">
+          <img src="https://litter.catbox.moe/66guxd.jpg" alt="GWAKA" style="height:48px;width:48px;border-radius:50%;object-fit:cover;">
+          <span style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--green-accent);">gwaka</span>
+        </a>
+        <p>Traiteur brunch &amp; healthy a Tahiti. Des produits frais, locaux et faits maison pour tous vos evenements.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <a href="#accueil">Accueil</a>
+        <a href="#services">Services</a>
+        <a href="#menu">Menu</a>
+        <a href="#galerie">Galerie</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="#services">Brunch Gourmand</a>
+        <a href="#services">Buffet Signature</a>
+        <a href="#services">Cocktail Evenement</a>
+        <a href="#services">Dejeuner d'Affaires</a>
+        <a href="#services">Plateaux Pret a Servir</a>
+        <a href="#services">Apero Box</a>
+        <a href="https://drive.google.com/file/d/1NKrcejsYzoHpFg1EvS5LgBj6F1qOUt6A/view" target="_blank" rel="noopener">Catalogue PDF</a>
+      </div>
+      <div class="footer-col">
+        <h4>Suivez-nous</h4>
+        <a href="https://instagram.com/gwaka.tahiti" target="_blank" rel="noopener">Instagram @gwaka.tahiti</a>
+        <a href="tel:+68989537570">+689 89 53 75 70</a>
+        <a href="mailto:gwakatahiti@gmail.com">gwakatahiti@gmail.com</a>
+        <a href="#contact">Nous contacter</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 GWAKA. Tous droits reserves. Made with love for you.</span>
+      <span>Site par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to top -->
+<button class="back-to-top" id="backToTop" aria-label="Retour en haut" onclick="window.scrollTo({top:0,behavior:'smooth'});">&#8593;</button>
+
+<!-- ========== SCRIPTS ========== -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+/* ========== LENIS SMOOTH SCROLL ========== */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let lenis;
+if (!prefersReducedMotion) {
+  lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+}
+
+/* ========== NAVBAR SCROLL ========== */
+const navbar = document.getElementById('navbar');
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const currentScroll = window.scrollY;
+  navbar.classList.toggle('scrolled', currentScroll > 80);
+  lastScroll = currentScroll;
+
+  // Scroll progress
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = (currentScroll / docHeight) * 100;
+  document.getElementById('scrollProgress').style.width = progress + '%';
+
+  // Back to top
+  document.getElementById('backToTop').classList.toggle('visible', currentScroll > 600);
+});
+
+/* ========== MOBILE MENU ========== */
+const burger = document.getElementById('burger');
+const mobileMenu = document.getElementById('mobileMenu');
+
+burger.addEventListener('click', () => {
+  burger.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+  document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+});
+
+function closeMobile() {
+  burger.classList.remove('active');
+  mobileMenu.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+/* ========== MENU FILTERING ========== */
+const filterBtns = document.querySelectorAll('.filter-btn');
+const menuCards = document.querySelectorAll('.menu-card');
+const menuHeaders = document.querySelectorAll('.menu-category-header');
+const menuCountEl = document.getElementById('menuCount');
+
+function updateMenuCount(count) {
+  if (menuCountEl) menuCountEl.innerHTML = '<strong>' + count + '</strong> produit' + (count > 1 ? 's' : '');
+}
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    let visibleCount = 0;
+
+    // Show/hide category headers
+    menuHeaders.forEach(header => {
+      if (filter === 'all' || header.dataset.cat === filter) {
+        header.style.display = '';
+      } else {
+        header.style.display = 'none';
+      }
+    });
+
+    // Show/hide cards with staggered animation
+    menuCards.forEach((card, i) => {
+      if (filter === 'all' || card.dataset.cat === filter) {
+        card.classList.remove('hidden');
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(16px)';
+        const delay = Math.min(visibleCount * 40, 400);
+        visibleCount++;
+        setTimeout(() => {
+          card.style.transition = 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, delay);
+      } else {
+        card.classList.add('hidden');
+        card.style.opacity = '0';
+      }
+    });
+
+    updateMenuCount(visibleCount);
+  });
+});
+
+/* ========== GSAP ANIMATIONS ========== */
+if (!prefersReducedMotion) {
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Hero animations
+  gsap.from('.hero-badge', { opacity: 0, y: 20, duration: 0.8, delay: 0.2, ease: 'power2.out' });
+  gsap.from('.hero-title', { opacity: 0, y: 30, duration: 1, delay: 0.4, ease: 'power2.out' });
+  gsap.from('.hero-subtitle', { opacity: 0, y: 20, duration: 0.8, delay: 0.6, ease: 'power2.out' });
+  gsap.from('.hero-ctas', { opacity: 0, y: 20, duration: 0.8, delay: 0.8, ease: 'power2.out' });
+  gsap.from('.hero-image-wrapper', { opacity: 0, scale: 0.95, duration: 1.2, delay: 0.3, ease: 'power2.out' });
+  gsap.from('.hero-float-card', { opacity: 0, x: -30, duration: 0.8, delay: 1, ease: 'power2.out' });
+
+  // Reveal on scroll
+  document.querySelectorAll('.reveal').forEach(el => {
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 85%',
+      onEnter: () => el.classList.add('visible'),
+      once: true
+    });
+  });
+
+  // Service cards stagger
+  gsap.utils.toArray('.service-card').forEach((card, i) => {
+    gsap.from(card, {
+      scrollTrigger: { trigger: card, start: 'top 85%', once: true },
+      opacity: 0,
+      y: 40,
+      duration: 0.7,
+      delay: i * 0.15,
+      ease: 'power2.out'
+    });
+  });
+
+  // Gallery items stagger
+  gsap.utils.toArray('.gallery-item').forEach((item, i) => {
+    gsap.from(item, {
+      scrollTrigger: { trigger: item, start: 'top 90%', once: true },
+      opacity: 0,
+      scale: 0.85,
+      duration: 0.6,
+      delay: i * 0.08,
+      ease: 'power2.out'
+    });
+  });
+
+  // Menu cards stagger
+  gsap.utils.toArray('.menu-card').forEach((card, i) => {
+    gsap.from(card, {
+      scrollTrigger: { trigger: card, start: 'top 90%', once: true },
+      opacity: 0,
+      y: 20,
+      duration: 0.5,
+      delay: (i % 4) * 0.08,
+      ease: 'power2.out'
+    });
+  });
+
+  // Parallax hero background shape
+  gsap.to('.hero-bg-shape', {
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 },
+    y: 150,
+    ease: 'none'
+  });
+
+} else {
+  // Show all reveals immediately
+  document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+}
+
+/* ========== SMOOTH ANCHOR SCROLLING ========== */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      if (lenis) {
+        lenis.scrollTo(target, { offset: -80 });
+      } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+    closeMobile();
+  });
+});
+
+/* ========== ACTIVE NAV LINK ========== */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.style.color = '';
+    if (link.getAttribute('href') === '#' + current) {
+      link.style.color = 'var(--green)';
+    }
+  });
+});
+</script>
+
+</body>
+</html>

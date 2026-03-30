@@ -1,0 +1,2620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GWAKA | Traiteur Brunch & Healthy — Tahiti</title>
+  <meta name="description" content="GWAKA — Traiteur Brunch & Healthy à Tahiti. Saveurs fraîches & faites maison, livrées chez vous. Brunch, buffets corporate, événements privés, mariages.">
+  <link rel="icon" type="image/jpeg" href="https://litter.catbox.moe/66guxd.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+  <style>
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --white: #FAFAFA;
+      --avocado: #4A7C3F;
+      --avocado-dark: #3A6232;
+      --avocado-light: #7CB342;
+      --orange-accent: #F5941E;
+      --coral: #E8A87C;
+      --coral-light: #F5CBA7;
+      --sage: #C5D5A5;
+      --sage-light: #E8F0D8;
+      --dark: #2D3436;
+      --dark-muted: #636E72;
+      --cream: #FFF8F0;
+      --radius: 24px;
+      --radius-sm: 16px;
+      --shadow-soft: 0 4px 24px rgba(45,52,54,0.06);
+      --shadow-hover: 0 12px 40px rgba(45,52,54,0.12);
+      --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--white);
+      color: var(--dark);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-weight: 400;
+      line-height: 1.15;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    button, input, textarea, select {
+      font-family: inherit;
+      font-size: inherit;
+      border: none;
+      outline: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ========== PRELOADER ========== */
+    .preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .preloader svg {
+      width: 64px;
+      height: 64px;
+      animation: pulse-loader 1.2s ease-in-out infinite;
+    }
+
+    .preloader-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.125rem;
+      color: var(--dark-muted);
+      opacity: 0.7;
+    }
+
+    @keyframes pulse-loader {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0.6; }
+    }
+
+    /* ========== NAV ========== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 0;
+      transition: var(--transition);
+      background: transparent;
+    }
+
+    nav.scrolled {
+      background: rgba(250,250,250,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 12px 0;
+      box-shadow: 0 1px 16px rgba(45,52,54,0.06);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-logo svg { width: 36px; height: 42px; }
+
+    .nav-logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.375rem;
+      letter-spacing: 0.04em;
+      color: var(--dark);
+    }
+
+    .nav-logo-sub {
+      font-size: 0.7rem;
+      color: var(--dark-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--dark-muted);
+      transition: color 0.25s;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links a:hover { color: var(--avocado); }
+
+    .nav-cta {
+      background: var(--avocado);
+      color: white !important;
+      padding: 10px 24px;
+      border-radius: 100px;
+      font-weight: 600 !important;
+      transition: var(--transition) !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--avocado-dark);
+      transform: translateY(-1px);
+    }
+
+    .mobile-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+      background: none;
+    }
+
+    .mobile-toggle span {
+      width: 24px;
+      height: 2px;
+      background: var(--dark);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* Mobile Nav */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 360px;
+      height: 100vh;
+      background: var(--white);
+      z-index: 1001;
+      padding: 80px 32px 32px;
+      transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: -8px 0 40px rgba(0,0,0,0.1);
+    }
+
+    .mobile-menu.open { right: 0; }
+
+    .mobile-menu a {
+      display: block;
+      padding: 16px 0;
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: var(--dark);
+      border-bottom: 1px solid var(--sage-light);
+    }
+
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .mobile-overlay.show { opacity: 1; }
+
+    .mobile-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: none;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(160deg, var(--white) 0%, var(--sage-light) 50%, var(--cream) 100%);
+    }
+
+    .hero-bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .hero-bg-blob.one {
+      width: 600px;
+      height: 600px;
+      background: var(--sage);
+      top: -200px;
+      right: -100px;
+    }
+
+    .hero-bg-blob.two {
+      width: 400px;
+      height: 400px;
+      background: var(--coral-light);
+      bottom: -100px;
+      left: -50px;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      padding: 120px 0 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124,179,66,0.12);
+      color: var(--avocado-dark);
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-size: 0.813rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .hero-badge svg { width: 16px; height: 16px; }
+
+    .hero h1 {
+      font-size: clamp(2.75rem, 5vw, 4.25rem);
+      color: var(--dark);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+      color: var(--avocado);
+      position: relative;
+    }
+
+    .hero-desc {
+      font-size: 1.125rem;
+      color: var(--dark-muted);
+      line-height: 1.75;
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--avocado);
+      color: white;
+      padding: 16px 36px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.938rem;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background: var(--avocado-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(124,179,66,0.3);
+    }
+
+    .btn-primary svg { width: 18px; height: 18px; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: var(--dark);
+      padding: 16px 32px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.938rem;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid rgba(45,52,54,0.15);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--avocado);
+      color: var(--avocado);
+      transform: translateY(-2px);
+    }
+
+    .hero-clients {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(45,52,54,0.08);
+    }
+
+    .hero-clients-text {
+      font-size: 0.813rem;
+      color: var(--dark-muted);
+      line-height: 1.5;
+    }
+
+    .hero-clients-logos {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .client-logo-pill {
+      background: rgba(255,255,255,0.7);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--dark-muted);
+      white-space: nowrap;
+    }
+
+    /* Hero Visual */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-image-shape {
+      width: 100%;
+      aspect-ratio: 4/5;
+      max-width: 480px;
+      border-radius: 40% 60% 55% 45% / 55% 45% 60% 40%;
+      background: linear-gradient(135deg, var(--sage) 0%, var(--avocado-light) 40%, var(--coral-light) 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(124,179,66,0.15);
+    }
+
+    .hero-image-shape::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(255,255,255,0.4) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, var(--coral) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, var(--avocado-light) 0%, transparent 50%);
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+
+    /* Mini floating food thumbnails near hero */
+    .hero-mini-img {
+      position: absolute;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      z-index: 4;
+      border: 3px solid white;
+    }
+
+    .hero-mini-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-mini-img.mini-1 {
+      width: 120px;
+      height: 120px;
+      bottom: 8%;
+      left: -10%;
+      animation: float 7s ease-in-out infinite;
+      animation-delay: -1.5s;
+    }
+
+    .hero-mini-img.mini-2 {
+      width: 100px;
+      height: 100px;
+      top: 12%;
+      right: -8%;
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+      animation-delay: -3s;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-mini-img { display: none; }
+    }
+
+    .hero-image-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-image-inner svg {
+      width: 55%;
+      height: auto;
+      opacity: 0.2;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
+    }
+
+    .hero-image-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Service card images */
+    .service-card-img {
+      width: 100%;
+      height: 180px;
+      border-radius: 16px;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+
+    /* Instagram real images */
+    .insta-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Floating Icons */
+    .floating-icon {
+      position: absolute;
+      z-index: 3;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .floating-icon.icon-1 {
+      top: 10%;
+      right: 15%;
+      animation-delay: 0s;
+    }
+
+    .floating-icon.icon-2 {
+      bottom: 20%;
+      right: 5%;
+      animation-delay: -2s;
+    }
+
+    .floating-icon.icon-3 {
+      top: 55%;
+      left: 5%;
+      animation-delay: -4s;
+    }
+
+    .floating-icon.icon-4 {
+      top: 5%;
+      left: 20%;
+      animation-delay: -1s;
+    }
+
+    .floating-icon svg {
+      width: 48px;
+      height: 48px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      33% { transform: translateY(-12px) rotate(3deg); }
+      66% { transform: translateY(6px) rotate(-2deg); }
+    }
+
+    /* ========== SECTION COMMON ========== */
+    section { padding: 100px 0; }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.813rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--avocado);
+      margin-bottom: 16px;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: var(--avocado);
+      border-radius: 2px;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      margin-bottom: 16px;
+      color: var(--dark);
+    }
+
+    .section-desc {
+      font-size: 1.063rem;
+      color: var(--dark-muted);
+      max-width: 560px;
+      line-height: 1.75;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .section-header .section-desc {
+      margin: 0 auto;
+    }
+
+    /* ========== SERVICES — BENTO GRID ========== */
+    .services { background: var(--white); }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .service-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 40px 36px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      transition: var(--transition);
+      cursor: default;
+      border: 1px solid rgba(45,52,54,0.04);
+    }
+
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--avocado), var(--avocado-light));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .service-card:hover::before { opacity: 1; }
+
+    .service-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .service-icon.brunch {
+      background: linear-gradient(135deg, var(--sage-light), var(--sage));
+    }
+
+    .service-icon.corporate {
+      background: linear-gradient(135deg, #E8F0FE, #BBDEFB);
+    }
+
+    .service-icon.events {
+      background: linear-gradient(135deg, var(--coral-light), var(--coral));
+    }
+
+    .service-icon.mariage {
+      background: linear-gradient(135deg, #FFF0F5, #F8BBD0);
+    }
+
+    .service-icon svg { width: 28px; height: 28px; }
+
+    .service-card h3 {
+      font-size: 1.375rem;
+      margin-bottom: 12px;
+    }
+
+    .service-card p {
+      font-size: 0.938rem;
+      color: var(--dark-muted);
+      line-height: 1.7;
+    }
+
+    .service-tag {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--avocado);
+      background: rgba(124,179,66,0.1);
+      padding: 6px 14px;
+      border-radius: 100px;
+    }
+
+    /* ========== INSTAGRAM / GALERIE ========== */
+    .instagram {
+      background: linear-gradient(180deg, var(--white) 0%, var(--sage-light) 100%);
+      overflow: hidden;
+    }
+
+    .insta-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .insta-profile {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .insta-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--avocado), var(--avocado-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid white;
+      box-shadow: 0 4px 16px rgba(124,179,66,0.2);
+    }
+
+    .insta-avatar svg { width: 36px; height: 36px; }
+
+    .insta-info h3 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+
+    .insta-stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .insta-stats span {
+      font-size: 0.813rem;
+      color: var(--dark-muted);
+    }
+
+    .insta-stats strong {
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .insta-follow-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #833AB4, #E1306C, #F77737);
+      color: white;
+      padding: 12px 28px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+
+    .insta-follow-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(225,48,108,0.3);
+    }
+
+    .insta-follow-btn svg { width: 18px; height: 18px; }
+
+    .insta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .insta-item {
+      aspect-ratio: 1;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .insta-item:hover { transform: scale(1.03); }
+
+    .insta-item-bg {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .insta-item:hover .insta-item-bg { transform: scale(1.08); }
+
+    .insta-item.g1 .insta-item-bg {
+      background: linear-gradient(145deg, #E8F5E9 0%, #C5E1A5 40%, #AED581 100%);
+    }
+    .insta-item.g2 .insta-item-bg {
+      background: linear-gradient(145deg, #FFF8E1 0%, #FFE0B2 40%, var(--coral) 100%);
+    }
+    .insta-item.g3 .insta-item-bg {
+      background: linear-gradient(145deg, #F1F8E9 0%, #DCEDC8 40%, #C5D5A5 100%);
+    }
+    .insta-item.g4 .insta-item-bg {
+      background: linear-gradient(145deg, #FFF3E0 0%, #FFCCBC 40%, #FF8A65 100%);
+    }
+    .insta-item.g5 .insta-item-bg {
+      background: linear-gradient(145deg, #E8F5E9 0%, var(--avocado-light) 40%, var(--avocado) 100%);
+    }
+    .insta-item.g6 .insta-item-bg {
+      background: linear-gradient(145deg, #FFFDE7 0%, #FFF9C4 40%, #FFE082 100%);
+    }
+    .insta-item.g7 .insta-item-bg {
+      background: linear-gradient(145deg, #ECEFF1 0%, #CFD8DC 40%, #B0BEC5 100%);
+    }
+    .insta-item.g8 .insta-item-bg {
+      background: linear-gradient(145deg, #FCE4EC 0%, #F8BBD0 40%, #F48FB1 100%);
+    }
+    .insta-item.g9 .insta-item-bg {
+      background: linear-gradient(145deg, var(--sage-light) 0%, var(--sage) 40%, var(--avocado-light) 100%);
+    }
+
+    .insta-item-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(45,52,54,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .insta-item:hover .insta-item-overlay { opacity: 1; }
+
+    .insta-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .insta-stat svg { width: 18px; height: 18px; }
+
+    /* Decorative SVG inside grid items */
+    .insta-item-icon {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      opacity: 0.15;
+    }
+
+    .insta-item-icon svg { width: 40px; height: 40px; }
+
+    .insta-cta {
+      text-align: center;
+      margin-top: 48px;
+    }
+
+    .insta-cta a {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 0.938rem;
+      color: var(--dark);
+      padding: 14px 32px;
+      border-radius: 100px;
+      border: 2px solid rgba(45,52,54,0.12);
+      transition: var(--transition);
+    }
+
+    .insta-cta a:hover {
+      border-color: var(--avocado);
+      color: var(--avocado);
+      transform: translateY(-2px);
+    }
+
+    .insta-cta a svg { width: 20px; height: 20px; }
+
+    /* ========== CONTACT ========== */
+    .contact {
+      background: linear-gradient(180deg, var(--sage-light) 0%, var(--white) 100%);
+    }
+
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .contact-info h2 {
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      margin-bottom: 20px;
+    }
+
+    .contact-info p {
+      font-size: 1.063rem;
+      color: var(--dark-muted);
+      line-height: 1.75;
+      margin-bottom: 36px;
+    }
+
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .contact-detail-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(124,179,66,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .contact-detail-icon svg { width: 22px; height: 22px; color: var(--avocado); }
+
+    .contact-detail-text {
+      font-size: 0.938rem;
+      color: var(--dark-muted);
+    }
+
+    .contact-detail-text strong {
+      display: block;
+      color: var(--dark);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .contact-form-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(45,52,54,0.04);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.813rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid rgba(45,52,54,0.08);
+      border-radius: 14px;
+      background: var(--white);
+      color: var(--dark);
+      font-size: 0.938rem;
+      transition: border-color 0.25s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--avocado);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: #B2BEC3;
+    }
+
+    .form-group textarea { resize: vertical; min-height: 100px; }
+
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23636E72' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 5.5l3.5 4 3.5-4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      cursor: pointer;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .radio-group label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border: 2px solid rgba(45,52,54,0.08);
+      border-radius: 100px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.813rem;
+      font-weight: 500;
+    }
+
+    .radio-group input[type="radio"] {
+      display: none;
+    }
+
+    .radio-group input[type="radio"]:checked + label {
+      border-color: var(--avocado);
+      background: rgba(124,179,66,0.08);
+      color: var(--avocado-dark);
+    }
+
+    .form-submit {
+      width: 100%;
+      padding: 16px;
+      border-radius: 100px;
+      background: var(--avocado);
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .form-submit:hover {
+      background: var(--avocado-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(124,179,66,0.3);
+    }
+
+    .form-submit svg { width: 20px; height: 20px; }
+
+    /* ========== FOOTER ========== */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.6);
+      padding: 48px 0 32px;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .footer-brand svg { width: 30px; height: 35px; }
+
+    .footer-brand span {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.125rem;
+      color: white;
+    }
+
+    .footer-text {
+      font-size: 0.813rem;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+
+    .footer-social a {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .footer-social a:hover {
+      background: var(--avocado);
+      transform: translateY(-2px);
+    }
+
+    .footer-social a svg { width: 18px; height: 18px; color: white; }
+
+    .footer-bottom {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+      font-size: 0.75rem;
+    }
+
+    /* ========== MENU / CATALOGUE ========== */
+    .menu-section {
+      background: linear-gradient(180deg, var(--white) 0%, var(--sage-light) 40%, var(--white) 100%);
+    }
+
+    /* --- Sticky Filter Tabs --- */
+    .menu-tabs-wrap {
+      position: sticky;
+      top: 64px;
+      z-index: 50;
+      background: rgba(250,250,250,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 16px 0 12px;
+      margin: 0 -24px 40px;
+      border-bottom: 1px solid rgba(45,52,54,0.06);
+      transition: box-shadow 0.3s;
+    }
+
+    .menu-tabs-wrap.stuck {
+      box-shadow: 0 4px 24px rgba(45,52,54,0.06);
+    }
+
+    .menu-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 0 24px;
+      justify-content: center;
+    }
+
+    .menu-tab {
+      padding: 10px 22px;
+      border-radius: 100px;
+      border: 1.5px solid rgba(45,52,54,0.1);
+      background: white;
+      font-size: 0.813rem;
+      font-weight: 600;
+      color: var(--dark-muted);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.25,0.46,0.45,0.94);
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-tab::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--avocado);
+      border-radius: inherit;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+      z-index: -1;
+    }
+
+    .menu-tab:hover {
+      border-color: var(--avocado);
+      color: var(--avocado);
+    }
+
+    .menu-tab.active {
+      background: var(--avocado);
+      border-color: var(--avocado);
+      color: white;
+    }
+
+    .menu-tab.active::after {
+      transform: scaleX(1);
+    }
+
+    .menu-tab .tab-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 100px;
+      background: rgba(45,52,54,0.08);
+      font-size: 0.688rem;
+      font-weight: 700;
+      margin-left: 6px;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    .menu-tab.active .tab-count {
+      background: rgba(255,255,255,0.25);
+      color: white;
+    }
+
+    /* --- List Layout --- */
+    .menu-list {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 48px);
+    }
+
+    .menu-category {
+      margin-bottom: 64px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: menuCatIn 0.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+    }
+
+    .menu-category:nth-child(2) { animation-delay: 0.06s; }
+    .menu-category:nth-child(3) { animation-delay: 0.12s; }
+    .menu-category:nth-child(4) { animation-delay: 0.18s; }
+    .menu-category:nth-child(5) { animation-delay: 0.24s; }
+    .menu-category:nth-child(6) { animation-delay: 0.3s; }
+    .menu-category:nth-child(7) { animation-delay: 0.36s; }
+
+    .menu-category.hidden {
+      display: none;
+    }
+
+    @keyframes menuCatIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .menu-category__header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(45,52,54,0.1);
+    }
+
+    .menu-category__title {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      color: var(--dark);
+    }
+
+    .menu-category__count {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--avocado);
+      background: rgba(124,179,66,0.1);
+      padding: 4px 12px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .menu-category__line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(45,52,54,0.1) 0%, transparent 100%);
+    }
+
+    .menu-list-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 20px;
+      align-items: center;
+      padding: 14px 16px;
+      margin: 0 -16px;
+      border-radius: 16px;
+      transition: all 0.22s cubic-bezier(0.25,0.46,0.45,0.94);
+      cursor: default;
+      position: relative;
+    }
+
+    .menu-list-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 96px;
+      right: 16px;
+      height: 1px;
+      background: rgba(45,52,54,0.06);
+      transition: opacity 0.22s;
+    }
+
+    .menu-list-item:last-child::after { display: none; }
+
+    .menu-list-item:hover {
+      background: rgba(124,179,66,0.04);
+    }
+
+    .menu-list-item:hover::after { opacity: 0; }
+
+    .menu-list-item:hover .menu-list-item__thumbnail {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(45,52,54,0.12);
+    }
+
+    .menu-list-item__thumbnail-wrap {
+      width: 80px;
+      height: 80px;
+      border-radius: 14px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--sage-light), var(--sage));
+    }
+
+    .menu-list-item__thumbnail {
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      object-fit: cover;
+      object-position: center 40%;
+      transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.35s;
+    }
+
+    .menu-list-item__info {
+      min-width: 0;
+    }
+
+    .menu-list-item__name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.0625rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .menu-list-item__description {
+      font-size: 0.8125rem;
+      color: var(--dark-muted);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .menu-list-item__price {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.125rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      color: var(--avocado-dark);
+      background: rgba(124,179,66,0.08);
+      padding: 6px 16px;
+      border-radius: 100px;
+    }
+
+    .menu-list-item__price--devis {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--dark-muted);
+      background: rgba(45,52,54,0.05);
+      font-style: italic;
+    }
+
+    /* --- Download Button --- */
+    .menu-download {
+      text-align: center;
+      margin-top: 56px;
+      padding-top: 48px;
+      border-top: 1px solid rgba(45,52,54,0.06);
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--avocado);
+      color: white;
+      padding: 16px 36px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.938rem;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      box-shadow: 0 4px 16px rgba(74,124,63,0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-download::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+
+    .btn-download:hover::before { transform: translateX(100%); }
+
+    .btn-download:hover {
+      background: var(--avocado-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(74,124,63,0.35);
+    }
+
+    .btn-download svg { width: 20px; height: 20px; }
+
+    /* --- Item count pill --- */
+    .menu-total-count {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 0.8125rem;
+      color: var(--dark-muted);
+    }
+
+    .menu-total-count strong {
+      color: var(--avocado-dark);
+      font-weight: 700;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 768px) {
+      .menu-tabs { justify-content: center; }
+      .menu-tab { padding: 8px 16px; font-size: 0.75rem; }
+
+      .menu-list-item {
+        grid-template-columns: 64px 1fr;
+        gap: 12px;
+        padding: 12px 12px;
+        margin: 0 -12px;
+      }
+
+      .menu-list-item__thumbnail-wrap {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+      }
+
+      .menu-list-item__thumbnail { border-radius: 12px; }
+
+      .menu-list-item__price {
+        grid-column: 1 / -1;
+        justify-self: end;
+        font-size: 1rem;
+        padding: 4px 14px;
+        margin-top: -4px;
+      }
+
+      .menu-list-item::after {
+        left: 76px;
+        right: 12px;
+      }
+
+      .menu-category__header { gap: 16px; }
+      .menu-category { margin-bottom: 48px; }
+      .menu-tabs-wrap { margin: 0 -24px 32px; top: 56px; }
+    }
+
+    @media (max-width: 480px) {
+      .menu-list { padding: 0; }
+      .menu-tab .tab-count { display: none; }
+    }
+
+    /* ========== REVEAL ANIMATIONS ========== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+    }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        text-align: center;
+      }
+      .hero-desc { margin: 0 auto 36px; }
+      .hero-actions { justify-content: center; }
+      .hero-clients { justify-content: center; }
+      .hero-visual { order: -1; }
+      .hero-image-shape { max-width: 360px; margin: 0 auto; }
+      .services-grid { grid-template-columns: 1fr; }
+      .contact-inner { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 72px 0; }
+      .nav-links { display: none; }
+      .mobile-toggle { display: flex; }
+      .mobile-menu { display: block; }
+      .insta-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .insta-header { flex-direction: column; align-items: flex-start; }
+      .form-row { grid-template-columns: 1fr; }
+      .hero-clients-logos { flex-wrap: wrap; }
+      .floating-icon svg { width: 36px; height: 36px; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 2.25rem; }
+      .hero-image-shape { max-width: 280px; }
+      .contact-form-card { padding: 28px 20px; }
+      .radio-group { flex-direction: column; }
+      .radio-group label { justify-content: center; }
+    }
+
+    /* ========== REDUCED MOTION ========== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal, .reveal-scale {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PRELOADER -->
+  <div class="preloader" id="preloader">
+    <svg viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M24 10C21 10 18 5 15 7C18 9 21 10 24 10Z" fill="#7CB342"/>
+      <path d="M24 10C27 10 30 5 33 7C30 9 27 10 24 10Z" fill="#4A7C3F"/>
+      <line x1="24" y1="10" x2="24" y2="14" stroke="#3A6232" stroke-width="1.5" stroke-linecap="round"/>
+      <ellipse cx="24" cy="30" rx="14" ry="18" fill="#4A7C3F"/>
+      <ellipse cx="24" cy="28" rx="9" ry="12" fill="#7CB342" opacity="0.5"/>
+      <ellipse cx="24" cy="26" rx="4.5" ry="6" fill="#3A6232"/>
+      <circle cx="24" cy="24.5" r="3" fill="#8D6E63" opacity="0.7"/>
+    </svg>
+    <span class="preloader-text">GWAKA</span>
+  </div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <img src="https://litter.catbox.moe/66guxd.jpg" alt="GWAKA" style="height:40px;width:40px;border-radius:50%;object-fit:cover;">
+        <div>
+          <span class="nav-logo-text">gwaka</span>
+          <span class="nav-logo-sub">Traiteur Brunch & Healthy</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#galerie">Galerie</a></li>
+        <li><a href="#contact" class="nav-cta">Devis Gratuit</a></li>
+      </ul>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#2D3436" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+    <a href="#services" class="mobile-link">Services</a>
+    <a href="#menu" class="mobile-link">Menu</a>
+    <a href="#galerie" class="mobile-link">Galerie</a>
+    <a href="#contact" class="mobile-link">Demander un Devis</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-bg-blob one"></div>
+    <div class="hero-bg-blob two"></div>
+
+    <!-- Floating food icons -->
+    <div class="floating-icon icon-1">
+      <svg viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="26" rx="18" ry="16" fill="#C5D5A5"/><ellipse cx="24" cy="24" rx="13" ry="12" fill="#7CB342"/><ellipse cx="24" cy="21" rx="5" ry="7" fill="#558B2F"/><circle cx="24" cy="19" r="3.5" fill="#8D6E63" opacity="0.7"/></svg>
+    </div>
+    <div class="floating-icon icon-2">
+      <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="18" fill="#FFF9C4"/><circle cx="24" cy="24" r="13" fill="#FFE082"/><path d="M18 14C22 8 26 8 30 14" stroke="#F9A825" stroke-width="2" fill="none"/><ellipse cx="24" cy="24" rx="5" ry="6" fill="#FFF176" opacity="0.6"/></svg>
+    </div>
+    <div class="floating-icon icon-3">
+      <svg viewBox="0 0 48 48" fill="none"><path d="M24 4C18 4 8 18 8 28C8 38 16 44 24 44C32 44 40 38 40 28C40 18 30 4 24 4Z" fill="#AED581"/><path d="M24 8L24 36" stroke="#7CB342" stroke-width="1.5"/><path d="M24 16C20 14 16 18 18 22" stroke="#7CB342" stroke-width="1.2" fill="none"/><path d="M24 22C28 20 32 24 30 28" stroke="#7CB342" stroke-width="1.2" fill="none"/></svg>
+    </div>
+    <div class="floating-icon icon-4">
+      <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="28" r="16" fill="#FFCCBC"/><ellipse cx="24" cy="26" rx="12" ry="10" fill="#FF8A65"/><ellipse cx="20" cy="24" rx="3" ry="2" fill="#D84315" opacity="0.3"/><ellipse cx="28" cy="25" rx="2.5" ry="1.8" fill="#BF360C" opacity="0.3"/><path d="M12 20Q24 10 36 20" stroke="#8D6E63" stroke-width="2" fill="none"/></svg>
+    </div>
+
+    <div class="container hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge reveal">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l2 3.5L14 5l-2.8 2.8L12 12 8 10l-4 2 .8-4.2L2 5l4-.5z"/></svg>
+          Traiteur Brunch & Healthy &mdash; Papeete, Tahiti
+        </div>
+        <h1 class="reveal">Le Brunch<br><span>Reinvente</span></h1>
+        <p class="hero-desc reveal">Brunch & Pleasure. Produits frais & faits-maison pour particuliers & professionnels. Des brunches gourmands aux buffets d'exception, de 9 a 70+ personnes.</p>
+        <div class="hero-actions reveal">
+          <a href="#contact" class="btn-primary">
+            Demander un Devis
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"/></svg>
+          </a>
+          <a href="#galerie" class="btn-secondary">
+            Voir nos Creations
+          </a>
+        </div>
+        <div class="hero-clients">
+          <span class="hero-clients-text">Ils nous font confiance</span>
+          <div class="hero-clients-logos">
+            <span class="client-logo-pill">TotalEnergies</span>
+            <span class="client-logo-pill">Socredo</span>
+            <span class="client-logo-pill">ICPF</span>
+            <span class="client-logo-pill">Gaz de Tahiti</span>
+            <span class="client-logo-pill">Royal Automobile</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual reveal-scale">
+        <div class="hero-image-shape">
+          <div class="hero-image-inner">
+            <img src="images/gwaka/hero-brunch.jpg" alt="Brunch tropical GWAKA Tahiti" loading="eager" onerror="this.style.display='none'">
+          </div>
+        </div>
+        <div class="hero-mini-img mini-1">
+          <img src="images/gwaka/verrines.jpg" alt="Verrines GWAKA" loading="lazy" onerror="this.parentElement.style.display='none'">
+        </div>
+        <div class="hero-mini-img mini-2">
+          <img src="images/gwaka/charcuterie-board.jpg" alt="Charcuterie board GWAKA" loading="lazy" onerror="this.parentElement.style.display='none'">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label reveal">Nos Services</span>
+        <h2 class="section-title reveal">Des Experiences Culinaires<br>Sur Mesure</h2>
+        <p class="section-desc reveal">Produits frais & faits-maison, dressage soigne, vaisselle elegante. Du brunch intime au buffet corporate, pour particuliers & professionnels.</p>
+      </div>
+      <div class="services-grid">
+        <!-- Brunch Gourmand -->
+        <div class="service-card reveal">
+          <img class="service-card-img" src="images/gwaka/plateau-fruits.jpg" alt="Plateau de fruits frais GWAKA" onerror="this.style.background='linear-gradient(135deg,#E8F0D8,#C5D5A5)';this.style.display='block'">
+          <h3>Brunch Gourmand</h3>
+          <p>Planches de 1,20m de fruits frais, jus presses, pancakes, granola maison... Un brunch genereux livre chez vous avec dressage soigne.</p>
+          <span class="service-tag">Le plus demande</span>
+        </div>
+        <!-- Buffet Signature -->
+        <div class="service-card reveal">
+          <img class="service-card-img" src="images/gwaka/buffet-corporate.jpg" alt="Buffet corporate GWAKA" onerror="this.style.background='linear-gradient(135deg,#E8F0FE,#BBDEFB)';this.style.display='block'">
+          <h3>Buffet Signature</h3>
+          <p>Buffet sale raffine avec vaisselle elegante pour inaugurations, colloques et seminaires. Comme pour l'ICPF, Socredo ou TotalEnergies.</p>
+          <span class="service-tag">Entreprises</span>
+        </div>
+        <!-- Cocktail & Evenement -->
+        <div class="service-card reveal">
+          <img class="service-card-img" src="images/gwaka/scene-tropical.jpg" alt="Cocktail evenement GWAKA" onerror="this.style.background='linear-gradient(135deg,#F5CBA7,#E8A87C)';this.style.display='block'">
+          <h3>Cocktail & Evenement</h3>
+          <p>Bouchees, verrines et cocktails dejeunatoires pour vos evenements corporate, lancements et celebrations privees.</p>
+          <span class="service-tag">Particuliers & Pro</span>
+        </div>
+        <!-- Dejeuner d'Affaires -->
+        <div class="service-card reveal">
+          <img class="service-card-img" src="images/gwaka/scene-deco.jpg" alt="Dejeuner d'affaires GWAKA" onerror="this.style.background='linear-gradient(135deg,#FFF0F5,#F8BBD0)';this.style.display='block'">
+          <h3>Dejeuner d'Affaires</h3>
+          <p>Format convivial pour dejeuners corporate, comites de direction et reunions d'equipe. Livraison et mise en place incluses.</p>
+          <span class="service-tag">Sur mesure</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU / CATALOGUE -->
+  <section class="menu-section" id="menu">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label reveal">Notre Carte</span>
+        <h2 class="section-title reveal">Le Menu <span style="color:var(--avocado)">Gwaka</span></h2>
+        <p class="section-desc reveal">Des produits frais, locaux et faits maison avec amour. Decouvrez notre selection de saveurs healthy et gourmandes.</p>
+      </div>
+
+      <!-- Sticky Filter Tabs -->
+      <div class="menu-tabs-wrap reveal" id="menuTabsWrap">
+        <div class="menu-tabs" role="tablist">
+          <button class="menu-tab active" data-cat="all" role="tab" aria-selected="true">Tout <span class="tab-count">55</span></button>
+          <button class="menu-tab" data-cat="sales" role="tab">Produits Sales <span class="tab-count">19</span></button>
+          <button class="menu-tab" data-cat="toasts" role="tab">Toasts Signature <span class="tab-count">9</span></button>
+          <button class="menu-tab" data-cat="wraps" role="tab">Wraps & Sandwiches <span class="tab-count">8</span></button>
+          <button class="menu-tab" data-cat="salades" role="tab">Salades <span class="tab-count">6</span></button>
+          <button class="menu-tab" data-cat="plateaux" role="tab">Plateaux <span class="tab-count">6</span></button>
+          <button class="menu-tab" data-cat="sushis" role="tab">Sushis <span class="tab-count">1</span></button>
+          <button class="menu-tab" data-cat="cakes" role="tab">Cakes & Carpaccios <span class="tab-count">2</span></button>
+          <button class="menu-tab" data-cat="mini" role="tab">Mini Sales <span class="tab-count">4</span></button>
+        </div>
+      </div>
+
+      <!-- Total count -->
+      <p class="menu-total-count reveal" id="menuTotalCount"><strong>55</strong> produits disponibles</p>
+
+      <!-- List Layout -->
+      <div class="menu-list" id="menuContainer">
+
+        <!-- PRODUITS SALES -->
+        <div class="menu-category" data-cat="sales">
+          <div class="menu-category__header">
+            <h3 class="menu-category__title">Produits Sales</h3>
+            <span class="menu-category__count">19 produits</span>
+            <div class="menu-category__line"></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/egg-muffin.jpg" alt="Egg Muffin Classique" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Egg Muffin Classique</div><div class="menu-list-item__description">Oeuf, cheddar</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/egg-muffin.jpg" alt="Egg Muffin Double" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Egg Muffin Double</div><div class="menu-list-item__description">Double cheddar, jambon Serrano</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/bagel-veggie.jpg" alt="Bagel Veggie" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Bagel Veggie</div><div class="menu-list-item__description">Houmous, poivrons grilles, chevre frais, epinards</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/bagel-jambon.jpg" alt="Bagel Jambon de Dinde" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Bagel Jambon de Dinde</div><div class="menu-list-item__description">Jambon de dinde, garniture fraiche</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/bagel-thon.jpg" alt="Bagel Thon Fume Local" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Bagel Thon Fume Local</div><div class="menu-list-item__description">Thon fume local, condiments</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/bagel-saumon.jpg" alt="Bagel Saumon Fume" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Bagel Saumon Fume</div><div class="menu-list-item__description">Saumon fume, garniture</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/black-bun.jpg" alt="Black Bun Oeufs" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Black Bun Oeufs</div><div class="menu-list-item__description">Oeufs brouilles, sriracha OU comte, bacon grille</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/black-bun-saumon.jpg" alt="Black Bun Poisson" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Black Bun Poisson</div><div class="menu-list-item__description">Saumon fume OU thon fume local</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/black-bun-saumon.jpg" alt="Black Bun Caviar d'Aubergines" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Black Bun Caviar d'Aubergines</div><div class="menu-list-item__description">Caviar d'aubergines, Serrano</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/cake-feta.jpg" alt="Cake Feta" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Cake Feta</div><div class="menu-list-item__description">Epinards, tomates sechees</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/cake-chevre.jpg" alt="Cake Chevre" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Cake Chevre</div><div class="menu-list-item__description">Epinards, patates douces</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/cake-thon.jpg" alt="Cake au Thon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Cake au Thon</div><div class="menu-list-item__description">Olives noires, tomates sechees, curry</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/gaufre-salee.jpg" alt="Gaufre Salee Epinards" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Gaufre Salee Epinards</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/gaufre-patates-douces.jpg" alt="Gaufre Salee Patates Douces" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Gaufre Salee Patates Douces</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/croque-monsieur.jpg" alt="Croque-Monsieur" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Croque-Monsieur</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/avocado-grilled-cheese.jpg" alt="Avocado Grilled Cheese" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Avocado Grilled Cheese</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mini-shakshuka.jpg" alt="Mini Shakshuka" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Mini Shakshuka</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/gaspacho-pasteque.jpg" alt="Gaspacho Pasteque" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Gaspacho Pasteque</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/gaspacho-tomates.jpg" alt="Gaspacho Tomates" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Gaspacho Tomates</div></div>
+
+          </div>
+        </div>
+
+        <!-- TOASTS SIGNATURE -->
+        <div class="menu-category" data-cat="toasts">
+          <div class="menu-category__header">
+            <h3 class="menu-category__title">Toasts Signature</h3>
+            <span class="menu-category__count">9 produits</span>
+            <div class="menu-category__line"></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/avocado-toast.jpg" alt="Avocado Toast" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Avocado Toast</div><div class="menu-list-item__description">Gwakamole maison</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/avocado-salmon-toast.jpg" alt="Avocado Salmon Toast" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Avocado Salmon Toast</div><div class="menu-list-item__description">Gwakamole, saumon fume</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/feta-salmon-toast.jpg" alt="Gwaka Feta Salmon Toast" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Gwaka Feta Salmon Toast</div><div class="menu-list-item__description">Supplement : grenade</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-chutney-magret.jpg" alt="Toast Chutney Magret" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Chutney Magret</div><div class="menu-list-item__description">Mangue-ananas, magret fume, chevre frais, noix</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-tartare-thon.jpg" alt="Toast Gwaka & Tartare de Thon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Gwaka & Tartare de Thon</div><div class="menu-list-item__description">Gwakamole, tartare thon fume local, aneth</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-bruschetta.jpg" alt="Toast Bruschetta" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Bruschetta</div><div class="menu-list-item__description">Supplement : mozzarella fraiche</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-caviar-aubergines.jpg" alt="Toast Caviar d'Aubergines" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Caviar d'Aubergines</div><div class="menu-list-item__description">Supplements : serrano, chevre frais</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-houmous.jpg" alt="Toast Houmous" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Houmous</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-tapenade.jpg" alt="Toast Tapenade" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Tapenade</div></div>
+
+          </div>
+        </div>
+
+        <!-- WRAPS & SANDWICHES -->
+        <div class="menu-category" data-cat="wraps">
+          <div class="menu-category__header">
+            <h3 class="menu-category__title">Wraps & Sandwiches</h3>
+            <span class="menu-category__count">8 produits</span>
+            <div class="menu-category__line"></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/wraps.jpg" alt="Wrap Saumon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Wrap Saumon</div><div class="menu-list-item__description">Saumon fume, sauce citron</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/wraps.jpg" alt="Wrap Veggie" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Wrap Veggie</div><div class="menu-list-item__description">Tofu grille curcuma, houmous betterave, veggies, pickles</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/wraps.jpg" alt="Wrap Oeufs" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Wrap Oeufs</div><div class="menu-list-item__description">Oeufs brouilles, gwakamole</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich Saumon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Club Sandwich Saumon</div><div class="menu-list-item__description">Saumon fume, creamcheese</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich Gwaka" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Club Sandwich Gwaka</div><div class="menu-list-item__description">Oeufs brouilles, gwakamole</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich Classique" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Club Sandwich Classique</div><div class="menu-list-item__description">Cheddar, creamcheese, jambon de dinde</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/rouleaux-printemps.jpg" alt="Rouleaux de Printemps Veggies" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Rouleaux de Printemps Veggies</div><div class="menu-list-item__description">Sauce cacahuete & sesame</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mozzarella-buffala.jpg" alt="Mozzarella di Buffala" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Mozzarella di Buffala</div></div>
+
+          </div>
+        </div>
+
+        <!-- SALADES COMPOSEES -->
+        <div class="menu-category" data-cat="salades">
+          <div class="menu-category__header">
+            <h3 class="menu-category__title">Salades Composees</h3>
+            <span class="menu-category__count">6 produits</span>
+            <div class="menu-category__line"></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/quinoa-salad.jpg" alt="Quinoa Energy" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Quinoa Energy</div><div class="menu-list-item__description">Trio de quinoa, feta, oranges, noix de pecan, epinards</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/salade-italienne.jpg" alt="Salade a l'Italienne" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Salade a l'Italienne</div><div class="menu-list-item__description">Pates torti, tomates sechees, olives, mozzarella, pesto</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/salade-med.jpg" alt="Salade Mediterraneenne" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Salade Mediterraneenne</div><div class="menu-list-item__description">Pates Orzo, olives, feta, concombres, tomates</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/salade-lentilles.jpg" alt="Salade de Lentilles" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Salade de Lentilles</div><div class="menu-list-item__description">Feta, tomates, mangues, concombres, menthe</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/coleslaw-healthy.jpg" alt="Coleslaw Healthy" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Coleslaw Healthy</div><div class="menu-list-item__description">Choux, carottes, sauce yaourt grecque</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/taboule-libanais.jpg" alt="Taboule Libanais" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Taboule Libanais</div><div class="menu-list-item__description">Couscous, concombres, citron, tomates, menthe</div></div>
+            
+          </div>
+        </div>
+
+        <!-- PLATEAUX A PARTAGER -->
+        <div class="menu-category" data-cat="plateaux">
+          <div class="menu-category__header">
+            <h3 class="menu-category__title">Plateaux a Partager</h3>
+            <span class="menu-category__count">6 produits</span>
+            <div class="menu-category__line"></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/plateau-legumes.jpg" alt="Plateaux de Legumes Decoupes" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Plateaux de Legumes Decoupes</div><div class="menu-list-item__description">5 varietes selon arrivage</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/veggies-tacos-bar.jpg" alt="Veggies Tacos Bar" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Veggies Tacos Bar</div><div class="menu-list-item__description">Minis tortillas, 5 condiments, 2 sauces</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/plateau-fromages.jpg" alt="Plateau Fromages" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Plateau Fromages</div><div class="menu-list-item__description">5 fromages selon arrivage</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/plateau-charcuterie.jpg" alt="Plateau Charcuterie" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Plateau Charcuterie</div><div class="menu-list-item__description">5 varietes selon arrivage</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/plateau-mixte.jpg" alt="Plateau Mixte" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Plateau Mixte</div><div class="menu-list-item__description">Charcuteries et fromages</div></div>
+            
+          </div>
+
+        </div>
+
+        <!-- SUSHIS -->
+        <div class="menu-category" data-cat="sushis">
+          <div class="menu-category__header">
+            <h3 class="menu-category__title">Sushis</h3>
+            <span class="menu-category__count">1 produit</span>
+            <div class="menu-category__line"></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/sushis.jpg" alt="Plateaux de Sushis Maison" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Plateaux de Sushis Maison</div><div class="menu-list-item__description">Sur devis, a partir de 50 pieces</div></div>
+            
+          </div>
+        </div>
+
+        <!-- CAKES & CARPACCIOS -->
+        <div class="menu-category" data-cat="cakes">
+          <div class="menu-category__header">
+            <h3 class="menu-category__title">Cakes & Carpaccios</h3>
+            <span class="menu-category__count">2 produits</span>
+            <div class="menu-category__line"></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/carpaccio-tofu.jpg" alt="Carpaccio Tofu Curry Coco" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Carpaccio Tofu Curry Coco</div></div>
+
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/carpaccio-aubergines.jpg" alt="Carpaccio Aubergines Vapeur" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Carpaccio Aubergines Vapeur</div></div>
+
+          </div>
+        </div>
+
+        <!-- MINI SALES -->
+        <div class="menu-category" data-cat="mini">
+          <div class="menu-category__header">
+            <h3 class="menu-category__title">Mini Sales</h3>
+            <span class="menu-category__count">4 produits</span>
+            <div class="menu-category__line"></div>
+          </div>
+
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mini-pain-lait.jpg" alt="Mini Pain au Lait" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Mini Pain au Lait</div><div class="menu-list-item__description">Moelleux, garni selon la saison</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/wrap-bite.jpg" alt="Wrap Bite" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Wrap Bite</div><div class="menu-list-item__description">Bouchee de wrap, format finger food</div></div>
+            
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/onigiri.jpg" alt="Onigiri" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Onigiri</div><div class="menu-list-item__description">Boulette de riz japonaise, garnie</div></div>
+            
+          </div>
+
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/bouchees-saumon.jpg" alt="Bouchees" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Bouchees</div><div class="menu-list-item__description">Assortiment de bouchees salees</div></div>
+            
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Download PDF -->
+      <div class="menu-download reveal">
+        <a href="https://drive.google.com/file/d/1NKrcejsYzoHpFg1EvS5LgBj6F1qOUt6A/view" target="_blank" rel="noopener" class="btn-download">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Telecharger notre catalogue complet
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM / GALERIE -->
+  <section class="instagram" id="galerie">
+    <div class="container">
+      <div class="insta-header">
+        <div class="insta-profile">
+          <div class="insta-avatar">
+            <svg viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="18" fill="rgba(255,255,255,0.3)"/>
+              <ellipse cx="24" cy="24" rx="12" ry="14" fill="rgba(255,255,255,0.4)"/>
+              <ellipse cx="24" cy="22" rx="5" ry="7" fill="rgba(255,255,255,0.3)"/>
+              <circle cx="24" cy="20" r="3" fill="rgba(255,255,255,0.4)"/>
+            </svg>
+          </div>
+          <div class="insta-info">
+            <h3>@gwaka.tahiti</h3>
+            <div class="insta-stats">
+              <span>Brunch & Healthy</span>
+              <span>Papeete, Tahiti</span>
+            </div>
+          </div>
+        </div>
+        <a href="https://www.instagram.com/gwaka.tahiti/" target="_blank" rel="noopener" class="insta-follow-btn">
+          <svg viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="2" width="16" height="16" rx="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="15" cy="5" r="1.2" fill="currentColor"/></svg>
+          Suivez-nous
+        </a>
+      </div>
+
+      <div class="insta-grid">
+        <div class="insta-item g1 reveal-scale">
+          <div class="insta-item-bg"></div>
+          <img src="images/gwaka/hero-brunch.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
+          <div class="insta-item-overlay">
+            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 142</span>
+          </div>
+        </div>
+        <div class="insta-item g2 reveal-scale">
+          <div class="insta-item-bg"></div>
+          <img src="images/gwaka/buffet-corporate.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
+          <div class="insta-item-overlay">
+            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 98</span>
+          </div>
+        </div>
+        <div class="insta-item g3 reveal-scale">
+          <div class="insta-item-bg"></div>
+          <img src="images/gwaka/scene-deco.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
+          <div class="insta-item-overlay">
+            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 215</span>
+          </div>
+        </div>
+        <div class="insta-item g4 reveal-scale">
+          <div class="insta-item-bg"></div>
+          <img src="images/gwaka/scene-tropical.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
+          <div class="insta-item-overlay">
+            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 176</span>
+          </div>
+        </div>
+        <div class="insta-item g5 reveal-scale">
+          <div class="insta-item-bg"></div>
+          <img src="images/gwaka/plateau-fruits.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
+          <div class="insta-item-overlay">
+            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 89</span>
+          </div>
+        </div>
+        <div class="insta-item g6 reveal-scale">
+          <div class="insta-item-bg"></div>
+          <img src="images/gwaka/chef-cuisine.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
+          <div class="insta-item-overlay">
+            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 134</span>
+          </div>
+        </div>
+        <div class="insta-item g7 reveal-scale">
+          <div class="insta-item-bg"></div>
+          <img src="images/gwaka/charcuterie-board.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
+          <div class="insta-item-overlay">
+            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 67</span>
+          </div>
+        </div>
+        <div class="insta-item g8 reveal-scale">
+          <div class="insta-item-bg"></div>
+          <img src="images/gwaka/verrines-appetizers.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
+          <div class="insta-item-overlay">
+            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 201</span>
+          </div>
+        </div>
+        <div class="insta-item g9 reveal-scale">
+          <div class="insta-item-bg"></div>
+          <img src="images/gwaka/club-sandwich.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
+          <div class="insta-item-overlay">
+            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 156</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="insta-cta reveal">
+        <a href="https://www.instagram.com/gwaka.tahiti/" target="_blank" rel="noopener">
+          Voir plus sur Instagram
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-inner">
+        <div class="contact-info">
+          <span class="section-label reveal">Contact</span>
+          <h2 class="reveal">Parlons de Votre<br>Evenement</h2>
+          <p class="reveal">Decrivez-nous votre projet et nous vous proposerons une prestation sur mesure, adaptee a vos envies et votre budget.</p>
+          <div class="contact-details reveal">
+            <div class="contact-detail">
+              <div class="contact-detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div class="contact-detail-text">
+                <strong>Adresse</strong>
+                Papeete, Tahiti
+              </div>
+            </div>
+            <div class="contact-detail">
+              <div class="contact-detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="18" cy="6" r="1.5"/></svg>
+              </div>
+              <div class="contact-detail-text">
+                <strong>Instagram</strong>
+                <a href="https://www.instagram.com/gwaka.tahiti/" target="_blank" rel="noopener" style="color: var(--avocado);">@gwaka.tahiti</a>
+              </div>
+            </div>
+            <div class="contact-detail">
+              <div class="contact-detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div class="contact-detail-text">
+                <strong>Telephone</strong>
+                <a href="tel:+68989537570" style="color: var(--avocado);">+689 89 53 75 70</a>
+              </div>
+            </div>
+            <div class="contact-detail">
+              <div class="contact-detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div class="contact-detail-text">
+                <strong>Email</strong>
+                <a href="mailto:gwakatahiti@gmail.com" style="color: var(--avocado);">gwakatahiti@gmail.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form-card reveal">
+          <form id="contactForm" onsubmit="return false;">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="prenom">Prenom</label>
+                <input type="text" id="prenom" placeholder="Votre prenom" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="votre@email.com" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tel">Telephone</label>
+                <input type="tel" id="tel" placeholder="+689 87 XX XX XX">
+              </div>
+              <div class="form-group">
+                <label for="date">Date souhaitee</label>
+                <input type="date" id="date">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Type de prestation</label>
+              <div class="radio-group">
+                <input type="radio" name="prestation" id="p-brunch" value="brunch" checked>
+                <label for="p-brunch">Brunch</label>
+                <input type="radio" name="prestation" id="p-buffet" value="buffet">
+                <label for="p-buffet">Buffet Corporate</label>
+                <input type="radio" name="prestation" id="p-event" value="event">
+                <label for="p-event">Evenement Prive</label>
+                <input type="radio" name="prestation" id="p-mariage" value="mariage">
+                <label for="p-mariage">Mariage</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="personnes">Nombre de personnes</label>
+              <select id="personnes">
+                <option value="">Selectionnez...</option>
+                <option value="2-10">2 a 10 personnes</option>
+                <option value="10-30">10 a 30 personnes</option>
+                <option value="30-50">30 a 50 personnes</option>
+                <option value="50+">50+ personnes</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" rows="4" placeholder="Decrivez votre evenement, vos envies, vos contraintes alimentaires..."></textarea>
+            </div>
+            <button type="submit" class="form-submit">
+              Envoyer ma Demande
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <img src="https://litter.catbox.moe/66guxd.jpg" alt="GWAKA" style="height:48px;width:48px;border-radius:50%;object-fit:cover;">
+          <div>
+            <span>gwaka</span>
+            <span style="display:block;font-family:'DM Sans',sans-serif;font-size:0.625rem;color:rgba(255,255,255,0.4);letter-spacing:0.12em;text-transform:lowercase;margin-top:-2px;font-style:italic;">made with love for you</span>
+          </div>
+        </div>
+        <p class="footer-text">Produits frais & faits maison<br>Papeete, Tahiti &mdash; +689 89 53 75 70</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/gwaka.tahiti/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="18" cy="6" r="1.5" fill="currentColor"/></svg>
+          </a>
+          <a href="https://www.facebook.com/gwaka.tahiti" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 GWAKA &mdash; made with love for you | Papeete, Tahiti | <a href="mailto:gwakatahiti@gmail.com" style="color:rgba(255,255,255,0.5);">gwakatahiti@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ========== PRELOADER ========== */
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      gsap.to(preloader, {
+        opacity: 0,
+        duration: 0.6,
+        delay: 0.4,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          preloader.style.display = 'none';
+          initAnimations();
+        }
+      });
+    });
+
+    /* ========== MOBILE MENU ========== */
+    const mobileToggle = document.getElementById('mobileToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+    const mobileClose = document.getElementById('mobileClose');
+
+    function openMenu() {
+      mobileMenu.classList.add('open');
+      mobileOverlay.style.display = 'block';
+      requestAnimationFrame(() => mobileOverlay.classList.add('show'));
+    }
+
+    function closeMenu() {
+      mobileMenu.classList.remove('open');
+      mobileOverlay.classList.remove('show');
+      setTimeout(() => mobileOverlay.style.display = 'none', 300);
+    }
+
+    mobileToggle.addEventListener('click', openMenu);
+    mobileClose.addEventListener('click', closeMenu);
+    mobileOverlay.addEventListener('click', closeMenu);
+
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    /* ========== STICKY NAV ========== */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ========== GSAP + SCROLLTRIGGER ANIMATIONS ========== */
+    function initAnimations() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Reveal elements
+      const reveals = document.querySelectorAll('.reveal');
+      reveals.forEach((el, i) => {
+        gsap.fromTo(el,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 88%',
+              once: true,
+            },
+            delay: el.closest('.services-grid, .pricing-grid, .insta-grid') ? (Array.from(el.parentElement.children).indexOf(el) * 0.1) : 0,
+          }
+        );
+      });
+
+      // Scale reveals (Instagram grid)
+      const scaleReveals = document.querySelectorAll('.reveal-scale');
+      scaleReveals.forEach((el, i) => {
+        gsap.fromTo(el,
+          { opacity: 0, scale: 0.88 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.7,
+            ease: 'back.out(1.4)',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 90%',
+              once: true,
+            },
+            delay: i * 0.06,
+          }
+        );
+      });
+
+      // Hero special animations
+      gsap.fromTo('.hero h1', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.2 });
+      gsap.fromTo('.hero-desc', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.4 });
+      gsap.fromTo('.hero-actions', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.55 });
+      gsap.fromTo('.hero-clients', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.7 });
+      gsap.fromTo('.hero-image-shape', { opacity: 0, scale: 0.85, rotate: -5 }, { opacity: 1, scale: 1, rotate: 0, duration: 1.2, ease: 'elastic.out(1, 0.6)', delay: 0.3 });
+
+      // Floating icons parallax
+      document.querySelectorAll('.floating-icon').forEach((icon, i) => {
+        gsap.to(icon, {
+          y: -30 - (i * 10),
+          scrollTrigger: {
+            trigger: '.hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1,
+          }
+        });
+      });
+
+      // Service cards stagger
+      gsap.utils.toArray('.service-card').forEach((card, i) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: card, start: 'top 88%', once: true },
+            delay: i * 0.12,
+          }
+        );
+      });
+
+      // Menu items stagger
+      gsap.utils.toArray('.menu-item').forEach((item, i) => {
+        gsap.fromTo(item,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: item, start: 'top 92%', once: true },
+            delay: (i % 6) * 0.06,
+          }
+        );
+      });
+
+
+
+      // Contact form slide in
+      gsap.fromTo('.contact-form-card',
+        { opacity: 0, x: 60 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: '.contact', start: 'top 75%', once: true },
+          delay: 0.2,
+        }
+      );
+    }
+
+    /* ========== FORM RADIO VISUAL ========== */
+    // Radio buttons are handled by CSS :checked + label
+
+    /* ========== MENU TABS + FILTERING ========== */
+    const menuTabs = document.querySelectorAll('.menu-tab');
+    const menuCategories = document.querySelectorAll('.menu-category');
+    const menuTotalCount = document.getElementById('menuTotalCount');
+    const menuTabsWrap = document.getElementById('menuTabsWrap');
+
+    // Sticky tabs shadow on scroll
+    if (menuTabsWrap) {
+      const observer = new IntersectionObserver(
+        ([e]) => menuTabsWrap.classList.toggle('stuck', e.intersectionRatio < 1),
+        { threshold: [1], rootMargin: '-1px 0px 0px 0px' }
+      );
+      observer.observe(menuTabsWrap);
+    }
+
+    menuTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const cat = tab.dataset.cat;
+
+        // Update active tab with aria
+        menuTabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+
+        // Filter categories with staggered animation
+        let visibleCount = 0;
+        let delay = 0;
+        menuCategories.forEach(c => {
+          const show = cat === 'all' || c.dataset.cat === cat;
+          if (show) {
+            c.classList.remove('hidden');
+            c.style.animation = 'none';
+            c.offsetHeight; // reflow
+            c.style.animation = `menuCatIn 0.5s cubic-bezier(0.25,0.46,0.45,0.94) ${delay}s forwards`;
+            delay += 0.06;
+            visibleCount += c.querySelectorAll('.menu-list-item').length;
+          } else {
+            c.classList.add('hidden');
+          }
+        });
+
+        // Update counter
+        if (menuTotalCount) {
+          menuTotalCount.innerHTML = `<strong>${visibleCount}</strong> produit${visibleCount > 1 ? 's' : ''} disponible${visibleCount > 1 ? 's' : ''}`;
+        }
+
+        // Scroll active tab into view (horizontal scroll on mobile)
+        tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      });
+    });
+
+    // Show all on load
+    menuCategories.forEach(c => c.classList.remove('hidden'));
+
+    /* ========== SMOOTH SCROLL ========== */
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const offset = 80;
+          const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
