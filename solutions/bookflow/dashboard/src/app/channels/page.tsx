@@ -296,7 +296,15 @@ function WhatsAppCard({
 
 // ─── Messenger Login Modal (email+password via mautrix-meta) ─────────────────
 
-type LoginStep = 'credentials' | 'twofactor' | 'approval' | 'connecting' | 'done';
+type LoginStep = 'credentials' | 'twofactor' | 'approval' | 'connecting' | 'pages' | 'done';
+
+interface DiscoveredPage {
+  id: string;
+  name: string;
+  category?: string;
+  avatarUrl?: string;
+  connected: boolean;
+}
 
 function MessengerLoginModal({
   businessId,
@@ -316,6 +324,13 @@ function MessengerLoginModal({
   const [twoFactorLabel, setTwoFactorLabel] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  // Page selection state
+  const [discoveredPages, setDiscoveredPages] = useState<DiscoveredPage[]>([]);
+  const [selectedPageIds, setSelectedPageIds] = useState<Set<string>>(new Set());
+  const [manualPageId, setManualPageId] = useState('');
+  const [manualPageName, setManualPageName] = useState('');
+  const [showManualEntry, setShowManualEntry] = useState(false);
+  const [loadingPages, setLoadingPages] = useState(false);
 
   async function bridgeAction(action: string, extra: Record<string, unknown> = {}) {
     const res = await fetch('/api/messenger-bridge', {
@@ -349,10 +364,74 @@ function MessengerLoginModal({
     }
   }
 
-  async function handleLoginResult(result: Record<string, unknown>) {
-    if (result.type === 'complete') {
+  async function fetchPages() {
+    setLoadingPages(true);
+    try {
+      const res = await bridgeAction('bridge-pages');
+      const pages = (res.pages || []) as DiscoveredPage[];
+      const selected = (res.selected || []) as string[];
+      setDiscoveredPages(pages);
+      setSelectedPageIds(new Set(selected));
+
+      if (pages.length > 0) {
+        setStep('pages');
+      } else {
+        // No pages auto-detected — show manual entry by default
+        setShowManualEntry(true);
+        setStep('pages');
+      }
+    } catch {
+      // Fallback: show manual entry
+      setShowManualEntry(true);
+      setStep('pages');
+    } finally {
+      setLoadingPages(false);
+    }
+  }
+
+  async function handleSelectPages() {
+    if (selectedPageIds.size === 0 && !manualPageId.trim()) return;
+    setSubmitting(true);
+    setError('');
+
+    try {
+      // Add manual page if provided
+      if (manualPageId.trim() && manualPageName.trim()) {
+        await bridgeAction('bridge-add-page', {
+          page_id: manualPageId.trim(),
+          page_name: manualPageName.trim(),
+        });
+        selectedPageIds.add(manualPageId.trim());
+      }
+
+      // Select all chosen pages
+      const pageIds = Array.from(selectedPageIds);
+      if (pageIds.length > 0) {
+        await bridgeAction('bridge-select-page', { page_ids: pageIds });
+      }
+
       setStep('done');
       setTimeout(() => onSuccess(), 1500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur de selection');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function togglePage(pageId: string) {
+    setSelectedPageIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(pageId)) next.delete(pageId);
+      else next.add(pageId);
+      return next;
+    });
+  }
+
+  async function handleLoginResult(result: Record<string, unknown>) {
+    if (result.type === 'complete') {
+      // Login successful — now discover Pages
+      await fetchPages();
       return;
     }
 
@@ -553,12 +632,113 @@ function MessengerLoginModal({
           </div>
         )}
 
+        {/* Step: Page Selection */}
+        {step === 'pages' && (
+          <div className="p-5 space-y-4">
+            <div>
+              <p className="text-sm font-medium text-white">Selectionnez vos Pages Facebook</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Ve&apos;a gerera les messages Messenger de ces Pages.
+              </p>
+            </div>
+
+            {loadingPages ? (
+              <div className="flex items-center justify-center py-8 gap-3">
+                <Loader2 size={20} className="text-[#1877F2] animate-spin" />
+                <p className="text-xs text-gray-400">Recherche de vos Pages...</p>
+              </div>
+            ) : (
+              <>
+                {/* Auto-detected Pages */}
+                {discoveredPages.length > 0 && (
+                  <div className="space-y-2">
+                    {discoveredPages.map((page) => (
+                      <button
+                        key={page.id}
+                        onClick={() => togglePage(page.id)}
+                        className={`w-full flex items-center gap-3 p-3 rounded-lg border transition text-left ${
+                          selectedPageIds.has(page.id)
+                            ? 'bg-[#1877F2]/10 border-[#1877F2]/40'
+                            : 'bg-gray-800/50 border-gray-700/50 hover:border-gray-600'
+                        }`}
+                      >
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                          selectedPageIds.has(page.id)
+                            ? 'bg-[#1877F2] border-[#1877F2]'
+                            : 'border-gray-600'
+                        }`}>
+                          {selectedPageIds.has(page.id) && <Check size={12} className="text-white" />}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-white truncate">{page.name}</p>
+                          {page.category && (
+                            <p className="text-xs text-gray-500">{page.category}</p>
+                          )}
+                          <p className="text-xs text-gray-600 font-mono">ID: {page.id}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Manual entry toggle */}
+                {!showManualEntry && (
+                  <button
+                    onClick={() => setShowManualEntry(true)}
+                    className="text-xs text-[#1877F2] hover:text-[#1877F2]/80 transition"
+                  >
+                    + Ajouter une Page manuellement
+                  </button>
+                )}
+
+                {/* Manual Page entry */}
+                {showManualEntry && (
+                  <div className="space-y-2 p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
+                    <p className="text-xs text-gray-400">
+                      {discoveredPages.length === 0
+                        ? 'Aucune Page detectee automatiquement. Entrez les infos manuellement :'
+                        : 'Ajoutez une Page par son ID :'}
+                    </p>
+                    <input
+                      type="text"
+                      value={manualPageName}
+                      onChange={(e) => setManualPageName(e.target.value)}
+                      placeholder="Nom de la Page"
+                      className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#1877F2]/60"
+                    />
+                    <input
+                      type="text"
+                      value={manualPageId}
+                      onChange={(e) => setManualPageId(e.target.value)}
+                      placeholder="ID de la Page (ex: 123456789)"
+                      className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white font-mono placeholder:text-gray-600 placeholder:font-sans focus:outline-none focus:border-[#1877F2]/60"
+                    />
+                    <p className="text-[10px] text-gray-600">
+                      Trouvez l&apos;ID dans les parametres de votre Page Facebook → Transparence de la Page
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+
+            <button
+              onClick={handleSelectPages}
+              disabled={submitting || (selectedPageIds.size === 0 && !manualPageId.trim())}
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-medium text-white rounded-lg transition hover:opacity-90 disabled:opacity-40"
+              style={{ backgroundColor: '#1877F2' }}
+            >
+              {submitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
+              Connecter {selectedPageIds.size + (manualPageId.trim() ? 1 : 0)} Page{(selectedPageIds.size + (manualPageId.trim() ? 1 : 0)) > 1 ? 's' : ''}
+            </button>
+          </div>
+        )}
+
         {/* Step: Done */}
         {step === 'done' && (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <CheckCircle2 size={32} className="text-[#25D366]" />
-            <p className="text-sm text-[#25D366] font-medium">Messenger connecte !</p>
-            <p className="text-xs text-gray-400">Les messages seront relayes automatiquement.</p>
+            <p className="text-sm text-[#25D366] font-medium">Page Messenger connectee !</p>
+            <p className="text-xs text-gray-400">Les messages de vos clients seront geres par Ve&apos;a.</p>
           </div>
         )}
 

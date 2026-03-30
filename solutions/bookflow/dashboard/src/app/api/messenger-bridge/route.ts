@@ -69,6 +69,23 @@ export async function POST(req: NextRequest) {
       case 'bridge-disconnect':
         return proxyToBridge('POST', '/bridge/disconnect', { businessId: business_id });
 
+      // ─── Pages discovery & selection ───
+      case 'bridge-pages':
+        return proxyToBridge('GET', `/bridge/pages/${business_id}`);
+
+      case 'bridge-select-page':
+        return proxyToBridge('POST', '/bridge/select-page', {
+          businessId: business_id,
+          pageIds: body.page_ids,
+        });
+
+      case 'bridge-add-page':
+        return proxyToBridge('POST', '/bridge/add-page', {
+          businessId: business_id,
+          pageId: body.page_id,
+          pageName: body.page_name,
+        });
+
       // ─── Legacy endpoints ───
       case 'start-login':
         return proxyToBridge('POST', '/auth/login/start', { business_id });
