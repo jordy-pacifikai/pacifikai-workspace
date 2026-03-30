@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te Honu Surf — Ecole de Surf Tahiti | PACIFIK'AI Portfolio</title>
+  <meta name="description" content="Te Honu Surf — Ecole de surf a Papara, Tahiti. Cours debutants a confirmes dans le respect de l'ocean et de la culture polynesienne.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+    :root {
+      --ocean: #0B5E8A;
+      --ocean-light: #0e7ab5;
+      --sand: #F5E6D0;
+      --coral: #FF6B5A;
+      --coral-hover: #ff8577;
+      --white: #FAFAFA;
+      --dark: #1A2A3A;
+      --dark-deep: #0f1c28;
+      --font-heading: 'Sora', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+    }
+
+    body {
+      background: var(--white);
+      color: var(--dark);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    /* ── Scroll Progress ── */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--ocean), var(--ocean-light));
+      z-index: 9999;
+      transition: none;
+    }
+
+    /* ── Navigation ── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.4s ease, padding 0.3s ease;
+    }
+    .nav.scrolled {
+      background: rgba(26, 42, 58, 0.92);
+      backdrop-filter: blur(12px);
+      padding: 14px 40px;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: color 0.25s ease;
+      letter-spacing: 0.02em;
+    }
+    .nav-links a:hover { color: var(--coral); }
+    .nav-cta {
+      background: var(--coral);
+      color: var(--white) !important;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-weight: 600 !important;
+      transition: background 0.25s ease, transform 0.25s ease !important;
+    }
+    .nav-cta:hover {
+      background: var(--coral-hover) !important;
+      transform: translateY(-1px);
+    }
+    .nav-burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-burger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .nav { padding: 16px 20px; }
+      .nav.scrolled { padding: 12px 20px; }
+      .nav-links { display: none; }
+      .nav-burger { display: flex; }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('/portfolio/new/images/te-honu-surf/hero.jpg') center/cover no-repeat;
+      will-change: transform;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(15, 28, 40, 0.55) 0%,
+        rgba(15, 28, 40, 0.35) 40%,
+        rgba(15, 28, 40, 0.65) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .hero-title {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: clamp(3.2rem, 10vw, 7.5rem);
+      color: var(--white);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      margin-bottom: 16px;
+      text-shadow: 0 4px 30px rgba(0,0,0,0.3);
+    }
+    .hero-subtitle {
+      font-family: var(--font-body);
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      color: rgba(255,255,255,0.85);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      margin-bottom: 36px;
+    }
+    .btn-coral {
+      display: inline-block;
+      background: var(--coral);
+      color: var(--white);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 1.05rem;
+      padding: 16px 40px;
+      border-radius: 8px;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-coral:hover {
+      background: var(--coral-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(255, 107, 90, 0.35);
+    }
+
+    /* ── Wave Divider ── */
+    .wave-divider {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      margin-top: -2px;
+    }
+    .wave-divider svg {
+      display: block;
+      width: 200%;
+      height: 80px;
+      animation: waveSlide 8s linear infinite;
+    }
+    .wave-divider-bottom svg {
+      animation: waveSlideReverse 10s linear infinite;
+    }
+
+    @keyframes waveSlide {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes waveSlideReverse {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    /* ── Intro Section ── */
+    .intro {
+      background: var(--sand);
+      padding: 100px 20px;
+      text-align: center;
+    }
+    .intro-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .intro-line {
+      width: 60px;
+      height: 3px;
+      background: var(--ocean);
+      margin: 0 auto 32px;
+      border-radius: 2px;
+    }
+    .intro-text {
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+      line-height: 1.8;
+      color: var(--dark);
+      font-weight: 300;
+    }
+    .intro-text strong {
+      font-weight: 600;
+      color: var(--ocean);
+    }
+
+    /* ── Courses Section ── */
+    .courses {
+      background: var(--white);
+      padding: 100px 20px;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .section-tag {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--coral);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--dark);
+      line-height: 1.15;
+    }
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .course-card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.45s ease;
+      cursor: pointer;
+    }
+    .course-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(11, 94, 138, 0.2);
+    }
+    .course-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .course-card:hover .course-card-bg {
+      transform: scale(1.06);
+    }
+    .course-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(26,42,58,0.1) 0%, rgba(26,42,58,0.85) 70%);
+    }
+    .course-card-content {
+      position: relative;
+      z-index: 2;
+      padding: 28px;
+    }
+    .course-badge {
+      display: inline-block;
+      background: var(--coral);
+      color: var(--white);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 6px 14px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      letter-spacing: 0.02em;
+    }
+    .course-name {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .course-desc {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.75);
+      font-weight: 300;
+    }
+
+    @media (max-width: 900px) {
+      .courses-grid { grid-template-columns: 1fr; max-width: 420px; }
+    }
+
+    /* ── Gallery ── */
+    .gallery {
+      padding: 80px 0;
+      background: var(--dark);
+      overflow: hidden;
+    }
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding: 0 20px;
+    }
+    .gallery-header .section-tag { color: var(--coral); }
+    .gallery-header .section-title { color: var(--white); }
+    .gallery-strip {
+      display: flex;
+      gap: 20px;
+      padding: 0 40px;
+      will-change: transform;
+    }
+    .gallery-item {
+      flex: 0 0 auto;
+      width: 55vw;
+      min-width: 340px;
+      max-width: 720px;
+      height: 60vh;
+      min-height: 320px;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .gallery-item:hover img {
+      transform: scale(1.04);
+    }
+
+    @media (max-width: 768px) {
+      .gallery-item { width: 80vw; }
+      .gallery-strip { padding: 0 20px; }
+    }
+
+    /* ── Spot Section ── */
+    .spot {
+      background: var(--sand);
+      padding: 100px 20px;
+    }
+    .spot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: center;
+    }
+    .spot-map {
+      background: var(--dark);
+      border-radius: 16px;
+      height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .spot-map-label {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      color: var(--white);
+      text-align: center;
+      z-index: 2;
+      letter-spacing: 0.03em;
+    }
+    .spot-map-pin {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      animation: pingRing 2.5s ease-out infinite;
+    }
+    @keyframes pingRing {
+      0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.6; }
+      100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+    }
+    .spot-info h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      color: var(--dark);
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    .spot-info p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: rgba(26, 42, 58, 0.8);
+      margin-bottom: 28px;
+      font-weight: 300;
+    }
+    .spot-stats {
+      display: flex;
+      gap: 32px;
+    }
+    .spot-stat {
+      text-align: center;
+    }
+    .spot-stat-value {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.8rem;
+      color: var(--ocean);
+      line-height: 1;
+    }
+    .spot-stat-label {
+      font-size: 0.85rem;
+      color: rgba(26, 42, 58, 0.6);
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    @media (max-width: 768px) {
+      .spot-grid { grid-template-columns: 1fr; }
+      .spot-map { height: 260px; }
+    }
+
+    /* ── Values Section ── */
+    .values {
+      background: var(--white);
+      padding: 100px 20px;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .value-card {
+      text-align: center;
+      padding: 40px 28px;
+      border-radius: 16px;
+      background: var(--sand);
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
+    }
+    .value-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(11, 94, 138, 0.1);
+    }
+    .value-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 20px;
+      background: var(--ocean);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .value-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: none;
+      stroke: var(--white);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .value-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+    .value-desc {
+      font-size: 0.95rem;
+      color: rgba(26, 42, 58, 0.7);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    @media (max-width: 768px) {
+      .values-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+    }
+
+    /* ── CTA Section ── */
+    .cta {
+      position: relative;
+      padding: 120px 20px;
+      overflow: hidden;
+      text-align: center;
+    }
+    .cta-bg {
+      position: absolute;
+      inset: 0;
+      background: url('/portfolio/new/images/te-honu-surf/sunset.jpg') center/cover no-repeat;
+      will-change: transform;
+    }
+    .cta-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 28, 40, 0.78);
+    }
+    .cta-content {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .cta-title {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .cta-sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 36px;
+      font-weight: 300;
+    }
+    .cta-contacts {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .cta-contact {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.65);
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .cta-contact:hover { color: var(--coral); }
+    .cta-contact svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      background: var(--dark);
+      padding: 48px 20px;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-logo {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .footer-address {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 20px;
+      font-weight: 300;
+    }
+    .footer-socials {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .footer-social {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.25s ease, transform 0.25s ease;
+      text-decoration: none;
+    }
+    .footer-social:hover {
+      background: var(--ocean);
+      transform: translateY(-2px);
+    }
+    .footer-social svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--white);
+    }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.3);
+    }
+    .footer-copy a {
+      color: var(--coral);
+      text-decoration: none;
+    }
+    .footer-copy a:hover { text-decoration: underline; }
+
+    /* ── Reveal Utility ── */
+    .reveal { opacity: 0; transform: translateY(40px); }
+    .reveal-left { opacity: 0; transform: translateX(-40px); }
+    .reveal-right { opacity: 0; transform: translateX(40px); }
+
+    /* ── Reduced Motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal, .reveal-left, .reveal-right {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .wave-divider svg { animation: none !important; }
+    }
+  </style>
+<style>.ifr .loader,.ifr .custom-cursor,.ifr .cursor-dot,.ifr .cursor-ring,.ifr .scroll-progress,.ifr .disclaimer,.ifr .scroll-indicator,.ifr .scroll-hint{display:none!important}.ifr body,.ifr html{overflow:hidden!important}</style>
+<script>if(window.self!==window.top){document.documentElement.classList.add("ifr");var _f=setInterval(function(){document.querySelectorAll("*").forEach(function(e){var s=getComputedStyle(e);if(s.opacity==="0"&&!e.classList.contains("loader")){e.style.opacity="1";if(s.animationName==="none"||s.animationName==="")e.style.transform="none"}});document.body.style.overflow="hidden";window.scrollTo(0,0)},200);setTimeout(function(){clearInterval(_f)},5000)}</script></head>
+<body>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="mainNav">
+    <a href="#" class="nav-logo">Te Honu Surf</a>
+    <ul class="nav-links">
+      <li><a href="#courses">Cours</a></li>
+      <li><a href="#spot">Le Spot</a></li>
+      <li><a href="#values">Valeurs</a></li>
+      <li><a href="#cta" class="nav-cta">Reserver</a></li>
+    </ul>
+    <button class="nav-burger" id="navBurger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title" id="heroTitle">TE HONU SURF</h1>
+      <p class="hero-subtitle" id="heroSub">Ecole de Surf a Papara depuis 2018</p>
+      <a href="#cta" class="btn-coral" id="heroCta">Reserver un Cours</a>
+    </div>
+  </section>
+
+  <!-- Wave Divider: Hero -> Intro -->
+  <div class="wave-divider" style="background: var(--sand); margin-top: -2px;">
+    <svg viewBox="0 0 2400 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C150,80 350,0 600,40 C850,80 1050,0 1200,40 C1350,80 1550,0 1800,40 C2050,80 2250,0 2400,40 L2400,0 L0,0 Z" fill="var(--dark)"/>
+    </svg>
+  </div>
+
+  <!-- Intro -->
+  <section class="intro" id="intro">
+    <div class="intro-inner">
+      <div class="intro-line reveal"></div>
+      <p class="intro-text reveal">
+        La ou l'ocean devient ton professeur. <strong>Te Honu Surf</strong> t'accompagne de ta premiere mousse jusqu'au line-up, dans le respect de la vague et de la culture polynesienne.
+      </p>
+    </div>
+  </section>
+
+  <!-- Wave Divider: Intro -> Courses -->
+  <div class="wave-divider wave-divider-bottom" style="background: var(--white); margin-top: -2px;">
+    <svg viewBox="0 0 2400 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C150,80 350,0 600,40 C850,80 1050,0 1200,40 C1350,80 1550,0 1800,40 C2050,80 2250,0 2400,40 L2400,0 L0,0 Z" fill="var(--sand)"/>
+    </svg>
+  </div>
+
+  <!-- Courses -->
+  <section class="courses" id="courses">
+    <div class="section-header">
+      <p class="section-tag reveal">Nos Formules</p>
+      <h2 class="section-title reveal">Trouve ton Niveau</h2>
+    </div>
+    <div class="courses-grid">
+      <div class="course-card reveal">
+        <div class="course-card-bg" style="background-image: url('/portfolio/new/images/te-honu-surf/boards.jpg')"></div>
+        <div class="course-card-overlay"></div>
+        <div class="course-card-content">
+          <span class="course-badge">5 500 XPF</span>
+          <h3 class="course-name">Decouverte</h3>
+          <p class="course-desc">1h30 — Niveau debutant. Premiers pas dans la mousse.</p>
+        </div>
+      </div>
+      <div class="course-card reveal">
+        <div class="course-card-bg" style="background-image: url('/portfolio/new/images/te-honu-surf/ocean.jpg')"></div>
+        <div class="course-card-overlay"></div>
+        <div class="course-card-content">
+          <span class="course-badge">22 000 XPF</span>
+          <h3 class="course-name">Progression</h3>
+          <p class="course-desc">5 sessions — Take-off, lecture de vague, placement.</p>
+        </div>
+      </div>
+      <div class="course-card reveal">
+        <div class="course-card-bg" style="background-image: url('/portfolio/new/images/te-honu-surf/detail.jpg')"></div>
+        <div class="course-card-overlay"></div>
+        <div class="course-card-content">
+          <span class="course-badge">8 500 XPF / session</span>
+          <h3 class="course-name">Perfectionnement</h3>
+          <p class="course-desc">Coaching prive — Manoeuvres, surf video, analyse.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="gallery" id="gallery">
+    <div class="gallery-header">
+      <p class="section-tag reveal">Galerie</p>
+      <h2 class="section-title reveal">Nos Sessions</h2>
+    </div>
+    <div class="gallery-strip" id="galleryStrip">
+      <div class="gallery-item">
+        <img src="/portfolio/new/images/te-honu-surf/ocean.jpg" alt="Session surf ocean Tahiti" loading="lazy">
+      </div>
+      <div class="gallery-item">
+        <img src="/portfolio/new/images/te-honu-surf/sunset.jpg" alt="Coucher de soleil surf Papara" loading="lazy">
+      </div>
+      <div class="gallery-item">
+        <img src="/portfolio/new/images/te-honu-surf/boards.jpg" alt="Planches de surf Te Honu" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- Spot -->
+  <section class="spot" id="spot">
+    <div class="spot-grid">
+      <div class="spot-map reveal-left">
+        <div class="spot-map-pin"></div>
+        <span class="spot-map-label">Papara — Spot de Taharuu</span>
+      </div>
+      <div class="spot-info reveal-right">
+        <h3>Le Reef Break de Taharuu</h3>
+        <p>
+          Vagues regulieres toute l'annee, ideal pour tous les niveaux. Un reef break historique ou des generations de surfeurs polynesiens ont fait leurs premieres vagues. Fond de sable et corail mort, houle constante de sud-ouest.
+        </p>
+        <div class="spot-stats">
+          <div class="spot-stat">
+            <div class="spot-stat-value">26-29°C</div>
+            <div class="spot-stat-label">Eau toute l'annee</div>
+          </div>
+          <div class="spot-stat">
+            <div class="spot-stat-value">Avr — Oct</div>
+            <div class="spot-stat-label">Meilleure saison</div>
+          </div>
+          <div class="spot-stat">
+            <div class="spot-stat-value">1-3m</div>
+            <div class="spot-stat-label">Taille des vagues</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="values" id="values">
+    <div class="section-header">
+      <p class="section-tag reveal">Notre ADN</p>
+      <h2 class="section-title reveal">Nos Valeurs</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" stroke="currentColor" fill="none"/><path d="M8 14s1.5 2 4 2 4-2 4-2" /><path d="M2 12h2M20 12h2M12 2v2M12 20v2" /></svg>
+        </div>
+        <h3 class="value-title">Respect de l'Ocean</h3>
+        <p class="value-desc">Eco-responsable : nettoyage du spot, planches recycees, zero plastique. L'ocean nous donne, on protege.</p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 3L2 12h3v8h6v-5h2v5h6v-8h3L12 3z" /></svg>
+        </div>
+        <h3 class="value-title">Culture Locale</h3>
+        <p class="value-desc">Le surf est ne dans le Pacifique. On transmet l'histoire, le respect des locaux et l'esprit ma'ohi a chaque session.</p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" /><circle cx="12" cy="10" r="3" /></svg>
+        </div>
+        <h3 class="value-title">Securite</h3>
+        <p class="value-desc">Moniteurs diplomes BPJEPS, ratio 1 pour 6 max. Materiel controle, briefing conditions avant chaque cours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave Divider: Values -> CTA -->
+  <div class="wave-divider" style="background: transparent; margin-top: -2px; position: relative; z-index: 2;">
+    <svg viewBox="0 0 2400 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C150,80 350,0 600,40 C850,80 1050,0 1200,40 C1350,80 1550,0 1800,40 C2050,80 2250,0 2400,40 L2400,0 L0,0 Z" fill="var(--white)"/>
+    </svg>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta" id="cta">
+    <div class="cta-bg" id="ctaBg"></div>
+    <div class="cta-overlay"></div>
+    <div class="cta-content">
+      <h2 class="cta-title reveal">Pret a Prendre ta Premiere Vague ?</h2>
+      <p class="cta-sub reveal">Rejoins la ohana Te Honu et decouvre le surf autrement.</p>
+      <a href="#" class="btn-coral reveal">Reserver Maintenant</a>
+      <div class="cta-contacts reveal">
+        <a href="tel:+68989000000" class="cta-contact">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          +689 89 00 00 00
+        </a>
+        <a href="#" class="cta-contact">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          @tehonusurf
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-logo">Te Honu Surf</div>
+    <p class="footer-address">PK 39, Papara — Tahiti, Polynesie francaise</p>
+    <div class="footer-socials">
+      <a href="#" class="footer-social" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"/></svg>
+      </a>
+      <a href="#" class="footer-social" aria-label="Facebook">
+        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#" class="footer-social" aria-label="TikTok">
+        <svg viewBox="0 0 24 24"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <p class="footer-copy">&copy; 2025 Te Honu Surf — Site fictif realise par <a href="https://pacifikai.com" target="_blank" rel="noopener">PACIFIK'AI</a></p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // ── Reduced Motion Check ──
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ── Lenis Smooth Scroll ──
+      let lenis;
+      if (!prefersReduced) {
+        lenis = new Lenis({
+          duration: 1.2,
+          easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+          touchMultiplier: 2,
+          smoothWheel: true
+        });
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+        // Sync Lenis with GSAP ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      // ── Register GSAP Plugins ──
+      gsap.registerPlugin(ScrollTrigger);
+
+      // ── Scroll Progress Bar ──
+      var progressBar = document.getElementById('scrollProgress');
+      if (!prefersReduced) {
+        gsap.to(progressBar, {
+          width: '100%',
+          ease: 'none',
+          scrollTrigger: {
+            trigger: document.body,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0.3
+          }
+        });
+      }
+
+      // ── Nav Scroll State ──
+      var nav = document.getElementById('mainNav');
+      ScrollTrigger.create({
+        start: 80,
+        onUpdate: function(self) {
+          if (self.scroll() > 80) {
+            nav.classList.add('scrolled');
+          } else {
+            nav.classList.remove('scrolled');
+          }
+        }
+      });
+
+      // ── Mobile Burger (no animation needed) ──
+      var burger = document.getElementById('navBurger');
+      var navLinks = document.querySelector('.nav-links');
+      if (burger) {
+        burger.addEventListener('click', function() {
+          var expanded = navLinks.style.display === 'flex';
+          navLinks.style.display = expanded ? 'none' : 'flex';
+          navLinks.style.position = expanded ? '' : 'absolute';
+          navLinks.style.top = expanded ? '' : '100%';
+          navLinks.style.left = expanded ? '' : '0';
+          navLinks.style.right = expanded ? '' : '0';
+          navLinks.style.background = expanded ? '' : 'rgba(26,42,58,0.95)';
+          navLinks.style.flexDirection = expanded ? '' : 'column';
+          navLinks.style.padding = expanded ? '' : '20px';
+          navLinks.style.gap = expanded ? '' : '16px';
+          navLinks.style.backdropFilter = expanded ? '' : 'blur(12px)';
+        });
+      }
+
+      // ── Smooth scroll for anchor links ──
+      document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            if (lenis) {
+              lenis.scrollTo(target, { offset: -60 });
+            } else {
+              target.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+            // Close mobile nav
+            if (window.innerWidth <= 768) {
+              navLinks.style.display = 'none';
+            }
+          }
+        });
+      });
+
+      // ── Skip animations if reduced motion ──
+      if (prefersReduced) {
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(function(el) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+        return;
+      }
+
+      // ── Hero Parallax ──
+      var heroBg = document.getElementById('heroBg');
+      gsap.to(heroBg, {
+        yPercent: 30,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.6
+        }
+      });
+
+      // ── Hero Content Entrance ──
+      var heroTl = gsap.timeline({ delay: 0.3 });
+      heroTl
+        .from('#heroTitle', { y: 60, opacity: 0, duration: 1, ease: 'power3.out' })
+        .from('#heroSub', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
+        .from('#heroCta', { y: 20, opacity: 0, duration: 0.7, ease: 'power3.out' }, '-=0.4');
+
+      // ── Reveal Animations ──
+      function createReveal(selector, fromVars) {
+        document.querySelectorAll(selector).forEach(function(el) {
+          gsap.to(el, Object.assign({
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 88%',
+              toggleActions: 'play none none none'
+            }
+          }));
+        });
+      }
+      createReveal('.reveal');
+      createReveal('.reveal-left');
+      createReveal('.reveal-right');
+
+      // ── Course Cards Stagger ──
+      gsap.from('.course-card', {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.courses-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // ── Gallery Horizontal Scroll ──
+      var strip = document.getElementById('galleryStrip');
+      if (strip) {
+        var totalScroll = strip.scrollWidth - window.innerWidth;
+        gsap.to(strip, {
+          x: function() { return -totalScroll; },
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.gallery',
+            start: 'top top',
+            end: function() { return '+=' + totalScroll; },
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true
+          }
+        });
+      }
+
+      // ── Value Cards Stagger ──
+      gsap.from('.value-card', {
+        y: 40,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.values-grid',
+          start: 'top 85%'
+        }
+      });
+
+      // ── CTA Parallax Background ──
+      var ctaBg = document.getElementById('ctaBg');
+      if (ctaBg) {
+        gsap.to(ctaBg, {
+          yPercent: 20,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.cta',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.6
+          }
+        });
+      }
+
+      // ── Spot Stats Counter Animation ──
+      document.querySelectorAll('.spot-stat').forEach(function(stat) {
+        gsap.from(stat, {
+          y: 20,
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: stat,
+            start: 'top 90%'
+          }
+        });
+      });
+
+      // ── Spot Map Entrance ──
+      gsap.from('.spot-map', {
+        scale: 0.92,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.spot-map',
+          start: 'top 85%'
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>

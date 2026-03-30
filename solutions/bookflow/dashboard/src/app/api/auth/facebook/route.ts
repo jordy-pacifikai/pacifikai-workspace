@@ -8,6 +8,8 @@ import { logger } from '@/lib/logger';
 
 const FB_APP_ID = (process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '').trim();
 const FB_APP_SECRET = (process.env.FACEBOOK_APP_SECRET ?? '').trim();
+const CHATWOOT_API = 'https://app.chatwoot.com/api/v1/accounts/158268';
+const CHATWOOT_TOKEN = process.env.CHATWOOT_API_TOKEN || '';
 // config_id removed — was causing "ID d'app non valide" error. Using scope param instead.
 const FB_API = 'https://graph.facebook.com/v22.0';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vea.pacifikai.com';
@@ -33,7 +35,7 @@ interface FacebookPage {
 /**
  * Helper: connect first page automatically (subscribe webhook + store in DB).
  */
-async function autoConnectPage(page: FacebookPage, businessId: string) {
+async function autoConnectPage(page: FacebookPage, businessId: string, userAccessToken?: string) {
   const supabase = supabaseAdmin();
 
   // Subscribe to webhook events
@@ -46,6 +48,33 @@ async function autoConnectPage(page: FacebookPage, businessId: string) {
     { method: 'POST' },
   ).catch(() => {});
 
+  // Register in Chatwoot as a Facebook inbox
+  let chatwootInboxId: number | null = null;
+  if (CHATWOOT_TOKEN && userAccessToken) {
+    try {
+      const cwRes = await fetch(`${CHATWOOT_API}/callbacks/register_facebook_page`, {
+        method: 'POST',
+        headers: { 'api_access_token': CHATWOOT_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_access_token: userAccessToken,
+          page_access_token: page.access_token,
+          page_id: page.id,
+          inbox_name: page.name || 'Facebook Page',
+        }),
+        signal: AbortSignal.timeout(15000),
+      });
+      const cwData = await cwRes.json();
+      if (cwRes.ok) {
+        chatwootInboxId = cwData.id || cwData.inbox_id || null;
+        logger.info('Chatwoot inbox created via OAuth', { action: 'facebook_oauth', inboxId: chatwootInboxId, pageName: page.name });
+      } else {
+        logger.warn('Chatwoot register failed (non-blocking)', { action: 'facebook_oauth', status: cwRes.status, error: JSON.stringify(cwData) });
+      }
+    } catch (e) {
+      logger.warn('Chatwoot register error (non-blocking)', { action: 'facebook_oauth', error: String(e) });
+    }
+  }
+
   // Store in database
   await supabase
     .from('bookbot_businesses')
@@ -56,6 +85,7 @@ async function autoConnectPage(page: FacebookPage, businessId: string) {
       meta_ig_account_id: page.instagram_business_account?.id ?? null,
       meta_connected_at: new Date().toISOString(),
       meta_token_status: 'valid',
+      ...(chatwootInboxId ? { chatwoot_inbox_id: chatwootInboxId, chatwoot_connected_at: new Date().toISOString() } : {}),
     })
     .eq('id', businessId);
 }
@@ -163,7 +193,7 @@ export async function GET(req: NextRequest) {
 
       // Auto-connect if only one page
       if (pages.length === 1) {
-        await autoConnectPage(pages[0], businessId);
+        await autoConnectPage(pages[0], businessId, longLivedToken);
         return oauthRedirect(`${SITE_URL}/channels?fb_connected=true`);
       }
 
@@ -177,6 +207,7 @@ export async function GET(req: NextRequest) {
           id: p.id,
           name: p.name,
           access_token: p.access_token,
+          user_access_token: longLivedToken,
           instagram_business_account_id: p.instagram_business_account?.id ?? null,
         })),
         expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 min TTL
@@ -273,6 +304,7 @@ export async function PUT(req: NextRequest) {
       pageId: z.string().min(1),
       pageName: z.string().optional(),
       pageToken: z.string().min(1),
+      userAccessToken: z.string().optional(),
       igAccountId: z.string().optional().nullable(),
     });
 
@@ -284,7 +316,7 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const { businessId, pageId, pageName, pageToken, igAccountId } = parsed.data;
+    const { businessId, pageId, pageName, pageToken, userAccessToken, igAccountId } = parsed.data;
 
     // Auth: verify caller owns this business
     try {
@@ -309,14 +341,33 @@ export async function PUT(req: NextRequest) {
 
     if (subscribeData.error) {
       logger.warn('Webhook subscribe error', { action: 'facebook_oauth', error: String(subscribeData.error) });
-      // Non-blocking — store the token anyway, we can retry later
     }
 
-    // If IG account exists, subscribe Instagram webhook too
-    if (igAccountId) {
-      // Instagram webhooks are subscribed at the Page level, same endpoint
-      // The `messages` field covers both Messenger and Instagram DM
-      // No extra subscription needed for Instagram if page is already subscribed
+    // ── Step 3b: Register in Chatwoot ────────────────────────────────────
+    let chatwootInboxId: number | null = null;
+    if (CHATWOOT_TOKEN && userAccessToken) {
+      try {
+        const cwRes = await fetch(`${CHATWOOT_API}/callbacks/register_facebook_page`, {
+          method: 'POST',
+          headers: { 'api_access_token': CHATWOOT_TOKEN, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_access_token: userAccessToken,
+            page_access_token: pageToken,
+            page_id: pageId,
+            inbox_name: pageName || 'Facebook Page',
+          }),
+          signal: AbortSignal.timeout(15000),
+        });
+        const cwData = await cwRes.json();
+        if (cwRes.ok) {
+          chatwootInboxId = cwData.id || cwData.inbox_id || null;
+          logger.info('Chatwoot inbox created via PUT', { action: 'facebook_oauth', inboxId: chatwootInboxId });
+        } else {
+          logger.warn('Chatwoot register failed (non-blocking)', { action: 'facebook_oauth', status: cwRes.status });
+        }
+      } catch (e) {
+        logger.warn('Chatwoot register error (non-blocking)', { action: 'facebook_oauth', error: String(e) });
+      }
     }
 
     // ── Step 4: Store in database ─────────────────────────────────────────
@@ -329,6 +380,7 @@ export async function PUT(req: NextRequest) {
         meta_ig_account_id: igAccountId ?? null,
         meta_connected_at: new Date().toISOString(),
         meta_token_status: 'valid',
+        ...(chatwootInboxId ? { chatwoot_inbox_id: chatwootInboxId, chatwoot_connected_at: new Date().toISOString() } : {}),
       })
       .eq('id', businessId);
 

@@ -30,6 +30,23 @@ function LoginForm() {
 
   const supabase = getSupabaseBrowser()
 
+  // Handle magic link hash fragment (from email link redirect)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const hash = window.location.hash
+    if (!hash || !hash.includes('access_token=')) return
+
+    const params = new URLSearchParams(hash.substring(1))
+    const accessToken = params.get('access_token')
+    const refreshToken = params.get('refresh_token')
+    if (!accessToken || !refreshToken) return
+
+    supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(() => {
+      window.location.hash = ''
+      router.push(redirect)
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   async function handleSendCode(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)

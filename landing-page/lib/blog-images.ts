@@ -1,0 +1,23 @@
+/** Blog article cover images — shared between blog index and article pages */
+export const ARTICLE_IMAGES: Record<string, string> = {
+  "automatisation-ia-entreprise-polynesie": "https://v3b.fal.media/files/b/0a940533/MsceT9au7_JV5GkMUUluC.jpg",
+  "chatbot-ia-polynesie": "https://v3b.fal.media/files/b/0a940533/NmTj2PrYLawXOx28rQTRu.jpg",
+  "prix-site-web-polynesie": "https://v3b.fal.media/files/b/0a940533/heJWVwR3-N4RxZsVzN4Wk.jpg",
+  "intelligence-artificielle-polynesie": "https://v3b.fal.media/files/b/0a940533/Oy5EwHZS7gGlfmASMCGQ-.jpg",
+  "automatisation-ia-vs-employe-polynesie": "https://v3b.fal.media/files/b/0a940533/J1cHbAfQy3S4OnKRCUsJd.jpg",
+  "starbucks-deep-brew-ia": "https://v3b.fal.media/files/b/0a8c5bbc/z7vc-eBDfbizjAurNlPEc_b405efbecdbb46efb4ad552ee5acce5c.png",
+  "marriott-chatbot-reservation": "https://v3b.fal.media/files/b/0a8c5bba/JjL4e8xzZQKqn1msaHopY_a4daac51f27343cba2456cf3fb5905ef.png",
+  "klm-service-client-ia": "https://v3b.fal.media/files/b/0a8c5bb7/AmFVDpoLDQsO9W7xPFti1_cff11274c3d141b7ae8052110a4b1fad.png",
+  "hsbc-extraction-documents": "https://v3b.fal.media/files/b/0a8c5bbe/Wnx3WF5OZR3_FooVxKaD8_e8bafb6f3a0540f2b4c82db35145e4c9.png",
+  "digitalisation-entreprise-tahiti": "https://v3b.fal.media/files/b/0a940533/tuh0vlAstCVeLDYOdjThF.jpg",
+  "creation-site-internet-tahiti": "https://v3b.fal.media/files/b/0a940533/7C8x4bfmGzKB2iDmuS1PQ.jpg",
+  "marketing-digital-tahiti": "https://v3b.fal.media/files/b/0a940533/zPFqJssVV0joBCPf_yw1R.jpg",
+  "transformation-digitale-polynesie-francaise": "https://v3b.fal.media/files/b/0a940533/1wWaQu7Tb-rU-l1OWPN7N.jpg",
+  "site-web-sur-mesure-vs-template-tahiti": "https://v3b.fal.media/files/b/0a940533/U3w1RK4fQdrpnDcKbNpLM.jpg",
+  "application-mobile-polynesie": "https://v3b.fal.media/files/b/0a940533/-SsyAW8Euovc8vCsIKdbn.jpg",
+  "agence-web-tahiti-2026": "https://v3b.fal.media/files/b/0a940533/uJzHEn94Mtb-jnGzyzwxj.jpg",
+  "agence-digitale-tahiti-guide": "https://v3b.fal.media/files/b/0a940533/hrJ1gI-WfBbddLP1FABSP.jpg",
+  "agences-digitales-tahiti-comparatif": "https://v3b.fal.media/files/b/0a940533/8E_s7Fc11HcMh58rUmCYo.jpg",
+  "chatbot-ia-vs-standard-telephonique": "https://v3b.fal.media/files/b/0a940533/qiiNPJ0RUzLAoa5-Xd7wu.jpg",
+  "automatisation-entreprise-tahiti": "https://v3b.fal.media/files/b/0a940533/IzhFgCiahZQobgCrGoyB_.jpg",
+};

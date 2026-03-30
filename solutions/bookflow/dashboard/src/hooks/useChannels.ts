@@ -102,6 +102,134 @@ export function useSelectPage(businessId: string | null) {
 /**
  * Disconnect Facebook — remove tokens + unsubscribe webhook.
  */
+// ─── Messenger Bridge Types ────────────────────────────────────────────────
+
+export interface MessengerBridgeSession {
+  status: 'active' | 'pending' | 'expired' | 'error';
+  facebook_user_id: string | null;
+  created_at: string | null;
+  last_poll_at: string | null;
+}
+
+// ─── Messenger Bridge Hooks ────────────────────────────────────────────────
+
+async function fetchBridgeStatus(businessId: string): Promise<MessengerBridgeSession | null> {
+  try {
+    const res = await fetch('/api/messenger-bridge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'bridge-status', business_id: businessId }),
+    });
+    const data = await res.json();
+
+    // Provisioning API returns { login_ids: ["123456"] } when connected
+    if (data.login_ids && data.login_ids.length > 0) {
+      return {
+        status: 'active',
+        facebook_user_id: data.login_ids[0],
+        created_at: null,
+        last_poll_at: null,
+      };
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function useBridgeStatus(businessId: string | null) {
+  return useQuery({
+    queryKey: ['messenger-bridge', 'status', businessId],
+    queryFn: () => fetchBridgeStatus(businessId!),
+    enabled: Boolean(businessId),
+    refetchInterval: 30_000, // poll every 30s to show live status
+  });
+}
+
+export interface BridgeLoginSession {
+  session_id: string;
+  screenshot: string;
+  viewport: { width: number; height: number };
+}
+
+export function useStartBridgeLogin(businessId: string | null) {
+  return useMutation({
+    mutationFn: async (): Promise<BridgeLoginSession> => {
+      const res = await fetch('/api/messenger-bridge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'start-login', business_id: businessId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Failed to start login');
+      return data;
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors du demarrage de la connexion');
+    },
+  });
+}
+
+export async function bridgeAction(
+  sessionId: string,
+  action: { type: string; x?: number; y?: number; text?: string; key?: string; selector?: string; value?: string },
+): Promise<{ screenshot: string; status: string; url: string }> {
+  const res = await fetch('/api/messenger-bridge', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'action', session_id: sessionId, ...action }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? 'Action failed');
+  return data;
+}
+
+export async function bridgeScreenshot(
+  sessionId: string,
+): Promise<{ screenshot: string; status: string; url: string }> {
+  const res = await fetch('/api/messenger-bridge', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'screenshot', session_id: sessionId }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? 'Screenshot failed');
+  return data;
+}
+
+export function useCompleteBridgeLogin(businessId: string | null) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (sessionId: string) => {
+      const res = await fetch('/api/messenger-bridge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'complete', session_id: sessionId, business_id: businessId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Failed to complete login');
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['messenger-bridge', 'status', businessId] });
+      toast.success('Messenger connecte avec succes !');
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la finalisation');
+    },
+  });
+}
+
+export async function cancelBridgeLogin(sessionId: string): Promise<void> {
+  await fetch('/api/messenger-bridge', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'cancel', session_id: sessionId }),
+  });
+}
+
 export function useDisconnectFacebook(businessId: string | null) {
   const queryClient = useQueryClient();
 

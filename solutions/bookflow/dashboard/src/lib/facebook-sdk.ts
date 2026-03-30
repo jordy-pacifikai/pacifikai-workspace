@@ -3,22 +3,25 @@
  * Loads the JS SDK on demand and exposes a login popup.
  */
 
+interface FacebookSDK {
+  init: (params: {
+    appId: string;
+    cookie?: boolean;
+    xfbml?: boolean;
+    version: string;
+  }) => void;
+  login: (
+    callback: (response: FacebookLoginResponse) => void,
+    options?: { scope?: string; auth_type?: string; return_scopes?: boolean },
+  ) => void;
+  getLoginStatus: (callback: (response: FacebookLoginResponse) => void) => void;
+}
+
 declare global {
+  // eslint-disable-next-line no-var
+  var FB: FacebookSDK | undefined;
   interface Window {
     fbAsyncInit?: () => void;
-    FB?: {
-      init: (params: {
-        appId: string;
-        cookie?: boolean;
-        xfbml?: boolean;
-        version: string;
-      }) => void;
-      login: (
-        callback: (response: FacebookLoginResponse) => void,
-        options?: { scope?: string; auth_type?: string; return_scopes?: boolean },
-      ) => void;
-      getLoginStatus: (callback: (response: FacebookLoginResponse) => void) => void;
-    };
   }
 }
 
@@ -117,15 +120,31 @@ export async function loginWithFacebook(): Promise<{
   }
 
   return new Promise((resolve, reject) => {
+    let settled = false;
+
+    // Timeout: if FB.login callback never fires (popup blocked), reject after 30s
+    const timer = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        reject(new Error(
+          'Le popup Facebook ne s\'est pas ouvert. Desactive Brave Shield (icone lion) pour ce site, puis reessaie.',
+        ));
+      }
+    }, 30_000);
+
     window.FB!.login(
       (response) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+
         if (response.status === 'connected' && response.authResponse) {
           resolve({
             accessToken: response.authResponse.accessToken,
             userID: response.authResponse.userID,
           });
         } else {
-          reject(new Error('Facebook login cancelled or failed'));
+          reject(new Error('Connexion Facebook annulee ou refusee. Reessaie.'));
         }
       },
       {

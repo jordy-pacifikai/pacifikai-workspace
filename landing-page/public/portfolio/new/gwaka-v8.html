@@ -1152,7 +1152,7 @@
 
   <!-- Items counter -->
   <div class="menu-masonry__count reveal" id="menuCount">
-    <strong id="menuCountNum">62</strong> creations
+    <strong id="menuCountNum">49</strong> creations
   </div>
 
   <!-- Masonry grid -->
@@ -1223,7 +1223,6 @@
       </div>
     </div>
 
-
     <div class="menu-masonry__item" data-cat="sales">
       <span class="menu-masonry__cat">Sales</span>
       <img class="menu-masonry__img" src="images/gwaka/cake-feta.jpg" alt="Cake Feta" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#B8D4A3,#F4C89E)';this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22/>';">
@@ -1259,7 +1258,6 @@
         <div class="menu-masonry__desc">Houmous cremeux, poivrons grilles</div>
       </div>
     </div>
-
 
     <div class="menu-masonry__item" data-cat="sales">
       <span class="menu-masonry__cat">Sales</span>
@@ -1434,8 +1432,6 @@
       </div>
     </div>
 
-
-
     <div class="menu-masonry__item" data-cat="wraps">
       <span class="menu-masonry__cat">Wraps</span>
       <img class="menu-masonry__img" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#A8D8EA,#B8D4A3)';this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22267%22/>';">
@@ -1444,8 +1440,6 @@
         <div class="menu-masonry__desc">Saumon fume, creamcheese</div>
       </div>
     </div>
-
-
 
     <div class="menu-masonry__item" data-cat="wraps">
       <span class="menu-masonry__cat">Wraps</span>
@@ -1706,7 +1700,7 @@
       <div class="gallery-overlay"><span>Table dressee</span></div>
     </div>
   </div>
-  <a href="images/gwaka/verrines-appetizers.jpg" target="_blank" rel="noopener" class="gallery-insta reveal">
+  <a href="https://instagram.com/gwaka.tahiti" target="_blank" rel="noopener" class="gallery-insta reveal">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
       <rect x="2" y="2" width="20" height="20" rx="5"/>
       <circle cx="12" cy="12" r="5"/>
@@ -1879,21 +1873,25 @@
   'use strict';
 
   // ===== LENIS SMOOTH SCROLL =====
-  const lenis = new Lenis({
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    touchMultiplier: 2
-  });
-  function raf(time) {
-    lenis.raf(time);
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let lenis;
+  if (!prefersReduced) {
+    lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      touchMultiplier: 2
+    });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
     requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
 
-  // Sync Lenis with ScrollTrigger
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
-  gsap.ticker.lagSmoothing(0);
+    // Sync Lenis with ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
 
   // ===== NAVBAR SCROLL =====
   const navbar = document.getElementById('navbar');
@@ -1954,8 +1952,6 @@
   })();
 
   // ===== GSAP SCROLL REVEALS =====
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   if (!prefersReduced) {
     gsap.registerPlugin(ScrollTrigger);
 
@@ -2046,7 +2042,11 @@
       const target = document.querySelector(id);
       if (target) {
         e.preventDefault();
-        lenis.scrollTo(target, { offset: -72 });
+        if (lenis) {
+          lenis.scrollTo(target, { offset: -72 });
+        } else {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }
     });
   });

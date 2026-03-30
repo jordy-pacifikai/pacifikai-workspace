@@ -1,0 +1,86 @@
+<!DOCTYPE html><html><body>
+<div id="status">Loading...</div>
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+
+const el = document.getElementById('status');
+
+async function run() {
+  el.textContent = 'Loading SVG...';
+  const resp = await fetch('vea-v16-flat-traced.svg');
+  const svgStr = await resp.text();
+
+  el.textContent = 'Parsing...';
+  const svgData = new SVGLoader().parse(svgStr);
+  el.textContent = `Extruding ${svgData.paths.length} NON-OVERLAPPING paths...`;
+
+  // Group by color — safe to merge because cutout paths don't overlap
+  const colorGroups = {};
+  for (const path of svgData.paths) {
+    const fill = path.userData?.style?.fill;
+    if (!fill || fill === 'none') continue;
+    const c = new THREE.Color(fill);
+    // Skip white/near-white background
+    if (c.r > 0.85 && c.g > 0.85 && c.b > 0.85) continue;
+    // Aggressive color quantization: 4 levels per channel = max 64 groups
+    // Merges near-identical colors to eliminate micro-boundary scintillation
+    const key = Math.round(c.r*3)+'_'+Math.round(c.g*3)+'_'+Math.round(c.b*3);
+    if (!colorGroups[key]) colorGroups[key] = { color: fill, geos: [] };
+    for (const shape of SVGLoader.createShapes(path)) {
+      try {
+        colorGroups[key].geos.push(new THREE.ExtrudeGeometry(shape, {
+          depth: 15, bevelEnabled: true, bevelThickness: 1.5,
+          bevelSize: 1.0, bevelSegments: 4, curveSegments: 16, steps: 1,
+        }));
+      } catch(e) {}
+    }
+  }
+
+  el.textContent = `Merging ${Object.keys(colorGroups).length} color groups...`;
+  const scene = new THREE.Scene();
+  const group = new THREE.Group();
+
+  for (const data of Object.values(colorGroups)) {
+    if (!data.geos.length) continue;
+    const merged = mergeGeometries(data.geos, false);
+    data.geos.forEach(g => g.dispose());
+    if (!merged) continue;
+    const c = new THREE.Color(data.color);
+    const isGreen = c.g > c.r * 1.2 && c.g > 0.15;
+    group.add(new THREE.Mesh(merged, new THREE.MeshStandardMaterial({
+      color: c, metalness: isGreen ? 0.65 : 0.8,
+      roughness: isGreen ? 0.18 : 0.12, side: THREE.DoubleSide,
+    })));
+  }
+
+  el.textContent = 'Centering...';
+  const box = new THREE.Box3().setFromObject(group);
+  const center = box.getCenter(new THREE.Vector3());
+  const maxDim = Math.max(...box.getSize(new THREE.Vector3()).toArray());
+  group.position.sub(center);
+  group.scale.multiplyScalar(2.0 / maxDim);
+  group.rotation.x = Math.PI;
+  scene.add(group);
+
+  el.textContent = 'Exporting GLB...';
+  const glb = await new GLTFExporter().parseAsync(scene, { binary: true });
+  const bytes = new Uint8Array(glb);
+  let bin = '';
+  const CHUNK = 4096;
+  for (let i = 0; i < bytes.length; i += CHUNK)
+    bin += String.fromCharCode.apply(null, bytes.slice(i, i + CHUNK));
+  window.__glbBase64 = btoa(bin);
+  window.__status = 'done';
+  el.textContent = `Done! GLB: ${(bytes.length/1024/1024).toFixed(2)}MB`;
+}
+run().catch(e => { window.__status = 'error: ' + e.message; el.textContent = 'Error: ' + e.message; });
+</script></body></html>

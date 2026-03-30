@@ -158,10 +158,14 @@ export const bookbotHandler = schemaTask({
     buttonPayload: z.string().nullable(),
     messageType: z.enum(["text", "button", "interactive"]),
     businessId: z.string().uuid(),
-    channel: z.enum(["whatsapp", "messenger", "instagram"]).optional(),
+    channel: z.enum(["whatsapp", "messenger", "instagram", "unipile_messenger", "unipile_instagram", "bridge_messenger"]).optional(),
     senderName: z.string().optional(),
     pageAccessToken: z.string().optional(),
     messageId: z.string().optional(),
+    unipileChatId: z.string().optional(),
+    unipileAccountId: z.string().optional(),
+    bridgeThreadId: z.string().optional(),
+    bridgeSenderId: z.string().optional(),
   }),
   retry: {
     maxAttempts: 1, // No retries — agent + sendWhatsApp are not idempotent (would re-send messages)

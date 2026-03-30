@@ -5,6 +5,7 @@ import {
   Plug, MessageCircle, Send, Instagram, CheckCircle2, Circle,
   Copy, Check, LogIn, LogOut, Loader2, AlertCircle, Calendar,
   ChevronRight, ChevronLeft, ExternalLink, Shield, Eye, EyeOff,
+  Bot, Power, Sparkles,
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonCard } from '@/components/ui/Skeleton';
@@ -12,9 +13,8 @@ import { useAppStore } from '@/lib/store';
 import { useBusiness, useUpdateBusiness } from '@/hooks/useBusiness';
 import {
   useConnectedChannels,
-  startFacebookOAuth,
-  useSelectPage,
   useDisconnectFacebook,
+  useBridgeStatus,
   type FacebookPageOption,
 } from '@/hooks/useChannels';
 import {
@@ -22,6 +22,7 @@ import {
   useConnectGoogle,
   useDisconnectGoogle,
 } from '@/hooks/useGoogleCalendar';
+import { loginWithFacebook } from '@/lib/facebook-sdk';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -293,6 +294,400 @@ function WhatsAppCard({
   );
 }
 
+// ─── Messenger Login Modal (email+password via mautrix-meta) ─────────────────
+
+type LoginStep = 'credentials' | 'twofactor' | 'approval' | 'connecting' | 'done';
+
+function MessengerLoginModal({
+  businessId,
+  onClose,
+  onSuccess,
+}: {
+  businessId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [step, setStep] = useState<LoginStep>('credentials');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [twoFactorStepId, setTwoFactorStepId] = useState('');
+  const [twoFactorLabel, setTwoFactorLabel] = useState('');
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  async function bridgeAction(action: string, extra: Record<string, unknown> = {}) {
+    const res = await fetch('/api/messenger-bridge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, business_id: businessId, ...extra }),
+    });
+    return res.json();
+  }
+
+  async function handleLogin() {
+    if (!email.trim() || !password.trim()) return;
+
+    setSubmitting(true);
+    setError('');
+    setStep('connecting');
+
+    try {
+      // Step 1: Start login flow
+      await bridgeAction('login-start');
+
+      // Step 2: Submit credentials
+      const result = await bridgeAction('login-credentials', { email, password });
+
+      handleLoginResult(result);
+    } catch (err) {
+      setStep('credentials');
+      setError(err instanceof Error ? err.message : 'Erreur de connexion');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleLoginResult(result: Record<string, unknown>) {
+    if (result.type === 'complete') {
+      setStep('done');
+      setTimeout(() => onSuccess(), 1500);
+      return;
+    }
+
+    if (result.type === 'display_and_wait' && result.step_id) {
+      // "Approve From Another Device" — user taps approve on phone
+      setTwoFactorStepId(result.step_id as string);
+      setStep('approval');
+      pollApproval(result.step_id as string);
+      return;
+    }
+
+    if (result.type === 'user_input' && result.step_id) {
+      const fields = (result.user_input as Record<string, unknown>)?.fields as Array<Record<string, unknown>> | undefined;
+      const firstField = fields?.[0];
+
+      // MFA type selection — auto-select "Notification on another device"
+      if (firstField?.type === 'select' && (result.step_id as string).includes('mfa_type')) {
+        try {
+          const mfaResult = await bridgeAction('login-2fa', {
+            step_id: result.step_id,
+            code: 'Notification on another device',
+          });
+          handleLoginResult(mfaResult);
+        } catch (err) {
+          setStep('credentials');
+          setError(err instanceof Error ? err.message : 'Erreur MFA');
+        }
+        return;
+      }
+
+      // Code input (TOTP, SMS, email code)
+      const label = (firstField?.name as string) || 'Code de verification';
+      setTwoFactorStepId(result.step_id as string);
+      setTwoFactorLabel(label);
+      setStep('twofactor');
+      return;
+    }
+
+    // Error or unknown step
+    setStep('credentials');
+    setError((result.instructions as string) || (result.error as string) || 'Identifiants invalides.');
+  }
+
+  async function pollApproval(stepId: string) {
+    try {
+      const result = await bridgeAction('login-wait-approval', { step_id: stepId });
+      if (result.type === 'complete') {
+        setStep('done');
+        setTimeout(() => onSuccess(), 1500);
+      } else {
+        setStep('credentials');
+        setError(result.instructions || result.error || 'Approbation echouee, reessayez.');
+      }
+    } catch (err) {
+      setStep('credentials');
+      setError(err instanceof Error ? err.message : 'Erreur de verification');
+    }
+  }
+
+  async function handle2FA() {
+    if (!twoFactorCode.trim()) return;
+
+    setSubmitting(true);
+    setError('');
+    setStep('connecting');
+
+    try {
+      const result = await bridgeAction('login-2fa', {
+        step_id: twoFactorStepId,
+        code: twoFactorCode,
+      });
+
+      handleLoginResult(result);
+    } catch (err) {
+      setStep('twofactor');
+      setError(err instanceof Error ? err.message : 'Erreur de verification');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden max-w-[420px] w-full mx-4">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-800">
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${step === 'done' ? 'bg-[#25D366]' : 'bg-[#1877F2]'} animate-pulse`} />
+            <span className="text-sm font-medium text-white">Connecter Messenger</span>
+          </div>
+          <button onClick={onClose} className="text-gray-500 hover:text-white transition text-sm">
+            Annuler
+          </button>
+        </div>
+
+        {error && (
+          <div className="px-5 py-3 bg-red-500/10 border-b border-red-500/20">
+            <p className="text-xs text-red-400">{error}</p>
+          </div>
+        )}
+
+        {/* Step: Credentials */}
+        {step === 'credentials' && (
+          <div className="p-5 space-y-4">
+            <p className="text-sm text-gray-400">
+              Entrez vos identifiants Facebook pour connecter Messenger.
+            </p>
+
+            <div className="space-y-3">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email ou telephone"
+                autoFocus
+                autoComplete="username"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#1877F2]/60"
+              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Mot de passe"
+                  autoComplete="current-password"
+                  onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 pr-10 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#1877F2]/60"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={handleLogin}
+              disabled={submitting || !email.trim() || !password.trim()}
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-medium text-white rounded-lg transition hover:opacity-90 disabled:opacity-40"
+              style={{ backgroundColor: '#1877F2' }}
+            >
+              {submitting ? <Loader2 size={16} className="animate-spin" /> : <LogIn size={16} />}
+              Se connecter
+            </button>
+          </div>
+        )}
+
+        {/* Step: 2FA */}
+        {step === 'twofactor' && (
+          <div className="p-5 space-y-4">
+            <p className="text-sm text-gray-400">
+              {twoFactorLabel || 'Entrez le code de verification'}
+            </p>
+
+            <input
+              type="text"
+              value={twoFactorCode}
+              onChange={(e) => setTwoFactorCode(e.target.value)}
+              placeholder="Code a 6 chiffres"
+              autoFocus
+              inputMode="numeric"
+              maxLength={8}
+              onKeyDown={(e) => e.key === 'Enter' && handle2FA()}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-sm text-white text-center tracking-[0.3em] font-mono placeholder:text-gray-600 placeholder:tracking-normal focus:outline-none focus:border-[#1877F2]/60"
+            />
+
+            <button
+              onClick={handle2FA}
+              disabled={submitting || !twoFactorCode.trim()}
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-medium text-white rounded-lg transition hover:opacity-90 disabled:opacity-40"
+              style={{ backgroundColor: '#1877F2' }}
+            >
+              {submitting ? <Loader2 size={16} className="animate-spin" /> : <Shield size={16} />}
+              Verifier
+            </button>
+          </div>
+        )}
+
+        {/* Step: Approve on phone */}
+        {step === 'approval' && (
+          <div className="flex flex-col items-center justify-center py-12 gap-4">
+            <Loader2 size={32} className="text-[#1877F2] animate-spin" />
+            <p className="text-sm text-white font-medium">Approuvez sur votre telephone</p>
+            <p className="text-xs text-gray-400 text-center px-8">
+              Ouvrez l&apos;app Facebook sur votre telephone et approuvez la connexion.
+            </p>
+          </div>
+        )}
+
+        {/* Step: Connecting */}
+        {step === 'connecting' && (
+          <div className="flex flex-col items-center justify-center py-16 gap-3">
+            <Loader2 size={32} className="text-[#1877F2] animate-spin" />
+            <p className="text-sm text-gray-400">Connexion a Facebook...</p>
+          </div>
+        )}
+
+        {/* Step: Done */}
+        {step === 'done' && (
+          <div className="flex flex-col items-center justify-center py-16 gap-3">
+            <CheckCircle2 size={32} className="text-[#25D366]" />
+            <p className="text-sm text-[#25D366] font-medium">Messenger connecte !</p>
+            <p className="text-xs text-gray-400">Les messages seront relayes automatiquement.</p>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="px-5 py-3 border-t border-gray-800 bg-gray-900">
+          <div className="flex items-center gap-2 justify-center">
+            <Shield size={11} className="text-gray-600" />
+            <p className="text-[11px] text-gray-600">
+              Connexion securisee — vos identifiants ne sont jamais stockes
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Messenger Bridge Card (self-hosted, no App Review) ─────────────────────
+
+function MessengerBridgeCard({ businessId }: { businessId: string }) {
+  const { data: session, isLoading, refetch } = useBridgeStatus(businessId);
+  const [showLogin, setShowLogin] = useState(false);
+
+  if (isLoading) return <SkeletonCard />;
+
+  const isActive = session?.status === 'active';
+  const isExpired = session?.status === 'expired';
+
+  return (
+    <>
+      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#0084FF15' }}>
+              <Send size={20} style={{ color: '#0084FF' }} />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-white">Facebook Messenger</h3>
+              <p className="text-xs text-gray-500">
+                Connexion directe — aucune validation Meta requise
+              </p>
+            </div>
+          </div>
+          {isActive && (
+            <span className="flex items-center gap-2 text-sm text-[#25D366]">
+              <CheckCircle2 size={18} />
+              Connecte
+            </span>
+          )}
+          {isExpired && (
+            <span className="flex items-center gap-2 text-sm text-red-400">
+              <AlertCircle size={18} />
+              Session expiree
+            </span>
+          )}
+        </div>
+
+        {isActive ? (
+          <div className="space-y-3">
+            <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white">Messenger actif</p>
+                  {session.facebook_user_id && (
+                    <p className="text-xs text-gray-500 font-mono mt-1">FB: {session.facebook_user_id}</p>
+                  )}
+                </div>
+                <span className="px-2 py-1 text-xs rounded-full bg-[#0084FF]/10 text-[#0084FF]">
+                  Messenger
+                </span>
+              </div>
+              {session.created_at && (
+                <p className="text-xs text-gray-600 mt-2">
+                  Connecte le {new Date(session.created_at).toLocaleDateString('fr-FR')}
+                </p>
+              )}
+              {session.last_poll_at && (
+                <p className="text-xs text-gray-600 mt-1">
+                  Derniere activite : {new Date(session.last_poll_at).toLocaleString('fr-FR')}
+                </p>
+              )}
+            </div>
+
+            <div className="p-3 bg-[#25D366]/5 border border-[#25D366]/10 rounded-lg">
+              <p className="text-xs text-gray-400">
+                Les messages entrants sont automatiquement relayes a votre agent IA.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {isExpired && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-2">
+                <AlertCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
+                <p className="text-xs text-red-400">
+                  La session Facebook a expire. Reconnectez-vous pour reactiver Messenger.
+                </p>
+              </div>
+            )}
+
+            <button
+              onClick={() => setShowLogin(true)}
+              className="w-full flex items-center justify-center gap-3 px-5 py-3 text-sm font-medium text-white rounded-lg transition hover:opacity-90"
+              style={{ backgroundColor: '#1877F2' }}
+            >
+              <LogIn size={18} />
+              Connecter Messenger
+            </button>
+            <p className="text-xs text-gray-600 text-center">
+              Connectez votre compte Facebook en 30 secondes
+            </p>
+          </div>
+        )}
+      </div>
+
+      {showLogin && (
+        <MessengerLoginModal
+          businessId={businessId}
+          onClose={() => setShowLogin(false)}
+          onSuccess={() => {
+            setShowLogin(false);
+            refetch();
+          }}
+        />
+      )}
+    </>
+  );
+}
+
 // ─── Facebook Connected Card (Messenger + Instagram) ───────────────────────────
 
 function FacebookConnectedCard({
@@ -302,8 +697,7 @@ function FacebookConnectedCard({
   businessId: string;
   dashboardUrl: string;
 }) {
-  const { data: connected, isLoading } = useConnectedChannels(businessId);
-  const selectPage = useSelectPage(businessId);
+  const { data: connected, isLoading, refetch: refetchChannels } = useConnectedChannels(businessId);
   const disconnectFacebook = useDisconnectFacebook(businessId);
 
   const [pages, setPages] = useState<FacebookPageOption[]>([]);
@@ -311,18 +705,77 @@ function FacebookConnectedCard({
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  // Ve'a AI status
+  const [aiStatus, setAiStatus] = useState<{ connected: boolean; ai_enabled: boolean; inbox_id: number | null } | null>(null);
+  const [togglingAI, setTogglingAI] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/chatwoot?business_id=${encodeURIComponent(businessId)}`)
+      .then((r) => r.json())
+      .then((data) => setAiStatus(data))
+      .catch(() => {});
+  }, [businessId]);
+
+  async function toggleAI() {
+    if (!aiStatus) return;
+    setTogglingAI(true);
+    try {
+      const res = await fetch('/api/chatwoot', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId, aiEnabled: !aiStatus.ai_enabled }),
+      });
+      if (res.ok) setAiStatus((prev) => prev ? { ...prev, ai_enabled: !prev.ai_enabled } : prev);
+    } catch { /* ignore */ }
+    setTogglingAI(false);
+  }
+
   // Handle OAuth callback URL params
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    if (params.get('fb_connected') === 'true') {
-      setSuccessMsg('Facebook connecte avec succes !');
+    if (params.get('fb_connected') === 'true' || params.get('fb_success')) {
+      setSuccessMsg(params.get('fb_success') ? decodeURIComponent(params.get('fb_success')!) : 'Facebook connecte avec succes !');
+      refetchChannels();
       window.history.replaceState({}, '', '/channels');
+    }
+
+    // Handle OAuth multi-page picker
+    if (params.get('fb_pick_pages') === 'true') {
+      window.history.replaceState({}, '', '/channels');
+      setConnecting(true);
+      fetch('/api/messenger/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'load-page-session', businessId }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.pages) {
+            setUserAccessToken(data.userToken || '');
+            setPages(data.pages.map((p: { id: string; name: string; access_token: string }) => ({
+              id: p.id, name: p.name, access_token: p.access_token, instagram_business_account_id: null,
+            })));
+            setShowPagePicker(true);
+          } else {
+            setError(data.error || 'Session expiree, reessaie la connexion Facebook.');
+          }
+          setConnecting(false);
+        })
+        .catch(() => { setError('Erreur chargement des pages'); setConnecting(false); });
     }
 
     const fbError = params.get('fb_error');
     if (fbError) {
-      setError(fbError);
+      const errorMessages: Record<string, string> = {
+        csrf_failed: 'Erreur de securite (CSRF). Reessaye la connexion.',
+        token_exchange_failed: 'Erreur lors de l\'echange de token Facebook. Reessaye.',
+        pages_fetch_failed: 'Impossible de recuperer tes Pages Facebook. Reessaye.',
+        access_denied: 'Tu as refuse l\'acces Facebook. Reessaye si c\'etait une erreur.',
+        user_denied: 'Tu as refuse l\'acces Facebook. Reessaye si c\'etait une erreur.',
+        invalid_state: 'Session expiree. Reessaye la connexion.',
+      };
+      setError(errorMessages[fbError] || fbError);
       window.history.replaceState({}, '', '/channels');
     }
 
@@ -341,22 +794,75 @@ function FacebookConnectedCard({
         })
         .catch(() => setError('Erreur lors du chargement des pages Facebook'));
     }
+
+    // Handle return from Facebook OAuth callback with multiple pages
+    const pickPage = params.get('pick_page');
+    if (pickPage) {
+      window.history.replaceState({}, '', '/channels');
+      try {
+        const storedPages = sessionStorage.getItem('fb_pages');
+        const storedToken = sessionStorage.getItem('fb_user_token');
+        if (storedPages) {
+          const parsed = JSON.parse(storedPages);
+          setPages(parsed.map((p: { id: string; name: string; access_token: string }) => ({
+            id: p.id,
+            name: p.name,
+            access_token: p.access_token,
+            instagram_business_account_id: null,
+          })));
+          setUserAccessToken(storedToken || '');
+          setShowPagePicker(true);
+          sessionStorage.removeItem('fb_pages');
+          sessionStorage.removeItem('fb_user_token');
+        }
+      } catch {}
+    }
   }, []);
 
-  function handleConnect() {
-    startFacebookOAuth(businessId);
+  const [connecting, setConnecting] = useState(false);
+  const [userAccessToken, setUserAccessToken] = useState('');
+
+  const [sdkBlocked, setSdkBlocked] = useState(false);
+
+  async function handleConnect() {
+    setError('');
+    // OAuth redirect flow — works in ALL browsers (no SDK dependency)
+    const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '854522137595486';
+    const redirectUri = `${window.location.origin}/api/messenger/oauth-callback`;
+    const scopes = 'pages_show_list,pages_manage_metadata,pages_messaging,instagram_manage_messages,public_profile';
+    const state = businessId; // pass businessId through OAuth state
+    const oauthUrl = `https://www.facebook.com/v22.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scopes}&state=${state}&response_type=code`;
+    window.location.href = oauthUrl;
   }
 
-  async function handleSelectPage(page: FacebookPageOption) {
+  async function handleSelectPage(page: FacebookPageOption, overrideUserToken?: string) {
     setError('');
+    setConnecting(true);
+    const uat = overrideUserToken || userAccessToken;
     try {
-      await selectPage.mutateAsync(page);
+      const res = await fetch('/api/messenger/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'connect-page',
+          businessId,
+          pageId: page.id,
+          pageName: page.name,
+          pageAccessToken: page.access_token,
+          userAccessToken: uat,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur');
       setShowPagePicker(false);
       setPages([]);
-      setSuccessMsg('Page connectee avec succes !');
+      setSuccessMsg('Page connectee avec succes ! Ve\'a AI est active.');
+      setAiStatus({ connected: true, ai_enabled: true, inbox_id: data.inbox_id });
+      refetchChannels();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de la connexion de la page');
     }
+    setConnecting(false);
   }
 
   async function handleDisconnect() {
@@ -373,7 +879,6 @@ function FacebookConnectedCard({
     return <SkeletonCard />;
   }
 
-  const isConnecting = selectPage.isPending;
   const isDisconnecting = disconnectFacebook.isPending;
 
   return (
@@ -385,9 +890,11 @@ function FacebookConnectedCard({
             <Send size={20} style={{ color: '#0084FF' }} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white">Messenger & Instagram</h3>
+            <h3 className="text-sm font-semibold text-white">
+              {connected ? (connected.pageName || 'Page Facebook') : 'Facebook Messenger'}
+            </h3>
             <p className="text-xs text-gray-500">
-              Connexion automatique via Facebook — Token permanent
+              {connected ? 'Messenger' + (connected.igAccountId ? ' & Instagram' : '') + ' connecte' : 'Connecte ta Page Facebook pour recevoir les messages'}
             </p>
           </div>
         </div>
@@ -460,14 +967,27 @@ function FacebookConnectedCard({
             )}
           </div>
 
-          {/* Webhook URLs (read-only, auto-configured) */}
-          <div className="p-3 bg-gray-800/30 rounded-lg border border-gray-700/30">
-            <p className="text-xs text-gray-500 mb-1">Webhooks (auto-configures)</p>
-            <p className="text-xs text-gray-400 font-mono break-all">{dashboardUrl}/api/webhook/messenger</p>
-            {connected.igAccountId && (
-              <p className="text-xs text-gray-400 font-mono break-all mt-1">{dashboardUrl}/api/webhook/instagram</p>
-            )}
-          </div>
+          {/* Ve'a AI — auto-response toggle */}
+          {aiStatus?.connected && (
+            <div className="flex items-center justify-between bg-gray-800 rounded-lg px-4 py-3">
+              <div className="flex items-center gap-3">
+                <Bot size={16} className={aiStatus.ai_enabled ? 'text-purple-400' : 'text-gray-500'} />
+                <div>
+                  <p className="text-sm text-white font-medium">Ve&apos;a AI</p>
+                  <p className="text-xs text-gray-500">
+                    {aiStatus.ai_enabled ? 'Repond automatiquement aux messages' : 'Reponses automatiques desactivees'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={toggleAI}
+                disabled={togglingAI}
+                className={`relative w-11 h-6 rounded-full transition-colors ${aiStatus.ai_enabled ? 'bg-purple-500' : 'bg-gray-600'}`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${aiStatus.ai_enabled ? 'translate-x-5' : ''}`} />
+              </button>
+            </div>
+          )}
 
           <button
             onClick={handleDisconnect}
@@ -486,7 +1006,7 @@ function FacebookConnectedCard({
             <button
               key={page.id}
               onClick={() => handleSelectPage(page)}
-              disabled={selectPage.isPending}
+              disabled={connecting}
               className="w-full p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-[#0084FF]/50 transition text-left disabled:opacity-40"
             >
               <div className="flex items-center justify-between">
@@ -511,21 +1031,45 @@ function FacebookConnectedCard({
       ) : (
         /* Not connected — show connect button */
         <div className="space-y-4">
+          {sdkBlocked && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 space-y-2">
+              <div className="flex items-start gap-2">
+                <Shield size={18} className="text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-amber-300 font-medium">Navigateur bloque la connexion Facebook</p>
+                  <p className="text-xs text-amber-200/70 mt-1">
+                    Ton navigateur (Brave / bloqueur de pubs) empeche le chargement de Facebook.
+                  </p>
+                  <ol className="text-xs text-amber-200/70 mt-2 space-y-1 list-decimal list-inside">
+                    <li>Clique sur l&apos;icone <strong>bouclier</strong> (🛡️) dans la barre d&apos;adresse</li>
+                    <li>Desactive la protection pour ce site</li>
+                    <li>Recharge la page et reessaye</li>
+                  </ol>
+                </div>
+              </div>
+              <button
+                onClick={() => { setSdkBlocked(false); handleConnect(); }}
+                className="w-full mt-2 px-4 py-2 text-xs font-medium text-amber-300 border border-amber-500/30 rounded-lg hover:bg-amber-500/10 transition"
+              >
+                Reessayer la connexion
+              </button>
+            </div>
+          )}
           <button
             onClick={handleConnect}
-            disabled={isConnecting}
+            disabled={connecting}
             className="w-full flex items-center justify-center gap-3 px-5 py-3 text-sm font-medium text-white rounded-lg transition hover:opacity-90 disabled:opacity-40"
             style={{ backgroundColor: '#1877F2' }}
           >
-            {isConnecting ? (
+            {connecting ? (
               <Loader2 size={18} className="animate-spin" />
             ) : (
               <LogIn size={18} />
             )}
-            {isConnecting ? 'Connexion en cours...' : 'Connecter avec Facebook'}
+            {connecting ? 'Connexion en cours...' : 'Connecter avec Facebook'}
           </button>
           <p className="text-xs text-gray-600 text-center">
-            Un seul clic connecte Messenger ET Instagram (si lie a la Page)
+            Connecte ta Page Facebook en 30 secondes — Ve&apos;a AI repond ensuite automatiquement
           </p>
         </div>
       )}
@@ -620,13 +1164,8 @@ export default function ChannelsPage() {
           {/* Google Calendar — sync bidirectionnelle */}
           <GoogleCalendarSection businessId={businessId} />
 
-          {/* Messenger & Instagram — OAuth auto */}
-          {businessId && (
-            <FacebookConnectedCard
-              businessId={businessId}
-              dashboardUrl={dashboardUrl}
-            />
-          )}
+          {/* Facebook Messenger & Instagram — OAuth + Ve'a AI */}
+          {businessId && <FacebookConnectedCard businessId={businessId} dashboardUrl={dashboardUrl} />}
 
           {/* WhatsApp — manual config */}
           <WhatsAppCard
@@ -656,19 +1195,19 @@ export default function ChannelsPage() {
             <h3 className="text-sm font-semibold text-white mb-3">Comment connecter ?</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="text-xs font-semibold text-[#0084FF] mb-2">Messenger & Instagram (automatique)</h4>
+                <h4 className="text-xs font-semibold text-[#0084FF] mb-2">Messenger (activation assistee)</h4>
                 <ol className="space-y-1.5 text-sm text-gray-400">
                   <li className="flex gap-2">
                     <span className="font-mono text-[#0084FF] shrink-0">1.</span>
-                    Clique sur &quot;Connecter avec Facebook&quot;
+                    Clique sur &quot;Activer Messenger&quot;
                   </li>
                   <li className="flex gap-2">
                     <span className="font-mono text-[#0084FF] shrink-0">2.</span>
-                    Autorise les permissions dans la popup
+                    Notre equipe configure la connexion a ton compte Facebook
                   </li>
                   <li className="flex gap-2">
                     <span className="font-mono text-[#0084FF] shrink-0">3.</span>
-                    Selectionne ta Page — les webhooks se configurent automatiquement
+                    Ton agent IA repond automatiquement aux messages Messenger
                   </li>
                 </ol>
               </div>
@@ -861,6 +1400,150 @@ function GoogleCalendarSection({ businessId }: { businessId: string | null }) {
             <Calendar size={15} />
             {connectGoogle.isPending ? 'Connexion...' : 'Connecter Google Calendar'}
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Ve'a AI Section ──────────────────────────────────────────────────────────
+
+interface ChatwootStatus {
+  connected: boolean;
+  inbox_id: number | null;
+  connected_at: string | null;
+  ai_enabled: boolean;
+  has_custom_prompt: boolean;
+}
+
+function VeaAISection({ businessId }: { businessId: string }) {
+  const [status, setStatus] = useState<ChatwootStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [toggling, setToggling] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/chatwoot?business_id=${encodeURIComponent(businessId)}`)
+      .then((r) => r.json())
+      .then((data) => setStatus(data))
+      .catch(() => setStatus({ connected: false, inbox_id: null, connected_at: null, ai_enabled: false, has_custom_prompt: false }))
+      .finally(() => setLoading(false));
+  }, [businessId]);
+
+  async function toggleAI() {
+    if (!status) return;
+    setToggling(true);
+    try {
+      const res = await fetch('/api/chatwoot', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId, aiEnabled: !status.ai_enabled }),
+      });
+      if (res.ok) {
+        setStatus((prev) => prev ? { ...prev, ai_enabled: !prev.ai_enabled } : prev);
+      }
+    } catch { /* ignore */ }
+    setToggling(false);
+  }
+
+  if (loading) return null;
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+          <Bot size={20} className="text-purple-400" />
+        </div>
+        <div>
+          <h3 className="text-white font-semibold flex items-center gap-2">
+            Ve&apos;a AI
+            <Sparkles size={14} className="text-purple-400" />
+          </h3>
+          <p className="text-xs text-gray-500">Agent IA qui repond automatiquement aux messages</p>
+        </div>
+        <div className="ml-auto">
+          {status?.connected ? (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-500/15 text-purple-400 border border-purple-500/30">
+              <CheckCircle2 size={12} />
+              Actif
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-800 text-gray-400 border border-gray-700">
+              <Circle size={12} />
+              Non configure
+            </span>
+          )}
+        </div>
+      </div>
+
+      {status?.connected ? (
+        <div className="space-y-4">
+          {/* Status info */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-gray-800 rounded-lg px-4 py-3">
+              <p className="text-xs text-gray-500 mb-1">Inbox Chatwoot</p>
+              <p className="text-sm text-gray-200">#{status.inbox_id}</p>
+            </div>
+            {status.connected_at && (
+              <div className="bg-gray-800 rounded-lg px-4 py-3">
+                <p className="text-xs text-gray-500 mb-1">Connecte le</p>
+                <p className="text-sm text-gray-200">
+                  {new Date(status.connected_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* AI toggle */}
+          <div className="flex items-center justify-between bg-gray-800 rounded-lg px-4 py-3">
+            <div className="flex items-center gap-3">
+              <Power size={16} className={status.ai_enabled ? 'text-purple-400' : 'text-gray-500'} />
+              <div>
+                <p className="text-sm text-white font-medium">Reponses IA automatiques</p>
+                <p className="text-xs text-gray-500">
+                  {status.ai_enabled ? 'Ve\'a repond automatiquement aux messages entrants' : 'Les messages sont recus mais pas de reponse auto'}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={toggleAI}
+              disabled={toggling}
+              className={`relative w-11 h-6 rounded-full transition-colors ${status.ai_enabled ? 'bg-purple-500' : 'bg-gray-600'}`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${status.ai_enabled ? 'translate-x-5' : ''}`} />
+            </button>
+          </div>
+
+          {/* How it works */}
+          <div className="bg-purple-500/5 border border-purple-500/20 rounded-lg p-4">
+            <p className="text-xs text-purple-300 font-medium mb-2">Comment ca marche</p>
+            <ol className="space-y-1.5 text-xs text-gray-400">
+              <li className="flex gap-2">
+                <span className="text-purple-400 font-mono shrink-0">1.</span>
+                Un client t&apos;envoie un message sur Messenger
+              </li>
+              <li className="flex gap-2">
+                <span className="text-purple-400 font-mono shrink-0">2.</span>
+                Ve&apos;a analyse le message et genere une reponse personnalisee
+              </li>
+              <li className="flex gap-2">
+                <span className="text-purple-400 font-mono shrink-0">3.</span>
+                La reponse est envoyee automatiquement en quelques secondes
+              </li>
+            </ol>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <p className="text-sm text-gray-400">
+            Connecte ta Page Facebook via Messenger ci-dessus pour activer les reponses IA automatiques.
+            Ve&apos;a utilise l&apos;intelligence artificielle pour repondre a tes clients 24h/24.
+          </p>
+          <div className="bg-purple-500/5 border border-purple-500/20 rounded-lg p-4">
+            <p className="text-xs text-purple-300">
+              <Sparkles size={12} className="inline mr-1" />
+              Ve&apos;a comprend le contexte de ton activite et repond en francais avec un ton professionnel adapte.
+            </p>
+          </div>
         </div>
       )}
     </div>

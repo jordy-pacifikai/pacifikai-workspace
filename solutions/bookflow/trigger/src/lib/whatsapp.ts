@@ -42,6 +42,20 @@ export async function sendWhatsApp(
     return;
   }
 
+  // Detect Unipile channel (Messenger/Instagram via Unipile proxy)
+  if (to.startsWith("unipile_")) {
+    const chatId = to.replace("unipile_", "");
+    await sendViaUnipile(chatId, message);
+    return;
+  }
+
+  // Detect Bridge channel (self-hosted Messenger proxy)
+  if (to.startsWith("bridge_")) {
+    const threadId = to.replace("bridge_", "");
+    await sendViaBridge(threadId, message, config);
+    return;
+  }
+
   // WhatsApp
   if (config.provider === "meta") {
     await sendViaMeta(to, message, config);
@@ -286,6 +300,68 @@ async function sendViaInstagram(
   }
 }
 
+/**
+ * Send via Unipile messaging proxy.
+ * Used when channel prefix is "unipile_" — routes through Unipile API
+ * instead of direct Graph API (no Meta App Review needed).
+ */
+async function sendViaUnipile(
+  chatId: string,
+  message: string,
+): Promise<void> {
+  const dsn = process.env.UNIPILE_DSN;
+  const apiKey = process.env.UNIPILE_API_KEY;
+  if (!dsn || !apiKey) {
+    throw new Error("Unipile credentials not configured (UNIPILE_DSN, UNIPILE_API_KEY)");
+  }
+
+  const res = await fetch(`${dsn}/api/v1/chats/${chatId}/messages`, {
+    method: "POST",
+    headers: {
+      "X-API-KEY": apiKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ text: message }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "unknown");
+    throw new Error(`Unipile send error ${res.status}: ${body}`);
+  }
+}
+
+/**
+ * Send a message via the self-hosted Messenger Bridge.
+ * Used when channel prefix is "bridge_" — routes through our own proxy
+ * service instead of Unipile or direct Graph API.
+ */
+async function sendViaBridge(
+  threadId: string,
+  message: string,
+  config: BusinessConfig,
+): Promise<void> {
+  const bridgeUrl = process.env.MESSENGER_BRIDGE_URL;
+  const bridgeSecret = process.env.MESSENGER_BRIDGE_SECRET;
+  if (!bridgeUrl || !bridgeSecret) {
+    throw new Error("Bridge credentials not configured (MESSENGER_BRIDGE_URL, MESSENGER_BRIDGE_SECRET)");
+  }
+
+  const res = await fetch(`${bridgeUrl}/messages/send/${config.businessId}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${bridgeSecret}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ thread_id: threadId, text: message }),
+    signal: AbortSignal.timeout(15000),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "unknown");
+    throw new Error(`Bridge send error ${res.status}: ${body}`);
+  }
+}
+
 async function getPageToken(businessId: string): Promise<string | null> {
   const res = await fetch(
     `${SUPABASE_URL}/rest/v1/bookbot_businesses?id=eq.${businessId}&select=meta_page_token`,
@@ -349,6 +425,9 @@ export async function sendTypingIndicator(
   pageAccessToken?: string,
 ): Promise<void> {
   try {
+    // Unipile channels — no typing indicator API available
+    if (to.startsWith("unipile_")) return;
+
     // Messenger/Instagram support sender_action natively
     if (to.startsWith("messenger_") || to.startsWith("instagram_")) {
       const recipientId = to.replace(/^(messenger_|instagram_)/, "");
