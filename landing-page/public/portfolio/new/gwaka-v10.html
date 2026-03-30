@@ -1,0 +1,2590 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GWAKA — Brunch & Healthy Catering | Tahiti</title>
+<meta name="description" content="GWAKA — Traiteur brunch & healthy a Tahiti. Made with love for you.">
+<link rel="icon" type="image/jpeg" href="https://litter.catbox.moe/66guxd.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #F8F4EF;
+  --kraft: #EDE4D3;
+  --kraft-dark: #D4C9B5;
+  --green: #4A7C3F;
+  --green-herb: #5C8A4D;
+  --green-accent: #7CB342;
+  --honey: #8B6914;
+  --terracotta: #C4724A;
+  --brown: #3E2723;
+  --brown-light: #5D4037;
+  --white: #FEFCF9;
+  --shadow: rgba(62, 39, 35, 0.08);
+  --shadow-md: rgba(62, 39, 35, 0.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Karla', sans-serif;
+  background: var(--bg);
+  color: var(--brown);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ========== KRAFT TEXTURE (CSS noise) ========== */
+.kraft-bg {
+  background-color: var(--kraft);
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+}
+
+/* ========== STAMP BADGE ========== */
+.stamp-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border: 2px solid var(--green);
+  border-radius: 50px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--green);
+  transform: rotate(-3deg);
+  position: relative;
+}
+.stamp-badge::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1px dashed var(--green);
+  border-radius: 54px;
+  opacity: 0.4;
+}
+.stamp-badge--terracotta {
+  border-color: var(--terracotta);
+  color: var(--terracotta);
+}
+.stamp-badge--terracotta::before { border-color: var(--terracotta); }
+.stamp-badge--honey {
+  border-color: var(--honey);
+  color: var(--honey);
+}
+.stamp-badge--honey::before { border-color: var(--honey); }
+
+/* ========== CIRCULAR STAMP ========== */
+.circular-stamp {
+  width: 80px;
+  height: 80px;
+  border: 3px solid var(--green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  position: relative;
+  transform: rotate(-5deg);
+}
+.circular-stamp::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1.5px dashed var(--green);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+/* ========== DASHED SEPARATOR ========== */
+.dashed-sep {
+  border: none;
+  border-top: 2px dashed var(--kraft-dark);
+  margin: 40px 0;
+  opacity: 0.6;
+}
+
+/* ========== NAVBAR ========== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(248, 244, 239, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 2px dashed var(--kraft-dark);
+  transition: box-shadow 0.3s ease;
+}
+.navbar.scrolled { box-shadow: 0 4px 20px var(--shadow); }
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.navbar-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.navbar-logo svg { height: 42px; width: auto; }
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.navbar-links a {
+  text-decoration: none;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brown);
+  transition: color 0.3s;
+  position: relative;
+}
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--green);
+  transition: width 0.3s;
+}
+.navbar-links a:hover { color: var(--green); }
+.navbar-links a:hover::after { width: 100%; }
+.navbar-cta {
+  background: var(--green);
+  color: var(--white) !important;
+  padding: 10px 24px;
+  border-radius: 4px;
+  border: 2px dashed rgba(255,255,255,0.3);
+  transition: background 0.3s, transform 0.2s !important;
+}
+.navbar-cta::after { display: none !important; }
+.navbar-cta:hover { background: var(--green-herb); transform: translateY(-1px); }
+
+/* Burger */
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1001;
+}
+.burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--brown);
+  transition: transform 0.3s, opacity 0.3s;
+  border-radius: 1px;
+}
+.burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.burger.active span:nth-child(2) { opacity: 0; }
+.burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* Mobile nav */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(248, 244, 239, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  text-decoration: none;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brown);
+  transition: color 0.3s;
+}
+.mobile-nav a:hover { color: var(--green); }
+
+@media (max-width: 768px) {
+  .navbar-links { display: none; }
+  .burger { display: flex; }
+}
+
+/* ========== HERO ========== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: 72px;
+}
+.hero-kraft-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background-color: var(--kraft);
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)' opacity='0.05'/%3E%3C/svg%3E");
+  clip-path: polygon(0 0, 60% 0, 55% 100%, 0 100%);
+  z-index: 0;
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.hero-content { padding: 40px 0; }
+.hero-stamp {
+  width: 100px;
+  height: 100px;
+  border: 3px solid var(--green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+  transform: rotate(-8deg);
+}
+.hero-stamp::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1.5px dashed var(--green);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+.hero-stamp-text {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+  line-height: 1.3;
+}
+.hero h1 {
+  font-size: clamp(56px, 8vw, 120px);
+  color: var(--brown);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  line-height: 0.95;
+}
+.hero h1 span {
+  display: block;
+  font-size: 0.3em;
+  letter-spacing: 0.2em;
+  color: var(--green);
+  font-weight: 300;
+  margin-top: 4px;
+}
+.hero-tagline {
+  font-family: 'Karla', sans-serif;
+  font-size: 18px;
+  color: var(--brown-light);
+  font-style: italic;
+  margin-bottom: 32px;
+  font-weight: 300;
+}
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green);
+  color: var(--white);
+  padding: 14px 32px;
+  border: 2px dashed rgba(255,255,255,0.3);
+  border-radius: 4px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+.btn-primary:hover { background: var(--green-herb); transform: translateY(-2px); }
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--green);
+  padding: 14px 32px;
+  border: 2px dashed var(--green);
+  border-radius: 4px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+.btn-outline:hover { background: var(--green); color: var(--white); transform: translateY(-2px); }
+
+.hero-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 20px;
+}
+.hero-img-wrap {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 3px solid var(--white);
+  box-shadow: 4px 4px 0 var(--kraft-dark);
+  transition: transform 0.4s;
+}
+.hero-img-wrap:nth-child(1) { transform: rotate(-2deg); }
+.hero-img-wrap:nth-child(2) { transform: rotate(1.5deg); margin-top: 30px; }
+.hero-img-wrap:nth-child(3) { transform: rotate(1deg); margin-top: -20px; }
+.hero-img-wrap:nth-child(4) { transform: rotate(-1.5deg); margin-top: 10px; }
+.hero-img-wrap:hover { transform: rotate(0deg) scale(1.03); z-index: 2; }
+.hero-img-wrap img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Dashed circle deco */
+.deco-circle {
+  position: absolute;
+  border: 2px dashed var(--kraft-dark);
+  border-radius: 50%;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .hero-kraft-strip { clip-path: polygon(0 0, 100% 0, 100% 50%, 0 60%); }
+  .hero-inner { grid-template-columns: 1fr; gap: 32px; text-align: center; }
+  .hero-stamp { margin: 0 auto 24px; }
+  .hero-actions { justify-content: center; }
+  .hero-images { grid-template-columns: 1fr 1fr; gap: 12px; padding: 0; }
+  .hero-img-wrap img { height: 150px; }
+}
+
+/* ========== SECTION HEADERS ========== */
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.section-header .stamp-badge { margin-bottom: 16px; }
+.section-header h2 {
+  font-size: clamp(32px, 5vw, 48px);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brown);
+  margin-bottom: 12px;
+}
+.section-header p {
+  font-size: 17px;
+  color: var(--brown-light);
+  max-width: 550px;
+  margin: 0 auto;
+  font-weight: 300;
+}
+.section-header .dashed-line {
+  width: 80px;
+  height: 0;
+  border-top: 2px dashed var(--green);
+  margin: 16px auto 0;
+  opacity: 0.5;
+}
+
+/* ========== SERVICES ========== */
+.services { padding: 100px 0; }
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+.service-card {
+  background: var(--white);
+  border: 2px dashed var(--green);
+  border-radius: 8px;
+  padding: 40px 28px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.4s, box-shadow 0.4s;
+}
+.service-card:nth-child(1) { transform: rotate(-1deg); }
+.service-card:nth-child(2) { transform: rotate(0.5deg); }
+.service-card:nth-child(3) { transform: rotate(-0.8deg); }
+.service-card:hover {
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow: 6px 6px 0 var(--kraft-dark);
+}
+.service-card .card-stamp {
+  position: absolute;
+  top: -12px;
+  right: 16px;
+}
+.service-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+}
+.service-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.service-card h3 {
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+  color: var(--brown);
+}
+.service-card p {
+  font-size: 15px;
+  color: var(--brown-light);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .services-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+}
+
+/* ========== ENGAGEMENTS ========== */
+.engagements {
+  padding: 60px 0;
+  border-top: 2px dashed var(--kraft-dark);
+  border-bottom: 2px dashed var(--kraft-dark);
+  background: var(--bg);
+}
+.engagements-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+.engagement-item {
+  flex: 1;
+  text-align: center;
+  max-width: 220px;
+}
+.engagement-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 14px;
+}
+.engagement-icon svg { width: 100%; height: 100%; }
+.engagement-item h4 {
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brown);
+  margin-bottom: 6px;
+}
+.engagement-item p {
+  font-size: 13px;
+  color: var(--brown-light);
+  font-weight: 300;
+  line-height: 1.5;
+}
+.engagement-divider {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+@media (max-width: 768px) {
+  .engagements-grid {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .engagement-divider {
+    transform: rotate(90deg);
+  }
+  .engagement-divider svg { width: 60px; height: 2px; }
+}
+
+/* ========== MENU — Polaroid Masonry ========== */
+.menu-section { padding: 100px 0; }
+
+/* Sticky filter tabs */
+.menu-filters {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+  position: sticky;
+  top: 72px;
+  z-index: 10;
+  background: var(--bg);
+  padding: 16px 0 12px;
+  transition: box-shadow 0.3s;
+}
+.menu-filters.stuck {
+  box-shadow: 0 4px 20px var(--shadow);
+}
+.menu-filter-btn {
+  padding: 8px 18px;
+  border-radius: 100px;
+  border: 1.5px solid var(--green);
+  background: transparent;
+  color: var(--green);
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+.menu-filter-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--green);
+  border-radius: inherit;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+.menu-filter-btn:hover::before {
+  transform: scaleX(1);
+}
+.menu-filter-btn:hover {
+  color: var(--white);
+  border-color: var(--green);
+}
+.menu-filter-btn.active {
+  background: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+}
+.menu-filter-btn.active::before { display: none; }
+
+/* Category headers — full-width break in masonry */
+.menu-category-header {
+  column-span: all;
+  text-align: center;
+  padding: 32px 0 16px;
+  position: relative;
+}
+.menu-category-header:first-child { padding-top: 0; }
+.menu-category-header h3 {
+  display: inline-block;
+  background: var(--bg);
+  padding: 8px 32px;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--green);
+  border: 2px solid var(--green);
+  border-radius: 4px;
+  position: relative;
+}
+.menu-category-header h3::before,
+.menu-category-header h3::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 60px;
+  height: 0;
+  border-top: 2px dashed var(--kraft-dark);
+}
+.menu-category-header h3::before { right: calc(100% + 14px); }
+.menu-category-header h3::after { left: calc(100% + 14px); }
+
+/* Polaroid masonry grid */
+.menu-polaroid-grid {
+  column-count: 3;
+  column-gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 48px);
+}
+
+/* Polaroid card */
+.menu-polaroid {
+  break-inside: avoid;
+  margin-bottom: 24px;
+  background: var(--white);
+  padding: 12px 12px 0;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px var(--shadow);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  position: relative;
+  will-change: transform;
+}
+
+/* Slight random tilts for organic, scrapbook feel */
+.menu-polaroid:nth-child(3n+1) { transform: rotate(-1.5deg); }
+.menu-polaroid:nth-child(3n+2) { transform: rotate(0.8deg); }
+.menu-polaroid:nth-child(3n+3) { transform: rotate(-0.5deg); }
+.menu-polaroid:nth-child(5n)   { transform: rotate(1.2deg); }
+.menu-polaroid:nth-child(7n)   { transform: rotate(-0.8deg); }
+.menu-polaroid:nth-child(11n)  { transform: rotate(1.5deg); }
+
+.menu-polaroid:hover {
+  transform: rotate(0deg) scale(1.03) translateY(-4px);
+  box-shadow: 0 12px 32px var(--shadow-md);
+  z-index: 2;
+}
+
+/* Corner stamp on polaroid */
+.menu-polaroid .card-corner-stamp {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 3;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1.5px solid;
+  border-radius: 2px;
+  transform: rotate(3deg);
+  background: var(--white);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-corner-stamp.nouveau { border-color: var(--terracotta); color: var(--terracotta); }
+.card-corner-stamp.signature { border-color: var(--honey); color: var(--honey); }
+.card-corner-stamp.veggie { border-color: var(--green-accent); color: var(--green-accent); }
+.card-corner-stamp.maison { border-color: var(--green); color: var(--green); }
+
+/* Image wrapper */
+.menu-polaroid__img-wrap {
+  overflow: hidden;
+  border-radius: 2px;
+}
+.menu-polaroid__img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 40%;
+  aspect-ratio: 4/3;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(135deg, var(--kraft) 0%, var(--kraft-dark) 100%);
+}
+.menu-polaroid:hover .menu-polaroid__img {
+  transform: scale(1.04);
+}
+
+/* Caption area */
+.menu-polaroid__caption {
+  padding: 14px 4px 18px;
+  text-align: center;
+}
+.menu-polaroid__name {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  line-height: 1.3;
+  color: var(--brown);
+}
+.menu-polaroid__desc {
+  font-size: 0.75rem;
+  color: var(--brown-light);
+  margin-top: 4px;
+  line-height: 1.4;
+  font-weight: 300;
+  font-style: italic;
+}
+.menu-polaroid__label {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  border: 1px solid var(--green);
+  padding: 2px 7px;
+  border-radius: 2px;
+  opacity: 0.7;
+}
+
+/* Hidden state for filtering */
+.menu-polaroid.hidden,
+.menu-category-header.hidden { display: none; }
+
+/* Download button */
+.menu-download {
+  text-align: center;
+  margin-top: 56px;
+}
+.btn-kraft {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--kraft);
+  color: var(--brown);
+  padding: 16px 36px;
+  border: 2px dashed var(--brown-light);
+  border-radius: 4px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-kraft:hover {
+  background: var(--brown);
+  color: var(--white);
+  border-color: var(--brown);
+  transform: translateY(-2px);
+}
+
+/* Responsive: 3 -> 2 -> 1 columns */
+@media (width < 1024px) {
+  .menu-polaroid-grid { column-count: 2; }
+}
+@media (width < 640px) {
+  .menu-polaroid-grid { column-count: 1; max-width: 420px; }
+  .menu-polaroid { transform: rotate(0deg) !important; }
+  .menu-polaroid:hover { transform: scale(1.01) translateY(-2px) !important; }
+  .menu-category-header h3::before,
+  .menu-category-header h3::after { width: 24px; }
+}
+
+/* Scroll-driven reveal for polaroids */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .menu-polaroid {
+      animation: polaroidReveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 30%;
+    }
+    @keyframes polaroidReveal {
+      from { opacity: 0; transform: translateY(30px) rotate(var(--tilt, -1.5deg)); }
+      to   { opacity: 1; }
+    }
+  }
+}
+
+/* ========== GALLERY ========== */
+.gallery { padding: 100px 0; }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+}
+.polaroid {
+  background: var(--white);
+  padding: 12px 12px 48px;
+  box-shadow: 3px 3px 0 var(--kraft-dark), 6px 6px 12px var(--shadow);
+  transition: transform 0.4s, box-shadow 0.4s;
+  position: relative;
+}
+.polaroid:nth-child(1) { transform: rotate(-2deg); }
+.polaroid:nth-child(2) { transform: rotate(1deg); }
+.polaroid:nth-child(3) { transform: rotate(-0.5deg); }
+.polaroid:nth-child(4) { transform: rotate(1.5deg); }
+.polaroid:nth-child(5) { transform: rotate(-1deg); }
+.polaroid:nth-child(6) { transform: rotate(0.8deg); }
+.polaroid:nth-child(7) { transform: rotate(-1.5deg); }
+.polaroid:nth-child(8) { transform: rotate(0.5deg); }
+.polaroid:nth-child(9) { transform: rotate(-0.8deg); }
+.polaroid:nth-child(10) { transform: rotate(1.2deg); }
+.polaroid:hover {
+  transform: rotate(0deg) translateY(-8px) scale(1.02);
+  box-shadow: 4px 4px 0 var(--kraft-dark), 8px 8px 20px var(--shadow-md);
+  z-index: 2;
+}
+.polaroid img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+}
+.polaroid-caption {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  right: 16px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--brown-light);
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 768px) {
+  .gallery-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .polaroid img { height: 180px; }
+}
+@media (max-width: 480px) {
+  .gallery-grid { grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; }
+}
+
+/* ========== CTA BAND ========== */
+.cta-band { padding: 60px 0; }
+.cta-band-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 40px;
+  background: var(--white);
+  border: 2px dashed var(--green);
+  border-radius: 8px;
+  box-shadow: 6px 6px 0 var(--kraft-dark);
+}
+.cta-band-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.cta-band-content .circular-stamp::before {
+  border-color: var(--terracotta);
+}
+.cta-band-text h3 {
+  font-size: 22px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--brown);
+  margin-bottom: 8px;
+}
+.cta-band-text p {
+  font-size: 15px;
+  color: var(--brown-light);
+  font-weight: 300;
+  line-height: 1.6;
+  max-width: 480px;
+}
+@media (max-width: 768px) {
+  .cta-band-inner {
+    flex-direction: column;
+    text-align: center;
+    padding: 28px 20px;
+  }
+  .cta-band-content {
+    flex-direction: column;
+  }
+}
+
+/* ========== CONTACT ========== */
+.contact { padding: 100px 0; }
+.contact-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+.contact-info h3 {
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 20px;
+}
+.contact-info p {
+  font-size: 16px;
+  color: var(--brown-light);
+  margin-bottom: 12px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+.contact-info a {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+.contact-info a:hover { color: var(--green-herb); }
+.contact-social {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+.contact-social a {
+  width: 44px;
+  height: 44px;
+  border: 2px dashed var(--green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, color 0.3s;
+}
+.contact-social a svg { width: 20px; height: 20px; fill: var(--green); transition: fill 0.3s; }
+.contact-social a:hover { background: var(--green); }
+.contact-social a:hover svg { fill: var(--white); }
+
+.contact-form {
+  background: var(--kraft);
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n3'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n3)' opacity='0.05'/%3E%3C/svg%3E");
+  padding: 40px;
+  border-radius: 8px;
+  border: 2px dashed var(--kraft-dark);
+}
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brown);
+  margin-bottom: 6px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--white);
+  border: 2px solid var(--kraft-dark);
+  border-radius: 4px;
+  font-family: 'Karla', sans-serif;
+  font-size: 15px;
+  color: var(--brown);
+  transition: border-color 0.3s;
+  outline: none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--green);
+}
+.form-group textarea { resize: vertical; min-height: 100px; }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green);
+  color: var(--white);
+  padding: 14px 36px;
+  border: 2px dashed rgba(255,255,255,0.3);
+  border-radius: 4px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  width: 100%;
+  justify-content: center;
+}
+.btn-submit:hover { background: var(--green-herb); transform: translateY(-2px); }
+
+@media (max-width: 768px) {
+  .contact-inner { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .contact-form { padding: 28px 20px; }
+}
+
+/* ========== FOOTER ========== */
+.footer {
+  background: var(--brown);
+  color: rgba(255,255,255,0.7);
+  padding: 60px 0 32px;
+}
+.footer-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+.footer h4 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.footer p, .footer a {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  line-height: 1.8;
+  transition: color 0.3s;
+}
+.footer a:hover { color: var(--green-accent); }
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 4px; }
+.footer-bottom {
+  border-top: 1px dashed rgba(255,255,255,0.15);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-bottom p { font-size: 13px; }
+.footer-logo svg { height: 32px; width: auto; opacity: 0.7; }
+
+@media (max-width: 768px) {
+  .footer-inner { grid-template-columns: 1fr; text-align: center; }
+  .footer-bottom { justify-content: center; text-align: center; }
+}
+
+/* ========== SCROLL ANIMATIONS ========== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========== REDUCED MOTION ========== */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .polaroid, .service-card, .menu-polaroid, .hero-img-wrap { transform: none !important; }
+  * { animation: none !important; transition-duration: 0s !important; }
+}
+
+/* ========== IMG FALLBACK ========== */
+img.img-error {
+  background: linear-gradient(135deg, var(--kraft) 0%, var(--kraft-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========== BACK TO TOP ========== */
+.back-to-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 48px;
+  height: 48px;
+  background: var(--green);
+  border: 2px dashed rgba(255,255,255,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 100;
+}
+.back-to-top.visible { opacity: 1; pointer-events: auto; }
+.back-to-top:hover { transform: translateY(-3px); }
+.back-to-top svg { width: 20px; height: 20px; fill: var(--white); }
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="#accueil" class="navbar-logo" aria-label="GWAKA Home">
+      <img src="https://litter.catbox.moe/66guxd.jpg" alt="GWAKA" style="height:40px;width:40px;border-radius:50%;object-fit:cover;">
+      <span style="font-family:'Josefin Sans',sans-serif;font-size:26px;font-weight:700;color:#3E2723;letter-spacing:3px;">gwaka</span>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="#accueil">Accueil</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#galerie">Galerie</a></li>
+      <li><a href="#contact" class="navbar-cta">Devis</a></li>
+    </ul>
+    <button class="burger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#accueil" class="mobile-link">Accueil</a>
+  <a href="#services" class="mobile-link">Services</a>
+  <a href="#menu" class="mobile-link">Menu</a>
+  <a href="#galerie" class="mobile-link">Galerie</a>
+  <a href="#contact" class="mobile-link">Contact</a>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="accueil">
+  <div class="hero-kraft-strip"></div>
+  <!-- Decorative dashed circles -->
+  <div class="deco-circle" style="width:300px;height:300px;top:10%;right:-80px;"></div>
+  <div class="deco-circle" style="width:180px;height:180px;bottom:15%;left:-60px;"></div>
+
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-stamp">
+        <div class="hero-stamp-text">Made with<br>love<br>for you</div>
+      </div>
+      <h1>
+        GWAKA
+        <span>Brunch & Healthy Catering</span>
+      </h1>
+      <p class="hero-tagline">Traiteur artisanal, brunch sur-mesure & catering healthy a Tahiti</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Demander un devis
+        </a>
+        <a href="#menu" class="btn-outline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          Voir le menu
+        </a>
+      </div>
+    </div>
+    <div class="hero-images">
+      <div class="hero-img-wrap">
+        <img src="images/gwaka/hero-brunch.jpg" alt="Brunch GWAKA" onerror="this.classList.add('img-error');this.alt='GWAKA Brunch'">
+      </div>
+      <div class="hero-img-wrap">
+        <img src="images/gwaka/buffet-corporate.jpg" alt="Healthy food" onerror="this.classList.add('img-error');this.alt='Healthy Food'">
+      </div>
+      <div class="hero-img-wrap">
+        <img src="images/gwaka/plateau-fruits.jpg" alt="Fresh ingredients" onerror="this.classList.add('img-error');this.alt='Fresh Ingredients'">
+      </div>
+      <div class="hero-img-wrap">
+        <img src="images/gwaka/scene-tropical.jpg" alt="Catering setup" onerror="this.classList.add('img-error');this.alt='Catering Setup'">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="services kraft-bg" id="services">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="stamp-badge">Nos Prestations</div>
+      <h2>Services</h2>
+      <p>Du brunch intimiste au buffet d'entreprise, chaque prestation est preparee avec soin et des ingredients frais.</p>
+      <div class="dashed-line"></div>
+    </div>
+
+    <div class="services-grid">
+      <!-- Card 1: Brunch -->
+      <div class="service-card reveal">
+        <div class="card-stamp">
+          <div class="stamp-badge stamp-badge--terracotta">Populaire</div>
+        </div>
+        <div class="service-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 44c0-4 2-8 8-10s14-2 20-2 14 0 12 12H12z" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <ellipse cx="32" cy="28" rx="18" ry="4" stroke="#4A7C3F" stroke-width="2.5" fill="none"/>
+            <path d="M20 28c2-8 6-14 12-14s10 6 12 14" stroke="#5C8A4D" stroke-width="2" stroke-linecap="round" fill="none" stroke-dasharray="4 3"/>
+            <circle cx="28" cy="35" r="2" fill="#7CB342"/>
+            <circle cx="36" cy="37" r="1.5" fill="#C4724A"/>
+            <circle cx="32" cy="33" r="1.5" fill="#8B6914"/>
+          </svg>
+        </div>
+        <h3>Brunch Gourmand</h3>
+        <p>Brunch sur-mesure pour vos evenements prives, baby showers, anniversaires. Des recettes originales servies avec amour.</p>
+      </div>
+
+      <!-- Card 2: Traiteur -->
+      <div class="service-card reveal">
+        <div class="card-stamp">
+          <div class="stamp-badge">Evenementiel</div>
+        </div>
+        <div class="service-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="20" width="48" height="28" rx="4" stroke="#4A7C3F" stroke-width="2.5" fill="none"/>
+            <path d="M8 28h48" stroke="#4A7C3F" stroke-width="2" stroke-dasharray="4 3"/>
+            <path d="M20 28v-8c0-2 2-4 4-4h16c2 0 4 2 4 4v8" stroke="#5C8A4D" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <circle cx="24" cy="36" r="3" stroke="#7CB342" stroke-width="2" fill="none"/>
+            <circle cx="32" cy="36" r="3" stroke="#C4724A" stroke-width="2" fill="none"/>
+            <circle cx="40" cy="36" r="3" stroke="#8B6914" stroke-width="2" fill="none"/>
+          </svg>
+        </div>
+        <h3>Buffet Signature</h3>
+        <p>Buffets, plateaux a partager, formules individuelles. Ideal pour seminaires, lancements, mariages et fetes d'entreprise.</p>
+      </div>
+
+      <!-- Card 3: Healthy -->
+      <div class="service-card reveal">
+        <div class="card-stamp">
+          <div class="stamp-badge stamp-badge--honey">Healthy</div>
+        </div>
+        <div class="service-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 12c-8 0-16 6-16 18s8 22 16 22 16-10 16-22-8-18-16-18z" stroke="#4A7C3F" stroke-width="2.5" fill="none"/>
+            <ellipse cx="32" cy="36" rx="5" ry="6" fill="#8B6914" opacity="0.3"/>
+            <path d="M28 8c2-2 4-4 4-4s2 2 4 4" stroke="#5C8A4D" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M24 8c-4 0-6-2-6-4" stroke="#7CB342" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M40 8c4 0 6-2 6-4" stroke="#7CB342" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M32 18v20" stroke="#4A7C3F" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.4"/>
+          </svg>
+        </div>
+        <h3>Cocktail & Apero Box</h3>
+        <p>Cocktails evenement, apero box et plateaux prets a servir. Dejeuners d'affaires et receptions sur-mesure. Frais, local, de saison.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ENGAGEMENTS BAND ============ -->
+<section class="engagements" id="engagements">
+  <div class="container">
+    <div class="engagements-grid">
+      <div class="engagement-item reveal">
+        <div class="engagement-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 4C14 4 8 12 8 20c0 10 16 24 16 24s16-14 16-24c0-8-6-16-16-16z" stroke="#4A7C3F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M18 18c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#7CB342" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="3 2"/>
+            <circle cx="24" cy="20" r="3" fill="#4A7C3F" opacity="0.3"/>
+          </svg>
+        </div>
+        <h4>Produits Locaux</h4>
+        <p>Ingredients frais selectionnes aupres de producteurs tahitiens</p>
+      </div>
+      <div class="engagement-divider">
+        <svg width="2" height="60" viewBox="0 0 2 60"><line x1="1" y1="0" x2="1" y2="60" stroke="#D4C9B5" stroke-width="2" stroke-dasharray="4 4"/></svg>
+      </div>
+      <div class="engagement-item reveal">
+        <div class="engagement-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 8v32M8 24h32" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="24" cy="24" r="18" stroke="#4A7C3F" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+            <path d="M14 14l6 6M28 28l6 6M34 14l-6 6M14 34l6-6" stroke="#7CB342" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          </svg>
+        </div>
+        <h4>Fait Maison</h4>
+        <p>Chaque recette preparee a la main avec passion et creativite</p>
+      </div>
+      <div class="engagement-divider">
+        <svg width="2" height="60" viewBox="0 0 2 60"><line x1="1" y1="0" x2="1" y2="60" stroke="#D4C9B5" stroke-width="2" stroke-dasharray="4 4"/></svg>
+      </div>
+      <div class="engagement-item reveal">
+        <div class="engagement-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 6c-10 0-18 6-18 14 0 6 4 11 10 13l-2 9 8-6 2 0c10 0 18-6 18-14S34 6 24 6z" stroke="#4A7C3F" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="16" cy="20" r="2" fill="#7CB342"/>
+            <circle cx="24" cy="20" r="2" fill="#7CB342"/>
+            <circle cx="32" cy="20" r="2" fill="#7CB342"/>
+          </svg>
+        </div>
+        <h4>Sur-Mesure</h4>
+        <p>Chaque evenement est unique, votre menu l'est aussi</p>
+      </div>
+      <div class="engagement-divider">
+        <svg width="2" height="60" viewBox="0 0 2 60"><line x1="1" y1="0" x2="1" y2="60" stroke="#D4C9B5" stroke-width="2" stroke-dasharray="4 4"/></svg>
+      </div>
+      <div class="engagement-item reveal">
+        <div class="engagement-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 36c0-8 4-14 12-16s12 2 12 16" stroke="#4A7C3F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M24 8c-2 4-2 8 0 12" stroke="#5C8A4D" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M20 6c-4 2-4 6-2 10" stroke="#7CB342" stroke-width="1.5" stroke-linecap="round" fill="none" stroke-dasharray="3 2"/>
+            <path d="M28 6c4 2 4 6 2 10" stroke="#7CB342" stroke-width="1.5" stroke-linecap="round" fill="none" stroke-dasharray="3 2"/>
+            <line x1="8" y1="36" x2="40" y2="36" stroke="#4A7C3F" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="10" y1="40" x2="38" y2="40" stroke="#D4C9B5" stroke-width="1.5" stroke-dasharray="4 3"/>
+          </svg>
+        </div>
+        <h4>Healthy & Gourmand</h4>
+        <p>Equilibre parfait entre sante et plaisir, sans compromis</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MENU — Polaroid Masonry ============ -->
+<section class="menu-section" id="menu">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="stamp-badge stamp-badge--honey">La Carte</div>
+      <h2>Notre Menu</h2>
+      <p>Des produits frais, locaux et faits maison. Decouvrez notre selection complete.</p>
+      <div class="dashed-line"></div>
+    </div>
+
+    <!-- Sticky pill filters -->
+    <div class="menu-filters reveal">
+      <button class="menu-filter-btn active" data-filter="all">Tout</button>
+      <button class="menu-filter-btn" data-filter="sales">Sales</button>
+      <button class="menu-filter-btn" data-filter="toasts-signature">Toasts Signature</button>
+      <button class="menu-filter-btn" data-filter="wraps">Wraps & Sandwiches</button>
+      <button class="menu-filter-btn" data-filter="gaufres">Gaufres & Croque</button>
+      <button class="menu-filter-btn" data-filter="verrines">Verrines & Specialites</button>
+      <button class="menu-filter-btn" data-filter="mini">Mini Sales</button>
+      <button class="menu-filter-btn" data-filter="salades">Salades</button>
+      <button class="menu-filter-btn" data-filter="plateaux">Plateaux</button>
+      <button class="menu-filter-btn" data-filter="sushis">Sushis</button>
+    </div>
+
+    <div class="menu-polaroid-grid" id="menuGrid">
+
+      <!-- ===== PRODUITS SALES ===== -->
+      <div class="menu-category-header" data-cat="sales"><h3>Produits Sales</h3></div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="card-corner-stamp maison">Classique</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/egg-muffin.jpg" alt="Egg Muffin" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Egg Muffin Classique</div>
+          <div class="menu-polaroid__desc">Oeuf, cheddar</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Egg Muffin Double</div>
+          <div class="menu-polaroid__desc">Double cheddar, jambon Serrano</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="card-corner-stamp veggie">Veggie</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/bagel-veggie.jpg" alt="Bagel Veggie" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Bagel Veggie</div>
+          <div class="menu-polaroid__desc">Houmous, poivrons grilles, chevre frais, epinards frais & autres saveurs</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/bagel-jambon.jpg" alt="Bagel Jambon de Dinde" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Bagel Jambon de Dinde</div>
+          <div class="menu-polaroid__desc">Garni de jambon de dinde et accompagnements frais</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="card-corner-stamp maison">Local</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/bagel-thon.jpg" alt="Bagel Thon Fume Local" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Bagel Thon Fume Local</div>
+          <div class="menu-polaroid__desc">Thon fume local, garniture fraiche</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="card-corner-stamp signature">Premium</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/bagel-saumon.jpg" alt="Bagel Saumon Fume" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Bagel Saumon Fume</div>
+          <div class="menu-polaroid__desc">Saumon fume, accompagnements de saison</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="card-corner-stamp nouveau">Nouveau</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/black-bun.jpg" alt="Black Bun Oeufs" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Black Bun Oeufs</div>
+          <div class="menu-polaroid__desc">Oeufs brouilles, sriracha OU oeufs brouilles au comte, copeaux de bacon grille</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/black-bun-saumon.jpg" alt="Black Bun Saumon / Thon / Caviar" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Black Bun Saumon ou Thon</div>
+          <div class="menu-polaroid__desc">Saumon fume OU Thon fume local</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Black Bun Caviar Aubergines</div>
+          <div class="menu-polaroid__desc">Caviar d'aubergines, jambon Serrano</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="card-corner-stamp veggie">Veggie</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/cake-feta.jpg" alt="Cake Feta" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Cake Feta</div>
+          <div class="menu-polaroid__desc">Feta, epinards, tomates sechees</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/cake-chevre.jpg" alt="Cake Chevre" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Cake Chevre</div>
+          <div class="menu-polaroid__desc">Chevre, epinards, patates douces</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="card-corner-stamp maison">Local</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/cake-thon.jpg" alt="Cake au Thon" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Cake au Thon</div>
+          <div class="menu-polaroid__desc">Thon local, olives noires, tomates sechees, curry</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Toast Houmous Poivrons</div>
+          <div class="menu-polaroid__desc">Houmous, poivrons grilles</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/toast-houmous.jpg" alt="Toast Houmous" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Toast Houmous</div>
+          <div class="menu-polaroid__desc">Betterave OU curry-curcuma</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/toast-tapenade.jpg" alt="Toast Tapenade" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Toast Tapenade</div>
+          <div class="menu-polaroid__desc">Olives vertes ou olives noires</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="card-corner-stamp veggie">Veggie</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/carpaccio-tofu.jpg" alt="Carpaccio Tofu Curry Coco" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Carpaccio Tofu Curry Coco</div>
+          <div class="menu-polaroid__desc">Carottes, tomates, concombres, capres et plus</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="sales">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/carpaccio-aubergines.jpg" alt="Carpaccio Aubergines Vapeur" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Carpaccio Aubergines Vapeur</div>
+          <div class="menu-polaroid__desc">Feta, tomates sechees, olives vertes</div>
+        </div>
+      </div>
+
+      <!-- ===== TOASTS SIGNATURE ===== -->
+      <div class="menu-category-header" data-cat="toasts-signature"><h3>Toasts Signature</h3></div>
+
+      <div class="menu-polaroid reveal" data-cat="toasts-signature">
+        <div class="card-corner-stamp signature">Signature</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/avocado-toast.jpg" alt="Avocado Toast" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Avocado Toast</div>
+          <div class="menu-polaroid__desc">Gwakamole frais sur pain toaste</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="toasts-signature">
+        <div class="card-corner-stamp signature">Signature</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/avocado-salmon-toast.jpg" alt="Avocado Salmon Toast" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Avocado Salmon Toast</div>
+          <div class="menu-polaroid__desc">Gwakamole, saumon fume</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="toasts-signature">
+        <div class="card-corner-stamp nouveau">Nouveau</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/feta-salmon-toast.jpg" alt="Gwaka Feta Salmon Toast" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Gwaka Feta Salmon Toast</div>
+          <div class="menu-polaroid__desc">Supplement : grenade (selon arrivage)</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="toasts-signature">
+        <div class="card-corner-stamp signature">Signature</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/toast-chutney-magret.jpg" alt="Toast Chutney Magret" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Toast Chutney Magret</div>
+          <div class="menu-polaroid__desc">Chutney mangue-ananas, magret de canard fume, chevre frais, noix</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="toasts-signature">
+        <div class="card-corner-stamp maison">Local</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/toast-tartare-thon.jpg" alt="Toast Gwaka & Tartare de Thon" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Toast Gwaka & Tartare de Thon</div>
+          <div class="menu-polaroid__desc">Gwakamole, tartare de thon fume local, aneth, huile d'olive</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="toasts-signature">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/toast-bruschetta.jpg" alt="Toast Bruschetta" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Toast Bruschetta</div>
+          <div class="menu-polaroid__desc">Supplement : mozzarella fraiche</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="toasts-signature">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/toast-caviar-aubergines.jpg" alt="Toast Caviar d'Aubergines" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Toast Caviar d'Aubergines</div>
+          <div class="menu-polaroid__desc">Supplements : serrano, fromage de chevre frais</div>
+          <span class="menu-polaroid__label">Aussi en format mini</span>
+        </div>
+      </div>
+
+      <!-- ===== WRAPS & SANDWICHES ===== -->
+      <div class="menu-category-header" data-cat="wraps"><h3>Wraps & Sandwiches</h3></div>
+
+      <div class="menu-polaroid reveal" data-cat="wraps">
+        <div class="card-corner-stamp signature">Premium</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/wraps.jpg" alt="Wraps" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Wrap Saumon</div>
+          <div class="menu-polaroid__desc">Saumon fume, sauce citron</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="wraps">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Wrap Veggie</div>
+          <div class="menu-polaroid__desc">Tofu grille curcuma, houmous betterave, veggies, pickles</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="wraps">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Wrap Oeufs</div>
+          <div class="menu-polaroid__desc">Oeufs brouilles, gwakamole</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="wraps">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/club-sandwich.jpg" alt="Club Sandwich" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Club Sandwich Saumon</div>
+          <div class="menu-polaroid__desc">Saumon fume, cream-cheese</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="wraps">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Club Sandwich Gwaka</div>
+          <div class="menu-polaroid__desc">Oeufs brouilles, gwakamole</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="wraps">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Club Sandwich Classique</div>
+          <div class="menu-polaroid__desc">Cheddar, cream-cheese, jambon de dinde</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="wraps">
+        <div class="card-corner-stamp veggie">Veggie</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/rouleaux-printemps.jpg" alt="Rouleaux de Printemps" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Rouleaux de Printemps</div>
+          <div class="menu-polaroid__desc">Veggies, sauce cacahuete & sesame</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="wraps">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/mozzarella-buffala.jpg" alt="Mozzarella di Buffala" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Mozzarella di Buffala</div>
+          <div class="menu-polaroid__desc">Tomates, salade fraiche</div>
+        </div>
+      </div>
+
+      <!-- ===== GAUFRES & CROQUE ===== -->
+      <div class="menu-category-header" data-cat="gaufres"><h3>Gaufres & Croque</h3></div>
+
+      <div class="menu-polaroid reveal" data-cat="gaufres">
+        <div class="card-corner-stamp veggie">Veggie</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/gaufre-salee.jpg" alt="Gaufre Salee Epinards" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Gaufre Salee Epinards</div>
+          <div class="menu-polaroid__desc">Epinards, feta, cranberries</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="gaufres">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/gaufre-patates-douces.jpg" alt="Gaufre Salee Patates Douces" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Gaufre Salee Patates Douces</div>
+          <div class="menu-polaroid__desc">Patates douces, feta OU oeufs brouilles, avocat, saumon</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="gaufres">
+        <div class="card-corner-stamp nouveau">Nouveau</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/croque-monsieur.jpg" alt="Croque-Monsieur" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Croque-Monsieur</div>
+          <div class="menu-polaroid__desc">Creme de truffe, jambon de dinde fume, emmental</div>
+        </div>
+      </div>
+
+      <!-- ===== VERRINES & SPECIALITES ===== -->
+      <div class="menu-category-header" data-cat="verrines"><h3>Verrines & Specialites</h3></div>
+
+      <div class="menu-polaroid reveal" data-cat="verrines">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/verrines.jpg" alt="Verrine Houmous" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Verrine Houmous</div>
+          <div class="menu-polaroid__desc">Houmous et batonnets de legumes crus</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="verrines">
+        <div class="card-corner-stamp nouveau">Nouveau</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/gaspacho-pasteque.jpg" alt="Verrine Gaspacho Pasteque" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Verrine Gaspacho Pasteque</div>
+          <div class="menu-polaroid__desc">Pasteque, poivrons, concombres</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="verrines">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/gaspacho-tomates.jpg" alt="Verrine Gaspacho Tomates" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Verrine Gaspacho Tomates</div>
+          <div class="menu-polaroid__desc">Tomates, mangues, basilic</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="verrines">
+        <div class="card-corner-stamp signature">Signature</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/mini-shakshuka.jpg" alt="Mini Shakshuka" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Mini Shakshuka</div>
+          <div class="menu-polaroid__desc">Base de legumes, saveurs mexicaines, oeuf poche (option : + feta)</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="verrines">
+        <div class="card-corner-stamp nouveau">Nouveau</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/avocado-grilled-cheese.jpg" alt="Avocado Grilled Cheese" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Avocado Grilled Cheese</div>
+          <div class="menu-polaroid__desc">Oeufs brouilles, avocat, roquette, emmental, tomates sechees</div>
+        </div>
+      </div>
+
+      <!-- ===== MINI SALES ===== -->
+      <div class="menu-category-header" data-cat="mini"><h3>Mini Sales</h3></div>
+
+      <div class="menu-polaroid reveal" data-cat="mini">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/mini-pain-lait.jpg" alt="Mini Pain au Lait" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Mini Pain au Lait Classique</div>
+          <div class="menu-polaroid__desc">Cream-cheese, jambon de dinde fume, cheddar</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="mini">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Mini Pain au Lait Brie</div>
+          <div class="menu-polaroid__desc">Jambon de dinde fume, brie, confiture de mangue maison</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="mini">
+        <div class="card-corner-stamp veggie">Veggie</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/wrap-bite.jpg" alt="Wrap Bite" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Wrap Bite</div>
+          <div class="menu-polaroid__desc">Tofu grille au curcuma, veggies, houmous, pickles OU saumon fume / cream cheese</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="mini">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/onigiri.jpg" alt="Onigiri" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Onigiri</div>
+          <div class="menu-polaroid__desc">Spicy tuna OU tuna-mayo</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="mini">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Mini Cake Sale Chevre</div>
+          <div class="menu-polaroid__desc">Patates douces, chevre et epinards</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="mini">
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Mini Cake Sale Feta</div>
+          <div class="menu-polaroid__desc">Tomates sechees, feta et epinards</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="mini">
+        <div class="card-corner-stamp signature">Frais</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/bouchees-saumon.jpg" alt="Bouchees Saumon" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Bouchees Saumon</div>
+          <div class="menu-polaroid__desc">Saumon, creme aneth sur lamelle de concombre</div>
+        </div>
+      </div>
+
+      <!-- ===== SALADES ===== -->
+      <div class="menu-category-header" data-cat="salades"><h3>Salades Composees</h3></div>
+
+      <div class="menu-polaroid reveal" data-cat="salades">
+        <div class="card-corner-stamp signature">Energy</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/quinoa-salad.jpg" alt="Quinoa Energy" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Quinoa Energy</div>
+          <div class="menu-polaroid__desc">Trio de quinoa, feta, oranges, noix de pecan, epinards frais, vinaigrette miel citron</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="salades">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/salade-italienne.jpg" alt="Salade a l'Italienne" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Salade a l'Italienne</div>
+          <div class="menu-polaroid__desc">Pates torti, tomates sechees, olives vertes, mozzarella, pesto maison, roquette</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="salades">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/salade-med.jpg" alt="Salade Mediterraneenne" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Salade Mediterraneenne</div>
+          <div class="menu-polaroid__desc">Pates Orzo, olives, feta, concombres, tomates, poivrons, pesto maison</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="salades">
+        <div class="card-corner-stamp nouveau">Nouveau</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/salade-lentilles.jpg" alt="Salade de Lentilles" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Salade de Lentilles</div>
+          <div class="menu-polaroid__desc">Feta, tomates, mangues, concombres, oignons rouges, menthe</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="salades">
+        <div class="card-corner-stamp veggie">Healthy</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/coleslaw-healthy.jpg" alt="Coleslaw Healthy" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Coleslaw Healthy</div>
+          <div class="menu-polaroid__desc">Choux, carottes, sauce yaourt grecque</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="salades">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/taboule-libanais.jpg" alt="Taboule Libanais" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Taboule Libanais</div>
+          <div class="menu-polaroid__desc">Graines de couscous, concombres, citron, tomates, poivron jaune, menthe, oignons</div>
+          <span class="menu-polaroid__label">Buffet ou individuel</span>
+        </div>
+      </div>
+
+      <!-- ===== PLATEAUX ===== -->
+      <div class="menu-category-header" data-cat="plateaux"><h3>Plateaux a Partager</h3></div>
+
+      <div class="menu-polaroid reveal" data-cat="plateaux">
+        <div class="card-corner-stamp veggie">Veggie</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/plateau-legumes.jpg" alt="Plateau Legumes" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Plateau de Legumes</div>
+          <div class="menu-polaroid__desc">5 varietes par plateau selon arrivage</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="plateaux">
+        <div class="card-corner-stamp nouveau">Nouveau</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/veggies-tacos-bar.jpg" alt="Veggies Tacos Bar" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Veggies Tacos Bar</div>
+          <div class="menu-polaroid__desc">Minis tortillas, 5 condiments, 2 sauces, 2 herbes aromatiques</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="plateaux">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/plateau-fromages.jpg" alt="Plateau Fromages" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Plateau Fromages</div>
+          <div class="menu-polaroid__desc">5 fromages differents selon arrivage</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="plateaux">
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/plateau-charcuterie.jpg" alt="Plateau Charcuterie" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Plateau Charcuterie</div>
+          <div class="menu-polaroid__desc">5 varietes differentes selon arrivage</div>
+        </div>
+      </div>
+
+      <div class="menu-polaroid reveal" data-cat="plateaux">
+        <div class="card-corner-stamp signature">Mixte</div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/plateau-mixte.jpg" alt="Plateau Mixte" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Plateau Mixte</div>
+          <div class="menu-polaroid__desc">5 varietes charcuteries et fromages selon arrivage</div>
+        </div>
+      </div>
+
+      <!-- ===== SUSHIS ===== -->
+      <div class="menu-category-header" data-cat="sushis"><h3>Sushis</h3></div>
+
+      <div class="menu-polaroid reveal" data-cat="sushis">
+        <div class="card-corner-stamp maison"></div>
+        <div class="menu-polaroid__img-wrap">
+          <img class="menu-polaroid__img" src="images/gwaka/sushis.jpg" alt="Plateaux Sushis" loading="lazy" onerror="this.style.visibility='hidden'">
+        </div>
+        <div class="menu-polaroid__caption">
+          <div class="menu-polaroid__name">Plateaux de Sushis Maison</div>
+          <div class="menu-polaroid__desc">Sur demande et par devis uniquement, a partir de 50 pieces. Sauce sushis maison.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PDF Download -->
+    <div class="menu-download reveal">
+      <a href="https://drive.google.com/file/d/1NKrcejsYzoHpFg1EvS5LgBj6F1qOUt6A/view" target="_blank" rel="noopener" class="btn-kraft">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Telecharger notre catalogue PDF
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALERIE ============ -->
+<section class="gallery kraft-bg" id="galerie">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="stamp-badge stamp-badge--terracotta">Instagram</div>
+      <h2>Galerie</h2>
+      <p>Nos creations en images. Suivez-nous sur <a href="https://www.instagram.com/gwaka.tahiti" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;font-weight:600;">@gwaka.tahiti</a></p>
+      <div class="dashed-line"></div>
+    </div>
+
+    <div class="gallery-grid">
+      <div class="polaroid reveal">
+        <img src="images/gwaka/scene-deco.jpg" alt="GWAKA deco" onerror="this.classList.add('img-error');this.alt='GWAKA Deco'">
+        <div class="polaroid-caption">Ambiance soignee</div>
+      </div>
+      <div class="polaroid reveal">
+        <img src="images/gwaka/chef-cuisine.jpg" alt="Chef en cuisine" onerror="this.classList.add('img-error');this.alt='Chef GWAKA'">
+        <div class="polaroid-caption">En cuisine</div>
+      </div>
+      <div class="polaroid reveal">
+        <img src="images/gwaka/charcuterie-board.jpg" alt="Charcuterie board" onerror="this.classList.add('img-error');this.alt='Charcuterie GWAKA'">
+        <div class="polaroid-caption">Planche charcuterie</div>
+      </div>
+      <div class="polaroid reveal">
+        <img src="images/gwaka/verrines-appetizers.jpg" alt="Verrines" onerror="this.classList.add('img-error');this.alt='Verrines GWAKA'">
+        <div class="polaroid-caption">Verrines et mises en bouche</div>
+      </div>
+      <div class="polaroid reveal">
+        <img src="images/gwaka/hero-brunch.jpg" alt="GWAKA ambiance" onerror="this.classList.add('img-error');this.alt='GWAKA Ambiance'">
+        <div class="polaroid-caption">Ambiance GWAKA</div>
+      </div>
+      <div class="polaroid reveal">
+        <img src="images/gwaka/buffet-corporate.jpg" alt="Fresh platter" onerror="this.classList.add('img-error');this.alt='Fresh Platter'">
+        <div class="polaroid-caption">Plateau frais du jour</div>
+      </div>
+      <div class="polaroid reveal">
+        <img src="images/gwaka/plateau-fruits.jpg" alt="Brunch spread" onerror="this.classList.add('img-error');this.alt='Brunch Spread'">
+        <div class="polaroid-caption">Brunch complet</div>
+      </div>
+      <div class="polaroid reveal">
+        <img src="images/gwaka/scene-tropical.jpg" alt="Dessert table" onerror="this.classList.add('img-error');this.alt='Dessert Table'">
+        <div class="polaroid-caption">Table gourmande</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA BAND ============ -->
+<section class="cta-band kraft-bg">
+  <div class="container">
+    <div class="cta-band-inner reveal">
+      <div class="cta-band-content">
+        <div class="circular-stamp" style="width:90px;height:90px;border-color:var(--terracotta);flex-shrink:0;">
+          <span style="color:var(--terracotta);font-size:9px;">100%<br>Fait<br>Maison</span>
+        </div>
+        <div class="cta-band-text">
+          <h3>Un evenement a preparer ?</h3>
+          <p>Du brunch intimiste de 10 personnes au buffet d'entreprise de 200 convives, nous nous adaptons a toutes vos envies. Demandez votre devis personnalise et gratuit.</p>
+        </div>
+      </div>
+      <a href="#contact" class="btn-primary" style="flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg>
+        Demander un devis gratuit
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="stamp-badge">Demande de Devis</div>
+      <h2>Contact</h2>
+      <p>Une envie de brunch, un evenement a preparer ? Dites-nous tout.</p>
+      <div class="dashed-line"></div>
+    </div>
+
+    <div class="contact-inner">
+      <div class="contact-info reveal">
+        <h3>Parlons de votre evenement</h3>
+        <p>Que ce soit pour un brunch prive, un buffet d'entreprise ou un evenement special, nous creeons une experience culinaire sur-mesure adaptee a vos envies.</p>
+        <p>
+          <strong>Telephone :</strong> <a href="tel:+68989537570" style="color:var(--green);text-decoration:none;">+689 89 53 75 70</a>
+        </p>
+        <p>
+          <strong>Email :</strong> <a href="mailto:gwakatahiti@gmail.com" style="color:var(--green);text-decoration:none;">gwakatahiti@gmail.com</a>
+        </p>
+        <p>
+          <strong>Instagram :</strong> <a href="https://www.instagram.com/gwaka.tahiti" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none;">@gwaka.tahiti</a>
+        </p>
+        <p>
+          <strong>Localisation :</strong> Papeete, Tahiti
+        </p>
+
+        <!-- Circular stamp -->
+        <div style="margin-top:40px;display:flex;gap:20px;align-items:center;">
+          <div class="circular-stamp">
+            <span>Made<br>with love<br>for you</span>
+          </div>
+          <div style="font-size:14px;color:var(--brown-light);font-weight:300;line-height:1.6;">
+            Chaque commande est preparee<br>avec passion et des ingredients<br>frais selectionnes.
+          </div>
+        </div>
+
+        <div class="contact-social">
+          <a href="https://www.instagram.com/gwaka.tahiti" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/gwaka.tahiti" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Nom complet</label>
+            <input type="text" id="name" name="name" placeholder="Votre nom" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="votre@email.com" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event">Type d'evenement</label>
+            <select id="event" name="event" required>
+              <option value="" disabled selected>Choisir...</option>
+              <option value="brunch-prive">Brunch prive</option>
+              <option value="anniversaire">Anniversaire</option>
+              <option value="baby-shower">Baby shower</option>
+              <option value="mariage">Mariage</option>
+              <option value="seminaire">Seminaire / Entreprise</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="guests">Nombre d'invites</label>
+            <input type="number" id="guests" name="guests" placeholder="Ex: 30" min="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="date">Date souhaitee</label>
+          <input type="date" id="date" name="date">
+        </div>
+        <div class="form-group">
+          <label for="message">Votre message</label>
+          <textarea id="message" name="message" placeholder="Decrivez votre evenement, vos envies, preferences alimentaires..." rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn-submit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg>
+          Envoyer ma demande
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <img src="https://litter.catbox.moe/66guxd.jpg" alt="GWAKA" style="height:48px;width:48px;border-radius:50%;object-fit:cover;">
+          <span style="font-family:'Josefin Sans',sans-serif;font-size:26px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:3px;">gwaka</span>
+        </div>
+        <p>Traiteur brunch & healthy a Tahiti.<br>Made with love for you.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="#accueil">Accueil</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#galerie">Galerie</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Nous suivre</h4>
+        <ul class="footer-links">
+          <li><a href="https://www.instagram.com/gwaka.tahiti" target="_blank" rel="noopener">Instagram @gwaka.tahiti</a></li>
+          <li><a href="https://www.facebook.com/gwaka.tahiti" target="_blank" rel="noopener">Facebook</a></li>
+        </ul>
+        <p style="margin-top:16px;font-size:13px;"><a href="tel:+68989537570" style="color:inherit;text-decoration:none;">+689 89 53 75 70</a></p>
+        <p style="font-size:13px;"><a href="mailto:gwakatahiti@gmail.com" style="color:inherit;text-decoration:none;">gwakatahiti@gmail.com</a></p>
+        <p style="font-size:13px;">Papeete, Tahiti</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 GWAKA. Tous droits reserves.</p>
+      <p style="font-size:12px;opacity:0.5;">Prototype par PACIFIK'AI</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to Top -->
+<button class="back-to-top" id="backToTop" aria-label="Retour en haut" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
+</button>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  // ========== REDUCED MOTION CHECK ==========
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ========== LENIS SMOOTH SCROLL ==========
+  let lenis;
+  if (!prefersReducedMotion) {
+    lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true,
+    });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+  }
+
+  // ========== NAVBAR SCROLL EFFECT ==========
+  const navbar = document.getElementById('navbar');
+  const backToTop = document.getElementById('backToTop');
+  let lastScroll = 0;
+
+  window.addEventListener('scroll', function() {
+    const scrollY = window.scrollY;
+    if (scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+    if (scrollY > 600) {
+      backToTop.classList.add('visible');
+    } else {
+      backToTop.classList.remove('visible');
+    }
+    lastScroll = scrollY;
+  }, { passive: true });
+
+  // ========== BURGER MENU ==========
+  const burger = document.getElementById('burger');
+  const mobileNav = document.getElementById('mobileNav');
+  const mobileLinks = document.querySelectorAll('.mobile-link');
+
+  burger.addEventListener('click', function() {
+    burger.classList.toggle('active');
+    mobileNav.classList.toggle('open');
+    document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+  });
+
+  mobileLinks.forEach(function(link) {
+    link.addEventListener('click', function() {
+      burger.classList.remove('active');
+      mobileNav.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // ========== SMOOTH SCROLL FOR ANCHOR LINKS ==========
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 80;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        if (lenis) {
+          lenis.scrollTo(top);
+        } else {
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        }
+      }
+    });
+  });
+
+  // ========== GSAP ANIMATIONS ==========
+  if (!prefersReducedMotion) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Reveal animations
+    const reveals = document.querySelectorAll('.reveal');
+    reveals.forEach(function(el, i) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            once: true,
+          }
+        }
+      );
+    });
+
+    // Hero content
+    gsap.fromTo('.hero-content', { opacity: 0, x: -40 }, {
+      opacity: 1, x: 0, duration: 1, delay: 0.3, ease: 'power3.out'
+    });
+
+    // Hero images stagger
+    gsap.fromTo('.hero-img-wrap', { opacity: 0, scale: 0.8, rotation: 0 }, {
+      opacity: 1, scale: 1, duration: 0.6, stagger: 0.15, delay: 0.6, ease: 'back.out(1.4)',
+      onComplete: function() {
+        // Restore original rotations
+        document.querySelectorAll('.hero-img-wrap').forEach(function(wrap, idx) {
+          var rots = [-2, 1.5, 1, -1.5];
+          wrap.style.transform = 'rotate(' + rots[idx] + 'deg)';
+        });
+      }
+    });
+
+    // Hero stamp rotation
+    gsap.fromTo('.hero-stamp', { opacity: 0, rotation: -30, scale: 0.5 }, {
+      opacity: 1, rotation: -8, scale: 1, duration: 0.8, delay: 0.5, ease: 'back.out(2)'
+    });
+
+    // Floating deco circles
+    gsap.to('.deco-circle', {
+      y: -20,
+      duration: 4,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      stagger: 1
+    });
+
+    // Polaroid hover parallax
+    document.querySelectorAll('.polaroid').forEach(function(p) {
+      p.addEventListener('mouseenter', function() {
+        gsap.to(this, { scale: 1.03, rotation: 0, duration: 0.3, ease: 'power2.out' });
+      });
+      p.addEventListener('mouseleave', function() {
+        gsap.to(this, { scale: 1, duration: 0.3, ease: 'power2.out' });
+      });
+    });
+
+    // Service cards hover
+    document.querySelectorAll('.service-card').forEach(function(card) {
+      card.addEventListener('mouseenter', function() {
+        gsap.to(this, { rotation: 0, y: -6, duration: 0.3, ease: 'power2.out' });
+      });
+      card.addEventListener('mouseleave', function() {
+        gsap.to(this, { y: 0, duration: 0.3, ease: 'power2.out' });
+      });
+    });
+
+  } else {
+    // Reduced motion: show everything immediately
+    document.querySelectorAll('.reveal').forEach(function(el) {
+      el.classList.add('visible');
+    });
+  }
+
+  // ========== MENU FILTER ==========
+  var filterBtns = document.querySelectorAll('.menu-filter-btn');
+  var menuCards = document.querySelectorAll('.menu-polaroid, .menu-category-header');
+
+  filterBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var filter = this.dataset.filter;
+
+      // Update active button
+      filterBtns.forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+
+      // Filter polaroid cards
+      menuCards.forEach(function(card) {
+        if (filter === 'all') {
+          card.classList.remove('hidden');
+          card.style.display = '';
+        } else {
+          if (card.dataset.cat === filter) {
+            card.classList.remove('hidden');
+            card.style.display = '';
+          } else {
+            card.classList.add('hidden');
+            card.style.display = 'none';
+          }
+        }
+      });
+
+      // Re-trigger GSAP for visible cards
+      if (!prefersReducedMotion && typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
+      }
+    });
+  });
+
+  // ========== FORM HANDLER ==========
+  window.handleSubmit = function(e) {
+    e.preventDefault();
+    var form = e.target;
+    var btn = form.querySelector('.btn-submit');
+    var originalText = btn.innerHTML;
+
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Demande envoyee !';
+    btn.style.background = '#5C8A4D';
+    btn.disabled = true;
+
+    setTimeout(function() {
+      btn.innerHTML = originalText;
+      btn.style.background = '';
+      btn.disabled = false;
+      form.reset();
+    }, 3000);
+  };
+
+  // ========== IMAGE ERROR HANDLER ==========
+  document.querySelectorAll('img').forEach(function(img) {
+    img.addEventListener('error', function() {
+      if (!this.classList.contains('img-error')) {
+        this.classList.add('img-error');
+        this.style.background = 'linear-gradient(135deg, #EDE4D3 0%, #D4C9B5 100%)';
+        this.style.minHeight = this.height ? this.height + 'px' : '200px';
+      }
+    });
+  });
+
+  // ========== ACTIVE NAV LINK ON SCROLL ==========
+  var sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', function() {
+    var scrollY = window.scrollY + 100;
+    sections.forEach(function(section) {
+      var top = section.offsetTop;
+      var height = section.offsetHeight;
+      var id = section.getAttribute('id');
+      var link = document.querySelector('.navbar-links a[href="#' + id + '"]');
+      if (link) {
+        if (scrollY >= top && scrollY < top + height) {
+          link.style.color = 'var(--green)';
+        } else {
+          link.style.color = '';
+        }
+      }
+    });
+  }, { passive: true });
+
+  // ========== MENU CARD COUNT DISPLAY ==========
+  function updateMenuCount() {
+    var visible = document.querySelectorAll('.menu-polaroid:not(.hidden):not([style*="display: none"])');
+    var countEl = document.getElementById('menuCount');
+    if (countEl) {
+      countEl.textContent = visible.length + ' produit' + (visible.length > 1 ? 's' : '');
+    }
+  }
+  // Add count element
+  var filtersDiv = document.querySelector('.menu-filters');
+  if (filtersDiv) {
+    var countSpan = document.createElement('span');
+    countSpan.id = 'menuCount';
+    countSpan.style.cssText = 'font-family:Karla,sans-serif;font-size:13px;color:var(--brown-light);font-weight:300;font-style:italic;display:block;width:100%;text-align:center;margin-top:8px;';
+    filtersDiv.parentNode.insertBefore(countSpan, filtersDiv.nextSibling);
+    updateMenuCount();
+    // Hook into filter buttons
+    filterBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        setTimeout(updateMenuCount, 50);
+      });
+    });
+  }
+
+  // ========== PARALLAX ON HERO DECO CIRCLES ==========
+  if (!prefersReducedMotion) {
+    var decoCircles = document.querySelectorAll('.deco-circle');
+    window.addEventListener('scroll', function() {
+      var scrollY = window.scrollY;
+      decoCircles.forEach(function(circle, i) {
+        var speed = (i + 1) * 0.08;
+        circle.style.transform = 'translateY(' + (scrollY * speed) + 'px)';
+      });
+    }, { passive: true });
+  }
+
+  // ========== STAMP BADGES MICRO ANIMATION ==========
+  if (!prefersReducedMotion) {
+    var stamps = document.querySelectorAll('.stamp-badge, .card-corner-stamp');
+    stamps.forEach(function(stamp) {
+      stamp.addEventListener('mouseenter', function() {
+        gsap.to(this, {
+          scale: 1.1,
+          rotation: '+=5',
+          duration: 0.2,
+          ease: 'back.out(2)'
+        });
+      });
+      stamp.addEventListener('mouseleave', function() {
+        gsap.to(this, {
+          scale: 1,
+          duration: 0.2,
+          ease: 'power2.out'
+        });
+      });
+    });
+  }
+
+  // ========== ENGAGEMENT ICONS PULSE ==========
+  if (!prefersReducedMotion) {
+    gsap.to('.engagement-icon', {
+      scale: 1.05,
+      duration: 2,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      stagger: 0.5,
+    });
+  }
+
+  // ========== CTA BAND SHADOW ANIMATION ==========
+  if (!prefersReducedMotion) {
+    var ctaBand = document.querySelector('.cta-band-inner');
+    if (ctaBand) {
+      ctaBand.addEventListener('mouseenter', function() {
+        gsap.to(this, {
+          boxShadow: '8px 8px 0 #D4C9B5',
+          y: -3,
+          duration: 0.3,
+          ease: 'power2.out'
+        });
+      });
+      ctaBand.addEventListener('mouseleave', function() {
+        gsap.to(this, {
+          boxShadow: '6px 6px 0 #D4C9B5',
+          y: 0,
+          duration: 0.3,
+          ease: 'power2.out'
+        });
+      });
+    }
+  }
+
+  // ========== FORM INPUT FOCUS ANIMATION ==========
+  if (!prefersReducedMotion) {
+    document.querySelectorAll('.form-group input, .form-group select, .form-group textarea').forEach(function(input) {
+      input.addEventListener('focus', function() {
+        gsap.to(this.parentElement.querySelector('label'), {
+          color: '#4A7C3F',
+          scale: 1.02,
+          duration: 0.2,
+          ease: 'power2.out'
+        });
+      });
+      input.addEventListener('blur', function() {
+        gsap.to(this.parentElement.querySelector('label'), {
+          color: '#3E2723',
+          scale: 1,
+          duration: 0.2,
+          ease: 'power2.out'
+        });
+      });
+    });
+  }
+
+})();
+</script>
+
+</body>
+</html>
