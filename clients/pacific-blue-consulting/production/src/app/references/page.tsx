@@ -14,6 +14,10 @@ const domainIconMap: Record<Domain, string> = {
   etudes: "chart",
   amo: "compass",
   formation: "users",
+  documentation: "document",
+  securite: "shield",
+  drones: "plane",
+  artisanat: "leaf",
 };
 
 export default function ReferencesPage() {

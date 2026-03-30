@@ -41,9 +41,19 @@ const timeline = [
 
 const values = [
   {
-    title: "Sur mesure",
+    title: "Expertise aeronautique",
     description:
-      "Des solutions adaptees aux besoins specifiques de chaque acteur, prive ou public.",
+      "Plus de 57% du portefeuille couvre l'aerien : compagnies, aeroports, conformite EASA.",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+      </svg>
+    ),
+  },
+  {
+    title: "Structuration complete",
+    description:
+      "De la creation d'entites a la certification, mise en conformite et operations.",
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
         <path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
@@ -51,9 +61,19 @@ const values = [
     ),
   },
   {
-    title: "Innovation",
+    title: "Partenariats long terme",
     description:
-      "Un engagement envers l'excellence et l'innovation au service des partenaires du cabinet.",
+      "Relations multi-ans avec Air Loyaute, CNAM, DIREN, DAC-Pf, demontrant confiance et impact.",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Accompagnement de croissance",
+    description:
+      "Business plans, strategie commerciale, gestion de projets complexes, AMO integrale.",
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
         <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -61,22 +81,32 @@ const values = [
     ),
   },
   {
-    title: "Performance",
+    title: "RSE et environnement",
     description:
-      "Certification ISO 9001, 14001, 45001 et accompagnement dans les demarches techniques.",
+      "Certification biodiversite, bilan carbone, feuille de route decarbonation.",
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
   },
   {
-    title: "Responsabilite",
+    title: "Formation et competences",
     description:
-      "Bilans carbone, feuilles de route de decarbonation et certification biodiversite.",
+      "Part-147, management, compliance, tutoring individualise et transfert de savoir-faire.",
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-        <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
+      </svg>
+    ),
+  },
+  {
+    title: "Technologie et innovation",
+    description:
+      "Drones/UAV, modelisation, outils decisionnels, aeroports marins innovants.",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
       </svg>
     ),
   },
@@ -85,15 +115,19 @@ const values = [
 const territories = [
   {
     name: "Polynesie francaise",
-    description: "Base du cabinet depuis 2017.",
+    description: "Siege du cabinet depuis 2017. Compagnies aeriennes, DAC-Pf, DIREN, CNAM, artisanat, agriculture.",
   },
   {
     name: "Nouvelle-Caledonie",
-    description: "Air Loyaute, aeroport de Lifou, Province des Iles Loyaute.",
+    description: "Air Loyaute, aeroport de Lifou, Province des Iles Loyaute (convention pluriannuelle ports et aeroports).",
   },
   {
-    name: "Pacifique Sud",
-    description: "Etude de liaison aerienne Iles Cook, Tonga, Samoa, Fidji.",
+    name: "Wallis et Futuna",
+    description: "Mise en place du Dispositif de Service Public aerien, continuite territoriale.",
+  },
+  {
+    name: "Pacifique Sud et Europe",
+    description: "Liaison aerienne regionale Iles Cook, Tonga, Samoa, Fidji. Ecosysteme de partenaires en France metropolitaine.",
   },
 ];
 
@@ -155,18 +189,31 @@ function PacificMap() {
       <circle cx="300" cy="300" r="6" fill="oklch(0.55 0.12 245)" />
       <circle cx="300" cy="300" r="3" fill="oklch(0.25 0.05 250)" />
 
+      {/* Wallis et Futuna */}
+      <circle cx="340" cy="270" r="12" fill="oklch(0.55 0.12 245 / 0.12)" className="animate-pulse-soft" style={{ animationDelay: "1.5s" }} />
+      <circle cx="340" cy="270" r="5" fill="oklch(0.55 0.12 245 / 0.8)" />
+      <circle cx="340" cy="270" r="2.5" fill="oklch(0.25 0.05 250)" />
+
       {/* Pacifique Sud */}
       <circle cx="380" cy="340" r="10" fill="oklch(1 0 0 / 0.1)" className="animate-pulse-soft" style={{ animationDelay: "2s" }} />
       <circle cx="380" cy="340" r="4" fill="oklch(1 0 0 / 0.5)" />
 
+      {/* Europe (off-screen indicator) */}
+      <circle cx="40" cy="120" r="8" fill="oklch(1 0 0 / 0.08)" className="animate-pulse-soft" style={{ animationDelay: "2.5s" }} />
+      <circle cx="40" cy="120" r="3" fill="oklch(1 0 0 / 0.35)" />
+
       {/* Connection lines */}
       <line x1="300" y1="300" x2="580" y2="250" stroke="oklch(0.72 0.12 85 / 0.2)" strokeWidth="1" strokeDasharray="4 4" />
+      <line x1="300" y1="300" x2="340" y2="270" stroke="oklch(0.55 0.12 245 / 0.15)" strokeWidth="1" strokeDasharray="4 4" />
       <line x1="300" y1="300" x2="380" y2="340" stroke="oklch(1 0 0 / 0.1)" strokeWidth="1" strokeDasharray="4 4" />
+      <line x1="40" y1="120" x2="300" y2="300" stroke="oklch(1 0 0 / 0.06)" strokeWidth="1" strokeDasharray="6 6" />
 
       {/* Labels */}
       <text x="580" y="220" textAnchor="middle" fill="oklch(1 0 0 / 0.7)" fontSize="11" fontWeight="600">Polynesie francaise</text>
       <text x="300" y="280" textAnchor="middle" fill="oklch(1 0 0 / 0.5)" fontSize="10">Nouvelle-Caledonie</text>
+      <text x="340" y="256" textAnchor="middle" fill="oklch(1 0 0 / 0.45)" fontSize="9">Wallis et Futuna</text>
       <text x="380" y="368" textAnchor="middle" fill="oklch(1 0 0 / 0.4)" fontSize="9">Pacifique Sud</text>
+      <text x="40" y="105" textAnchor="middle" fill="oklch(1 0 0 / 0.3)" fontSize="8">Europe</text>
     </svg>
   );
 }
@@ -187,7 +234,7 @@ export default function AProposPage() {
             <SectionTitle
               label="A propos"
               title="Un cabinet ne de l'experience du terrain"
-              description="Cabinet de conseil independant present en Polynesie francaise depuis 2017."
+              description="Cabinet de conseil independant qui accompagne les acteurs publics et prives dans leurs projets de transformation, d'investissement et de structuration, en particulier dans les secteurs du transport, des infrastructures, de l'energie, de l'environnement et des services publics."
               light
             />
           </div>
@@ -237,18 +284,27 @@ export default function AProposPage() {
 
               <div className="gsap-reveal mt-6 space-y-4 text-warm leading-relaxed">
                 <p>
-                  Depuis 2017, Pacific Blue Consulting accompagne des acteurs de l&apos;aeronautique et des services aeroportuaires en Polynesie francaise, Nouvelle-Caledonie et dans le Pacifique.
+                  Fondateur et president de Pacific Blue Consulting, Pascal Bazer-Bachi met au service de ses clients plus de trente annees d&apos;experience de direction et de pilotage de systemes complexes dans l&apos;aviation civile, les systemes satellitaires, les aeroports et les politiques publiques, en Europe et dans le Pacifique.
                 </p>
                 <p>
-                  Le cabinet intervient dans le conseil en strategie, l&apos;environnement, le pilotage de projets et l&apos;assistance a maitrise d&apos;ouvrage. Il accompagne egalement les organisations dans leurs demarches de certification (ISO 9001, 14001, 45001) et les dossiers ICPE.
+                  Il a occupe des fonctions de haut niveau dans l&apos;administration et au sein d&apos;operateurs techniques, avant de creer plusieurs structures de conseil et d&apos;ingenierie, ce qui lui donne une connaissance fine des contraintes des institutions, des entreprises et des porteurs de projets.
+                </p>
+                <p>
+                  <strong className="text-navy">Chevalier de l&apos;Ordre National du Merite</strong>, il s&apos;est vu reconnaitre son engagement au service de l&apos;interet general et de la modernisation des organisations publiques et privees.
+                </p>
+                <p>
+                  Forme au management, a la gestion des risques industriels et au coaching professionnel, il privilegie une approche profondement humaine des organisations, combinant exigence de rigueur, ecoute des parties prenantes et capacite a transformer des contraintes reglementaires en leviers de structuration et de performance durable.
+                </p>
+                <p>
+                  Coach professionnel et executive coach accredite, il accompagne dirigeants, cadres et porteurs de projets pour les aider a clarifier leurs enjeux, structurer leurs decisions et incarner les transformations.
                 </p>
               </div>
 
               {/* Mini stats */}
               <div className="gsap-reveal mt-10 grid grid-cols-3 gap-4">
                 <Stat value={60} suffix="+" label="Missions realisees" />
-                <Stat value={6} suffix="" label="Domaines d'expertise" />
-                <Stat value={3} suffix="" label="Territoires" />
+                <Stat value={8} suffix="" label="Domaines d'expertise" />
+                <Stat value={4} suffix="+" label="Territoires" />
               </div>
             </div>
           </div>
@@ -302,11 +358,11 @@ export default function AProposPage() {
           <div className="gsap-reveal">
             <SectionTitle
               label="Nos valeurs"
-              title="Les principes qui guident notre action"
+              title="Nos axes de differenciation"
             />
           </div>
 
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" data-stagger-parent>
+          <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" data-stagger-parent>
             {values.map((value) => (
               <div
                 key={value.title}
@@ -324,6 +380,54 @@ export default function AProposPage() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Symbolique du logo */}
+      <section className="py-24 lg:py-32 bg-navy-50/30">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="gsap-reveal text-center mb-12">
+            <SectionTitle
+              label="Notre identite"
+              title="Le coquillage, symbole de Pacific Blue"
+            />
+          </div>
+
+          <div className="gsap-reveal space-y-6 text-warm leading-relaxed">
+            <p>
+              L&apos;identite visuelle de Pacific Blue Consulting nait d&apos;un coquillage stylise dont la spirale s&apos;ouvre et s&apos;agrandit a mesure qu&apos;elle se deploie. Cette spirale suggere qu&apos;aucun projet ne repart jamais de zero : l&apos;on repasse par des themes familiers — surete, continuite de service, modeles economiques, gouvernance — mais a chaque tour, le regard est plus ample, l&apos;experience plus riche et la capacite a faire des choix structurants plus affirmee.
+            </p>
+            <p>
+              Ce coquillage est aussi un hommage a la Polynesie et au grand ocean Pacifique, ou il est a la fois objet du quotidien, symbole des lagons et trace sensible du lien entre terre et mer. Il fait echo au <em className="text-navy font-medium">pu</em>, la conque que l&apos;on souffle pour signaler sa presence, annoncer un evenement ou souhaiter la bienvenue aux navigateurs qui approchent — comme un appel clair et bienveillant dans l&apos;immensite.
+            </p>
+            <p>
+              Cette image exprime la vocation de PBC : accueillir, guider et securiser les trajectoires de ses clients dans un environnement complexe, tout en respectant profondement les territoires et les populations.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Ecosysteme de partenaires */}
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="gsap-reveal text-center mb-12">
+            <SectionTitle
+              label="Notre ecosysteme"
+              title="Un reseau d'experts mobilisables"
+            />
+          </div>
+
+          <div className="gsap-reveal space-y-6 text-warm leading-relaxed">
+            <p>
+              Pacific Blue Consulting intervient comme interlocuteur unique et responsable de la qualite des missions, tout en s&apos;appuyant, lorsque necessaire, sur un ecosysteme d&apos;experts et de structures partenaires, mobilises en fonction des besoins specifiques de chaque projet.
+            </p>
+            <p>
+              Au fil de plus de soixante missions conduites depuis 2017, le cabinet a developpe des cooperations de confiance avec des bureaux d&apos;etudes techniques, des laboratoires d&apos;essais, des specialistes de la formation, de l&apos;environnement, des systemes d&apos;information et du financement de projets, en Polynesie francaise, en Nouvelle-Caledonie et en France metropolitaine.
+            </p>
+            <p>
+              Cet ecosysteme permet de proposer, sous la banniere PBC, des interventions integrees combinant strategie, modelisation economique, mise en conformite reglementaire, ingenierie operationnelle et appui a la mise en oeuvre, tout en preservant l&apos;independance des analyses et la transparence vis-a-vis des clients.
+            </p>
           </div>
         </div>
       </section>
@@ -348,7 +452,7 @@ export default function AProposPage() {
             <PacificMap />
           </div>
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-5" data-stagger-parent>
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" data-stagger-parent>
             {territories.map((territory) => (
               <div key={territory.name} data-stagger-child>
                 <TerritoryCard territory={territory} />
@@ -382,6 +486,11 @@ export default function AProposPage() {
                 Voir nos references
               </Link>
             </div>
+
+            {/* Legal */}
+            <p className="mt-16 text-[11px] text-warm/50">
+              Pacific Blue Consulting — SAS au capital de 200 000 FCFP — PK 17,900 Cote Mer, Punaauia, Polynesie francaise — N° Tahiti G28823
+            </p>
           </div>
         </div>
       </section>

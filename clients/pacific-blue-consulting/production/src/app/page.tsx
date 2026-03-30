@@ -10,8 +10,8 @@ import HeroTextReveal from "@/components/HeroTextReveal";
 /* ===== Data ===== */
 const stats = [
   { value: 60, suffix: "+", label: "Missions realisees" },
-  { value: 6, suffix: "", label: "Domaines d'expertise" },
-  { value: 3, suffix: "", label: "Territoires couverts" },
+  { value: 8, suffix: "", label: "Domaines d'expertise" },
+  { value: 4, suffix: "", label: "Territoires couverts" },
   { value: 100, suffix: "%", label: "Independant" },
 ];
 
@@ -19,36 +19,48 @@ const whyUs = [
   {
     title: "Sur mesure",
     description:
-      "Des solutions adaptees aux besoins specifiques de chaque entreprise.",
+      "Des solutions adaptees aux besoins specifiques de chaque acteur, avec une comprehension fine des realites insulaires et des contextes multipartenaires.",
     icon: "puzzle",
   },
   {
     title: "Innovation",
     description:
-      "Un engagement envers l'excellence et l'innovation au service des acteurs prives et publics.",
+      "Drones et imagerie aerienne, modelisation de dessertes, aeroports marins innovants et outils decisionnels au service de la performance.",
     icon: "chart",
   },
   {
     title: "Performance",
     description:
-      "Optimisation des operations et conformite aux reglementations internationales.",
+      "Accompagnement ISO 9001, 14001, 45001, conformite EASA (Part-145, Part-M, Part-CAMO) et dossiers ICPE.",
     icon: "compass",
   },
   {
     title: "Certification",
     description:
-      "Accompagnement ISO 9001, 14001, 45001 et dossiers ICPE.",
+      "Plus de 47 documents operationnels certifies, manuels MANEX, RCO SSLIA, AFIS et procedures UAV.",
     icon: "shield",
   },
 ];
 
 const partners = [
-  "Air Tahiti Nui",
+  "Air Loyaute",
   "Vinci Airports",
-  "Ministere des Transports",
+  "Direction de l'Aviation Civile (DAC-PF)",
+  "CNAM",
   "DIREN",
   "Terciel",
-  "Direction de l'Aviation Civile PF",
+  "Province des Iles Loyaute",
+  "Air Bora Bora",
+  "Islands Airline",
+  "Tahiti Air Charter",
+  "TASC",
+  "Air Formation",
+  "Tahiti Beachcomber SA",
+  "Direction de l'Agriculture (DAG)",
+  "MLA (Aerodromes)",
+  "Ministere des Transports",
+  "Service de l'Artisanat Traditionnel",
+  "MOZ ULM",
 ];
 
 /* ===== Components ===== */
@@ -311,7 +323,7 @@ export default function Home() {
                 />
               </div>
               <p className="gsap-reveal mt-6 text-warm leading-relaxed">
-                Depuis 2017, Pacific Blue Consulting accompagne des acteurs de l&apos;aeronautique et des services aeroportuaires en Polynesie francaise, Nouvelle-Caledonie et dans le Pacifique.
+                Depuis 2017, Pacific Blue Consulting accompagne les acteurs publics et prives dans leurs projets de transformation, d&apos;investissement et de structuration, dans les secteurs du transport, des infrastructures, de l&apos;environnement et des services publics.
               </p>
               <div className="gsap-reveal mt-8">
                 <Link
@@ -368,7 +380,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5" data-stagger-parent>
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" data-stagger-parent>
             {partners.map((name) => (
               <div
                 key={name}
