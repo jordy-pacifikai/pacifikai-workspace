@@ -24,13 +24,13 @@ const timeline = [
     year: "2021-2023",
     title: "Deploiement multi-territorial",
     description:
-      "Schemas d'amenagement des aeroports de Moorea et Huahine pour la DAC-PF. Etude de classification internationale de l'aeroport de Lifou. Formations CNAM et creation d'un centre Part-147.",
+      "Conformite et certification Air Loyaute (CTA, Part-145, Part-CAMO). Desserte inter-iles Marquises avec Tahiti Air Charter. Gestion pieces Twin-Otter pour la DAC-PF. Formations CNAM et creation d'un centre Part-147 avec Air Formation.",
   },
   {
-    year: "2024",
+    year: "2024-2025",
     title: "Transition ecologique et innovation",
     description:
-      "Bilan carbone de la DAC-PF et feuille de route de decarbonation. Modele economique pour aeroports marins innovants avec Terciel.",
+      "Schemas d'amenagement des aeroports de Moorea et Huahine. Bilan carbone de la DAC-PF et feuille de route de decarbonation. Nouvelle generation de RCO SSLIA, manuels AFIS et maintenance. Aeroports marins innovants avec Terciel.",
   },
   {
     year: "2025",
@@ -228,14 +228,14 @@ export default function AProposPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Image
-          src="/images/istock-1287424844.jpg"
+          src="/images/nb2-branded-hero-about.jpg"
           alt=""
           fill
           priority
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/82" />
+        <div className="absolute inset-0 overlay-hero" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 lg:pt-40 pb-20">
@@ -257,7 +257,7 @@ export default function AProposPage() {
             {/* Photo */}
             <div className="lg:col-span-2">
               <div className="gsap-reveal-scale">
-                <div className="aspect-[3/4] bg-gradient-to-br from-navy-50 to-navy-100/50 rounded-3xl flex items-center justify-center overflow-hidden relative">
+                <div className="aspect-[4/3] bg-gradient-to-br from-navy-50 to-navy-100/50 rounded-3xl flex items-center justify-center overflow-hidden relative">
                   {/* Decorative */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-[60px]" />
 
@@ -444,13 +444,13 @@ export default function AProposPage() {
       {/* Zones d'intervention */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
         <Image
-          src="/images/drone-pf-2.jpg"
+          src="/images/nb2-branded-zones-about.jpg"
           alt=""
           fill
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/85" />
+        <div className="absolute inset-0 overlay-cta" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
