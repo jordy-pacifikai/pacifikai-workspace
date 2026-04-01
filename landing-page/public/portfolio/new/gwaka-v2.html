@@ -36,7 +36,7 @@
     }
 
     html {
-      scroll-behavior: smooth;
+      scroll-behavior: auto;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -81,6 +81,15 @@
       justify-content: center;
       flex-direction: column;
       gap: 24px;
+      animation: preloader-fade 0.6s ease 2s forwards;
+    }
+
+    @keyframes preloader-fade {
+      to { opacity: 0; pointer-events: none; }
+    }
+
+    .preloader.gsap-handled {
+      animation: none;
     }
 
     .preloader img {
@@ -1234,11 +1243,14 @@
       color: white;
     }
 
-    /* --- List Layout --- */
+    /* --- Grid Layout --- */
     .menu-list {
-      max-width: 900px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 0 clamp(20px, 4vw, 48px);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
     }
 
     .menu-category {
@@ -1246,6 +1258,10 @@
       opacity: 0;
       transform: translateY(20px);
       animation: menuCatIn 0.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
     }
 
     .menu-category:nth-child(2) { animation-delay: 0.06s; }
@@ -1264,10 +1280,11 @@
     }
 
     .menu-category__header {
+      grid-column: 1 / -1;
       display: flex;
       align-items: center;
       gap: 24px;
-      margin-bottom: 28px;
+      margin-bottom: 12px;
       padding-bottom: 16px;
       border-bottom: 1px solid rgba(45,52,54,0.1);
     }
@@ -1299,29 +1316,19 @@
 
     .menu-list-item {
       display: grid;
-      grid-template-columns: 80px 1fr auto;
-      gap: 20px;
+      grid-template-columns: 60px 1fr;
+      gap: 12px;
       align-items: center;
-      padding: 14px 16px;
-      margin: 0 -16px;
-      border-radius: 16px;
+      padding: 12px 14px;
+      border-radius: 14px;
       transition: all 0.22s cubic-bezier(0.25,0.46,0.45,0.94);
       cursor: default;
       position: relative;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(45,52,54,0.06);
     }
 
-    .menu-list-item::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 96px;
-      right: 16px;
-      height: 1px;
-      background: rgba(45,52,54,0.06);
-      transition: opacity 0.22s;
-    }
-
-    .menu-list-item:last-child::after { display: none; }
+    .menu-list-item::after { display: none; }
 
     .menu-list-item:hover {
       background: rgba(124,179,66,0.04);
@@ -1335,9 +1342,9 @@
     }
 
     .menu-list-item__thumbnail-wrap {
-      width: 80px;
-      height: 80px;
-      border-radius: 14px;
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
       overflow: hidden;
       flex-shrink: 0;
       background: linear-gradient(135deg, var(--sage-light), var(--sage));
@@ -1346,7 +1353,7 @@
     .menu-list-item__thumbnail {
       width: 100%;
       height: 100%;
-      border-radius: 14px;
+      border-radius: 12px;
       object-fit: cover;
       object-position: center 40%;
       transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.35s;
@@ -1358,7 +1365,7 @@
 
     .menu-list-item__name {
       font-family: 'DM Sans', sans-serif;
-      font-size: 1.0625rem;
+      font-size: 0.9375rem;
       font-weight: 600;
       color: var(--dark);
       margin-bottom: 4px;
@@ -1458,32 +1465,20 @@
       .menu-tabs { justify-content: center; }
       .menu-tab { padding: 8px 16px; font-size: 0.75rem; }
 
+      .menu-list,
+      .menu-category {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
       .menu-list-item {
-        grid-template-columns: 64px 1fr;
-        gap: 12px;
-        padding: 12px 12px;
-        margin: 0 -12px;
+        grid-template-columns: 48px 1fr;
+        gap: 10px;
+        padding: 10px 12px;
       }
 
       .menu-list-item__thumbnail-wrap {
-        width: 64px;
-        height: 64px;
-        border-radius: 12px;
-      }
-
-      .menu-list-item__thumbnail { border-radius: 12px; }
-
-      .menu-list-item__price {
-        grid-column: 1 / -1;
-        justify-self: end;
-        font-size: 1rem;
-        padding: 4px 14px;
-        margin-top: -4px;
-      }
-
-      .menu-list-item::after {
-        left: 76px;
-        right: 12px;
+        width: 48px;
+        height: 48px;
       }
 
       .menu-category__header { gap: 16px; }
@@ -1492,6 +1487,10 @@
     }
 
     @media (max-width: 480px) {
+      .menu-list,
+      .menu-category {
+        grid-template-columns: 1fr;
+      }
       .menu-list { padding: 0; }
       .menu-tab .tab-count { display: none; }
     }
@@ -1563,7 +1562,7 @@
 
   <!-- PRELOADER -->
   <div class="preloader" id="preloader">
-    <img src="images/gwaka/gwaka-logo.jpg" alt="GWAKA Logo" style="width:80px;height:80px;border-radius:50%;object-fit:cover">
+    <img src="https://litter.catbox.moe/66guxd.jpg" alt="GWAKA Logo" style="width:80px;height:80px;border-radius:50%;object-fit:cover">
     <span class="preloader-text">GWAKA</span>
   </div>
 
@@ -1717,20 +1716,20 @@
       <!-- Sticky Filter Tabs -->
       <div class="menu-tabs-wrap reveal" id="menuTabsWrap">
         <div class="menu-tabs" role="tablist">
-          <button class="menu-tab active" data-cat="all" role="tab" aria-selected="true">Tout <span class="tab-count">54</span></button>
-          <button class="menu-tab" data-cat="sales" role="tab">Produits Sales <span class="tab-count">19</span></button>
-          <button class="menu-tab" data-cat="toasts" role="tab">Toasts Signature <span class="tab-count">9</span></button>
-          <button class="menu-tab" data-cat="wraps" role="tab">Wraps & Sandwiches <span class="tab-count">8</span></button>
-          <button class="menu-tab" data-cat="salades" role="tab">Salades <span class="tab-count">6</span></button>
-          <button class="menu-tab" data-cat="plateaux" role="tab">Plateaux <span class="tab-count">5</span></button>
+          <button class="menu-tab active" data-cat="all" role="tab" aria-selected="true">Tout <span class="tab-count">8</span></button>
+          <button class="menu-tab" data-cat="sales" role="tab">Produits Sales <span class="tab-count">1</span></button>
+          <button class="menu-tab" data-cat="toasts" role="tab">Toasts Signature <span class="tab-count">1</span></button>
+          <button class="menu-tab" data-cat="wraps" role="tab">Wraps & Sandwiches <span class="tab-count">1</span></button>
+          <button class="menu-tab" data-cat="salades" role="tab">Salades <span class="tab-count">1</span></button>
+          <button class="menu-tab" data-cat="plateaux" role="tab">Plateaux <span class="tab-count">1</span></button>
           <button class="menu-tab" data-cat="sushis" role="tab">Sushis <span class="tab-count">1</span></button>
-          <button class="menu-tab" data-cat="cakes" role="tab">Cakes & Carpaccios <span class="tab-count">2</span></button>
-          <button class="menu-tab" data-cat="mini" role="tab">Mini Sales <span class="tab-count">4</span></button>
+          <button class="menu-tab" data-cat="cakes" role="tab">Cakes <span class="tab-count">1</span></button>
+          <button class="menu-tab" data-cat="mini" role="tab">Mini Sales <span class="tab-count">1</span></button>
         </div>
       </div>
 
       <!-- Total count -->
-      <p class="menu-total-count reveal" id="menuTotalCount"><strong>54</strong> produits disponibles</p>
+      <p class="menu-total-count reveal" id="menuTotalCount"><strong>8</strong> produits disponibles</p>
 
       <!-- List Layout -->
       <div class="menu-list" id="menuContainer">
@@ -1739,7 +1738,7 @@
         <div class="menu-category" data-cat="sales">
           <div class="menu-category__header">
             <h3 class="menu-category__title">Produits Sales</h3>
-            <span class="menu-category__count">17 produits</span>
+            <span class="menu-category__count">1 produit</span>
             <div class="menu-category__line"></div>
           </div>
 
@@ -1820,7 +1819,7 @@
         <div class="menu-category" data-cat="toasts">
           <div class="menu-category__header">
             <h3 class="menu-category__title">Toasts Signature</h3>
-            <span class="menu-category__count">9 produits</span>
+            <span class="menu-category__count">1 produit</span>
             <div class="menu-category__line"></div>
           </div>
 
@@ -1842,7 +1841,8 @@
         <div class="menu-category" data-cat="wraps">
           <div class="menu-category__header">
             <h3 class="menu-category__title">Wraps & Sandwiches</h3>
-            <span class="menu-category__count">4 produits</span>
+            <span class="menu-category__count">1 produit</span>
+
             <div class="menu-category__line"></div>
           </div>
 
@@ -1873,7 +1873,7 @@
         <div class="menu-category" data-cat="salades">
           <div class="menu-category__header">
             <h3 class="menu-category__title">Salades Composees</h3>
-            <span class="menu-category__count">6 produits</span>
+            <span class="menu-category__count">1 produit</span>
             <div class="menu-category__line"></div>
           </div>
 
@@ -1901,7 +1901,7 @@
         <div class="menu-category" data-cat="plateaux">
           <div class="menu-category__header">
             <h3 class="menu-category__title">Plateaux a Partager</h3>
-            <span class="menu-category__count">5 produits</span>
+            <span class="menu-category__count">1 produit</span>
             <div class="menu-category__line"></div>
           </div>
 
@@ -1952,11 +1952,11 @@
           </div>
         </div>
 
-        <!-- CAKES & CARPACCIOS -->
-        <div class="menu-category" data-cat="cakes">
+        <!-- CAKES & MINI SALES restored -->
+<div class="menu-category" data-cat="cakes">
           <div class="menu-category__header">
             <h3 class="menu-category__title">Cakes & Carpaccios</h3>
-            <span class="menu-category__count">2 produits</span>
+            <span class="menu-category__count">1 produit</span>
             <div class="menu-category__line"></div>
           </div>
 
@@ -1966,10 +1966,9 @@
         <div class="menu-category" data-cat="mini">
           <div class="menu-category__header">
             <h3 class="menu-category__title">Mini Sales</h3>
-            <span class="menu-category__count">4 produits</span>
+            <span class="menu-category__count">1 produit</span>
             <div class="menu-category__line"></div>
           </div>
-
 
           <div class="menu-list-item">
             <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mini-pain-lait.jpg" alt="Mini Pain au Lait" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
@@ -1983,12 +1982,357 @@
             
           </div>
 
-
           <div class="menu-list-item">
             <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/bouchees-saumon.jpg" alt="Bouchees" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
             <div class="menu-list-item__info"><div class="menu-list-item__name">Bouchees</div><div class="menu-list-item__description">Assortiment de bouchees salees</div></div>
             
           </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/avocado-grilled-cheese.jpg" alt="Avocado Grilled Cheese" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Avocado Grilled Cheese</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/avocado-salmon-toast.jpg" alt="Avocado Salmon Toast" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Avocado Salmon Toast</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/black-bun-saumon.jpg" alt="Black Bun Saumon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Black Bun Saumon</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/brioche-doree.jpg" alt="Brioche Doree" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Brioche Doree</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/burger-classic.jpg" alt="Burger Classic" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Burger Classic</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/burger-montagnard.jpg" alt="Burger Montagnard" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Burger Montagnard</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/cafe-latte.jpg" alt="Cafe Latte" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Cafe Latte</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/cake-feta.jpg" alt="Cake Feta" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Cake Feta</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/cake-thon.jpg" alt="Cake au Thon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Cake au Thon</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/carrot-cake.jpg" alt="Carrot Cake" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Carrot Cake</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/club-sandwich-saumon.jpg" alt="Club Sandwich Saumon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Club Sandwich Saumon</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/coleslaw-healthy.jpg" alt="Coleslaw Healthy" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Coleslaw Healthy</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/cookie-chocolat.jpg" alt="Cookie Chocolat" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Cookie Chocolat</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/crepe-nutella.jpg" alt="Crepe Nutella" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Crepe Nutella</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/croque-monsieur.jpg" alt="Croque-Monsieur" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Croque-Monsieur</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/feta-salmon-toast.jpg" alt="Feta Salmon Toast" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Feta Salmon Toast</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/fondant-chocolat.jpg" alt="Fondant Chocolat" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Fondant Chocolat</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/french-toast.jpg" alt="French Toast" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">French Toast</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/galette-bretonne.jpg" alt="Galette Bretonne" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Galette Bretonne</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/granola-maison.jpg" alt="Granola Maison" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Granola Maison</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/jus-detox.jpg" alt="Jus Detox" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Jus Detox</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/jus-orange.jpg" alt="Jus d'Orange" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Jus d'Orange</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/limonade.jpg" alt="Limonade Maison" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Limonade Maison</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/matcha-latte.jpg" alt="Matcha Latte" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Matcha Latte</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/milkshake-vanille.jpg" alt="Milkshake Vanille" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Milkshake Vanille</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mini-cake-sale.jpg" alt="Mini Cake Sale" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Mini Cake Sale</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mini-croissant-jambon.jpg" alt="Mini Croissant Jambon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Mini Croissant Jambon</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mini-pain-lait-nutella.jpg" alt="Mini Pain au Lait Nutella" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Mini Pain au Lait Nutella</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mini-quiche.jpg" alt="Mini Quiche" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Mini Quiche</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mini-wrap-poulet.jpg" alt="Mini Wrap Poulet" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Mini Wrap Poulet</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/mozzarella-buffala.jpg" alt="Mozzarella Buffala" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Mozzarella Buffala</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/muffin-myrtilles.jpg" alt="Muffin Myrtilles" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Muffin Myrtilles</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/pain-chocolat.jpg" alt="Pain au Chocolat" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Pain au Chocolat</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/pain-perdu-banane.jpg" alt="Pain Perdu Banane" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Pain Perdu Banane</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/pancakes-myrtilles.jpg" alt="Pancakes Myrtilles" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Pancakes Myrtilles</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/panini-caprese.jpg" alt="Panini Caprese" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Panini Caprese</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/pita-falafel.jpg" alt="Pita Falafel" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Pita Falafel</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/plateau-charcuterie.jpg" alt="Plateau Charcuterie" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Plateau Charcuterie</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/plateau-fromages.jpg" alt="Plateau Fromages" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Plateau Fromages</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/plateau-legumes.jpg" alt="Plateau Legumes" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Plateau Legumes</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/plateau-mixte.jpg" alt="Plateau Mixte" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Plateau Mixte</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/quiche-epinards.jpg" alt="Quiche Epinards" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Quiche Epinards</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/quiche-lorraine.jpg" alt="Quiche Lorraine" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Quiche Lorraine</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/quinoa-salad.jpg" alt="Quinoa Energy" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Quinoa Energy</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/salade-caesar.jpg" alt="Salade Caesar" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Salade Caesar</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/salade-chevre.jpg" alt="Salade Chevre Chaud" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Salade Chevre Chaud</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/salade-lentilles.jpg" alt="Salade de Lentilles" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Salade de Lentilles</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/salade-nicoise.jpg" alt="Salade Nicoise" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Salade Nicoise</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/salade-quinoa.jpg" alt="Salade Quinoa" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Salade Quinoa</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/smoothie-bowl-acai.jpg" alt="Smoothie Bowl Acai" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Smoothie Bowl Acai</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/smoothie-bowl-mangue.jpg" alt="Smoothie Bowl Mangue" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Smoothie Bowl Mangue</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/smoothie-bowl-spiruline.jpg" alt="Smoothie Bowl Spiruline" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Smoothie Bowl Spiruline</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/smoothie-bowl-tropical.jpg" alt="Smoothie Bowl Tropical" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Smoothie Bowl Tropical</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/sushis.jpg" alt="Sushis Maison" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Sushis Maison</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/taboule-libanais.jpg" alt="Taboule Libanais" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Taboule Libanais</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/tarte-citron.jpg" alt="Tarte Citron" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Tarte Citron</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/tarte-fruits.jpg" alt="Tarte aux Fruits" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Tarte aux Fruits</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/tiramisu.jpg" alt="Tiramisu" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Tiramisu</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-avocat.jpg" alt="Toast Avocat" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Avocat</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-bruschetta.jpg" alt="Toast Bruschetta" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Bruschetta</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-caviar-aubergines.jpg" alt="Toast Caviar d'Aubergines" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Caviar d'Aubergines</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-chutney-magret.jpg" alt="Toast Chutney Magret" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Chutney Magret</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-saumon.jpg" alt="Toast Saumon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Saumon</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-tapenade.jpg" alt="Toast Tapenade" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Tapenade</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/toast-tartare-thon.jpg" alt="Toast Tartare Thon" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Toast Tartare Thon</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/tortilla-espagnole.jpg" alt="Tortilla Espagnole" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Tortilla Espagnole</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/veggies-tacos-bar.jpg" alt="Veggies Tacos Bar" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Veggies Tacos Bar</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/wrap-bite.jpg" alt="Wrap Bite" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Wrap Bite</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
+          <div class="menu-list-item">
+            <div class="menu-list-item__thumbnail-wrap"><img class="menu-list-item__thumbnail" src="images/gwaka/wrap-poulet.jpg" alt="Wrap Poulet" loading="lazy" onerror="this.style.visibility='hidden';this.parentElement.style.background='linear-gradient(135deg, #4A7C3F 0%, #7CB342 100%)'"></div>
+            <div class="menu-list-item__info"><div class="menu-list-item__name">Wrap Poulet</div><div class="menu-list-item__description">Fait maison, produits frais</div></div>
+          </div>
+
         </div>
 
       </div>
@@ -2033,73 +2377,48 @@
       <div class="insta-grid">
         <div class="insta-item g1 reveal-scale">
           <div class="insta-item-bg"></div>
-          <img src="images/gwaka/hero-brunch.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
-          <div class="insta-item-overlay">
-            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 142</span>
-          </div>
+          <img src="images/gwaka/hero-brunch.jpg" alt="Brunch GWAKA" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="insta-item g2 reveal-scale">
           <div class="insta-item-bg"></div>
-          <img src="images/gwaka/buffet-corporate.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
-          <div class="insta-item-overlay">
-            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 98</span>
-          </div>
+          <img src="images/gwaka/buffet-corporate.jpg" alt="Buffet corporate GWAKA" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="insta-item g3 reveal-scale">
           <div class="insta-item-bg"></div>
-          <img src="images/gwaka/scene-deco.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
-          <div class="insta-item-overlay">
-            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 215</span>
-          </div>
+          <img src="images/gwaka/scene-deco.jpg" alt="Decoration GWAKA" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="insta-item g4 reveal-scale">
           <div class="insta-item-bg"></div>
-          <img src="images/gwaka/scene-tropical.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
-          <div class="insta-item-overlay">
-            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 176</span>
-          </div>
+          <img src="images/gwaka/scene-tropical.jpg" alt="Scene tropicale GWAKA" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="insta-item g5 reveal-scale">
           <div class="insta-item-bg"></div>
-          <img src="images/gwaka/plateau-fruits.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
-          <div class="insta-item-overlay">
-            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 89</span>
-          </div>
+          <img src="images/gwaka/plateau-fruits.jpg" alt="Plateau de fruits GWAKA" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="insta-item g6 reveal-scale">
           <div class="insta-item-bg"></div>
-          <img src="images/gwaka/chef-cuisine.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
-          <div class="insta-item-overlay">
-            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 134</span>
-          </div>
+          <img src="images/gwaka/chef-cuisine.jpg" alt="Chef GWAKA" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="insta-item g7 reveal-scale">
           <div class="insta-item-bg"></div>
-          <img src="images/gwaka/buffet-corporate.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
-          <div class="insta-item-overlay">
-            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 67</span>
-          </div>
+          <img src="images/gwaka/verrines-appetizers.jpg" alt="Verrines GWAKA" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="insta-item g8 reveal-scale">
           <div class="insta-item-bg"></div>
-          <img src="images/gwaka/verrines-appetizers.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
-          <div class="insta-item-overlay">
-            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 201</span>
-          </div>
+          <img src="images/gwaka/avocado-toast.jpg" alt="Avocado toast GWAKA" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="insta-item g9 reveal-scale">
           <div class="insta-item-bg"></div>
-          <img src="images/gwaka/buffet-corporate.jpg" alt="GWAKA Instagram" loading="lazy" onerror="this.style.display='none'">
-          <div class="insta-item-overlay">
-            <span class="insta-stat"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg> 156</span>
-          </div>
+          <img src="images/gwaka/bagel-saumon.jpg" alt="Bagel saumon GWAKA" loading="lazy" onerror="this.style.display='none'">
         </div>
       </div>
 
-      <div class="insta-cta reveal">
-        <a href="https://www.instagram.com/gwaka.tahiti/" target="_blank" rel="noopener">
-          Voir plus sur Instagram
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <p class="reveal" style="text-align:center;color:var(--dark-muted);font-size:1rem;margin-top:24px;margin-bottom:8px;">Decouvrez nos dernieres creations sur Instagram</p>
+
+      <div class="insta-cta reveal" style="text-align:center;">
+        <a href="https://www.instagram.com/gwaka.tahiti/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#833AB4,#E1306C,#F77737);color:white;padding:14px 32px;border-radius:100px;font-weight:600;font-size:1rem;transition:transform 0.25s,box-shadow 0.25s;box-shadow:0 4px 20px rgba(225,48,108,0.25);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(225,48,108,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(225,48,108,0.25)'">
+          <svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><rect x="2" y="2" width="16" height="16" rx="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="15" cy="5" r="1.2" fill="currentColor"/></svg>
+          Voir notre Instagram @gwaka.tahiti
         </a>
       </div>
     </div>
@@ -2239,19 +2558,40 @@
   </footer>
 
   <script>
+    // GSAP 3.12+ uses Web Animations API internally — cancel() is the ONLY way to clear
+    function clearGsap(el) {
+      if (el.getAnimations) el.getAnimations().forEach(function(a) { if (!(a instanceof CSSAnimation) && !(a instanceof CSSTransition)) a.cancel(); });
+      if (el._gsap) delete el._gsap;
+      // Force visible — CSS .reveal sets opacity:0, so we must override with inline
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+      el.style.translate = '';
+      el.style.rotate = '';
+      el.style.scale = '';
+    }
+
     /* ========== PRELOADER ========== */
     window.addEventListener('load', () => {
       const preloader = document.getElementById('preloader');
-      gsap.to(preloader, {
-        opacity: 0,
-        duration: 0.6,
-        delay: 0.4,
-        ease: 'power2.inOut',
-        onComplete: () => {
+      if (typeof gsap !== 'undefined') {
+        preloader.classList.add('gsap-handled');
+        gsap.to(preloader, {
+          opacity: 0,
+          duration: 0.6,
+          delay: 0.4,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            preloader.style.display = 'none';
+            initAnimations();
+          }
+        });
+      } else {
+        // CSS fallback handles fade; just init animations after
+        preloader.addEventListener('animationend', () => {
           preloader.style.display = 'none';
-          initAnimations();
-        }
-      });
+          if (typeof initAnimations === 'function') initAnimations();
+        });
+      }
     });
 
     /* ========== MOBILE MENU ========== */
@@ -2380,8 +2720,6 @@
         );
       });
 
-
-
       // Contact form slide in
       gsap.fromTo('.contact-form-card',
         { opacity: 0, x: 60 },
@@ -2394,6 +2732,24 @@
           delay: 0.2,
         }
       );
+
+      // Safety: clear GSAP inline styles after 4s to prevent invisible content
+      setTimeout(function() {
+        document.querySelectorAll('.reveal, .reveal-scale, .menu-bento__cell, .menu-card, .menu-polaroid, .menu-masonry__item, .menu__item, .menu-item, .menu-list-item, .menu-sub-card, .service-card, .gallery-item, .menu-category-divider, .contact-form, .contact-form-card, .contact-info, .footer-inner > *').forEach(function(el) {
+          if (el.style.opacity === '0' || getComputedStyle(el).opacity === '0') {
+            clearGsap(el);
+          }
+        });
+      }, 4000);
+
+      // Final safety — ensure revealed elements are truly visible after paint
+      requestAnimationFrame(function() {
+        document.querySelectorAll('.reveal, .reveal-scale').forEach(function(el) {
+          if (getComputedStyle(el).opacity === '0') {
+            clearGsap(el);
+          }
+        });
+      });
     }
 
     /* ========== FORM RADIO VISUAL ========== */
@@ -2446,14 +2802,13 @@
         }
 
         // Scroll active tab into view (horizontal scroll on mobile)
-        tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        tab.scrollIntoView({ behavior:'auto', block: 'nearest', inline: 'center' });
       });
     });
 
     // Show all on load
     menuCategories.forEach(c => c.classList.remove('hidden'));
 
-    /* ========== SMOOTH SCROLL ========== */
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
         e.preventDefault();
@@ -2461,10 +2816,43 @@
         if (target) {
           const offset = 80;
           const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
+          window.scrollTo({ top: y, behavior:'auto' });
         }
       });
     });
   </script>
+<script>
+// Global failsafe: kill GSAP engine then force visibility after 3s
+setTimeout(function() {
+  // 0. FIRST: kill preloader if still visible
+  var preloader = document.getElementById('preloader');
+  if (preloader && getComputedStyle(preloader).display !== 'none') {
+    preloader.style.transition = 'none';
+    preloader.style.opacity = '0';
+    preloader.style.pointerEvents = 'none';
+    preloader.style.display = 'none';
+  }
+  // 1. Kill ScrollTrigger instances so GSAP stops re-creating animations
+  if (typeof ScrollTrigger !== 'undefined' && ScrollTrigger.getAll) {
+    ScrollTrigger.getAll().forEach(function(st) { st.kill(); });
+  }
+  // 2. Kill all GSAP tweens
+  if (typeof gsap !== 'undefined') gsap.killTweensOf('*');
+  // 3. Cancel GSAP-created WAAPI animations only (preserve CSS keyframes & transitions)
+  document.querySelectorAll('*').forEach(function(el) {
+    if (el.getAnimations && el.getAnimations().length) {
+      el.getAnimations().forEach(function(a) {
+        if (!(a instanceof CSSAnimation) && !(a instanceof CSSTransition)) a.cancel();
+      });
+    }
+  });
+  // 4. Force visibility — disable transitions first to prevent zombie CSSTransitions
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .menu-category, .service-card, .insta-item, .gallery-item, .menu-list-item, .menu-card, .menu-bento__cell, .menu-polaroid, .menu-masonry__item, .menu__item, .menu-sub-card, .contact-form, .contact-info, .footer-inner > *').forEach(function(el) {
+    el.style.transition = 'none';
+    el.style.setProperty('opacity', '1', 'important');
+    el.style.setProperty('transform', 'none', 'important');
+  });
+}, 3000);
+</script>
 </body>
 </html>
