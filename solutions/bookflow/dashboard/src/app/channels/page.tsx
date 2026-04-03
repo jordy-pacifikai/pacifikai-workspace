@@ -327,9 +327,9 @@ function MessengerLoginModal({
   // Page selection state
   const [discoveredPages, setDiscoveredPages] = useState<DiscoveredPage[]>([]);
   const [selectedPageIds, setSelectedPageIds] = useState<Set<string>>(new Set());
-  const [manualPageId, setManualPageId] = useState('');
-  const [manualPageName, setManualPageName] = useState('');
-  const [showManualEntry, setShowManualEntry] = useState(false);
+  const [pageUrl, setPageUrl] = useState('');
+  const [parsedSlug, setParsedSlug] = useState('');
+  const [pageName, setPageName] = useState('');
   const [loadingPages, setLoadingPages] = useState(false);
 
   async function bridgeAction(action: string, extra: Record<string, unknown> = {}) {
@@ -372,36 +372,53 @@ function MessengerLoginModal({
       const selected = (res.selected || []) as string[];
       setDiscoveredPages(pages);
       setSelectedPageIds(new Set(selected));
-
-      if (pages.length > 0) {
-        setStep('pages');
-      } else {
-        // No pages auto-detected — show manual entry by default
-        setShowManualEntry(true);
-        setStep('pages');
-      }
+      setStep('pages');
     } catch {
-      // Fallback: show manual entry
-      setShowManualEntry(true);
       setStep('pages');
     } finally {
       setLoadingPages(false);
     }
   }
 
+  function parsePageUrl(input: string) {
+    const trimmed = input.trim();
+    if (!trimmed) { setParsedSlug(''); setPageName(''); return; }
+
+    let slug = trimmed;
+    // Extract from full URL
+    const urlMatch = trimmed.match(/(?:https?:\/\/)?(?:www\.)?(?:web\.)?(?:m\.)?facebook\.com\/(.+)/i);
+    if (urlMatch) {
+      let path = urlMatch[1].replace(/\/$/, '');
+      const profileMatch = path.match(/profile\.php\?id=(\d+)/);
+      if (profileMatch) { slug = profileMatch[1]; }
+      else { slug = path.split('?')[0].split('#')[0].split('/')[0]; }
+    }
+
+    setParsedSlug(slug);
+    // Generate readable name from slug
+    const readable = slug
+      .replace(/[._-]/g, ' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+    setPageName(readable);
+  }
+
   async function handleSelectPages() {
-    if (selectedPageIds.size === 0 && !manualPageId.trim()) return;
+    const hasAutoSelected = selectedPageIds.size > 0;
+    const hasManual = parsedSlug && pageName.trim();
+    if (!hasAutoSelected && !hasManual) return;
+
     setSubmitting(true);
     setError('');
 
     try {
-      // Add manual page if provided
-      if (manualPageId.trim() && manualPageName.trim()) {
+      // Add manually entered page
+      if (parsedSlug && pageName.trim()) {
         await bridgeAction('bridge-add-page', {
-          page_id: manualPageId.trim(),
-          page_name: manualPageName.trim(),
+          page_id: parsedSlug,
+          page_name: pageName.trim(),
         });
-        selectedPageIds.add(manualPageId.trim());
+        selectedPageIds.add(parsedSlug);
       }
 
       // Select all chosen pages
@@ -478,13 +495,7 @@ function MessengerLoginModal({
   async function pollApproval(stepId: string) {
     try {
       const result = await bridgeAction('login-wait-approval', { step_id: stepId });
-      if (result.type === 'complete') {
-        setStep('done');
-        setTimeout(() => onSuccess(), 1500);
-      } else {
-        setStep('credentials');
-        setError(result.instructions || result.error || 'Approbation echouee, reessayez.');
-      }
+      handleLoginResult(result);
     } catch (err) {
       setStep('credentials');
       setError(err instanceof Error ? err.message : 'Erreur de verification');
@@ -636,9 +647,9 @@ function MessengerLoginModal({
         {step === 'pages' && (
           <div className="p-5 space-y-4">
             <div>
-              <p className="text-sm font-medium text-white">Selectionnez vos Pages Facebook</p>
+              <p className="text-sm font-medium text-white">Quelle Page Facebook connecter ?</p>
               <p className="text-xs text-gray-500 mt-1">
-                Ve&apos;a gerera les messages Messenger de ces Pages.
+                Ve&apos;a gerera les messages Messenger de cette Page.
               </p>
             </div>
 
@@ -674,61 +685,65 @@ function MessengerLoginModal({
                           {page.category && (
                             <p className="text-xs text-gray-500">{page.category}</p>
                           )}
-                          <p className="text-xs text-gray-600 font-mono">ID: {page.id}</p>
                         </div>
                       </button>
                     ))}
                   </div>
                 )}
 
-                {/* Manual entry toggle */}
-                {!showManualEntry && (
-                  <button
-                    onClick={() => setShowManualEntry(true)}
-                    className="text-xs text-[#1877F2] hover:text-[#1877F2]/80 transition"
-                  >
-                    + Ajouter une Page manuellement
-                  </button>
-                )}
+                {/* URL-based Page entry */}
+                <div className="space-y-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
+                  <p className="text-xs text-gray-400">
+                    {discoveredPages.length === 0
+                      ? 'Collez le lien de votre Page Facebook :'
+                      : 'Ou ajoutez une autre Page :'}
+                  </p>
+                  <input
+                    type="text"
+                    value={pageUrl}
+                    onChange={(e) => { setPageUrl(e.target.value); parsePageUrl(e.target.value); }}
+                    placeholder="facebook.com/MaPagePro"
+                    autoFocus={discoveredPages.length === 0}
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#1877F2]/60"
+                  />
 
-                {/* Manual Page entry */}
-                {showManualEntry && (
-                  <div className="space-y-2 p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                    <p className="text-xs text-gray-400">
-                      {discoveredPages.length === 0
-                        ? 'Aucune Page detectee automatiquement. Entrez les infos manuellement :'
-                        : 'Ajoutez une Page par son ID :'}
-                    </p>
-                    <input
-                      type="text"
-                      value={manualPageName}
-                      onChange={(e) => setManualPageName(e.target.value)}
-                      placeholder="Nom de la Page"
-                      className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#1877F2]/60"
-                    />
-                    <input
-                      type="text"
-                      value={manualPageId}
-                      onChange={(e) => setManualPageId(e.target.value)}
-                      placeholder="ID de la Page (ex: 123456789)"
-                      className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white font-mono placeholder:text-gray-600 placeholder:font-sans focus:outline-none focus:border-[#1877F2]/60"
-                    />
+                  {/* Parsed result with editable name */}
+                  {parsedSlug && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <CheckCircle2 size={13} className="text-[#1877F2] shrink-0" />
+                        <span className="font-mono">{parsedSlug}</span>
+                      </div>
+                      <input
+                        type="text"
+                        value={pageName}
+                        onChange={(e) => setPageName(e.target.value)}
+                        placeholder="Nom de votre Page"
+                        className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#1877F2]/60"
+                      />
+                      <p className="text-[10px] text-gray-600">
+                        Verifiez que le nom correspond a votre Page
+                      </p>
+                    </div>
+                  )}
+
+                  {!parsedSlug && (
                     <p className="text-[10px] text-gray-600">
-                      Trouvez l&apos;ID dans les parametres de votre Page Facebook → Transparence de la Page
+                      Ex: facebook.com/MonSalon ou https://www.facebook.com/MonSalon
                     </p>
-                  </div>
-                )}
+                  )}
+                </div>
               </>
             )}
 
             <button
               onClick={handleSelectPages}
-              disabled={submitting || (selectedPageIds.size === 0 && !manualPageId.trim())}
+              disabled={submitting || (selectedPageIds.size === 0 && (!parsedSlug || !pageName.trim()))}
               className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-medium text-white rounded-lg transition hover:opacity-90 disabled:opacity-40"
               style={{ backgroundColor: '#1877F2' }}
             >
               {submitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
-              Connecter {selectedPageIds.size + (manualPageId.trim() ? 1 : 0)} Page{(selectedPageIds.size + (manualPageId.trim() ? 1 : 0)) > 1 ? 's' : ''}
+              Connecter la Page
             </button>
           </div>
         )}
@@ -810,16 +825,6 @@ function MessengerBridgeCard({ businessId }: { businessId: string }) {
                   Messenger
                 </span>
               </div>
-              {session.created_at && (
-                <p className="text-xs text-gray-600 mt-2">
-                  Connecte le {new Date(session.created_at).toLocaleDateString('fr-FR')}
-                </p>
-              )}
-              {session.last_poll_at && (
-                <p className="text-xs text-gray-600 mt-1">
-                  Derniere activite : {new Date(session.last_poll_at).toLocaleString('fr-FR')}
-                </p>
-              )}
             </div>
 
             <div className="p-3 bg-[#25D366]/5 border border-[#25D366]/10 rounded-lg">
@@ -827,6 +832,23 @@ function MessengerBridgeCard({ businessId }: { businessId: string }) {
                 Les messages entrants sont automatiquement relayes a votre agent IA.
               </p>
             </div>
+
+            <button
+              onClick={async () => {
+                try {
+                  await fetch('/api/messenger-bridge', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'bridge-disconnect', business_id: businessId }),
+                  });
+                  refetch();
+                } catch { /* ignore */ }
+              }}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/10 transition"
+            >
+              <LogOut size={14} />
+              Deconnecter Messenger
+            </button>
           </div>
         ) : (
           <div className="space-y-4">
@@ -1344,8 +1366,8 @@ export default function ChannelsPage() {
           {/* Google Calendar — sync bidirectionnelle */}
           <GoogleCalendarSection businessId={businessId} />
 
-          {/* Facebook Messenger & Instagram — OAuth + Ve'a AI */}
-          {businessId && <FacebookConnectedCard businessId={businessId} dashboardUrl={dashboardUrl} />}
+          {/* Facebook Messenger — Credential login direct (no App Review) */}
+          {businessId && <MessengerBridgeCard businessId={businessId} />}
 
           {/* WhatsApp — manual config */}
           <WhatsAppCard

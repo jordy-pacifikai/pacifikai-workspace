@@ -18,12 +18,14 @@ const navItems: NavItem[] = [
     href: "/expertise",
     label: "Expertise",
     children: [
-      { href: "/expertise#aviation", label: "Aviation civile", description: "Compagnies aeriennes & certification" },
-      { href: "/expertise#aeroports", label: "Aeroports", description: "Infrastructures aeroportuaires" },
-      { href: "/expertise#environnement", label: "Environnement", description: "Biodiversite & bilan carbone" },
-      { href: "/expertise#etudes", label: "Etudes strategiques", description: "Modelisation & faisabilite" },
-      { href: "/expertise#amo", label: "AMO & Pilotage", description: "Projets complexes" },
-      { href: "/expertise#formation", label: "Formation", description: "Management & competences" },
+      { href: "/expertise#etudes-strategie", label: "Etudes & Strategie", description: "Faisabilite, modelisation, schemas directeurs" },
+      { href: "/expertise#audits-conformite", label: "Audits & Conformite", description: "Part-145, Part-M, Part-CAMO, certification" },
+      { href: "/expertise#documentation-certification", label: "Documentation", description: "MANEX, SSLIA, AFIS, procedures UAV" },
+      { href: "/expertise#formation-concours", label: "Formation", description: "Management, Part-147, concours" },
+      { href: "/expertise#amo-projets", label: "AMO & Projets", description: "Pilotage de projets complexes" },
+      { href: "/expertise#creation-structuration", label: "Creation / Structuration", description: "Compagnies, centres de formation, CTA" },
+      { href: "/expertise#gestion-securite", label: "Gestion de la Securite", description: "SGS, cartographie des risques, EISA" },
+      { href: "/expertise#organisation-management", label: "Organisation & Management", description: "Diagnostics, RH, coaching" },
     ],
   },
   {
@@ -129,12 +131,12 @@ function DropdownMenu({
                 </span>
                 <h3 className="mt-2 font-display text-lg font-bold text-white leading-snug">
                   {item.label === "Expertise"
-                    ? "6 domaines au service du Pacifique"
+                    ? "8 domaines au service du Pacifique"
                     : "Nos missions depuis 2017"}
                 </h3>
                 <p className="mt-3 text-xs text-white/50 leading-relaxed">
                   {item.label === "Expertise"
-                    ? "Aviation, aeroports, environnement, etudes strategiques, pilotage de projets et formation."
+                    ? "Etudes, audits, documentation, formation, AMO, creation, securite et management."
                     : "Polynesie francaise, Nouvelle-Caledonie et Pacifique Sud."}
                 </p>
               </div>

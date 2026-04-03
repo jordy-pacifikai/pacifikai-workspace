@@ -32,23 +32,24 @@ const whyUs = [
   {
     title: "Performance",
     description:
-      "Accompagnement ISO 9001, 14001, 45001, conformite EASA (Part-145, Part-M, Part-CAMO) et dossiers ICPE.",
+      "Conformite EASA (Part-145, Part-M, Part-CAMO), certification biodiversite, bilan carbone et feuille de route decarbonation.",
     icon: "compass",
   },
   {
     title: "Certification",
     description:
-      "Plus de 47 documents operationnels certifies, manuels MANEX, RCO SSLIA, AFIS et procedures UAV.",
+      "Documentation operationnelle complete : manuels MANEX, RCO SSLIA, manuels AFIS, procedures UAV et maintenance.",
     icon: "shield",
   },
 ];
 
 const partners = [
+  "Air Tahiti Nui",
   "Air Loyaute",
   "Vinci Airports",
   "Direction de l'Aviation Civile (DAC-PF)",
   "CNAM",
-  "DIREN",
+  "DAE-Pf (Direction de l'Environnement)",
   "Terciel",
   "Province des Iles Loyaute",
   "Air Bora Bora",
@@ -62,6 +63,9 @@ const partners = [
   "Ministere des Transports",
   "Service de l'Artisanat Traditionnel",
   "MOZ ULM",
+  "Tahiti Nui Helicopters",
+  "Dexios",
+  "DGEE",
 ];
 
 /* ===== Components ===== */
@@ -129,7 +133,7 @@ export default function Home() {
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/82" />
+        <div className="absolute inset-0 overlay-hero" />
 
         {/* Grain overlay */}
         <div className="absolute inset-0 grain-overlay" />
@@ -162,7 +166,7 @@ export default function Home() {
             <div className="gsap-reveal">
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.06] backdrop-blur-sm border border-white/[0.08] rounded-full text-white/70 text-fluid-xs font-medium tracking-wide">
                 <span className="w-1.5 h-1.5 bg-gold rounded-full animate-pulse-soft" />
-                Cabinet de conseil independant
+Cabinet de conseil independant
               </span>
             </div>
 
@@ -429,7 +433,7 @@ export default function Home() {
           sizes="100vw"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-navy/85" />
+        <div className="absolute inset-0 overlay-cta" />
         <div className="absolute inset-0 grain-overlay" />
 
         {/* Gold glow */}

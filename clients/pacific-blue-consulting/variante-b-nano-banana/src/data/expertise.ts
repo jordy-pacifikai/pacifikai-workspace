@@ -4,6 +4,7 @@ export type ExpertiseItem = {
   shortTitle: string;
   icon: string;
   description: string;
+  value: string;
   details: string[];
   examples: string[];
 };
@@ -16,6 +17,8 @@ export const expertises: ExpertiseItem[] = [
     icon: "chart",
     description:
       "Expertise en analyse de faisabilite, modelisation economique, etudes de marche, definition de positionnement et elaboration de schemas directeurs pour des projets aeriens, d'infrastructures et environnementaux.",
+    value:
+      "Vision strategique structuree, decisions d'investissement mieux fondees, modeles economiques testes et trajectoires de developpement clarifiees (operationnelles, territoriales et environnementales).",
     details: [
       "Analyses de faisabilite technico-economique",
       "Modelisation economique et business plans",
@@ -51,6 +54,8 @@ export const expertises: ExpertiseItem[] = [
     icon: "plane",
     description:
       "Realisation d'audits complets et d'appuis a la mise en conformite des activites aeriennes, de maintenance et d'infrastructures, dans le cadre des reglementations EASA (Part-145, Part-M, Part-OPS, Part-CAMO), de la certification aeroportuaire et des dispositifs environnementaux.",
+    value:
+      "Risques mieux maitrises, conformite demontree aupres des autorites, certifications obtenues et maintenues, continuite des operations securisee.",
     details: [
       "Audits reglementaires des autorites de l'aviation civile",
       "Audits de conformite Part-145 et Part-M (maintenance)",
@@ -60,6 +65,8 @@ export const expertises: ExpertiseItem[] = [
       "Accompagnement conformite Part-OPS et Part-CAMO",
       "Actualisation des dispositifs d'evaluation environnementale (EIE/NIE)",
       "Gestion des pieces detachees et reintegration",
+      "Certification ISO 9001, 14001, 45001",
+      "Dossiers ICPE et plans de prevention des risques",
     ],
     examples: [
       "Audit reglementaire DAC-Pf",
@@ -77,6 +84,8 @@ export const expertises: ExpertiseItem[] = [
     icon: "document",
     description:
       "Redaction et structuration de manuels, procedures, matrices de conformite et cahiers des charges techniques pour les compagnies, les aeroports, les organismes de formation et les autorites.",
+    value:
+      "Dispositifs documentaires complets et evolutifs, conformite structuree, operations encadrees et maintenance facilitee.",
     details: [
       "Manuels d'exploitation (MANEX) et documentation operationnelle",
       "Procedures operationnelles et gestion des operations vol",
@@ -104,6 +113,8 @@ export const expertises: ExpertiseItem[] = [
     icon: "users",
     description:
       "Conception et animation de formations manageriales et techniques, developpement de contenus pedagogiques, accompagnement individuel (tutoring) et contribution a des concours et examens professionnels.",
+    value:
+      "Competences renforcees, certifications obtenues, capacites internes structurees et trajectoires professionnelles ou entrepreneuriales securisees.",
     details: [
       "Formation au management et conduite du changement",
       "Gestion de projet et culture generale economique et manageriale",
@@ -135,6 +146,8 @@ export const expertises: ExpertiseItem[] = [
     icon: "compass",
     description:
       "Assistance a maitrise d'ouvrage pour des projets complexes : cadrage, planification, coordination multi-acteurs, suivi des risques et appui a la decision.",
+    value:
+      "Projets menes a terme dans des contextes exigeants, calendriers tenus, coordination fluidifiee et atteinte des objectifs strategiques des maitres d'ouvrage.",
     details: [
       "Cadrage et planification de projets complexes",
       "Coordination multi-acteurs et parties prenantes",
@@ -165,13 +178,15 @@ export const expertises: ExpertiseItem[] = [
     icon: "building",
     description:
       "Appui a la creation ou a la structuration d'entites : compagnies aeriennes, centres de formation, societes d'infrastructures ou activites nouvelles.",
+    value:
+      "Structures concues sur des bases solides, organisations operationnelles pretes a l'emploi et modeles economiques soutenables.",
     details: [
       "Creation et structuration de compagnies aeriennes",
       "Structuration de compagnies aeriennes startup",
       "Modernisation et restructuration de compagnies existantes",
       "Mise en place de centres de formation agrees",
       "Definition de modeles economiques et structures innovantes",
-      "Obtention du Certificat de Transporteur Aerien (CTA)",
+      "Obtention du Certificat de Transport Aerien (CTA)",
       "Organisations operationnelles pretes a l'emploi",
     ],
     examples: [
@@ -190,6 +205,8 @@ export const expertises: ExpertiseItem[] = [
     icon: "shield",
     description:
       "Renforcement des dispositifs de gestion de la securite : SGS, cartographie des risques, etudes de securite ciblees et evaluations d'impacts sur la securite aeroportuaire.",
+    value:
+      "Dispositifs securite plus robustes, meilleure maitrise des risques operationnels et demonstration de conformite aux attentes des autorites.",
     details: [
       "Systemes de Gestion de la Securite (SGS)",
       "Cartographie et analyse des risques operationnels",
@@ -212,6 +229,8 @@ export const expertises: ExpertiseItem[] = [
     icon: "users",
     description:
       "Diagnostics organisationnels, structuration de fonctions cles (notamment RH), optimisation de processus et accompagnement managerial.",
+    value:
+      "Organisations plus lisibles, responsabilites clarifiees, processus mieux maitrises et management renforce au service de la performance globale.",
     details: [
       "Diagnostics organisationnels complets",
       "Structuration de la fonction RH",

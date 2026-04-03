@@ -86,6 +86,11 @@ export async function POST(req: NextRequest) {
           pageName: body.page_name,
         });
 
+      case 'bridge-resolve-page-url':
+        return proxyToBridge('POST', '/bridge/resolve-page-url', {
+          url: body.url,
+        });
+
       // ─── Legacy endpoints ───
       case 'start-login':
         return proxyToBridge('POST', '/auth/login/start', { business_id });

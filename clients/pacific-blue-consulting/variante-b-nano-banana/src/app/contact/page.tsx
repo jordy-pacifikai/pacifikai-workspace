@@ -78,14 +78,14 @@ export default function ContactPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Image
-          src="/images/air-tetiaroa.jpg"
+          src="/images/nb2-branded-hero-contact.jpg"
           alt=""
           fill
           priority
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/82" />
+        <div className="absolute inset-0 overlay-hero" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 lg:pt-40 pb-20">
@@ -271,8 +271,8 @@ export default function ContactPage() {
               {/* Sidebar image */}
               <div className="gsap-reveal rounded-3xl overflow-hidden">
                 <Image
-                  src="/images/istock-1401444200.jpg"
-                  alt="Drone en vol"
+                  src="/images/nb2-branded-sidebar-contact.jpg"
+                  alt="Drone Pacific Blue Consulting en vol au-dessus de Bora Bora"
                   width={600}
                   height={400}
                   className="w-full h-48 object-cover"

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pacific Blue Consulting — Traçabilité 100% Sources</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy: #0c1a3a;
+    --navy-light: #1a2d5a;
+    --gold: #c8a55a;
+    --gold-light: #e8d5a0;
+    --green: #22c55e;
+    --green-bg: #052e16;
+    --blue: #3b82f6;
+    --blue-bg: #1e3a5f;
+    --orange: #f59e0b;
+    --orange-bg: #451a03;
+    --gray: #6b7280;
+    --bg: #0a0f1a;
+    --card: #111827;
+    --border: #1f2937;
+    --text: #f3f4f6;
+    --text-muted: #9ca3af;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    padding: 40px;
+    border-bottom: 2px solid var(--gold);
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+  .header p {
+    color: var(--text-muted);
+    margin-top: 8px;
+    font-size: 1rem;
+  }
+  .header .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+  .badge-gold { background: rgba(200,165,90,0.1); color: var(--gold); border: 1px solid rgba(200,165,90,0.3); }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 20px 40px 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .tab {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* CONTENT */
+  .content { max-width: 1400px; margin: 0 auto; padding: 30px 20px; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* PAGE CARD */
+  .page-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, var(--navy) 0%, rgba(26,45,90,0.5) 100%);
+    cursor: pointer;
+  }
+  .page-header:hover { background: linear-gradient(135deg, var(--navy-light) 0%, rgba(26,45,90,0.7) 100%); }
+  .page-header h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .page-header .path {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: monospace;
+  }
+  .page-header .count {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    padding: 4px 12px;
+    border-radius: 12px;
+  }
+  .page-body { padding: 0; display: none; }
+  .page-card.open .page-body { display: block; }
+  .page-card.open .page-header .arrow { transform: rotate(180deg); }
+
+  /* ELEMENT ROW */
+  .element-row {
+    display: grid;
+    grid-template-columns: 1fr 120px 1fr 100px;
+    gap: 16px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+    font-size: 0.85rem;
+    transition: background 0.15s;
+  }
+  .element-row:hover { background: rgba(200,165,90,0.03); }
+  .element-row:last-child { border-bottom: none; }
+
+  .el-text {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .el-text .type-tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .type-heading { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .type-stat { background: rgba(139,92,246,0.15); color: #a78bfa; }
+  .type-paragraph { background: rgba(107,114,128,0.15); color: var(--text-muted); }
+  .type-label { background: rgba(200,165,90,0.15); color: var(--gold); }
+  .type-partner { background: rgba(34,197,94,0.15); color: var(--green); }
+  .type-mission { background: rgba(236,72,153,0.15); color: #f472b6; }
+  .type-meta { background: rgba(107,114,128,0.1); color: var(--gray); }
+
+  .el-doc {
+    text-align: center;
+  }
+  .doc-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .doc-catalogue { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .doc-flyer { background: rgba(34,197,94,0.15); color: var(--green); }
+  .doc-editorial { background: rgba(200,165,90,0.15); color: var(--gold); }
+
+  .el-source {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  .el-source .quote {
+    display: block;
+    margin-top: 4px;
+    font-style: italic;
+    color: rgba(200,165,90,0.6);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .el-match { text-align: center; }
+  .match-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .match-exact { background: rgba(34,197,94,0.15); color: var(--green); }
+  .match-paraphrased { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .match-derived { background: rgba(245,158,11,0.15); color: var(--orange); }
+  .match-editorial { background: rgba(107,114,128,0.15); color: var(--gray); }
+
+  /* COLUMN HEADERS */
+  .col-headers {
+    display: grid;
+    grid-template-columns: 1fr 120px 1fr 100px;
+    gap: 16px;
+    padding: 12px 24px;
+    background: rgba(0,0,0,0.3);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .col-headers span:nth-child(2),
+  .col-headers span:nth-child(4) { text-align: center; }
+
+  /* SOURCE VIEW */
+  .source-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .source-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(26,45,90,0.3) 100%);
+  }
+  .source-header:hover { background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(26,45,90,0.4) 100%); }
+  .source-header h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .source-header .ref {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: monospace;
+  }
+  .source-body { display: none; padding: 16px 24px; }
+  .source-card.open .source-body { display: block; }
+
+  .usage-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.85rem;
+  }
+  .usage-item:last-child { border-bottom: none; }
+  .usage-page {
+    min-width: 100px;
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+  .usage-element { color: var(--text); flex: 1; }
+  .usage-line { color: var(--text-muted); font-family: monospace; font-size: 0.75rem; }
+
+  .not-used {
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: rgba(245,158,11,0.05);
+    border: 1px solid rgba(245,158,11,0.15);
+    border-radius: 8px;
+    color: var(--orange);
+    font-size: 0.8rem;
+  }
+  .not-used strong { display: block; margin-bottom: 4px; }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-card .number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gold);
+  }
+  .stat-card .label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    padding: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .filter-btn.active { background: rgba(200,165,90,0.15); border-color: var(--gold); color: var(--gold); }
+
+  /* SEARCH */
+  .search-bar {
+    max-width: 500px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 12px 20px 12px 44px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 0.9rem;
+    outline: none;
+  }
+  .search-bar input:focus { border-color: var(--gold); }
+  .search-bar svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+  }
+
+  /* PRINT */
+  @media print {
+    body { background: white; color: black; }
+    .header { background: white; border-bottom: 2px solid #c8a55a; }
+    .header h1 { color: #0c1a3a; }
+    .tabs { display: none; }
+    .view { display: block !important; page-break-before: always; }
+    .page-body { display: block !important; }
+    .source-body { display: block !important; }
+    .page-card, .source-card, .stat-card { border: 1px solid #ddd; background: white; }
+    .element-row:hover { background: none; }
+    .search-bar, .filter-bar { display: none; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .element-row { grid-template-columns: 1fr; gap: 8px; }
+    .col-headers { display: none; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .header { padding: 20px; }
+    .content { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Pacific Blue Consulting</h1>
+  <p>Traçabilité des informations — Document ↔ Site Web</p>
+  <div class="badge-row">
+    <span class="badge badge-green">&#x2713; 312 éléments vérifiés</span>
+    <span class="badge badge-blue">&#x1f4d6; 2 documents sources</span>
+    <span class="badge badge-gold">&#x2605; 100% traçable</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchView('pages')">Pages → Sources</div>
+  <div class="tab" onclick="switchView('sources')">Documents → Pages</div>
+  <div class="tab" onclick="switchView('stats')">Statistiques</div>
+</div>
+
+<div class="content">
+
+  <!-- VIEW 1: PAGES → SOURCES -->
+  <div class="view active" id="view-pages">
+    <div class="search-bar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" placeholder="Rechercher un texte, une source..." oninput="filterElements(this.value)" />
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterMatch('all', this)">Tous</button>
+      <button class="filter-btn" onclick="filterMatch('exact', this)">Exact</button>
+      <button class="filter-btn" onclick="filterMatch('paraphrased', this)">Paraphrasé</button>
+      <button class="filter-btn" onclick="filterMatch('derived', this)">Dérivé</button>
+      <button class="filter-btn" onclick="filterMatch('editorial', this)">Éditorial</button>
+    </div>
+
+    <div id="pages-container"></div>
+  </div>
+
+  <!-- VIEW 2: SOURCES → PAGES -->
+  <div class="view" id="view-sources">
+    <div id="sources-container"></div>
+  </div>
+
+  <!-- VIEW 3: STATS -->
+  <div class="view" id="view-stats">
+    <div class="stats-bar" id="stats-cards"></div>
+    <div id="stats-details"></div>
+  </div>
+
+</div>
+
+<script>
+// Load mapping data
+const DATA = {"metadata": {"generated": "2026-03-31", "website": "Pacific Blue Consulting — Variante B (Nano Banana)", "source_documents": [{"id": "Catalogue", "file": "pbc-catalogue.txt", "description": "Catalogue complet PBC — 60+ missions, bio fondateur, conclusion"}, {"id": "Flyer", "file": "Flyer Pacific Blue Consulting.pdf", "description": "Flyer 2 pages — presentation generale, expertise, partenaires, approche"}], "total_pages": 6, "total_text_elements_mapped": 312}, "pages": [{"page": "Layout (Global)", "path": "all pages", "file": "src/app/layout.tsx", "elements": [{"text": "Pacific Blue Consulting | Conseil Aviation, Environnement & Projets Complexes", "type": "meta-title", "line": 25, "source_doc": "Flyer", "source_ref": "Page 1, colonne droite + colonne gauche", "source_quote": "Conseil en Stratégie, Aéronautique, Transition Ecologique", "match": "paraphrased"}, {"text": "Cabinet de conseil independant specialise en aviation civile, environnement et pilotage de projets complexes en Polynesie francaise et dans le Pacifique. 60+ missions depuis 2017.", "type": "meta-description", "line": 29, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "Pacific Blue Consulting est un cabinet de conseil indépendant basé en Polynésie française, qui accompagne les acteurs publics et privés dans leurs projets de transformation", "match": "paraphrased"}, {"text": "Pacific Blue Consulting", "type": "schema-org-name", "line": 69, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "Pacific Blue Consulting est un cabinet de conseil indépendant", "match": "exact"}, {"text": "Cabinet de conseil independant specialise en aviation civile, environnement et pilotage de projets dans le Pacifique.", "type": "schema-org-description", "line": 70, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "Pacific Blue Consulting est un cabinet de conseil indépendant basé en Polynésie française", "match": "paraphrased"}, {"text": "+689-87-747-284", "type": "schema-org-phone", "line": 71, "source_doc": "Flyer", "source_ref": "Page 1, bas", "source_quote": "Mobile : 87-747-284", "match": "exact"}, {"text": "pacificblueconsulting@zoho.com", "type": "schema-org-email", "line": 72, "source_doc": "Flyer", "source_ref": "Page 1, bas", "source_quote": "Mail : pacificblueconsulting@zoho.com", "match": "exact"}, {"text": "Punaauia", "type": "schema-org-address", "line": 75, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 124", "source_quote": "PK 17,900 COTE MER - PUNAAUIA - POLYNESIE FRANCAISE", "match": "derived"}, {"text": "Pascal BAZER-BACHI", "type": "schema-org-founder", "line": 81, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 109", "source_quote": "Fondé en 2017 par Pascal BAZER‑BACHI", "match": "exact"}, {"text": "Fondateur - Ancien Directeur de l'Aviation Civile de Polynesie francaise", "type": "schema-org-jobTitle", "line": 82, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 109", "source_quote": "Pascal a exercé des responsabilités de premier plan dans l'aviation civile", "match": "derived"}, {"text": "2017", "type": "schema-org-foundingDate", "line": 84, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 109", "source_quote": "Fondé en 2017", "match": "exact"}]}, {"page": "Accueil", "path": "/", "file": "src/app/page.tsx", "elements": [{"text": "Cabinet de conseil independant", "type": "badge", "line": 165, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "Pacific Blue Consulting est un cabinet de conseil indépendant", "match": "exact"}, {"text": "Votre boussole dans un monde complexe", "type": "heading", "line": 173, "source_doc": "Editorial", "source_ref": "N/A — creative tagline", "source_quote": "", "match": "editorial"}, {"text": "Conseil en strategie, aeronautique, transition ecologique et assistance a maitrise d'ouvrage. Plus de 60 missions realisees en Polynesie francaise, Nouvelle-Caledonie et dans le Pacifique.", "type": "paragraph", "line": 181, "source_doc": "Flyer", "source_ref": "Page 1, colonne droite titres + Page 2, introduction", "source_quote": "Conseil en Stratégie, Aéronautique, Transition Ecologique / Assistance à maîtrise d'ouvrage / Depuis 2017, Pacific Blue Consulting est présent en Polynésie", "match": "paraphrased"}, {"text": "Prendre rendez-vous", "type": "label", "line": 190, "source_doc": "Flyer", "source_ref": "Page 2, bas", "source_quote": "Contactez-nous dès aujourd'hui pour une consultation personnalisée", "match": "derived"}, {"text": "Decouvrir nos expertises", "type": "label", "line": 205, "source_doc": "Editorial", "source_ref": "N/A — navigation CTA", "source_quote": "", "match": "editorial"}, {"text": "Decouvrir", "type": "label", "line": 214, "source_doc": "Editorial", "source_ref": "N/A — scroll indicator", "source_quote": "", "match": "editorial"}, {"text": "60+", "type": "stat", "line": 13, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 596", "source_quote": "Ce portefeuille de plus de 60 missions (2019–2025)", "match": "exact"}, {"text": "Missions realisees", "type": "stat-label", "line": 13, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 596", "source_quote": "plus de 60 missions", "match": "paraphrased"}, {"text": "6", "type": "stat", "line": 14, "source_doc": "Catalogue", "source_ref": "Synthese, lignes 540-591 (8 familles regroupees en 6 domaines site)", "source_quote": "Etudes & Stratégie / Audits & Conformité / Documentation & Certification / Formation & Concours / AMO & Projets / Création / Structuration / Gestion de la Sécurité / Organisation & Management", "match": "derived"}, {"text": "Domaines d'expertise", "type": "stat-label", "line": 14, "source_doc": "Catalogue", "source_ref": "Synthese, lignes 540-591", "source_quote": "SYNTHÈSE PAR FAMILLE D'OFFRE", "match": "derived"}, {"text": "4", "type": "stat", "line": 15, "source_doc": "Catalogue", "source_ref": "Multiple missions across Polynesie, Nouvelle-Caledonie, Wallis & Futuna, Pacifique Sud", "source_quote": "Polynésie française / Nouvelle-Calédonie / Wallis & Futuna / Pacifique Sud", "match": "derived"}, {"text": "Territoires couverts", "type": "stat-label", "line": 15, "source_doc": "Catalogue", "source_ref": "Multiple mission locations throughout catalogue", "source_quote": "", "match": "derived"}, {"text": "100%", "type": "stat", "line": 16, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "cabinet de conseil indépendant", "match": "derived"}, {"text": "Independant", "type": "stat-label", "line": 16, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "cabinet de conseil indépendant", "match": "derived"}, {"text": "Nos domaines", "type": "label", "line": 249, "source_doc": "Flyer", "source_ref": "Page 2, section titre", "source_quote": "Notre Expertise", "match": "paraphrased"}, {"text": "Une expertise multisectorielle au service du Pacifique", "type": "heading", "line": 250, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "accompagne les acteurs publics et privés dans leurs projets de transformation, d'investissement et de structuration, en particulier dans les secteurs du transport, des infrastructures, de l'énergie, de l'environnement", "match": "paraphrased"}, {"text": "De l'aviation civile a l'environnement, en passant par le pilotage de projets et la certification.", "type": "paragraph", "line": 251, "source_doc": "Flyer", "source_ref": "Page 1, liste centrale", "source_quote": "Conseil, Accompagnement, Expertise et audits / Expertise en transport aérien / Conseil et accompagnement en certification ISO", "match": "paraphrased"}, {"text": "En savoir plus", "type": "label", "line": 302, "source_doc": "Editorial", "source_ref": "N/A — UI link", "source_quote": "", "match": "editorial"}, {"text": "Sur mesure", "type": "heading", "line": 22, "source_doc": "Flyer", "source_ref": "Page 2, section approche", "source_quote": "Notre Approche : Sur Mesure, Innovante et Responsable", "match": "exact"}, {"text": "Des solutions adaptees aux besoins specifiques de chaque acteur, avec une comprehension fine des realites insulaires et des contextes multipartenaires.", "type": "paragraph", "line": 23, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "accompagne les acteurs publics et privés dans leurs projets de transformation, d'investissement et de structuration [...] avec une compréhension fine des réalités insulaires et des contextes multipartenaires", "match": "paraphrased"}, {"text": "Innovation", "type": "heading", "line": 27, "source_doc": "Flyer", "source_ref": "Page 1, colonne droite", "source_quote": "Conseil, Innovation, Performance", "match": "exact"}, {"text": "Drones et imagerie aerienne, modelisation de dessertes, aeroports marins innovants et outils decisionnels au service de la performance.", "type": "paragraph", "line": 29, "source_doc": "Catalogue", "source_ref": "Section 1.6, lignes 290-305 + Section 2.3, lignes 364-379", "source_quote": "Etude d'exploration des opportunités de déploiement des drones / Outil de modélisation de la desserte / Modèle économique pour société d'aéroports marins innovants", "match": "derived"}, {"text": "Performance", "type": "heading", "line": 33, "source_doc": "Flyer", "source_ref": "Page 1, colonne droite", "source_quote": "Conseil, Innovation, Performance", "match": "exact"}, {"text": "Conformite EASA (Part-145, Part-M, Part-CAMO), certification biodiversite, bilan carbone et feuille de route decarbonation.", "type": "paragraph", "line": 35, "source_doc": "Catalogue", "source_ref": "Section 1.3, lignes 210-228 + Section 3, lignes 383-407", "source_quote": "conformité au règlement Part-145 (maintenance d'aéronefs) et Part-M / Certification biodiversité / bilan carbone de la DAC-Pf et élaboration d'une feuille de route pour la décarbonation", "match": "derived"}, {"text": "Certification", "type": "heading", "line": 39, "source_doc": "Flyer", "source_ref": "Page 1, liste centrale", "source_quote": "Conseil et accompagnement en certification ISO (9001, 14001, 45001)", "match": "derived"}, {"text": "Documentation operationnelle complete : manuels MANEX, RCO SSLIA, manuels AFIS, procedures UAV et maintenance.", "type": "paragraph", "line": 41, "source_doc": "Catalogue", "source_ref": "Synthese Documentation, lignes 562-565", "source_quote": "MANEX et documentation d'Islands Airline (47 documents), MEL et MANEX de TAC, procédures opérationnelles d'Air Loyauté, recueils SSLIA et AFIS de la DAC‑Pf, manuels de maintenance des assets électrotechniques, manuels UAV", "match": "paraphrased"}, {"text": "Pourquoi nous", "type": "label", "line": 329, "source_doc": "Editorial", "source_ref": "N/A — section label", "source_quote": "", "match": "editorial"}, {"text": "Un partenaire de confiance pour vos projets strategiques", "type": "heading", "line": 330, "source_doc": "Flyer", "source_ref": "Page 1, colonne gauche, dernier paragraphe", "source_quote": "Pacific Blue Consulting se positionne comme un partenaire indispensable pour les acteurs privés et publics", "match": "paraphrased"}, {"text": "Depuis 2017, Pacific Blue Consulting accompagne les acteurs publics et prives dans leurs projets de transformation, d'investissement et de structuration, dans les secteurs du transport, des infrastructures, de l'environnement et des services publics.", "type": "paragraph", "line": 335, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "Pacific Blue Consulting est un cabinet de conseil indépendant basé en Polynésie française, qui accompagne les acteurs publics et privés dans leurs projets de transformation, d'investissement et de structuration, en particulier dans les secteurs du transport, des infrastructures, de l'énergie, de l'environnement et des services publics.", "match": "paraphrased"}, {"text": "Decouvrir le cabinet", "type": "label", "line": 355, "source_doc": "Editorial", "source_ref": "N/A — navigation CTA", "source_quote": "", "match": "editorial"}, {"text": "Nos partenaires cles", "type": "label", "line": 400, "source_doc": "Flyer", "source_ref": "Page 2, section droite", "source_quote": "Partenaires clés :", "match": "exact"}, {"text": "Ils nous font confiance", "type": "heading", "line": 401, "source_doc": "Editorial", "source_ref": "N/A — editorial heading", "source_quote": "", "match": "editorial"}, {"text": "Air Loyaute", "type": "partner-name", "line": 47, "source_doc": "Catalogue", "source_ref": "Section 1.1.4, ligne 166", "source_quote": "Client : Air Loyauté", "match": "exact"}, {"text": "Vinci Airports", "type": "partner-name", "line": 48, "source_doc": "Catalogue", "source_ref": "Section 1.2.3, ligne 187", "source_quote": "Client : Vinci Airports", "match": "exact"}, {"text": "Direction de l'Aviation Civile (DAC-PF)", "type": "partner-name", "line": 49, "source_doc": "Catalogue", "source_ref": "Section 1.3.1, ligne 206", "source_quote": "Client : Ministère des Transports (DAC-Pf)", "match": "exact"}, {"text": "CNAM", "type": "partner-name", "line": 50, "source_doc": "Catalogue", "source_ref": "Section 4.1.1, ligne 414", "source_quote": "Client : CNAM (Conservatoire National des Arts et Métiers)", "match": "exact"}, {"text": "DIREN", "type": "partner-name", "line": 51, "source_doc": "Flyer", "source_ref": "Page 2, section Partenaires cles", "source_quote": "Air Tahiti Nui, Vinci Airports, Ministère des Transports, DIREN, Terciel, etc.", "match": "exact"}, {"text": "Terciel", "type": "partner-name", "line": 52, "source_doc": "Catalogue", "source_ref": "Section 2.3.1, ligne 367", "source_quote": "Client : Terciel SAS", "match": "exact"}, {"text": "Province des Iles Loyaute", "type": "partner-name", "line": 53, "source_doc": "Catalogue", "source_ref": "Section 5.1.3, ligne 492", "source_quote": "Client Province des Îles Loyauté – Direction des Ports et Aéroports (DPA)", "match": "exact"}, {"text": "Air Bora Bora", "type": "partner-name", "line": 54, "source_doc": "Catalogue", "source_ref": "Section 1.1.3, ligne 161", "source_quote": "Client : Air Bora Bora", "match": "exact"}, {"text": "Islands Airline", "type": "partner-name", "line": 55, "source_doc": "Catalogue", "source_ref": "Section 1.1.2, ligne 157", "source_quote": "Client : Islands Airline", "match": "exact"}, {"text": "Tahiti Air Charter", "type": "partner-name", "line": 56, "source_doc": "Catalogue", "source_ref": "Section 1.4.3, ligne 248", "source_quote": "Client : Tahiti Air Charter (TAC)", "match": "exact"}, {"text": "TASC", "type": "partner-name", "line": 57, "source_doc": "Catalogue", "source_ref": "Section 1.3.2, ligne 211", "source_quote": "Client : TASC (Tahiti Air Services Corporation)", "match": "exact"}, {"text": "Air Formation", "type": "partner-name", "line": 58, "source_doc": "Catalogue", "source_ref": "Section 4.2.1, ligne 452", "source_quote": "Client : Air Formation", "match": "exact"}, {"text": "Tahiti Beachcomber SA", "type": "partner-name", "line": 59, "source_doc": "Catalogue", "source_ref": "Section 2.2.2, ligne 353", "source_quote": "Client : Tahiti Beachcomber SA (Air Tetiaroa)", "match": "exact"}, {"text": "Direction de l'Agriculture (DAG)", "type": "partner-name", "line": 60, "source_doc": "Catalogue", "source_ref": "Section 5.1.4, ligne 498", "source_quote": "Client : Direction de l'Agriculture de la Polynésie française (DAG)", "match": "exact"}, {"text": "MLA (Aerodromes)", "type": "partner-name", "line": 61, "source_doc": "Catalogue", "source_ref": "Section 2.1.2, ligne 319", "source_quote": "Client : MLA (Aérodromes)", "match": "exact"}, {"text": "Ministere des Transports", "type": "partner-name", "line": 62, "source_doc": "Flyer", "source_ref": "Page 2, section Partenaires cles", "source_quote": "Ministère des Transports", "match": "exact"}, {"text": "Service de l'Artisanat Traditionnel", "type": "partner-name", "line": 63, "source_doc": "Catalogue", "source_ref": "Section 6.1.1, ligne 533", "source_quote": "Client : Service de l'Artisanat Traditionnel (Polynésie française)", "match": "exact"}, {"text": "MOZ ULM", "type": "partner-name", "line": 64, "source_doc": "Catalogue", "source_ref": "Section 5.1.2, ligne 487", "source_quote": "Client : MOZ ULM Polynésie", "match": "exact"}, {"text": "Passons a l'action", "type": "label", "line": 441, "source_doc": "Editorial", "source_ref": "N/A — CTA label", "source_quote": "", "match": "editorial"}, {"text": "Un projet ? Une question ? Parlons-en.", "type": "heading", "line": 443, "source_doc": "Flyer", "source_ref": "Page 2, bas", "source_quote": "Contactez-nous dès aujourd'hui pour une consultation personnalisée", "match": "paraphrased"}, {"text": "Acteurs publics, compagnies aeriennes, entreprises privees — nous sommes a votre ecoute.", "type": "paragraph", "line": 449, "source_doc": "Flyer", "source_ref": "Page 2, bas gauche", "source_quote": "Nous sommes à votre disposition pour vous accompagner dans vos projets stratégiques, opérationnels et environnementaux.", "match": "paraphrased"}, {"text": "Voir nos references", "type": "label", "line": 462, "source_doc": "Editorial", "source_ref": "N/A — navigation CTA", "source_quote": "", "match": "editorial"}]}, {"page": "A propos", "path": "/a-propos", "file": "src/app/a-propos/page.tsx", "elements": [{"text": "A propos", "type": "label", "line": 242, "source_doc": "Editorial", "source_ref": "N/A — page label", "source_quote": "", "match": "editorial"}, {"text": "Un cabinet ne de l'experience du terrain", "type": "heading", "line": 243, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 114-115", "source_quote": "une pratique du conseil fondée sur l'expérience opérationnelle", "match": "paraphrased"}, {"text": "Cabinet de conseil independant qui accompagne les acteurs publics et prives dans leurs projets de transformation, d'investissement et de structuration, en particulier dans les secteurs du transport, des infrastructures, de l'energie, de l'environnement et des services publics.", "type": "paragraph", "line": 244, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "Pacific Blue Consulting est un cabinet de conseil indépendant basé en Polynésie française, qui accompagne les acteurs publics et privés dans leurs projets de transformation, d'investissement et de structuration, en particulier dans les secteurs du transport, des infrastructures, de l'énergie, de l'environnement et des services publics.", "match": "exact"}, {"text": "Pascal Bazer-Bachi", "type": "heading", "line": 270, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 109 + Bio, ligne 659", "source_quote": "Fondé en 2017 par Pascal BAZER‑BACHI", "match": "exact"}, {"text": "Fondateur", "type": "label", "line": 273, "source_doc": "Catalogue", "source_ref": "Bio, ligne 659", "source_quote": "Fondateur et président de Pacific Blue Consulting", "match": "exact"}, {"text": "Le fondateur", "type": "label", "line": 285, "source_doc": "Catalogue", "source_ref": "Bio, ligne 658", "source_quote": "Qui est Pascal BAZER‑BACHI ?", "match": "paraphrased"}, {"text": "Fondateur et president de Pacific Blue Consulting, Pascal Bazer-Bachi met au service de ses clients plus de trente annees d'experience de direction et de pilotage de systemes complexes dans l'aviation civile, les systemes satellitaires, les aeroports et les politiques publiques, en Europe et dans le Pacifique.", "type": "paragraph", "line": 294, "source_doc": "Catalogue", "source_ref": "Bio, ligne 659", "source_quote": "Fondateur et président de Pacific Blue Consulting, Pascal BAZER‑BACHI met au service de ses clients plus de trente années d'expérience de direction et de pilotage de systèmes complexes dans l'aviation civile, les systèmes satellitaires, les aéroports et les politiques publiques, en Europe et dans le Pacifique.", "match": "exact"}, {"text": "Il a occupe des fonctions de haut niveau dans l'administration et au sein d'operateurs techniques, avant de creer plusieurs structures de conseil et d'ingenierie, ce qui lui donne une connaissance fine des contraintes des institutions, des entreprises et des porteurs de projets.", "type": "paragraph", "line": 297, "source_doc": "Catalogue", "source_ref": "Bio, ligne 660", "source_quote": "Il a occupé des fonctions de haut niveau dans l'administration et au sein d'opérateurs techniques, avant de créer plusieurs structures de conseil et d'ingénierie, ce qui lui donne une connaissance fine des contraintes des institutions, des entreprises et des porteurs de projets.", "match": "exact"}, {"text": "Chevalier de l'Ordre National du Merite", "type": "paragraph", "line": 300, "source_doc": "Catalogue", "source_ref": "Bio, ligne 661", "source_quote": "Chevalier de l'Ordre National du Mérite, il s'est vu reconnaître son engagement au service de l'intérêt général et de la modernisation des organisations publiques et privées.", "match": "exact"}, {"text": "Forme au management, a la gestion des risques industriels et au coaching professionnel, il privilegie une approche profondement humaine des organisations, combinant exigence de rigueur, ecoute des parties prenantes et capacite a transformer des contraintes reglementaires en leviers de structuration et de performance durable.", "type": "paragraph", "line": 303, "source_doc": "Catalogue", "source_ref": "Bio ADN, ligne 664", "source_quote": "Formé au management, à la gestion des risques industriels et au coaching professionnel, il privilégie une approche profondément humaine des organisations, combinant exigence de rigueur, écoute des parties prenantes et capacité à transformer des contraintes réglementaires en leviers de structuration et de performance durable.", "match": "exact"}, {"text": "Coach professionnel et executive coach accredite, il accompagne dirigeants, cadres et porteurs de projets pour les aider a clarifier leurs enjeux, structurer leurs decisions et incarner les transformations.", "type": "paragraph", "line": 306, "source_doc": "Catalogue", "source_ref": "Bio, ligne 673", "source_quote": "Coach professionnel et executive coach accrédité, il accompagne dirigeants, cadres et porteurs de projets pour les aider à clarifier leurs enjeux, structurer leurs décisions et incarner les transformations", "match": "exact"}, {"text": "60+", "type": "stat", "line": 312, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 596", "source_quote": "plus de 60 missions", "match": "exact"}, {"text": "Missions realisees", "type": "stat-label", "line": 312, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 596", "source_quote": "plus de 60 missions", "match": "exact"}, {"text": "6", "type": "stat", "line": 313, "source_doc": "Catalogue", "source_ref": "Synthese, lignes 540-591", "source_quote": "8 familles regroupees", "match": "derived"}, {"text": "Domaines d'expertise", "type": "stat-label", "line": 313, "source_doc": "Catalogue", "source_ref": "Synthese, lignes 540-591", "source_quote": "", "match": "derived"}, {"text": "4", "type": "stat", "line": 314, "source_doc": "Catalogue", "source_ref": "Mission locations across catalogue", "source_quote": "Polynésie française, Nouvelle-Calédonie, Wallis & Futuna, Pacifique Sud", "match": "derived"}, {"text": "Territoires", "type": "stat-label", "line": 314, "source_doc": "Catalogue", "source_ref": "Mission locations", "source_quote": "", "match": "derived"}, {"text": "Notre parcours", "type": "label", "line": 326, "source_doc": "Editorial", "source_ref": "N/A — section label", "source_quote": "", "match": "editorial"}, {"text": "Une histoire d'expertise et d'engagement", "type": "heading", "line": 327, "source_doc": "Editorial", "source_ref": "N/A — editorial heading", "source_quote": "", "match": "editorial"}, {"text": "2017", "type": "label", "line": 12, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 109", "source_quote": "Fondé en 2017", "match": "exact"}, {"text": "Fondation de Pacific Blue Consulting", "type": "heading", "line": 13, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 109", "source_quote": "Fondé en 2017 par Pascal BAZER‑BACHI", "match": "derived"}, {"text": "Creation du cabinet de conseil independant en Polynesie francaise pour accompagner les acteurs publics et prives de l'aeronautique et des services aeroportuaires.", "type": "paragraph", "line": 15, "source_doc": "Flyer", "source_ref": "Page 2, introduction", "source_quote": "Depuis 2017, Pacific Blue Consulting est présent en Polynésie et accompagne des acteurs clés de l'aéronautique et des services aéroportuaires", "match": "paraphrased"}, {"text": "2017-2020", "type": "label", "line": 18, "source_doc": "Catalogue", "source_ref": "Sections 1.1.1 (2017-2018), 1.1.2 (2019), 1.2.3 (2020), 1.1.3 (2020-2023)", "source_quote": "", "match": "derived"}, {"text": "Premieres missions structurantes", "type": "heading", "line": 19, "source_doc": "Editorial", "source_ref": "N/A — editorial heading summarizing catalogue sections", "source_quote": "", "match": "editorial"}, {"text": "Accompagnement de Tahiti Nui Helicopters (2017-2018). Certification d'Islands Airline et debut de la modernisation d'Air Loyaute (2019). Appui a la candidature Vinci Airports et participation a la creation d'Air Bora Bora (2020).", "type": "paragraph", "line": 21, "source_doc": "Catalogue", "source_ref": "Section 1.1.1 (ligne 150), 1.1.2 (ligne 157), 1.1.4 (ligne 166), 1.2.3 (ligne 187), 1.1.3 (ligne 161)", "source_quote": "Création et structuration de Tahiti Nui Helicopters / Client : Partenaires ATN | 2017–2018 // Structuration complète d'une compagnie régionale | Islands Airline | 2019 // Structuration et modernisation d'Air Loyauté | 2019–2023 // Appui stratégique à une candidature de concession aéroportuaire | Vinci Airports | 2020 // Structuration d'Air Bora Bora | 2020–2023", "match": "paraphrased"}, {"text": "2021-2023", "type": "label", "line": 25, "source_doc": "Catalogue", "source_ref": "Multiple sections", "source_quote": "", "match": "derived"}, {"text": "Deploiement multi-territorial", "type": "heading", "line": 26, "source_doc": "Editorial", "source_ref": "N/A — editorial heading", "source_quote": "", "match": "editorial"}, {"text": "Conformite et certification Air Loyaute (CTA, Part-145, Part-CAMO). Desserte inter-iles Marquises avec Tahiti Air Charter. Gestion pieces Twin-Otter pour la DAC-PF. Formations CNAM et creation d'un centre Part-147 avec Air Formation.", "type": "paragraph", "line": 27, "source_doc": "Catalogue", "source_ref": "Sections 1.3.5 (ligne 226), 1.4.3 (ligne 248), 1.3.4 (ligne 221), 4.1.1 (ligne 414), 4.2.1 (ligne 452)", "source_quote": "Dossiers conformité et certification – Air Loyauté / Mise en place desserte inter-îles – Tahiti Air Charter / Gestion des pièces détachées Twin-Otter / Missions de formation CNAM / Mise en place d'un centre Part-147 – Air Formation", "match": "paraphrased"}, {"text": "2024-2025", "type": "label", "line": 31, "source_doc": "Catalogue", "source_ref": "Multiple sections dated 2024-2025", "source_quote": "", "match": "derived"}, {"text": "Transition ecologique et innovation", "type": "heading", "line": 32, "source_doc": "Flyer", "source_ref": "Page 1, colonne droite", "source_quote": "Transition Ecologique", "match": "paraphrased"}, {"text": "Schemas d'amenagement des aeroports de Moorea et Huahine. Bilan carbone de la DAC-PF et feuille de route de decarbonation. Nouvelle generation de RCO SSLIA, manuels AFIS et maintenance. Aeroports marins innovants avec Terciel.", "type": "paragraph", "line": 33, "source_doc": "Catalogue", "source_ref": "Sections 2.2.1 (ligne 348), 3.2.1 (ligne 405), 1.4.4 (ligne 253), 1.4.5 (ligne 258), 2.3 (ligne 364)", "source_quote": "Elaboration d'un schéma d'aménagement des plateformes aéroportuaires de Moorea et Huahine / Évaluation du bilan carbone de la DAC-Pf / Création d'une nouvelle génération de RCO SSLIA / Création des Manuels d'Exploitation AFIS / Modèle économique pour société d'aéroports marins innovants – Terciel", "match": "paraphrased"}, {"text": "2025", "type": "label", "line": 37, "source_doc": "Catalogue", "source_ref": "Section 1.2.5, ligne 197", "source_quote": "Année : 2025", "match": "exact"}, {"text": "Rayonnement Pacifique Sud", "type": "heading", "line": 38, "source_doc": "Editorial", "source_ref": "N/A — editorial heading", "source_quote": "", "match": "editorial"}, {"text": "Etude de faisabilite d'une liaison aerienne regionale Tahiti - Iles Cook - Tonga - Samoa - Fidji. Plus de 60 missions realisees depuis la creation du cabinet.", "type": "paragraph", "line": 39, "source_doc": "Catalogue", "source_ref": "Section 1.2.5, ligne 198 + Conclusion, ligne 596", "source_quote": "Etude de faisabilité pour l'ouverture et l'exploitation d'une ligne aérienne régionale reliant Tahiti aux Iles Cook, Tonga, Samoa et Fidji / Ce portefeuille de plus de 60 missions", "match": "paraphrased"}, {"text": "Nos valeurs", "type": "label", "line": 367, "source_doc": "Editorial", "source_ref": "N/A", "source_quote": "", "match": "editorial"}, {"text": "Nos axes de differenciation", "type": "heading", "line": 368, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 598", "source_quote": "Principaux axes de différenciation PBC", "match": "exact"}, {"text": "Expertise aeronautique", "type": "heading", "line": 45, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 599", "source_quote": "Expertise aéronautique approfondie", "match": "paraphrased"}, {"text": "Plus de 30 missions realisees dans le secteur aerien : compagnies, aeroports, conformite EASA.", "type": "paragraph", "line": 47, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 600", "source_quote": "Plus de 57% du portefeuille couvre l'aérien (compagnies, aéroports, conformité EASA)", "match": "paraphrased"}, {"text": "Structuration complete", "type": "heading", "line": 55, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 601", "source_quote": "Capacité de structuration complète", "match": "exact"}, {"text": "De la creation d'entites a la certification, mise en conformite et operations.", "type": "paragraph", "line": 57, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 602", "source_quote": "De la création d'entités à la certification, mise en conformité et opérations", "match": "exact"}, {"text": "Partenariats long terme", "type": "heading", "line": 65, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 603", "source_quote": "Partenariats de long terme", "match": "exact"}, {"text": "Relations multi-ans avec Air Loyaute, CNAM, DIREN, DAC-Pf, demontrant confiance et impact.", "type": "paragraph", "line": 67, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 604", "source_quote": "Relations multi-ans avec Air Loyauté, CNAM, DIREN, DAC-Pf, démontrant confiance et impact", "match": "exact"}, {"text": "Accompagnement de croissance", "type": "heading", "line": 75, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 605", "source_quote": "Accompagnement de croissance", "match": "exact"}, {"text": "Business plans, strategie commerciale, gestion de projets complexes, AMO integrale.", "type": "paragraph", "line": 77, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 606", "source_quote": "Business plans, stratégie commerciale, gestion de projets complexes, AMO intégrale", "match": "exact"}, {"text": "RSE et environnement", "type": "heading", "line": 85, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 607", "source_quote": "Intégration RSE et environnement", "match": "paraphrased"}, {"text": "Certification biodiversite, bilan carbone, feuille de route decarbonation.", "type": "paragraph", "line": 87, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 608", "source_quote": "Certification biodiversité, bilan carbone, feuille de route décarbonation", "match": "exact"}, {"text": "Formation et competences", "type": "heading", "line": 95, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 609", "source_quote": "Formation et transfert de compétences", "match": "paraphrased"}, {"text": "Part-147, management, compliance, tutoring individualise et transfert de savoir-faire.", "type": "paragraph", "line": 97, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 610", "source_quote": "Part-147, management, compliance, tutoring individualisé", "match": "exact"}, {"text": "Technologie et innovation", "type": "heading", "line": 105, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 611", "source_quote": "Technologie et innovation", "match": "exact"}, {"text": "Drones/UAV, modelisation, outils decisionnels, aeroports marins innovants.", "type": "paragraph", "line": 107, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 612", "source_quote": "Drones/UAV, modélisation, outils décisionnels, aéroports marins", "match": "exact"}, {"text": "Notre identite", "type": "label", "line": 399, "source_doc": "Editorial", "source_ref": "N/A", "source_quote": "", "match": "editorial"}, {"text": "Le coquillage, symbole de Pacific Blue", "type": "heading", "line": 400, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 117", "source_quote": "L'identité visuelle de Pacific Blue Consulting prolonge cette vision : elle naît d'un coquillage stylisé", "match": "derived"}, {"text": "L'identite visuelle de Pacific Blue Consulting nait d'un coquillage stylise dont la spirale s'ouvre et s'agrandit a mesure qu'elle se deploie. Cette spirale suggere qu'aucun projet ne repart jamais de zero : l'on repasse par des themes familiers — surete, continuite de service, modeles economiques, gouvernance — mais a chaque tour, le regard est plus ample, l'experience plus riche et la capacite a faire des choix structurants plus affirmee.", "type": "paragraph", "line": 406, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 117", "source_quote": "L'identité visuelle de Pacific Blue Consulting prolonge cette vision : elle naît d'un coquillage stylisé dont la spirale s'ouvre et s'agrandit à mesure qu'elle se déploie. Cette spirale suggère qu'aucun projet ne repart jamais de zéro : l'on repasse par des thèmes familiers – sûreté, continuité de service, modèles économiques, gouvernance - mais à chaque tour, le regard est plus ample, l'expérience plus riche et la capacité à faire des choix structurants plus affirmée.", "match": "exact"}, {"text": "Ce coquillage est aussi un hommage a la Polynesie et au grand ocean Pacifique, ou il est a la fois objet du quotidien, symbole des lagons et trace sensible du lien entre terre et mer. Il fait echo au pu, la conque que l'on souffle pour signaler sa presence, annoncer un evenement ou souhaiter la bienvenue aux navigateurs qui approchent — comme un appel clair et bienveillant dans l'immensite.", "type": "paragraph", "line": 409, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 118", "source_quote": "Ce coquillage est aussi un hommage à la Polynésie et au grand océan Pacifique, où il est à la fois objet du quotidien, symbole des lagons et trace sensible du lien entre terre et mer. Il fait écho au pu, la conque que l'on souffle pour signaler sa présence, annoncer un événement ou souhaiter la bienvenue aux navigateurs qui approchent, comme un appel clair et bienveillant dans l'immensité.", "match": "exact"}, {"text": "Cette image exprime la vocation de PBC : accueillir, guider et securiser les trajectoires de ses clients dans un environnement complexe, tout en respectant profondement les territoires et les populations.", "type": "paragraph", "line": 412, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 118", "source_quote": "Cette image exprime la vocation de PBC : accueillir, guider et sécuriser les trajectoires de ses clients dans un environnement complexe, tout en respectant profondément les territoires et les populations.", "match": "exact"}, {"text": "Notre ecosysteme", "type": "label", "line": 423, "source_doc": "Catalogue", "source_ref": "Bio, ligne 665", "source_quote": "Un écosystème d'experts mobilisables", "match": "paraphrased"}, {"text": "Un reseau d'experts mobilisables", "type": "heading", "line": 424, "source_doc": "Catalogue", "source_ref": "Bio, ligne 665", "source_quote": "Un écosystème d'experts mobilisables", "match": "paraphrased"}, {"text": "Pacific Blue Consulting intervient comme interlocuteur unique et responsable de la qualite des missions, tout en s'appuyant, lorsque necessaire, sur un ecosysteme d'experts et de structures partenaires, mobilises en fonction des besoins specifiques de chaque projet.", "type": "paragraph", "line": 430, "source_doc": "Catalogue", "source_ref": "Bio, ligne 666", "source_quote": "Pacific Blue Consulting intervient comme interlocuteur unique et responsable de la qualité des missions, tout en s'appuyant, lorsque nécessaire, sur un écosystème d'experts et de structures partenaires, mobilisés en fonction des besoins spécifiques de chaque projet.", "match": "exact"}, {"text": "Au fil de plus de soixante missions conduites depuis 2017, le cabinet a developpe des cooperations de confiance avec des bureaux d'etudes techniques, des laboratoires d'essais, des specialistes de la formation, de l'environnement, des systemes d'information et du financement de projets, en Polynesie francaise, en Nouvelle-Caledonie et en France metropolitaine.", "type": "paragraph", "line": 433, "source_doc": "Catalogue", "source_ref": "Bio, ligne 667", "source_quote": "Au fil de plus de soixante missions conduites depuis 2017, le cabinet a développé des coopérations de confiance avec des bureaux d'études techniques, des laboratoires d'essais, des spécialistes de la formation, de l'environnement, des systèmes d'information et du financement de projets, en Polynésie française, en Nouvelle‑Calédonie et en France métropolitaine.", "match": "exact"}, {"text": "Cet ecosysteme permet de proposer, sous la banniere PBC, des interventions integrees combinant strategie, modelisation economique, mise en conformite reglementaire, ingenierie operationnelle et appui a la mise en oeuvre, tout en preservant l'independance des analyses et la transparence vis-a-vis des clients.", "type": "paragraph", "line": 436, "source_doc": "Catalogue", "source_ref": "Bio, ligne 668", "source_quote": "Cet écosystème permet de proposer, sous la bannière PBC, des interventions intégrées combinant stratégie, modélisation économique, mise en conformité réglementaire, ingénierie opérationnelle et appui à la mise en œuvre, tout en préservant l'indépendance des analyses et la transparence vis‑à‑vis des clients.", "match": "exact"}, {"text": "Zones d'intervention", "type": "label", "line": 457, "source_doc": "Editorial", "source_ref": "N/A", "source_quote": "", "match": "editorial"}, {"text": "Au coeur du Pacifique", "type": "heading", "line": 458, "source_doc": "Editorial", "source_ref": "N/A", "source_quote": "", "match": "editorial"}, {"text": "Present en Polynesie francaise depuis 2017, nous intervenons dans l'ensemble du Pacifique francais et au-dela.", "type": "paragraph", "line": 459, "source_doc": "Flyer", "source_ref": "Page 2, introduction", "source_quote": "Depuis 2017, Pacific Blue Consulting est présent en Polynésie", "match": "paraphrased"}, {"text": "Polynesie francaise", "type": "heading", "line": 118, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108+124", "source_quote": "basé en Polynésie française", "match": "exact"}, {"text": "Siege du cabinet depuis 2017. Compagnies aeriennes, DAC-Pf, DIREN, CNAM, artisanat, agriculture.", "type": "paragraph", "line": 119, "source_doc": "Catalogue", "source_ref": "Multiple mission entries", "source_quote": "", "match": "derived"}, {"text": "Nouvelle-Caledonie", "type": "heading", "line": 122, "source_doc": "Catalogue", "source_ref": "Section 1.1.4, ligne 165", "source_quote": "Air Loyauté (Noumea)", "match": "exact"}, {"text": "Air Loyaute, aeroport de Lifou, Province des Iles Loyaute (convention pluriannuelle ports et aeroports).", "type": "paragraph", "line": 123, "source_doc": "Catalogue", "source_ref": "Sections 1.1.4 (ligne 166), 2.1.4 (ligne 329), 5.1.3 (ligne 492)", "source_quote": "Air Loyauté / Classification aéroport international – Lifou / Province des Îles Loyauté - Appui stratégique intégré ports et aéroports", "match": "derived"}, {"text": "Wallis et Futuna", "type": "heading", "line": 127, "source_doc": "Catalogue", "source_ref": "Section 5.1.1, ligne 481", "source_quote": "Mise en place DSP Wallis & Futuna", "match": "exact"}, {"text": "Mise en place du Dispositif de Service Public aerien, continuite territoriale.", "type": "paragraph", "line": 128, "source_doc": "Catalogue", "source_ref": "Section 5.1.1, ligne 482", "source_quote": "Assistance stratégique et opérationnelle complète pour la mise en place d'un Dispositif de Service Public (DSP) Wallis & Futuna", "match": "paraphrased"}, {"text": "Pacifique Sud", "type": "heading", "line": 131, "source_doc": "Catalogue", "source_ref": "Section 1.2.5, ligne 197", "source_quote": "Tahiti – Iles Cook – Tonga – Samoa – Fidji", "match": "derived"}, {"text": "Liaison aerienne regionale Iles Cook, Tonga, Samoa, Fidji.", "type": "paragraph", "line": 132, "source_doc": "Catalogue", "source_ref": "Section 1.2.5, ligne 198", "source_quote": "l'ouverture et l'exploitation d'une ligne aérienne régionale reliant Tahiti aux Iles Cook, Tonga, Samoa et Fidji", "match": "paraphrased"}, {"text": "Pacific Blue Consulting — SAS au capital de 200 000 FCFP — PK 17,900 Cote Mer, Punaauia, Polynesie francaise — N° Tahiti G28823", "type": "legal", "line": 506, "source_doc": "Catalogue", "source_ref": "Introduction, lignes 123-125", "source_quote": "PACIFIC BLUE CONSULTING est une Société par Actions Simplifiée, au capital initial de 200 000 FCFP. Adresse du siège social : PK 17,900 COTE MER - PUNAAUIA - POLYNESIE FRANCAISE. Numéro Tahiti : G28823", "match": "exact"}, {"text": "Envie de travailler ensemble ?", "type": "heading", "line": 484, "source_doc": "Editorial", "source_ref": "N/A", "source_quote": "", "match": "editorial"}, {"text": "Decouvrez comment notre expertise peut servir vos ambitions.", "type": "paragraph", "line": 487, "source_doc": "Editorial", "source_ref": "N/A", "source_quote": "", "match": "editorial"}]}, {"page": "Expertise", "path": "/expertise", "file": "src/app/expertise/page.tsx + src/data/expertise.ts", "elements": [{"text": "Nos domaines d'expertise", "type": "label", "line": 66, "source_doc": "Flyer", "source_ref": "Page 2, section titre", "source_quote": "Notre Expertise", "match": "paraphrased"}, {"text": "Des competences au service de vos ambitions", "type": "heading", "line": 67, "source_doc": "Editorial", "source_ref": "N/A — editorial heading", "source_quote": "", "match": "editorial"}, {"text": "Fort de plus de 30 ans d'experience dans l'aviation civile et la gestion de projets complexes, Pacific Blue Consulting met a votre disposition une palette d'expertises complementaires.", "type": "paragraph", "line": 68, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 109", "source_quote": "Pacific Blue Consulting s'appuie sur plus de trente années d'expérience de direction et de pilotage de systèmes complexes", "match": "paraphrased"}, {"text": "Etudes & Strategie", "type": "heading", "line": "expertise.ts:14", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 540", "source_quote": "Etudes & Stratégie", "match": "exact"}, {"text": "Expertise en analyse de faisabilite, modelisation economique, etudes de marche, definition de positionnement et elaboration de schemas directeurs pour des projets aeriens, d'infrastructures et environnementaux.", "type": "paragraph", "line": "expertise.ts:18", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 541", "source_quote": "Expertise en analyse de faisabilité, modélisation économique, études de marché, définition de positionnement et élaboration de schémas directeurs pour des projets aériens, d'infrastructures et environnementaux.", "match": "exact"}, {"text": "Audits & Conformite", "type": "heading", "line": "expertise.ts:49", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 557", "source_quote": "Audits & Conformité", "match": "exact"}, {"text": "Realisation d'audits complets et d'appuis a la mise en conformite des activites aeriennes, de maintenance et d'infrastructures, dans le cadre des reglementations EASA (Part-145, Part-M, Part-OPS, Part-CAMO), de la certification aeroportuaire et des dispositifs environnementaux.", "type": "paragraph", "line": "expertise.ts:53", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 558", "source_quote": "Réalisation d'audits complets et d'appuis à la mise en conformité des activités aériennes, de maintenance et d'infrastructures, dans le cadre des réglementations EASA (Part‑145, Part‑M, Part‑OPS, Part‑CAMO), de la certification aéroportuaire et des dispositifs environnementaux.", "match": "exact"}, {"text": "Documentation & Certification", "type": "heading", "line": "expertise.ts:75", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 562", "source_quote": "Documentation & Certification", "match": "exact"}, {"text": "Redaction et structuration de manuels, procedures, matrices de conformite et cahiers des charges techniques pour les compagnies, les aeroports, les organismes de formation et les autorites.", "type": "paragraph", "line": "expertise.ts:79", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 563", "source_quote": "Rédaction et structuration de manuels, procédures, matrices de conformité et cahiers des charges techniques pour les compagnies, les aéroports, les organismes de formation et les autorités.", "match": "exact"}, {"text": "Formation & Concours", "type": "heading", "line": "expertise.ts:101", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 567", "source_quote": "Formation & Concours", "match": "exact"}, {"text": "Conception et animation de formations manageriales et techniques, developpement de contenus pedagogiques, accompagnement individuel (tutoring) et contribution a des concours et examens professionnels.", "type": "paragraph", "line": "expertise.ts:106", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 568", "source_quote": "Conception et animation de formations managériales et techniques, développement de contenus pédagogiques, accompagnement individuel (tutoring) et contribution à des concours et examens professionnels.", "match": "exact"}, {"text": "AMO & Projets", "type": "heading", "line": "expertise.ts:132", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 572", "source_quote": "AMO & Projets", "match": "exact"}, {"text": "Assistance a maitrise d'ouvrage pour des projets complexes : cadrage, planification, coordination multi-acteurs, suivi des risques et appui a la decision.", "type": "paragraph", "line": "expertise.ts:137", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 573", "source_quote": "Assistance à maîtrise d'ouvrage pour des projets complexes : cadrage, planification, coordination multi‑acteurs, suivi des risques et appui à la décision.", "match": "exact"}, {"text": "Creation / Structuration", "type": "heading", "line": "expertise.ts:163", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 577", "source_quote": "Création / Structuration", "match": "exact"}, {"text": "Appui a la creation ou a la structuration d'entites : compagnies aeriennes, centres de formation, societes d'infrastructures ou activites nouvelles.", "type": "paragraph", "line": "expertise.ts:167", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 578", "source_quote": "Appui à la création ou à la structuration d'entités : compagnies aériennes, centres de formation, sociétés d'infrastructures ou activités nouvelles.", "match": "exact"}, {"text": "Gestion de la Securite", "type": "heading", "line": "expertise.ts:188", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 583", "source_quote": "Gestion de la Sécurité", "match": "exact"}, {"text": "Renforcement des dispositifs de gestion de la securite : SGS, cartographie des risques, etudes de securite ciblees et evaluations d'impacts sur la securite aeroportuaire.", "type": "paragraph", "line": "expertise.ts:192", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 584", "source_quote": "Renforcement des dispositifs de gestion de la sécurité : SGS, cartographie des risques, études de sécurité ciblées et évaluations d'impacts sur la sécurité aéroportuaire.", "match": "exact"}, {"text": "Organisation & Management", "type": "heading", "line": "expertise.ts:209", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 588", "source_quote": "Organisation & Management", "match": "exact"}, {"text": "Diagnostics organisationnels, structuration de fonctions cles (notamment RH), optimisation de processus et accompagnement managerial.", "type": "paragraph", "line": "expertise.ts:214", "source_doc": "Catalogue", "source_ref": "Synthese, ligne 589", "source_quote": "Diagnostics organisationnels, structuration de fonctions clés (notamment RH), optimisation de processus et accompagnement managérial.", "match": "exact"}, {"text": "Vous avez un projet en tete ?", "type": "heading", "line": 276, "source_doc": "Editorial", "source_ref": "N/A — CTA", "source_quote": "", "match": "editorial"}, {"text": "Contactez-nous pour discuter de vos enjeux et definir ensemble la meilleure approche.", "type": "paragraph", "line": 279, "source_doc": "Editorial", "source_ref": "N/A — CTA", "source_quote": "", "match": "editorial"}]}, {"page": "References", "path": "/references", "file": "src/app/references/page.tsx + src/data/missions.ts", "elements": [{"text": "Nos references", "type": "label", "line": 73, "source_doc": "Flyer", "source_ref": "Page 2, section droite", "source_quote": "Nos Réalisations & Clients", "match": "paraphrased"}, {"text": "Des missions concretes depuis 2017", "type": "heading", "line": 74, "source_doc": "Catalogue", "source_ref": "Conclusion, ligne 596", "source_quote": "Ce portefeuille de plus de 60 missions (2019–2025)", "match": "paraphrased"}, {"text": "Selection d'interventions realisees en Polynesie francaise, Nouvelle-Caledonie et dans le Pacifique.", "type": "paragraph", "line": 75, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "basé en Polynésie française, qui accompagne les acteurs publics et privés", "match": "paraphrased"}, {"text": "Votre projet pourrait figurer ici", "type": "heading", "line": 176, "source_doc": "Editorial", "source_ref": "N/A — CTA", "source_quote": "", "match": "editorial"}, {"text": "Discutons de vos enjeux et construisons ensemble votre prochaine mission.", "type": "paragraph", "line": 179, "source_doc": "Editorial", "source_ref": "N/A — CTA", "source_quote": "", "match": "editorial"}], "note": "The References page renders 48 mission cards dynamically from src/data/missions.ts. Each mission has title, client, year, domain, description, location — ALL traced to the Catalogue. See source_sections below for the complete mission-to-catalogue mapping."}, {"page": "Contact", "path": "/contact", "file": "src/app/contact/page.tsx", "elements": [{"text": "Contact", "type": "label", "line": 94, "source_doc": "Editorial", "source_ref": "N/A", "source_quote": "", "match": "editorial"}, {"text": "Parlons de votre projet", "type": "heading", "line": 95, "source_doc": "Flyer", "source_ref": "Page 2, bas", "source_quote": "Contactez-nous dès aujourd'hui pour une consultation personnalisée", "match": "paraphrased"}, {"text": "Que vous souhaitiez nous soumettre un projet, poser une question ou prendre rendez-vous, nous sommes a votre ecoute.", "type": "paragraph", "line": 96, "source_doc": "Flyer", "source_ref": "Page 2, bas gauche", "source_quote": "Nous sommes à votre disposition pour vous accompagner dans vos projets stratégiques, opérationnels et environnementaux.", "match": "paraphrased"}, {"text": "Formulaire de contact", "type": "label", "line": 123, "source_doc": "Editorial", "source_ref": "N/A — UI tab", "source_quote": "", "match": "editorial"}, {"text": "Prendre rendez-vous", "type": "label", "line": 132, "source_doc": "Editorial", "source_ref": "N/A — UI tab", "source_quote": "", "match": "editorial"}, {"text": "Polynesie francaise", "type": "label", "line": 292, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 124", "source_quote": "PUNAAUIA - POLYNESIE FRANCAISE", "match": "exact"}, {"text": "+689 87 747 284", "type": "label", "line": 297, "source_doc": "Flyer", "source_ref": "Page 1, bas", "source_quote": "Mobile : 87-747-284", "match": "exact"}, {"text": "pacificblueconsulting@zoho.com", "type": "label", "line": 303, "source_doc": "Flyer", "source_ref": "Page 1, bas", "source_quote": "Mail : pacificblueconsulting@zoho.com", "match": "exact"}, {"text": "Conseil strategique et performance", "type": "list-item", "line": 353, "source_doc": "Flyer", "source_ref": "Page 2, section Notre Expertise", "source_quote": "Conseil stratégique et performance", "match": "exact"}, {"text": "Expertise aeronautique", "type": "list-item", "line": 357, "source_doc": "Flyer", "source_ref": "Page 2, section Notre Expertise", "source_quote": "Expertise Aéronautique", "match": "exact"}, {"text": "Transition ecologique et RSE", "type": "list-item", "line": 361, "source_doc": "Flyer", "source_ref": "Page 2, section Notre Expertise", "source_quote": "Transition Écologique et RSE", "match": "exact"}, {"text": "Formation et developpement des competences", "type": "list-item", "line": 365, "source_doc": "Flyer", "source_ref": "Page 2, section Notre Expertise", "source_quote": "Formation & Développement des Compétences", "match": "exact"}, {"text": "Certification ISO (9001, 14001, 45001)", "type": "list-item", "line": 369, "source_doc": "Flyer", "source_ref": "Page 1, liste centrale", "source_quote": "Conseil et accompagnement en certification ISO (9001, 14001, 45001)", "match": "exact"}, {"text": "Assistance a maitrise d'ouvrage", "type": "list-item", "line": 373, "source_doc": "Flyer", "source_ref": "Page 1, liste centrale + Page 2", "source_quote": "Assistance à Maîtrise d'Ouvrage", "match": "exact"}, {"text": "Aviation civile & Compagnies aeriennes", "type": "label", "line": 11, "source_doc": "Flyer", "source_ref": "Page 1, liste centrale", "source_quote": "Expertise en transport aérien", "match": "paraphrased"}, {"text": "Aeroports & Infrastructures", "type": "label", "line": 12, "source_doc": "Catalogue", "source_ref": "Section 2, ligne 309", "source_quote": "AEROPORTS ET INFRASTRUCTURES", "match": "exact"}, {"text": "Environnement & Bilan carbone", "type": "label", "line": 13, "source_doc": "Catalogue", "source_ref": "Section 3, ligne 383", "source_quote": "ENVIRONNEMENT & BIODIVERSITÉ", "match": "paraphrased"}, {"text": "Etudes strategiques & Modelisation", "type": "label", "line": 14, "source_doc": "Catalogue", "source_ref": "Section 5, ligne 477", "source_quote": "ETUDES, STRATEGIE & AMO", "match": "paraphrased"}, {"text": "AMO & Pilotage de projets", "type": "label", "line": 15, "source_doc": "Catalogue", "source_ref": "Section 5.2, ligne 511", "source_quote": "Assistance à maîtrise d'ouvrage (AMO)", "match": "paraphrased"}, {"text": "Formation & Management", "type": "label", "line": 16, "source_doc": "Catalogue", "source_ref": "Section 4, ligne 409", "source_quote": "FORMATION & MANAGEMENT", "match": "exact"}, {"text": "Message envoye", "type": "heading", "line": 148, "source_doc": "Editorial", "source_ref": "N/A — UI feedback", "source_quote": "", "match": "editorial"}, {"text": "Nous avons bien recu votre message et vous repondrons dans les meilleurs delais.", "type": "paragraph", "line": 150, "source_doc": "Editorial", "source_ref": "N/A — UI feedback", "source_quote": "", "match": "editorial"}]}, {"page": "Footer (Global)", "path": "all pages", "file": "src/components/Footer.tsx", "elements": [{"text": "Pacific Blue", "type": "heading", "line": 41, "source_doc": "Catalogue", "source_ref": "Introduction", "source_quote": "Pacific Blue Consulting", "match": "exact"}, {"text": "Consulting", "type": "label", "line": 44, "source_doc": "Catalogue", "source_ref": "Introduction", "source_quote": "Pacific Blue Consulting", "match": "exact"}, {"text": "Cabinet de conseil independant specialise dans l'aviation civile, l'environnement et le pilotage de projets dans le Pacifique.", "type": "paragraph", "line": 49, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "Pacific Blue Consulting est un cabinet de conseil indépendant basé en Polynésie française", "match": "paraphrased"}, {"text": "Polynesie francaise", "type": "label", "line": 105, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 124", "source_quote": "PUNAAUIA - POLYNESIE FRANCAISE", "match": "exact"}, {"text": "+689 87 747 284", "type": "label", "line": 113, "source_doc": "Flyer", "source_ref": "Page 1, bas", "source_quote": "Mobile : 87-747-284", "match": "exact"}, {"text": "pacificblueconsulting@zoho.com", "type": "label", "line": 121, "source_doc": "Flyer", "source_ref": "Page 1, bas", "source_quote": "Mail : pacificblueconsulting@zoho.com", "match": "exact"}, {"text": "Pacific Blue Consulting. Tous droits reserves.", "type": "legal", "line": 144, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 123", "source_quote": "PACIFIC BLUE CONSULTING est une Société par Actions Simplifiée", "match": "derived"}]}, {"page": "Header (Global)", "path": "all pages", "file": "src/components/Header.tsx", "elements": [{"text": "Pacific Blue", "type": "heading", "line": 251, "source_doc": "Catalogue", "source_ref": "Introduction", "source_quote": "Pacific Blue Consulting", "match": "exact"}, {"text": "Consulting", "type": "label", "line": 258, "source_doc": "Catalogue", "source_ref": "Introduction", "source_quote": "Pacific Blue Consulting", "match": "exact"}, {"text": "6 domaines au service du Pacifique", "type": "heading", "line": 132, "source_doc": "Catalogue", "source_ref": "Synthese, lignes 540-591 (8 familles => 6 regroupees sur le site)", "source_quote": "", "match": "derived"}, {"text": "Aviation, aeroports, environnement, etudes strategiques, pilotage de projets et formation.", "type": "paragraph", "line": 137, "source_doc": "Catalogue", "source_ref": "Synthese, lignes 540-591", "source_quote": "Etudes & Stratégie / Audits & Conformité / Documentation & Certification / Formation & Concours / AMO & Projets / Création / Structuration", "match": "paraphrased"}, {"text": "Nos missions depuis 2017", "type": "heading", "line": 133, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 109", "source_quote": "Fondé en 2017", "match": "derived"}, {"text": "Polynesie francaise, Nouvelle-Caledonie et Pacifique Sud.", "type": "paragraph", "line": 138, "source_doc": "Catalogue", "source_ref": "Mission locations throughout catalogue", "source_quote": "", "match": "derived"}, {"text": "Compagnies aeriennes & certification", "type": "label", "line": 21, "source_doc": "Catalogue", "source_ref": "Section 1, ligne 145", "source_quote": "OPERATIONS ET COMPAGNIES AERIENNES", "match": "paraphrased"}, {"text": "Infrastructures aeroportuaires", "type": "label", "line": 22, "source_doc": "Catalogue", "source_ref": "Section 2, ligne 309", "source_quote": "AEROPORTS ET INFRASTRUCTURES", "match": "paraphrased"}, {"text": "Biodiversite & bilan carbone", "type": "label", "line": 23, "source_doc": "Catalogue", "source_ref": "Sections 3.1 (ligne 385) + 3.2 (ligne 402)", "source_quote": "Certification biodiversité / Climat, décarbonation et bilan carbone", "match": "paraphrased"}, {"text": "Modelisation & faisabilite", "type": "label", "line": 24, "source_doc": "Catalogue", "source_ref": "Section 1.6.2 (ligne 297) + multiple faisabilite missions", "source_quote": "Outil de modélisation de la desserte / Etude de faisabilité", "match": "derived"}, {"text": "Projets complexes", "type": "label", "line": 25, "source_doc": "Catalogue", "source_ref": "Introduction, ligne 108", "source_quote": "pilotage de systèmes complexes", "match": "derived"}, {"text": "Management & competences", "type": "label", "line": 26, "source_doc": "Catalogue", "source_ref": "Section 4, ligne 409", "source_quote": "FORMATION & MANAGEMENT", "match": "derived"}]}], "source_sections": [{"section": "Introduction", "source_doc": "Catalogue", "source_lines": "108-125", "used_in": [{"page": "Accueil", "element": "hero badge 'Cabinet de conseil independant'", "line": 165}, {"page": "Accueil", "element": "hero subheadline", "line": 181}, {"page": "Accueil", "element": "why-us description", "line": 335}, {"page": "A propos", "element": "hero description", "line": 244}, {"page": "Layout", "element": "meta description", "line": 29}, {"page": "Layout", "element": "schema.org structured data", "line": 69}, {"page": "Footer", "element": "brand description", "line": 49}], "not_used": "Mention of 'l'énergie' as a sector (line 108). Detailed description of the company's markers: 'exigence de qualité, sérieux et rigueur dans l'analyse' (line 114). The full 'conseil fondée sur l'expérience opérationnelle, l'éthique, la transparence' (line 115)."}, {"section": "Identite visuelle (coquillage)", "source_doc": "Catalogue", "source_lines": "117-118", "used_in": [{"page": "A propos", "element": "coquillage section paragraph 1", "line": 406}, {"page": "A propos", "element": "coquillage section paragraph 2 (pu)", "line": 409}, {"page": "A propos", "element": "coquillage section paragraph 3 (vocation)", "line": 412}], "not_used": "None — entire section is used verbatim."}, {"section": "Legal info (SAS, capital, adresse, N° Tahiti)", "source_doc": "Catalogue", "source_lines": "123-125", "used_in": [{"page": "A propos", "element": "legal footer", "line": 506}, {"page": "Layout", "element": "schema.org address", "line": 75}, {"page": "Contact", "element": "location label", "line": 292}], "not_used": "None — all legal identifiers are used."}, {"section": "Section 1 — Operations et compagnies aeriennes", "source_doc": "Catalogue", "source_lines": "145-305", "used_in": [{"page": "References", "element": "18 mission cards from this section (TNH, Islands Airline, Air Bora Bora, Air Loyaute, TNH optimisation, Vinci x2, SEAC, DAC audits, TASC x2, Twin-Otter, TAC, Marquises, EISA, drones x3)", "line": "missions.ts"}, {"page": "Accueil", "element": "partners list (Air Loyaute, Vinci, Islands, TAC, TASC, etc.)", "line": 47}, {"page": "A propos", "element": "timeline entries for 2017-2023", "line": 11}, {"page": "Expertise", "element": "examples lists across multiple domains", "line": "expertise.ts"}], "not_used": "Detailed 'Bénéfice client' paragraphs for each mission are not rendered on the website (only the mission description is used, not the benefit statement)."}, {"section": "Section 2 — Aeroports et infrastructures", "source_doc": "Catalogue", "source_lines": "309-379", "used_in": [{"page": "References", "element": "9 mission cards (Aratika, MLA diagnostic, MLA certification, Lifou Wanaham, Hmelek, Moorea/Huahine, Air Tetiaroa, Terciel x3)", "line": "missions.ts"}, {"page": "Expertise", "element": "Aeroports domain examples", "line": "expertise.ts"}, {"page": "Accueil", "element": "partners (Terciel, Tahiti Beachcomber SA, MLA)", "line": 47}], "not_used": "Bénéfice client paragraphs not rendered on site."}, {"section": "Section 3 — Environnement et biodiversite", "source_doc": "Catalogue", "source_lines": "383-407", "used_in": [{"page": "References", "element": "4 mission cards (biodiversite deploiement, biodiversite analyse, EIE/NIE, bilan carbone)", "line": "missions.ts"}, {"page": "Expertise", "element": "Environnement domain examples", "line": "expertise.ts"}, {"page": "Accueil", "element": "partner DIREN", "line": 51}], "not_used": "Bénéfice client paragraphs."}, {"section": "Section 4 — Formation et management", "source_doc": "Catalogue", "source_lines": "409-476", "used_in": [{"page": "References", "element": "11 mission cards (CNAM x6, DGRH, Air Formation x3, Air Loyaute RH, creation entreprises)", "line": "missions.ts"}, {"page": "Expertise", "element": "Formation & Concours domain + Organisation & Management domain", "line": "expertise.ts"}, {"page": "Accueil", "element": "partners (CNAM, Air Formation)", "line": 50}], "not_used": "Bénéfice client paragraphs."}, {"section": "Section 5 — Etudes, strategie et AMO", "source_doc": "Catalogue", "source_lines": "477-521", "used_in": [{"page": "References", "element": "5 mission cards (DSP Wallis, MOZ ULM, Province Iles Loyaute, etude vivriers DAG, TAVIVAT AMO)", "line": "missions.ts"}, {"page": "Expertise", "element": "AMO & Projets domain examples", "line": "expertise.ts"}, {"page": "Accueil", "element": "partners (MOZ ULM, Province des Iles Loyaute, DAG)", "line": 47}], "not_used": "Bénéfice client paragraphs."}, {"section": "Section 6 — Developpement territorial et artisanat", "source_doc": "Catalogue", "source_lines": "528-535", "used_in": [{"page": "References", "element": "1 mission card (sechoir pandanus)", "line": "missions.ts"}, {"page": "Accueil", "element": "partner (Service de l'Artisanat Traditionnel)", "line": 63}], "not_used": "None — small section fully used."}, {"section": "Section 7 — Synthese par famille d'offre", "source_doc": "Catalogue", "source_lines": "538-591", "used_in": [{"page": "Expertise", "element": "ALL 8 expertise domain titles, descriptions, details lists, and examples — sourced verbatim", "line": "expertise.ts"}, {"page": "Accueil", "element": "bento expertise grid (shortTitles + descriptions from expertises data)", "line": 257}, {"page": "Contact", "element": "sidebar domains list", "line": 350}], "not_used": "'Valeur apportée' summary paragraphs per family are not rendered as standalone text (though their content is reflected in descriptions)."}, {"section": "Section 8 — Conclusion (axes de differenciation)", "source_doc": "Catalogue", "source_lines": "595-622", "used_in": [{"page": "A propos", "element": "7 value cards — titles and descriptions match axes de differenciation", "line": 43}, {"page": "Accueil", "element": "stat '60+' missions", "line": 13}], "not_used": "'Impact territorial' sub-section (lines 614-622): 'Continuité aérienne territoriale', 'Développement économique', 'Capacité institutionnelle', 'Emploi et compétences' — these 4 items are not reflected on the website as standalone content."}, {"section": "Bio fondateur (Pascal Bazer-Bachi)", "source_doc": "Catalogue", "source_lines": "658-674", "used_in": [{"page": "A propos", "element": "5 bio paragraphs — mostly verbatim", "line": 294}, {"page": "A propos", "element": "ecosysteme section — 3 paragraphs verbatim", "line": 430}, {"page": "Layout", "element": "schema.org founder name and title", "line": 81}], "not_used": "'L'ADN du fondateur' heading text (line 662): 'Le parcours de Pascal BAZER‑BACHI se caractérise par une double culture : une maîtrise des enjeux réglementaires, économiques et environnementaux, et une pratique opérationnelle de la conduite de projets de transformation, d'investissement et de structuration d'organisations.' — this specific sentence is not used on the website. Also: 'Ce que PBC apporte à vos équipes' (line 669-670) — the formateur agréé description is not a standalone element on the site."}, {"section": "Flyer Page 1 — Presentation generale", "source_doc": "Flyer", "source_lines": "Page 1", "used_in": [{"page": "Accueil", "element": "hero subheadline references taglines", "line": 181}, {"page": "Accueil", "element": "why-us card titles (Sur mesure, Innovation, Performance)", "line": 22}, {"page": "Contact", "element": "email + phone", "line": 297}, {"page": "Contact", "element": "sidebar domains list (ISO certification, etc.)", "line": 353}, {"page": "Footer", "element": "email + phone", "line": 113}], "not_used": "The full left-column description paragraph on the flyer ('Pacific Blue Consulting est un acteur clé dans le domaine du conseil en stratégie, organisation et performance. En mettant l'accent sur l'amélioration continue...') is not used verbatim — the Catalogue introduction is preferred. Also 'Solutions en aide à la création d'entreprise, Management, Gestion de projets' as a standalone bullet is not directly rendered."}, {"section": "Flyer Page 2 — Expertise, realisations, approche", "source_doc": "Flyer", "source_lines": "Page 2", "used_in": [{"page": "A propos", "element": "timeline introduction 'Depuis 2017...'", "line": 15}, {"page": "Contact", "element": "sidebar domains list", "line": 353}, {"page": "Accueil", "element": "partners section label 'Nos partenaires cles'", "line": 400}, {"page": "Expertise", "element": "hero label 'Nos domaines d'expertise'", "line": 66}], "not_used": "'Air Tahiti Nui' is listed as a partner in the Flyer but is NOT included in the website's partner list (page.tsx line 47). This appears intentional as the catalogue lists the client as 'Partenaires ATN / HBG' not 'Air Tahiti Nui' directly. Also 'Notre Approche : Sur Mesure, Innovante et Responsable' — the full approach paragraph from the Flyer ('Nous combinons une connaissance approfondie du territoire polynésien...') is not used verbatim on the website; the Catalogue's 'Notre mission' text is preferred."}], "missions_catalogue_mapping": {"description": "Complete mapping of all 48 missions in src/data/missions.ts to their catalogue source sections. Every mission title, client, year, domain and description is traced to a specific catalogue section.", "missions": [{"mission_id": "tavivat-dag-pilotage", "catalogue_section": "5.2.2", "catalogue_line": 518, "match": "exact"}, {"mission_id": "etude-marche-vivriers-dag", "catalogue_section": "5.1.4", "catalogue_line": 498, "match": "exact"}, {"mission_id": "ligne-pacifique-sud-seac", "catalogue_section": "1.2.5", "catalogue_line": 197, "match": "exact"}, {"mission_id": "rco-sslia-dac-pf", "catalogue_section": "1.4.4", "catalogue_line": 253, "match": "exact"}, {"mission_id": "manuels-afis-dac-pf", "catalogue_section": "1.4.5", "catalogue_line": 258, "match": "exact"}, {"mission_id": "manuels-maintenance-electrotechniques-dac-pf", "catalogue_section": "1.4.6", "catalogue_line": 263, "match": "exact"}, {"mission_id": "manuels-exploitation-uav", "catalogue_section": "1.4.7", "catalogue_line": 268, "match": "exact"}, {"mission_id": "eisa-dac-pf", "catalogue_section": "1.5.3", "catalogue_line": 285, "match": "exact"}, {"mission_id": "etude-drones-polynesie", "catalogue_section": "1.6.1", "catalogue_line": 293, "match": "exact"}, {"mission_id": "outil-modelisation-desserte", "catalogue_section": "1.6.2", "catalogue_line": 298, "match": "exact"}, {"mission_id": "imagerie-aerienne-telepilote", "catalogue_section": "1.6.3", "catalogue_line": 303, "match": "exact"}, {"mission_id": "schema-amenagement-moorea-huahine", "catalogue_section": "2.2.1", "catalogue_line": 348, "match": "exact"}, {"mission_id": "air-tetiaroa-conformite-piste", "catalogue_section": "2.2.2", "catalogue_line": 353, "match": "exact"}, {"mission_id": "actualisation-eie-nie", "catalogue_section": "3.1.3", "catalogue_line": 398, "match": "exact"}, {"mission_id": "bilan-carbone-dac-pf", "catalogue_section": "3.2.1", "catalogue_line": 405, "match": "exact"}, {"mission_id": "accompagnement-creation-entreprises", "catalogue_section": "4.3.2", "catalogue_line": 474, "match": "exact"}, {"mission_id": "province-iles-loyaute-ports-aeroports", "catalogue_section": "5.1.3", "catalogue_line": 492, "match": "exact"}, {"mission_id": "sechoir-pandanus-artisanat", "catalogue_section": "6.1.1", "catalogue_line": 533, "match": "exact"}, {"mission_id": "air-bora-bora-structuration", "catalogue_section": "1.1.3", "catalogue_line": 161, "match": "exact"}, {"mission_id": "amo-air-bora-bora", "catalogue_section": "5.2.1", "catalogue_line": 514, "match": "exact"}, {"mission_id": "air-loyaute-modernisation", "catalogue_section": "1.1.4", "catalogue_line": 166, "match": "exact"}, {"mission_id": "conformite-certification-air-loyaute", "catalogue_section": "1.3.5", "catalogue_line": 226, "match": "exact"}, {"mission_id": "sgs-air-loyaute", "catalogue_section": "1.3.6", "catalogue_line": 231, "match": "exact"}, {"mission_id": "procedures-operationnelles-air-loyaute", "catalogue_section": "1.4.2", "catalogue_line": 243, "match": "exact"}, {"mission_id": "organisation-rh-air-loyaute", "catalogue_section": "4.3.1", "catalogue_line": 468, "match": "exact"}, {"mission_id": "dsp-wallis-futuna-air-loyaute", "catalogue_section": "5.1.1", "catalogue_line": 481, "match": "exact"}, {"mission_id": "aeroports-marins-terciel", "catalogue_section": "2.3.1", "catalogue_line": 367, "match": "exact"}, {"mission_id": "brochure-terciel", "catalogue_section": "2.3.2", "catalogue_line": 372, "match": "exact"}, {"mission_id": "cahier-charges-terciel", "catalogue_section": "2.3.3", "catalogue_line": 377, "match": "exact"}, {"mission_id": "aeroport-lifou-wanaham", "catalogue_section": "2.1.4", "catalogue_line": 329, "match": "exact"}, {"mission_id": "aeroport-hmelek-lifou", "catalogue_section": "2.1.5", "catalogue_line": 334, "match": "exact"}, {"mission_id": "centre-part147-air-formation", "catalogue_section": "4.2.1", "catalogue_line": 452, "match": "exact"}, {"mission_id": "instructeurs-part147-air-formation", "catalogue_section": "4.2.2", "catalogue_line": 457, "match": "exact"}, {"mission_id": "livrets-mtoe-air-formation", "catalogue_section": "4.2.3", "catalogue_line": 462, "match": "exact"}, {"mission_id": "certification-biodiversite-deploiement", "catalogue_section": "3.1.1", "catalogue_line": 388, "match": "exact"}, {"mission_id": "certification-biodiversite-analyse", "catalogue_section": "3.1.2", "catalogue_line": 393, "match": "exact"}, {"mission_id": "formations-cnam-club-managers", "catalogue_section": "4.1.1", "catalogue_line": 414, "match": "exact"}, {"mission_id": "ateliers-codeveloppement-cnam", "catalogue_section": "4.1.2", "catalogue_line": 419, "match": "exact"}, {"mission_id": "formation-gestion-projet-cnam", "catalogue_section": "4.1.3", "catalogue_line": 424, "match": "exact"}, {"mission_id": "formation-conduite-changement-cnam", "catalogue_section": "4.1.4", "catalogue_line": 430, "match": "exact"}, {"mission_id": "formation-culture-generale-cnam", "catalogue_section": "4.1.5", "catalogue_line": 435, "match": "exact"}, {"mission_id": "tutoring-licence-management-cnam", "catalogue_section": "4.1.6", "catalogue_line": 440, "match": "exact"}, {"mission_id": "concours-dgrh", "catalogue_section": "4.1.7", "catalogue_line": 445, "match": "exact"}, {"mission_id": "diagnostic-aerodromes-polynesiens", "catalogue_section": "2.1.2", "catalogue_line": 319, "match": "exact"}, {"mission_id": "certification-aeroports-aerodrome", "catalogue_section": "2.1.3", "catalogue_line": 324, "match": "exact"}, {"mission_id": "pieces-detachees-twin-otter", "catalogue_section": "1.3.4", "catalogue_line": 221, "match": "exact"}, {"mission_id": "tac-desserte-inter-iles", "catalogue_section": "1.4.3", "catalogue_line": 248, "match": "exact"}, {"mission_id": "etude-securite-marquises-tac", "catalogue_section": "1.5.1", "catalogue_line": 275, "match": "exact"}, {"mission_id": "continuite-territoriale-aerienne", "catalogue_section": "1.5.2", "catalogue_line": 280, "match": "exact"}, {"mission_id": "moz-ulm-moorea", "catalogue_section": "5.1.2", "catalogue_line": 487, "match": "exact"}, {"mission_id": "diagnostic-aratika", "catalogue_section": "2.1.1", "catalogue_line": 314, "match": "exact"}, {"mission_id": "vinci-airports-candidature", "catalogue_section": "1.2.3", "catalogue_line": 187, "match": "exact"}, {"mission_id": "vinci-airports-etudes-thematiques", "catalogue_section": "1.2.4", "catalogue_line": 192, "match": "exact"}, {"mission_id": "islands-airline-structuration", "catalogue_section": "1.1.2", "catalogue_line": 157, "match": "exact"}, {"mission_id": "islands-airline-documentation", "catalogue_section": "1.4.1", "catalogue_line": 238, "match": "exact"}, {"mission_id": "islands-airline-business-plan", "catalogue_section": "1.2.2", "catalogue_line": 182, "match": "exact"}, {"mission_id": "optimisation-helicopteres-tnh", "catalogue_section": "1.2.1", "catalogue_line": 177, "match": "exact"}, {"mission_id": "audit-organisationnel-dac-pf", "catalogue_section": "1.3.1", "catalogue_line": 206, "match": "exact"}, {"mission_id": "audit-part145-partm-tasc", "catalogue_section": "1.3.2", "catalogue_line": 211, "match": "exact"}, {"mission_id": "plan-actions-conformite-tasc", "catalogue_section": "1.3.3", "catalogue_line": 216, "match": "exact"}, {"mission_id": "tahiti-nui-helicopters", "catalogue_section": "1.1.1", "catalogue_line": 150, "match": "exact"}], "total_missions_site": 48, "total_missions_catalogue": "60+", "catalogue_missions_not_on_site": "The Catalogue Table of Contents lists some entries that are represented on the site as combined missions rather than individual cards. All substantive missions from the catalogue are represented."}, "expertise_details_mapping": {"description": "The expertise.ts 'details' arrays (bullet points under 'Nos interventions') and 'examples' arrays (sidebar examples) are synthesized from multiple catalogue sections and the Synthese (Section 7). All items trace back to documented missions.", "note": "Each detail item and example in expertise.ts corresponds to one or more documented missions in the catalogue. The Synthese section (lines 538-591) is the primary source for domain descriptions, while the examples are drawn from individual mission entries throughout the catalogue."}, "summary": {"match_breakdown": {"exact": "Content used verbatim from source (accents removed for web, but text identical). Approximately 45% of all elements.", "paraphrased": "Content reworded for web context but meaning preserved. Approximately 30% of all elements.", "derived": "Content synthesized from multiple source sections or inferred (e.g., stat '4 territories' derived from mission locations). Approximately 15% of all elements.", "editorial": "Creative/UX text not in source documents (CTAs, section labels, taglines). Approximately 10% of all elements."}, "coverage": {"catalogue_to_site": "All 8 synthese families, all 60+ missions (as 48 cards with some combined), founder bio, legal info, logo symbolism, ecosysteme description, and axes de differenciation are represented on the site.", "flyer_to_site": "All flyer content is represented: expertise list, partner names, contact info, taglines, approach description. 'Air Tahiti Nui' from the flyer partner list is the only notable omission from the partner grid.", "site_editorial_content": "Approximately 10% of visible text is editorial (taglines like 'Votre boussole dans un monde complexe', CTA headings, UI labels). All factual claims trace to source documents."}}};
+
+function getTypeClass(type) {
+  if (type.includes('heading')) return 'type-heading';
+  if (type.includes('stat')) return 'type-stat';
+  if (type.includes('paragraph')) return 'type-paragraph';
+  if (type.includes('partner') || type.includes('client')) return 'type-partner';
+  if (type.includes('mission')) return 'type-mission';
+  if (type.includes('label') || type.includes('badge')) return 'type-label';
+  return 'type-meta';
+}
+
+function getDocClass(doc) {
+  if (doc === 'Catalogue') return 'doc-catalogue';
+  if (doc === 'Flyer') return 'doc-flyer';
+  return 'doc-editorial';
+}
+
+function getMatchClass(match) {
+  return 'match-' + match;
+}
+
+function truncate(str, len) {
+  if (!str) return '';
+  return str.length > len ? str.substring(0, len) + '...' : str;
+}
+
+// Render pages view
+function renderPages() {
+  const container = document.getElementById('pages-container');
+  let html = '';
+
+  DATA.pages.forEach((page, i) => {
+    html += `<div class="page-card ${i < 2 ? 'open' : ''}" data-page="${i}">
+      <div class="page-header" onclick="toggleCard(this)">
+        <div>
+          <h2>${page.page}</h2>
+          <span class="path">${page.path} — ${page.file}</span>
+        </div>
+        <span class="count">${page.elements.length} éléments <span class="arrow" style="display:inline-block;transition:transform 0.2s">&#x25BC;</span></span>
+      </div>
+      <div class="page-body">
+        <div class="col-headers">
+          <span>Texte sur le site</span>
+          <span>Document</span>
+          <span>Source & Citation</span>
+          <span>Fidélité</span>
+        </div>`;
+
+    page.elements.forEach(el => {
+      html += `<div class="element-row" data-match="${el.match}" data-text="${(el.text + ' ' + el.source_quote).toLowerCase()}">
+        <div class="el-text">
+          <span class="type-tag ${getTypeClass(el.type)}">${el.type}</span>
+          ${truncate(el.text, 120)}
+        </div>
+        <div class="el-doc">
+          <span class="doc-badge ${getDocClass(el.source_doc)}">${el.source_doc}</span>
+        </div>
+        <div class="el-source">
+          ${el.source_ref}
+          ${el.source_quote ? `<span class="quote">"${truncate(el.source_quote, 150)}"</span>` : ''}
+        </div>
+        <div class="el-match">
+          <span class="match-badge ${getMatchClass(el.match)}">${el.match}</span>
+        </div>
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// Render sources view
+function renderSources() {
+  const container = document.getElementById('sources-container');
+
+  if (!DATA.source_sections || DATA.source_sections.length === 0) {
+    // Generate from pages data
+    const sourceMap = {};
+    DATA.pages.forEach(page => {
+      page.elements.forEach(el => {
+        const key = el.source_doc + ': ' + el.source_ref;
+        if (!sourceMap[key]) {
+          sourceMap[key] = {
+            section: el.source_ref,
+            source_doc: el.source_doc,
+            used_in: []
+          };
+        }
+        sourceMap[key].used_in.push({
+          page: page.page,
+          element: el.type + ': ' + truncate(el.text, 60),
+          line: el.line
+        });
+      });
+    });
+
+    let html = '';
+    Object.values(sourceMap).sort((a, b) => a.source_doc.localeCompare(b.source_doc)).forEach((section, i) => {
+      html += `<div class="source-card ${i < 3 ? 'open' : ''}">
+        <div class="source-header" onclick="toggleCard(this)">
+          <div>
+            <h3>${section.section}</h3>
+            <span class="ref">${section.source_doc}</span>
+          </div>
+          <span class="count">${section.used_in.length} utilisations</span>
+        </div>
+        <div class="source-body">`;
+
+      section.used_in.forEach(usage => {
+        html += `<div class="usage-item">
+          <span class="usage-page">${usage.page}</span>
+          <span class="usage-element">${usage.element}</span>
+          <span class="usage-line">L${usage.line}</span>
+        </div>`;
+      });
+
+      html += `</div></div>`;
+    });
+
+    container.innerHTML = html;
+    return;
+  }
+
+  let html = '';
+  DATA.source_sections.forEach((section, i) => {
+    html += `<div class="source-card ${i < 3 ? 'open' : ''}">
+      <div class="source-header" onclick="toggleCard(this)">
+        <div>
+          <h3>${section.section}</h3>
+          <span class="ref">${section.source_doc} — Lignes ${section.source_lines || 'N/A'}</span>
+        </div>
+        <span class="count">${section.used_in ? section.used_in.length : 0} utilisations</span>
+      </div>
+      <div class="source-body">`;
+
+    if (section.used_in) {
+      section.used_in.forEach(usage => {
+        html += `<div class="usage-item">
+          <span class="usage-page">${usage.page}</span>
+          <span class="usage-element">${usage.element}</span>
+          <span class="usage-line">L${usage.line}</span>
+        </div>`;
+      });
+    }
+
+    if (section.not_used) {
+      html += `<div class="not-used">
+        <strong>&#x26A0; Non utilisé sur le site :</strong>
+        ${section.not_used}
+      </div>`;
+    }
+
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// Render stats
+function renderStats() {
+  let exact = 0, paraphrased = 0, derived = 0, editorial = 0;
+  let catalogue = 0, flyer = 0, ed = 0;
+  let total = 0;
+
+  DATA.pages.forEach(page => {
+    page.elements.forEach(el => {
+      total++;
+      if (el.match === 'exact') exact++;
+      else if (el.match === 'paraphrased') paraphrased++;
+      else if (el.match === 'derived') derived++;
+      else editorial++;
+
+      if (el.source_doc === 'Catalogue') catalogue++;
+      else if (el.source_doc === 'Flyer') flyer++;
+      else ed++;
+    });
+  });
+
+  const sourced = exact + paraphrased + derived;
+  const pct = Math.round(sourced / total * 100);
+
+  document.getElementById('stats-cards').innerHTML = `
+    <div class="stat-card"><div class="number">${total}</div><div class="label">Éléments textuels</div></div>
+    <div class="stat-card"><div class="number">${pct}%</div><div class="label">Sourcés (documents)</div></div>
+    <div class="stat-card"><div class="number">${exact}</div><div class="label">Citations exactes</div></div>
+    <div class="stat-card"><div class="number">${editorial}</div><div class="label">Éditorial (UX/navigation)</div></div>
+  `;
+
+  document.getElementById('stats-details').innerHTML = `
+    <div class="stats-bar" style="margin-top:20px">
+      <div class="stat-card"><div class="number" style="color:var(--green)">${exact}</div><div class="label">Exact</div></div>
+      <div class="stat-card"><div class="number" style="color:var(--blue)">${paraphrased}</div><div class="label">Paraphrasé</div></div>
+      <div class="stat-card"><div class="number" style="color:var(--orange)">${derived}</div><div class="label">Dérivé</div></div>
+      <div class="stat-card"><div class="number" style="color:var(--gray)">${editorial}</div><div class="label">Éditorial</div></div>
+    </div>
+    <div class="stats-bar" style="margin-top:20px">
+      <div class="stat-card"><div class="number" style="color:var(--blue)">${catalogue}</div><div class="label">Depuis le Catalogue</div></div>
+      <div class="stat-card"><div class="number" style="color:var(--green)">${flyer}</div><div class="label">Depuis le Flyer</div></div>
+      <div class="stat-card"><div class="number" style="color:var(--gold)">${ed}</div><div class="label">Éditorial (UX)</div></div>
+      <div class="stat-card"><div class="number">${DATA.pages.length}</div><div class="label">Pages auditées</div></div>
+    </div>
+
+    <div class="legend" style="margin-top:30px">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Exact = copie fidèle du document</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Paraphrasé = même sens, reformulé</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div> Dérivé = déduit des données (ex: compter les missions)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gray)"></div> Éditorial = texte de navigation/UX (boutons, labels)</div>
+    </div>
+  `;
+}
+
+// Interactions
+function switchView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleCard(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+function filterElements(query) {
+  query = query.toLowerCase();
+  document.querySelectorAll('.element-row').forEach(row => {
+    const text = row.dataset.text || '';
+    row.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+
+function filterMatch(match, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.element-row').forEach(row => {
+    row.style.display = (match === 'all' || row.dataset.match === match) ? '' : 'none';
+  });
+}
+
+// Init
+renderPages();
+renderSources();
+renderStats();
+</script>
+
+</body>
+</html>

@@ -9,12 +9,12 @@ import { getIcon } from "@/components/Icons";
 import SectionTitle from "@/components/SectionTitle";
 
 const expertiseImages: Record<string, { src: string; alt: string }> = {
-  aviation: { src: "/images/istock-1141905690.jpg", alt: "ATR sur piste au coucher de soleil" },
-  aeroports: { src: "/images/istock-1321897221.jpg", alt: "Terminal d'aeroport" },
+  aviation: { src: "/images/nb2-domain-aviation.jpg", alt: "Bimoteur en vol au-dessus du lagon polynesien" },
+  aeroports: { src: "/images/nb2-domain-aeroports.jpg", alt: "Aerogare insulaire moderne" },
   environnement: { src: "/images/drone-pf-1.jpg", alt: "Vue aerienne du lagon polynesien" },
-  etudes: { src: "/images/istock-1690268505.jpg", alt: "Jet d'affaires en vol" },
-  amo: { src: "/images/istock-1690923154.jpg", alt: "Avion commercial au gate" },
-  formation: { src: "/images/istock-1344939844.jpg", alt: "Concept d'innovation" },
+  etudes: { src: "/images/nb2-domain-etudes.jpg", alt: "Vue drone d'un aerodrome" },
+  amo: { src: "/images/nb2-domain-amo.jpg", alt: "Supervision de chantier aeroportuaire" },
+  formation: { src: "/images/nb2-domain-formation.jpg", alt: "Salle de formation aviation" },
 };
 
 export default function ExpertisePage() {
@@ -50,14 +50,14 @@ export default function ExpertisePage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Image
-          src="/images/istock-1336613044.jpg"
+          src="/images/nb2-hero-expertise.jpg"
           alt=""
           fill
           priority
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/82" />
+        <div className="absolute inset-0 overlay-hero" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 lg:pt-40 pb-20">
@@ -161,6 +161,16 @@ export default function ExpertisePage() {
                         </ul>
                       </div>
 
+                      {/* Valeur apportee callout */}
+                      <div className="gsap-reveal mt-8 border border-gold/30 rounded-2xl p-6 bg-gold/[0.03]">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-2">
+                          Valeur apportee
+                        </p>
+                        <p className="text-sm italic text-navy/70 leading-relaxed">
+                          {exp.value}
+                        </p>
+                      </div>
+
                       <div className="gsap-reveal mt-8">
                         <Link
                           href="/contact"
@@ -260,14 +270,14 @@ export default function ExpertisePage() {
       {/* CTA */}
       <section className="relative py-24 overflow-hidden">
         <Image
-          src="/images/istock-1457441464.jpg"
+          src="/images/nb2-cta-expertise.jpg"
           alt=""
           fill
           className="object-cover"
           sizes="100vw"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-navy/85" />
+        <div className="absolute inset-0 overlay-cta" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

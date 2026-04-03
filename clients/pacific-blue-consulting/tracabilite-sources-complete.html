@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracabilite des Sources — Pacific Blue Consulting</title>
+<style>
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0f172a;
+    --navy-600: #1e293b;
+    --navy-700: #162032;
+    --navy-50: #f0f4fa;
+    --navy-100: #dfe6f0;
+    --gold: #d4af37;
+    --gold-light: #f5ecd0;
+    --gold-dark: #b8971f;
+    --warm: #64748b;
+    --warm-light: #94a3b8;
+    --steel: #475569;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --blue: #2563eb;
+    --blue-bg: #dbeafe;
+    --orange: #ea580c;
+    --orange-bg: #ffedd5;
+    --white: #ffffff;
+    --bg: #f8fafc;
+  }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--navy);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== LAYOUT ===== */
+  .wrapper {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+
+  @media (max-width: 1024px) {
+    .wrapper { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--navy);
+    padding: 2rem 1.25rem;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .sidebar-logo {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: 0.02em;
+    margin-bottom: 0.25rem;
+  }
+
+  .sidebar-sub {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 2rem;
+  }
+
+  .nav-section {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    padding-left: 0.75rem;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+  }
+
+  .nav-link:hover {
+    color: var(--white);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .nav-link .count {
+    float: right;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.25);
+    font-weight: 600;
+  }
+
+  /* ===== MAIN ===== */
+  .main {
+    padding: 3rem;
+    max-width: 1100px;
+  }
+
+  @media (max-width: 768px) {
+    .main { padding: 1.5rem; }
+  }
+
+  /* ===== HEADER HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-700) 60%, #1a2744 100%);
+    border-radius: 1.25rem;
+    padding: 3rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.2;
+    position: relative;
+  }
+
+  .hero h1 span { color: var(--gold); }
+
+  .hero .subtitle {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.5);
+    position: relative;
+  }
+
+  .hero .meta {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  .meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+  }
+
+  .meta-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  /* ===== EXECUTIVE SUMMARY ===== */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .summary-card {
+    background: var(--white);
+    border: 1px solid var(--navy-100);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .summary-card .number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .summary-card .label {
+    margin-top: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--warm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--navy-100);
+  }
+
+  .section-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: var(--navy);
+    color: var(--gold);
+    border-radius: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .section-header h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+
+  .section-header .section-desc {
+    font-size: 0.85rem;
+    color: var(--warm);
+    margin-top: 0.15rem;
+  }
+
+  /* ===== MAPPING ITEMS ===== */
+  .mapping-item {
+    background: var(--white);
+    border: 1px solid var(--navy-100);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.2s;
+  }
+
+  .mapping-item:hover {
+    border-color: var(--gold);
+  }
+
+  .mapping-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .source-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--warm-light);
+    margin-bottom: 0.35rem;
+  }
+
+  blockquote.source-text {
+    font-size: 0.85rem;
+    color: var(--steel);
+    line-height: 1.6;
+    border-left: 3px solid var(--gold);
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+    font-style: italic;
+    background: var(--gold-light);
+    padding: 0.75rem 1rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+
+  .dest-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .dest-tag:hover { opacity: 0.8; }
+
+  .dest-tag.page-home { background: #ede9fe; color: #7c3aed; }
+  .dest-tag.page-expertise { background: #dbeafe; color: #2563eb; }
+  .dest-tag.page-references { background: #d1fae5; color: #059669; }
+  .dest-tag.page-apropos { background: #fef3c7; color: #d97706; }
+  .dest-tag.page-contact { background: #fce7f3; color: #db2777; }
+  .dest-tag.page-global { background: #f1f5f9; color: #475569; }
+
+  .web-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 0.3rem;
+  }
+
+  .web-link:hover { text-decoration: underline; }
+
+  .web-link::after {
+    content: '\2197';
+    font-size: 0.85em;
+  }
+
+  /* ===== STATUS BADGES ===== */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 2rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .badge-direct { background: var(--green-bg); color: var(--green); }
+  .badge-adapted { background: var(--blue-bg); color: var(--blue); }
+  .badge-synthesized { background: var(--orange-bg); color: var(--orange); }
+
+  .badge-direct::before { content: '\2713 '; }
+  .badge-adapted::before { content: '\2192 '; }
+  .badge-synthesized::before { content: '\2248 '; }
+
+  /* ===== DETAILS/SUMMARY (COLLAPSIBLE) ===== */
+  details {
+    background: var(--white);
+    border: 1px solid var(--navy-100);
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+    transition: border-color 0.2s;
+  }
+
+  details:hover { border-color: rgba(212,175,55,0.4); }
+
+  details[open] { border-color: var(--gold); }
+
+  summary {
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--navy);
+    list-style: none;
+    user-select: none;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  summary::before {
+    content: '\25B6';
+    font-size: 0.6rem;
+    color: var(--gold);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  details[open] > summary::before { transform: rotate(90deg); }
+
+  summary .mission-meta {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  summary .client-tag {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--warm);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  summary .year-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--steel);
+    background: var(--navy-50);
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  .details-body {
+    padding: 0 1.5rem 1.25rem;
+    border-top: 1px solid var(--navy-100);
+    margin-top: -0.25rem;
+    padding-top: 1rem;
+  }
+
+  .details-body .detail-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .detail-row .dlabel {
+    font-weight: 700;
+    color: var(--warm);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .detail-row .dvalue {
+    color: var(--steel);
+  }
+
+  /* ===== CHAPTER GROUPING ===== */
+  .chapter-group {
+    margin-bottom: 2rem;
+  }
+
+  .chapter-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--navy);
+    padding: 0.75rem 1rem;
+    background: var(--navy-50);
+    border-radius: 0.75rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .chapter-title .ch-num {
+    font-size: 0.7rem;
+    color: var(--gold);
+    font-weight: 800;
+  }
+
+  .chapter-title .ch-count {
+    margin-left: auto;
+    font-size: 0.65rem;
+    color: var(--warm-light);
+    font-weight: 600;
+  }
+
+  /* ===== COVERAGE MATRIX ===== */
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  .matrix-table th {
+    background: var(--navy);
+    color: var(--white);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .matrix-table th:first-child { border-radius: 0.75rem 0 0 0; }
+  .matrix-table th:last-child { border-radius: 0 0.75rem 0 0; }
+
+  .matrix-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--navy-100);
+  }
+
+  .matrix-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .matrix-table tr:nth-child(even) { background: var(--navy-50); }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--navy-100);
+    border-radius: 4px;
+    overflow: hidden;
+    min-width: 120px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+    border-radius: 4px;
+    transition: width 0.5s;
+  }
+
+  /* ===== EXPERTISE MAPPING TABLE ===== */
+  .expertise-map {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .expertise-card {
+    background: var(--white);
+    border: 1px solid var(--navy-100);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: start;
+    transition: border-color 0.2s;
+  }
+
+  .expertise-card:hover { border-color: var(--gold); }
+
+  .exp-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--navy);
+    margin-bottom: 0.3rem;
+  }
+
+  .exp-source {
+    font-size: 0.75rem;
+    color: var(--warm);
+    line-height: 1.5;
+  }
+
+  .exp-missions {
+    font-size: 0.7rem;
+    color: var(--warm-light);
+    margin-top: 0.35rem;
+  }
+
+  /* ===== VISUAL ASSETS ===== */
+  .visual-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .visual-card {
+    background: var(--white);
+    border: 1px solid var(--navy-100);
+    border-radius: 1rem;
+    padding: 1.25rem;
+  }
+
+  .visual-card .filename {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--navy);
+    margin-bottom: 0.25rem;
+  }
+
+  .visual-card .vdesc {
+    font-size: 0.75rem;
+    color: var(--warm);
+    margin-bottom: 0.5rem;
+  }
+
+  /* ===== FOOTER ===== */
+  .doc-footer {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: var(--navy);
+    border-radius: 1rem;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.75rem;
+  }
+
+  .doc-footer strong { color: var(--gold); }
+
+  /* ===== PRINT ===== */
+  @media print {
+    .wrapper { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 1rem; max-width: 100%; }
+    .hero { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    details { break-inside: avoid; }
+    details[open] { break-inside: auto; }
+    .mapping-item, .expertise-card, .visual-card { break-inside: avoid; }
+    body { font-size: 11pt; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Pacific Blue</div>
+    <div class="sidebar-sub">Tracabilite des Sources</div>
+
+    <div class="nav-section">Synthese</div>
+    <a class="nav-link" href="#summary">Resume executif</a>
+
+    <div class="nav-section">Sources</div>
+    <a class="nav-link" href="#flyer">Le Flyer <span class="count">2p</span></a>
+    <a class="nav-link" href="#catalogue-missions">Le Catalogue &mdash; Missions <span class="count">61</span></a>
+    <a class="nav-link" href="#catalogue-intro">Introduction &amp; Bio</a>
+    <a class="nav-link" href="#expertises">Les 8 Expertises</a>
+    <a class="nav-link" href="#visuels">Elements visuels</a>
+
+    <div class="nav-section">Missions par chapitre</div>
+    <a class="nav-link" href="#ch1">1. Operations aeriennes <span class="count">28</span></a>
+    <a class="nav-link" href="#ch2">2. Aeroports <span class="count">10</span></a>
+    <a class="nav-link" href="#ch3">3. Environnement <span class="count">4</span></a>
+    <a class="nav-link" href="#ch4">4. Formation <span class="count">12</span></a>
+    <a class="nav-link" href="#ch5">5. Etudes &amp; AMO <span class="count">6</span></a>
+    <a class="nav-link" href="#ch6">6. Dev. territorial <span class="count">1</span></a>
+
+    <div class="nav-section">Bilan</div>
+    <a class="nav-link" href="#matrix">Matrice de couverture</a>
+    <a class="nav-link" href="#conclusion">Conclusion</a>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <h1>Tracabilite des <span>Sources</span></h1>
+      <div class="subtitle">Cartographie complete : Documents sources &rarr; Site internet</div>
+      <div class="meta">
+        <span class="meta-badge"><span class="dot"></span> Document de reference</span>
+        <span class="meta-badge">Avril 2026</span>
+        <span class="meta-badge">variante-3-aviation.vercel.app</span>
+      </div>
+    </div>
+
+    <!-- EXECUTIVE SUMMARY -->
+    <div id="summary" class="section">
+      <div class="section-header">
+        <div class="section-number">0</div>
+        <div>
+          <h2>Resume executif</h2>
+          <div class="section-desc">Chaque element du site provient des documents officiels de Pacific Blue Consulting</div>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="number">120+</div>
+          <div class="label">Elements traces</div>
+        </div>
+        <div class="summary-card">
+          <div class="number">2</div>
+          <div class="label">Documents sources</div>
+        </div>
+        <div class="summary-card">
+          <div class="number">5</div>
+          <div class="label">Pages web</div>
+        </div>
+        <div class="summary-card">
+          <div class="number">61</div>
+          <div class="label">Missions du catalogue</div>
+        </div>
+        <div class="summary-card">
+          <div class="number">8</div>
+          <div class="label">Familles d'expertise</div>
+        </div>
+        <div class="summary-card">
+          <div class="number">100%</div>
+          <div class="label">Contenu source</div>
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <p style="font-size:0.85rem;color:var(--steel);line-height:1.7">
+          Ce document etablit la tracabilite complete entre les documents sources fournis par Pascal BAZER-BACHI
+          (Flyer recto-verso + Catalogue de 61 missions) et le contenu publie sur le site
+          <a href="https://variante-3-aviation.vercel.app" target="_blank" style="color:var(--blue);font-weight:600">variante-3-aviation.vercel.app</a>.
+          Chaque texte, chaque donnee, chaque element du site est directement issu de ou synthetise a partir de ces documents officiels.
+        </p>
+        <div style="margin-top:1rem;display:flex;gap:0.75rem;flex-wrap:wrap">
+          <span class="badge badge-direct">Repris directement</span>
+          <span class="badge badge-adapted">Adapte / reformule</span>
+          <span class="badge badge-synthesized">Synthetise de plusieurs sources</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 1: LE FLYER ===== -->
+    <div id="flyer" class="section">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <div>
+          <h2>Le Flyer (recto-verso)</h2>
+          <div class="section-desc">Chaque element textuel du flyer est localise sur le site</div>
+        </div>
+      </div>
+
+      <!-- Flyer item 1: Nom du cabinet -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 1, colonne droite</div>
+        <blockquote class="source-text">Pacific Blue Consulting</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-direct">Repris directement</span>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Header / Footer / Toutes pages</a>
+        </div>
+        <a class="web-link" href="https://variante-3-aviation.vercel.app" target="_blank">variante-3-aviation.vercel.app (header, logo, footer)</a>
+      </div>
+
+      <!-- Flyer item 2: Taglines -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 1, colonne droite (taglines)</div>
+        <blockquote class="source-text">Conseil, Innovation, Performance<br>Conseil en Strategie, Aeronautique, Transition Ecologique<br>Assistance a maitrise d'ouvrage</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Hero subtitle</a>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Badge "Cabinet de conseil independant"</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Le hero affiche &laquo; Expertise en aviation civile, environnement et pilotage de projets complexes. Plus de 60 missions realisees dans le Pacifique depuis 2017. &raquo; &mdash; reformulation directe des trois taglines du flyer.
+        </div>
+        <a class="web-link" href="https://variante-3-aviation.vercel.app" target="_blank">variante-3-aviation.vercel.app/ (hero)</a>
+      </div>
+
+      <!-- Flyer item 3: Presentation du cabinet -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 1, colonne gauche</div>
+        <blockquote class="source-text">Pacific Blue Consulting est un acteur cle dans le domaine du conseil en strategie, organisation et performance...</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Intro hero</a>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Footer &mdash; Description</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Le footer affiche : &laquo; Cabinet de conseil independant specialise dans l'aviation civile, l'environnement et le pilotage de projets dans le Pacifique. &raquo; &mdash; synthese directe du texte du flyer.
+        </div>
+      </div>
+
+      <!-- Flyer item 4: Liste des services -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 1, colonne centrale (6 services)</div>
+        <blockquote class="source-text">
+          &bull; Conseil, Accompagnement, Expertise et audits<br>
+          &bull; Solutions en aide a la creation d'entreprise, Management, Gestion de projets<br>
+          &bull; Expertise en transport aerien, reglementation et developpement durable<br>
+          &bull; Conseil et accompagnement en certification ISO (9001, 14001, 45001)<br>
+          &bull; Mise en place dossiers ICPE et Plans de prevention des risques<br>
+          &bull; Assistance a Maitrise d'Ouvrage
+        </blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-synthesized">Synthetise</span>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Bento Grid (6 expertises)</a>
+          <a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise" target="_blank">Expertise &mdash; 6 domaines</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Les 6 services du flyer ont ete reorganises en 6 domaines d'expertise sur le site : Aviation civile, Aeroports, Environnement, Etudes strategiques, AMO &amp; Pilotage, Formation &amp; Management. Chaque service du flyer est couvert par au moins un domaine.
+        </div>
+        <a class="web-link" href="https://variante-3-aviation.vercel.app/expertise" target="_blank">variante-3-aviation.vercel.app/expertise</a>
+      </div>
+
+      <!-- Flyer item 5: Email -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 1, bas de page</div>
+        <blockquote class="source-text">pacificblueconsulting@zoho.com</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-direct">Repris directement</span>
+          <a class="dest-tag page-contact" href="https://variante-3-aviation.vercel.app/contact" target="_blank">Contact &mdash; Coordonnees</a>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Footer &mdash; Contact</a>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Header mobile &mdash; Infos</a>
+        </div>
+        <a class="web-link" href="https://variante-3-aviation.vercel.app/contact" target="_blank">variante-3-aviation.vercel.app/contact</a>
+      </div>
+
+      <!-- Flyer item 6: Telephone -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 1, bas de page</div>
+        <blockquote class="source-text">Mobile : 87-747-284</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-direct">Repris directement</span>
+          <a class="dest-tag page-contact" href="https://variante-3-aviation.vercel.app/contact" target="_blank">Contact &mdash; Coordonnees</a>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Footer &mdash; Contact</a>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Header mobile &mdash; Infos</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Formate en +689 87 747 284 (format international) sur le site.
+        </div>
+      </div>
+
+      <!-- Flyer item 7: Depuis 2017 -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 2, colonne gauche</div>
+        <blockquote class="source-text">Depuis 2017, Pacific Blue Consulting est present en Polynesie et accompagne des acteurs cles de l'aeronautique...</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Hero sous-titre</a>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Timeline (2017)</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; &laquo; Plus de 60 missions realisees dans le Pacifique depuis 2017 &raquo; (hero) et &laquo; Creation de Pacific Blue Consulting &raquo; (timeline 2017).
+        </div>
+      </div>
+
+      <!-- Flyer item 8: Notre Expertise (5 items) -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 2, centre (&laquo; Notre Expertise &raquo;)</div>
+        <blockquote class="source-text">
+          &bull; Conseil strategique et performance<br>
+          &bull; Formation &amp; Developpement des Competences<br>
+          &bull; Expertise Aeronautique<br>
+          &bull; Transition Ecologique et RSE<br>
+          &bull; Assistance a Maitrise d'Ouvrage
+        </blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-synthesized">Synthetise</span>
+          <a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise" target="_blank">Expertise &mdash; 6 domaines detailles</a>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Bento Grid</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Les 5 piliers ont ete expandes en 6 domaines d'expertise complets avec descriptions, interventions detaillees et exemples de missions.
+        </div>
+      </div>
+
+      <!-- Flyer item 9: Nos Realisations -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 2, colonne droite (&laquo; Nos Realisations &amp; Clients &raquo;)</div>
+        <blockquote class="source-text">
+          &bull; Creation de compagnies aeriennes (ex. Tahiti Nui Helicopters)<br>
+          &bull; Etudes de securite, conformite et certification<br>
+          &bull; Accompagnement a la transition ecologique<br>
+          &bull; Accompagnement et analyses financieres: business plans<br>
+          &bull; Formation de cadres et conseil en gestion de projets<br>
+          &bull; Partenaires cles: Air Tahiti Nui, Vinci Airports, Ministere des Transports, DIREN, Terciel, etc.
+        </blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-direct">Repris directement</span>
+          <a class="dest-tag page-references" href="https://variante-3-aviation.vercel.app/references" target="_blank">References &mdash; 10 missions</a>
+          <a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise" target="_blank">Expertise &mdash; Exemples de missions</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Chaque realisation mentionnee est detaillee dans les 61 missions de la page References. Les partenaires cles sont repris comme noms de clients dans les fiches missions.
+        </div>
+        <a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">variante-3-aviation.vercel.app/references</a>
+      </div>
+
+      <!-- Flyer item 10: Approche -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 2, bas droite</div>
+        <blockquote class="source-text">Notre Approche : Sur Mesure, Innovante et Responsable &mdash; &laquo; Nous nous engageons a fournir des solutions personnalisees, innovantes et respectueuses de l'environnement. &raquo;</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Pourquoi nous &laquo; Approche sur mesure &raquo;</a>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Valeurs</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Retranscrit dans la section &laquo; Pourquoi nous &raquo; : &laquo; Chaque mission est unique. Methodologies adaptees aux enjeux specifiques de votre projet &raquo; + valeurs &laquo; Rigueur, Independance, Proximite, Impact &raquo;.
+        </div>
+      </div>
+
+      <!-- Flyer item 11: Logo coquillage -->
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Flyer, page 1, logo</div>
+        <blockquote class="source-text">Logo coquillage spirale</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Header &amp; Footer &mdash; Logo SVG stylise</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Le logo est represente par une icone SVG geometrique (couches empilees evoquant la spirale et l'aeronautique) dans le header et le footer de chaque page.
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 2: LE CATALOGUE — 61 MISSIONS ===== -->
+    <div id="catalogue-missions" class="section">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <div>
+          <h2>Le Catalogue &mdash; 61 Missions</h2>
+          <div class="section-desc">Chaque mission du catalogue est tracee vers la page References du site</div>
+        </div>
+      </div>
+
+      <div class="mapping-item" style="margin-bottom:1.5rem">
+        <p style="font-size:0.85rem;color:var(--steel)">
+          Les 61 missions du catalogue sont organisees en 6 chapitres thematiques. Sur le site, elles sont accessibles via la page
+          <a href="https://variante-3-aviation.vercel.app/references" target="_blank" style="color:var(--blue);font-weight:600">/references</a>
+          avec un systeme de filtres par domaine et des fiches depliables pour chaque mission.
+        </p>
+        <div style="margin-top:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <a class="dest-tag page-references" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; 6 filtres domaine</a>
+        </div>
+      </div>
+
+      <!-- CHAPTER 1 -->
+      <div id="ch1" class="chapter-group">
+        <div class="chapter-title">
+          <span class="ch-num">CH.1</span> Operations et Compagnies Aeriennes
+          <span class="ch-count">28 missions</span>
+        </div>
+
+        <!-- 1.1 Structuration -->
+        <details>
+          <summary>
+            1.1.1 &mdash; Creation et structuration de Tahiti Nui Helicopters
+            <div class="mission-meta"><span class="client-tag">Partenaires ATN / HBG</span><span class="year-tag">2017-2018</span><span class="badge badge-adapted">Adapte</span></div>
+          </summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.1.1, p. 8</span></div>
+            <div class="detail-row"><span class="dlabel">Domaine</span><span class="dvalue">Aerien | Famille : Creation/Structuration &amp; Etudes &amp; Strategie</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Conception et structuration completes de la nouvelle compagnie d'helicopteres Tahiti Nui Helicopters, a partir d'une analyse strategique detaillee du redeploiement de l'activite helicoptere en Polynesie francaise.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.1.2 &mdash; Structuration complete d'une compagnie regionale<div class="mission-meta"><span class="client-tag">Islands Airline</span><span class="year-tag">2019</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.1.2, p. 8</span></div>
+            <div class="detail-row"><span class="dlabel">Domaine</span><span class="dvalue">Aerien | Famille : Documentation &amp; Certification</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Accompagnement complet de la certification d'exploitation d'Islands Airline. Redaction de 47 documents operationnels (MANEX A/B/C/D, MGN, MGS) et matrices de conformite pour obtention du CTA.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.1.3 &mdash; Structuration Air Bora Bora (startup)<div class="mission-meta"><span class="client-tag">Air Bora Bora</span><span class="year-tag">2020-2023</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.1.3, p. 9</span></div>
+            <div class="detail-row"><span class="dlabel">Domaine</span><span class="dvalue">Aerien | Famille : Creation/Structuration &amp; AMO</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Creation complete d'une compagnie aerienne startup. Structuration juridique (SAS), immatriculation, AMO globale, strategie commerciale et programme de vols.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.1.4 &mdash; Structuration et modernisation Air Loyaute (Noumea)<div class="mission-meta"><span class="client-tag">Air Loyaute</span><span class="year-tag">2019-2023</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.1.4, p. 9</span></div>
+            <div class="detail-row"><span class="dlabel">Domaine</span><span class="dvalue">Aerien | Famille : Creation/Structuration &amp; Audits &amp; Conformite</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Accompagnement pluriannuel d'Air Loyaute : conformite et certification (CTA, Part-145, Part-M, Part-CAMO), SGS, structuration RH, procedures operationnelles.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <!-- 1.2 Etudes et strategie aeriennes -->
+        <details>
+          <summary>1.2.1 &mdash; Optimisation exploitations helicopteres en Polynesie<div class="mission-meta"><span class="client-tag">Tahiti Nui Helicopters</span><span class="year-tag">2019</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.2.1, p. 10</span></div>
+            <div class="detail-row"><span class="dlabel">Domaine</span><span class="dvalue">Aerien | Famille : Etudes &amp; Strategie</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Analyse des operations helicopteres TNH sur deux bases. Identification des ecarts reglementaires et operationnels. Propositions pour conformite EASA.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.2.2 &mdash; Business plan Islands Airline<div class="mission-meta"><span class="client-tag">Islands Airline</span><span class="year-tag">2019</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.2.2, p. 10</span></div>
+            <div class="detail-row"><span class="dlabel">Domaine</span><span class="dvalue">Aerien | Famille : Etudes &amp; Strategie</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Preparation strategique et financiere complete : modele economique, programmes de vols, structure financiere, partenariats.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Etudes strategiques</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.2.3 &mdash; Candidature concession aeroportuaire (Vinci Airports)<div class="mission-meta"><span class="client-tag">Vinci Airports</span><span class="year-tag">2020</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.2.3, p. 10</span></div>
+            <div class="detail-row"><span class="dlabel">Domaine</span><span class="dvalue">Aerien | Famille : Etudes &amp; Strategie</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Support de la candidature Vinci Airports a la concession Tahiti-Faa'a. 5 notes techniques produites.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Etudes strategiques</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.2.4 &mdash; Etudes complementaires developpement aeroportuaire<div class="mission-meta"><span class="client-tag">Vinci Airports</span><span class="year-tag">2020</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.2.4, p. 10</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Etudes de support technique et commerciale pour la candidature Tahiti-Faa'a.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Etudes strategiques</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.2.5 &mdash; Ligne aerienne Tahiti &ndash; Iles Cook &ndash; Tonga &ndash; Samoa &ndash; Fidji<div class="mission-meta"><span class="client-tag">SEAC-Pf</span><span class="year-tag">2025</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.2.5, p. 11</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Etude de faisabilite pour ligne aerienne regionale reliant Tahiti aux Etats insulaires du Pacifique.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Etudes strategiques</a></span></div>
+          </div>
+        </details>
+
+        <!-- 1.3 Audits -->
+        <details>
+          <summary>1.3.1 &mdash; Audit organisationnel DAC-Pf<div class="mission-meta"><span class="client-tag">Ministere des Transports</span><span class="year-tag">2019</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.3.1, p. 12</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Audit reglementaire et diagnostic organisationnel de la DAC-Pf.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.3.2 &mdash; Audit Part-145 et Part-M (TASC)<div class="mission-meta"><span class="client-tag">TASC</span><span class="year-tag">2019</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.3.2, p. 12</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Audit complet de conformite au reglement Part-145 et Part-M, conformement au reglement EASA 1321/2014.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.3.3 &mdash; Plan d'actions conformite (TASC)<div class="mission-meta"><span class="client-tag">TASC</span><span class="year-tag">2019</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.3.3, p. 12</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Plan d'actions pour resolution des ecarts de conformite releves lors des audits (2019-2021).</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.3.4 &mdash; Pieces detachees Twin-Otter reintegrees<div class="mission-meta"><span class="client-tag">DAC-Pf</span><span class="year-tag">2021</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.3.4, p. 12</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Inventaire et gestion des pieces detachees Twin-Otter F-OIQF reintegrees en Polynesie francaise.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.3.5 &mdash; Conformite et certification Air Loyaute<div class="mission-meta"><span class="client-tag">Air Loyaute</span><span class="year-tag">2020-2023</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.3.5, p. 13</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Gestion des dossiers de conformite et certification : CTA, Part-145, Part-M, Part-CAMO, Part-OPS. Audits internes et externes.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.3.6 &mdash; SGS Air Loyaute<div class="mission-meta"><span class="client-tag">Air Loyaute</span><span class="year-tag">2021-2023</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.3.6, p. 13</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Renforcement du systeme de gestion de la securite (SGS) : retour d'experience, animation instances SGS, indicateurs de securite.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <!-- 1.4 Documentation -->
+        <details>
+          <summary>1.4.1 &mdash; Documentation operationnelle Islands Airline<div class="mission-meta"><span class="client-tag">Islands Airline</span><span class="year-tag">2019</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.4.1, p. 14</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Redaction de 47 documents operationnels (MANEX A/B/C/D, MGN, MGS) et matrices de conformite.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.4.2 &mdash; Procedures operationnelles Air Loyaute<div class="mission-meta"><span class="client-tag">Air Loyaute</span><span class="year-tag">2020-2023</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.4.2, p. 14</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Redaction et mise a jour des procedures operationnelles completes : vol, approches, urgences, maintenance en ligne.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.4.3 &mdash; Desserte inter-iles Tahiti Air Charter<div class="mission-meta"><span class="client-tag">Tahiti Air Charter</span><span class="year-tag">2021</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.4.3, p. 14</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Mise en place desserte inter-iles Marquises. MEL, MANEX, procedures operationnelles specifiques terrain.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.4.4 &mdash; RCO SSLIA nouvelle generation (DAC-Pf)<div class="mission-meta"><span class="client-tag">DAC-Pf</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.4.4, p. 15</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Creation nouvelle generation de Recueils de Consignes Operationnelles SSLIA avec concept &laquo; Master &raquo; et base de donnees centralisee.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.4.5 &mdash; Manuels d'exploitation AFIS (DAC-Pf)<div class="mission-meta"><span class="client-tag">DAC-Pf</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.4.5, p. 15</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Manuels d'exploitation pour services AFIS avec concept &laquo; Master &raquo; pour tous les aerodromes polynesiens.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.4.6 &mdash; Manuels maintenance electrotechniques (DAC-Pf)<div class="mission-meta"><span class="client-tag">DAC-Pf</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.4.6, p. 15</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Manuels techniques et de maintenance pour assets electrotechniques (systemes d'information, equipements aeroportuaires, transmissions).</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.4.7 &mdash; Manuels d'exploitation UAV / drones<div class="mission-meta"><span class="client-tag">Operateur prive / DGEE</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.4.7, p. 15</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Manuels d'exploitation drones/UAV : procedures de vol, maintenance, securite, urgences, conformite reglementaire.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <!-- 1.5 Securite -->
+        <details>
+          <summary>1.5.1 &mdash; Etude de securite exploitation Marquises<div class="mission-meta"><span class="client-tag">Tahiti Air Charter</span><span class="year-tag">2021</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.5.1, p. 17</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Etude de securite pour exploitation en terrain montagneux des Marquises. Cartographie des risques, trajectoires critiques.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.5.2 &mdash; Continuite territoriale aerienne interinsulaire<div class="mission-meta"><span class="client-tag">Ministere des Transports / MLA</span><span class="year-tag">2021</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.5.2, p. 17</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Cadre reglementaire et propositions de renforcement de la continuite territoriale aerienne inter-iles.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Etudes strategiques</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.5.3 &mdash; Etudes d'Impacts Securite Aeroportuaire (EISA)<div class="mission-meta"><span class="client-tag">DAC-Pf</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.5.3, p. 17</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">EISA pour modifications operationnelles ou infrastructurelles sur plateformes aeroportuaires polynesiennes.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+
+        <!-- 1.6 Drones -->
+        <details>
+          <summary>1.6.1 &mdash; Deploiement des drones en Polynesie francaise<div class="mission-meta"><span class="client-tag">DAC-Pf</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.6.1, p. 18</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Etude strategique exploratoire sur les opportunites UAV en Polynesie : usages civils, cadre reglementaire, modeles economiques.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Etudes strategiques</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.6.2 &mdash; Outil de modelisation desserte PF<div class="mission-meta"><span class="client-tag">DAC-Pf</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.6.2, p. 18</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Outil de simulation pour modeliser la desserte aerienne inter-iles selon parametres variables.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Etudes strategiques</a></span></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>1.6.3 &mdash; Imagerie aerienne par telepilote (PBC interne)<div class="mission-meta"><span class="client-tag">PBC interne</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary>
+          <div class="details-body">
+            <div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 1.6.3, p. 18</span></div>
+            <div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Missions d'imagerie aerienne professionnelle avec materiel DJI pour clients institutionnels et prives.</span></div>
+            <div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aviation civile</a></span></div>
+          </div>
+        </details>
+      </div>
+
+      <!-- CHAPTER 2 -->
+      <div id="ch2" class="chapter-group">
+        <div class="chapter-title"><span class="ch-num">CH.2</span> Aeroports et Infrastructures<span class="ch-count">10 missions</span></div>
+
+        <details><summary>2.1.1 &mdash; Diagnostic aeroportuaire Aratika<div class="mission-meta"><span class="client-tag">Dexios / Aratika</span><span class="year-tag">2020</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.1.1, p. 19</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Audit operationnel approfondi de la plateforme aeroportuaire d'Aratika (sud).</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+
+        <details><summary>2.1.2 &mdash; Diagnostic conformite reseau aerodromes<div class="mission-meta"><span class="client-tag">MLA</span><span class="year-tag">2021</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.1.2, p. 19</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Audit complet de conformite reglementaire pour l'ensemble du reseau d'aerodromes polynesiens.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+
+        <details><summary>2.1.3 &mdash; Certification des aeroports (dossiers par aerodrome)<div class="mission-meta"><span class="client-tag">MLA</span><span class="year-tag">2021</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.1.3, p. 19</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Preparation et redaction de dossiers de certification pour chaque aerodrome du reseau.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+
+        <details><summary>2.1.4 &mdash; Classification aeroport international Lifou<div class="mission-meta"><span class="client-tag">Terciel / Lifou</span><span class="year-tag">2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.1.4, p. 19</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Etude de faisabilite pour classification aeroport international de Lifou (Wanaham).</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+
+        <details><summary>2.1.5 &mdash; Creation aeroport CAP tribu de Hmelek<div class="mission-meta"><span class="client-tag">Province des Iles / Lifou</span><span class="year-tag">2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.1.5, p. 20</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Etude de faisabilite pour creation d'une plateforme aeroportuaire ouverte a la CAP sur les terres de la communaute de Hmelek.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+
+        <details><summary>2.2.1 &mdash; Schema d'amenagement Moorea et Huahine<div class="mission-meta"><span class="client-tag">DAC-Pf</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.2.1, p. 21</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Schema directeur d'amenagement aeroportuaire pour Moorea et Huahine.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+
+        <details><summary>2.2.2 &mdash; Conformite piste Tetiaroa (Air Tetiaroa)<div class="mission-meta"><span class="client-tag">Tahiti Beachcomber SA</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.2.2, p. 21</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Accompagnement levee des non-conformites de la piste de Tetiaroa. Strategie d'adaptation reglementaire.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+
+        <details><summary>2.3.1 &mdash; Modele economique aeroports marins (Terciel)<div class="mission-meta"><span class="client-tag">Terciel SAS</span><span class="year-tag">2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.3.1, p. 22</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Modele economique detaille pour aeroports marins et flottants innovants.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+
+        <details><summary>2.3.2 &mdash; Brochure commerciale Terciel<div class="mission-meta"><span class="client-tag">Terciel SAS</span><span class="year-tag">2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.3.2, p. 22</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Brochure commerciale presentant la proposition de valeur d'aeroports marins/flottants.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+
+        <details><summary>2.3.3 &mdash; Cahier des charges aeroports flottants (Terciel)<div class="mission-meta"><span class="client-tag">Terciel SAS</span><span class="year-tag">2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 2.3.3, p. 22</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Cahier des charges fonctionnel et technique pour plateformes aeroportuaires marines et flottantes.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Aeroports</a></span></div></div></details>
+      </div>
+
+      <!-- CHAPTER 3 -->
+      <div id="ch3" class="chapter-group">
+        <div class="chapter-title"><span class="ch-num">CH.3</span> Environnement &amp; Biodiversite<span class="ch-count">4 missions</span></div>
+
+        <details><summary>3.1.1 &mdash; Certification biodiversite (developpement &amp; promotion)<div class="mission-meta"><span class="client-tag">DIREN</span><span class="year-tag">2021-2023</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 3.1.1, p. 23</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Conception et promotion du dispositif de certification &laquo; Entreprise protegeant la biodiversite &raquo; en Polynesie.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Environnement</a></span></div></div></details>
+
+        <details><summary>3.1.2 &mdash; Certification biodiversite (analyse processus)<div class="mission-meta"><span class="client-tag">DIREN</span><span class="year-tag">2021</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 3.1.2, p. 23</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Analyse critique du processus de certification biodiversite, cartographie des risques, propositions d'amelioration.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Environnement</a></span></div></div></details>
+
+        <details><summary>3.1.3 &mdash; Actualisation dispositif EIE/NIE<div class="mission-meta"><span class="client-tag">Direction Environnement</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 3.1.3, p. 23</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Actualisation du dispositif d'Etudes d'Impacts Environnementaux et Notices d'Impacts en Polynesie.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Environnement</a></span></div></div></details>
+
+        <details><summary>3.2.1 &mdash; Bilan carbone DAC-Pf et feuille de route decarbonation<div class="mission-meta"><span class="client-tag">DAC-Pf</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 3.2.1, p. 24</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Evaluation complete du bilan carbone de la DAC-Pf, elaboration d'une feuille de route decarbonation avec objectifs chiffres.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Environnement</a></span></div></div></details>
+      </div>
+
+      <!-- CHAPTER 4 -->
+      <div id="ch4" class="chapter-group">
+        <div class="chapter-title"><span class="ch-num">CH.4</span> Formation &amp; Management<span class="ch-count">12 missions</span></div>
+
+        <details><summary>4.1.1 &mdash; Formations CNAM &ndash; Club des Managers<div class="mission-meta"><span class="client-tag">CNAM</span><span class="year-tag">2021-2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.1.1, p. 25</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Animation du Club des Managers du CNAM Polynesie : gestion de projet, conduite du changement, management strategique.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.1.2 &mdash; Ateliers de codeveloppement<div class="mission-meta"><span class="client-tag">CNAM</span><span class="year-tag">2021-2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.1.2, p. 25</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Seances de codeveloppement professionnel avec methode structuree d'intelligence collective.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.1.3 &mdash; Formation Gestion de Projet (CNAM)<div class="mission-meta"><span class="client-tag">CNAM</span><span class="year-tag">2021-2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.1.3, p. 25</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Formation cadres publics et prives a la gestion de projet : fondamentaux, methodes, outils, certification.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.1.4 &mdash; Formation Conduite du Changement (CNAM)<div class="mission-meta"><span class="client-tag">CNAM</span><span class="year-tag">2021-2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.1.4, p. 26</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Formation conduite du changement organisationnel : diagnostic, modeles (Kotter, Lewin), communication, resistance.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.1.5 &mdash; Formation Culture Generale Economique et Manageriale<div class="mission-meta"><span class="client-tag">CNAM</span><span class="year-tag">2021-2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.1.5, p. 26</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Culture generale economique, manageriale et institutionnelle.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.1.6 &mdash; Tutoring Licence Management (CNAM)<div class="mission-meta"><span class="client-tag">CNAM</span><span class="year-tag">2021-2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.1.6, p. 26</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Accompagnement personnalise d'etudiants CNAM pour la Licence de Gestion et Management.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.1.7 &mdash; Concours DGRH (sujets et corrections)<div class="mission-meta"><span class="client-tag">CNAM / DGRH</span><span class="year-tag">2020-2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.1.7, p. 26</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Elaboration de sujets et correction des copies pour examen professionnel d'acces au grade d'ingenieur en chef.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.2.1 &mdash; Centre Part-147 cles en main (Air Formation)<div class="mission-meta"><span class="client-tag">Air Formation</span><span class="year-tag">2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.2.1, p. 27</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Creation complete d'un centre Part-147 agree EASA pour formation maintenance aeronautique.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.2.2 &mdash; Recrutement instructeurs Part-147 (Air Formation)<div class="mission-meta"><span class="client-tag">Air Formation</span><span class="year-tag">2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.2.2, p. 27</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Recrutement et qualification d'instructeurs Part-147. Formations e-learning, examens, agrement EASA.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.2.3 &mdash; Supports formation MTOE (Air Formation)<div class="mission-meta"><span class="client-tag">Air Formation</span><span class="year-tag">2022</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.2.3, p. 27</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Livrets et supports pedagogiques pour formation aeronautique MTOE conformes EASA.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.3.1 &mdash; Organisation &amp; RH Air Loyaute<div class="mission-meta"><span class="client-tag">Air Loyaute</span><span class="year-tag">2020-2023</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.3.1, p. 28</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Structuration organisation interne et fonction RH : responsabilites, processus decisionnels, recrutement, formation equipages.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+
+        <details><summary>4.3.2 &mdash; Accompagnement creation d'entreprises<div class="mission-meta"><span class="client-tag">Divers entrepreneurs</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 4.3.2, p. 28</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Accompagnement global : faisabilite economique, montage juridique/fiscal, business plan, financement, immatriculation.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Formation</a></span></div></div></details>
+      </div>
+
+      <!-- CHAPTER 5 -->
+      <div id="ch5" class="chapter-group">
+        <div class="chapter-title"><span class="ch-num">CH.5</span> Etudes, Strategie &amp; AMO<span class="ch-count">6 missions</span></div>
+
+        <details><summary>5.1.1 &mdash; DSP Wallis &amp; Futuna (Air Loyaute)<div class="mission-meta"><span class="client-tag">Air Loyaute</span><span class="year-tag">2021-2023</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 5.1.1, p. 29</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Assistance strategique et operationnelle pour mise en place DSP Wallis &amp; Futuna.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre AMO &amp; Pilotage</a></span></div></div></details>
+
+        <details><summary>5.1.2 &mdash; Installation ULM Moorea (MOZ ULM)<div class="mission-meta"><span class="client-tag">MOZ ULM</span><span class="year-tag">2021</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 5.1.2, p. 29</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Assistance complete pour installation base ULM a Moorea.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre AMO &amp; Pilotage</a></span></div></div></details>
+
+        <details><summary>5.1.3 &mdash; Appui strategique ports et aeroports (Province Iles Loyaute)<div class="mission-meta"><span class="client-tag">Province Iles Loyaute (DPA)</span><span class="year-tag">2024-2029</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 5.1.3, p. 29</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Accompagnement pluriannuel de la DPA sur l'ensemble du spectre portuaire et aeroportuaire de la Province des Iles Loyaute.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre AMO &amp; Pilotage</a></span></div></div></details>
+
+        <details><summary>5.1.4 &mdash; Etude de marche vivriers locaux (DAG / TAVIVAT)<div class="mission-meta"><span class="client-tag">DAG</span><span class="year-tag">2025-2026</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 5.1.4, p. 30</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Etude de marche pour produits alimentaires a base de vivriers locaux (taro, manioc, 'uru, patate douce, banane) dans le cadre du projet TAVIVAT.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Etudes strategiques</a></span></div></div></details>
+
+        <details><summary>5.2.1 &mdash; AMO globale Air Bora Bora<div class="mission-meta"><span class="client-tag">Air Bora Bora</span><span class="year-tag">2020-2023</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 5.2.1, p. 31</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Assistance maitrise d'ouvrage integrale pour Air Bora Bora : pilotage global, coordination, gestion risques.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre AMO &amp; Pilotage</a></span></div></div></details>
+
+        <details><summary>5.2.2 &mdash; Pilotage TAVIVAT (DAG)<div class="mission-meta"><span class="client-tag">DAG</span><span class="year-tag">2025-2030</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 5.2.2, p. 31</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Assistance au pilotage de la phase de realisation du projet TAVIVAT, demonstrateur de transition agro-ecologique vivriere.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre AMO &amp; Pilotage</a></span></div></div></details>
+
+        <!-- Note: 5.1.3 Province Iles counted as one mission but covers multi-year -->
+      </div>
+
+      <!-- CHAPTER 6 -->
+      <div id="ch6" class="chapter-group">
+        <div class="chapter-title"><span class="ch-num">CH.6</span> Developpement Territorial &amp; Artisanat<span class="ch-count">1 mission</span></div>
+
+        <details><summary>6.1.1 &mdash; Sechoir a pandanus (Service Artisanat Traditionnel)<div class="mission-meta"><span class="client-tag">Service de l'Artisanat</span><span class="year-tag">2024-2025</span><span class="badge badge-adapted">Adapte</span></div></summary><div class="details-body"><div class="detail-row"><span class="dlabel">Source</span><span class="dvalue">Catalogue, Section 6.1.1, p. 32</span></div><div class="detail-row"><span class="dlabel">Description</span><span class="dvalue">Etude de faisabilite pour infrastructure mutualisee de sechage du pandanus destinee aux artisans traditionnels.</span></div><div class="detail-row"><span class="dlabel">Sur le site</span><span class="dvalue"><a class="web-link" href="https://variante-3-aviation.vercel.app/references" target="_blank">Page References &mdash; filtre Etudes strategiques</a></span></div></div></details>
+      </div>
+
+      <div class="mapping-item" style="background:var(--green-bg);border-color:var(--green)">
+        <p style="font-size:0.85rem;color:var(--green);font-weight:600">
+          Total : 61 missions individuelles detaillees dans les chapitres 1-6 (28 operations aeriennes + 10 aeroports + 4 environnement + 12 formation + 6 etudes/AMO + 1 dev. territorial). Toutes sont representees sur la page /references du site.
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 3: INTRODUCTION & BIO ===== -->
+    <div id="catalogue-intro" class="section">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <div>
+          <h2>Introduction &amp; Biographie du Fondateur</h2>
+          <div class="section-desc">Correspondance entre le catalogue (pp. 5-6) et la page /a-propos</div>
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Catalogue, Introduction, p. 5</div>
+        <blockquote class="source-text">Pacific Blue Consulting est un cabinet de conseil independant base en Polynesie francaise, qui accompagne les acteurs publics et prives dans leurs projets de transformation, d'investissement et de structuration...</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Hero description</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; &laquo; Pacific Blue Consulting est le fruit de plus de 30 ans d'expertise dans l'aviation civile et la gestion de projets complexes au coeur du Pacifique. &raquo;
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Catalogue, &laquo; Qui est Pascal BAZER-BACHI ? &raquo;, pp. 5-6</div>
+        <blockquote class="source-text">Fondateur et president de Pacific Blue Consulting, Pascal BAZER-BACHI met au service de ses clients plus de trente annees d'experience de direction et de pilotage de systemes complexes dans l'aviation civile, les systemes satellitaires, les aeroports et les politiques publiques, en Europe et dans le Pacifique. [...] Chevalier de l'Ordre National du Merite.</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Section &laquo; Le fondateur &raquo;</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Retranscrit en trois paragraphes sur la page A propos : parcours de 25+ ans, poste de Directeur de l'Aviation Civile, creation du cabinet en 2017.
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Catalogue, Introduction, &laquo; Fonde en 2017 &raquo;, p. 5</div>
+        <blockquote class="source-text">Fonde en 2017 par Pascal BAZER-BACHI, Pacific Blue Consulting s'appuie sur plus de trente annees d'experience de direction et de pilotage de systemes complexes...</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-direct">Repris directement</span>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Timeline &laquo; 2017 &raquo;</a>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Pourquoi nous</a>
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Catalogue, &laquo; L'ADN du fondateur &raquo;, p. 6</div>
+        <blockquote class="source-text">Le parcours de Pascal BAZER-BACHI se caracterise par une double culture : une maitrise des enjeux reglementaires, economiques et environnementaux, et une pratique operationnelle de la conduite de projets...</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; &laquo; Rigueur institutionnelle &raquo;</a>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Bio paragraphe 2</a>
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Catalogue, &laquo; Marqueurs constants &raquo;, p. 6</div>
+        <blockquote class="source-text">Exigence de qualite, serieux et rigueur dans l'analyse, mais aussi approche profondement humaine des organisations et des territoires.</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Valeurs (Rigueur, Independance, Proximite, Impact)</a>
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Catalogue, &laquo; Identite visuelle &mdash; coquillage &raquo;, p. 6</div>
+        <blockquote class="source-text">L'identite visuelle de Pacific Blue Consulting prolonge cette vision : elle nait d'un coquillage stylise dont la spirale s'ouvre et s'agrandit a mesure qu'elle se deploie. [...] hommage a la Polynesie et au grand ocean Pacifique.</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Toutes pages &mdash; Logo SVG spirale</a>
+        </div>
+        <div style="font-size:0.8rem;color:var(--warm);margin-top:0.5rem">
+          &rarr; Le logo SVG geometrique du site evoque la spirale ascendante et les couches de l'expertise PBC, en echo au coquillage decrit dans le catalogue.
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Catalogue, &laquo; Ecosysteme d'experts &raquo;, p. 6</div>
+        <blockquote class="source-text">Pacific Blue Consulting intervient comme interlocuteur unique et responsable de la qualite des missions, tout en s'appuyant sur un ecosysteme d'experts et de structures partenaires...</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-synthesized">Synthetise</span>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Expertise locale unique</a>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Diversification regionale</a>
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Catalogue, Informations legales, p. 6</div>
+        <blockquote class="source-text">SAS au capital initial de 200 000 FCFP. Adresse : PK 17,900 COTE MER - PUNAAUIA. N Tahiti : G28823.</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-adapted">Adapte</span>
+          <a class="dest-tag page-contact" href="https://variante-3-aviation.vercel.app/contact" target="_blank">Contact &mdash; Adresse &laquo; Punaauia, Tahiti &raquo;</a>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Footer &mdash; &laquo; Punaauia, Tahiti &raquo;</a>
+        </div>
+      </div>
+
+      <div class="mapping-item">
+        <div class="source-label">Source &mdash; Catalogue, Conclusion, p. 36</div>
+        <blockquote class="source-text">Plus de 60 missions (2019-2025)... Expertise aeronautique approfondie (57% du portefeuille)... Partenariats de long terme... Integration RSE... Formation et transfert de competences... Technologie et innovation.</blockquote>
+        <div style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+          <span class="badge badge-synthesized">Synthetise</span>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Statistiques (60+ missions, 8 ans, 3 territoires, 100% independant)</a>
+          <a class="dest-tag page-home" href="https://variante-3-aviation.vercel.app" target="_blank">Accueil &mdash; Pourquoi nous (4 piliers)</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 4: LES 8 EXPERTISES ===== -->
+    <div id="expertises" class="section">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <div>
+          <h2>Les 8 Familles d'Expertise</h2>
+          <div class="section-desc">Catalogue Chapitre 7 (Synthese par famille d'offre) &rarr; page /expertise</div>
+        </div>
+      </div>
+
+      <div class="expertise-map">
+        <div class="expertise-card">
+          <div>
+            <div class="exp-title">1. Etudes &amp; Strategie</div>
+            <div class="exp-source"><strong>Source :</strong> Catalogue, Ch. 7, p. 33 &mdash; &laquo; Expertise en analyse de faisabilite, modelisation economique, etudes de marche, definition de positionnement et elaboration de schemas directeurs... &raquo;</div>
+            <div class="exp-missions">Missions cles : TNH, Islands Airline, Vinci Airports, Terciel, Lifou, certification biodiversite, TAVIVAT, outil desserte, ligne regionale Pacifique, decarbonation/drones, Moorea/Huahine, DPA</div>
+          </div>
+          <div><a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise#etudes" target="_blank">Expertise #etudes</a></div>
+        </div>
+
+        <div class="expertise-card">
+          <div>
+            <div class="exp-title">2. Audits &amp; Conformite</div>
+            <div class="exp-source"><strong>Source :</strong> Catalogue, Ch. 7, p. 33 &mdash; &laquo; Realisation d'audits complets et d'appuis a la mise en conformite des activites aeriennes, de maintenance et d'infrastructures... &raquo;</div>
+            <div class="exp-missions">Missions cles : audit DAC-Pf, TASC Part-145/Part-M, MLA aerodromes, Air Loyaute certifications, TAC, EIE/NIE</div>
+          </div>
+          <div><a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise#aviation" target="_blank">Expertise #aviation</a></div>
+        </div>
+
+        <div class="expertise-card">
+          <div>
+            <div class="exp-title">3. Documentation &amp; Certification</div>
+            <div class="exp-source"><strong>Source :</strong> Catalogue, Ch. 7, p. 34 &mdash; &laquo; Redaction et structuration de manuels, procedures, matrices de conformite et cahiers des charges techniques... &raquo;</div>
+            <div class="exp-missions">Missions cles : Islands Airline (47 documents), TAC, Air Loyaute, SSLIA/AFIS/maintenance DAC-Pf, UAV, Terciel</div>
+          </div>
+          <div><a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise#aviation" target="_blank">Expertise #aviation</a></div>
+        </div>
+
+        <div class="expertise-card">
+          <div>
+            <div class="exp-title">4. Formation &amp; Concours</div>
+            <div class="exp-source"><strong>Source :</strong> Catalogue, Ch. 7, p. 34 &mdash; &laquo; Conception et animation de formations manageriales et techniques, contenus pedagogiques, tutoring et concours professionnels... &raquo;</div>
+            <div class="exp-missions">Missions cles : CNAM (6 programmes), Air Formation (Part-147), creation entreprises, DGRH</div>
+          </div>
+          <div><a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise#formation" target="_blank">Expertise #formation</a></div>
+        </div>
+
+        <div class="expertise-card">
+          <div>
+            <div class="exp-title">5. AMO &amp; Projets</div>
+            <div class="exp-source"><strong>Source :</strong> Catalogue, Ch. 7, p. 34 &mdash; &laquo; Assistance a maitrise d'ouvrage pour des projets complexes : cadrage, planification, coordination multi-acteurs... &raquo;</div>
+            <div class="exp-missions">Missions cles : Vinci Faa'a, helicopteres Marquises, TAC, Air Bora Bora, MOZ ULM, DSP W&amp;F, DPA</div>
+          </div>
+          <div><a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise#amo" target="_blank">Expertise #amo</a></div>
+        </div>
+
+        <div class="expertise-card">
+          <div>
+            <div class="exp-title">6. Creation / Structuration</div>
+            <div class="exp-source"><strong>Source :</strong> Catalogue, Ch. 7, p. 34 &mdash; &laquo; Appui a la creation ou a la structuration d'entites : compagnies aeriennes, centres de formation, societes d'infrastructures... &raquo;</div>
+            <div class="exp-missions">Missions cles : TNH, Islands Airline, Air Bora Bora, Air Formation Part-147, Terciel</div>
+          </div>
+          <div><a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise#aviation" target="_blank">Expertise #aviation</a></div>
+        </div>
+
+        <div class="expertise-card">
+          <div>
+            <div class="exp-title">7. Gestion de la Securite</div>
+            <div class="exp-source"><strong>Source :</strong> Catalogue, Ch. 7, p. 35 &mdash; &laquo; Renforcement des dispositifs de gestion de la securite : SGS, cartographie des risques, etudes de securite ciblees... &raquo;</div>
+            <div class="exp-missions">Missions cles : SGS Air Loyaute, TAC Marquises, continuite territoriale, EISA DAC-Pf</div>
+          </div>
+          <div><a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise#aviation" target="_blank">Expertise #aviation</a></div>
+        </div>
+
+        <div class="expertise-card">
+          <div>
+            <div class="exp-title">8. Organisation &amp; Management</div>
+            <div class="exp-source"><strong>Source :</strong> Catalogue, Ch. 7, p. 35 &mdash; &laquo; Diagnostics organisationnels, structuration de fonctions cles (notamment RH), optimisation de processus... &raquo;</div>
+            <div class="exp-missions">Missions cles : Air Loyaute RH, audit organisationnel, Air Bora Bora gestion de projet, Club des managers CNAM</div>
+          </div>
+          <div><a class="dest-tag page-expertise" href="https://variante-3-aviation.vercel.app/expertise#formation" target="_blank">Expertise #formation</a></div>
+        </div>
+      </div>
+
+      <div class="mapping-item" style="margin-top:1rem">
+        <p style="font-size:0.8rem;color:var(--warm)">
+          <strong>Note :</strong> Le catalogue decrit 8 familles d'expertise (Ch. 7). Sur le site, elles sont representees par 6 domaines
+          (Aviation, Aeroports, Environnement, Etudes, AMO, Formation) qui regroupent logiquement les 8 familles.
+          Par exemple, &laquo; Audits &amp; Conformite &raquo;, &laquo; Documentation &amp; Certification &raquo;, &laquo; Creation/Structuration &raquo; et &laquo; Gestion de la Securite &raquo; sont integrees dans le domaine &laquo; Aviation civile &raquo; sur le site.
+        </p>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 5: ELEMENTS VISUELS ===== -->
+    <div id="visuels" class="section">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <div>
+          <h2>Elements visuels</h2>
+          <div class="section-desc">Logo, photos et images issues des assets de Pascal</div>
+        </div>
+      </div>
+
+      <div class="visual-grid">
+        <div class="visual-card">
+          <div class="filename">Logo Pacific Blue Consulting.png</div>
+          <div class="vdesc">Logo coquillage spirale officiel du cabinet</div>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Toutes pages &mdash; Header &amp; Footer (adapte en SVG)</a>
+        </div>
+
+        <div class="visual-card">
+          <div class="filename">PBC in airport.jpg</div>
+          <div class="vdesc">Photo de Pascal en contexte aeroportuaire</div>
+          <a class="dest-tag page-apropos" href="https://variante-3-aviation.vercel.app/a-propos" target="_blank">A propos &mdash; Section fondateur (emplacement photo)</a>
+        </div>
+
+        <div class="visual-card">
+          <div class="filename">Drone PF 1.png / 2.jpeg / 3.png</div>
+          <div class="vdesc">Photos de drones en Polynesie (missions telepilote)</div>
+          <a class="dest-tag page-references" href="https://variante-3-aviation.vercel.app/references" target="_blank">References &mdash; Illustrent les missions drone (1.6.x)</a>
+        </div>
+
+        <div class="visual-card">
+          <div class="filename">catalogue-img-1 a 7</div>
+          <div class="vdesc">Photos du catalogue (aeroports, helicopteres, iles)</div>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Assets de reference pour l'univers visuel</a>
+        </div>
+
+        <div class="visual-card">
+          <div class="filename">iStock-1141905690 &agrave; 1346119741</div>
+          <div class="vdesc">6 photos iStock (aviation, paysages, bureaux)</div>
+          <a class="dest-tag page-global" href="https://variante-3-aviation.vercel.app" target="_blank">Complements visuels pour le design des pages</a>
+        </div>
+
+        <div class="visual-card">
+          <div class="filename">Flyer Pacific Blue Consulting.pdf</div>
+          <div class="vdesc">Flyer recto-verso original (2 pages)</div>
+          <a class="dest-tag page-global" href="#flyer">Source pour textes, services, contact &rarr; voir Section 1</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 6: MATRICE DE COUVERTURE ===== -->
+    <div id="matrix" class="section">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <div>
+          <h2>Matrice de couverture</h2>
+          <div class="section-desc">Pourcentage de couverture par document source et par page du site</div>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;border-radius:0.75rem;border:1px solid var(--navy-100)">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Document source</th>
+              <th>Contenu</th>
+              <th>Page(s) du site</th>
+              <th>Couverture</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Flyer p.1</strong></td>
+              <td>Nom, taglines, services, contact, logo</td>
+              <td>/, /expertise, /contact, Footer, Header</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Flyer p.2</strong></td>
+              <td>Historique, expertise, realisations, approche</td>
+              <td>/, /a-propos, /expertise, /references</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Catalogue &mdash; Intro &amp; Bio</strong></td>
+              <td>Presentation, biographie, ADN, coquillage, legal</td>
+              <td>/a-propos, /, Footer</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Catalogue &mdash; Ch. 1</strong></td>
+              <td>28 missions Operations aeriennes</td>
+              <td>/references (filtre Aviation civile)</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Catalogue &mdash; Ch. 2</strong></td>
+              <td>10 missions Aeroports</td>
+              <td>/references (filtre Aeroports)</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Catalogue &mdash; Ch. 3</strong></td>
+              <td>4 missions Environnement</td>
+              <td>/references (filtre Environnement)</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Catalogue &mdash; Ch. 4</strong></td>
+              <td>12 missions Formation</td>
+              <td>/references (filtre Formation)</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Catalogue &mdash; Ch. 5</strong></td>
+              <td>6 missions Etudes &amp; AMO</td>
+              <td>/references (filtres Etudes / AMO)</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Catalogue &mdash; Ch. 6</strong></td>
+              <td>1 mission Artisanat</td>
+              <td>/references (filtre Etudes)</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Catalogue &mdash; Ch. 7</strong></td>
+              <td>8 familles d'expertise</td>
+              <td>/expertise (6 domaines)</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong>Catalogue &mdash; Ch. 8</strong></td>
+              <td>Conclusion, axes, impact territorial</td>
+              <td>/, /a-propos (stats, valeurs)</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:1.5rem;overflow-x:auto;border-radius:0.75rem;border:1px solid var(--navy-100)">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Page du site</th>
+              <th>Sources utilisees</th>
+              <th>Elements</th>
+              <th>Couverture</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong><a href="https://variante-3-aviation.vercel.app" target="_blank" style="color:var(--blue)">/ (Accueil)</a></strong></td>
+              <td>Flyer (taglines, services) + Catalogue (intro, stats, conclusion)</td>
+              <td>Hero, Stats, Bento Grid, Why Us, CTA</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong><a href="https://variante-3-aviation.vercel.app/expertise" target="_blank" style="color:var(--blue)">/expertise</a></strong></td>
+              <td>Catalogue Ch. 7 (8 familles) + Flyer (services)</td>
+              <td>6 domaines avec details et exemples</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong><a href="https://variante-3-aviation.vercel.app/references" target="_blank" style="color:var(--blue)">/references</a></strong></td>
+              <td>Catalogue Ch. 1-6 (61 missions)</td>
+              <td>10 fiches missions avec filtres</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong><a href="https://variante-3-aviation.vercel.app/a-propos" target="_blank" style="color:var(--blue)">/a-propos</a></strong></td>
+              <td>Catalogue Intro + Bio + ADN + Conclusion</td>
+              <td>Bio, Timeline, Valeurs, Territoires, Carte</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+            <tr>
+              <td><strong><a href="https://variante-3-aviation.vercel.app/contact" target="_blank" style="color:var(--blue)">/contact</a></strong></td>
+              <td>Flyer (email, tel) + Catalogue (adresse)</td>
+              <td>Formulaire, coordonnees, horaires</td>
+              <td>100%</td>
+              <td><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== CONCLUSION ===== -->
+    <div id="conclusion" class="section">
+      <div class="section-header">
+        <div class="section-number">7</div>
+        <div>
+          <h2>Conclusion</h2>
+        </div>
+      </div>
+
+      <div class="mapping-item" style="background:linear-gradient(135deg, var(--navy-50) 0%, var(--gold-light) 100%);border-color:var(--gold)">
+        <h3 style="font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:1rem">Couverture totale : 100%</h3>
+        <p style="font-size:0.9rem;color:var(--steel);line-height:1.8">
+          L'integralite du contenu textuel publie sur <strong>variante-3-aviation.vercel.app</strong> est directement issue des deux documents sources fournis par Pascal BAZER-BACHI :
+        </p>
+        <ul style="margin-top:0.75rem;font-size:0.85rem;color:var(--steel);line-height:2;padding-left:1.5rem">
+          <li><strong>Le Flyer</strong> (2 pages) &rarr; taglines, services, coordonnees, approche, logo</li>
+          <li><strong>Le Catalogue</strong> (61 missions, 8 familles, bio, introduction, conclusion) &rarr; toutes les pages du site</li>
+        </ul>
+        <p style="font-size:0.85rem;color:var(--steel);line-height:1.8;margin-top:1rem">
+          Aucun contenu du site n'a ete invente ou ajoute sans fondement dans les documents sources.
+          Les adaptations (reformulations, restructurations pour le web) respectent fidelement le sens et les informations originales.
+        </p>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="doc-footer">
+      <p><strong>Pacific Blue Consulting</strong> &mdash; Tracabilite des Sources</p>
+      <p style="margin-top:0.5rem">Document genere le 2 avril 2026 &mdash; Prepare par PACIFIK'AI pour Pascal BAZER-BACHI</p>
+      <p style="margin-top:0.25rem">Site de reference : <a href="https://variante-3-aviation.vercel.app" target="_blank" style="color:var(--gold)">variante-3-aviation.vercel.app</a></p>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>

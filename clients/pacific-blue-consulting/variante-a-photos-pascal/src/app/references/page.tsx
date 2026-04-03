@@ -64,7 +64,7 @@ export default function ReferencesPage() {
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/82" />
+        <div className="absolute inset-0 overlay-hero" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 lg:pt-40 pb-20">
@@ -153,6 +153,16 @@ export default function ReferencesPage() {
                   <p className="mt-3 text-sm text-warm/80 leading-relaxed">
                     {mission.description}
                   </p>
+                  {mission.benefit && (
+                    <div className="mt-4 pt-3 border-t border-gold/15">
+                      <p className="text-xs font-semibold text-gold-600 uppercase tracking-wider mb-1">
+                        Benefice client
+                      </p>
+                      <p className="text-sm text-navy/70 leading-relaxed italic">
+                        {mission.benefit}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

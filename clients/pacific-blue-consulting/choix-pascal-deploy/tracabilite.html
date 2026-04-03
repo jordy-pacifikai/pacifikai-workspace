@@ -1,0 +1,2381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Missions de Pacific Blue Consulting — Traçabilité Web</title>
+<style>
+/* ===== RESET & VARS ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #0f172a;
+  --navy-800: #162032;
+  --navy-700: #1e293b;
+  --navy-600: #334155;
+  --navy-50: #f0f4fa;
+  --gold: #d4af37;
+  --gold-light: #f5ecd0;
+  --gold-dark: #b8971f;
+  --cream: #faf9f6;
+  --warm: #64748b;
+  --warm-light: #94a3b8;
+  --green: #16a34a;
+  --green-bg: #dcfce7;
+  --orange: #ea580c;
+  --orange-bg: #ffedd5;
+  --blue: #2563eb;
+  --blue-bg: #dbeafe;
+  --purple: #7c3aed;
+  --purple-bg: #ede9fe;
+  --white: #ffffff;
+  --sidebar-w: 280px;
+  --base-url: https://variante-3-aviation.vercel.app;
+}
+
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--navy-50);
+  color: var(--navy);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== LAYOUT ===== */
+.wrapper {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 100vh;
+}
+
+@media (max-width: 1024px) {
+  .wrapper { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 1.5rem 1rem; }
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--navy);
+  padding: 1.5rem 1rem;
+  border-right: 2px solid var(--gold);
+  scrollbar-width: thin;
+  scrollbar-color: var(--navy-600) var(--navy);
+}
+.sidebar::-webkit-scrollbar { width: 5px; }
+.sidebar::-webkit-scrollbar-track { background: var(--navy); }
+.sidebar::-webkit-scrollbar-thumb { background: var(--navy-600); border-radius: 3px; }
+
+.sidebar-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.15rem;
+  line-height: 1.3;
+}
+.sidebar-sub {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.toc-chapter {
+  margin-bottom: 0.6rem;
+}
+.toc-chapter-title {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.2rem;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.toc-chapter-title:hover { color: var(--gold-light); }
+
+.toc-section {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--warm-light);
+  text-decoration: none;
+  padding: 0.15rem 0 0.15rem 0.8rem;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+.toc-section:hover {
+  color: var(--white);
+  border-left-color: var(--gold);
+}
+
+.toc-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 0.6rem 0;
+}
+
+/* ===== MAIN ===== */
+.main {
+  padding: 2.5rem 3rem 4rem;
+  max-width: 900px;
+}
+
+/* ===== COVER ===== */
+.cover {
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 3.5rem 3rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at center, rgba(212,175,55,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cover-pre {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.cover-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.25;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+.cover-subtitle {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.1rem;
+  color: var(--gold);
+  font-style: italic;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.cover-line {
+  width: 80px;
+  height: 2px;
+  background: var(--gold);
+  margin: 0 auto 1.5rem;
+  position: relative;
+}
+.cover-meta {
+  font-size: 0.75rem;
+  color: var(--warm-light);
+  position: relative;
+}
+
+/* ===== CHAPTER HEADERS ===== */
+.chapter-header {
+  margin: 3rem 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid var(--gold);
+}
+.chapter-number {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold-dark);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.chapter-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.3;
+}
+
+/* ===== SECTION HEADERS ===== */
+.section-header {
+  margin: 2rem 0 1rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--gold);
+}
+.section-number {
+  font-size: 0.65rem;
+  color: var(--warm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.section-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+/* ===== CATALOGUE TEXT BLOCKS ===== */
+.catalogue-block {
+  background: var(--cream);
+  border: 1px solid #e8e5de;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #2d2d2d;
+}
+.catalogue-block p { margin-bottom: 0.75rem; }
+.catalogue-block p:last-child { margin-bottom: 0; }
+.catalogue-block strong { color: var(--navy); }
+
+/* ===== MISSION CARDS ===== */
+.mission-card {
+  background: var(--cream);
+  border: 1px solid #e8e5de;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+.mission-id {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.35rem;
+}
+.mission-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+  line-height: 1.35;
+}
+.mission-meta {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.72rem;
+  color: var(--warm);
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.mission-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.mission-meta .sep { color: #cbd5e1; }
+.mission-desc {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.85rem;
+  color: #3d3d3d;
+  line-height: 1.7;
+  margin-bottom: 0.6rem;
+}
+.mission-benefit {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.82rem;
+  color: #4a5568;
+  line-height: 1.6;
+  padding-left: 1rem;
+  border-left: 2px solid #e2e0d8;
+  font-style: italic;
+}
+.mission-benefit strong {
+  font-style: normal;
+  color: var(--navy);
+}
+
+/* ===== WEB CALLOUT ===== */
+.web-callout {
+  background: rgba(212,175,55,0.04);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  padding: 0.65rem 1rem;
+  margin: 0 0 1.5rem 1rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.75rem;
+  color: var(--navy-600);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.2rem;
+}
+.web-callout-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.web-callout a {
+  color: var(--gold-dark);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+.web-callout a:hover { border-bottom-color: var(--gold); }
+
+.web-callout .tag {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+.tag-fidele { background: var(--green-bg); color: var(--green); }
+.tag-adapte { background: var(--orange-bg); color: var(--orange); }
+.tag-synthetise { background: var(--blue-bg); color: var(--blue); }
+.tag-enrichi { background: var(--purple-bg); color: var(--purple); }
+
+.web-callout .filter-tag {
+  font-size: 0.65rem;
+  color: var(--warm);
+}
+
+/* ===== SYNTHESE FAMILY CARDS ===== */
+.family-card {
+  background: var(--cream);
+  border: 1px solid #e8e5de;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.family-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.family-desc {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.82rem;
+  color: #3d3d3d;
+  line-height: 1.65;
+  margin-bottom: 0.5rem;
+}
+.family-missions {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.78rem;
+  color: #4a5568;
+  line-height: 1.6;
+}
+.family-missions li {
+  margin-bottom: 0.2rem;
+  list-style-type: disc;
+  margin-left: 1.2rem;
+}
+.family-missions-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-top: 0.6rem;
+}
+.family-missions-text {
+  font-size: 0.78rem;
+  color: var(--warm);
+  line-height: 1.55;
+  margin: 0.25rem 0 0.6rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--gold-light);
+  font-style: italic;
+}
+.family-value {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.8rem;
+  color: var(--navy);
+  font-style: italic;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e8e5de;
+}
+
+/* ===== CONCLUSION ===== */
+.conclusion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+@media (max-width: 600px) { .conclusion-grid { grid-template-columns: 1fr; } }
+.conclusion-item {
+  background: var(--cream);
+  border: 1px solid #e8e5de;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+.conclusion-item h4 {
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.2rem;
+}
+.conclusion-item p {
+  font-size: 0.78rem;
+  color: var(--warm);
+  line-height: 1.5;
+}
+
+/* ===== STATS BAR ===== */
+.stats-bar {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: var(--navy);
+  border-radius: 8px;
+}
+.stat-item {
+  text-align: center;
+}
+.stat-num {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.6rem;
+  color: var(--warm-light);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ===== PRINT ===== */
+@media print {
+  .sidebar { display: none; }
+  .wrapper { grid-template-columns: 1fr; }
+  .main { padding: 1rem; max-width: 100%; }
+  .cover { background: #fff; border: 2px solid var(--navy); }
+  .cover-title, .cover-pre { color: var(--navy); }
+  .cover-subtitle { color: var(--navy-600); }
+  .web-callout { border-left-color: #333; background: #f5f5f5; }
+  .stats-bar { background: #f5f5f5; }
+  .stat-num { color: var(--navy); }
+  .stat-label { color: #666; }
+  body { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- ===== SIDEBAR — Table des matières ===== -->
+<nav class="sidebar">
+  <div class="sidebar-title">Catalogue PBC</div>
+  <div class="sidebar-sub">Traçabilité Web</div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#cover">Couverture</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#introduction">Introduction</a>
+    <a class="toc-section" href="#intro-company">Le cabinet</a>
+    <a class="toc-section" href="#intro-pascal">Qui est Pascal Bazer-Bachi</a>
+    <a class="toc-section" href="#intro-adn">L'ADN du fondateur</a>
+    <a class="toc-section" href="#intro-legal">Informations légales</a>
+    <a class="toc-section" href="#intro-ecosystem">Écosystème d'experts</a>
+    <a class="toc-section" href="#intro-coquillage">Le coquillage</a>
+  </div>
+
+  <div class="toc-divider"></div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch1">1. Opérations &amp; Compagnies aériennes</a>
+    <a class="toc-section" href="#s1-1">1.1 Structuration de compagnies</a>
+    <a class="toc-section" href="#s1-2">1.2 Études et stratégie aériennes</a>
+    <a class="toc-section" href="#s1-3">1.3 Audits &amp; conformité</a>
+    <a class="toc-section" href="#s1-4">1.4 Documentation &amp; procédures</a>
+    <a class="toc-section" href="#s1-5">1.5 Gestion sécurité &amp; études</a>
+    <a class="toc-section" href="#s1-6">1.6 Drones &amp; nouvelles technologies</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch2">2. Aéroports &amp; Infrastructures</a>
+    <a class="toc-section" href="#s2-1">2.1 Aérodromes et aéroports</a>
+    <a class="toc-section" href="#s2-2">2.2 Schémas d'aménagement</a>
+    <a class="toc-section" href="#s2-3">2.3 Aéroports marins innovants</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch3">3. Environnement &amp; Biodiversité</a>
+    <a class="toc-section" href="#s3-1">3.1 Certification biodiversité</a>
+    <a class="toc-section" href="#s3-2">3.2 Climat &amp; décarbonation</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch4">4. Formation &amp; Management</a>
+    <a class="toc-section" href="#s4-1">4.1 Formations managériales</a>
+    <a class="toc-section" href="#s4-2">4.2 Formation aéronautique</a>
+    <a class="toc-section" href="#s4-3">4.3 Organisation &amp; RH</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch5">5. Études, Stratégie &amp; AMO</a>
+    <a class="toc-section" href="#s5-1">5.1 Études sectorielles</a>
+    <a class="toc-section" href="#s5-2">5.2 Assistance maîtrise d'ouvrage</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch6">6. Développement Territorial</a>
+    <a class="toc-section" href="#s6-1">6.1 Artisanat et filières locales</a>
+  </div>
+
+  <div class="toc-divider"></div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch7">7. Synthèse par famille</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch8">8. Conclusion</a>
+  </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main">
+
+<!-- ===== COVER ===== -->
+<div class="cover" id="cover">
+  <div class="cover-pre">Catalogue PBC</div>
+  <h1 class="cover-title">Les Missions<br>de Pacific Blue Consulting</h1>
+  <div class="cover-line"></div>
+  <div class="cover-subtitle">Traçabilité Web — Où chaque élément vit sur le site</div>
+  <div class="cover-meta">Document de correspondance entre le catalogue original et le site web<br>
+  <a href="https://variante-3-aviation.vercel.app" style="color:var(--gold);text-decoration:none;font-weight:600;">variante-3-aviation.vercel.app</a></div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-num">61</div><div class="stat-label">Missions catalogue</div></div>
+  <div class="stat-item"><div class="stat-num">7</div><div class="stat-label">Chapitres</div></div>
+  <div class="stat-item"><div class="stat-num">10</div><div class="stat-label">Domaines web</div></div>
+  <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Pages du site</div></div>
+</div>
+
+<!-- ================================================================== -->
+<!-- INTRODUCTION -->
+<!-- ================================================================== -->
+<div class="chapter-header" id="introduction">
+  <div class="chapter-number">Introduction</div>
+  <h2 class="chapter-title">Introduction</h2>
+</div>
+
+<!-- Présentation du cabinet -->
+<div id="intro-company">
+<div class="catalogue-block">
+  <p>Pacific Blue Consulting est un cabinet de conseil indépendant basé en Polynésie française, qui accompagne les acteurs publics et privés dans leurs projets de transformation, d'investissement et de structuration, en particulier dans les secteurs du transport, des infrastructures, de l'énergie, de l'environnement et des services publics. Le cabinet intervient sur l'ensemble du cycle de vie des projets : études stratégiques, assistance à maîtrise d'ouvrage, modélisation économique, mise en conformité réglementaire, organisation et management, conduite du changement et formation de cadres, avec une compréhension fine des réalités insulaires et des contextes multipartenaires.</p>
+  <p>Fondé en 2017 par Pascal BAZER‑BACHI, Pacific Blue Consulting s'appuie sur plus de trente années d'expérience de direction et de pilotage de systèmes complexes, en Europe et dans le Pacifique. Pascal a exercé des responsabilités de premier plan dans l'aviation civile, les systèmes satellitaires, la régulation, l'exploitation d'aéroports et l'accompagnement d'investissements publics et privés, avant de mettre cette expertise au service de la création et de la transformation de multiples organisations : compagnies aériennes, autorités, collectivités, opérateurs d'infrastructures et entreprises en développement.</p>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <span>Implémenté sur le site</span>
+  <a href="https://variante-3-aviation.vercel.app/a-propos">/a-propos</a> — Section hero + introduction fondateur
+  <span class="tag tag-adapte">~ Adapté</span>
+</div>
+</div>
+
+<!-- Qui est Pascal -->
+<div id="intro-pascal">
+<div class="catalogue-block">
+  <p><strong>Qui est Pascal BAZER‑BACHI ?</strong></p>
+  <p>Fondateur et président de Pacific Blue Consulting, Pascal BAZER‑BACHI met au service de ses clients plus de trente années d'expérience de direction et de pilotage de systèmes complexes dans l'aviation civile, les systèmes satellitaires, les aéroports et les politiques publiques, en Europe et dans le Pacifique.</p>
+  <p>Il a occupé des fonctions de haut niveau dans l'administration et au sein d'opérateurs techniques, avant de créer plusieurs structures de conseil et d'ingénierie, ce qui lui donne une connaissance fine des contraintes des institutions, des entreprises et des porteurs de projets.</p>
+  <p>Chevalier de l'Ordre National du Mérite, il s'est vu reconnaître son engagement au service de l'intérêt général et de la modernisation des organisations publiques et privées.</p>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <span>Implémenté sur le site</span>
+  <a href="https://variante-3-aviation.vercel.app/a-propos">/a-propos</a> — Bloc « Le fondateur — Pascal Bazer-Bachi »
+  <span class="tag tag-adapte">~ Adapté</span>
+</div>
+</div>
+
+<!-- Marqueurs constants + coquillage -->
+<div id="intro-coquillage">
+<div class="catalogue-block">
+  <p>Les interventions de Pacific Blue Consulting se caractérisent par quelques marqueurs constants : exigence de qualité, sérieux et rigueur dans l'analyse, mais aussi approche profondément humaine des organisations et des territoires.</p>
+  <p>Le cabinet revendique une pratique du conseil fondée sur l'expérience opérationnelle, l'éthique, la transparence des recommandations et une énergie orientée vers la mise en œuvre concrète, qu'il s'agisse de sécuriser un certificat d'exploitation, de bâtir un modèle économique, d'accompagner un projet d'infrastructure ou de former une nouvelle génération de managers.</p>
+  <p>L'identité visuelle de Pacific Blue Consulting prolonge cette vision : elle naît d'un coquillage stylisé dont la spirale s'ouvre et s'agrandit à mesure qu'elle se déploie. Cette spirale suggère qu'aucun projet ne repart jamais de zéro : l'on repasse par des thèmes familiers – sûreté, continuité de service, modèles économiques, gouvernance - mais à chaque tour, le regard est plus ample, l'expérience plus riche et la capacité à faire des choix structurants plus affirmée.</p>
+  <p>Ce coquillage est aussi un hommage à la Polynésie et au grand océan Pacifique, où il est à la fois objet du quotidien, symbole des lagons et trace sensible du lien entre terre et mer. Il fait écho au pu, la conque que l'on souffle pour signaler sa présence, annoncer un événement ou souhaiter la bienvenue aux navigateurs qui approchent, comme un appel clair et bienveillant dans l'immensité. Cette image exprime la vocation de PBC : accueillir, guider et sécuriser les trajectoires de ses clients dans un environnement complexe, tout en respectant profondément les territoires et les populations.</p>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <span>Implémenté sur le site</span>
+  <a href="https://variante-3-aviation.vercel.app/a-propos">/a-propos</a> — Sections valeurs + vision + identité
+  <span class="tag tag-adapte">~ Adapté</span>
+</div>
+</div>
+
+<!-- ADN du fondateur -->
+<div id="intro-adn">
+<div class="catalogue-block">
+  <p><strong>L'ADN du fondateur</strong></p>
+  <p>Le parcours de Pascal BAZER‑BACHI se caractérise par une double culture : une maîtrise des enjeux réglementaires, économiques et environnementaux, et une pratique opérationnelle de la conduite de projets de transformation, d'investissement et de structuration d'organisations.</p>
+  <p>Formé au management, à la gestion des risques industriels et au coaching professionnel, il privilégie une approche profondément humaine des organisations, combinant exigence de rigueur, écoute des parties prenantes et capacité à transformer des contraintes réglementaires en leviers de structuration et de performance durable.</p>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <span>Implémenté sur le site</span>
+  <a href="https://variante-3-aviation.vercel.app/a-propos">/a-propos</a> — Bio fondateur + chronologie carrière
+  <span class="tag tag-adapte">~ Adapté</span>
+</div>
+</div>
+
+<!-- Informations légales -->
+<div id="intro-legal">
+<div class="catalogue-block">
+  <p><strong>PACIFIC BLUE CONSULTING</strong> est une Société par Actions Simplifiée, au capital initial de 200 000 FCFP.</p>
+  <p>Adresse du siège social : PK 17,900 COTE MER - PUNAAUIA - POLYNESIE FRANCAISE</p>
+  <p>Numéro Tahiti : G28823</p>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <span>Implémenté sur le site</span>
+  <a href="https://variante-3-aviation.vercel.app/a-propos">/a-propos</a> — Footer + informations légales
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+</div>
+</div>
+
+<!-- Écosystème d'experts -->
+<div id="intro-ecosystem">
+<div class="catalogue-block">
+  <p><strong>Un écosystème d'experts mobilisables</strong></p>
+  <p>Pacific Blue Consulting intervient comme interlocuteur unique et responsable de la qualité des missions, tout en s'appuyant, lorsque nécessaire, sur un écosystème d'experts et de structures partenaires, mobilisés en fonction des besoins spécifiques de chaque projet.</p>
+  <p>Au fil de plus de soixante missions conduites depuis 2017, le cabinet a développé des coopérations de confiance avec des bureaux d'études techniques, des laboratoires d'essais, des spécialistes de la formation, de l'environnement, des systèmes d'information et du financement de projets, en Polynésie française, en Nouvelle‑Calédonie et en France métropolitaine.</p>
+  <p>Cet écosystème permet de proposer, sous la bannière PBC, des interventions intégrées combinant stratégie, modélisation économique, mise en conformité réglementaire, ingénierie opérationnelle et appui à la mise en œuvre, tout en préservant l'indépendance des analyses et la transparence vis‑à‑vis des clients.</p>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <span>Implémenté sur le site</span>
+  <a href="https://variante-3-aviation.vercel.app/a-propos">/a-propos</a> — Section « Réseau d'experts »
+  <span class="tag tag-adapte">~ Adapté</span>
+</div>
+</div>
+
+
+<!-- ================================================================== -->
+<!-- 1. OPERATIONS ET COMPAGNIES AERIENNES -->
+<!-- ================================================================== -->
+<div class="web-callout" style="background:rgba(22,163,74,0.04);border-left-color:var(--green);margin-bottom:1.5rem;">
+  <span class="web-callout-icon">&#9989;</span>
+  <span style="font-weight:700;color:var(--green);">Bénéfices clients intégrés</span>
+  <span style="font-size:0.7rem;color:var(--navy);">Chaque mission affiche désormais son « Bénéfice client » complet sur la page <a href="https://variante-3-aviation.vercel.app/references">/références</a>, sous la description, dans un encadré doré dédié.</span>
+</div>
+
+<div class="chapter-header" id="ch1">
+  <div class="chapter-number">Chapitre 1</div>
+  <h2 class="chapter-title">Opérations et Compagnies Aériennes</h2>
+</div>
+
+<!-- 1.1 -->
+<div class="section-header" id="s1-1">
+  <div class="section-number">Section 1.1</div>
+  <div class="section-title">Structuration de compagnies aériennes</div>
+</div>
+
+<!-- 1.1.1 -->
+<div class="mission-card" id="m1-1-1">
+  <div class="mission-id">Mission 1.1.1</div>
+  <div class="mission-title">Création et structuration de Tahiti Nui Helicopters</div>
+  <div class="mission-meta">
+    <span>Client : Partenaires ATN / HBG</span><span class="sep">|</span>
+    <span>2017–2018</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Création/Structuration &amp; Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Conception et structuration complètes de la nouvelle compagnie d'hélicoptères Tahiti Nui Helicopters, à partir d'une analyse stratégique détaillée du redéploiement de l'activité hélicoptère en Polynésie française : étude des missions (transport passagers, évacuations sanitaires, travail aérien), analyse géographique et opérationnelle des zones d'exploitation, choix des types de machines et de leurs équipements, définition des bases, organisation de la maintenance, modèle économique, gouvernance cible, marketing et plan de démarrage.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Mise en place d'un opérateur hélicoptère structuré et viable, capable de répondre aux besoins de transport, de tourisme et d'évacuation sanitaire sur un territoire très dispersé, tout en optimisant les investissements, la mutualisation des moyens et la complémentarité avec les autres acteurs aériens.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans la mission « Accompagnement à la Certification d'une Compagnie Aérienne »</span>
+</div>
+
+<!-- 1.1.2 -->
+<div class="mission-card" id="m1-1-2">
+  <div class="mission-id">Mission 1.1.2</div>
+  <div class="mission-title">Structuration complète d'une compagnie régionale</div>
+  <div class="mission-meta">
+    <span>Client : Islands Airline</span><span class="sep">|</span>
+    <span>2019</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Documentation &amp; Certification</span>
+  </div>
+  <div class="mission-desc">Accompagnement complet de la certification d'exploitation d'Islands Airline. Rédaction de 47 documents opérationnels (MANEX A/B/C/D, MGN, MGS) et matrices de conformité pour obtention du Certificat de Transport Aérien (CTA).</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> CTA obtenu, opérations lancées sur bases solides, conformité réglementaire démontrée auprès de la DAC-Pf.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Accompagnement à la Certification d'une Compagnie Aérienne »</span>
+</div>
+
+<!-- 1.1.3 -->
+<div class="mission-card" id="m1-1-3">
+  <div class="mission-id">Mission 1.1.3</div>
+  <div class="mission-title">Structuration d'une compagnie aérienne startup – Création Air Bora Bora</div>
+  <div class="mission-meta">
+    <span>Client : Air Bora Bora</span><span class="sep">|</span>
+    <span>2020–2023</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Création/Structuration &amp; AMO</span>
+  </div>
+  <div class="mission-desc">Création complète d'une compagnie aérienne startup. Structuration juridique (SAS), immatriculation, assistance maîtrise d'ouvrage globale (stratégie lancement, business plan), stratégie commerciale et programme de vols (liaisons Moorea/atolls), gestion de projet et coordination calendrier lancement.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Structure juridique et financière validée, stratégie commerciale crédible, projets menés à terme, lancement réussi avec partenariats établis.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile + AMO &amp; Pilotage</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Accompagnement à la Certification » + « AMO Extension de Piste »</span>
+</div>
+
+<!-- 1.1.4 -->
+<div class="mission-card" id="m1-1-4">
+  <div class="mission-id">Mission 1.1.4</div>
+  <div class="mission-title">Structuration et modernisation d'une compagnie aérienne – Air Loyauté (Nouméa)</div>
+  <div class="mission-meta">
+    <span>Client : Air Loyauté</span><span class="sep">|</span>
+    <span>2019–2023</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Création/Structuration &amp; Audits &amp; Conformité</span>
+  </div>
+  <div class="mission-desc">Accompagnement pluriannuel d'Air Loyauté, compagnie régionale de Nouvelle-Calédonie, dans l'évolution de son organisation et de ses référentiels techniques et opérationnels. La mission a couvert la mise à jour des dossiers de conformité et de certification (CTA, Part-145, Part-M, Part-CAMO), le renforcement du système de gestion de la sécurité (SGS), l'appui à la structuration de la fonction RH, ainsi que l'actualisation des procédures opérationnelles et de la gestion des opérations de vol, incluant la formation des équipages.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Compagnie alignée sur les exigences réglementaires en vigueur, processus internes consolidés, documentation et pratiques opérationnelles harmonisées, culture de sécurité renforcée au sein des équipes.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Accompagnement à la Certification d'une Compagnie Aérienne »</span>
+</div>
+
+<!-- 1.2 -->
+<div class="section-header" id="s1-2">
+  <div class="section-number">Section 1.2</div>
+  <div class="section-title">Études et stratégie aériennes</div>
+</div>
+
+<!-- 1.2.1 -->
+<div class="mission-card" id="m1-2-1">
+  <div class="mission-id">Mission 1.2.1</div>
+  <div class="mission-title">Optimisation et sécurisation d'exploitations hélicoptères en Polynésie</div>
+  <div class="mission-meta">
+    <span>Client : Tahiti Nui Helicopters</span><span class="sep">|</span>
+    <span>2019</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Analyse des opérations hélicoptères TNH sur deux bases (Pago/Bora Bora, Taravao). Identification complète des écarts réglementaires et opérationnels. Propositions de solutions opérationnelles et règlementaires pour conformité EASA.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Cadre d'exploitation clarifié, conformité améliorée, continuité du service aérien préservée, risques opérationnels minimisés.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à « Audit de Sécurité et de Sûreté »</span>
+</div>
+
+<!-- 1.2.2 -->
+<div class="mission-card" id="m1-2-2">
+  <div class="mission-id">Mission 1.2.2</div>
+  <div class="mission-title">Business plan et modèle économique – Islands Airline</div>
+  <div class="mission-meta">
+    <span>Client : Islands Airline</span><span class="sep">|</span>
+    <span>2019</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Préparation stratégique et financière complète d'Islands Airline : modèle économique détaillé, programmes de vols, structure financière, partenariats (notamment avec TASC pour la maintenance).</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Stratégie commerciale validée par les investisseurs, financement sécurisé, lancement commercial crédible et calendrier réaliste.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Études stratégiques</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Modélisation Économique du Trafic Aérien Post-Covid »</span>
+</div>
+
+<!-- 1.2.3 -->
+<div class="mission-card" id="m1-2-3">
+  <div class="mission-id">Mission 1.2.3</div>
+  <div class="mission-title">Appui stratégique à une candidature de concession aéroportuaire majeure</div>
+  <div class="mission-meta">
+    <span>Client : Vinci Airports</span><span class="sep">|</span>
+    <span>2020</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Support complet de la candidature de Vinci Airports à la concession d'exploitation de Tahiti-Faa'a. Production de 5 notes techniques : trafic aéroportuaire, obligation de service public (OSP), certification exploitant, sûreté aéroportuaire, benchmarking international.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Candidature complète et hautement crédible, différenciation concurrentielle démontrée, dossier structuré pour la sélection gouvernementale.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Études stratégiques</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à « Analyse de la Continuité Territoriale Aérienne »</span>
+</div>
+
+<!-- 1.2.4 -->
+<div class="mission-card" id="m1-2-4">
+  <div class="mission-id">Mission 1.2.4</div>
+  <div class="mission-title">Études thématiques complémentaires – développement aéroportuaire</div>
+  <div class="mission-meta">
+    <span>Client : Vinci Airports</span><span class="sep">|</span>
+    <span>2020</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Études de support technique et commerciale pour la candidature Tahiti-Faa'a : travaux de maintenance aéroportuaire, régimes de taxation aéroportuaire, éléments techniques pour appel d'offres.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Dossier de réponse à appel d'offres renforcé, éléments techniques validés, dossier final compétitif.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Études stratégiques</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à « Analyse de la Continuité Territoriale Aérienne »</span>
+</div>
+
+<!-- 1.2.5 -->
+<div class="mission-card" id="m1-2-5">
+  <div class="mission-id">Mission 1.2.5</div>
+  <div class="mission-title">Marché d'étude – Ligne aérienne Tahiti – Îles Cook – Tonga – Samoa – Fidji</div>
+  <div class="mission-meta">
+    <span>Client : Service d'État de l'Aviation Civile en Polynésie française</span><span class="sep">|</span>
+    <span>2025</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Étude de faisabilité pour l'ouverture et l'exploitation d'une ligne aérienne régionale reliant Tahiti aux Îles Cook, Tonga, Samoa et Fidji, visant une meilleure connectivité et intégration économique des États insulaires du Pacifique.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Positionnement stratégique de la Polynésie renforcé, feuille de route pour connectivité régionale, viabilité économique démontrée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Études stratégiques</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à « Étude de Desserte Aérienne des Îles Marquises » + « Analyse de la Continuité Territoriale »</span>
+</div>
+
+<!-- 1.3 -->
+<div class="section-header" id="s1-3">
+  <div class="section-number">Section 1.3</div>
+  <div class="section-title">Audits &amp; conformité aérienne</div>
+</div>
+
+<!-- 1.3.1 -->
+<div class="mission-card" id="m1-3-1">
+  <div class="mission-id">Mission 1.3.1</div>
+  <div class="mission-title">Audit organisationnel – Direction de l'Aviation Civile de Polynésie française</div>
+  <div class="mission-meta">
+    <span>Client : Ministère des Transports (DAC-Pf)</span><span class="sep">|</span>
+    <span>2019</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Audits &amp; Conformité</span>
+  </div>
+  <div class="mission-desc">Réalisation d'un audit réglementaire et d'un diagnostic organisationnel de la Direction de l'Aviation Civile de Polynésie française. La mission a porté sur l'analyse des processus et de l'organisation, l'identification des axes de progrès et la proposition d'un plan d'actions pour accompagner l'évolution de la structure.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Vision consolidée de la situation de la DAC-Pf, feuille de route partagée pour les ajustements organisationnels et renforcement de la gouvernance interne.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Audit de Sécurité et de Sûreté de l'Aéroport International »</span>
+</div>
+
+<!-- 1.3.2 -->
+<div class="mission-card" id="m1-3-2">
+  <div class="mission-id">Mission 1.3.2</div>
+  <div class="mission-title">Audit de conformité Part-145 et Part-M – Exploitant maintenance</div>
+  <div class="mission-meta">
+    <span>Client : TASC (Tahiti Air Services Corporation)</span><span class="sep">|</span>
+    <span>2019</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Audits &amp; Conformité</span>
+  </div>
+  <div class="mission-desc">Audit complet de conformité au règlement Part-145 (maintenance d'aéronefs) et Part-M (propriétaire exploitant), conformément au règlement EASA 1321/2014.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Conformité réglementaire démontrée, opérations de maintenance sécurisées, risques de non-conformité maîtrisés, certifications à jour.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Audit de Sécurité et de Sûreté de l'Aéroport International »</span>
+</div>
+
+<!-- 1.3.3 -->
+<div class="mission-card" id="m1-3-3">
+  <div class="mission-id">Mission 1.3.3</div>
+  <div class="mission-title">Plan d'actions conformité – Exploitant aérien régional</div>
+  <div class="mission-meta">
+    <span>Client : TASC</span><span class="sep">|</span>
+    <span>2019</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Audits &amp; Conformité</span>
+  </div>
+  <div class="mission-desc">Développement et mise en place d'un plan d'actions complet pour la résolution des écarts de conformité relevés lors des audits menés par les autorités de l'aviation civile (2019–2021). Calendrier d'amélioration, responsabilités assignées, suivi d'exécution.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Écarts de conformité résorbés, certifications maintenues, relation avec autorités améliorée, continuité opérationnelle garantie.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Audit de Sécurité et de Sûreté »</span>
+</div>
+
+<!-- 1.3.4 -->
+<div class="mission-card" id="m1-3-4">
+  <div class="mission-id">Mission 1.3.4</div>
+  <div class="mission-title">Gestion des pièces détachées Twin-Otter réintégrées</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Aviation Civile (DAC-Pf)</span><span class="sep">|</span>
+    <span>2021</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Audits &amp; Conformité</span>
+  </div>
+  <div class="mission-desc">Inventaire détaillé et gestion administrative des pièces détachées de l'aéronef Twin-Otter F-OIQF réintégrées en Polynésie française suite à un rapatriement. Rapport d'inventaire complété avec traçabilité complète.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Inventaire sécurisé et transparent, pièces restituées régulièrement, responsabilité financière clarifiée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Audit de Sécurité et de Sûreté »</span>
+</div>
+
+<!-- 1.3.5 -->
+<div class="mission-card" id="m1-3-5">
+  <div class="mission-id">Mission 1.3.5</div>
+  <div class="mission-title">Dossiers conformité et certification – audits internes et externes – Air Loyauté</div>
+  <div class="mission-meta">
+    <span>Client : Air Loyauté</span><span class="sep">|</span>
+    <span>2020–2023</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Audits &amp; Conformité</span>
+  </div>
+  <div class="mission-desc">Gestion complète des dossiers de conformité et certification pour Air Loyauté : CTA (Certificat de Transport Aérien), Part-145, Part-M, Part-CAMO, Part-OPS. Préparation et accompagnement des audits internes et externes (autorités et auditeurs tiers).</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Certifications de transport aérien maintenues, audits réussis, conformité EASA démontrée en continu, opérations certifiées.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Accompagnement à la Certification d'une Compagnie Aérienne »</span>
+</div>
+
+<!-- 1.3.6 -->
+<div class="mission-card" id="m1-3-6">
+  <div class="mission-id">Mission 1.3.6</div>
+  <div class="mission-title">Système de gestion de la sécurité (SGS) – Renforcement et accompagnement – Air Loyauté</div>
+  <div class="mission-meta">
+    <span>Client : Air Loyauté</span><span class="sep">|</span>
+    <span>2021–2023</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Gestion de la Sécurité</span>
+  </div>
+  <div class="mission-desc">Accompagnement d'Air Loyauté dans le renforcement et la structuration de son système de gestion de la sécurité (SGS) : consolidation des processus de retour d'expérience (comptes rendus PNT/CRES/CRESAC), animation des instances SGS (SAG, SRB), définition et suivi d'indicateurs de sécurité opérationnelle, soutien aux audits internes.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Dispositif SGS consolidé, culture de sécurité mieux partagée au sein des équipes et pilotage plus fin des enjeux de sécurité opérationnelle.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Audit de Sécurité et de Sûreté de l'Aéroport International »</span>
+</div>
+
+<!-- 1.4 -->
+<div class="section-header" id="s1-4">
+  <div class="section-number">Section 1.4</div>
+  <div class="section-title">Documentation &amp; procédures opérationnelles</div>
+</div>
+
+<!-- 1.4.1 -->
+<div class="mission-card" id="m1-4-1">
+  <div class="mission-id">Mission 1.4.1</div>
+  <div class="mission-title">Certification et documentation opérationnelle – Islands Airline</div>
+  <div class="mission-meta">
+    <span>Client : Islands Airline</span><span class="sep">|</span>
+    <span>2019</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Documentation &amp; Certification</span>
+  </div>
+  <div class="mission-desc">Rédaction intégrale de 47 documents opérationnels pour certification d'exploitation : MANEX A (Politique générale), MANEX B (Procédures d'exploitation), MANEX C (Procédures de sécurité), MANEX D (Procédures techniques), MGN (Manuel de Gestion Normale), MGS (Manuel de Gestion de la Sécurité), ainsi que matrices complètes de conformité réglementaire.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Documentation opérationnelle complète et conforme, certification obtenue auprès de la DAC-Pf, opérations encadrées et sécurisées depuis le premier jour.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Accompagnement à la Certification d'une Compagnie Aérienne »</span>
+</div>
+
+<!-- 1.4.2 -->
+<div class="mission-card" id="m1-4-2">
+  <div class="mission-id">Mission 1.4.2</div>
+  <div class="mission-title">Procédures opérationnelles et gestion des opérations vol – Air Loyauté</div>
+  <div class="mission-meta">
+    <span>Client : Air Loyauté</span><span class="sep">|</span>
+    <span>2020–2023</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Documentation &amp; Certification</span>
+  </div>
+  <div class="mission-desc">Rédaction et mise à jour continue des procédures opérationnelles complètes : procédures de vol normal et anormal, approches, procédures d'urgence, manuel de vol des équipages, procédures de maintenance en ligne, processus de gestion des déroutements.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Équipages formés et calibrés, opérations standardisées, sécurité des vols optimisée, processus de gestion des incidents structurés.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Accompagnement à la Certification d'une Compagnie Aérienne »</span>
+</div>
+
+<!-- 1.4.3 -->
+<div class="mission-card" id="m1-4-3">
+  <div class="mission-id">Mission 1.4.3</div>
+  <div class="mission-title">Mise en place desserte inter-îles – Documentation et conformité – Tahiti Air Charter</div>
+  <div class="mission-meta">
+    <span>Client : Tahiti Air Charter (TAC)</span><span class="sep">|</span>
+    <span>2021</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Documentation &amp; Certification &amp; AMO</span>
+  </div>
+  <div class="mission-desc">Mise en place opérationnelle complète d'une nouvelle desserte inter-îles (Marquises). Rédaction du Manuel d'Exploitation (MEL), MANEX, procédures opérationnelles spécifiques terrain, documentation de conformité DAC-Pf, lettres d'approbation.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Nouvelle desserte lancée conformément à la réglementation, liaisons inter-îles sécurisées, acceptabilité DAC-Pf obtenue, populations insulaires desservies.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à « Étude de Desserte Aérienne des Îles Marquises »</span>
+</div>
+
+<!-- 1.4.4 -->
+<div class="mission-card" id="m1-4-4">
+  <div class="mission-id">Mission 1.4.4</div>
+  <div class="mission-title">Direction de l'Aviation Civile de Polynésie française – Création d'une nouvelle génération de RCO SSLIA</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Aviation Civile (DAC-Pf)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Documentation &amp; Certification</span>
+  </div>
+  <div class="mission-desc">Création d'une nouvelle génération de Recueils de Consignes Opérationnelles pour les opérations des pompiers d'aérodromes (SSLIA – Service de Secours et de Lutte contre les Incendies d'Aéronefs), avec concept innovant de document "Master" et base de données centralisée des procédures. Permet mise à jour simplifiée et conformité facilitée.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Recueils modernes et modulaires, maintenance documentaire simplifiée, conformité opérationnelle maintenue, procédures à jour en continu.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#documentation-certification">/expertise#documentation-certification</a>
+  <span class="filter-tag">Expertise : Documentation &amp; Certification</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Documentation &amp; Certification Opérationnelle »</span>
+</div>
+
+<!-- 1.4.5 -->
+<div class="mission-card" id="m1-4-5">
+  <div class="mission-id">Mission 1.4.5</div>
+  <div class="mission-title">Direction de l'Aviation Civile de Polynésie française – Création des Manuels d'Exploitation AFIS</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Aviation Civile (DAC-Pf)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Documentation &amp; Certification</span>
+  </div>
+  <div class="mission-desc">Création des Manuels d'Exploitation pour les services AFIS (Aerodrome Flight Information Service) avec concept "Master" et base de données des procédures d'information aéronautique de surface, exploitables sur tous les aérodromes polynésiens.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Manuels AFIS standardisés, cohérence informationnelle aéroportuaire améliorée, maintenance simplifiée, conformité opérationnelle continuée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#documentation-certification">/expertise#documentation-certification</a>
+  <span class="filter-tag">Expertise : Documentation &amp; Certification</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Documentation &amp; Certification Opérationnelle »</span>
+</div>
+
+<!-- 1.4.6 -->
+<div class="mission-card" id="m1-4-6">
+  <div class="mission-id">Mission 1.4.6</div>
+  <div class="mission-title">Direction de l'Aviation Civile de Polynésie française – Création des Manuels de Maintenance des assets électrotechniques</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Aviation Civile (DAC-Pf)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Documentation &amp; Certification</span>
+  </div>
+  <div class="mission-desc">Création de manuels techniques et de maintenance pour l'ensemble des assets électrotechniques gérés par la DAC-Pf (systèmes d'information, équipements aéroportuaires, transmissions). Concept "Master" avec base de données procédures pour maintenance prédictive et gestion d'actifs.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Manuels de maintenance techniques standardisés, maintenance prédictive possible, interruptions réduites, disponibilité des systèmes améliorée, coûts d'exploitation diminués.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#documentation-certification">/expertise#documentation-certification</a>
+  <span class="filter-tag">Expertise : Documentation &amp; Certification</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Documentation &amp; Certification Opérationnelle »</span>
+</div>
+
+<!-- 1.4.7 -->
+<div class="mission-card" id="m1-4-7">
+  <div class="mission-id">Mission 1.4.7</div>
+  <div class="mission-title">Réalisation de manuels d'exploitation UAV</div>
+  <div class="mission-meta">
+    <span>Client : Opérateur privé / DGEE (Service audiovisuel)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Documentation &amp; Certification</span>
+  </div>
+  <div class="mission-desc">Rédaction complète de manuels d'exploitation pour drones/UAV (Unmanned Aerial Vehicles), incluant procédures de vol, maintenance, consignes de sécurité, procédures d'urgence, conformité réglementaire française/européenne.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Documentation UAV complète et conforme, opérateurs qualifiés et certifiés, exploitation sécurisée des drones, missions d'imagerie aérienne professionnelles et réglementaires.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#documentation-certification">/expertise#documentation-certification</a>
+  <span class="filter-tag">Expertise : Documentation &amp; Certification</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Documentation &amp; Certification Opérationnelle » — manuels UAV</span>
+</div>
+
+<!-- 1.5 -->
+<div class="section-header" id="s1-5">
+  <div class="section-number">Section 1.5</div>
+  <div class="section-title">Gestion de la sécurité &amp; études spécifiques</div>
+</div>
+
+<!-- 1.5.1 -->
+<div class="mission-card" id="m1-5-1">
+  <div class="mission-id">Mission 1.5.1</div>
+  <div class="mission-title">Étude de sécurité – exploitation inter-îles en archipel montagneux – Marquises</div>
+  <div class="mission-meta">
+    <span>Client : Tahiti Air Charter (TAC)</span><span class="sep">|</span>
+    <span>2021</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Gestion de la Sécurité</span>
+  </div>
+  <div class="mission-desc">Étude de sécurité spécifique et approfondie pour l'exploitation aérienne en terrain montagneux des Marquises. Cartographie complète des risques terrain, des facteurs météorologiques, des trajectoires de vol critiques, évaluation de l'acceptabilité sécurité et recommandations.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Sécurité opérationnelle démontrée malgré terrain exigeant, acceptabilité DAC-Pf pour exploitation obtenue, opérations Marquises approuvées et sûres.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Étude de Desserte Aérienne des Îles Marquises »</span>
+</div>
+
+<!-- 1.5.2 -->
+<div class="mission-card" id="m1-5-2">
+  <div class="mission-id">Mission 1.5.2</div>
+  <div class="mission-title">Continuité territoriale aérienne interinsulaire – cadre et propositions</div>
+  <div class="mission-meta">
+    <span>Client : Ministère des Transports / MLA (Aérodromes)</span><span class="sep">|</span>
+    <span>2021</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie / Gestion de la Sécurité</span>
+  </div>
+  <div class="mission-desc">Présentation du cadre réglementaire et stratégique de la continuité territoriale aérienne pour les liaisons inter-îles, avec propositions de renforcement du dispositif d'aide publique, amélioration de l'accessibilité, modèles économiques optimisés.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Cadre politique clarifié, propositions de continuité territoriale validées, allocation des aides optimisée, connectivité inter-îles renforcée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Études stratégiques</span>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Mission « Analyse de la Continuité Territoriale Aérienne »</span>
+</div>
+
+<!-- 1.5.3 -->
+<div class="mission-card" id="m1-5-3">
+  <div class="mission-id">Mission 1.5.3</div>
+  <div class="mission-title">Diverses Études d'Impacts sur la Sécurité Aéroportuaire (EISA) – DAC-Pf</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Aviation Civile (DAC-Pf)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Gestion de la Sécurité</span>
+  </div>
+  <div class="mission-desc">Réalisation d'études d'impacts sur la sécurité aéroportuaire (EISA) pour diverses modifications opérationnelles ou infrastructurelles sur les plateformes aéroportuaires polynésiennes. Cartographie des risques de sécurité, recommandations d'atténuation.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Impacts sécurité aéroportuaire identifiés en amont, risques minorés, modifications validées sécuritairement, conformité réglementaire maintenue.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aviation civile</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Audit de Sécurité et de Sûreté de l'Aéroport International »</span>
+</div>
+
+<!-- 1.6 -->
+<div class="section-header" id="s1-6">
+  <div class="section-number">Section 1.6</div>
+  <div class="section-title">Drones, modélisation et nouvelles technologies</div>
+</div>
+
+<!-- 1.6.1 -->
+<div class="mission-card" id="m1-6-1">
+  <div class="mission-id">Mission 1.6.1</div>
+  <div class="mission-title">Étude d'exploration des opportunités de déploiement des drones en Polynésie française</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Aviation Civile (DAC-Pf)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Étude stratégique exploratoire sur les opportunités de déploiement des drones/UAV en Polynésie française : usages civils (surveillance, imagerie, inspection), cadre réglementaire européen applicable, enjeux sécurité aérienne, modèles économiques d'exploitation, recommandations de politique publique.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Stratégie drone clarifiée, cadre réglementaire défini, opportunités commerciales identifiées, feuille de route gouvernementale pour le secteur UAV.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#etudes-strategie">/expertise#etudes-strategie</a>
+  <span class="filter-tag">Expertise : Études &amp; Stratégie</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Études Stratégiques » — opportunités drones/UAV</span>
+</div>
+
+<!-- 1.6.2 -->
+<div class="mission-card" id="m1-6-2">
+  <div class="mission-id">Mission 1.6.2</div>
+  <div class="mission-title">Outil de modélisation de la desserte en Polynésie française</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Aviation Civile (DAC-Pf)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Développement d'un outil/modèle de simulation permettant de modéliser la desserte aérienne inter-îles en fonction de paramètres variables (flottes aériennes, capacités, fréquences, coûts, connectivité, accessibilité). Aide à la décision stratégique pour optimisation de la continuité territoriale.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Outil de planification stratégique disponible, scénarios de desserte visualisables, décisions publiques aéronautiques mieux informées, résilience de la connectivité améliorée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Études stratégiques</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à « Modélisation Économique du Trafic Aérien Post-Covid »</span>
+</div>
+
+<!-- 1.6.3 -->
+<div class="mission-card" id="m1-6-3">
+  <div class="mission-id">Mission 1.6.3</div>
+  <div class="mission-title">Pacific Blue Consulting – Missions d'imagerie aérienne par télépilote</div>
+  <div class="mission-meta">
+    <span>Client : Pacific Blue Consulting interne</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Aérien</span><span class="sep">|</span>
+    <span>Famille : Services nouveaux</span>
+  </div>
+  <div class="mission-desc">Le président de Pacific Blue Consulting, télépilote qualifié (qualifications européennes), réalise des missions d'imagerie aérienne professionnelle avec matériel DJI (drones de haute qualité) pour clients institutionnels et privés. Surveils infrastructures aéroportuaires, cartographie, inspection, documentation visuelle.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Imagerie aérienne professionnelle et conforme, données visuelles de haute résolution, expertise en acquisition de données aériennes, rapports d'inspection complets.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#etudes-strategie">/expertise#etudes-strategie</a>
+  <span class="filter-tag">Expertise : Études &amp; Stratégie</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Compétence drone/télépilote — section Études &amp; innovation</span>
+</div>
+
+
+<!-- ================================================================== -->
+<!-- 2. AEROPORTS ET INFRASTRUCTURES -->
+<!-- ================================================================== -->
+<div class="chapter-header" id="ch2">
+  <div class="chapter-number">Chapitre 2</div>
+  <h2 class="chapter-title">Aéroports et Infrastructures</h2>
+</div>
+
+<!-- 2.1 -->
+<div class="section-header" id="s2-1">
+  <div class="section-number">Section 2.1</div>
+  <div class="section-title">Aérodromes et aéroports</div>
+</div>
+
+<!-- 2.1.1 -->
+<div class="mission-card" id="m2-1-1">
+  <div class="mission-id">Mission 2.1.1</div>
+  <div class="mission-title">Diagnostic et plans d'amélioration – exploitation piste aéroport insulaire (Aratika)</div>
+  <div class="mission-meta">
+    <span>Client : Dexios / Aratika</span><span class="sep">|</span>
+    <span>2020</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Audit opérationnel approfondi de la plateforme aéroportuaire d'Aratika (sud). Analyse complète des infrastructures, aspects sol, capacités opérationnelles, opérations aériennes. Identification des points forts et vulnérabilités, recommandations préconisations.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Décision d'exploitation fondée sur diagnostic solide, risques opérationnels identifiés, solutions d'amélioration priorisées, investissements futurs orientés.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aéroports &amp; Infrastructures</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Schéma Directeur des Aérodromes des Îles Sous-le-Vent »</span>
+</div>
+
+<!-- 2.1.2 -->
+<div class="mission-card" id="m2-1-2">
+  <div class="mission-id">Mission 2.1.2</div>
+  <div class="mission-title">Diagnostic de conformité du réseau d'aérodromes polynésiens</div>
+  <div class="mission-meta">
+    <span>Client : MLA (Aérodromes)</span><span class="sep">|</span>
+    <span>2021</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Audits &amp; Conformité</span>
+  </div>
+  <div class="mission-desc">Audit complet de conformité réglementaire pour l'ensemble du réseau d'aérodromes polynésiens gérés par MLA. Analyse des constats d'autorité, description des activités d'exploitation, identification des écarts, plan d'actions hiérarchisé.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Vision d'ensemble de la conformité du réseau, priorités d'amélioration clarifiées, stratégie de conformité définie, dossiers d'autorités structurés.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aéroports &amp; Infrastructures</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Schéma Directeur des Aérodromes des Îles Sous-le-Vent »</span>
+</div>
+
+<!-- 2.1.3 -->
+<div class="mission-card" id="m2-1-3">
+  <div class="mission-id">Mission 2.1.3</div>
+  <div class="mission-title">Certification des aéroports – dossiers par aérodrome</div>
+  <div class="mission-meta">
+    <span>Client : MLA (Aérodromes)</span><span class="sep">|</span>
+    <span>2021</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Audits &amp; Conformité</span>
+  </div>
+  <div class="mission-desc">Préparation et rédaction de dossiers de certification pour chaque aérodrome du réseau. Documentation technique, déclaration de conformité, soumission auprès de la DGAC pour obtention/maintien des certifications d'exploitation.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Certifications aéroportuaires à jour pour toutes les plateformes, opérations régulières autorisées, conformité réglementaire continuée, risque de suspension réduit.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aéroports &amp; Infrastructures</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Schéma Directeur des Aérodromes »</span>
+</div>
+
+<!-- 2.1.4 -->
+<div class="mission-card" id="m2-1-4">
+  <div class="mission-id">Mission 2.1.4</div>
+  <div class="mission-title">Étude de faisabilité – Classification aéroport international – Lifou (Wanaham)</div>
+  <div class="mission-meta">
+    <span>Client : Terciel / Lifou</span><span class="sep">|</span>
+    <span>2022</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Étude approfondie de faisabilité pour la classification d'une plateforme de Lifou (Wanaham) comme aéroport international. Analyse des contraintes techniques, réglementaires, commerciales, scénarios d'investissement et modèle économique initial.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Décideurs munis d'analyse solide sur faisabilité, études ultérieures guidées, stratégie d'investissement aéroportuaire validée, développement territorial envisageable.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aéroports &amp; Infrastructures</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à « AMO Extension de Piste d'un Aérodrome Insulaire »</span>
+</div>
+
+<!-- 2.1.5 -->
+<div class="mission-card" id="m2-1-5">
+  <div class="mission-id">Mission 2.1.5</div>
+  <div class="mission-title">Étude de création d'un aéroport ouvert à la CAP sur les terres de la tribu de Hmelek</div>
+  <div class="mission-meta">
+    <span>Client : Province des Îles / Lifou</span><span class="sep">|</span>
+    <span>2022</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie &amp; AMO</span>
+  </div>
+  <div class="mission-desc">Étude de faisabilité technique, réglementaire et socio-économique pour la création d'une plateforme aéroportuaire ouverte à la circulation aérienne publique (CAP) sur les terres de la communauté de Hmelek. Concertation locale, conformité foncière, autorisation, modèle de gestion.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Projet d'infrastructure territoriale étudié complètement, acceptabilité locale confirmée, dossiers administratifs prêts, vision stratégique de développement structurée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aéroports &amp; Infrastructures + AMO &amp; Pilotage</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à « AMO Extension de Piste d'un Aérodrome Insulaire »</span>
+</div>
+
+<!-- 2.2 -->
+<div class="section-header" id="s2-2">
+  <div class="section-number">Section 2.2</div>
+  <div class="section-title">Schémas d'aménagement et adaptation réglementaire</div>
+</div>
+
+<!-- 2.2.1 -->
+<div class="mission-card" id="m2-2-1">
+  <div class="mission-id">Mission 2.2.1</div>
+  <div class="mission-title">Direction de l'Aviation Civile de Polynésie française – Élaboration d'un schéma d'aménagement des plateformes aéroportuaires de Moorea et Huahine</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Aviation Civile (DAC-Pf)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Élaboration d'un schéma directeur d'aménagement aéroportuaire pour les deux grandes plateformes insulaires de Moorea et Huahine. Analyse des besoins (capacités, services, connectivité), schémas d'évolution, priorités d'infrastructure, modèles d'exploitation.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Schéma directeur aéroportuaire défini, investissements futurs priorisés, développement touristique cohérent, connectivité régionale planifiée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Aéroports &amp; Infrastructures</span>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Mission « Schéma Directeur des Aérodromes des Îles Sous-le-Vent »</span>
+</div>
+
+<!-- 2.2.2 -->
+<div class="mission-card" id="m2-2-2">
+  <div class="mission-id">Mission 2.2.2</div>
+  <div class="mission-title">Tahiti Beachcomber SA – Air Tetiaroa : Accompagnement à la levée des non-conformités de la piste de Tetiaroa</div>
+  <div class="mission-meta">
+    <span>Client : Tahiti Beachcomber SA (Air Tetiaroa)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie / Gestion de la Sécurité</span>
+  </div>
+  <div class="mission-desc">Accompagnement stratégique pour résolution des écarts de conformité identifiés sur la piste d'atterrissage de Tetiaroa. Mise en place de stratégie d'adaptation réglementaire, études de sécurité démonstratives (notamment sur l'inutilité de la mise en place d'une Aire de Sécurité d'Extrémité de Piste – RESA), optimisation des investissements aéroportuaires.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Écarts de conformité résorbés de manière économiquement viable, exploitations autorisées de manière pérenne, piste de Tetiaroa certifiée, activités touristiques aériennes pérennisées.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#etudes-strategie">/expertise#etudes-strategie</a>
+  <span class="filter-tag">Expertise : Aéroports &amp; Infrastructures Aéroportuaires</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par les compétences audits/conformité aéroportuaire</span>
+</div>
+
+<!-- 2.3 -->
+<div class="section-header" id="s2-3">
+  <div class="section-number">Section 2.3</div>
+  <div class="section-title">Aéroports marins et projets innovants</div>
+</div>
+
+<!-- 2.3.1 -->
+<div class="mission-card" id="m2-3-1">
+  <div class="mission-id">Mission 2.3.1</div>
+  <div class="mission-title">Modèle économique pour société d'aéroports marins innovants – Terciel SAS</div>
+  <div class="mission-meta">
+    <span>Client : Terciel SAS</span><span class="sep">|</span>
+    <span>2022</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Création/Structuration &amp; Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Élaboration du modèle économique détaillé pour Terciel SAS, société créée pour exploiter des aéroports marins et flottants innovants. Description complète des services, identification des segments clients, modèles de revenus (landing fees, services à l'aéronef, carburant), pricing, scénarios financiers.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Modèle économique validé auprès d'investisseurs, structure financière de l'entreprise clarifiée, viabilité économique démontrée, mise en place commerciale guidée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#etudes-strategie">/expertise#etudes-strategie</a>
+  <span class="filter-tag">Expertise : Études Stratégiques &amp; Modélisation Économique</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par la compétence modélisation économique</span>
+</div>
+
+<!-- 2.3.2 -->
+<div class="mission-card" id="m2-3-2">
+  <div class="mission-id">Mission 2.3.2</div>
+  <div class="mission-title">Brochure commerciale et présentation des produits aéroportuaires – Terciel</div>
+  <div class="mission-meta">
+    <span>Client : Terciel SAS</span><span class="sep">|</span>
+    <span>2022</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Création/Structuration</span>
+  </div>
+  <div class="mission-desc">Rédaction d'une brochure commerciale professionnelle présentant la proposition de valeur de Terciel : services innovants d'aéroports marins/flottants, avantages compétitifs, offre standard, calendrier de développement, vision stratégique.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Outils commerciaux disponibles pour prospection, clients potentiels informés sur offre différenciée, positionnement marché clarifié, démarche commerciale lancée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#etudes-strategie">/expertise#etudes-strategie</a>
+  <span class="filter-tag">Expertise : Aéroports &amp; Infrastructures</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par les compétences de structuration aéroportuaire</span>
+</div>
+
+<!-- 2.3.3 -->
+<div class="mission-card" id="m2-3-3">
+  <div class="mission-id">Mission 2.3.3</div>
+  <div class="mission-title">Cahier des charges – Aéroports marins et flottants – Terciel</div>
+  <div class="mission-meta">
+    <span>Client : Terciel SAS</span><span class="sep">|</span>
+    <span>2022</span><span class="sep">|</span>
+    <span>Domaine : Infrastructures</span><span class="sep">|</span>
+    <span>Famille : Création/Structuration</span>
+  </div>
+  <div class="mission-desc">Rédaction d'un cahier des charges fonctionnel et technique pour la conception et construction de plateformes aéroportuaires marines et flottantes innovantes. Spécifications techniques marines, normes de sécurité flottaison, capacités d'accueil, interfaces aéronautiques.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Cahier des charges précis pour mise en oeuvre, spécifications techniques validées, contractualisation avec constructeurs facilitée, qualité des réalisations assurée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#amo-projets">/expertise#amo-projets</a>
+  <span class="filter-tag">Expertise : AMO &amp; Pilotage de Projets Complexes</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par la compétence « Rédaction des cahiers des charges et spécifications »</span>
+</div>
+
+
+<!-- ================================================================== -->
+<!-- 3. ENVIRONNEMENT & BIODIVERSITE -->
+<!-- ================================================================== -->
+<div class="chapter-header" id="ch3">
+  <div class="chapter-number">Chapitre 3</div>
+  <h2 class="chapter-title">Environnement &amp; Biodiversité</h2>
+</div>
+
+<!-- 3.1 -->
+<div class="section-header" id="s3-1">
+  <div class="section-number">Section 3.1</div>
+  <div class="section-title">Certification biodiversité et dispositifs environnementaux</div>
+</div>
+
+<!-- 3.1.1 -->
+<div class="mission-card" id="m3-1-1">
+  <div class="mission-id">Mission 3.1.1</div>
+  <div class="mission-title">Certification biodiversité – Développement, déploiement et promotion</div>
+  <div class="mission-meta">
+    <span>Client : DIREN (Direction de l'Environnement)</span><span class="sep">|</span>
+    <span>2021–2023</span><span class="sep">|</span>
+    <span>Domaine : Environnement</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie / Formation &amp; Communication</span>
+  </div>
+  <div class="mission-desc">Conception, mise en place et promotion du dispositif de certification « Entreprise protégeant la biodiversité » en Polynésie française. La mission a couvert l'élaboration des critères et du processus de certification, ainsi que l'animation d'ateliers et de présentations auprès des compagnies aériennes afin de les sensibiliser aux enjeux de biodiversité et aux bénéfices RSE associés.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Dispositif de certification crédible et opérationnel, compagnies aériennes mieux informées et engagées, et valorisation des démarches environnementales auprès des clients et partenaires institutionnels.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Environnement &amp; Carbone</span>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Mission « Plan de Gestion de la Biodiversité Aéroportuaire »</span>
+</div>
+
+<!-- 3.1.2 -->
+<div class="mission-card" id="m3-1-2">
+  <div class="mission-id">Mission 3.1.2</div>
+  <div class="mission-title">Certification biodiversité – Analyse et amélioration du processus</div>
+  <div class="mission-meta">
+    <span>Client : DIREN (Direction de l'Environnement)</span><span class="sep">|</span>
+    <span>2021</span><span class="sep">|</span>
+    <span>Domaine : Environnement</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Phase 3 du projet : analyse critique du processus de certification biodiversité, cartographie des risques de sécurité et de viabilité du programme, propositions d'amélioration pour robustesse, acceptabilité compagnies, viabilité financière du dispositif.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Processus de certification biodiversité robuste et pérenne, acceptabilité clients aériens améliorée, programme DIREN viable à long terme, impacts environnementaux réels démontrés.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Environnement &amp; Carbone</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Plan de Gestion de la Biodiversité Aéroportuaire »</span>
+</div>
+
+<!-- 3.1.3 -->
+<div class="mission-card" id="m3-1-3">
+  <div class="mission-id">Mission 3.1.3</div>
+  <div class="mission-title">Direction de l'Environnement – Actualisation du dispositif d'évaluation environnementale (EIE – NIE) en Polynésie française</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Environnement (DAE-Pf)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Environnement</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie / Documentation &amp; Certification</span>
+  </div>
+  <div class="mission-desc">Actualisation complète du dispositif d'Études d'Impacts sur l'Environnement (EIE) et Notices d'Impacts Environnementaux (NIE) en Polynésie française. Révision des critères, processus, contenus attendus, harmonisation avec normes internationales, formation des évaluateurs.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Dispositif EIE/NIE modernisé et harmonisé, évaluations environnementales de meilleure qualité, projets d'infrastructure mieux informés, conformité environnementale facilitée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#etudes-strategie">/expertise#etudes-strategie</a>
+  <span class="filter-tag">Expertise : Environnement, Biodiversité &amp; Bilan Carbone</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Études d'impact environnemental de projets aéronautiques »</span>
+</div>
+
+<!-- 3.2 -->
+<div class="section-header" id="s3-2">
+  <div class="section-number">Section 3.2</div>
+  <div class="section-title">Climat, décarbonation et bilan carbone</div>
+</div>
+
+<!-- 3.2.1 -->
+<div class="mission-card" id="m3-2-1">
+  <div class="mission-id">Mission 3.2.1</div>
+  <div class="mission-title">Direction de l'Aviation Civile de Polynésie française – Évaluation du bilan carbone de la DAC-Pf et élaboration d'une feuille de route pour la décarbonation</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Aviation Civile (DAC-Pf)</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Environnement</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie / RSE</span>
+  </div>
+  <div class="mission-desc">Évaluation complète du bilan carbone institutionnel de la DAC-Pf (opérations, déplacements, infrastructure). Identification des sources d'émissions majeures, élaboration d'une feuille de route ambitieuse de décarbonation avec objectifs chiffrés, actions prioritaires, métriques de suivi.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Bilan carbone DAC-Pf établi, engagement climatique affirmé institutionnellement, feuille de route décarbonation adoptée, crédibilité de l'institution sur RSE renforcée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Environnement &amp; Carbone</span>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Mission « Bilan Carbone de l'Aviation Civile en Polynésie française »</span>
+</div>
+
+
+<!-- ================================================================== -->
+<!-- 4. FORMATION & MANAGEMENT -->
+<!-- ================================================================== -->
+<div class="chapter-header" id="ch4">
+  <div class="chapter-number">Chapitre 4</div>
+  <h2 class="chapter-title">Formation &amp; Management</h2>
+</div>
+
+<!-- 4.1 -->
+<div class="section-header" id="s4-1">
+  <div class="section-number">Section 4.1</div>
+  <div class="section-title">Formations et accompagnement managérial</div>
+</div>
+
+<!-- 4.1.1 -->
+<div class="mission-card" id="m4-1-1">
+  <div class="mission-id">Mission 4.1.1</div>
+  <div class="mission-title">Missions de formation CNAM – Club des Managers</div>
+  <div class="mission-meta">
+    <span>Client : CNAM</span><span class="sep">|</span>
+    <span>2021–2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours</span>
+  </div>
+  <div class="mission-desc">Animation du Club des Managers du CNAM Polynésie française. Des sessions de travail collectif réunissant cadres publics et privés autour de thèmes : gestion de projet, conduite du changement, management stratégique, networking de cadres, préparation aux concours d'accès.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Réseau de cadres renforcé, compétences managériales développées, réussite accrue aux concours d'accès (grades supérieurs, maîtrises de gestion publique), cohésion réseau professionnel.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Formation &amp; Management</span>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Mission « Formation en Management de Projets Aéroportuaires »</span>
+</div>
+
+<!-- 4.1.2 -->
+<div class="mission-card" id="m4-1-2">
+  <div class="mission-id">Mission 4.1.2</div>
+  <div class="mission-title">Ateliers de codéveloppement – Club des Managers</div>
+  <div class="mission-meta">
+    <span>Client : CNAM</span><span class="sep">|</span>
+    <span>2021–2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours</span>
+  </div>
+  <div class="mission-desc">Animation de séances de codéveloppement professionnel au sein du Club des Managers, réunissant des cadres autour de leurs situations réelles de management, selon une méthode structurée d'intelligence collective. Chaque participant alterne les rôles de « client » et de « consultant », afin de travailler ses propres enjeux tout en contribuant à ceux de ses pairs dans un cadre de confiance, de confidentialité et de bienveillance.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Prise de recul sur les pratiques managériales, solutions co-construites et immédiatement actionnables, renforcement du soutien entre pairs et développement durable de la posture de manager-coach.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Formation en Management de Projets Aéroportuaires »</span>
+</div>
+
+<!-- 4.1.3 -->
+<div class="mission-card" id="m4-1-3">
+  <div class="mission-id">Mission 4.1.3</div>
+  <div class="mission-title">Formation Gestion de Projet – CNAM</div>
+  <div class="mission-meta">
+    <span>Client : CNAM</span><span class="sep">|</span>
+    <span>2021–2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours</span>
+  </div>
+  <div class="mission-desc">Formation de cadres publics et privés à la gestion de projet : fondamentaux (périmètre, délais, ressources, budget), méthodes (Gantt, charge, risques), outils numériques, certification. Préparation à la Licence de Gestion de Projet CNAM et certifications reconnus.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Cadres formés et certifiés en gestion de projet, projets institutionnels/privés mieux structurés et livrés, efficacité managériale augmentée, employabilité des participants renforcée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Formation en Management de Projets Aéroportuaires »</span>
+</div>
+
+<!-- 4.1.4 -->
+<div class="mission-card" id="m4-1-4">
+  <div class="mission-id">Mission 4.1.4</div>
+  <div class="mission-title">Formation Conduite du Changement – CNAM</div>
+  <div class="mission-meta">
+    <span>Client : CNAM</span><span class="sep">|</span>
+    <span>2021–2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours</span>
+  </div>
+  <div class="mission-desc">Formation à la conduite du changement organisationnel : diagnostic de l'état de changement, modèles de transformation (Kotter, Lewin), communication du changement, gestion de la résistance, engagement collectif, suivi du changement.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Managers outillés pour conduire transformations organisationnelles, changements mieux acceptés et intégrés, risques de blocage réduits, transitions réussies au sein des organisations.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#formation-concours">/expertise#formation-concours</a>
+  <span class="filter-tag">Expertise : Formation &amp; Management</span>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Ateliers de conduite du changement »</span>
+</div>
+
+<!-- 4.1.5 -->
+<div class="mission-card" id="m4-1-5">
+  <div class="mission-id">Mission 4.1.5</div>
+  <div class="mission-title">Formation Culture Générale, Économique et Managériale – CNAM</div>
+  <div class="mission-meta">
+    <span>Client : CNAM</span><span class="sep">|</span>
+    <span>2021–2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours</span>
+  </div>
+  <div class="mission-desc">Formation à la culture générale économique, managériale et institutionnelle : contexte économique polynésien, principes de gestion publique, stratégie d'entreprise, tendances sectorielles, enjeux de gouvernance.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Compréhension contexte économique/politique/managérial renforcée, culture générale solidifiée, vision stratégique élargie, préparation aux postes de responsabilité facilitée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#formation-concours">/expertise#formation-concours</a>
+  <span class="filter-tag">Expertise : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par les compétences formation managériale</span>
+</div>
+
+<!-- 4.1.6 -->
+<div class="mission-card" id="m4-1-6">
+  <div class="mission-id">Mission 4.1.6</div>
+  <div class="mission-title">Tutoring – Préparation Licence Management – CNAM</div>
+  <div class="mission-meta">
+    <span>Client : CNAM</span><span class="sep">|</span>
+    <span>2021–2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours</span>
+  </div>
+  <div class="mission-desc">Accompagnement personnalisé (tutoring) d'étudiants CNAM dans leur préparation à la Licence de Gestion et Management. Coaching individualisé, accompagnement mémoire, préparation examen, suivi insertion professionnelle.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Apprenants accompagnés sur mesure, réussite à la Licence améliorée, insertion professionnelle facilitée, trajectoires de carrière accélérées.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#formation-concours">/expertise#formation-concours</a>
+  <span class="filter-tag">Expertise : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Coaching de dirigeants et de cadres »</span>
+</div>
+
+<!-- 4.1.7 -->
+<div class="mission-card" id="m4-1-7">
+  <div class="mission-id">Mission 4.1.7</div>
+  <div class="mission-title">Concours DGRH – Élaboration de sujets et correction de copies</div>
+  <div class="mission-meta">
+    <span>Client : CNAM / DGRH Polynésie française</span><span class="sep">|</span>
+    <span>2020–2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours</span>
+  </div>
+  <div class="mission-desc">Élaboration de sujets d'épreuves d'admissibilité et correction des copies pour l'examen professionnel d'accès au grade d'ingénieur en chef (Lot 4 des concours DGRH), incluant organisation matérielle, production de sujets principaux et de secours, et correction des notes de synthèse conformément au cadre réglementaire en vigueur.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Sécurisation du déroulement des concours, sujets conformes au niveau attendu, corrections homogènes et traçables, bon déroulement des examens professionnels DGRH.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#formation-concours">/expertise#formation-concours</a>
+  <span class="filter-tag">Expertise : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par la compétence « concours et examens professionnels »</span>
+</div>
+
+<!-- 4.2 -->
+<div class="section-header" id="s4-2">
+  <div class="section-number">Section 4.2</div>
+  <div class="section-title">Formation aéronautique &amp; centres agréés</div>
+</div>
+
+<!-- 4.2.1 -->
+<div class="mission-card" id="m4-2-1">
+  <div class="mission-id">Mission 4.2.1</div>
+  <div class="mission-title">Mise en place clés en main d'un centre Part-147 – infrastructure et agrément – Air Formation</div>
+  <div class="mission-meta">
+    <span>Client : Air Formation</span><span class="sep">|</span>
+    <span>2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours / Création/Structuration</span>
+  </div>
+  <div class="mission-desc">Création complète d'un centre de formation Part-147 agréé par l'EASA pour la formation en maintenance aéronautique. Conception infrastructure, obtention agrément EASA, organisation pédagogique, recrutement équipe, lancement formations.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Centre Part-147 agréé opérationnel, filière de formation aéronautique locale établie, promos d'étudiants certifiés, capacité technique régionale de maintenance renforcée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Intégré dans « Formation en Management de Projets Aéroportuaires »</span>
+</div>
+
+<!-- 4.2.2 -->
+<div class="mission-card" id="m4-2-2">
+  <div class="mission-id">Mission 4.2.2</div>
+  <div class="mission-title">Recrutement et qualification d'instructeurs Part-147 – Air Formation</div>
+  <div class="mission-meta">
+    <span>Client : Air Formation</span><span class="sep">|</span>
+    <span>2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours / Création/Structuration</span>
+  </div>
+  <div class="mission-desc">Processus complet de recrutement et qualification d'instructeurs Part-147. Annonce et sélection profils, formations en ligne (e-learning), examens de qualification, agrément EASA comme instructeurs certifiés.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Pool d'instructeurs Part-147 qualifiés et agréés EASA, formations de qualité garantie, équipe pédagogique stable et professionnelle, reconnaissance EASA du centre confirmée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#formation-concours">/expertise#formation-concours</a>
+  <span class="filter-tag">Expertise : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Transfert de compétences et montée en capacité »</span>
+</div>
+
+<!-- 4.2.3 -->
+<div class="mission-card" id="m4-2-3">
+  <div class="mission-id">Mission 4.2.3</div>
+  <div class="mission-title">Livrets et supports de formation aéronautique (MTOE) – Air Formation</div>
+  <div class="mission-meta">
+    <span>Client : Air Formation</span><span class="sep">|</span>
+    <span>2022</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Formation &amp; Concours</span>
+  </div>
+  <div class="mission-desc">Rédaction complète de livrets et supports pédagogiques pour la formation aéronautique MTOE (Maintenance Training Organisation Exposition). Contenus théoriques, études de cas, exercices pratiques, documentation conforme aux standards EASA.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Étudiants munis de supports pédagogiques complets, formation reconnue, compétences de maintenance structurées, certifications EASA acquises à l'issue.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#formation-concours">/expertise#formation-concours</a>
+  <span class="filter-tag">Expertise : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par la compétence formation aéronautique</span>
+</div>
+
+<!-- 4.3 -->
+<div class="section-header" id="s4-3">
+  <div class="section-number">Section 4.3</div>
+  <div class="section-title">Organisation, RH et accompagnement entrepreneurial</div>
+</div>
+
+<!-- 4.3.1 -->
+<div class="mission-card" id="m4-3-1">
+  <div class="mission-id">Mission 4.3.1</div>
+  <div class="mission-title">Organisation &amp; fonction RH – Structuration et appui managérial – Air Loyauté</div>
+  <div class="mission-meta">
+    <span>Client : Air Loyauté</span><span class="sep">|</span>
+    <span>2020–2023</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Organisation &amp; Management</span>
+  </div>
+  <div class="mission-desc">Accompagnement d'Air Loyauté dans l'évolution de son organisation interne et de sa fonction ressources humaines : clarification des responsabilités, analyse des processus décisionnels, structuration des principaux processus RH (recrutement, intégration, suivi des compétences, formations des équipages) et appui à la mise en place d'outils de pilotage des effectifs.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Organisation plus lisible, fonctions RH mieux outillées, responsabilités mieux identifiées et contribution renforcée de la dimension managériale et RH au pilotage global de la compagnie.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#formation-concours">/expertise#formation-concours</a>
+  <span class="filter-tag">Expertise : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Coaching de dirigeants et de cadres »</span>
+</div>
+
+<!-- 4.3.2 -->
+<div class="mission-card" id="m4-3-2">
+  <div class="mission-id">Mission 4.3.2</div>
+  <div class="mission-title">Accompagnement à la création d'entreprises individuelles ou de sociétés</div>
+  <div class="mission-meta">
+    <span>Client : Divers entrepreneurs / Service de Développement Économique</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Formation</span><span class="sep">|</span>
+    <span>Famille : Création/Structuration &amp; Conseil</span>
+  </div>
+  <div class="mission-desc">Accompagnement global de porteurs de projets en création d'entreprise : faisabilité économique, montage juridique/fiscal, business plan, financement, immatriculation, premiers pas opérationnels. Coaching entrepreneurial intensif.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Entrepreneurs outillés et confiants, entreprises créées sur fondations solides, taux de survie à 3 ans amélioré, structures juridiques optimisées, accès financement facilité.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#formation-concours">/expertise#formation-concours</a>
+  <span class="filter-tag">Expertise : Formation &amp; Management</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Coaching de dirigeants et de cadres » + compétences structuration</span>
+</div>
+
+
+<!-- ================================================================== -->
+<!-- 5. ETUDES, STRATEGIE & AMO -->
+<!-- ================================================================== -->
+<div class="chapter-header" id="ch5">
+  <div class="chapter-number">Chapitre 5</div>
+  <h2 class="chapter-title">Études, Stratégie &amp; AMO</h2>
+</div>
+
+<!-- 5.1 -->
+<div class="section-header" id="s5-1">
+  <div class="section-number">Section 5.1</div>
+  <div class="section-title">Études &amp; stratégie sectorielle</div>
+</div>
+
+<!-- 5.1.1 -->
+<div class="mission-card" id="m5-1-1">
+  <div class="mission-id">Mission 5.1.1</div>
+  <div class="mission-title">Mise en place DSP Wallis &amp; Futuna – Assistance stratégique et opérationnelle – Air Loyauté</div>
+  <div class="mission-meta">
+    <span>Client : Air Loyauté</span><span class="sep">|</span>
+    <span>2021–2023</span><span class="sep">|</span>
+    <span>Domaine : Études, Stratégie &amp; AMO</span><span class="sep">|</span>
+    <span>Famille : AMO &amp; Projets / Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Assistance stratégique et opérationnelle complète pour la mise en place d'un Dispositif de Service Public (DSP) Wallis &amp; Futuna opéré par Air Loyauté. Stratégie opérationnelle, calendrier de lancement, configuration flotte, définition procédures, contrats, accompagnement premiers vols.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> DSP Wallis &amp; Futuna mis en place à terme, opérations robustes et sécurisées, continuité territoriale de Wallis &amp; Futuna assurée, populations desservies régulièrement.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : AMO &amp; Pilotage</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à « AMO Extension de Piste d'un Aérodrome Insulaire »</span>
+</div>
+
+<!-- 5.1.2 -->
+<div class="mission-card" id="m5-1-2">
+  <div class="mission-id">Mission 5.1.2</div>
+  <div class="mission-title">Installation d'une activité ULM – Dossier de présentation et conformité – MOZ ULM Moorea</div>
+  <div class="mission-meta">
+    <span>Client : MOZ ULM Polynésie</span><span class="sep">|</span>
+    <span>2021</span><span class="sep">|</span>
+    <span>Domaine : Études, Stratégie &amp; AMO</span><span class="sep">|</span>
+    <span>Famille : AMO &amp; Projets</span>
+  </div>
+  <div class="mission-desc">Assistance complète pour installation d'une base ULM (Ultra-Léger Motorisé) à Moorea. Rédaction dossier de présentation, lettre de demande auprès de DAC-Pf, justification sécurité, conformité infrastructurelle, autorisations environnementales.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Base ULM installée officiellement, activité lancée conformément à la réglementation, certifications obtenues, activités touristiques ULM pérennisées.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#amo-projets">/expertise#amo-projets</a>
+  <span class="filter-tag">Expertise : AMO &amp; Pilotage</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Cadrage et définition des besoins »</span>
+</div>
+
+<!-- 5.1.3 -->
+<div class="mission-card" id="m5-1-3">
+  <div class="mission-id">Mission 5.1.3</div>
+  <div class="mission-title">Province des Îles Loyauté – Appui stratégique intégré ports et aéroports (DPA)</div>
+  <div class="mission-meta">
+    <span>Client : Province des Îles Loyauté – DPA</span><span class="sep">|</span>
+    <span>2024–2029</span><span class="sep">|</span>
+    <span>Domaine : Aérien &amp; Maritime</span><span class="sep">|</span>
+    <span>Famille : Études / Stratégie, AMO, Organisation &amp; Gestion de la sécurité</span>
+  </div>
+  <div class="mission-desc">Accompagnement pluriannuel de la DPA sur l'ensemble du spectre portuaire et aéroportuaire de la Province des Îles Loyauté, dans le cadre d'une convention de conseil structurée autour d'un appui technique continu, d'analyses stratégiques et d'un renforcement de compétences. La mission couvre la sécurisation de l'approvisionnement en carburant et des opérations inter-îles, le pilotage du service public aérien domestique, la politique de renouvellement des moyens de sécurité et la modernisation des infrastructures, débouchant sur la définition d'un schéma directeur insulaire (SDIPIL) et sur une gouvernance partagée.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Vision intégrée des mobilités maritimes et aériennes, décisions d'investissement mieux fondées et renforcement de la résilience de la connectivité insulaire au bénéfice des populations.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : AMO &amp; Pilotage + Aéroports &amp; Infrastructures</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Contribue à plusieurs missions web : AMO, Schéma Directeur, Audit Sécurité</span>
+</div>
+
+<!-- 5.1.4 -->
+<div class="mission-card" id="m5-1-4">
+  <div class="mission-id">Mission 5.1.4</div>
+  <div class="mission-title">Étude de marché des nouveaux produits alimentaires à base de vivriers locaux – DAG</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Agriculture (DAG)</span><span class="sep">|</span>
+    <span>2025–2026</span><span class="sep">|</span>
+    <span>Domaine : Développement territorial, agriculture et alimentation</span><span class="sep">|</span>
+    <span>Famille : Études – Stratégie, Études de marché</span>
+  </div>
+  <div class="mission-desc">Réalisation d'une étude de marché complète pour de nouveaux produits alimentaires à base de vivriers locaux (taro, manioc, 'uru, patate douce, banane) dans le cadre du projet TAVIVAT, en ciblant la restauration scolaire, les collectivités, l'hôtellerie-restauration et la grande distribution. L'étude combine enquêtes de terrain multi-îles, quantification des besoins, analyse de l'appétence et des prix cibles, et définition du positionnement de gammes innovantes.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Disposer d'un dimensionnement fiable de la demande pour sécuriser les investissements d'agro-transformation, orienter les capacités de production et de conditionnement, et appuyer la montée en puissance de produits vivriers locaux dans la restauration scolaire et les autres marchés.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#etudes-strategie">/expertise#etudes-strategie</a>
+  <span class="filter-tag">Expertise : Études Stratégiques &amp; Modélisation Économique</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Études de marché et positionnement stratégique »</span>
+</div>
+
+<!-- 5.2 -->
+<div class="section-header" id="s5-2">
+  <div class="section-number">Section 5.2</div>
+  <div class="section-title">Assistance à maîtrise d'ouvrage (AMO)</div>
+</div>
+
+<!-- 5.2.1 -->
+<div class="mission-card" id="m5-2-1">
+  <div class="mission-id">Mission 5.2.1</div>
+  <div class="mission-title">AMO globale pour projet Air Bora Bora</div>
+  <div class="mission-meta">
+    <span>Client : Air Bora Bora</span><span class="sep">|</span>
+    <span>2020–2023</span><span class="sep">|</span>
+    <span>Domaine : Études, Stratégie &amp; AMO</span><span class="sep">|</span>
+    <span>Famille : AMO &amp; Projets</span>
+  </div>
+  <div class="mission-desc">Assistance maîtrise d'ouvrage intégrale pour Air Bora Bora : pilotage global du projet de création de compagnie aérienne, coordination entre fondateurs/investisseurs/prestataires, gestion des risques, respect des calendriers et budgets, assistance décisions stratégiques.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Projet mené à terme malgré complexité, calendrier et budgets respectés, risques anticipés et gérés, lancement compagnie réussi, opérations débutées conformément au plan.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="filter-tag">Filtre : AMO &amp; Pilotage</span>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Mission « AMO Extension de Piste d'un Aérodrome Insulaire »</span>
+</div>
+
+<!-- 5.2.2 -->
+<div class="mission-card" id="m5-2-2">
+  <div class="mission-id">Mission 5.2.2</div>
+  <div class="mission-title">Assistance au pilotage de la phase de réalisation du projet TAVIVAT – DAG</div>
+  <div class="mission-meta">
+    <span>Client : Direction de l'Agriculture (DAG) – projet TAVIVAT</span><span class="sep">|</span>
+    <span>2025–2030</span><span class="sep">|</span>
+    <span>Domaine : Agriculture, systèmes alimentaires, politiques publiques</span><span class="sep">|</span>
+    <span>Famille : AMO Projets, Gestion de projet multi-acteurs</span>
+  </div>
+  <div class="mission-desc">Assistance opérationnelle et stratégique au pilotage de la phase de réalisation du projet TAVIVAT, démonstrateur territorial de transition agro-écologique vivrière et d'Agro-Transformation, incluant la conception d'outils de planification et de suivi (GANTT, feuilles de route, tableaux de bord), l'animation de points de coordination mensuels et la préparation des comités de suivi avec la Banque des Territoires.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Pilotage fiabilisé d'un programme multi-acteurs d'envergure, sécurisation des jalons techniques et financiers, meilleure cohérence entre partenaires et actions, et capacité accrue à atteindre les objectifs de souveraineté alimentaire.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#amo-projets">/expertise#amo-projets</a>
+  <span class="filter-tag">Expertise : AMO &amp; Pilotage de Projets Complexes</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Pilotage de projet » + « Coordination des parties prenantes »</span>
+</div>
+
+
+<!-- ================================================================== -->
+<!-- 6. DEVELOPPEMENT TERRITORIAL & ARTISANAT -->
+<!-- ================================================================== -->
+<div class="chapter-header" id="ch6">
+  <div class="chapter-number">Chapitre 6</div>
+  <h2 class="chapter-title">Développement Territorial &amp; Artisanat</h2>
+</div>
+
+<!-- 6.1 -->
+<div class="section-header" id="s6-1">
+  <div class="section-number">Section 6.1</div>
+  <div class="section-title">Artisanat et filières locales</div>
+</div>
+
+<!-- 6.1.1 -->
+<div class="mission-card" id="m6-1-1">
+  <div class="mission-id">Mission 6.1.1</div>
+  <div class="mission-title">Service de l'Artisanat Traditionnel – Étude de faisabilité pour un séchoir à pandanus</div>
+  <div class="mission-meta">
+    <span>Client : Service de l'Artisanat Traditionnel</span><span class="sep">|</span>
+    <span>2024–2025</span><span class="sep">|</span>
+    <span>Domaine : Développement territorial</span><span class="sep">|</span>
+    <span>Famille : Études &amp; Stratégie</span>
+  </div>
+  <div class="mission-desc">Étude de faisabilité technique, économique et organisationnelle pour la création d'une infrastructure mutualisée de séchage du pandanus destinée aux artisans traditionnels polynésiens. Dimensionnement équipement, modèle économique (coûts, tarifs services), viabilité filière, impact emplois artisanaux.</div>
+  <div class="mission-benefit"><strong>Bénéfice client :</strong> Filière artisanale pandanus structurée, investissement public ciblé efficacement, emplois artisanaux locaux pérennisés, valorisation produits traditionnels augmentée, continuité de savoir-faire autochtone.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#etudes-strategie">/expertise#etudes-strategie</a>
+  <span class="filter-tag">Expertise : Études Stratégiques</span>
+  <span class="tag tag-synthetise">+ Synthétisé</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Couvert par « Études de faisabilité technico-économique »</span>
+</div>
+
+
+<!-- ================================================================== -->
+<!-- 7. SYNTHESE PAR FAMILLE D'OFFRE -->
+<!-- ================================================================== -->
+<div class="chapter-header" id="ch7">
+  <div class="chapter-number">Chapitre 7</div>
+  <h2 class="chapter-title">Synthèse par Famille d'Offre</h2>
+</div>
+
+<div class="web-callout" style="background:rgba(22,163,74,0.04);border-left-color:var(--green);margin-bottom:1.5rem;">
+  <span class="web-callout-icon">&#9989;</span>
+  <span style="font-weight:700;color:var(--green);">Complétude vérifiée</span>
+  <span style="font-size:0.7rem;color:var(--navy);">Les 8 familles sont intégralement présentes sur <a href="https://variante-3-aviation.vercel.app/expertise">/expertise</a> : description, détails d'intervention, exemples de missions, ET « Valeur apportée » — tous affichés. Les 61 bénéfices clients sont aussi visibles sur <a href="https://variante-3-aviation.vercel.app/references">/références</a>.</span>
+</div>
+
+<!-- Études & Stratégie -->
+<div class="family-card">
+  <div class="family-title">Études &amp; Stratégie</div>
+  <div class="family-desc">Expertise en analyse de faisabilité, modélisation économique, études de marché, définition de positionnement et élaboration de schémas directeurs pour des projets aériens, d'infrastructures et environnementaux.</div>
+  <ul class="family-missions">
+    <li>Création et structuration de Tahiti Nui Helicopters</li>
+    <li>Création et Business plan d'Islands Airline</li>
+    <li>Stratégie de concession pour Vinci Airports</li>
+    <li>Modèle économique pour Terciel (aéroports marins)</li>
+    <li>Études de faisabilité à Lifou (classification internationale et création d'un aéroport à Hmelek)</li>
+    <li>Conception du dispositif de certification biodiversité en Polynésie</li>
+    <li>Continuité territoriale aérienne interinsulaire</li>
+    <li>Étude de marché des nouveaux produits alimentaires à base de vivriers locaux (DAG, projet TAVIVAT)</li>
+    <li>Outil de modélisation de la desserte pour la DAC-Pf</li>
+    <li>Étude de ligne aérienne régionale Tahiti – États insulaires du Pacifique</li>
+    <li>Travaux sur la décarbonation et les drones (stratégie UAV, bilan carbone, feuille de route)</li>
+    <li>Schéma d'aménagement des plateformes aéroportuaires de Moorea et Huahine</li>
+    <li>Accompagnement stratégique pluriannuel de la Province des Îles Loyauté (DPA)</li>
+  </ul>
+  <div class="family-value">Valeur apportée : vision stratégique structurée, décisions d'investissement mieux fondées, modèles économiques testés et trajectoires de développement clarifiées (opérationnelles, territoriales et environnementales).</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#etudes-strategie">/expertise#etudes-strategie</a>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Études Stratégiques &amp; Modélisation Économique »</span>
+</div>
+
+<!-- Audits & Conformité -->
+<div class="family-card">
+  <div class="family-title">Audits &amp; Conformité</div>
+  <div class="family-desc">Réalisation d'audits complets et d'appuis à la mise en conformité des activités aériennes, de maintenance et d'infrastructures, dans le cadre des réglementations EASA (Part-145, Part-M, Part-OPS, Part-CAMO), de la certification aéroportuaire et des dispositifs environnementaux.</div>
+  <div class="family-missions-label">Missions clés :</div>
+  <p class="family-missions-text">Audit réglementaire DAC-Pf, audits Part-145/Part-M de TASC, diagnostic et certification du réseau d'aérodromes MLA, dossiers de certifications Air Loyauté, accompagnement conformité de TAC, actualisation du dispositif EIE/NIE pour la DAC-Pf.</p>
+  <div class="family-value">Valeur apportée : risques mieux maîtrisés, conformité démontrée auprès des autorités, certifications obtenues et maintenues, continuité des opérations sécurisée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#audits-conformite">/expertise#audits-conformite</a>
+  <span class="tag tag-adapte">~ Adapté</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Audits &amp; Conformité Réglementaire »</span>
+</div>
+
+<!-- Documentation & Certification -->
+<div class="family-card">
+  <div class="family-title">Documentation &amp; Certification</div>
+  <div class="family-desc">Rédaction et structuration de manuels, procédures, matrices de conformité et cahiers des charges techniques pour les compagnies, les aéroports, les organismes de formation et les autorités.</div>
+  <div class="family-missions-label">Missions clés :</div>
+  <p class="family-missions-text">MANEX et documentation d'Islands Airline (47 documents), MEL et MANEX de TAC, procédures opérationnelles d'Air Loyauté, recueils SSLIA et AFIS de la DAC-Pf, manuels de maintenance des assets électrotechniques, manuels UAV, cahier des charges pour aéroports marins Terciel.</p>
+  <div class="family-value">Valeur apportée : dispositifs documentaires complets et évolutifs, conformité structurée, opérations encadrées et maintenance facilitée.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#documentation-certification">/expertise#documentation-certification</a>
+  <span class="tag tag-adapte">~ Adapté</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Documentation &amp; Certification Opérationnelle »</span>
+</div>
+
+<!-- Formation & Concours -->
+<div class="family-card">
+  <div class="family-title">Formation &amp; Concours</div>
+  <div class="family-desc">Conception et animation de formations managériales et techniques, développement de contenus pédagogiques, accompagnement individuel (tutoring) et contribution à des concours et examens professionnels.</div>
+  <div class="family-missions-label">Missions clés :</div>
+  <p class="family-missions-text">Programmes CNAM (Club des managers, gestion de projet, conduite du changement, culture générale économique et managériale, tutoring), mise en place du centre Part-147 Air Formation, supports pédagogiques MTOE, accompagnement à la création d'entreprises, concours DGRH (sujets et corrections).</p>
+  <div class="family-value">Valeur apportée : compétences renforcées, certifications obtenues, capacités internes structurées et trajectoires professionnelles ou entrepreneuriales sécurisées.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#formation-concours">/expertise#formation-concours</a>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Formation &amp; Concours »</span>
+</div>
+
+<!-- AMO & Projets -->
+<div class="family-card">
+  <div class="family-title">AMO &amp; Projets</div>
+  <div class="family-desc">Assistance à maîtrise d'ouvrage pour des projets complexes : cadrage, planification, coordination multi-acteurs, suivi des risques et appui à la décision.</div>
+  <div class="family-missions-label">Missions clés :</div>
+  <p class="family-missions-text">Appui à la candidature de concession de Tahiti-Faa'a pour Vinci Airports, projets hélicoptères (Marquises, redéploiement), mise en place de la desserte TAC inter-îles, AMO globale Air Bora Bora, base ULM de Moorea (MOZ ULM), DSP Wallis &amp; Futuna, schémas d'aménagement aéroportuaires, appui stratégique intégré ports et aéroports pour la Province des Îles Loyauté (DPA).</p>
+  <div class="family-value">Valeur apportée : projets menés à terme dans des contextes exigeants, calendriers tenus, coordination fluidifiée et atteinte des objectifs stratégiques des maîtres d'ouvrage.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#amo-projets">/expertise#amo-projets</a>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « AMO &amp; Pilotage de Projets Complexes »</span>
+</div>
+
+<!-- Création / Structuration -->
+<div class="family-card">
+  <div class="family-title">Création / Structuration</div>
+  <div class="family-desc">Appui à la création ou à la structuration d'entités : compagnies aériennes, centres de formation, sociétés d'infrastructures ou activités nouvelles.</div>
+  <div class="family-missions-label">Missions clés :</div>
+  <p class="family-missions-text">Création et structuration de Tahiti Nui Helicopters, création et structuration d'Islands Airline et d'Air Bora Bora, mise en place du centre de formation Part-147 Air Formation, définition du modèle et de la structure Terciel (aéroports marins).</p>
+  <div class="family-value">Valeur apportée : structures conçues sur des bases solides, organisations opérationnelles prêtes à l'emploi et modèles économiques soutenables.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#creation-structuration">/expertise#creation-structuration</a> + <a href="https://variante-3-aviation.vercel.app/references">/références</a>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Création &amp; Structuration d'Entités »</span>
+</div>
+
+<!-- Gestion de la Sécurité -->
+<div class="family-card">
+  <div class="family-title">Gestion de la Sécurité</div>
+  <div class="family-desc">Renforcement des dispositifs de gestion de la sécurité : SGS, cartographie des risques, études de sécurité ciblées et évaluations d'impacts sur la sécurité aéroportuaire.</div>
+  <div class="family-missions-label">Missions clés :</div>
+  <p class="family-missions-text">Renforcement du SGS Air Loyauté, études de sécurité pour TAC aux Marquises, travaux sur la continuité territoriale aérienne, études d'impacts sur la sécurité aéroportuaire (EISA) pour la DAC-Pf.</p>
+  <div class="family-value">Valeur apportée : dispositifs sécurité plus robustes, meilleure maîtrise des risques opérationnels et démonstration de conformité aux attentes des autorités.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#gestion-securite">/expertise#gestion-securite</a>
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Gestion de la Sécurité Aérienne »</span>
+</div>
+
+<!-- Organisation & Management -->
+<div class="family-card">
+  <div class="family-title">Organisation &amp; Management</div>
+  <div class="family-desc">Diagnostics organisationnels, structuration de fonctions clés (notamment RH), optimisation de processus et accompagnement managérial.</div>
+  <div class="family-missions-label">Missions clés :</div>
+  <p class="family-missions-text">Organisation et fonction RH Air Loyauté (structuration et appui managérial), audit organisationnel et plan d'actions de management, gestion de projet pour Air Bora Bora, animation du Club des managers CNAM.</p>
+  <div class="family-value">Valeur apportée : organisations plus lisibles, responsabilités clarifiées, processus mieux maîtrisés et management renforcé au service de la performance globale.</div>
+</div>
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <a href="https://variante-3-aviation.vercel.app/expertise#organisation-management">/expertise#organisation-management</a>
+  <span class="tag tag-adapte">~ Adapté</span>
+  <span style="font-size:0.65rem;color:var(--warm);">Section « Organisation &amp; Management » — coaching et diagnostics organisationnels</span>
+</div>
+
+
+<!-- ================================================================== -->
+<!-- 8. CONCLUSION -->
+<!-- ================================================================== -->
+<div class="chapter-header" id="ch8">
+  <div class="chapter-number">Chapitre 8</div>
+  <h2 class="chapter-title">Conclusion</h2>
+</div>
+
+<div class="catalogue-block">
+  <p>Ce portefeuille de plus de 60 missions (2019–2025) témoigne de l'expertise approfondie de Pacific Blue Consulting dans la structuration et l'accompagnement du secteur aérien polynésien, ainsi que dans les domaines connexes (formation, infrastructures, environnement, développement territorial, services publics).</p>
+</div>
+
+<div class="catalogue-block" style="margin-top:0.5rem;">
+  <p><strong>Principaux axes de différenciation PBC</strong></p>
+</div>
+
+<div class="conclusion-grid">
+  <div class="conclusion-item">
+    <h4>Expertise aéronautique approfondie</h4>
+    <p>Plus de 57% du portefeuille couvre l'aérien (compagnies, aéroports, conformité EASA)</p>
+  </div>
+  <div class="conclusion-item">
+    <h4>Capacité de structuration complète</h4>
+    <p>De la création d'entités à la certification, mise en conformité et opérations</p>
+  </div>
+  <div class="conclusion-item">
+    <h4>Partenariats de long terme</h4>
+    <p>Relations multi-ans avec Air Loyauté, CNAM, DIREN, DAC-Pf, démontrant confiance et impact</p>
+  </div>
+  <div class="conclusion-item">
+    <h4>Accompagnement de croissance</h4>
+    <p>Business plans, stratégie commerciale, gestion de projets complexes, AMO intégrale</p>
+  </div>
+  <div class="conclusion-item">
+    <h4>Intégration RSE et environnement</h4>
+    <p>Certification biodiversité, bilan carbone, feuille de route décarbonation</p>
+  </div>
+  <div class="conclusion-item">
+    <h4>Formation et transfert de compétences</h4>
+    <p>Part-147, management, compliance, tutoring individualisé</p>
+  </div>
+  <div class="conclusion-item">
+    <h4>Technologie et innovation</h4>
+    <p>Drones/UAV, modélisation, outils décisionnels, aéroports marins</p>
+  </div>
+</div>
+
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <span>Implémenté sur le site</span>
+  <a href="https://variante-3-aviation.vercel.app/">/accueil</a> — Chiffres clés + proposition de valeur
+  <span class="tag tag-adapte">~ Adapté</span>
+</div>
+
+<div class="catalogue-block" style="margin-top:1rem;">
+  <p><strong>Impact territorial</strong></p>
+</div>
+
+<div class="conclusion-grid">
+  <div class="conclusion-item">
+    <h4>Continuité aérienne territoriale</h4>
+    <p>Structuration desserte inter-îles (Marquises, Wallis &amp; Futuna, atolls)</p>
+  </div>
+  <div class="conclusion-item">
+    <h4>Développement économique</h4>
+    <p>Création compagnies aériennes, filières artisanales, plateformes aéroportuaires</p>
+  </div>
+  <div class="conclusion-item">
+    <h4>Capacité institutionnelle</h4>
+    <p>Accompagnement DAC-Pf, DIREN, collectivités dans gouvernance sectorielle</p>
+  </div>
+  <div class="conclusion-item">
+    <h4>Emploi et compétences</h4>
+    <p>Formations certifiées, création postes management et technique, insertion professionnelle</p>
+  </div>
+</div>
+
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <span>Implémenté sur le site</span>
+  <a href="https://variante-3-aviation.vercel.app/a-propos">/a-propos</a> — Section « Impact territorial » (grille 2×2)
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+</div>
+
+<div class="catalogue-block" style="margin-top:1rem;">
+  <p><strong>Ce que PBC apporte à vos équipes :</strong></p>
+  <p>Pascal BAZER-BACHI conçoit le conseil comme un levier de montée en compétences des équipes : formateur agréé, concepteur et animateur de programmes en gestion de projet, conduite du changement, culture managériale et accompagnement entrepreneurial, il intervient autant sur les contenus que sur les pratiques de travail.</p>
+  <p>Coach professionnel et executive coach accrédité, il accompagne dirigeants, cadres et porteurs de projets pour les aider à clarifier leurs enjeux, structurer leurs décisions et incarner les transformations, qu'il s'agisse de politiques publiques, de projets territoriaux, d'infrastructures ou d'initiatives économiques locales.</p>
+</div>
+
+<div class="web-callout">
+  <span class="web-callout-icon">&#127760;</span>
+  <span>Implémenté sur le site</span>
+  <a href="https://variante-3-aviation.vercel.app/a-propos">/a-propos</a> — Section « Ce que PBC apporte à vos équipes »
+  <span class="tag tag-fidele">&#10003; Fidèle à la source</span>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="margin-top:3rem;padding:1.5rem;background:var(--navy);border-radius:8px;text-align:center;">
+  <div style="font-size:0.75rem;color:var(--warm-light);margin-bottom:0.5rem;">Document de traçabilité — Catalogue PBC vers site web</div>
+  <div style="font-size:0.65rem;color:var(--gold);">
+    <a href="https://variante-3-aviation.vercel.app" style="color:var(--gold);text-decoration:none;">variante-3-aviation.vercel.app</a>
+  </div>
+  <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);margin-top:0.75rem;">Généré par PACIFIK'AI</div>
+</div>
+
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pacific Blue Consulting — Vos choix de site web</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue: #0c4a6e;
+    --blue-light: #e0f2fe;
+    --blue-mid: #0369a1;
+    --gold: #d4af37;
+    --gold-light: #fef9e7;
+    --gold-bg: #fffbeb;
+    --dark: #1e293b;
+    --gray: #64748b;
+    --gray-light: #f1f5f9;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --white: #ffffff;
+    --radius: 16px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--gray-light);
+    color: var(--dark);
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    text-align: center;
+    padding: 48px 24px 36px;
+    background: linear-gradient(135deg, var(--blue) 0%, #0c3d5e 100%);
+    border-radius: var(--radius);
+    color: var(--white);
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: rgba(212, 175, 55, 0.08);
+    border-radius: 50%;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .header h1 span { color: var(--gold); }
+  .header p {
+    font-size: 15px;
+    opacity: 0.85;
+    max-width: 540px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .header .hint {
+    margin-top: 20px;
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px 20px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .header .hint em { color: var(--gold); font-style: normal; }
+
+  /* ─── SECTION ─── */
+  .section {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--blue-mid);
+    margin-bottom: 12px;
+  }
+  .section-label .dot {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  .section h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+  .section p.desc {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  /* ─── VARIANTES ─── */
+  .variantes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 640px) {
+    .variantes { grid-template-columns: 1fr; }
+  }
+  .variante-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .variante-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .variante-card.selected { border-color: var(--gold); background: var(--gold-bg); }
+  .variante-card.selected::after {
+    content: '✓ Sélectionné';
+    position: absolute;
+    top: 12px; right: 12px;
+    background: var(--gold);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    z-index: 2;
+  }
+  .variante-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+  }
+  .variante-card .card-body {
+    padding: 16px;
+  }
+  .variante-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .variante-card p {
+    font-size: 13px;
+    color: var(--gray);
+  }
+  .variante-links {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+  }
+  .variante-links a {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue-mid);
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    transition: all 0.15s;
+  }
+  .variante-links a:hover { background: var(--blue-light); border-color: var(--blue-mid); }
+
+  /* ─── SOURCES ─── */
+  .source-box {
+    background: var(--green-light);
+    border: 1px solid #a7f3d0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  .source-box h4 { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+  .source-box p { font-size: 13px; color: #334155; }
+  .source-box a { color: var(--green); font-weight: 600; }
+
+  /* ─── DOMAIN TABLE ─── */
+  .domain-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .domain-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .domain-option:hover { border-color: var(--blue-mid); background: var(--blue-light); }
+  .domain-option.selected { border-color: var(--gold); background: var(--gold-bg); }
+  .domain-option input[type="radio"] { display: none; }
+  .domain-option .radio-dot {
+    width: 20px; height: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .domain-option.selected .radio-dot {
+    border-color: var(--gold);
+    background: var(--gold);
+  }
+  .domain-option.selected .radio-dot::after {
+    content: '';
+    width: 8px; height: 8px;
+    background: white;
+    border-radius: 50%;
+  }
+  .domain-option .ext {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--dark);
+    min-width: 180px;
+  }
+  .domain-option .ext small {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--gray);
+  }
+  .domain-option .price {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--blue-mid);
+    margin-left: auto;
+    text-align: right;
+  }
+  .domain-option .price small {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--gray);
+  }
+  .domain-option .badge-free {
+    background: var(--green);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── DURATION ─── */
+  .duration-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .duration-tab {
+    padding: 10px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--white);
+    text-align: center;
+    flex: 1;
+    min-width: 100px;
+  }
+  .duration-tab:hover { border-color: var(--blue-mid); }
+  .duration-tab.selected { border-color: var(--gold); background: var(--gold-bg); color: var(--dark); }
+  .duration-tab .tab-price {
+    display: block;
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 2px;
+  }
+
+  /* ─── PRICE DISPLAY ─── */
+  .price-display {
+    background: var(--gray-light);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .price-display .label { font-size: 13px; color: var(--gray); margin-bottom: 4px; }
+  .price-display .amount { font-size: 32px; font-weight: 800; color: var(--dark); }
+  .price-display .amount .currency { font-size: 16px; font-weight: 600; }
+  .price-display .detail { font-size: 12px; color: var(--gray); margin-top: 4px; }
+  .price-display .offered {
+    display: inline-block;
+    margin-top: 8px;
+    background: var(--green);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 999px;
+  }
+
+  /* (transfer-box removed — .org is now a domain-option radio) */
+
+  /* ─── EMAIL SECTION ─── */
+  .email-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 640px) {
+    .email-options { grid-template-columns: 1fr; }
+  }
+  .email-opt {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .email-opt:hover { border-color: var(--blue-mid); }
+  .email-opt.selected { border-color: var(--gold); background: var(--gold-bg); }
+  .email-opt h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .email-opt .email-price { font-size: 24px; font-weight: 800; color: var(--blue-mid); }
+  .email-opt .email-price small { font-size: 13px; font-weight: 400; color: var(--gray); }
+  .email-opt ul { text-align: left; font-size: 12px; color: var(--gray); margin-top: 10px; list-style: none; }
+  .email-opt ul li::before { content: '✓ '; color: var(--green); font-weight: 700; }
+  .email-opt .no-thanks { font-size: 20px; color: var(--gray); margin: 8px 0; }
+
+  /* ─── NOTES ─── */
+  .notes-area {
+    width: 100%;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.15s;
+  }
+  .notes-area:focus { outline: none; border-color: var(--gold); }
+
+  /* ─── RECAP ─── */
+  .recap {
+    background: linear-gradient(135deg, var(--blue) 0%, #0c3d5e 100%);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    color: var(--white);
+    position: relative;
+  }
+  .recap h2 { color: var(--white); margin-bottom: 16px; }
+  .recap-content {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    min-height: 120px;
+    color: rgba(255,255,255,0.9);
+  }
+  .recap-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .btn-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: var(--gold);
+    color: var(--dark);
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-copy:hover { background: #c9a030; transform: translateY(-1px); }
+  .btn-copy.copied { background: var(--green); color: white; }
+
+  .footer-note {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: var(--gray);
+  }
+  .footer-note a { color: var(--blue-mid); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="header">
+    <h1>Pacific Blue Consulting<br><span>Vos choix pour le site web</span></h1>
+    <p>Pascal, voici les 2 variantes de votre site, les options de nom de domaine et d'email professionnel. Faites vos choix directement ici.</p>
+    <div class="hint">👇 <em>À la fin</em>, un bouton vous permet de copier vos choix et de les coller dans votre réponse email</div>
+  </div>
+
+  <!-- ═══ VOTRE PROJET ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span>Votre projet</div>
+    <h2>Récapitulatif du projet</h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+      <div style="background: var(--gray-light); border-radius: 12px; padding: 20px; text-align: center;">
+        <div style="font-size: 13px; color: var(--gray); margin-bottom: 4px;">Montant total</div>
+        <div style="font-size: 28px; font-weight: 800; color: var(--dark);">100 000 <span style="font-size: 14px; font-weight: 600;">XPF</span></div>
+        <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">Création site vitrine complet</div>
+      </div>
+      <div style="background: var(--green-light); border-radius: 12px; padding: 20px; text-align: center;">
+        <div style="font-size: 13px; color: var(--green); margin-bottom: 4px;">Acompte reçu ✓</div>
+        <div style="font-size: 28px; font-weight: 800; color: var(--green);">50 000 <span style="font-size: 14px; font-weight: 600;">XPF</span></div>
+        <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">Merci Pascal !</div>
+      </div>
+    </div>
+    <div style="background: var(--gold-bg); border: 1px solid #fde68a; border-radius: 12px; padding: 16px; text-align: center;">
+      <div style="font-size: 13px; color: var(--gray); margin-bottom: 4px;">Solde restant à la livraison</div>
+      <div style="font-size: 24px; font-weight: 800; color: var(--dark);">50 000 <span style="font-size: 14px; font-weight: 600;">XPF</span></div>
+      <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">+ frais domaine & email si applicable (détaillés ci-dessous)</div>
+    </div>
+  </div>
+
+  <!-- ═══ PROCHAINES ÉTAPES ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span>Planning</div>
+    <h2>Prochaines étapes</h2>
+
+    <div style="position: relative; padding-left: 32px;">
+      <div style="position: absolute; left: 11px; top: 8px; bottom: 8px; width: 2px; background: #e2e8f0;"></div>
+
+      <div style="position: relative; margin-bottom: 24px;">
+        <div style="position: absolute; left: -32px; top: 2px; width: 24px; height: 24px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">1</div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--dark);">Vos choix <span style="font-size: 12px; font-weight: 600; color: var(--gold); background: var(--gold-bg); padding: 2px 10px; border-radius: 999px; margin-left: 8px;">En cours</span></div>
+        <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">Variante, domaine, email — c'est cette page !</div>
+      </div>
+
+      <div style="position: relative; margin-bottom: 24px;">
+        <div style="position: absolute; left: -32px; top: 2px; width: 24px; height: 24px; background: #cbd5e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">2</div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--gray);">Achat du domaine</div>
+        <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">On achète le nom de domaine choisi et on configure le tout.</div>
+      </div>
+
+      <div style="position: relative; margin-bottom: 24px;">
+        <div style="position: absolute; left: -32px; top: 2px; width: 24px; height: 24px; background: #cbd5e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">3</div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--gray);">Ajustements</div>
+        <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">Vos retours, modifications de texte ou visuels.</div>
+      </div>
+
+      <div style="position: relative;">
+        <div style="position: absolute; left: -32px; top: 2px; width: 24px; height: 24px; background: #cbd5e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700;">4</div>
+        <div style="font-weight: 700; font-size: 15px; color: var(--gray);">Mise en ligne</div>
+        <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">Publication sur votre domaine + solde de 50 000 XPF.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 1. CHOIX DE LA VARIANTE ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span>Étape 1</div>
+    <h2>Quelle variante préférez-vous ?</h2>
+    <p class="desc">Deux directions artistiques ont été préparées. Cliquez sur celle que vous préférez. Les deux contiennent les mêmes informations issues de votre Catalogue des Missions.</p>
+
+    <div class="variantes">
+      <div class="variante-card" onclick="selectVariante('A')" id="card-a">
+        <img src="data:image/jpeg;base64,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" alt="Variante A — Photos réelles">
+        <div class="card-body">
+          <h3>Variante A — Photos réelles</h3>
+          <p>Utilise vos photos personnelles : portraits, aérien, paysages polynésiens. Rendu authentique et personnel.</p>
+          <div class="variante-links">
+            <a href="https://variante-3-aviation.vercel.app" target="_blank">🔗 Voir le site</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="variante-card" onclick="selectVariante('B')" id="card-b">
+        <img src="data:image/jpeg;base64,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" alt="Variante B — Illustrations IA">
+        <div class="card-body">
+          <h3>Variante B — Illustrations IA</h3>
+          <p>Visuels créés par intelligence artificielle : scènes aériennes, consulting, Pacifique. Rendu moderne et épuré.</p>
+          <div class="variante-links">
+            <a href="https://pbc-variante-b.vercel.app" target="_blank">🔗 Voir le site</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sources -->
+    <div class="source-box">
+      <h4>🔍 Traçabilité des sources</h4>
+      <p>Chaque texte du site est sourcé depuis votre Catalogue des Missions ou votre Flyer. J'ai développé un outil qui permet de le vérifier visuellement : survolez n'importe quel texte pour voir sa source exacte (page, section, citation).</p>
+      <p style="margin-top: 8px;"><a href="https://variante-3-aviation.vercel.app?sources" target="_blank">→ Voir le site en mode sources</a></p>
+    </div>
+  </div>
+
+  <!-- ═══ 2. NOM DE DOMAINE ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span>Étape 2</div>
+    <h2>Choix du nom de domaine</h2>
+    <p class="desc">Votre nom de domaine sera <strong>pacificblueconsulting</strong> suivi de l'extension de votre choix. La 1ère année est <strong>offerte par PACIFIK'AI</strong>.</p>
+
+    <div class="domain-grid" id="domain-grid">
+      <div class="domain-option" onclick="selectDomain(this, '.fr')" data-ext=".fr" data-y1="9.99" data-renew="14.99">
+        <div class="radio-dot"></div>
+        <div class="ext">pacificblueconsulting<strong>.fr</strong><small>France — professionnel, confiance locale</small></div>
+        <div class="price">9,99 €<small>/1ère année</small></div>
+        <div class="badge-free">Offert</div>
+      </div>
+      <div class="domain-option" onclick="selectDomain(this, '.net')" data-ext=".net" data-y1="11.99" data-renew="17.99">
+        <div class="radio-dot"></div>
+        <div class="ext">pacificblueconsulting<strong>.net</strong><small>International — réseau, technologie</small></div>
+        <div class="price">11,99 €<small>/1ère année</small></div>
+        <div class="badge-free">Offert</div>
+      </div>
+      <div class="domain-option" onclick="selectDomain(this, '.pro')" data-ext=".pro" data-y1="2.99" data-renew="14.99">
+        <div class="radio-dot"></div>
+        <div class="ext">pacificblueconsulting<strong>.pro</strong><small>Professionnel — expertise, cabinet</small></div>
+        <div class="price">2,99 €<small>/1ère année</small></div>
+        <div class="badge-free">Offert</div>
+      </div>
+      <div class="domain-option" onclick="selectDomain(this, '.pf')" data-ext=".pf" data-y1="25" data-renew="25">
+        <div class="radio-dot"></div>
+        <div class="ext">pacificblueconsulting<strong>.pf</strong><small>Polynésie française — ancrage territorial</small></div>
+        <div class="price">~25 €<small>/an (Mana)</small></div>
+        <div class="badge-free">Offert</div>
+      </div>
+    </div>
+
+    <h3 style="font-size: 16px; margin-bottom: 12px;">Durée d'engagement</h3>
+    <p class="desc">Plus la durée est longue, plus le tarif annuel est avantageux. La 1ère année est offerte, seules les années suivantes sont à votre charge.</p>
+
+    <div class="duration-tabs" id="duration-tabs">
+      <div class="duration-tab" onclick="selectDuration(1)">1 an<span class="tab-price">Prix standard</span></div>
+      <div class="duration-tab" onclick="selectDuration(2)">2 ans<span class="tab-price">-10% environ</span></div>
+      <div class="duration-tab" onclick="selectDuration(3)">3 ans<span class="tab-price">-20% environ</span></div>
+    </div>
+
+    <div class="price-display" id="price-domain">
+      <div class="label">Coût total du domaine</div>
+      <div class="amount">—</div>
+      <div class="detail">Sélectionnez une extension et une durée</div>
+    </div>
+
+    <!-- Transfer .org (as domain option) -->
+    <div style="margin-top: 12px; padding-top: 12px; border-top: 2px dashed #e2e8f0;">
+      <p style="font-size: 13px; color: var(--gray); margin-bottom: 12px; font-weight: 600;">OU — Transférer votre domaine existant :</p>
+      <div class="domain-option" onclick="selectDomain(this, '.org (transfert)')" data-ext=".org" data-y1="0" data-renew="0" id="transfer-org-option">
+        <div class="radio-dot"></div>
+        <div class="ext">pacificblueconsulting<strong>.org</strong><small>Transfert de votre domaine existant</small></div>
+        <div class="price" style="color: var(--green); font-weight: 800;">Gratuit<small>transfert offert</small></div>
+      </div>
+      <p style="font-size: 11px; color: var(--gray); margin-top: 8px; padding-left: 36px;">Les frais de renouvellement annuels seront communiqués lors de la procédure de transfert.</p>
+    </div>
+  </div>
+
+  <!-- ═══ 3. EMAIL PRO ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span>Étape 3</div>
+    <h2>Email professionnel</h2>
+    <p class="desc">Un email du type <strong>pascal@pacificblueconsulting.fr</strong> renforce votre image. Optionnel mais recommandé.</p>
+
+    <div class="email-options">
+      <div class="email-opt" onclick="selectEmail('none')" id="email-none">
+        <div class="no-thanks">✗</div>
+        <h4>Pas pour le moment</h4>
+        <p style="font-size: 12px; color: var(--gray);">Je conserve mon email actuel</p>
+      </div>
+      <div class="email-opt" onclick="selectEmail('pro')" id="email-pro">
+        <h4>Email Pro</h4>
+        <div class="email-price">5 – 30 €<small>/an</small></div>
+        <ul>
+          <li>Adresse @votredomaine</li>
+          <li>Anti-spam avancé</li>
+          <li>Accessible mobile & web</li>
+          <li>Tarif selon durée (12 à 48 mois)</li>
+        </ul>
+      </div>
+    </div>
+    <p style="font-size: 12px; color: var(--gray);">💡 Le tarif exact de l'email pro dépend du forfait choisi : environ <strong>5 €/an</strong> sur 48 mois, jusqu'à <strong>30 €/an</strong> au mois. Les détails vous seront communiqués lors de la mise en place.</p>
+  </div>
+
+  <!-- ═══ 4. NOTES ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span>Vos remarques</div>
+    <h2>Notes & commentaires</h2>
+    <p class="desc">Modifications souhaitées, questions, précisions... tout est bienvenu.</p>
+    <textarea class="notes-area" id="notes" placeholder="Ex: Je préfère telle photo sur la page d'accueil, j'aimerais changer le texte de..., question sur le référencement..." oninput="updateRecap()"></textarea>
+  </div>
+
+  <!-- ═══ 5. RECAP ═══ -->
+  <div class="recap section" style="background: linear-gradient(135deg, var(--blue) 0%, #0c3d5e 100%);">
+    <div class="section-label" style="color: var(--gold);"><span class="dot"></span>Récapitulatif</div>
+    <h2>Vos choix</h2>
+    <p style="opacity: 0.7; font-size: 14px; margin-bottom: 16px;">Voici le résumé de vos sélections. Cliquez sur le bouton pour copier et coller dans votre réponse email.</p>
+    <div class="recap-content" id="recap-text">Aucune sélection pour le moment.
+
+Faites vos choix ci-dessus et le récapitulatif se mettra à jour automatiquement.</div>
+    <div class="recap-actions">
+      <button class="btn-copy" onclick="copyRecap()" id="btn-copy">📋 Copier mes choix</button>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Préparé par <a href="https://pacifikai.com" target="_blank">PACIFIK'AI</a> pour Pascal BAZER-BACHI — Pacific Blue Consulting<br>
+    <span style="opacity: 0.6;">Ce document est interactif : ouvrez-le dans un navigateur web pour faire vos sélections.</span>
+  </div>
+
+</div>
+
+<script>
+// ─── STATE ───
+const state = {
+  variante: null,
+  domain: null,
+  domainY1: 0,
+  domainRenew: 0,
+  duration: null,
+  transferOrg: false,
+  email: null,
+  notes: ''
+};
+
+// ─── VARIANTE ───
+function selectVariante(v) {
+  state.variante = v;
+  document.getElementById('card-a').classList.toggle('selected', v === 'A');
+  document.getElementById('card-b').classList.toggle('selected', v === 'B');
+  updateRecap();
+}
+
+// ─── DOMAIN ───
+function selectDomain(el, ext) {
+  state.domain = ext;
+  state.domainY1 = parseFloat(el.dataset.y1);
+  state.domainRenew = parseFloat(el.dataset.renew);
+  document.querySelectorAll('.domain-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  updatePriceDisplay();
+  updateRecap();
+}
+
+function selectDuration(years) {
+  state.duration = years;
+  document.querySelectorAll('.duration-tab').forEach((t, i) => {
+    t.classList.toggle('selected', i + 1 === years);
+  });
+  updatePriceDisplay();
+  updateRecap();
+}
+
+function updatePriceDisplay() {
+  const el = document.getElementById('price-domain');
+  if (state.domain === '.org (transfert)') {
+    el.innerHTML = '<div class="label">Transfert de pacificblueconsulting.org</div><div class="amount">0 <span class="currency">€</span></div><div class="detail">Transfert pris en charge par PACIFIK\'AI</div><div class="offered">Frais de renouvellement communiqués lors du transfert</div>';
+    return;
+  }
+  if (!state.domain || !state.duration) {
+    el.innerHTML = '<div class="label">Coût total du domaine</div><div class="amount">—</div><div class="detail">Sélectionnez une extension et une durée</div>';
+    return;
+  }
+
+  const discount = state.duration === 2 ? 0.9 : state.duration === 3 ? 0.8 : 1;
+  const renewPerYear = state.domainRenew * discount;
+  const yearsToCharge = state.duration - 1; // 1ère année offerte
+  const total = yearsToCharge * renewPerYear;
+
+  let detail = '';
+  if (yearsToCharge === 0) {
+    detail = `1 an — <strong>entièrement offert</strong> par PACIFIK'AI`;
+  } else {
+    detail = `${state.duration} ans — 1ère année offerte + ${yearsToCharge} an${yearsToCharge > 1 ? 's' : ''} × ${renewPerYear.toFixed(2)} €`;
+  }
+
+  el.innerHTML = `
+    <div class="label">Votre part pour pacificblueconsulting${state.domain}</div>
+    <div class="amount">${total.toFixed(2)} <span class="currency">€</span></div>
+    <div class="detail">${detail}</div>
+    <div class="offered">1ère année offerte par PACIFIK'AI (${state.domainY1.toFixed(2)} €)</div>
+  `;
+}
+
+// ─── EMAIL ───
+function selectEmail(choice) {
+  state.email = choice;
+  document.getElementById('email-none').classList.toggle('selected', choice === 'none');
+  document.getElementById('email-pro').classList.toggle('selected', choice === 'pro');
+  updateRecap();
+}
+
+// ─── RECAP ───
+function updateRecap() {
+  state.transferOrg = state.domain === '.org (transfert)';
+  state.notes = document.getElementById('notes').value.trim();
+
+  let lines = [];
+  lines.push('═══ MES CHOIX — PACIFIC BLUE CONSULTING ═══');
+  lines.push('');
+
+  // Variante
+  if (state.variante) {
+    const name = state.variante === 'A' ? 'Variante A — Photos réelles de Pascal' : 'Variante B — Illustrations IA';
+    lines.push(`✅ SITE WEB : ${name}`);
+  } else {
+    lines.push('⬜ SITE WEB : pas encore choisi');
+  }
+
+  // Domain
+  if (state.domain === '.org (transfert)') {
+    lines.push('✅ DOMAINE : Transfert de pacificblueconsulting.org (gratuit)');
+    lines.push('   → Frais de renouvellement communiqués lors du transfert');
+  } else if (state.domain && state.duration) {
+    const discount = state.duration === 2 ? 0.9 : state.duration === 3 ? 0.8 : 1;
+    const renewPerYear = state.domainRenew * discount;
+    const yearsToCharge = state.duration - 1;
+    const total = yearsToCharge * renewPerYear;
+
+    lines.push(`✅ DOMAINE : pacificblueconsulting${state.domain} — ${state.duration} an${state.duration > 1 ? 's' : ''}`);
+    if (yearsToCharge === 0) {
+      lines.push(`   → Coût : 0 € (1ère année offerte par PACIFIK'AI)`);
+    } else {
+      lines.push(`   → Coût à ma charge : ${total.toFixed(2)} € (1ère année offerte)`);
+    }
+  } else if (state.domain) {
+    lines.push(`✅ DOMAINE : pacificblueconsulting${state.domain} — durée à choisir`);
+  } else {
+    lines.push('⬜ DOMAINE : pas encore choisi');
+  }
+
+  // Email
+  if (state.email === 'pro') {
+    lines.push('✅ EMAIL PRO : Oui, je souhaite un email @mondomaine (5 à 30 €/an)');
+  } else if (state.email === 'none') {
+    lines.push('✅ EMAIL PRO : Non merci, je garde mon email actuel');
+  } else {
+    lines.push('⬜ EMAIL PRO : pas encore choisi');
+  }
+
+  // Notes
+  if (state.notes) {
+    lines.push('');
+    lines.push('📝 MES REMARQUES :');
+    lines.push(state.notes);
+  }
+
+  lines.push('');
+  lines.push('═══════════════════════════════════════════');
+
+  document.getElementById('recap-text').textContent = lines.join('\n');
+}
+
+// ─── COPY ───
+function copyRecap() {
+  const text = document.getElementById('recap-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 Copier mes choix';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

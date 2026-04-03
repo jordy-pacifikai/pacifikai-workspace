@@ -23,13 +23,13 @@ const timeline = [
     year: "2021-2023",
     title: "Deploiement multi-territorial",
     description:
-      "Schemas d'amenagement des aeroports de Moorea et Huahine pour la DAC-PF. Etude de classification internationale de l'aeroport de Lifou. Formations CNAM et creation d'un centre Part-147.",
+      "Conformite et certification Air Loyaute (CTA, Part-145, Part-CAMO). Desserte inter-iles Marquises avec Tahiti Air Charter. Gestion pieces Twin-Otter pour la DAC-PF. Formations CNAM et creation d'un centre Part-147 avec Air Formation.",
   },
   {
-    year: "2024",
+    year: "2024-2025",
     title: "Transition ecologique et innovation",
     description:
-      "Bilan carbone de la DAC-PF et feuille de route de decarbonation. Modele economique pour aeroports marins innovants avec Terciel.",
+      "Schemas d'amenagement des aeroports de Moorea et Huahine. Bilan carbone de la DAC-PF et feuille de route de decarbonation. Nouvelle generation de RCO SSLIA, manuels AFIS et maintenance. Aeroports marins innovants avec Terciel.",
   },
   {
     year: "2025",
@@ -43,7 +43,7 @@ const values = [
   {
     title: "Expertise aeronautique",
     description:
-      "Plus de 57% du portefeuille couvre l'aerien : compagnies, aeroports, conformite EASA.",
+      "Plus de 30 missions realisees dans le secteur aerien : compagnies, aeroports, conformite EASA.",
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
         <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -126,8 +126,8 @@ const territories = [
     description: "Mise en place du Dispositif de Service Public aerien, continuite territoriale.",
   },
   {
-    name: "Pacifique Sud et Europe",
-    description: "Liaison aerienne regionale Iles Cook, Tonga, Samoa, Fidji. Ecosysteme de partenaires en France metropolitaine.",
+    name: "Pacifique Sud",
+    description: "Etude de faisabilite d'une liaison aerienne regionale Iles Cook, Tonga, Samoa, Fidji.",
   },
 ];
 
@@ -198,22 +198,16 @@ function PacificMap() {
       <circle cx="380" cy="340" r="10" fill="oklch(1 0 0 / 0.1)" className="animate-pulse-soft" style={{ animationDelay: "2s" }} />
       <circle cx="380" cy="340" r="4" fill="oklch(1 0 0 / 0.5)" />
 
-      {/* Europe (off-screen indicator) */}
-      <circle cx="40" cy="120" r="8" fill="oklch(1 0 0 / 0.08)" className="animate-pulse-soft" style={{ animationDelay: "2.5s" }} />
-      <circle cx="40" cy="120" r="3" fill="oklch(1 0 0 / 0.35)" />
-
       {/* Connection lines */}
       <line x1="300" y1="300" x2="580" y2="250" stroke="oklch(0.72 0.12 85 / 0.2)" strokeWidth="1" strokeDasharray="4 4" />
       <line x1="300" y1="300" x2="340" y2="270" stroke="oklch(0.55 0.12 245 / 0.15)" strokeWidth="1" strokeDasharray="4 4" />
       <line x1="300" y1="300" x2="380" y2="340" stroke="oklch(1 0 0 / 0.1)" strokeWidth="1" strokeDasharray="4 4" />
-      <line x1="40" y1="120" x2="300" y2="300" stroke="oklch(1 0 0 / 0.06)" strokeWidth="1" strokeDasharray="6 6" />
 
       {/* Labels */}
       <text x="580" y="220" textAnchor="middle" fill="oklch(1 0 0 / 0.7)" fontSize="11" fontWeight="600">Polynesie francaise</text>
       <text x="300" y="280" textAnchor="middle" fill="oklch(1 0 0 / 0.5)" fontSize="10">Nouvelle-Caledonie</text>
       <text x="340" y="256" textAnchor="middle" fill="oklch(1 0 0 / 0.45)" fontSize="9">Wallis et Futuna</text>
       <text x="380" y="368" textAnchor="middle" fill="oklch(1 0 0 / 0.4)" fontSize="9">Pacifique Sud</text>
-      <text x="40" y="105" textAnchor="middle" fill="oklch(1 0 0 / 0.3)" fontSize="8">Europe</text>
     </svg>
   );
 }
@@ -304,7 +298,7 @@ export default function AProposPage() {
               <div className="gsap-reveal mt-10 grid grid-cols-3 gap-4">
                 <Stat value={60} suffix="+" label="Missions realisees" />
                 <Stat value={8} suffix="" label="Domaines d'expertise" />
-                <Stat value={4} suffix="+" label="Territoires" />
+                <Stat value={4} suffix="" label="Territoires" />
               </div>
             </div>
           </div>

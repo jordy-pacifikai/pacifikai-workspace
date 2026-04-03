@@ -11,7 +11,7 @@ import HeroTextReveal from "@/components/HeroTextReveal";
 const stats = [
   { value: 60, suffix: "+", label: "Missions realisees" },
   { value: 8, suffix: "", label: "Domaines d'expertise" },
-  { value: 4, suffix: "", label: "Territoires couverts" },
+  { value: 4, suffix: "", label: "Territoires d'intervention" },
   { value: 100, suffix: "%", label: "Independant" },
 ];
 
@@ -31,13 +31,13 @@ const whyUs = [
   {
     title: "Performance",
     description:
-      "Accompagnement ISO 9001, 14001, 45001, conformite EASA (Part-145, Part-M, Part-CAMO) et dossiers ICPE.",
+      "Conformite EASA (Part-145, Part-M, Part-CAMO), certification biodiversite, bilan carbone et feuille de route decarbonation.",
     icon: "compass",
   },
   {
     title: "Certification",
     description:
-      "Plus de 47 documents operationnels certifies, manuels MANEX, RCO SSLIA, AFIS et procedures UAV.",
+      "Documentation operationnelle complete : manuels MANEX, RCO SSLIA, manuels AFIS, procedures UAV et maintenance.",
     icon: "shield",
   },
 ];

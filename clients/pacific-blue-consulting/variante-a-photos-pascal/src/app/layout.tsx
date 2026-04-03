@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/lib/SmoothScroll";
 import StickyCTA from "@/components/StickyCTA";
+import SourceTracer from "@/components/SourceTracer";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -105,6 +106,7 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer />
           <StickyCTA />
+          <SourceTracer />
         </SmoothScroll>
       </body>
     </html>

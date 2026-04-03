@@ -57,7 +57,7 @@ export default function ExpertisePage() {
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/82" />
+        <div className="absolute inset-0 overlay-hero" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 lg:pt-40 pb-20">
@@ -159,6 +159,16 @@ export default function ExpertisePage() {
                             </li>
                           ))}
                         </ul>
+                      </div>
+
+                      {/* Valeur apportee callout */}
+                      <div className="gsap-reveal mt-8 border border-gold/30 rounded-2xl p-6 bg-gold/[0.03]">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-2">
+                          Valeur apportee
+                        </p>
+                        <p className="text-sm italic text-navy/70 leading-relaxed">
+                          {exp.value}
+                        </p>
                       </div>
 
                       <div className="gsap-reveal mt-8">
@@ -267,7 +277,7 @@ export default function ExpertisePage() {
           sizes="100vw"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-navy/85" />
+        <div className="absolute inset-0 overlay-cta" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

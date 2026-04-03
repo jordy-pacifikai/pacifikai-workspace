@@ -32,23 +32,24 @@ const whyUs = [
   {
     title: "Performance",
     description:
-      "Accompagnement ISO 9001, 14001, 45001, conformite EASA (Part-145, Part-M, Part-CAMO) et dossiers ICPE.",
+      "Conformite EASA (Part-145, Part-M, Part-CAMO), certification biodiversite, bilan carbone et feuille de route decarbonation.",
     icon: "compass",
   },
   {
     title: "Certification",
     description:
-      "Plus de 47 documents operationnels certifies, manuels MANEX, RCO SSLIA, AFIS et procedures UAV.",
+      "Documentation operationnelle complete : manuels MANEX, RCO SSLIA, manuels AFIS, procedures UAV et maintenance.",
     icon: "shield",
   },
 ];
 
 const partners = [
+  "Air Tahiti Nui",
   "Air Loyaute",
   "Vinci Airports",
   "Direction de l'Aviation Civile (DAC-PF)",
   "CNAM",
-  "DIREN",
+  "DAE-Pf (Direction de l'Environnement)",
   "Terciel",
   "Province des Iles Loyaute",
   "Air Bora Bora",
@@ -62,6 +63,9 @@ const partners = [
   "Ministere des Transports",
   "Service de l'Artisanat Traditionnel",
   "MOZ ULM",
+  "Tahiti Nui Helicopters",
+  "Dexios",
+  "DGEE",
 ];
 
 /* ===== Components ===== */
@@ -122,14 +126,14 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center overflow-hidden">
         {/* Background image */}
         <Image
-          src="/images/istock-531907847.jpg"
-          alt=""
+          src="/images/nb2-branded-hero-home.jpg"
+          alt="Avion sur le tarmac avec vue sur le lagon — Pacific Blue Consulting"
           fill
           priority
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/82" />
+        <div className="absolute inset-0 overlay-hero" />
 
         {/* Grain overlay */}
         <div className="absolute inset-0 grain-overlay" />
@@ -338,8 +342,8 @@ export default function Home() {
               {/* PBC Airport showcase */}
               <div className="gsap-reveal mt-8 rounded-2xl overflow-hidden border border-navy-100/40">
                 <Image
-                  src="/images/pbc-in-airport.jpg"
-                  alt="Pacific Blue Consulting - affichage aeroport"
+                  src="/images/nb2-branded-why-us.jpg"
+                  alt="Lounge Pacific Blue Consulting dans un terminal d'aeroport"
                   width={800}
                   height={450}
                   className="w-full h-auto"
@@ -422,14 +426,14 @@ export default function Home() {
       <section className="relative py-24 lg:py-32 overflow-hidden">
         {/* Background */}
         <Image
-          src="/images/istock-975717824.jpg"
+          src="/images/nb2-branded-cta-home.jpg"
           alt=""
           fill
           className="object-cover"
           sizes="100vw"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-navy/85" />
+        <div className="absolute inset-0 overlay-cta" />
         <div className="absolute inset-0 grain-overlay" />
 
         {/* Gold glow */}

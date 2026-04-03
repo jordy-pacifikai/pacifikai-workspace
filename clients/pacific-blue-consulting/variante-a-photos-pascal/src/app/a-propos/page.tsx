@@ -24,13 +24,13 @@ const timeline = [
     year: "2021-2023",
     title: "Deploiement multi-territorial",
     description:
-      "Schemas d'amenagement des aeroports de Moorea et Huahine pour la DAC-PF. Etude de classification internationale de l'aeroport de Lifou. Formations CNAM et creation d'un centre Part-147.",
+      "Conformite et certification Air Loyaute (CTA, Part-145, Part-CAMO). Desserte inter-iles Marquises avec Tahiti Air Charter. Gestion pieces Twin-Otter pour la DAC-PF. Formations CNAM et creation d'un centre Part-147 avec Air Formation.",
   },
   {
-    year: "2024",
+    year: "2024-2025",
     title: "Transition ecologique et innovation",
     description:
-      "Bilan carbone de la DAC-PF et feuille de route de decarbonation. Modele economique pour aeroports marins innovants avec Terciel.",
+      "Schemas d'amenagement des aeroports de Moorea et Huahine. Bilan carbone de la DAC-PF et feuille de route de decarbonation. Nouvelle generation de RCO SSLIA, manuels AFIS et maintenance. Aeroports marins innovants avec Terciel.",
   },
   {
     year: "2025",
@@ -44,7 +44,7 @@ const values = [
   {
     title: "Expertise aeronautique",
     description:
-      "Plus de 57% du portefeuille couvre l'aerien : compagnies, aeroports, conformite EASA.",
+      "Plus de 30 missions realisees dans le secteur aerien : compagnies, aeroports, conformite EASA.",
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
         <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -127,8 +127,8 @@ const territories = [
     description: "Mise en place du Dispositif de Service Public aerien, continuite territoriale.",
   },
   {
-    name: "Pacifique Sud et Europe",
-    description: "Liaison aerienne regionale Iles Cook, Tonga, Samoa, Fidji. Ecosysteme de partenaires en France metropolitaine.",
+    name: "Pacifique Sud",
+    description: "Liaison aerienne regionale Iles Cook, Tonga, Samoa, Fidji.",
   },
 ];
 
@@ -199,22 +199,20 @@ function PacificMap() {
       <circle cx="380" cy="340" r="10" fill="oklch(1 0 0 / 0.1)" className="animate-pulse-soft" style={{ animationDelay: "2s" }} />
       <circle cx="380" cy="340" r="4" fill="oklch(1 0 0 / 0.5)" />
 
-      {/* Europe (off-screen indicator) */}
-      <circle cx="40" cy="120" r="8" fill="oklch(1 0 0 / 0.08)" className="animate-pulse-soft" style={{ animationDelay: "2.5s" }} />
-      <circle cx="40" cy="120" r="3" fill="oklch(1 0 0 / 0.35)" />
+      {/* (Europe removed — no documented missions) */}
 
       {/* Connection lines */}
       <line x1="300" y1="300" x2="580" y2="250" stroke="oklch(0.72 0.12 85 / 0.2)" strokeWidth="1" strokeDasharray="4 4" />
       <line x1="300" y1="300" x2="340" y2="270" stroke="oklch(0.55 0.12 245 / 0.15)" strokeWidth="1" strokeDasharray="4 4" />
       <line x1="300" y1="300" x2="380" y2="340" stroke="oklch(1 0 0 / 0.1)" strokeWidth="1" strokeDasharray="4 4" />
-      <line x1="40" y1="120" x2="300" y2="300" stroke="oklch(1 0 0 / 0.06)" strokeWidth="1" strokeDasharray="6 6" />
+      {/* Europe connection line removed */}
 
       {/* Labels */}
       <text x="580" y="220" textAnchor="middle" fill="oklch(1 0 0 / 0.7)" fontSize="11" fontWeight="600">Polynesie francaise</text>
       <text x="300" y="280" textAnchor="middle" fill="oklch(1 0 0 / 0.5)" fontSize="10">Nouvelle-Caledonie</text>
       <text x="340" y="256" textAnchor="middle" fill="oklch(1 0 0 / 0.45)" fontSize="9">Wallis et Futuna</text>
       <text x="380" y="368" textAnchor="middle" fill="oklch(1 0 0 / 0.4)" fontSize="9">Pacifique Sud</text>
-      <text x="40" y="105" textAnchor="middle" fill="oklch(1 0 0 / 0.3)" fontSize="8">Europe</text>
+      {/* Europe label removed */}
     </svg>
   );
 }
@@ -235,7 +233,7 @@ export default function AProposPage() {
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/82" />
+        <div className="absolute inset-0 overlay-hero" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 lg:pt-40 pb-20">
@@ -313,7 +311,7 @@ export default function AProposPage() {
               <div className="gsap-reveal mt-10 grid grid-cols-3 gap-4">
                 <Stat value={60} suffix="+" label="Missions realisees" />
                 <Stat value={8} suffix="" label="Domaines d'expertise" />
-                <Stat value={4} suffix="+" label="Territoires" />
+                <Stat value={4} suffix="" label="Territoires" />
               </div>
             </div>
           </div>
@@ -450,7 +448,7 @@ export default function AProposPage() {
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/85" />
+        <div className="absolute inset-0 overlay-cta" />
         <div className="absolute inset-0 grain-overlay" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -474,6 +472,78 @@ export default function AProposPage() {
                 <TerritoryCard territory={territory} />
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Impact territorial */}
+      <section className="py-24 lg:py-32 bg-navy-50/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="gsap-reveal text-center mb-16">
+            <SectionTitle
+              label="Notre impact"
+              title="Impact territorial"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6" data-stagger-parent>
+            <div className="card-hover p-8 bg-white rounded-3xl border border-navy-100/30" data-stagger-child>
+              <div className="w-12 h-12 bg-gold/8 rounded-2xl flex items-center justify-center text-gold mb-5">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                </svg>
+              </div>
+              <h3 className="font-display text-xl font-bold text-navy">Continuite aerienne territoriale</h3>
+              <p className="mt-3 text-sm text-warm leading-relaxed">Structuration desserte inter-iles (Marquises, Wallis &amp; Futuna, atolls).</p>
+            </div>
+            <div className="card-hover p-8 bg-white rounded-3xl border border-navy-100/30" data-stagger-child>
+              <div className="w-12 h-12 bg-gold/8 rounded-2xl flex items-center justify-center text-gold mb-5">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <h3 className="font-display text-xl font-bold text-navy">Developpement economique</h3>
+              <p className="mt-3 text-sm text-warm leading-relaxed">Creation compagnies aeriennes, filieres artisanales, plateformes aeroportuaires.</p>
+            </div>
+            <div className="card-hover p-8 bg-white rounded-3xl border border-navy-100/30" data-stagger-child>
+              <div className="w-12 h-12 bg-gold/8 rounded-2xl flex items-center justify-center text-gold mb-5">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                </svg>
+              </div>
+              <h3 className="font-display text-xl font-bold text-navy">Capacite institutionnelle</h3>
+              <p className="mt-3 text-sm text-warm leading-relaxed">Accompagnement DAC-Pf, DIREN, collectivites dans gouvernance sectorielle.</p>
+            </div>
+            <div className="card-hover p-8 bg-white rounded-3xl border border-navy-100/30" data-stagger-child>
+              <div className="w-12 h-12 bg-gold/8 rounded-2xl flex items-center justify-center text-gold mb-5">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
+                </svg>
+              </div>
+              <h3 className="font-display text-xl font-bold text-navy">Emploi et competences</h3>
+              <p className="mt-3 text-sm text-warm leading-relaxed">Formations certifiees, creation postes management et technique, insertion professionnelle.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Ce que PBC apporte a vos equipes */}
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="gsap-reveal text-center mb-12">
+            <SectionTitle
+              label="Accompagnement"
+              title="Ce que PBC apporte a vos equipes"
+            />
+          </div>
+
+          <div className="gsap-reveal space-y-6 text-warm leading-relaxed">
+            <p>
+              Pascal Bazer-Bachi concoit le conseil comme un levier de montee en competences des equipes : formateur agree, concepteur et animateur de programmes en gestion de projet, conduite du changement, culture manageriale et accompagnement entrepreneurial, il intervient autant sur les contenus que sur les pratiques de travail.
+            </p>
+            <p>
+              Coach professionnel et executive coach accredite, il accompagne dirigeants, cadres et porteurs de projets pour les aider a clarifier leurs enjeux, structurer leurs decisions et incarner les transformations, qu&apos;il s&apos;agisse de politiques publiques, de projets territoriaux, d&apos;infrastructures ou d&apos;initiatives economiques locales.
+            </p>
           </div>
         </div>
       </section>

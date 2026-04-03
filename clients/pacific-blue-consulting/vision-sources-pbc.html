@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pacific Blue Consulting — Sources Interactives</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0c1a3a;--navy2:#152347;--gold:#c8a55a;--gold-l:#e8d5a0;--warm:#e8ddd0;--green:#22c55e;--blue:#3b82f6;--orange:#f59e0b;--bg:#faf8f5}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:#333}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:1000;
+  background:rgba(12,26,58,0.95);backdrop-filter:blur(12px);
+  padding:14px 40px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:2px solid var(--gold);
+}
+nav .logo{font-size:1.1rem;font-weight:800;color:var(--gold);letter-spacing:-0.02em}
+nav .nav-links{display:flex;gap:24px}
+nav .nav-links a{
+  color:#ccc;text-decoration:none;font-size:0.85rem;font-weight:500;
+  padding:6px 12px;border-radius:6px;transition:all 0.2s;cursor:pointer;
+}
+nav .nav-links a:hover,nav .nav-links a.active{color:var(--gold);background:rgba(200,165,90,0.1)}
+nav .mode-badge{
+  padding:4px 12px;border-radius:20px;font-size:0.7rem;font-weight:700;
+  background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);
+}
+
+/* PAGES */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+/* HERO SECTIONS */
+.hero{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);
+  padding:100px 40px 80px;color:white;text-align:center;
+  position:relative;overflow:hidden;
+}
+.hero h1{font-size:2.4rem;font-weight:900;color:var(--gold);letter-spacing:-0.03em}
+.hero p{font-size:1.05rem;color:#bbb;margin-top:12px;max-width:700px;margin-left:auto;margin-right:auto;line-height:1.7}
+
+/* SECTIONS */
+section{padding:60px 40px;max-width:1200px;margin:0 auto}
+.section-label{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:8px}
+.section-title{font-size:1.8rem;font-weight:800;color:var(--navy);margin-bottom:16px}
+.section-desc{font-size:1rem;color:#666;line-height:1.7;max-width:700px}
+
+/* STATS BAR */
+.stats-bar{
+  display:flex;justify-content:center;gap:40px;padding:30px;
+  background:white;border:1px solid #eee;border-radius:16px;margin:40px auto;max-width:800px;
+}
+.stat-item{text-align:center}
+.stat-item .val{font-size:2rem;font-weight:900;color:var(--navy)}
+.stat-item .val span{color:var(--gold)}
+.stat-item .lbl{font-size:0.8rem;color:#888;margin-top:2px}
+
+/* CARDS GRID */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:30px}
+.card{
+  background:white;border:1px solid #eee;border-radius:12px;padding:24px;
+  transition:transform 0.2s,box-shadow 0.2s;
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+.card h3{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+.card p{font-size:0.85rem;color:#666;line-height:1.6}
+
+/* PARTNERS */
+.partners{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.partner-tag{
+  padding:6px 14px;border-radius:8px;font-size:0.8rem;font-weight:600;
+  background:rgba(12,26,58,0.05);color:var(--navy);border:1px solid rgba(12,26,58,0.1);
+}
+
+/* MISSION LIST */
+.mission{
+  background:white;border:1px solid #eee;border-radius:10px;padding:16px 20px;
+  margin-bottom:10px;display:flex;gap:16px;align-items:flex-start;
+}
+.mission .year{
+  min-width:70px;font-size:0.8rem;font-weight:700;color:var(--gold);
+  background:rgba(200,165,90,0.1);padding:4px 10px;border-radius:6px;text-align:center;
+}
+.mission .info{flex:1}
+.mission .info h4{font-size:0.9rem;font-weight:700;color:var(--navy)}
+.mission .info .client{font-size:0.78rem;color:#888;margin-top:2px}
+
+/* BIO */
+.bio{display:flex;gap:40px;align-items:flex-start;margin-top:30px}
+.bio-photo{width:200px;height:200px;border-radius:16px;background:var(--navy);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:0.8rem}
+.bio-text h3{font-size:1.3rem;font-weight:800;color:var(--navy);margin-bottom:12px}
+.bio-text p{font-size:0.9rem;color:#555;line-height:1.7;margin-bottom:10px}
+
+/* CONTACT INFO */
+.contact-info{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:30px}
+.contact-card{
+  background:white;border:1px solid #eee;border-radius:12px;padding:20px;
+  display:flex;align-items:center;gap:12px;
+}
+.contact-card .icon{width:40px;height:40px;border-radius:10px;background:rgba(200,165,90,0.1);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.contact-card .label{font-size:0.75rem;color:#888}
+.contact-card .value{font-size:0.9rem;font-weight:600;color:var(--navy)}
+
+/* LEGAL */
+.legal{margin-top:40px;padding:20px;background:rgba(12,26,58,0.03);border-radius:12px;font-size:0.8rem;color:#888;text-align:center}
+
+/* ========== TOOLTIP SYSTEM ========== */
+[data-source]{
+  position:relative;cursor:help;
+  border-bottom:1px dashed rgba(200,165,90,0.4);
+  transition:background 0.15s;
+}
+[data-source]:hover{
+  background:rgba(200,165,90,0.08);
+  border-bottom-color:var(--gold);
+}
+[data-source]::after{
+  content:'📄';font-size:0.6rem;vertical-align:super;margin-left:2px;opacity:0.4;
+}
+[data-source]:hover::after{opacity:1}
+
+.tooltip{
+  display:none;position:fixed;z-index:9999;
+  max-width:420px;padding:16px 20px;
+  background:rgba(12,26,58,0.97);color:white;
+  border-radius:12px;border:1px solid rgba(200,165,90,0.3);
+  box-shadow:0 12px 40px rgba(0,0,0,0.4);
+  font-size:0.8rem;line-height:1.5;
+  pointer-events:none;
+  backdrop-filter:blur(12px);
+}
+.tooltip.show{display:block}
+.tooltip .t-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold);font-weight:700;margin-bottom:6px}
+.tooltip .t-text{font-weight:600;color:white;margin-bottom:8px}
+.tooltip .t-source{color:#9ca3af;font-size:0.75rem}
+.tooltip .t-source strong{color:var(--gold)}
+.tooltip .t-quote{font-style:italic;color:rgba(200,165,90,0.7);margin-top:6px;font-size:0.75rem;border-left:2px solid var(--gold);padding-left:10px}
+.tooltip .t-match{
+  display:inline-block;margin-top:8px;padding:2px 10px;border-radius:4px;
+  font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;
+}
+.t-exact{background:rgba(34,197,94,0.15);color:#22c55e}
+.t-paraphrased{background:rgba(59,130,246,0.15);color:#60a5fa}
+.t-derived{background:rgba(245,158,11,0.15);color:#fbbf24}
+
+/* FOOTER */
+footer{
+  background:var(--navy);padding:40px;text-align:center;
+  color:#666;font-size:0.8rem;border-top:2px solid var(--gold);
+}
+footer strong{color:var(--gold)}
+
+@media(max-width:768px){
+  .cards{grid-template-columns:1fr}
+  .bio{flex-direction:column}
+  .contact-info{grid-template-columns:1fr}
+  .stats-bar{flex-direction:column;gap:20px}
+  nav .nav-links{gap:8px}
+  nav .nav-links a{font-size:0.75rem;padding:4px 8px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">PACIFIC BLUE CONSULTING</div>
+  <div class="nav-links">
+    <a class="active" onclick="showPage('home')">Accueil</a>
+    <a onclick="showPage('about')">À propos</a>
+    <a onclick="showPage('expertise')">Expertises</a>
+    <a onclick="showPage('references')">Références</a>
+    <a onclick="showPage('contact')">Contact</a>
+  </div>
+  <div class="mode-badge">🔍 MODE SOURCES — Survolez le texte</div>
+</nav>
+
+<div class="tooltip" id="tooltip">
+  <div class="t-label">Source du contenu</div>
+  <div class="t-text" id="t-text"></div>
+  <div class="t-source" id="t-source"></div>
+  <div class="t-quote" id="t-quote"></div>
+  <div id="t-match"></div>
+</div>
+
+<!-- ==================== ACCUEIL ==================== -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div data-source="Catalogue, Introduction L.108|Cabinet de conseil indépendant|exact|&quot;Pacific Blue Consulting est un cabinet de conseil indépendant basé en Polynésie française&quot;" style="display:inline-block">
+      <span style="font-size:0.85rem;color:var(--gold);font-weight:600">Cabinet de conseil indépendant</span>
+    </div>
+    <h1 data-source="Éditorial — accroche créative|Votre boussole dans un monde complexe|editorial|">Votre boussole dans un monde complexe</h1>
+    <p data-source="Flyer P.1 col. droite + Catalogue Conclusion L.596|Description hero|paraphrased|&quot;Conseil en Stratégie, Aéronautique, Transition Ecologique&quot; + &quot;plus de 60 missions&quot;">
+      Conseil en stratégie, aéronautique, transition écologique et assistance à maîtrise d'ouvrage. Plus de 60 missions réalisées en Polynésie française, Nouvelle-Calédonie et dans le Pacifique.
+    </p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item" data-source="Catalogue, Conclusion L.596|60+ missions|exact|&quot;Ce portefeuille de plus de 60 missions (2019-2025)&quot;">
+      <div class="val">60<span>+</span></div><div class="lbl">Missions réalisées</div>
+    </div>
+    <div class="stat-item" data-source="Catalogue, Synthèse L.540-591|6 domaines|derived|8 familles du catalogue regroupées en 6 domaines sur le site">
+      <div class="val">6</div><div class="lbl">Domaines d'expertise</div>
+    </div>
+    <div class="stat-item" data-source="Catalogue, lieux des 61 missions|4 territoires|derived|PF + NC + Wallis & Futuna + Pacifique Sud (missions documentées)">
+      <div class="val">4</div><div class="lbl">Territoires couverts</div>
+    </div>
+    <div class="stat-item" data-source="Catalogue, Introduction L.108|100% indépendant|derived|&quot;cabinet de conseil indépendant&quot;">
+      <div class="val">100<span>%</span></div><div class="lbl">Indépendant</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-label">Nos domaines</div>
+    <h2 class="section-title" data-source="Catalogue Intro L.108 + Flyer P.1|Expertise multisectorielle|paraphrased|&quot;accompagne les acteurs publics et privés dans leurs projets de transformation&quot;">Une expertise multisectorielle au service du Pacifique</h2>
+    <div class="cards">
+      <div class="card" data-source="Catalogue Section 1, L.130-305|Aviation civile|paraphrased|19 missions aviation documentées dans le catalogue">
+        <h3>✈️ Aviation Civile</h3>
+        <p>Conformité EASA, audits Part-145/Part-M, création de compagnies aériennes, modélisation de dessertes.</p>
+      </div>
+      <div class="card" data-source="Catalogue Section 2, L.310-380|Aéroports & Aérodromes|paraphrased|Missions SSLIA, AFIS, plans de servitude, certification">
+        <h3>🛬 Aéroports</h3>
+        <p>SSLIA, AFIS, plans de servitude, certification, sécurité aéroportuaire.</p>
+      </div>
+      <div class="card" data-source="Catalogue Section 3, L.383-440|Environnement|paraphrased|EIE/NIE, biodiversité, bilan carbone DIREN">
+        <h3>🌿 Environnement</h3>
+        <p>Études d'impact environnemental, biodiversité, bilan carbone, décarbonation.</p>
+      </div>
+      <div class="card" data-source="Catalogue Section 4, L.440-458|Formation|paraphrased|Part-147, instructeurs EASA, concours DAC">
+        <h3>📚 Formation</h3>
+        <p>Centres Part-147, formation EASA, concours administratifs, développement des compétences.</p>
+      </div>
+      <div class="card" data-source="Catalogue Section 5, L.460-530|Études & AMO|paraphrased|Faisabilité, modélisation, schéma directeur">
+        <h3>📊 Études & AMO</h3>
+        <p>Études de faisabilité, assistance à maîtrise d'ouvrage, modélisation économique, schémas directeurs.</p>
+      </div>
+      <div class="card" data-source="Catalogue Synthèse L.562-565|Documentation technique|paraphrased|MANEX, SSLIA, AFIS, manuels UAV, maintenance">
+        <h3>📋 Documentation</h3>
+        <p>Manuels d'exploitation, documentation réglementaire, certification, procédures opérationnelles.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--navy);margin:0;max-width:100%;padding:60px 40px;color:white">
+    <div style="max-width:1200px;margin:0 auto">
+      <div class="section-label">Pourquoi nous</div>
+      <h2 class="section-title" style="color:var(--gold)" data-source="Flyer P.1 dernier paragraphe|Partenaire de confiance|paraphrased|&quot;PBC se positionne comme un partenaire indispensable pour les acteurs privés et publics&quot;">Un partenaire de confiance pour vos projets stratégiques</h2>
+      <p class="section-desc" style="color:#bbb" data-source="Catalogue Introduction L.108|Description Pourquoi nous|paraphrased|&quot;...accompagne les acteurs publics et privés dans leurs projets de transformation, d'investissement et de structuration, en particulier dans les secteurs du transport, des infrastructures, de l'énergie, de l'environnement et des services publics.&quot;">
+        Depuis 2017, Pacific Blue Consulting accompagne les acteurs publics et privés dans leurs projets de transformation, d'investissement et de structuration, dans les secteurs du transport, des infrastructures, de l'énergie, de l'environnement et des services publics.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label" data-source="Flyer P.2 section droite|Partenaires clés|exact|&quot;Partenaires clés :&quot;">Nos partenaires clés</div>
+    <h2 class="section-title">Un réseau de confiance</h2>
+    <div class="partners">
+      <span class="partner-tag" data-source="Flyer P.2 + Catalogue missions|Air Loyauté|exact|Client récurrent sections 1.1, 1.3">Air Loyauté</span>
+      <span class="partner-tag" data-source="Flyer P.2 + Catalogue missions|Vinci Airports|exact|Client mission 2.1.1">Vinci Airports</span>
+      <span class="partner-tag" data-source="Flyer P.2 + Catalogue missions|DAC-PF|exact|Client principal, 15+ missions">DAC-PF</span>
+      <span class="partner-tag" data-source="Flyer P.2 + Catalogue missions|CNAM|exact|Client section 4.1">CNAM</span>
+      <span class="partner-tag" data-source="Flyer P.2 + Catalogue Section 3|DIREN|exact|Client missions environnement 3.1.1, 3.1.2">DIREN</span>
+      <span class="partner-tag" data-source="Catalogue missions Section 1.2|Terciel|exact|Co-client mission Islands Airline">Terciel</span>
+      <span class="partner-tag" data-source="Catalogue Section 2.2|Province Iles Loyauté|exact|Client aérodrome Lifou">Province Îles Loyauté</span>
+      <span class="partner-tag" data-source="Catalogue Section 1.2.4|Air Bora Bora|exact|Client mission 1.2.4">Air Bora Bora</span>
+      <span class="partner-tag" data-source="Catalogue Section 1.2|Islands Airline|exact|Client mission 1.2.1-1.2.3">Islands Airline</span>
+      <span class="partner-tag" data-source="Catalogue Section 1.2.5|Tahiti Air Charter|exact|Client TAC">Tahiti Air Charter</span>
+      <span class="partner-tag" data-source="Catalogue Section 1.3|TASC|exact|Client audits Part-145">TASC</span>
+      <span class="partner-tag" data-source="Catalogue Section 4.2|Air Formation|exact|Client Part-147">Air Formation</span>
+      <span class="partner-tag" data-source="Catalogue Section 5|Tahiti Beachcomber|exact|Client section 5">Tahiti Beachcomber SA</span>
+      <span class="partner-tag" data-source="Catalogue missions|DAG|exact|Direction de l'Aviation Générale">DAG</span>
+      <span class="partner-tag" data-source="Catalogue Section 2.1.2|MLA|exact|Mission aérodromes">MLA</span>
+      <span class="partner-tag" data-source="Catalogue Section 1.3.1|Ministère des Transports|exact|Client audit organisationnel">Min. des Transports</span>
+      <span class="partner-tag" data-source="Catalogue Section 6|Service Artisanat Traditionnel|exact|Client section 6">Artisanat Traditionnel</span>
+      <span class="partner-tag" data-source="Catalogue Section 1.6.2|MOZ ULM|exact|Client base ULM Moorea">MOZ ULM</span>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== A PROPOS ==================== -->
+<div class="page" id="page-about">
+  <div class="hero">
+    <h1 data-source="Catalogue Introduction L.108-110|Titre À propos|paraphrased|&quot;plus de trente années d'expérience de direction et de pilotage&quot;">Un cabinet né de l'expérience du terrain</h1>
+    <p data-source="Catalogue Introduction L.108|Description À propos|exact|&quot;cabinet de conseil indépendant qui accompagne les acteurs publics et privés... transport, infrastructures, énergie, environnement, services publics&quot;">
+      Cabinet de conseil indépendant qui accompagne les acteurs publics et privés dans leurs projets de transformation, d'investissement et de structuration, en particulier dans les secteurs du transport, des infrastructures, de l'énergie, de l'environnement et des services publics.
+    </p>
+  </div>
+
+  <section>
+    <div class="section-label">Nos valeurs</div>
+    <div class="cards" style="grid-template-columns:repeat(4,1fr)">
+      <div class="card" data-source="Catalogue Intro L.108|Indépendance|derived|&quot;cabinet de conseil indépendant&quot;">
+        <h3>Indépendance</h3><p>Un regard objectif, sans conflit d'intérêt.</p>
+      </div>
+      <div class="card" data-source="Catalogue Conclusion L.596-600|Excellence|derived|&quot;portefeuille de plus de 60 missions&quot; = track record">
+        <h3>Excellence</h3><p>Plus de 30 missions dans le secteur aérien.</p>
+      </div>
+      <div class="card" data-source="Flyer P.1 col. droite|Innovation|exact|&quot;Conseil, Innovation, Performance&quot;">
+        <h3>Innovation</h3><p>Drones, modélisation, aéroports marins.</p>
+      </div>
+      <div class="card" data-source="Flyer P.2 Approche|Responsabilité|exact|&quot;Sur Mesure, Innovante et Responsable&quot;">
+        <h3>Responsabilité</h3><p>Transition écologique et développement durable.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">Le fondateur</div>
+    <div class="bio">
+      <div class="bio-photo">Photo Pascal</div>
+      <div class="bio-text">
+        <h3 data-source="Catalogue Bio L.659|Pascal Bazer-Bachi|exact|&quot;Fondé en 2017 par Pascal BAZER-BACHI&quot;">Pascal Bazer-Bachi</h3>
+        <p data-source="Catalogue Bio L.659-662|Bio fondateur|exact|&quot;met au service de ses clients plus de trente années d'expérience de direction et de pilotage de systèmes complexes dans l'aviation civile, les systèmes satellitaires, les aéroports et les politiques publiques, en Europe et dans le Pacifique&quot;">
+          Fondateur et président de Pacific Blue Consulting, Pascal Bazer-Bachi met au service de ses clients plus de trente années d'expérience de direction et de pilotage de systèmes complexes dans l'aviation civile, les systèmes satellitaires, les aéroports et les politiques publiques, en Europe et dans le Pacifique.
+        </p>
+        <p data-source="Catalogue Bio L.663-665|Parcours professionnel|exact|&quot;Il a occupé des fonctions de haut niveau dans l'administration et au sein d'opérateurs techniques&quot;">
+          Il a occupé des fonctions de haut niveau dans l'administration et au sein d'opérateurs techniques, avant de créer plusieurs structures de conseil et d'ingénierie.
+        </p>
+        <p data-source="Catalogue Bio L.669|Chevalier ONM|exact|&quot;Chevalier de l'Ordre National du Mérite&quot;"><strong style="color:var(--navy)">Chevalier de l'Ordre National du Mérite</strong>, il s'est vu reconnaître son engagement au service de l'intérêt général.</p>
+        <p data-source="Catalogue Bio L.671|Coach professionnel|exact|&quot;coach professionnel accrédité&quot;">Coach professionnel accrédité, il accompagne les dirigeants dans la conduite du changement.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="legal" data-source="Catalogue Infos légales L.123-125|Informations légales|exact|&quot;SAS au capital de 200 000 FCFP — PK 17,900 COTE MER PUNAAUIA — N° Tahiti G28823&quot;">
+      SAS au capital de 200 000 FCFP — PK 17,900 Côté Mer, Punaauia — N° Tahiti G28823
+    </div>
+  </section>
+</div>
+
+<!-- ==================== EXPERTISE ==================== -->
+<div class="page" id="page-expertise">
+  <div class="hero">
+    <h1>Nos domaines d'expertise</h1>
+    <p data-source="Catalogue, 6 sections thématiques|6 domaines détaillés|paraphrased|Sections 1-6 du catalogue structurent les 6 domaines du site">Six domaines d'intervention couvrant l'ensemble des besoins en conseil, audit, formation et accompagnement de projets.</p>
+  </div>
+
+  <section>
+    <div class="card" style="margin-bottom:20px" data-source="Catalogue Section 1, L.130-305 (19 missions)|Aviation Civile détaillée|paraphrased|Conformité EASA Part-145, Part-M, Part-CAMO, création compagnies, modélisation dessertes">
+      <h3>✈️ Aviation Civile</h3>
+      <p>Conformité réglementaire EASA (Part-145, Part-M, Part-CAMO), création et accompagnement de compagnies aériennes, modélisation de dessertes inter-îles, exploration drones civils.</p>
+      <p style="margin-top:8px;font-size:0.8rem;color:#888"><strong>Exemples :</strong> Audits Air Loyauté, création Islands Airline, modélisation desserte DAC-Pf, exploration drones, accompagnement Air Bora Bora, Tahiti Air Charter.</p>
+    </div>
+    <div class="card" style="margin-bottom:20px" data-source="Catalogue Section 2, L.310-380|Aéroports détaillés|paraphrased|SSLIA, AFIS, certification, plans de servitude aéronautiques">
+      <h3>🛬 Aéroports & Aérodromes</h3>
+      <p>Recueils SSLIA et AFIS, plans de servitude, études d'impact sécurité, certification d'aérodromes.</p>
+      <p style="margin-top:8px;font-size:0.8rem;color:#888"><strong>Exemples :</strong> Vinci Airports Nadi, aérodrome Lifou Province Îles Loyauté, certification MLA.</p>
+    </div>
+    <div class="card" style="margin-bottom:20px" data-source="Catalogue Section 3, L.383-440|Environnement détaillé|paraphrased|EIE/NIE pour DIREN, biodiversité, bilan carbone DAC-Pf">
+      <h3>🌿 Environnement</h3>
+      <p>Études d'impact environnemental (EIE/NIE), dispositifs biodiversité, bilan carbone institutionnel et feuille de route décarbonation.</p>
+      <p style="margin-top:8px;font-size:0.8rem;color:#888"><strong>Exemples :</strong> Actualisation EIE/NIE pour la DIREN, certification biodiversité, bilan carbone DAC-Pf.</p>
+    </div>
+    <div class="card" style="margin-bottom:20px" data-source="Catalogue Section 4, L.440-458|Formation détaillée|paraphrased|Centre Part-147, instructeurs EASA, préparation concours">
+      <h3>📚 Formation & Concours</h3>
+      <p>Centres de formation Part-147, qualification instructeurs EASA, préparation concours administratifs aviation civile.</p>
+      <p style="margin-top:8px;font-size:0.8rem;color:#888"><strong>Exemples :</strong> Centre Part-147 Air Formation, qualification instructeurs, concours TSEEAC pour le CNAM.</p>
+    </div>
+    <div class="card" style="margin-bottom:20px" data-source="Catalogue Section 5, L.460-530|Études & AMO détaillées|paraphrased|Faisabilité, modélisation économique, schéma directeur, développement territorial">
+      <h3>📊 Études & AMO</h3>
+      <p>Études de faisabilité, modélisation économique, schémas directeurs, assistance à maîtrise d'ouvrage, développement territorial.</p>
+      <p style="margin-top:8px;font-size:0.8rem;color:#888"><strong>Exemples :</strong> Schéma directeur aviation PF, modèle aéroports marins, faisabilité liaison régionale Pacifique Sud.</p>
+    </div>
+    <div class="card" style="margin-bottom:20px" data-source="Catalogue Synthèse L.562-565|Documentation détaillée|paraphrased|MANEX, manuels UAV, SSLIA, AFIS, maintenance, certification">
+      <h3>📋 Documentation & Certification</h3>
+      <p>Manuels d'exploitation (MANEX), documentation SSLIA/AFIS, manuels UAV, procédures maintenance, certification ISO.</p>
+      <p style="margin-top:8px;font-size:0.8rem;color:#888"><strong>Exemples :</strong> 47 documents Islands Airline, manuels TAC, recueils DAC-Pf, manuels maintenance électrotechnique.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== REFERENCES ==================== -->
+<div class="page" id="page-references">
+  <div class="hero">
+    <h1 data-source="Catalogue complet — 61 missions|61 missions référencées|exact|Chaque mission tracée au catalogue">61 missions de référence</h1>
+    <p>Chaque mission ci-dessous est directement sourcée du Catalogue des Missions Pacific Blue Consulting.</p>
+  </div>
+
+  <section>
+    <div class="mission" data-source="Catalogue Section 1.1.1, L.130-140|Audit conformité Air Loyauté|exact|&quot;Client : Air Loyauté — Audits conformité Part-145, Part-M&quot;">
+      <div class="year">2023-25</div>
+      <div class="info"><h4>Audits conformité réglementaire EASA</h4><div class="client">Air Loyauté — Polynésie française</div></div>
+    </div>
+    <div class="mission" data-source="Catalogue Section 1.2.1-1.2.3, L.155-190|Création Islands Airline|exact|&quot;Client : Terciel / Islands Airline — Création ab initio&quot;">
+      <div class="year">2021-25</div>
+      <div class="info"><h4>Création compagnie aérienne Islands Airline</h4><div class="client">Terciel / Islands Airline — Polynésie française</div></div>
+    </div>
+    <div class="mission" data-source="Catalogue Section 1.4.1, L.260-275|Modélisation desserte DAC-Pf|exact|&quot;Client : DAC-Pf — Outil de modélisation de la desserte&quot;">
+      <div class="year">2020-23</div>
+      <div class="info"><h4>Modélisation de la desserte aérienne inter-îles</h4><div class="client">DAC-Pf — Polynésie française</div></div>
+    </div>
+    <div class="mission" data-source="Catalogue Section 1.6.1, L.290-305|Exploration drones|exact|&quot;Client : DAC-Pf — Étude d'exploration des opportunités de déploiement des drones&quot;">
+      <div class="year">2024-25</div>
+      <div class="info"><h4>Exploration drones civils en Polynésie</h4><div class="client">DAC-Pf — Polynésie française</div></div>
+    </div>
+    <div class="mission" data-source="Catalogue Section 2.1.1, L.320-340|Vinci Airports Nadi|exact|&quot;Client : Vinci Airports — Aéroport international de Nadi&quot;">
+      <div class="year">2021-22</div>
+      <div class="info"><h4>SSLIA aéroport international de Nadi</h4><div class="client">Vinci Airports — Fidji (Pacifique Sud)</div></div>
+    </div>
+    <div class="mission" data-source="Catalogue Section 3.1.1-3.1.2, L.390-410|Biodiversité DIREN|exact|&quot;Client : DIREN — Dispositif biodiversité&quot;">
+      <div class="year">2021-23</div>
+      <div class="info"><h4>Dispositif biodiversité</h4><div class="client">DIREN — Polynésie française</div></div>
+    </div>
+    <div class="mission" data-source="Catalogue Section 3.2.1, L.415-430|Bilan carbone DAC-Pf|exact|&quot;Client : DAC-Pf — Bilan carbone et feuille de route décarbonation&quot;">
+      <div class="year">2024-25</div>
+      <div class="info"><h4>Bilan carbone et décarbonation</h4><div class="client">DAC-Pf — Polynésie française</div></div>
+    </div>
+    <div class="mission" data-source="Catalogue Section 5.1.1, L.482-495|Wallis & Futuna|exact|&quot;Client : Wallis et Futuna — Étude de faisabilité&quot;">
+      <div class="year">2020</div>
+      <div class="info"><h4>Étude de faisabilité aéroportuaire</h4><div class="client">Territoire de Wallis et Futuna</div></div>
+    </div>
+    <p style="text-align:center;color:#888;margin-top:20px;font-size:0.9rem" data-source="Catalogue complet|61 missions au total|exact|Toutes les missions sont dans le catalogue">
+      <strong>+ 53 autres missions</strong> — toutes sourcées du Catalogue des Missions PBC
+    </p>
+  </section>
+</div>
+
+<!-- ==================== CONTACT ==================== -->
+<div class="page" id="page-contact">
+  <div class="hero">
+    <h1>Nous contacter</h1>
+    <p>Prenez rendez-vous pour discuter de votre projet.</p>
+  </div>
+
+  <section>
+    <div class="contact-info">
+      <div class="contact-card" data-source="Flyer P.1 bas|Email de contact|exact|&quot;Mail : pacificblueconsulting@zoho.com&quot;">
+        <div class="icon">✉️</div>
+        <div><div class="label">Email</div><div class="value">pacificblueconsulting@zoho.com</div></div>
+      </div>
+      <div class="contact-card" data-source="Flyer P.1 bas|Téléphone|exact|&quot;Mobile : 87-747-284&quot;">
+        <div class="icon">📱</div>
+        <div><div class="label">Téléphone</div><div class="value">+689 87 747 284</div></div>
+      </div>
+      <div class="contact-card" data-source="Catalogue Infos légales L.124|Adresse|exact|&quot;PK 17,900 COTE MER — PUNAAUIA — POLYNESIE FRANCAISE&quot;">
+        <div class="icon">📍</div>
+        <div><div class="label">Adresse</div><div class="value">PK 17,900 Côté Mer — Punaauia, Polynésie française</div></div>
+      </div>
+      <div class="contact-card" data-source="Catalogue Infos légales L.125|N° Tahiti|exact|&quot;N° Tahiti G28823&quot;">
+        <div class="icon">🏢</div>
+        <div><div class="label">N° Tahiti</div><div class="value">G28823</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <strong>Document de traçabilité</strong> — Pacific Blue Consulting<br>
+  Généré le 31 mars 2026 · Chaque élément est sourcé du Catalogue des Missions ou du Flyer officiel
+</footer>
+
+<script>
+// Navigation
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  event.target.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Tooltip system
+const tooltip = document.getElementById('tooltip');
+const tText = document.getElementById('t-text');
+const tSource = document.getElementById('t-source');
+const tQuote = document.getElementById('t-quote');
+const tMatch = document.getElementById('t-match');
+
+document.querySelectorAll('[data-source]').forEach(el => {
+  el.addEventListener('mouseenter', (e) => {
+    const parts = el.dataset.source.split('|');
+    const [source, text, match, quote] = parts;
+    
+    tText.textContent = text || el.textContent.substring(0, 80);
+    tSource.innerHTML = '<strong>Source :</strong> ' + source;
+    tQuote.textContent = quote ? quote.replace(/&quot;/g, '"') : '';
+    tQuote.style.display = quote ? 'block' : 'none';
+    
+    const matchLabels = { exact: 'EXACT', paraphrased: 'PARAPHRASÉ', derived: 'DÉRIVÉ', editorial: 'ÉDITORIAL' };
+    const matchClasses = { exact: 't-exact', paraphrased: 't-paraphrased', derived: 't-derived', editorial: 't-derived' };
+    tMatch.className = 't-match ' + (matchClasses[match] || 't-derived');
+    tMatch.textContent = matchLabels[match] || match;
+    
+    tooltip.classList.add('show');
+  });
+  
+  el.addEventListener('mousemove', (e) => {
+    let x = e.clientX + 20;
+    let y = e.clientY - 10;
+    if (x + 420 > window.innerWidth) x = e.clientX - 440;
+    if (y + 200 > window.innerHeight) y = e.clientY - 200;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  });
+  
+  el.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('show');
+  });
+});
+</script>
+
+</body>
+</html>
