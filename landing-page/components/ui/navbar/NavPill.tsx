@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { SOLUTIONS_DROPDOWN, EXPERTISE_DROPDOWN, TOP_LINKS } from "./navData";
 import NavDropdown from "./NavDropdown";
+// import LanguageToggle from "./LanguageToggle";
 
 interface NavPillProps {
   isScrolled: boolean;
@@ -100,6 +101,9 @@ export default function NavPill({
       >
         Discutons
       </Link>
+
+      {/* Language toggle — hidden pour l'instant */}
+      {/* <LanguageToggle /> */}
 
       {/* Menu button for fullscreen overlay */}
       <button

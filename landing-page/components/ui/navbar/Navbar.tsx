@@ -6,8 +6,11 @@ import { useNavbar } from "./useNavbar";
 import NavPill from "./NavPill";
 import NavFullscreen from "./NavFullscreen";
 import NavMobile from "./NavMobile";
+// import LanguageToggle from "./LanguageToggle";
+import { useT } from "@/lib/i18n/useT";
 
 export default function Navbar() {
+  const t = useT("nav");
   const {
     isScrolled,
     isVisible,
@@ -37,7 +40,7 @@ export default function Navbar() {
           className="block bg-accent/10 border-b border-accent/20 text-center py-2 px-4 hover:bg-accent/15 transition-colors"
         >
           <p className="text-xs text-accent font-medium tracking-wide">
-            Offre limitee : Site internet pro a partir de 100 000 XPF &rarr;
+            {t?.announcement ?? "Offre limitee : Site internet pro a partir de 100 000 XPF \u2192"}
           </p>
         </Link>
       </div>
@@ -62,10 +65,13 @@ export default function Navbar() {
         style={{ top: isScrolled || isMobileOpen ? 0 : "2.25rem" }}
       >
         <div className="flex items-center justify-between px-5 h-14">
-          <Link href="/" className="flex items-center gap-2.5" onClick={closeAll}>
-            <Image src="/logo-nav.png" alt="PACIFIK'AI" width={28} height={28} className="w-7 h-7" />
-            <span className="font-display text-base tracking-wide">PACIFIK&apos;AI</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2.5" onClick={closeAll}>
+              <Image src="/logo-nav.png" alt="PACIFIK'AI" width={28} height={28} className="w-7 h-7" />
+              <span className="font-display text-base tracking-wide">PACIFIK&apos;AI</span>
+            </Link>
+            {/* <LanguageToggle /> */}
+          </div>
 
           <button
             onClick={toggleMobile}
