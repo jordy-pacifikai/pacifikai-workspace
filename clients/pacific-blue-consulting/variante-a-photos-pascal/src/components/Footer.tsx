@@ -2,17 +2,16 @@ import Link from "next/link";
 import Image from "next/image";
 
 const footerLinks = {
-  expertise: [
-    { href: "/expertise#aviation", label: "Aviation civile" },
-    { href: "/expertise#aeroports", label: "Aeroports" },
-    { href: "/expertise#environnement", label: "Environnement" },
-    { href: "/expertise#etudes", label: "Etudes strategiques" },
-    { href: "/expertise#amo", label: "AMO & Pilotage" },
-    { href: "/expertise#formation", label: "Formation" },
+  offres: [
+    { href: "/offres#mobilites", label: "Mobilités & Transport aérien" },
+    { href: "/offres#infrastructures", label: "Infrastructures & Territoires" },
+    { href: "/offres#environnement", label: "Environnement & Souveraineté" },
+    { href: "/offres#transformation", label: "Transformation & Compétences" },
   ],
   cabinet: [
-    { href: "/a-propos", label: "A propos" },
-    { href: "/references", label: "References" },
+    { href: "/le-cabinet", label: "Le Cabinet" },
+    { href: "/realisations", label: "Réalisations" },
+    { href: "/perspectives", label: "Perspectives" },
     { href: "/contact", label: "Contact" },
   ],
 };
@@ -36,29 +35,25 @@ export default function Footer() {
                 height={27}
                 className="w-12 h-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]"
               />
-              <div>
-                <span className="font-display text-lg font-bold">
-                  Pacific Blue
-                </span>
-                <span className="block text-[10px] tracking-[0.2em] uppercase text-white/40">
-                  Consulting
-                </span>
-              </div>
+              <span className="font-display text-base font-bold tracking-wide text-white">
+                Pacific Blue Consulting
+              </span>
             </Link>
             <p className="text-white/40 text-sm leading-relaxed mt-6 max-w-xs">
-              Cabinet de conseil independant specialise dans l&apos;aviation
-              civile, l&apos;environnement et le pilotage de projets dans le
-              Pacifique.
+              Cabinet de conseil indépendant en Polynésie française.
+              Structuration de projets complexes en transport aérien, sécurité
+              aéroportuaire, infrastructures, environnement et développement
+              territorial dans le Pacifique.
             </p>
           </div>
 
           {/* Expertise */}
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold mb-5">
-              Expertise
+              Offres
             </h4>
             <ul className="space-y-3">
-              {footerLinks.expertise.map((link) => (
+              {footerLinks.offres.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

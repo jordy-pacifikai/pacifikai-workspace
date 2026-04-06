@@ -23,31 +23,34 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Pacific Blue Consulting | Conseil Aviation, Environnement & Projets Complexes",
+    default: "Pacific Blue Consulting | Architecte de projets complexes dans le Pacifique",
     template: "%s | Pacific Blue Consulting",
   },
   description:
-    "Cabinet de conseil independant specialise en aviation civile, environnement et pilotage de projets complexes en Polynesie francaise et dans le Pacifique. 60+ missions depuis 2017.",
+    "Pacific Blue Consulting : cabinet de conseil en Polynésie française. Structuration de projets complexes en transport aérien, sécurité aéroportuaire, environnement et développement territorial.",
   keywords: [
     "conseil aviation civile",
     "polynesie francaise",
     "consultant aerien",
-    "bilan carbone aviation",
-    "AMO aeroportuaire",
+    "securite aeroportuaire",
+    "transport aerien",
+    "EISA",
+    "environnement",
+    "souverainete alimentaire",
     "Pacific Blue Consulting",
     "Tahiti",
     "Pacifique",
-    "environnement",
     "aeroport",
+    "infrastructure insulaire",
   ],
   authors: [{ name: "Pacific Blue Consulting" }],
   openGraph: {
     type: "website",
     locale: "fr_FR",
     siteName: "Pacific Blue Consulting",
-    title: "Pacific Blue Consulting | Votre boussole dans un monde complexe",
+    title: "Pacific Blue Consulting | Architecte de projets complexes dans le Pacifique",
     description:
-      "Cabinet de conseil independant : aviation civile, environnement, pilotage de projets. 60+ missions en Polynesie francaise et dans le Pacifique.",
+      "Cabinet de conseil en Polynésie française. Structuration de projets complexes en transport aérien, sécurité aéroportuaire, environnement et développement territorial.",
   },
 };
 
@@ -67,7 +70,7 @@ export default function RootLayout({
               "@type": "ConsultingBusiness",
               name: "Pacific Blue Consulting",
               description:
-                "Cabinet de conseil independant specialise en aviation civile, environnement et pilotage de projets dans le Pacifique.",
+                "Cabinet de conseil en Polynésie française. Structuration de projets complexes en transport aérien, sécurité aéroportuaire, environnement et développement territorial.",
               url: "https://pacificblueconsulting.com",
               telephone: "+689-87-747-284",
               email: "pacificblueconsulting@zoho.com",

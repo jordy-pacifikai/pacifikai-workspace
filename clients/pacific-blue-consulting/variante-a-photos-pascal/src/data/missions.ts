@@ -1,3 +1,12 @@
+export type GeoTerritory = "Polynesie francaise" | "Nouvelle-Caledonie" | "Pacifique Sud" | "Wallis et Futuna";
+
+export const geoTerritoryLabels: Record<GeoTerritory, string> = {
+  "Polynesie francaise": "Polynésie française",
+  "Nouvelle-Caledonie": "Nouvelle-Calédonie",
+  "Pacifique Sud": "Pacifique Sud",
+  "Wallis et Futuna": "Wallis et Futuna",
+};
+
 export type Mission = {
   id: string;
   title: string;
@@ -5,7 +14,7 @@ export type Mission = {
   year: string;
   domain: Domain;
   description: string;
-  location: string;
+  location: GeoTerritory;
   benefit: string;
 };
 
@@ -962,5 +971,80 @@ export const missions: Mission[] = [
     location: "Polynesie francaise",
     benefit:
       "Mise en place d\'un opérateur hélicoptère structuré et viable, capable de répondre aux besoins de transport, de tourisme et d\'évacuation sanitaire sur un territoire très dispersé, tout en optimisant les investissements, la mutualisation des moyens et la complémentarité avec les autres acteurs aériens.",
+  },
+  // ──────────────────────────────────────────────
+  // Nouveaux clients CDC v3
+  // ──────────────────────────────────────────────
+  {
+    id: "commune-moorea-route-aeroport",
+    title: "Etude route aeroport Temae",
+    client: "Commune de Moorea",
+    year: "2024-2025",
+    domain: "aeroports",
+    description:
+      "Etude de la route d'acces a l'aeroport de Temae a Moorea, incluant l'analyse des flux, la securite routiere et l'integration avec le schema d'amenagement aeroportuaire.",
+    location: "Polynesie francaise",
+    benefit:
+      "Amélioration de l'accessibilité et de la sécurité de l'aéroport de Moorea, meilleure fluidité des flux passagers et fret.",
+  },
+  {
+    id: "eisa-etik-adt",
+    title: "EISA pour Etik Pf / Air Tahiti",
+    client: "Etik Pf / Air Tahiti",
+    year: "2024-2025",
+    domain: "securite",
+    description:
+      "Realisation d'etudes d'impact sur la securite aeroportuaire (EISA) pour les travaux menes par Etik Pf et Air Tahiti sur les plateformes polynesiennes.",
+    location: "Polynesie francaise",
+    benefit:
+      "Travaux aéroportuaires sécurisés, conformité aux exigences nationales et européennes, risques résiduels maîtrisés.",
+  },
+  {
+    id: "formation-hsf",
+    title: "Formation gestion de projet",
+    client: "HSF",
+    year: "2024-2025",
+    domain: "formation",
+    description:
+      "Formation en gestion de projet pour les equipes de HSF, incluant methodologie, outils de planification et suivi, et conduite du changement.",
+    location: "Polynesie francaise",
+    benefit:
+      "Équipes formées et autonomes en gestion de projet, meilleure exécution des projets internes.",
+  },
+  {
+    id: "ias-accompagnement",
+    title: "Accompagnement operationnel IAS",
+    client: "IAS",
+    year: "2024-2025",
+    domain: "aviation",
+    description:
+      "Accompagnement operationnel de la compagnie aerienne IAS, incluant conformite reglementaire et appui a l'exploitation.",
+    location: "Polynesie francaise",
+    benefit:
+      "Opérations conformes et sécurisées, continuité d'exploitation assurée.",
+  },
+  {
+    id: "kroma-prod-imagerie",
+    title: "Imagerie aerienne professionnelle",
+    client: "Kroma Prod",
+    year: "2024-2025",
+    domain: "drones",
+    description:
+      "Missions d'imagerie aerienne professionnelle par drone pour Kroma Prod, incluant captation video et photo aerienne haute resolution.",
+    location: "Polynesie francaise",
+    benefit:
+      "Contenus visuels aériens de qualité professionnelle pour productions audiovisuelles.",
+  },
+  {
+    id: "commune-hiva-oa",
+    title: "Accompagnement projet infrastructure",
+    client: "Commune de Hiva Oa",
+    year: "2024-2025",
+    domain: "aeroports",
+    description:
+      "Accompagnement de la Commune de Hiva Oa sur ses projets d'infrastructure aeroportuaire aux Marquises.",
+    location: "Polynesie francaise",
+    benefit:
+      "Infrastructure adaptée aux contraintes marquisiennes, meilleure desserte de l'île.",
   },
 ];

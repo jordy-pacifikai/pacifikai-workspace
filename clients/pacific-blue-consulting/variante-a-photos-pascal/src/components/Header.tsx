@@ -15,31 +15,26 @@ type NavItem = {
 const navItems: NavItem[] = [
   { href: "/", label: "Accueil" },
   {
-    href: "/expertise",
-    label: "Expertise",
+    href: "/offres",
+    label: "Offres",
     children: [
-      { href: "/expertise#etudes-strategie", label: "Etudes & Strategie", description: "Faisabilite, modelisation, schemas directeurs" },
-      { href: "/expertise#audits-conformite", label: "Audits & Conformite", description: "Part-145, Part-M, Part-CAMO, certification" },
-      { href: "/expertise#documentation-certification", label: "Documentation", description: "MANEX, SSLIA, AFIS, procedures UAV" },
-      { href: "/expertise#formation-concours", label: "Formation", description: "Management, Part-147, concours" },
-      { href: "/expertise#amo-projets", label: "AMO & Projets", description: "Pilotage de projets complexes" },
-      { href: "/expertise#creation-structuration", label: "Creation / Structuration", description: "Compagnies, centres de formation, CTA" },
-      { href: "/expertise#gestion-securite", label: "Gestion de la Securite", description: "SGS, cartographie des risques, EISA" },
-      { href: "/expertise#organisation-management", label: "Organisation & Management", description: "Diagnostics, RH, coaching" },
+      { href: "/offres#mobilites", label: "Mobilités & Transport aérien", description: "Compagnies, certification, EISA, dessertes" },
+      { href: "/offres#infrastructures", label: "Infrastructures & Territoires", description: "Aéroports, ports, schémas directeurs" },
+      { href: "/offres#environnement", label: "Environnement & Souveraineté", description: "Bilan carbone, biodiversité, filières locales" },
+      { href: "/offres#transformation", label: "Transformation & Compétences", description: "Formation, coaching, création d'entreprise" },
     ],
   },
   {
-    href: "/references",
-    label: "References",
+    href: "/realisations",
+    label: "Réalisations",
     children: [
-      { href: "/references#aviation", label: "Missions aviation" },
-      { href: "/references#environnement", label: "Missions environnement" },
-      { href: "/references#amo", label: "Missions AMO" },
-      { href: "/references", label: "Toutes les references" },
+      { href: "/realisations#domaine", label: "Par domaine" },
+      { href: "/realisations#territoire", label: "Par territoire" },
+      { href: "/realisations", label: "Toutes les réalisations" },
     ],
   },
-  { href: "/a-propos", label: "A propos" },
-  { href: "/contact", label: "Contact" },
+  { href: "/le-cabinet", label: "Le Cabinet" },
+  { href: "/perspectives", label: "Perspectives" },
 ];
 
 /* ===== Dropdown Component ===== */
@@ -130,14 +125,14 @@ function DropdownMenu({
                   {item.label}
                 </span>
                 <h3 className="mt-2 font-display text-lg font-bold text-white leading-snug">
-                  {item.label === "Expertise"
-                    ? "8 domaines au service du Pacifique"
+                  {item.label === "Offres"
+                    ? "4 territoires au service du Pacifique"
                     : "Nos missions depuis 2017"}
                 </h3>
                 <p className="mt-3 text-xs text-white/50 leading-relaxed">
-                  {item.label === "Expertise"
-                    ? "Etudes, audits, documentation, formation, AMO, creation, securite et management."
-                    : "Polynesie francaise, Nouvelle-Caledonie et Pacifique Sud."}
+                  {item.label === "Offres"
+                    ? "Transport aérien, infrastructures, environnement et transformation."
+                    : "Polynésie française, Nouvelle-Calédonie et Pacifique Sud."}
                 </p>
               </div>
               <Link
@@ -244,22 +239,13 @@ export default function Header() {
                   isScrolled ? "w-12 h-auto" : "w-14 h-auto"
                 }`}
               />
-              <div className="hidden sm:block">
-                <span
-                  className={`font-display text-lg font-bold transition-colors duration-300 ${
-                    isScrolled ? "text-navy" : "text-white"
-                  }`}
-                >
-                  Pacific Blue
-                </span>
-                <span
-                  className={`block text-[10px] tracking-[0.2em] uppercase transition-colors duration-300 ${
-                    isScrolled ? "text-steel" : "text-white/60"
-                  }`}
-                >
-                  Consulting
-                </span>
-              </div>
+              <span
+                className={`hidden sm:block font-display text-base font-bold tracking-wide transition-colors duration-300 ${
+                  isScrolled ? "text-navy" : "text-white"
+                }`}
+              >
+                Pacific Blue Consulting
+              </span>
             </Link>
 
             {/* Desktop Nav with Dropdowns */}

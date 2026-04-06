@@ -7,13 +7,11 @@ import SectionTitle from "@/components/SectionTitle";
 import AppointmentBooking from "@/components/AppointmentBooking";
 
 const domainOptions = [
-  { value: "", label: "Selectionnez un domaine" },
-  { value: "aviation", label: "Aviation civile & Compagnies aeriennes" },
-  { value: "aeroports", label: "Aeroports & Infrastructures" },
-  { value: "environnement", label: "Environnement & Bilan carbone" },
-  { value: "etudes", label: "Etudes strategiques & Modelisation" },
-  { value: "amo", label: "AMO & Pilotage de projets" },
-  { value: "formation", label: "Formation & Management" },
+  { value: "", label: "Sélectionnez un domaine" },
+  { value: "mobilites", label: "Mobilités & Transport aérien" },
+  { value: "infrastructures", label: "Infrastructures & Territoires" },
+  { value: "environnement", label: "Environnement & Souveraineté" },
+  { value: "transformation", label: "Transformation & Compétences" },
   { value: "autre", label: "Autre" },
 ];
 
@@ -93,7 +91,7 @@ export default function ContactPage() {
             <SectionTitle
               label="Contact"
               title="Parlons de votre projet"
-              description="Que vous souhaitiez nous soumettre un projet, poser une question ou prendre rendez-vous, nous sommes a votre ecoute."
+              description="Une question, un appel d'offres, une idée à explorer - nous sommes à votre écoute. Premier échange sans engagement."
               light
             />
           </div>
