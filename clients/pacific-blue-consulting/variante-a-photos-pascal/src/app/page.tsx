@@ -338,12 +338,30 @@ export default function Home() {
                   </h3>
                   <div className="flex flex-wrap gap-3">
                     {categoryClients.map((client) => (
-                      <span
+                      <div
                         key={client.name}
-                        className="px-4 py-2.5 bg-white border border-navy-100/40 rounded-xl text-sm font-medium text-navy/70"
+                        className="group relative flex flex-col items-center justify-center px-4 py-3 bg-white border border-navy-100/40 rounded-xl min-h-[52px] hover:border-navy-200 hover:shadow-sm transition-all duration-300"
                       >
-                        {client.name}
-                      </span>
+                        {client.logo ? (
+                          <>
+                            <Image
+                              src={client.logo}
+                              alt={client.name}
+                              width={120}
+                              height={40}
+                              className="h-8 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+                              loading="lazy"
+                            />
+                            <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-navy/60 bg-white/90 px-2 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                              {client.name}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-sm font-medium text-navy/70">
+                            {client.name}
+                          </span>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -367,14 +385,27 @@ export default function Home() {
             {partners.map((partner) => (
               <div
                 key={partner.name}
-                className="card-hover flex flex-col items-center justify-center p-6 bg-navy-50/40 border border-navy-100/40 rounded-2xl text-center"
+                className="group relative card-hover flex flex-col items-center justify-center p-6 bg-navy-50/40 border border-navy-100/40 rounded-2xl text-center min-h-[88px] hover:border-navy-200 hover:shadow-md transition-all duration-300"
                 data-stagger-child
               >
-                <span className="font-display text-sm font-bold text-navy/70 leading-tight">
-                  {partner.name}
-                </span>
-                {partner.specialty && (
-                  <span className="mt-1 text-[11px] text-warm-400">{partner.specialty}</span>
+                {partner.logo ? (
+                  <>
+                    <Image
+                      src={partner.logo}
+                      alt={partner.name}
+                      width={120}
+                      height={40}
+                      className="h-8 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-navy/70 bg-white/95 px-2.5 py-1 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 border border-navy-100/20">
+                      {partner.name}{partner.specialty ? ` — ${partner.specialty}` : ""}
+                    </span>
+                  </>
+                ) : (
+                  <span className="font-display text-sm font-bold text-navy/70 leading-tight">
+                    {partner.name}
+                  </span>
                 )}
               </div>
             ))}

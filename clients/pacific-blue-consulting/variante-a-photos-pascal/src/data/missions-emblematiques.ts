@@ -17,7 +17,7 @@ export const missionsEmblematiques: MissionEmblematique[] = [
     title: "Créer un opérateur hélicoptère de A à Z",
     description:
       "Structuration complète d'un opérateur hélicoptère en Polynésie française : du business plan à l'obtention du CTA, en passant par la documentation opérationnelle et la certification.",
-    image: "/images/pbc-cockpit.jpg",
+    image: "/images/istock-1141905690.jpg",
   },
   {
     territory: "infrastructures",
@@ -27,7 +27,7 @@ export const missionsEmblematiques: MissionEmblematique[] = [
     title: "Accompagnement intégré ports et aéroports",
     description:
       "Mission pluriannuelle d'accompagnement stratégique de la Province des Îles Loyauté sur l'ensemble de ses infrastructures portuaires et aéroportuaires.",
-    image: "/images/pbc-aeroport.jpg",
+    image: "/images/istock-1321897221.jpg",
   },
   {
     territory: "mobilites",
@@ -37,17 +37,17 @@ export const missionsEmblematiques: MissionEmblematique[] = [
     title: "10 EISA réalisées - Sécuriser les travaux aéroportuaires du Pacifique",
     description:
       "Dix études d'impact sur la sécurité aéroportuaire sur des plateformes allant des atolls des Tuamotu à l'aéroport international de Tahiti-Faa'a.",
-    image: "/images/pbc-aeroport.jpg",
+    image: "/images/drone-pf-1.jpg",
   },
   {
     territory: "environnement",
     territoryLabel: "Environnement",
     client: "DAG",
     dates: "2025-2030",
-    title: "Projet TAVIVAT - Souveraineté alimentaire",
+    title: "Souveraineté alimentaire - piloter la transition",
     description:
       "Pilotage de la transition vers la souveraineté alimentaire en Polynésie française : étude de marché des vivriers locaux et accompagnement de la structuration des filières.",
-    image: "/images/pbc-foret.jpg",
+    image: "/images/drone-pf-3.jpg",
   },
   {
     territory: "environnement",

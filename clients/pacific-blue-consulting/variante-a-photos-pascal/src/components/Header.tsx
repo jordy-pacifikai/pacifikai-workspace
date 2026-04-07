@@ -24,15 +24,7 @@ const navItems: NavItem[] = [
       { href: "/offres#transformation", label: "Transformation & Compétences", description: "Formation, coaching, création d'entreprise" },
     ],
   },
-  {
-    href: "/realisations",
-    label: "Réalisations",
-    children: [
-      { href: "/realisations#domaine", label: "Par domaine" },
-      { href: "/realisations#territoire", label: "Par territoire" },
-      { href: "/realisations", label: "Toutes les réalisations" },
-    ],
-  },
+  { href: "/realisations", label: "Réalisations" },
   { href: "/le-cabinet", label: "Le Cabinet" },
   { href: "/perspectives", label: "Perspectives" },
 ];

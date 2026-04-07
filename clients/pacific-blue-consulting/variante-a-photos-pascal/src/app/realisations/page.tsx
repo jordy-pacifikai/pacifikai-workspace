@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import {
@@ -13,6 +13,9 @@ import {
 } from "@/data/missions";
 import { getIcon } from "@/components/Icons";
 import SectionTitle from "@/components/SectionTitle";
+
+type ViewMode = "grid" | "list" | "timeline";
+type SortMode = "year-desc" | "year-asc" | "client" | "domain";
 
 const domainIconMap: Record<Domain, string> = {
   aviation: "plane",
@@ -27,16 +30,66 @@ const domainIconMap: Record<Domain, string> = {
   artisanat: "leaf",
 };
 
+/* ---- View icons ---- */
+function GridIcon({ active }: { active: boolean }) {
+  return (
+    <svg className={`w-4 h-4 ${active ? "text-navy" : "text-warm-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+      <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" />
+    </svg>
+  );
+}
+function ListIcon({ active }: { active: boolean }) {
+  return (
+    <svg className={`w-4 h-4 ${active ? "text-navy" : "text-warm-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
+function TimelineIcon({ active }: { active: boolean }) {
+  return (
+    <svg className={`w-4 h-4 ${active ? "text-navy" : "text-warm-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+      <path d="M12 2v20M5 5h4M15 9h4M7 13h4M13 17h6" />
+    </svg>
+  );
+}
+
 export default function RealisationsPage() {
   const sectionRef = useScrollAnimation<HTMLDivElement>();
   const [domainFilter, setDomainFilter] = useState<Domain | "all">("all");
   const [geoFilter, setGeoFilter] = useState<GeoTerritory | "all">("all");
+  const [view, setView] = useState<ViewMode>("grid");
+  const [sort, setSort] = useState<SortMode>("year-desc");
 
-  const filteredMissions = missions.filter((m) => {
-    if (domainFilter !== "all" && m.domain !== domainFilter) return false;
-    if (geoFilter !== "all" && m.location !== geoFilter) return false;
-    return true;
-  });
+  const filteredMissions = useMemo(() => {
+    const filtered = missions.filter((m) => {
+      if (domainFilter !== "all" && m.domain !== domainFilter) return false;
+      if (geoFilter !== "all" && m.location !== geoFilter) return false;
+      return true;
+    });
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sort) {
+        case "year-desc": return b.year.localeCompare(a.year);
+        case "year-asc": return a.year.localeCompare(b.year);
+        case "client": return a.client.localeCompare(b.client);
+        case "domain": return a.domain.localeCompare(b.domain);
+        default: return 0;
+      }
+    });
+    return sorted;
+  }, [domainFilter, geoFilter, sort]);
+
+  /* Group by year for timeline view */
+  const missionsByYear = useMemo(() => {
+    const groups: Record<string, typeof filteredMissions> = {};
+    filteredMissions.forEach((m) => {
+      const year = m.year.split("-")[0];
+      if (!groups[year]) groups[year] = [];
+      groups[year].push(m);
+    });
+    return Object.entries(groups).sort(([a], [b]) =>
+      sort === "year-asc" ? a.localeCompare(b) : b.localeCompare(a)
+    );
+  }, [filteredMissions, sort]);
 
   return (
     <div ref={sectionRef}>
@@ -49,11 +102,25 @@ export default function RealisationsPage() {
             Nos réalisations
           </span>
           <h1 className="font-display text-fluid-4xl font-bold leading-tight">
-            Nos réalisations
+            Plus de 60 missions réalisées
           </h1>
           <p className="mt-6 text-white/50 text-lg max-w-3xl mx-auto leading-relaxed">
-            Plus de 60 missions réalisées en Polynésie française, Nouvelle-Calédonie et dans le Pacifique. Des projets concrets, des résultats mesurables.
+            En Polynésie française, Nouvelle-Calédonie et dans le Pacifique Sud. Des projets concrets, des résultats mesurables.
           </p>
+          {/* Quick stats */}
+          <div className="mt-10 flex flex-wrap justify-center gap-8">
+            {[
+              { value: "68", label: "Missions" },
+              { value: "30+", label: "Clients" },
+              { value: "3", label: "Territoires" },
+              { value: "8 ans", label: "D'activité" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-2xl font-display font-bold text-gold">{stat.value}</div>
+                <div className="text-xs text-white/40 mt-1">{stat.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -82,14 +149,14 @@ export default function RealisationsPage() {
         </div>
       </section>
 
-      {/* Filters + Mission list */}
+      {/* Filters + Views + Mission list */}
       <section className="py-24 lg:py-32 bg-white" id="territoire">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="gsap-reveal">
             <SectionTitle
               label="Toutes nos missions"
-              title={`${filteredMissions.length} missions`}
-              description="Filtrez par domaine ou par territoire géographique."
+              title={`${filteredMissions.length} mission${filteredMissions.length > 1 ? "s" : ""}`}
+              description="Filtrez par domaine ou territoire, triez et changez de vue."
             />
           </div>
 
@@ -172,42 +239,185 @@ export default function RealisationsPage() {
             </div>
           </div>
 
-          {/* Mission grid */}
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredMissions.map((mission) => (
-              <article
-                key={mission.id}
-                className="card-hover group p-6 bg-white border border-navy-100/60 rounded-2xl"
+          {/* View toggle + Sort */}
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-navy-100/30 pt-6">
+            <div className="flex items-center gap-1 bg-navy-50/60 p-1 rounded-lg">
+              <button
+                onClick={() => setView("grid")}
+                className={`p-2 rounded-md transition-all ${view === "grid" ? "bg-white shadow-sm" : "hover:bg-white/50"}`}
+                title="Vue grille"
               >
-                <div className="flex items-start gap-3">
-                  <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${domainColors[mission.domain]}`}>
-                    {getIcon(domainIconMap[mission.domain], "w-5 h-5")}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 text-[11px] text-warm-400 mb-1">
-                      <span className="font-medium">{mission.year}</span>
-                      <span className="text-warm-200">·</span>
-                      <span className="truncate">{geoTerritoryLabels[mission.location]}</span>
+                <GridIcon active={view === "grid"} />
+              </button>
+              <button
+                onClick={() => setView("list")}
+                className={`p-2 rounded-md transition-all ${view === "list" ? "bg-white shadow-sm" : "hover:bg-white/50"}`}
+                title="Vue liste"
+              >
+                <ListIcon active={view === "list"} />
+              </button>
+              <button
+                onClick={() => setView("timeline")}
+                className={`p-2 rounded-md transition-all ${view === "timeline" ? "bg-white shadow-sm" : "hover:bg-white/50"}`}
+                title="Vue chronologique"
+              >
+                <TimelineIcon active={view === "timeline"} />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-warm-400">Trier par</span>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortMode)}
+                className="text-sm bg-white border border-navy-100/40 rounded-lg px-3 py-1.5 text-navy font-medium focus:outline-none focus:ring-2 focus:ring-gold/30"
+              >
+                <option value="year-desc">Plus récent</option>
+                <option value="year-asc">Plus ancien</option>
+                <option value="client">Client (A-Z)</option>
+                <option value="domain">Domaine</option>
+              </select>
+            </div>
+          </div>
+
+          {/* ===== GRID VIEW ===== */}
+          {view === "grid" && (
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filteredMissions.map((mission) => (
+                <article
+                  key={mission.id}
+                  className="card-hover group p-6 bg-white border border-navy-100/60 rounded-2xl"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${domainColors[mission.domain]}`}>
+                      {getIcon(domainIconMap[mission.domain], "w-5 h-5")}
                     </div>
-                    <h3 className="font-display text-sm font-bold text-navy leading-snug line-clamp-2">
-                      {mission.title}
-                    </h3>
-                    <p className="mt-1 text-[11px] text-gold font-medium">
-                      {mission.client}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 text-[11px] text-warm-400 mb-1">
+                        <span className="font-medium">{mission.year}</span>
+                        <span className="text-warm-200">·</span>
+                        <span className="truncate">{geoTerritoryLabels[mission.location]}</span>
+                      </div>
+                      <h3 className="font-display text-sm font-bold text-navy leading-snug line-clamp-2">
+                        {mission.title}
+                      </h3>
+                      <p className="mt-1 text-[11px] text-gold font-medium">
+                        {mission.client}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-sm text-warm leading-relaxed line-clamp-3">
+                    {mission.description}
+                  </p>
+                  <div className="mt-3 pt-3 border-t border-navy-100/30">
+                    <p className="text-[11px] text-warm-400 leading-relaxed line-clamp-2">
+                      <span className="font-semibold text-navy/60">Bénéfice :</span> {mission.benefit}
                     </p>
                   </div>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {/* ===== LIST VIEW ===== */}
+          {view === "list" && (
+            <div className="mt-8 overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b-2 border-navy-100/40">
+                    <th className="py-3 pr-4 text-[10px] font-bold uppercase tracking-[0.15em] text-warm-400 w-16">Année</th>
+                    <th className="py-3 pr-4 text-[10px] font-bold uppercase tracking-[0.15em] text-warm-400">Mission</th>
+                    <th className="py-3 pr-4 text-[10px] font-bold uppercase tracking-[0.15em] text-warm-400 hidden md:table-cell">Client</th>
+                    <th className="py-3 pr-4 text-[10px] font-bold uppercase tracking-[0.15em] text-warm-400 hidden lg:table-cell">Domaine</th>
+                    <th className="py-3 text-[10px] font-bold uppercase tracking-[0.15em] text-warm-400 hidden lg:table-cell">Territoire</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredMissions.map((mission) => (
+                    <tr key={mission.id} className="group border-b border-navy-100/20 hover:bg-navy-50/30 transition-colors">
+                      <td className="py-3 pr-4 text-sm font-medium text-navy/60 whitespace-nowrap">{mission.year}</td>
+                      <td className="py-3 pr-4">
+                        <div className="flex items-center gap-2.5">
+                          <div className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center ${domainColors[mission.domain]}`}>
+                            {getIcon(domainIconMap[mission.domain], "w-3.5 h-3.5")}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-navy leading-snug truncate max-w-md">{mission.title}</p>
+                            <p className="text-[11px] text-warm-400 mt-0.5 truncate max-w-md md:hidden">{mission.client}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 pr-4 text-sm text-gold font-medium hidden md:table-cell whitespace-nowrap">{mission.client}</td>
+                      <td className="py-3 pr-4 hidden lg:table-cell">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium ${domainColors[mission.domain]}`}>
+                          {domainLabels[mission.domain]}
+                        </span>
+                      </td>
+                      <td className="py-3 text-[11px] text-warm-400 hidden lg:table-cell whitespace-nowrap">{geoTerritoryLabels[mission.location]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ===== TIMELINE VIEW ===== */}
+          {view === "timeline" && (
+            <div className="mt-8 relative">
+              {/* Vertical line */}
+              <div className="absolute left-4 md:left-8 top-0 bottom-0 w-px bg-navy-100/40" />
+
+              {missionsByYear.map(([year, yearMissions]) => (
+                <div key={year} className="relative mb-12 last:mb-0">
+                  {/* Year badge */}
+                  <div className="relative flex items-center mb-6">
+                    <div className="relative z-10 flex items-center justify-center w-9 h-9 md:w-16 md:h-9 rounded-full bg-navy text-white text-sm font-bold shadow-lg">
+                      {year}
+                    </div>
+                    <div className="ml-4 h-px flex-1 bg-gradient-to-r from-navy-100/40 to-transparent" />
+                    <span className="ml-3 text-[11px] text-warm-400 font-medium">
+                      {yearMissions.length} mission{yearMissions.length > 1 ? "s" : ""}
+                    </span>
+                  </div>
+
+                  {/* Missions for that year */}
+                  <div className="ml-12 md:ml-20 space-y-3">
+                    {yearMissions.map((mission) => (
+                      <div
+                        key={mission.id}
+                        className="group relative p-4 bg-white border border-navy-100/40 rounded-xl hover:border-navy-200 hover:shadow-sm transition-all"
+                      >
+                        {/* Connector dot */}
+                        <div className="absolute -left-[2.15rem] md:-left-[3.15rem] top-5 w-2.5 h-2.5 rounded-full bg-gold border-2 border-white shadow-sm" />
+
+                        <div className="flex items-start gap-3">
+                          <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${domainColors[mission.domain]}`}>
+                            {getIcon(domainIconMap[mission.domain], "w-4 h-4")}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                              <h3 className="text-sm font-bold text-navy">{mission.title}</h3>
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium ${domainColors[mission.domain]}`}>
+                                {domainLabels[mission.domain]}
+                              </span>
+                            </div>
+                            <div className="mt-1 flex items-center gap-2 text-[11px]">
+                              <span className="text-gold font-medium">{mission.client}</span>
+                              <span className="text-warm-200">·</span>
+                              <span className="text-warm-400">{geoTerritoryLabels[mission.location]}</span>
+                            </div>
+                            <p className="mt-2 text-sm text-warm leading-relaxed line-clamp-2 group-hover:line-clamp-none transition-all">
+                              {mission.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <p className="mt-3 text-sm text-warm leading-relaxed line-clamp-3">
-                  {mission.description}
-                </p>
-                <div className="mt-3 pt-3 border-t border-navy-100/30">
-                  <p className="text-[11px] text-warm-400 leading-relaxed line-clamp-2">
-                    <span className="font-semibold text-navy/60">Bénéfice :</span> {mission.benefit}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {filteredMissions.length === 0 && (
             <div className="mt-12 text-center py-16">

@@ -5,13 +5,13 @@ export type Territory = {
   subtitle: string;
   description: string;
   approach: string;
-  coverage: string[];
+  coverage?: string[];
   focus?: {
     title: string;
     text: string;
   };
   missions: string[];
-  result: string;
+  result?: string;
   image: string;
 };
 
@@ -75,15 +75,6 @@ En sûreté : expérience de présidence des Comités Opérationnels de Sûreté
     approach: `Un aérodrome corallien de 800 mètres de piste aux Tuamotu. Un port des Îles Loyauté qui doit absorber le trafic de fret vital. Une piste privée sur un atoll classé. Chaque infrastructure insulaire est un cas particulier - et chacune doit pourtant répondre à des normes internationales pensées pour des contextes très différents.
 
 Pacific Blue Consulting sait naviguer dans cette équation. Nous concevons des schémas directeurs qui tiennent compte à la fois des contraintes réglementaires, des réalités foncières, des capacités financières des collectivités et des attentes des populations.`,
-    coverage: [
-      "Schémas directeurs aéroportuaires et portuaires",
-      "Certification et mise en conformité d'aérodromes",
-      "Études de faisabilité d'infrastructures de transport",
-      "Accompagnement intégré ports et aéroports",
-      "Aéroports marins innovants (flottants)",
-      "Levée de non-conformités et audits de plateformes",
-      "Études d'aménagement territorial",
-    ],
     missions: [
       "Province des Îles Loyauté (DPA) - ports et aéroports (2024-2029)",
       "Schéma d'aménagement Moorea et Huahine (2024-2025)",
@@ -93,8 +84,6 @@ Pacific Blue Consulting sait naviguer dans cette équation. Nous concevons des s
       "Terciel - aéroports marins flottants (2022-2030)",
       "Étude route aéroport Temae - Commune de Moorea",
     ],
-    result:
-      "Des infrastructures conçues pour durer, adaptées aux réalités insulaires, conformes aux normes internationales et au service des populations qu'elles desservent.",
     image: "/images/pbc-aeroport.jpg",
   },
   {
@@ -108,14 +97,6 @@ Pacific Blue Consulting sait naviguer dans cette équation. Nous concevons des s
     approach: `La souveraineté d'un territoire insulaire se joue sur plusieurs fronts à la fois : réduire sa dépendance aux énergies fossiles, protéger une biodiversité unique au monde, nourrir sa population avec ses propres ressources, et valoriser les savoir-faire qui font son identité.
 
 Pacific Blue Consulting accompagne cette transition avec la même rigueur que celle que nous appliquons à l'aviation civile : diagnostic factuel, objectifs chiffrés, feuille de route réaliste, et accompagnement dans la durée. Nous ne vendons pas du discours environnemental - nous construisons des dispositifs qui fonctionnent.`,
-    coverage: [
-      "Bilan carbone et feuille de route décarbonation",
-      "Certification biodiversité",
-      "Évaluation environnementale (EIE/NIE)",
-      "Souveraineté alimentaire et filières locales",
-      "Valorisation des savoir-faire traditionnels",
-      "Accompagnement de la transition écologique territoriale",
-    ],
     missions: [
       "Bilan carbone de la DAC-Pf et feuille de route décarbonation (2025)",
       "Certification biodiversité DIREN (2021-2023)",
@@ -124,8 +105,6 @@ Pacific Blue Consulting accompagne cette transition avec la même rigueur que ce
       "Pilotage projet TAVIVAT - DAG (2026-2027)",
       "Séchoir à pandanus - Service de l'Artisanat Traditionnel (2025-2026)",
     ],
-    result:
-      "Des territoires plus résilients, des filières locales structurées, des dispositifs environnementaux qui fonctionnent - parce que la souveraineté se construit sur tous les plans à la fois.",
     image: "/images/pbc-foret.jpg",
   },
   {
@@ -138,14 +117,6 @@ Pacific Blue Consulting accompagne cette transition avec la même rigueur que ce
     approach: `Les projets les plus ambitieux échouent quand les organisations qui doivent les porter ne sont pas prêtes. C'est pourquoi une part essentielle de notre travail consiste à renforcer les équipes, à clarifier les responsabilités, à outiller les managers et à former ceux qui, demain, prendront les décisions.
 
 Pascal Bazer-Bachi est formateur agréé, coach professionnel accrédité et concepteur de programmes pédagogiques. Il intervient autant sur les contenus que sur les pratiques de travail - parce que changer une organisation, c'est d'abord changer la manière dont les gens travaillent ensemble.`,
-    coverage: [
-      "Formation au management et conduite du changement",
-      "Coaching professionnel et executive coaching",
-      "Création de centres de formation agréés (Part-147)",
-      "Structuration RH et diagnostics organisationnels",
-      "Accompagnement à la création d'entreprises",
-      "Ateliers de codéveloppement et programmes pédagogiques",
-    ],
     missions: [
       "Club des Managers du CNAM (2021-2022)",
       "Centre Part-147 Air Formation - création clés en main (2022)",

@@ -86,34 +86,106 @@ function Stat({ value, suffix, label }: { value: number; suffix: string; label: 
 
 function PacificMap() {
   return (
-    <svg viewBox="0 0 800 500" className="w-full h-auto" aria-label="Zone d'intervention Pacifique">
-      <rect width="800" height="500" fill="oklch(0.22 0.06 250)" rx="16" />
-      {[100, 200, 300, 400].map((y) => (
-        <line key={`h${y}`} x1="0" y1={y} x2="800" y2={y} stroke="oklch(1 0 0 / 0.03)" strokeWidth="1" />
+    <svg viewBox="0 0 900 520" className="w-full h-auto" aria-label="Zone d'intervention Pacifique">
+      <defs>
+        <radialGradient id="ocean" cx="60%" cy="50%">
+          <stop offset="0%" stopColor="oklch(0.24 0.07 250)" />
+          <stop offset="100%" stopColor="oklch(0.18 0.05 250)" />
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+
+      {/* Ocean */}
+      <rect width="900" height="520" fill="url(#ocean)" rx="16" />
+
+      {/* Latitude/longitude grid */}
+      {[130, 260, 390].map((y) => (
+        <line key={`h${y}`} x1="0" y1={y} x2="900" y2={y} stroke="oklch(1 0 0 / 0.04)" strokeWidth="0.5" />
       ))}
-      {[200, 400, 600].map((x) => (
-        <line key={`v${x}`} x1={x} y1="0" x2={x} y2="500" stroke="oklch(1 0 0 / 0.03)" strokeWidth="1" />
+      {[180, 360, 540, 720].map((x) => (
+        <line key={`v${x}`} x1={x} y1="0" x2={x} y2="520" stroke="oklch(1 0 0 / 0.04)" strokeWidth="0.5" />
       ))}
-      <ellipse cx="120" cy="350" rx="80" ry="60" fill="oklch(0.30 0.04 250)" opacity="0.4" />
-      <ellipse cx="250" cy="400" rx="15" ry="35" fill="oklch(0.30 0.04 250)" opacity="0.4" transform="rotate(-15 250 400)" />
-      <circle cx="580" cy="250" r="20" fill="oklch(0.72 0.12 85 / 0.15)" className="animate-pulse-soft" />
-      <circle cx="580" cy="250" r="8" fill="oklch(0.72 0.12 85)" />
-      <circle cx="580" cy="250" r="4" fill="oklch(0.25 0.05 250)" />
-      <circle cx="300" cy="300" r="14" fill="oklch(0.55 0.12 245 / 0.15)" className="animate-pulse-soft" style={{ animationDelay: "1s" }} />
-      <circle cx="300" cy="300" r="6" fill="oklch(0.55 0.12 245)" />
-      <circle cx="300" cy="300" r="3" fill="oklch(0.25 0.05 250)" />
-      <circle cx="340" cy="270" r="12" fill="oklch(0.55 0.12 245 / 0.12)" className="animate-pulse-soft" style={{ animationDelay: "1.5s" }} />
-      <circle cx="340" cy="270" r="5" fill="oklch(0.55 0.12 245 / 0.8)" />
-      <circle cx="340" cy="270" r="2.5" fill="oklch(0.25 0.05 250)" />
-      <circle cx="380" cy="340" r="10" fill="oklch(1 0 0 / 0.1)" className="animate-pulse-soft" style={{ animationDelay: "2s" }} />
-      <circle cx="380" cy="340" r="4" fill="oklch(1 0 0 / 0.5)" />
-      <line x1="300" y1="300" x2="580" y2="250" stroke="oklch(0.72 0.12 85 / 0.2)" strokeWidth="1" strokeDasharray="4 4" />
-      <line x1="300" y1="300" x2="340" y2="270" stroke="oklch(0.55 0.12 245 / 0.15)" strokeWidth="1" strokeDasharray="4 4" />
-      <line x1="300" y1="300" x2="380" y2="340" stroke="oklch(1 0 0 / 0.1)" strokeWidth="1" strokeDasharray="4 4" />
-      <text x="580" y="220" textAnchor="middle" fill="oklch(1 0 0 / 0.7)" fontSize="11" fontWeight="600">Polynésie française</text>
-      <text x="300" y="280" textAnchor="middle" fill="oklch(1 0 0 / 0.5)" fontSize="10">Nouvelle-Calédonie</text>
-      <text x="340" y="256" textAnchor="middle" fill="oklch(1 0 0 / 0.45)" fontSize="9">Wallis et Futuna</text>
-      <text x="380" y="368" textAnchor="middle" fill="oklch(1 0 0 / 0.4)" fontSize="9">Pacifique Sud</text>
+      {/* Equateur */}
+      <line x1="0" y1="130" x2="900" y2="130" stroke="oklch(1 0 0 / 0.06)" strokeWidth="0.5" strokeDasharray="8 4" />
+      <text x="12" y="125" fill="oklch(1 0 0 / 0.15)" fontSize="7">Equateur</text>
+      {/* Tropique du Capricorne */}
+      <line x1="0" y1="310" x2="900" y2="310" stroke="oklch(1 0 0 / 0.06)" strokeWidth="0.5" strokeDasharray="8 4" />
+      <text x="12" y="305" fill="oklch(1 0 0 / 0.15)" fontSize="7">Tropique du Capricorne</text>
+
+      {/* Australia — simplified shape */}
+      <path d="M70,310 Q90,280 130,275 Q160,270 180,290 Q195,310 190,340 Q185,370 160,390 Q130,405 100,395 Q75,380 65,355 Q60,335 70,310Z" fill="oklch(0.30 0.04 250)" opacity="0.35" />
+      <text x="125" y="345" textAnchor="middle" fill="oklch(1 0 0 / 0.12)" fontSize="10" fontWeight="500">Australie</text>
+
+      {/* New Zealand */}
+      <path d="M270,385 Q275,370 280,365 Q285,375 283,390 Q280,400 270,405 Z" fill="oklch(0.30 0.04 250)" opacity="0.35" />
+      <path d="M278,405 Q282,395 286,400 Q284,415 278,420 Z" fill="oklch(0.30 0.04 250)" opacity="0.35" />
+      <text x="295" y="410" fill="oklch(1 0 0 / 0.12)" fontSize="7">NZ</text>
+
+      {/* Papua New Guinea */}
+      <path d="M150,200 Q170,190 190,195 Q195,205 185,215 Q170,220 155,215 Z" fill="oklch(0.30 0.04 250)" opacity="0.3" />
+
+      {/* Fiji */}
+      <circle cx="370" cy="280" r="4" fill="oklch(0.30 0.04 250)" opacity="0.3" />
+      <text x="380" y="278" fill="oklch(1 0 0 / 0.15)" fontSize="7">Fidji</text>
+
+      {/* Samoa */}
+      <circle cx="430" cy="230" r="3" fill="oklch(0.30 0.04 250)" opacity="0.25" />
+      <text x="440" y="228" fill="oklch(1 0 0 / 0.12)" fontSize="7">Samoa</text>
+
+      {/* Tonga */}
+      <circle cx="395" cy="310" r="2.5" fill="oklch(0.30 0.04 250)" opacity="0.25" />
+      <text x="405" y="313" fill="oklch(1 0 0 / 0.12)" fontSize="7">Tonga</text>
+
+      {/* Connection lines from PF hub */}
+      <line x1="640" y1="280" x2="340" y2="310" stroke="oklch(0.72 0.12 85 / 0.2)" strokeWidth="1" strokeDasharray="6 4" />
+      <line x1="640" y1="280" x2="370" y2="255" stroke="oklch(0.55 0.12 245 / 0.12)" strokeWidth="0.8" strokeDasharray="4 4" />
+      <line x1="340" y1="310" x2="370" y2="255" stroke="oklch(0.55 0.12 245 / 0.1)" strokeWidth="0.8" strokeDasharray="4 4" />
+
+      {/* Wallis et Futuna */}
+      <circle cx="370" cy="255" r="14" fill="oklch(0.55 0.12 245 / 0.1)" className="animate-pulse-soft" style={{ animationDelay: "1.5s" }} />
+      <circle cx="370" cy="255" r="5" fill="oklch(0.55 0.12 245 / 0.7)" />
+      <circle cx="370" cy="255" r="2.5" fill="oklch(0.22 0.05 250)" />
+      <text x="370" y="242" textAnchor="middle" fill="oklch(1 0 0 / 0.5)" fontSize="9" fontWeight="500">Wallis &amp; Futuna</text>
+
+      {/* Nouvelle-Caledonie */}
+      <path d="M325,305 Q335,295 350,300 Q358,305 355,315 Q348,322 335,320 Q325,315 325,305Z" fill="oklch(0.55 0.12 245 / 0.4)" />
+      <circle cx="340" cy="310" r="18" fill="oklch(0.55 0.12 245 / 0.1)" className="animate-pulse-soft" style={{ animationDelay: "1s" }} />
+      <circle cx="340" cy="310" r="7" fill="oklch(0.55 0.12 245)" />
+      <circle cx="340" cy="310" r="3.5" fill="oklch(0.22 0.05 250)" />
+      <text x="340" y="340" textAnchor="middle" fill="oklch(1 0 0 / 0.6)" fontSize="10" fontWeight="500">Nouvelle-Calédonie</text>
+      <text x="340" y="352" textAnchor="middle" fill="oklch(1 0 0 / 0.3)" fontSize="7">Nouméa</text>
+
+      {/* Polynesie francaise (hub principal) */}
+      <circle cx="620" cy="260" r="2" fill="oklch(0.72 0.12 85 / 0.4)" />
+      <text x="635" y="258" fill="oklch(1 0 0 / 0.25)" fontSize="6">Marquises</text>
+      <circle cx="660" cy="290" r="1.5" fill="oklch(0.72 0.12 85 / 0.3)" />
+      <text x="672" y="293" fill="oklch(1 0 0 / 0.2)" fontSize="6">Tuamotu</text>
+      <circle cx="610" cy="300" r="2" fill="oklch(0.72 0.12 85 / 0.4)" />
+      <text x="590" y="310" fill="oklch(1 0 0 / 0.25)" fontSize="6">Bora Bora</text>
+
+      {/* Main PF point — Tahiti */}
+      <circle cx="640" cy="280" r="28" fill="oklch(0.72 0.12 85 / 0.12)" className="animate-pulse-soft" />
+      <circle cx="640" cy="280" r="16" fill="oklch(0.72 0.12 85 / 0.15)" className="animate-pulse-soft" style={{ animationDelay: "0.5s" }} />
+      <circle cx="640" cy="280" r="10" fill="oklch(0.72 0.12 85)" filter="url(#glow)" />
+      <circle cx="640" cy="280" r="5" fill="oklch(0.22 0.05 250)" />
+
+      {/* PF label */}
+      <text x="640" y="255" textAnchor="middle" fill="oklch(0.85 0.10 85)" fontSize="13" fontWeight="700">Polynésie française</text>
+      <text x="640" y="318" textAnchor="middle" fill="oklch(1 0 0 / 0.4)" fontSize="8">Tahiti — Papeete (siège)</text>
+
+      {/* Broader Pacific zone — dashed border */}
+      <ellipse cx="500" cy="290" rx="250" ry="120" fill="none" stroke="oklch(1 0 0 / 0.06)" strokeWidth="1" strokeDasharray="4 8" />
+      <text x="500" y="425" textAnchor="middle" fill="oklch(1 0 0 / 0.12)" fontSize="8" letterSpacing="0.15em">ZONE D&apos;INTERVENTION PACIFIQUE</text>
+
+      {/* Mission count badges */}
+      <rect x="592" y="325" width="96" height="22" rx="11" fill="oklch(0.72 0.12 85 / 0.2)" />
+      <text x="640" y="339" textAnchor="middle" fill="oklch(0.85 0.10 85)" fontSize="9" fontWeight="600">45+ missions</text>
+
+      <rect x="296" y="356" width="88" height="20" rx="10" fill="oklch(0.55 0.12 245 / 0.2)" />
+      <text x="340" y="369" textAnchor="middle" fill="oklch(0.65 0.10 245)" fontSize="8" fontWeight="600">15+ missions</text>
     </svg>
   );
 }
@@ -169,19 +241,20 @@ export default function LeCabinetPage() {
           <div className="grid lg:grid-cols-5 gap-16 items-start">
             <div className="lg:col-span-2">
               <div className="gsap-reveal-scale">
-                <div className="aspect-[3/4] bg-gradient-to-br from-navy-50 to-navy-100/50 rounded-3xl overflow-hidden relative">
+                <div className="bg-gradient-to-br from-navy-50 to-navy-100/50 rounded-2xl overflow-hidden relative shadow-lg">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-[60px]" />
-                  <div className="relative z-10 w-full h-full">
+                  <div className="relative z-10">
                     <Image
                       src="/images/pascal-fondateur.jpg"
                       alt="Pascal Bazer-Bachi, fondateur"
-                      fill
-                      className="object-cover object-top"
-                      sizes="(max-width: 1024px) 100vw, 40vw"
+                      width={2052}
+                      height={1540}
+                      className="w-full h-auto object-cover"
+                      sizes="(max-width: 1024px) 100vw, 320px"
                     />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-navy/90 to-transparent">
-                      <h3 className="font-display text-2xl font-bold text-white">Pascal Bazer-Bachi</h3>
-                      <p className="mt-1 text-sm text-gold font-medium">Fondateur</p>
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-navy/90 to-transparent">
+                      <h3 className="font-display text-lg font-bold text-white">Pascal Bazer-Bachi</h3>
+                      <p className="mt-0.5 text-xs text-gold font-medium">Fondateur</p>
                     </div>
                   </div>
                 </div>
@@ -366,8 +439,29 @@ export default function LeCabinetPage() {
         </div>
       </section>
 
+      {/* Ce que PBC apporte à vos équipes (CONSERVÉ per CDC) */}
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="gsap-reveal text-center mb-12">
+            <SectionTitle
+              label="Accompagnement"
+              title="Ce que PBC apporte à vos équipes"
+            />
+          </div>
+
+          <div className="gsap-reveal space-y-6 text-warm leading-relaxed">
+            <p>
+              Pascal Bazer-Bachi conçoit le conseil comme un levier de montée en compétences des équipes : formateur agréé, concepteur et animateur de programmes en gestion de projet, conduite du changement, culture managériale et accompagnement entrepreneurial, il intervient autant sur les contenus que sur les pratiques de travail.
+            </p>
+            <p>
+              Coach professionnel et executive coach accrédité, il accompagne dirigeants, cadres et porteurs de projets pour les aider à clarifier leurs enjeux, structurer leurs décisions et incarner les transformations, qu&apos;il s&apos;agisse de politiques publiques, de projets territoriaux, d&apos;infrastructures ou d&apos;initiatives économiques locales.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-navy-50/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="gsap-reveal">
             <h2 className="font-display text-fluid-4xl font-bold text-navy text-balance">

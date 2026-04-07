@@ -89,18 +89,22 @@ export default function OffresPage() {
                       ))}
                     </div>
 
-                    {/* Coverage */}
-                    <h3 className="mt-10 text-[10px] font-bold uppercase tracking-[0.2em] text-warm-400 mb-4">
-                      Ce que cela couvre
-                    </h3>
-                    <ul className="space-y-2">
-                      {territory.coverage.map((item) => (
-                        <li key={item} className="flex items-start gap-2.5 text-sm text-warm">
-                          <span className="mt-1.5 w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+                    {/* Coverage (only Mobilités has this per CDC) */}
+                    {territory.coverage && territory.coverage.length > 0 && (
+                      <>
+                        <h3 className="mt-10 text-[10px] font-bold uppercase tracking-[0.2em] text-warm-400 mb-4">
+                          Ce que cela couvre
+                        </h3>
+                        <ul className="space-y-2">
+                          {territory.coverage.map((item) => (
+                            <li key={item} className="flex items-start gap-2.5 text-sm text-warm">
+                              <span className="mt-1.5 w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
 
                     {/* Focus */}
                     {territory.focus && (
@@ -147,15 +151,17 @@ export default function OffresPage() {
                       </ul>
                     </div>
 
-                    {/* Result */}
-                    <div className="mt-8 p-5 bg-navy rounded-xl">
-                      <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold/70 mb-2">
-                        Résultat pour vous
-                      </h3>
-                      <p className="text-sm text-white/70 leading-relaxed">
-                        {territory.result}
-                      </p>
-                    </div>
+                    {/* Result (only Mobilités + Transformation per CDC) */}
+                    {territory.result && (
+                      <div className="mt-8 p-5 bg-navy rounded-xl">
+                        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold/70 mb-2">
+                          Résultat pour vous
+                        </h3>
+                        <p className="text-sm text-white/70 leading-relaxed">
+                          {territory.result}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
