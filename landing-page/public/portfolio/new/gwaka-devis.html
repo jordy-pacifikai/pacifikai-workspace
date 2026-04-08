@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GWAKA — Devis Complet Site Web | PACIFIK'AI</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #4A7C3F;
+    --green-dark: #3A6232;
+    --green-light: #ecfdf5;
+    --green-bg: #f0faf0;
+    --gold: #c9a030;
+    --gold-light: #fef9e7;
+    --dark: #1e293b;
+    --gray: #64748b;
+    --gray-light: #f1f5f9;
+    --white: #ffffff;
+    --radius: 16px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--gray-light);
+    color: var(--dark);
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    text-align: center;
+    padding: 48px 24px 36px;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    border-radius: var(--radius);
+    color: var(--white);
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .header .logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .header .logo-row .logo-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.3);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .header .logo-row .logo-circle img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .header h1 span { color: var(--gold); }
+  .header p {
+    font-size: 15px;
+    opacity: 0.85;
+    max-width: 560px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .header .hint {
+    margin-top: 20px;
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px 20px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ─── SECTION ─── */
+  .section {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+  .section-label .dot {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  .section h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+  .section p.desc {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  /* ─── PROTOTYPES GRID ─── */
+  .proto-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 640px) {
+    .proto-grid { grid-template-columns: 1fr; }
+  }
+  .proto-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .proto-card:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .proto-card .preview-wrap {
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    position: relative;
+    background: #f0f0f0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .proto-card .preview-wrap iframe {
+    width: 1440px;
+    height: 900px;
+    border: none;
+    transform-origin: top left;
+    pointer-events: none;
+  }
+  .proto-card .preview-wrap::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 30px;
+    background: linear-gradient(transparent, white);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .proto-card .live-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--green);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .proto-card .live-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: livePulse 1.5s ease-in-out infinite;
+  }
+  @keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .proto-card .card-body { padding: 14px 16px; }
+  .proto-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .proto-card .card-desc { font-size: 12px; color: var(--gray); margin-bottom: 10px; }
+  .proto-card .card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    transition: all 0.15s;
+  }
+  .proto-card .card-link:hover { background: var(--green-light); border-color: var(--green); }
+  .proto-number {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: var(--green);
+    color: white;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 2;
+  }
+
+  /* ─── OFFER BOX ─── */
+  .offer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 640px) {
+    .offer-grid { grid-template-columns: 1fr; }
+  }
+  .offer-item {
+    background: var(--green-bg);
+    border: 1px solid #c6e7c6;
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .offer-item .offer-icon { font-size: 24px; margin-bottom: 8px; }
+  .offer-item h4 { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .offer-item p { font-size: 12px; color: var(--gray); line-height: 1.5; }
+
+  /* ─── PRICE DISPLAY ─── */
+  .price-display {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+  }
+  .price-display .label { font-size: 13px; opacity: 0.8; margin-bottom: 4px; }
+  .price-display .amount { font-size: 40px; font-weight: 800; }
+  .price-display .amount .currency { font-size: 18px; font-weight: 600; }
+  .price-display .detail { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .price-display .offered {
+    display: inline-block;
+    margin-top: 12px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 999px;
+  }
+  .price-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .price-step {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+  .price-step .step-label { font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; }
+  .price-step .step-amount { font-size: 22px; font-weight: 800; margin-top: 2px; }
+  .price-step .step-when { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+  /* ─── DOMAIN ─── */
+  .domain-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .domain-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+  }
+  .domain-option .ext { font-size: 16px; font-weight: 800; color: var(--dark); min-width: 200px; }
+  .domain-option .ext small { display: block; font-size: 11px; font-weight: 400; color: var(--gray); }
+  .domain-option .price { font-size: 14px; font-weight: 700; color: var(--green); margin-left: auto; text-align: right; }
+  .domain-option .price small { display: block; font-size: 11px; font-weight: 400; color: var(--gray); }
+
+  /* ─── INFO BOX ─── */
+  .info-box {
+    background: var(--green-light);
+    border: 1px solid #a7f3d0;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .info-box h4 { font-size: 14px; font-weight: 700; color: var(--green-dark); margin-bottom: 6px; }
+  .info-box p { font-size: 13px; color: #334155; line-height: 1.6; }
+
+  /* ─── MAINTENANCE CARDS ─── */
+  .maintenance-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 640px) {
+    .maintenance-grid { grid-template-columns: 1fr; }
+  }
+  .maint-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px 20px;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .maint-card:hover { border-color: var(--green); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .maint-card.recommended {
+    border-color: var(--green);
+    background: var(--green-bg);
+  }
+  .maint-card .rec-badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 14px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .maint-card .maint-icon { font-size: 28px; margin-bottom: 10px; }
+  .maint-card h4 { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+  .maint-card .maint-price { font-size: 24px; font-weight: 800; color: var(--green); margin-bottom: 8px; }
+  .maint-card .maint-price small { font-size: 13px; font-weight: 500; color: var(--gray); }
+  .maint-card .maint-desc { font-size: 13px; color: var(--gray); line-height: 1.6; }
+  .maint-card ul { list-style: none; margin-top: 12px; font-size: 13px; }
+  .maint-card ul li { padding: 4px 0; color: #334155; }
+  .maint-card ul li::before { content: '\2713\00a0'; color: var(--green); font-weight: 700; }
+
+  /* ─── AUTONOMY OPTION ─── */
+  .autonomy-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px 20px;
+    background: var(--gold-light);
+    border-color: #f0dfa0;
+  }
+  .autonomy-card h4 { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+  .autonomy-card .maint-price { font-size: 24px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+  .autonomy-card .maint-price small { font-size: 13px; font-weight: 500; color: var(--gray); }
+  .autonomy-card .maint-desc { font-size: 13px; color: var(--gray); line-height: 1.6; }
+  .autonomy-card ul { list-style: none; margin-top: 12px; font-size: 13px; }
+  .autonomy-card ul li { padding: 4px 0; color: #334155; }
+  .autonomy-card ul li::before { content: '\2713\00a0'; color: var(--gold); font-weight: 700; }
+
+  /* ─── BANKING ─── */
+  .bank-grid {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 6px 14px;
+    font-size: 13px;
+    background: var(--gray-light);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .bank-label { color: var(--gray); font-weight: 500; }
+  .bank-value { font-weight: 600; color: var(--dark); }
+
+  /* ─── STEPS ─── */
+  .steps-list {
+    counter-reset: step;
+    list-style: none;
+  }
+  .steps-list li {
+    counter-increment: step;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+  }
+  .steps-list li:last-child { border-bottom: none; }
+  .steps-list li::before {
+    content: counter(step);
+    width: 32px; height: 32px;
+    background: var(--green);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .steps-list li .step-text { flex: 1; }
+  .steps-list li .step-text strong { display: block; font-weight: 700; color: var(--dark); }
+  .steps-list li .step-text span { font-size: 12px; color: var(--gray); }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    border-radius: var(--radius);
+    padding: 36px 28px;
+    text-align: center;
+    color: white;
+    margin-bottom: 24px;
+  }
+  .cta-section h2 { color: white; font-size: 22px; margin-bottom: 8px; }
+  .cta-section p { opacity: 0.85; font-size: 14px; margin-bottom: 20px; }
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 36px;
+    background: white;
+    color: var(--green-dark);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+
+  /* ─── RECAP TABLE ─── */
+  .recap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .recap-table th {
+    text-align: left;
+    padding: 12px 14px;
+    background: var(--green);
+    color: white;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .recap-table th:first-child { border-radius: 10px 0 0 0; }
+  .recap-table th:last-child { border-radius: 0 10px 0 0; text-align: right; }
+  .recap-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .recap-table td:last-child { text-align: right; font-weight: 700; color: var(--green); }
+  .recap-table tr:last-child td { border-bottom: none; }
+  .recap-table .included { color: var(--green); font-weight: 700; }
+  .recap-table .sub-row td { padding-left: 30px; font-size: 13px; color: var(--gray); }
+
+  /* ─── FOOTER ─── */
+  .footer-note {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: var(--gray);
+  }
+  .footer-note a { color: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-row">
+      <div class="logo-circle"><img src="images/gwaka/gwaka-logo.jpg" alt="GWAKA"></div>
+    </div>
+    <h1>Votre site web <span>GWAKA</span></h1>
+    <p>Proposition complete avec tous les details : prototypes, tarifs, maintenance, delais et conditions. Tout est transparent, pas de surprise.</p>
+    <div class="hint">Prepare par <em style="color:#c9a030;font-style:normal">PACIFIK'AI</em> — Avril 2026</div>
+  </div>
+
+  <!-- ═══ SECTION 1 : PROTOTYPES ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Vos prototypes</div>
+    <h2>10 designs uniques a decouvrir</h2>
+    <p class="desc">Chaque version est un prototype fonctionnel avec vos vrais produits (49+ items), vos vrais clients et vos vraies photos Instagram. Cliquez sur "Voir le site" pour explorer chaque design en entier.</p>
+
+    <div class="proto-grid">
+      <div class="proto-card">
+        <div class="proto-number">1</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v1.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v1 — Elegance Nature</h3>
+          <div class="card-desc">Design premium sombre, animations fluides, menu filtrable</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v1.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+      <div class="proto-card">
+        <div class="proto-number">2</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v2.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v2 — Fresh & Moderne</h3>
+          <div class="card-desc">Style magazine, categories visuelles, animations au scroll</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v2.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+      <div class="proto-card">
+        <div class="proto-number">3</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v3.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v3 — Bento Grid</h3>
+          <div class="card-desc">Grille dynamique type Pinterest, hover effects, filtres</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v3.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+      <div class="proto-card">
+        <div class="proto-number">4</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v4.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v4 — Carte Interactive</h3>
+          <div class="card-desc">Menu structure par categories, navigation intuitive</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v4.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+      <div class="proto-card">
+        <div class="proto-number">5</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v5.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v5 — Tropical Chic</h3>
+          <div class="card-desc">Ambiance tropicale raffinee, photos immersives</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v5.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+      <div class="proto-card">
+        <div class="proto-number">6</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v6.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v6 — Bento Vibrant</h3>
+          <div class="card-desc">Grille coloree, animations dynamiques, filtres rapides</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v6.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+      <div class="proto-card">
+        <div class="proto-number">7</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v7.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v7 — Premium Gold</h3>
+          <div class="card-desc">Finitions haut de gamme, badges, hero marquant</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v7.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+      <div class="proto-card">
+        <div class="proto-number">8</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v8.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v8 — Masonry Flow</h3>
+          <div class="card-desc">Disposition maconnerie, decouverte visuelle, scroll fluide</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v8.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+      <div class="proto-card">
+        <div class="proto-number">9</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v9.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v9 — Services Focus</h3>
+          <div class="card-desc">Mise en avant des services, cartes detaillees, sushis</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v9.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+      <div class="proto-card">
+        <div class="proto-number">10</div>
+        <span class="live-badge">Live</span>
+        <div class="preview-wrap"><iframe src="gwaka-v10.html" loading="lazy" tabindex="-1"></iframe></div>
+        <div class="card-body">
+          <h3>v10 — Polaroid Gallery</h3>
+          <div class="card-desc">Style galerie photo, ambiance authentique, hover ludique</div>
+          <a href="https://pacifikai.com/portfolio/new/gwaka-v10.html" target="_blank" class="card-link">Voir le site &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:20px">
+      <h4>Ce sont des prototypes</h4>
+      <p>Ces 10 versions sont des maquettes fonctionnelles creees a partir de vos produits et de votre Instagram. Pour finaliser le site definitif, j'aurai besoin de quelques informations supplementaires de votre part (textes definitifs, photos haute qualite, tarifs si souhaite, etc.).</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 2 : L'OFFRE ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> L'offre</div>
+    <h2>Site web professionnel cle en main</h2>
+    <p class="desc">Un site qui reflete la qualite de votre travail — concu pour attirer de nouveaux clients et mettre en valeur vos prestations traiteur.</p>
+
+    <div class="offer-grid">
+      <div class="offer-item">
+        <div class="offer-icon">&#127912;</div>
+        <h4>Design sur mesure</h4>
+        <p>Design premium adapte a votre identite GWAKA, avec votre charte graphique et vos couleurs</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128241;</div>
+        <h4>100% responsive</h4>
+        <p>Parfait sur mobile, tablette et desktop — vos clients commandent depuis leur telephone</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128269;</div>
+        <h4>SEO & Google Business</h4>
+        <p>Referencement optimise pour apparaitre dans les recherches "traiteur Tahiti", "brunch Papeete"</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128247;</div>
+        <h4>Widget Instagram</h4>
+        <p>Vos vraies photos @gwaka.tahiti integrees en direct sur le site, widget interactif</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128172;</div>
+        <h4>Formulaire de devis</h4>
+        <p>Vos clients peuvent demander un devis directement depuis le site (nombre de personnes, date, type de prestation)</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128274;</div>
+        <h4>Hebergement & SSL inclus</h4>
+        <p>Hebergement performant (CDN mondial, SSL securise) inclus a vie — aucun frais mensuel</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128197;</div>
+        <h4>Nom de domaine offert</h4>
+        <p>Premiere annee de nom de domaine incluse (ex: gwaka-tahiti.com ou gwaka.pf)</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128221;</div>
+        <h4>Redaction des textes</h4>
+        <p>Je redige tout le contenu du site : descriptions produits, pages, accroches. Vous fournissez les infos, je structure et j'ecris</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 3 : TARIF ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Tarif</div>
+    <h2>Investissement</h2>
+
+    <div class="price-display">
+      <div class="label">Forfait site web complet</div>
+      <div class="amount">100 000 <span class="currency">F CFP</span></div>
+      <div class="detail">Tout compris — design, textes, developpement, hebergement, domaine, support</div>
+      <div class="offered">1ere annee de domaine OFFERTE</div>
+      <div class="price-breakdown">
+        <div class="price-step">
+          <div class="step-label">Acompte a la commande</div>
+          <div class="step-amount">50 000 F</div>
+          <div class="step-when">Pour demarrer la production</div>
+        </div>
+        <div class="price-step">
+          <div class="step-label">Solde a la livraison</div>
+          <div class="step-amount">50 000 F</div>
+          <div class="step-when">A reception du site final</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <h4>Paiement en 2 fois</h4>
+      <p>50 000 F a la commande pour demarrer la production du site, puis 50 000 F a la livraison une fois que vous etes satisfaite du resultat. Paiement par virement bancaire.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 4 : PAGES INCLUSES ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Pages incluses</div>
+    <h2>5 pages completes dans le forfait</h2>
+    <p class="desc">Tout ce qu'il faut pour presenter GWAKA de facon professionnelle sur internet.</p>
+
+    <div class="offer-grid">
+      <div class="offer-item">
+        <div class="offer-icon">&#127968;</div>
+        <h4>Accueil</h4>
+        <p>Page d'accueil avec hero, presentation, vos meilleurs produits et un apercu de vos services</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#127860;</div>
+        <h4>Menu / Catalogue</h4>
+        <p>Tous vos produits classes par categorie avec photos et descriptions</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#127881;</div>
+        <h4>Prestations</h4>
+        <p>Vos 6 types de prestations (brunch, buffet, cocktail, dejeuner d'affaires, plateaux, apero box)</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128587;</div>
+        <h4>A propos</h4>
+        <p>Votre histoire, vos valeurs, ce qui fait la difference GWAKA — produits frais et faits-maison</p>
+      </div>
+      <div class="offer-item" style="grid-column: span 2">
+        <div class="offer-icon">&#128172;</div>
+        <h4>Contact / Demande de devis</h4>
+        <p>Formulaire complet avec choix du type de prestation, nombre de personnes, date souhaitee. Vos clients peuvent vous contacter directement depuis le site</p>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <h4>Besoin de pages supplementaires ?</h4>
+      <p>Si vous souhaitez ajouter des pages (galerie photo, evenements, partenaires, temoignages...), c'est <strong>15 000 F par page supplementaire</strong>. Et si vous avez plusieurs pages a ajouter d'un coup, on peut s'arranger sur le tarif.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 5 : LES TEXTES ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Contenu & textes</div>
+    <h2>Je m'occupe de tout le contenu</h2>
+    <p class="desc">Vous n'avez pas besoin de rediger vous-meme. Voila comment ca marche :</p>
+
+    <div class="info-box" style="margin-bottom:12px">
+      <h4>Vous me donnez les infos</h4>
+      <p>Vos produits, vos services, ce que vous voulez mettre en avant, vos photos preferees, votre histoire — tout ce qui fait GWAKA. Envoyez-moi ca comme vous voulez : par message, vocal, photos, en vrac... pas besoin que ce soit bien redige.</p>
+    </div>
+    <div class="info-box" style="margin-bottom:12px">
+      <h4>Je structure et j'ecris tout</h4>
+      <p>Descriptions des produits, accroches, textes des pages, titres, boutons — je redige l'ensemble du site avec un ton professionnel qui reflete l'image GWAKA. Le contenu est <strong>inclus dans le forfait</strong>.</p>
+    </div>
+    <div class="info-box">
+      <h4>Vous relisez et validez</h4>
+      <p>Je vous envoie tout pour validation. Vous me dites ce que vous voulez changer, et j'ajuste autant de fois que necessaire. <strong>Allers-retours illimites</strong> avant la mise en ligne.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 6 : GESTION APRES LIVRAISON ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Apres la livraison</div>
+    <h2>Gestion & maintenance du site</h2>
+    <p class="desc">Votre site est livre, il est en ligne — voila comment ca se passe ensuite pour les modifications.</p>
+
+    <div class="info-box" style="margin-bottom:20px; background: var(--green-bg); border-color: #c6e7c6;">
+      <h4>3 mois de support INCLUS dans le forfait</h4>
+      <p>Pendant les 3 premiers mois apres la mise en ligne, <strong>toutes les modifications sont gratuites</strong> : ajout de produits, changement de photos, de textes, de prix, ajustements visuels. Vous m'envoyez un message, je fais la modif.</p>
+    </div>
+
+    <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; color:var(--dark)">Apres les 3 mois — 2 options au choix :</h3>
+
+    <div class="maintenance-grid">
+      <div class="maint-card recommended">
+        <div class="rec-badge">Recommande</div>
+        <div class="maint-icon">&#128197;</div>
+        <h4>Abonnement mensuel</h4>
+        <div class="maint-price">5 000 F <small>/ mois</small></div>
+        <div class="maint-desc">La solution la plus simple et la plus economique. Vous m'envoyez vos modifications, je m'en occupe.</div>
+        <ul>
+          <li>Modifications de textes & photos</li>
+          <li>Ajout / suppression de produits</li>
+          <li>Changements de prix</li>
+          <li>Ajustements visuels</li>
+          <li>Delai de traitement rapide</li>
+          <li>Sans engagement — arretez quand vous voulez</li>
+        </ul>
+      </div>
+      <div class="maint-card">
+        <div class="maint-icon">&#128736;</div>
+        <h4>Intervention ponctuelle</h4>
+        <div class="maint-price">10 000 F <small>/ intervention</small></div>
+        <div class="maint-desc">Pas de modification reguliere ? Contactez-moi quand vous en avez besoin, sans engagement.</div>
+        <ul>
+          <li>Paiement a la demande</li>
+          <li>Aucun abonnement</li>
+          <li>Ideal si modifications rares</li>
+          <li>Memes types de modifications</li>
+          <li>Delai sous 48h</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="autonomy-card">
+      <div class="maint-icon" style="font-size:28px; margin-bottom:10px">&#128273;</div>
+      <h4>Option autonomie totale</h4>
+      <div class="maint-price">150 000 F <small>forfait unique</small></div>
+      <div class="maint-desc">Vous voulez le controle total ? Je vous cree un espace d'administration sur mesure pour gerer votre site vous-meme, avec une formation complete.</div>
+      <ul>
+        <li>Espace admin securise (mot de passe)</li>
+        <li>Ajout / modification de produits en autonomie</li>
+        <li>Changement de textes et photos sans toucher au code</li>
+        <li>Formation video + session en direct (45 min)</li>
+        <li>Guide d'utilisation ecrit</li>
+        <li>Support technique 1 mois apres formation</li>
+      </ul>
+    </div>
+
+    <div class="info-box" style="margin-top:16px">
+      <h4>Pas besoin de decider maintenant</h4>
+      <p>Vous avez 3 mois de support inclus pour voir comment ca se passe. A la fin des 3 mois, vous choisissez l'option qui vous convient le mieux. La plupart de mes clients preferent l'abonnement a 5 000 F/mois — c'est simple, pas cher, et vous n'avez rien a gerer.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 7 : NOM DE DOMAINE ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Nom de domaine</div>
+    <h2>Votre adresse sur internet</h2>
+    <p class="desc">Le nom de domaine est inclus dans le forfait (1ere annee offerte). Vous choisissez le nom que vous voulez, je verifie sa disponibilite.</p>
+
+    <div class="domain-grid">
+      <div class="domain-option">
+        <div class="ext">gwaka-tahiti.com<small>Extension internationale — la plus courante</small></div>
+        <div class="price">~1 500 F<small>/an en moyenne</small></div>
+      </div>
+      <div class="domain-option">
+        <div class="ext">gwaka-traiteur.com<small>Met en avant votre metier</small></div>
+        <div class="price">~1 500 F<small>/an en moyenne</small></div>
+      </div>
+      <div class="domain-option">
+        <div class="ext">gwaka.pf<small>Extension Polynesie francaise — ancrage local</small></div>
+        <div class="price">~6 000 F<small>/an (via Mana)</small></div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <h4>Comment ca marche ?</h4>
+      <p><strong>La 1ere annee est incluse dans le forfait de 100 000 F.</strong> Vous etes libre de choisir le nom que vous voulez — ce sont juste des suggestions. Apres la 1ere annee, le renouvellement est a votre charge (~1 500 F/an pour .com, ~3 000-6 000 F/an pour .pf).</p>
+    </div>
+
+    <div class="info-box" style="margin-top:0">
+      <h4>Forfaits multi-annees (optionnel)</h4>
+      <p>Vous pouvez aussi souscrire a 2 ou 3 ans d'un coup. La 1ere annee reste offerte, vous ne payez que le surplus :</p>
+      <table style="width:100%;margin-top:12px;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:2px solid #a7f3d0">
+            <th style="text-align:left;padding:8px 6px;font-weight:700;color:#3A6232">Duree</th>
+            <th style="text-align:center;padding:8px 6px;font-weight:700;color:#3A6232">.com</th>
+            <th style="text-align:center;padding:8px 6px;font-weight:700;color:#3A6232">.pf</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #d1fae5">
+            <td style="padding:8px 6px;font-weight:600">1 an</td>
+            <td style="padding:8px 6px;text-align:center;color:#4A7C3F;font-weight:700">OFFERT</td>
+            <td style="padding:8px 6px;text-align:center;color:#4A7C3F;font-weight:700">OFFERT</td>
+          </tr>
+          <tr style="border-bottom:1px solid #d1fae5">
+            <td style="padding:8px 6px;font-weight:600">2 ans</td>
+            <td style="padding:8px 6px;text-align:center">+ 1 500 F</td>
+            <td style="padding:8px 6px;text-align:center">+ 3 000 F</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 6px;font-weight:600">3 ans</td>
+            <td style="padding:8px 6px;text-align:center">+ 3 000 F</td>
+            <td style="padding:8px 6px;text-align:center">+ 6 000 F</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 8 : RECAPITULATIF ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Recapitulatif</div>
+    <h2>Tout ce qui est inclus — en un coup d'oeil</h2>
+
+    <table class="recap-table">
+      <thead>
+        <tr>
+          <th>Element</th>
+          <th>Tarif</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Site web complet (5 pages)</strong></td>
+          <td>100 000 F</td>
+        </tr>
+        <tr class="sub-row">
+          <td>Design sur mesure + responsive</td>
+          <td class="included">inclus</td>
+        </tr>
+        <tr class="sub-row">
+          <td>Redaction de tous les textes</td>
+          <td class="included">inclus</td>
+        </tr>
+        <tr class="sub-row">
+          <td>SEO + Google Business</td>
+          <td class="included">inclus</td>
+        </tr>
+        <tr class="sub-row">
+          <td>Formulaire de devis</td>
+          <td class="included">inclus</td>
+        </tr>
+        <tr class="sub-row">
+          <td>Widget Instagram</td>
+          <td class="included">inclus</td>
+        </tr>
+        <tr>
+          <td><strong>Hebergement & SSL</strong></td>
+          <td class="included">inclus a vie</td>
+        </tr>
+        <tr>
+          <td><strong>Nom de domaine (1ere annee)</strong></td>
+          <td class="included">OFFERT</td>
+        </tr>
+        <tr>
+          <td><strong>Support & modifications (3 mois)</strong></td>
+          <td class="included">inclus</td>
+        </tr>
+        <tr>
+          <td><strong>Allers-retours illimites avant validation</strong></td>
+          <td class="included">inclus</td>
+        </tr>
+        <tr style="border-top:2px solid #e2e8f0">
+          <td><strong>Page supplementaire</strong></td>
+          <td>15 000 F / page</td>
+        </tr>
+        <tr>
+          <td><strong>Maintenance mensuelle (apres 3 mois)</strong></td>
+          <td>5 000 F / mois</td>
+        </tr>
+        <tr>
+          <td><strong>Intervention ponctuelle (apres 3 mois)</strong></td>
+          <td>10 000 F / intervention</td>
+        </tr>
+        <tr>
+          <td><strong>Option autonomie (back-office + formation)</strong></td>
+          <td>150 000 F</td>
+        </tr>
+        <tr>
+          <td><strong>Renouvellement domaine (apres 1ere annee)</strong></td>
+          <td>~1 500 F / an (.com)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box" style="background: var(--gold-light); border-color: #f0dfa0;">
+      <h4 style="color: #92400e">Aucun frais cache</h4>
+      <p>Le forfait de 100 000 F inclut tout ce qui est liste ci-dessus. L'hebergement est gratuit a vie, pas d'abonnement mensuel pour garder votre site en ligne. Les seuls frais recurrents possibles sont le renouvellement du domaine (~1 500 F/an) et la maintenance si vous la souhaitez.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 9 : DELAI ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Delai de livraison</div>
+    <h2>Votre site en ligne en 1 semaine</h2>
+
+    <div class="info-box" style="margin-bottom:12px">
+      <h4>7 jours apres reception de vos contenus</h4>
+      <p>Une fois que j'ai tout en main (votre choix de design, vos photos, vos informations), je finalise le site en <strong>1 semaine</strong>. Plus vous me donnez de details des le depart, plus on va vite.</p>
+    </div>
+    <div class="info-box">
+      <h4>Ensuite, on peaufine ensemble</h4>
+      <p>Une fois la premiere version prete, vous la regardez et me dites ce que vous voulez modifier. On ajuste les petits details ensemble, autant de fois que necessaire, jusqu'a ce que vous soyez 100% satisfaite. Le solde n'est paye qu'a ce moment-la.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 10 : CE DONT J'AI BESOIN ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Pour demarrer</div>
+    <h2>Ce dont j'ai besoin de votre part</h2>
+    <p class="desc">Envoyez-moi tout ca comme vous voulez — par message, vocal, en vrac, c'est moi qui organise.</p>
+
+    <div class="offer-grid">
+      <div class="offer-item">
+        <div class="offer-icon">&#9989;</div>
+        <h4>Choix du design</h4>
+        <p>Quel(s) prototype(s) vous plai(sen)t ? On peut aussi mixer des elements de plusieurs</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128248;</div>
+        <h4>Photos haute qualite</h4>
+        <p>Vos plus belles photos de plats, plateaux, evenements — en haute resolution si possible</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128221;</div>
+        <h4>Vos infos</h4>
+        <p>Vos services, votre histoire, ce que vous voulez mettre en avant — je m'occupe de la redaction</p>
+      </div>
+      <div class="offer-item">
+        <div class="offer-icon">&#128161;</div>
+        <h4>Vos inspirations</h4>
+        <p>Un site qui vous plait ? Des idees ? Des fonctionnalites ? Envoyez-moi tout</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 11 : PROCHAINES ETAPES ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Prochaines etapes</div>
+    <h2>Comment on avance ?</h2>
+
+    <ol class="steps-list">
+      <li>
+        <div class="step-text">
+          <strong>Vous choisissez votre design prefere</strong>
+          <span>Parmi les 10 versions — ou un mix de plusieurs</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-text">
+          <strong>Vous me transmettez vos contenus</strong>
+          <span>Photos, infos produits, logo HD, choix de nom de domaine</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-text">
+          <strong>Acompte & lancement</strong>
+          <span>Virement de 50 000 F pour demarrer la production</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-text">
+          <strong>Je finalise le site en 1 semaine</strong>
+          <span>Integration des contenus, redaction, optimisation</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-text">
+          <strong>Vous relisez, on ajuste ensemble</strong>
+          <span>Allers-retours illimites jusqu'a votre validation</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-text">
+          <strong>Mise en ligne & solde</strong>
+          <span>Le site est en ligne, vous reglez les 50 000 F restants</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-text">
+          <strong>3 mois de support inclus</strong>
+          <span>Modifications, mises a jour, ajout de produits — je reste disponible</span>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- ═══ SECTION 12 : FAQ ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Questions frequentes</div>
+    <h2>Vos questions, nos reponses</h2>
+
+    <div class="info-box" style="margin-bottom:12px">
+      <h4>Et si le resultat ne me plait pas ?</h4>
+      <p>Vous avez droit a <strong>des allers-retours illimites</strong> avant validation. On ajuste ensemble jusqu'a ce que vous soyez 100% satisfaite. Le solde n'est paye qu'une fois que vous validez le resultat final.</p>
+    </div>
+    <div class="info-box" style="margin-bottom:12px">
+      <h4>Est-ce que le site m'appartient ?</h4>
+      <p><strong>Oui, a 100%.</strong> Le site, le code, le nom de domaine — tout vous appartient. Vous etes libre de le transferer ou de le faire evoluer comme vous le souhaitez.</p>
+    </div>
+    <div class="info-box" style="margin-bottom:12px">
+      <h4>Est-ce que je peux rajouter des choses plus tard ?</h4>
+      <p>Bien sur. Que ce soit des nouveaux produits, des nouvelles pages, des nouvelles fonctionnalites — je reste disponible. Les petites modifications sont couvertes par la maintenance (5 000 F/mois ou 10 000 F/intervention). Les nouvelles pages sont a 15 000 F par page.</p>
+    </div>
+    <div class="info-box" style="margin-bottom:12px">
+      <h4>Quels sont les frais recurrents ?</h4>
+      <p>Apres la livraison, les seuls frais possibles sont :<br>
+      - <strong>Renouvellement du domaine</strong> : ~1 500 F/an pour .com (~3 000-6 000 F/an pour .pf) — a partir de la 2eme annee<br>
+      - <strong>Maintenance</strong> : 5 000 F/mois si vous la souhaitez (optionnel)<br>
+      L'hebergement est <strong>gratuit a vie</strong>.</p>
+    </div>
+    <div class="info-box">
+      <h4>Je peux vous envoyer les infos par vocal ou en vrac ?</h4>
+      <p><strong>Oui, absolument.</strong> Envoyez-moi vos photos, vos idees, vos infos comme ca vous arrange — par message, vocal, email. C'est moi qui organise, structure et redige. Pas besoin que ce soit parfait de votre cote.</p>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 13 : COORDONNEES BANCAIRES ═══ -->
+  <div class="section">
+    <div class="section-label"><span class="dot"></span> Informations de paiement</div>
+    <h2>Coordonnees bancaires</h2>
+    <p class="desc">Pour le virement (acompte et solde) :</p>
+
+    <div class="bank-grid">
+      <span class="bank-label">Titulaire</span><span class="bank-value">ENT INDIVIDUELLE PACIFIK AI</span>
+      <span class="bank-label">Banque</span><span class="bank-value">Banque de Tahiti</span>
+      <span class="bank-label">IBAN</span><span class="bank-value">FR76 1223 9000 1571 5144 0100 014</span>
+      <span class="bank-label">BIC</span><span class="bank-value">CEPAPFTPXXX</span>
+    </div>
+
+    <div class="info-box" style="margin-top:16px">
+      <h4>Prestataire</h4>
+      <p><strong>PACIFIK'AI</strong> — Jordy TOOFA<br>Entrepreneur Individuel — Patente G67367<br>jordy@pacifikai.com — +689 89 55 81 89<br>Tahiti, Polynesie francaise</p>
+    </div>
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="cta-section">
+    <h2>On demarre ?</h2>
+    <p>Dites-moi quel prototype vous plait, envoyez-moi vos infos, et votre site sera en ligne dans 1 semaine.</p>
+    <a href="https://www.instagram.com/pacifik.ai/" target="_blank" class="cta-btn">Me contacter sur Instagram &rarr;</a>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <div class="footer-note">
+    PACIFIK'AI — Agence IA & Web — Polynesie francaise<br>
+    <a href="https://pacifikai.com" target="_blank">pacifikai.com</a> | jordy@pacifikai.com | +689 89 55 81 89
+  </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const cards = document.querySelectorAll('.proto-card');
+
+  function setScales() {
+    cards.forEach(card => {
+      const wrap = card.querySelector('.preview-wrap');
+      const iframe = card.querySelector('iframe');
+      if (!wrap || !iframe) return;
+      const s = wrap.offsetWidth / 1440;
+      iframe.style.transform = 'scale(' + s + ')';
+    });
+  }
+  setScales();
+  window.addEventListener('resize', setScales);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const iframe = entry.target.querySelector('iframe');
+      if (iframe) iframe.dataset.visible = entry.isIntersecting ? '1' : '0';
+    });
+  }, { threshold: 0.1 });
+
+  const delays = [0, 2, 1, 3.5, 0.5, 2.5, 1.5, 4, 3, 1.8];
+
+  cards.forEach((card, i) => {
+    observer.observe(card);
+    const iframe = card.querySelector('iframe');
+    if (!iframe) return;
+
+    iframe.addEventListener('load', () => {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        if (!doc || !doc.body) return;
+
+        let scrollPos = 0;
+        let direction = 1;
+        const speed = 0.5 + Math.random() * 0.5;
+
+        setTimeout(() => {
+          function tick() {
+            if (iframe.dataset.visible === '1') {
+              const maxScroll = doc.documentElement.scrollHeight - 900;
+              scrollPos += speed * direction;
+              if (scrollPos >= maxScroll) { scrollPos = maxScroll; direction = -1; }
+              if (scrollPos <= 0) { scrollPos = 0; direction = 1; }
+              doc.documentElement.scrollTop = scrollPos;
+            }
+            requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        }, (delays[i] || 0) * 1000);
+      } catch(e) {}
+    });
+
+    card.addEventListener('mouseenter', () => { iframe.dataset.visible = '0'; });
+    card.addEventListener('mouseleave', () => { iframe.dataset.visible = '1'; });
+  });
+});
+</script>
+
+</body>
+</html>
