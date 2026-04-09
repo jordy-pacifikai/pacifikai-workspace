@@ -97,7 +97,7 @@ export default function Footer() {
                   <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <span>
-                  Polynesie francaise
+                  Polynésie française
                 </span>
               </li>
               <li>
@@ -136,10 +136,10 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-white/[0.06] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-white/25 text-xs">
-            &copy; {new Date().getFullYear()} Pacific Blue Consulting. Tous droits reserves.
+            &copy; {new Date().getFullYear()} Pacific Blue Consulting. Tous droits réservés.
           </p>
           <p className="text-white/20 text-xs">
-            Polynesie francaise
+            Polynésie française
           </p>
         </div>
       </div>

@@ -6,10 +6,10 @@ import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import { territories } from "@/data/territories";
 
 const territoryImages: Record<string, { src: string; alt: string }> = {
-  mobilites: { src: "/images/pbc-cockpit.jpg", alt: "Cockpit d'avion" },
-  infrastructures: { src: "/images/pbc-aeroport.jpg", alt: "Aéroport polynésien" },
-  environnement: { src: "/images/pbc-foret.jpg", alt: "Forêt tropicale polynésienne" },
-  transformation: { src: "/images/pbc-consulting.jpg", alt: "Session de travail" },
+  mobilites: { src: "/images/mobilites-cockpit.jpg", alt: "Cockpit vue Bora Bora — transport aérien Polynésie" },
+  infrastructures: { src: "/images/rgi1.jpg", alt: "Aéroport RGI — infrastructures aéroportuaires" },
+  environnement: { src: "/images/nuku-hiva.jpg", alt: "Nuku Hiva — Marquises" },
+  transformation: { src: "/images/transformation-workshop.jpg", alt: "Session de travail et formation" },
 };
 
 export default function OffresPage() {
@@ -18,9 +18,10 @@ export default function OffresPage() {
   return (
     <div ref={sectionRef}>
       {/* Hero */}
-      <section className="relative pt-32 pb-20 bg-navy text-white overflow-hidden">
+      <section className="relative pt-32 pb-20 text-white overflow-hidden">
+        <Image src="/images/hero-offres.jpg" alt="Bora Bora — lagon turquoise" fill className="object-cover" sizes="100vw" priority />
+        <div className="absolute inset-0 bg-navy/80" />
         <div className="absolute inset-0 grain-overlay" />
-        <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[128px]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block text-gold/70 text-fluid-xs font-semibold uppercase tracking-[0.3em] mb-4">
             Nos offres

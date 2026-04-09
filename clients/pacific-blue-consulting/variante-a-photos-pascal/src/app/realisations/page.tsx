@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import {
   missions,
@@ -94,25 +95,26 @@ export default function RealisationsPage() {
   return (
     <div ref={sectionRef}>
       {/* Hero */}
-      <section className="relative pt-32 pb-20 bg-navy text-white overflow-hidden">
+      <section className="relative pt-32 pb-20 text-white overflow-hidden">
+        <Image src="/images/hero-realisations.jpg" alt="Moorea — montagnes et lagon" fill className="object-cover" sizes="100vw" priority />
+        <div className="absolute inset-0 bg-navy/80" />
         <div className="absolute inset-0 grain-overlay" />
-        <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[128px]" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block text-gold/70 text-fluid-xs font-semibold uppercase tracking-[0.3em] mb-4">
-            Nos réalisations
+            Réalisations
           </span>
           <h1 className="font-display text-fluid-4xl font-bold leading-tight">
-            Plus de 60 missions réalisées
+            Nos réalisations
           </h1>
           <p className="mt-6 text-white/50 text-lg max-w-3xl mx-auto leading-relaxed">
-            En Polynésie française, Nouvelle-Calédonie et dans le Pacifique Sud. Des projets concrets, des résultats mesurables.
+            Plus de 60 missions réalisées en Polynésie française, Nouvelle-Calédonie et dans le Pacifique. Des projets concrets, des résultats mesurables.
           </p>
           {/* Quick stats */}
           <div className="mt-10 flex flex-wrap justify-center gap-8">
             {[
-              { value: "68", label: "Missions" },
-              { value: "30+", label: "Clients" },
-              { value: "3", label: "Territoires" },
+              { value: String(missions.length), label: "Missions" },
+              { value: "28", label: "Clients" },
+              { value: String(Object.keys(geoTerritoryLabels).length), label: "Territoires" },
               { value: "8 ans", label: "D'activité" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">

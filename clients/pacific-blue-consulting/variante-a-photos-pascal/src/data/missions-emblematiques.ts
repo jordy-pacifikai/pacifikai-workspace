@@ -17,7 +17,7 @@ export const missionsEmblematiques: MissionEmblematique[] = [
     title: "Créer un opérateur hélicoptère de A à Z",
     description:
       "Structuration complète d'un opérateur hélicoptère en Polynésie française : du business plan à l'obtention du CTA, en passant par la documentation opérationnelle et la certification.",
-    image: "/images/istock-1141905690.jpg",
+    image: "/images/tnh-helicopter-flight.jpg",
   },
   {
     territory: "infrastructures",
@@ -27,27 +27,27 @@ export const missionsEmblematiques: MissionEmblematique[] = [
     title: "Accompagnement intégré ports et aéroports",
     description:
       "Mission pluriannuelle d'accompagnement stratégique de la Province des Îles Loyauté sur l'ensemble de ses infrastructures portuaires et aéroportuaires.",
-    image: "/images/istock-1321897221.jpg",
+    image: "/images/aratika.jpg",
   },
   {
     territory: "mobilites",
     territoryLabel: "Mobilités",
     client: "DAC-Pf / Etik Pf",
     dates: "2024-2025",
-    title: "10 EISA réalisées - Sécuriser les travaux aéroportuaires du Pacifique",
+    title: "Sécuriser les travaux aéroportuaires du Pacifique",
     description:
       "Dix études d'impact sur la sécurité aéroportuaire sur des plateformes allant des atolls des Tuamotu à l'aéroport international de Tahiti-Faa'a.",
-    image: "/images/drone-pf-1.jpg",
+    image: "/images/rgi1.jpg",
   },
   {
     territory: "environnement",
     territoryLabel: "Environnement",
-    client: "DAG",
+    client: "TAVIVAT",
     dates: "2025-2030",
     title: "Souveraineté alimentaire - piloter la transition",
     description:
       "Pilotage de la transition vers la souveraineté alimentaire en Polynésie française : étude de marché des vivriers locaux et accompagnement de la structuration des filières.",
-    image: "/images/drone-pf-3.jpg",
+    image: "/images/taro.jpg",
   },
   {
     territory: "environnement",
@@ -57,7 +57,7 @@ export const missionsEmblematiques: MissionEmblematique[] = [
     title: "Inventer un dispositif de certification biodiversité",
     description:
       "Conception et mise en place d'un dispositif de certification biodiversité innovant pour la Direction de l'Environnement de Polynésie française.",
-    image: "/images/pbc-corail.jpg",
+    image: "/images/nuku-hiva.jpg",
   },
   {
     territory: "mobilites",
@@ -67,6 +67,6 @@ export const missionsEmblematiques: MissionEmblematique[] = [
     title: "Connecter les États insulaires du Pacifique",
     description:
       "Étude de faisabilité d'une ligne aérienne régionale reliant Tahiti aux États insulaires du Pacifique Sud, pour renforcer la connectivité régionale.",
-    image: "/images/pbc-hero.jpg",
+    image: "/images/rgi3.jpg",
   },
 ];

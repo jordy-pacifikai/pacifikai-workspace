@@ -4,7 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import SectionTitle from "@/components/SectionTitle";
-import AppointmentBooking from "@/components/AppointmentBooking";
+
+const CONTACT_EMAIL = "pascal@pacificblueconsulting.fr";
 
 const domainOptions = [
   { value: "", label: "Sélectionnez un domaine" },
@@ -26,7 +27,6 @@ type ContactForm = {
 
 export default function ContactPage() {
   const sectionRef = useScrollAnimation<HTMLDivElement>();
-  const [activeTab, setActiveTab] = useState<"contact" | "rdv">("contact");
   const [form, setForm] = useState<ContactForm>({
     name: "",
     company: "",
@@ -36,7 +36,6 @@ export default function ContactPage() {
     message: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ContactForm, string>>>({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const updateField = (field: keyof ContactForm, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -58,14 +57,20 @@ export default function ContactPage() {
       return;
     }
 
-    const messages = JSON.parse(localStorage.getItem("pbc-messages") || "[]");
-    messages.push({
-      ...form,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-    });
-    localStorage.setItem("pbc-messages", JSON.stringify(messages));
-    setIsSubmitted(true);
+    const domainLabel = domainOptions.find(d => d.value === form.domain)?.label || "";
+    const subject = `[Contact PBC] ${form.name}${domainLabel ? ` — ${domainLabel}` : ""}`;
+    const body = [
+      `Nom : ${form.name}`,
+      form.company ? `Entreprise : ${form.company}` : "",
+      `Email : ${form.email}`,
+      form.phone ? `Téléphone : ${form.phone}` : "",
+      domainLabel ? `Domaine : ${domainLabel}` : "",
+      "",
+      "Message :",
+      form.message,
+    ].filter(Boolean).join("\n");
+
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   const inputClasses =
@@ -76,7 +81,7 @@ export default function ContactPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Image
-          src="/images/air-tetiaroa.jpg"
+          src="/images/hero-contact.jpg"
           alt=""
           fill
           priority
@@ -104,61 +109,8 @@ export default function ContactPage() {
           <div className="grid lg:grid-cols-3 gap-16">
             {/* Form / Booking */}
             <div className="lg:col-span-2">
-              {/* Tabs */}
-              <div className="gsap-reveal flex gap-1 p-1.5 bg-navy-50/50 rounded-2xl mb-10">
-                <button
-                  onClick={() => {
-                    setActiveTab("contact");
-                    setIsSubmitted(false);
-                  }}
-                  className={`flex-1 px-6 py-3.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-                    activeTab === "contact"
-                      ? "bg-white text-navy shadow-elevation-1"
-                      : "text-warm hover:text-navy"
-                  }`}
-                >
-                  Formulaire de contact
-                </button>
-                <button
-                  onClick={() => setActiveTab("rdv")}
-                  className={`flex-1 px-6 py-3.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-                    activeTab === "rdv"
-                      ? "bg-white text-navy shadow-elevation-1"
-                      : "text-warm hover:text-navy"
-                  }`}
-                >
-                  Prendre rendez-vous
-                </button>
-              </div>
-
               {/* Contact Form */}
-              {activeTab === "contact" && (
-                <>
-                  {isSubmitted ? (
-                    <div className="text-center py-16">
-                      <div className="w-16 h-16 bg-green-50 border border-green-100 rounded-2xl flex items-center justify-center mx-auto">
-                        <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                          <path d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <h3 className="mt-6 font-display text-2xl font-bold text-navy">
-                        Message envoye
-                      </h3>
-                      <p className="mt-3 text-warm max-w-sm mx-auto">
-                        Nous avons bien recu votre message et vous repondrons dans les meilleurs delais.
-                      </p>
-                      <button
-                        onClick={() => {
-                          setIsSubmitted(false);
-                          setForm({ name: "", company: "", email: "", phone: "", domain: "", message: "" });
-                        }}
-                        className="mt-8 px-6 py-3 bg-navy text-white text-sm font-semibold rounded-xl hover:bg-navy-600 transition-all duration-300"
-                      >
-                        Envoyer un autre message
-                      </button>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-sm font-medium text-navy mb-2">
@@ -206,7 +158,7 @@ export default function ContactPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-navy mb-2">
-                            Telephone
+                            Téléphone
                           </label>
                           <input
                             type="tel"
@@ -221,7 +173,7 @@ export default function ContactPage() {
 
                       <div>
                         <label className="block text-sm font-medium text-navy mb-2">
-                          Domaine concerne
+                          Domaine concerné
                         </label>
                         <select
                           value={form.domain}
@@ -245,7 +197,7 @@ export default function ContactPage() {
                           onChange={(e) => updateField("message", e.target.value)}
                           rows={5}
                           className={`${inputClasses} resize-none`}
-                          placeholder="Decrivez votre projet, vos enjeux, vos questions..."
+                          placeholder="Décrivez votre projet, vos enjeux, vos questions..."
                         />
                         {errors.message && <p className="mt-1.5 text-xs text-red-500">{errors.message}</p>}
                       </div>
@@ -256,12 +208,10 @@ export default function ContactPage() {
                       >
                         Envoyer le message
                       </button>
+                      <p className="text-xs text-warm-300 mt-2">
+                        Ce bouton ouvre votre application mail avec le message pré-rempli.
+                      </p>
                     </form>
-                  )}
-                </>
-              )}
-
-              {activeTab === "rdv" && <AppointmentBooking />}
             </div>
 
             {/* Sidebar */}
@@ -269,8 +219,8 @@ export default function ContactPage() {
               {/* Sidebar image */}
               <div className="gsap-reveal rounded-3xl overflow-hidden">
                 <Image
-                  src="/images/istock-1401444200.jpg"
-                  alt="Drone en vol"
+                  src="/images/pbc-in-airport.jpg"
+                  alt="PBC à l'aéroport"
                   width={600}
                   height={400}
                   className="w-full h-48 object-cover"
@@ -280,26 +230,26 @@ export default function ContactPage() {
               {/* Contact Info */}
               <div className="gsap-reveal p-8 bg-navy-50/40 border border-navy-100/30 rounded-3xl">
                 <h3 className="font-display text-lg font-bold text-navy mb-6">
-                  Coordonnees
+                  Coordonnées
                 </h3>
                 <div className="space-y-5">
                   {[
                     {
                       label: "Localisation",
-                      value: "Polynesie francaise",
+                      value: "Polynésie française",
                       icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z",
                       icon2: "M15 11a3 3 0 11-6 0 3 3 0 016 0z",
                     },
                     {
-                      label: "Telephone",
+                      label: "Téléphone",
                       value: "+689 87 747 284",
                       href: "tel:+68987747284",
                       icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",
                     },
                     {
                       label: "Email",
-                      value: "pacificblueconsulting@zoho.com",
-                      href: "mailto:pacificblueconsulting@zoho.com",
+                      value: "pascal@pacificblueconsulting.fr",
+                      href: "mailto:pascal@pacificblueconsulting.fr",
                       icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
                     },
                   ].map((item) => (
@@ -343,32 +293,24 @@ export default function ContactPage() {
               {/* Expertise */}
               <div className="gsap-reveal p-8 bg-navy-50/40 border border-navy-100/30 rounded-3xl">
                 <h3 className="font-display text-lg font-bold text-navy mb-5">
-                  Nos domaines
+                  Nos territoires
                 </h3>
                 <ul className="space-y-3 text-sm text-warm">
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Conseil strategique et performance
+                    Mobilités &amp; Transport aérien
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Expertise aeronautique
+                    Infrastructures &amp; Territoires
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Transition ecologique et RSE
+                    Environnement &amp; Souveraineté
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Formation et developpement des competences
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Certification ISO (9001, 14001, 45001)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Assistance a maitrise d&apos;ouvrage
+                    Transformation &amp; Compétences
                   </li>
                 </ul>
               </div>

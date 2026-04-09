@@ -400,7 +400,7 @@ export default function Header() {
                 className="flex items-center justify-center w-full py-4 bg-gold text-navy font-semibold rounded-xl text-sm hover:bg-gold-400 transition-colors"
                 onClick={() => setIsMobileOpen(false)}
               >
-                Prendre rendez-vous
+                Nous contacter
                 <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>

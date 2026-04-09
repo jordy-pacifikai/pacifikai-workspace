@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s | Pacific Blue Consulting",
   },
   description:
-    "Pacific Blue Consulting : cabinet de conseil en Polynésie française. Structuration de projets complexes en transport aérien, sécurité aéroportuaire, environnement et développement territorial.",
+    "Cabinet de conseil indépendant en Polynésie française. Structuration de projets complexes en transport aérien, sécurité aéroportuaire, infrastructures, environnement et développement territorial dans le Pacifique.",
   keywords: [
     "conseil aviation civile",
     "polynesie francaise",
@@ -83,17 +83,17 @@ export default function RootLayout({
               founder: {
                 "@type": "Person",
                 name: "Pascal BAZER-BACHI",
-                jobTitle: "Fondateur - Ancien Directeur de l'Aviation Civile de Polynesie francaise",
+                jobTitle: "Fondateur - Ancien Directeur de l'Aviation Civile de Polynésie française",
               },
               foundingDate: "2017",
               areaServed: [
-                "Polynesie francaise",
-                "Nouvelle-Caledonie",
+                "Polynésie française",
+                "Nouvelle-Calédonie",
                 "Pacifique Sud",
               ],
               knowsAbout: [
                 "Aviation civile",
-                "Aeroports",
+                "Aéroports",
                 "Environnement",
                 "Bilan carbone",
                 "AMO",

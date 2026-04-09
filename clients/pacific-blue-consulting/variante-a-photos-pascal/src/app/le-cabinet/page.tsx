@@ -182,7 +182,7 @@ function PacificMap() {
 
       {/* Mission count badges */}
       <rect x="592" y="325" width="96" height="22" rx="11" fill="oklch(0.72 0.12 85 / 0.2)" />
-      <text x="640" y="339" textAnchor="middle" fill="oklch(0.85 0.10 85)" fontSize="9" fontWeight="600">45+ missions</text>
+      <text x="640" y="339" textAnchor="middle" fill="oklch(0.85 0.10 85)" fontSize="9" fontWeight="600">60+ missions</text>
 
       <rect x="296" y="356" width="88" height="20" rx="10" fill="oklch(0.55 0.12 245 / 0.2)" />
       <text x="340" y="369" textAnchor="middle" fill="oklch(0.65 0.10 245)" fontSize="8" fontWeight="600">15+ missions</text>
@@ -198,7 +198,7 @@ export default function LeCabinetPage() {
     <div ref={sectionRef}>
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <Image src="/images/istock-1287424844.jpg" alt="" fill priority className="object-cover" sizes="100vw" />
+        <Image src="/images/hero-cabinet.jpg" alt="Bora Bora — coucher de soleil" fill priority className="object-cover" sizes="100vw" />
         <div className="absolute inset-0 overlay-hero" />
         <div className="absolute inset-0 grain-overlay" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 lg:pt-40 pb-20">
@@ -278,7 +278,7 @@ export default function LeCabinetPage() {
                   Titulaire d&apos;une qualification EASA Form-4 et formé à la gestion des risques industriels (Mastère MIDE), il est aujourd&apos;hui l&apos;un des rares experts du Pacifique à combiner une expérience de direction au sein de l&apos;autorité de surveillance et une pratique opérationnelle du conseil en sécurité et sûreté aéroportuaires. Il a réalisé 10 études d&apos;impact sur la sécurité aéroportuaire (EISA) depuis 2024.
                 </p>
                 <p>
-                  <strong className="text-navy">Chevalier de l&apos;Ordre National du Mérite</strong>, il a créé Pacific Blue Consulting en 2019. Depuis, il a également cofondé Terciel (aéroports marins flottants, prix Innovation « Or Bleu » 2023), Ironetik (laboratoire d&apos;essai et expertise technique) et Islands Services and Solutions (gestion de projets d&apos;infrastructures publiques).
+                  <strong className="text-navy">Chevalier de l&apos;Ordre National du Mérite</strong>, il a créé Pacific Blue Consulting en 2017. Depuis, il a également cofondé Terciel (aéroports marins flottants, prix Innovation « Or Bleu » 2023), Ironetik (laboratoire d&apos;essai et expertise technique) et Islands Services and Solutions (gestion de projets d&apos;infrastructures publiques).
                 </p>
                 <p>
                   Télépilote qualifié, il réalise lui-même les missions d&apos;imagerie aérienne professionnelle pour ses clients - parce que comprendre un territoire, c&apos;est aussi le voir d&apos;en haut.
@@ -386,7 +386,7 @@ export default function LeCabinetPage() {
 
       {/* Zones d'intervention (CONSERVÉ) */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
-        <Image src="/images/drone-pf-2.jpg" alt="" fill className="object-cover" sizes="100vw" />
+        <Image src="/images/aratika-village.jpg" alt="Aratika — village vu du ciel" fill className="object-cover" sizes="100vw" />
         <div className="absolute inset-0 overlay-cta" />
         <div className="absolute inset-0 grain-overlay" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

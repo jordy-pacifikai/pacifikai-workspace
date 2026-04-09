@@ -11,9 +11,9 @@ import HeroTextReveal from "@/components/HeroTextReveal";
 
 /* ===== Data ===== */
 const stats = [
-  { value: 60, suffix: "+", label: "Missions réalisées" },
   { value: 8, suffix: "", label: "Années d'activité" },
   { value: 4, suffix: "", label: "Territoires du Pacifique" },
+  { value: 60, suffix: "+", label: "Missions" },
   { value: 100, suffix: "%", label: "Indépendant" },
 ];
 
@@ -101,7 +101,7 @@ export default function Home() {
     <div ref={sectionRef}>
       {/* ===== HERO ===== */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        <Image src="/images/istock-531907847.jpg" alt="" fill priority className="object-cover" sizes="100vw" />
+        <Image src="/images/hero-accueil.jpg" alt="Bora Bora — Pacific Blue Consulting" fill priority className="object-cover" sizes="100vw" />
         <div className="absolute inset-0 overlay-hero" />
         <div className="absolute inset-0 grain-overlay" />
         <div ref={parallaxRef} className="absolute inset-0 opacity-[0.04]">
@@ -327,20 +327,22 @@ export default function Home() {
             <SectionTitle label="Nos clients" title="Ils nous font confiance" />
           </div>
 
-          <div className="mt-16 space-y-10">
+          <div className="mt-16 space-y-12">
             {(Object.keys(clientCategories) as ClientCategory[]).map((category) => {
               const categoryClients = clients.filter((c) => c.category === category);
               if (categoryClients.length === 0) return null;
               return (
                 <div key={category}>
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-warm-400 mb-4">
-                    {clientCategories[category]}
+                  <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-warm-400 mb-5 flex items-center gap-3">
+                    <span>{clientCategories[category]}</span>
+                    <span className="flex-1 h-px bg-navy-100/40" />
+                    <span className="text-warm-300 font-normal normal-case tracking-normal text-[10px]">{categoryClients.length}</span>
                   </h3>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
                     {categoryClients.map((client) => (
                       <div
                         key={client.name}
-                        className="group relative flex flex-col items-center justify-center px-4 py-3 bg-white border border-navy-100/40 rounded-xl min-h-[52px] hover:border-navy-200 hover:shadow-sm transition-all duration-300"
+                        className="relative flex flex-col items-center justify-center p-4 bg-white border border-navy-100/40 rounded-xl aspect-[3/2] overflow-hidden transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100"
                       >
                         {client.logo ? (
                           <>
@@ -348,16 +350,18 @@ export default function Home() {
                               src={client.logo}
                               alt={client.name}
                               width={120}
-                              height={40}
-                              className="h-8 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+                              height={48}
+                              className="h-10 w-auto object-contain"
                               loading="lazy"
                             />
-                            <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-navy/60 bg-white/90 px-2 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                              {client.name}
-                            </span>
+                            <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10">
+                              <span className="text-[11px] font-semibold text-white text-center leading-tight px-2">
+                                {client.name}
+                              </span>
+                            </div>
                           </>
                         ) : (
-                          <span className="text-sm font-medium text-navy/70">
+                          <span className="text-xs font-medium text-navy/70 text-center leading-tight">
                             {client.name}
                           </span>
                         )}
@@ -376,16 +380,17 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="gsap-reveal">
             <SectionTitle
-              label="Nos partenaires"
-              title="Un réseau d'expertise pour des interventions intégrées"
+              label="Partenaires"
+              title="Nos partenaires"
+              description="Un réseau d'expertise pour des interventions intégrées"
             />
           </div>
 
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" data-stagger-parent>
+          <div className="mt-16 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3" data-stagger-parent>
             {partners.map((partner) => (
               <div
                 key={partner.name}
-                className="group relative card-hover flex flex-col items-center justify-center p-6 bg-navy-50/40 border border-navy-100/40 rounded-2xl text-center min-h-[88px] hover:border-navy-200 hover:shadow-md transition-all duration-300"
+                className="relative flex flex-col items-center justify-center p-4 bg-navy-50/40 border border-navy-100/40 rounded-xl aspect-[3/2] overflow-hidden transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100"
                 data-stagger-child
               >
                 {partner.logo ? (
@@ -394,16 +399,18 @@ export default function Home() {
                       src={partner.logo}
                       alt={partner.name}
                       width={120}
-                      height={40}
-                      className="h-8 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+                      height={48}
+                      className="h-10 w-auto object-contain"
                       loading="lazy"
                     />
-                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-navy/70 bg-white/95 px-2.5 py-1 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 border border-navy-100/20">
-                      {partner.name}{partner.specialty ? ` — ${partner.specialty}` : ""}
-                    </span>
+                    <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10 px-2">
+                      <span className="text-[11px] font-semibold text-white text-center leading-tight">
+                        {partner.name}{partner.specialty ? ` — ${partner.specialty}` : ""}
+                      </span>
+                    </div>
                   </>
                 ) : (
-                  <span className="font-display text-sm font-bold text-navy/70 leading-tight">
+                  <span className="text-xs font-medium text-navy/70 text-center leading-tight">
                     {partner.name}
                   </span>
                 )}
@@ -415,7 +422,7 @@ export default function Home() {
 
       {/* ===== FINAL CTA ===== */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
-        <Image src="/images/istock-975717824.jpg" alt="" fill className="object-cover" sizes="100vw" loading="lazy" />
+        <Image src="/images/img-e8221.jpg" alt="Polynésie française" fill className="object-cover" sizes="100vw" loading="lazy" />
         <div className="absolute inset-0 overlay-cta" />
         <div className="absolute inset-0 grain-overlay" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[150px]" />

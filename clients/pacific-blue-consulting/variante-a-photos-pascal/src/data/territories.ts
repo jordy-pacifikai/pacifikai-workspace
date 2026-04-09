@@ -42,7 +42,7 @@ Nous avons créé des compagnies aériennes là où il n'y en avait pas, remis e
       "Documentation SSLIA, AFIS et maintenance",
     ],
     focus: {
-      title: "Expertise EISA et Sûreté",
+      title: "EISA et Sûreté",
       text: `Pascal Bazer-Bachi est l'un des rares experts du Pacifique à combiner une expérience de direction au sein de l'autorité de surveillance et une pratique opérationnelle du conseil en sécurité et sûreté aéroportuaires.
 
 Depuis 2024, 10 EISA réalisées sur des plateformes allant des atolls des Tuamotu à l'aéroport international de Tahiti-Faa'a (gros-porteurs B777/A350, travaux en site exploité, coordination multi-acteurs). Méthodologie conforme aux exigences nationales et européennes, risques résiduels positionnés en zone ALARP.
@@ -63,7 +63,7 @@ En sûreté : expérience de présidence des Comités Opérationnels de Sûreté
     ],
     result:
       "Des opérations aériennes lancées sur des bases solides, des certifications obtenues et maintenues, des risques maîtrisés - parce que la continuité territoriale n'est pas un concept, c'est le quotidien des îles.",
-    image: "/images/pbc-cockpit.jpg",
+    image: "/images/mobilites-cockpit.jpg",
   },
   {
     id: "infrastructures",
@@ -84,7 +84,7 @@ Pacific Blue Consulting sait naviguer dans cette équation. Nous concevons des s
       "Terciel - aéroports marins flottants (2022-2030)",
       "Étude route aéroport Temae - Commune de Moorea",
     ],
-    image: "/images/pbc-aeroport.jpg",
+    image: "/images/rgi1.jpg",
   },
   {
     id: "environnement",
@@ -105,7 +105,7 @@ Pacific Blue Consulting accompagne cette transition avec la même rigueur que ce
       "Pilotage projet TAVIVAT - DAG (2026-2027)",
       "Séchoir à pandanus - Service de l'Artisanat Traditionnel (2025-2026)",
     ],
-    image: "/images/pbc-foret.jpg",
+    image: "/images/nuku-hiva.jpg",
   },
   {
     id: "transformation",
@@ -126,6 +126,6 @@ Pascal Bazer-Bachi est formateur agréé, coach professionnel accrédité et con
     ],
     result:
       "Des équipes plus compétentes, des organisations plus lisibles, des managers mieux outillés, et des trajectoires professionnelles ou entrepreneuriales sécurisées. Parce que le meilleur investissement d'un territoire, ce sont ses talents.",
-    image: "/images/pbc-consulting.jpg",
+    image: "/images/transformation-workshop.jpg",
   },
 ];

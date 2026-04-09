@@ -32,15 +32,15 @@ export type Domain =
 
 export const domainLabels: Record<Domain, string> = {
   aviation: "Aviation civile",
-  aeroports: "Aeroports & Infrastructures",
-  environnement: "Environnement & Biodiversite",
-  etudes: "Etudes strategiques",
+  aeroports: "Aéroports & Infrastructures",
+  environnement: "Environnement & Biodiversité",
+  etudes: "Études stratégiques",
   amo: "AMO & Pilotage",
   formation: "Formation & Management",
   documentation: "Documentation & Certification",
-  securite: "Securite aerienne",
+  securite: "Sécurité aérienne",
   drones: "Drones & Nouvelles technologies",
-  artisanat: "Developpement territorial & Artisanat",
+  artisanat: "Développement territorial & Artisanat",
 };
 
 export const domainColors: Record<Domain, string> = {
