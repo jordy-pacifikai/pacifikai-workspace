@@ -15,17 +15,33 @@ async function proxyToBridge(
 ): Promise<NextResponse> {
   const url = `${BRIDGE_URL}${path}`;
 
-  const res = await fetch(url, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${BRIDGE_SECRET}`,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  if (!BRIDGE_URL || !BRIDGE_SECRET) {
+    return NextResponse.json({ error: 'Messenger Bridge non configure' }, { status: 503 });
+  }
 
-  const data = await res.json();
-  return NextResponse.json(data, { status: res.status });
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BRIDGE_SECRET}`,
+      },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(10000),
+    });
+
+    const text = await res.text();
+    let data: unknown;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { error: 'Invalid response from bridge', raw: text.slice(0, 200) };
+    }
+    return NextResponse.json(data, { status: res.status });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Bridge unreachable';
+    return NextResponse.json({ error: `Bridge indisponible: ${msg}` }, { status: 503 });
+  }
 }
 
 /**

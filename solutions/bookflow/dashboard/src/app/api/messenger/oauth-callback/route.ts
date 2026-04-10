@@ -4,7 +4,18 @@ import { logger } from '@/lib/logger';
 
 const FB_APP_ID = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || process.env.FB_APP_ID || '';
 const FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || process.env.FB_APP_SECRET || '';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || '';
 const GRAPH_API = 'https://graph.facebook.com/v22.0';
+
+/** Get the public-facing origin (not the internal PM2 binding) */
+function getOrigin(req: NextRequest): string {
+  if (SITE_URL) return SITE_URL.replace(/\/$/, '');
+  // Fallback: trust X-Forwarded-Host from reverse proxy
+  const fwdHost = req.headers.get('x-forwarded-host');
+  const fwdProto = req.headers.get('x-forwarded-proto') || 'https';
+  if (fwdHost) return `${fwdProto}://${fwdHost}`;
+  return req.nextUrl.origin;
+}
 
 /**
  * GET /api/messenger/oauth-callback
@@ -14,9 +25,10 @@ const GRAPH_API = 'https://graph.facebook.com/v22.0';
  * stores in a temporary session, and redirects to /channels.
  */
 export async function GET(req: NextRequest) {
+  const origin = getOrigin(req);
   const { searchParams } = req.nextUrl;
   const code = searchParams.get('code');
-  const state = searchParams.get('state'); // businessId
+  const stateParam = searchParams.get('state'); // businessId:nonce or legacy businessId
   const errorParam = searchParams.get('error');
 
   // User denied or error
@@ -24,20 +36,36 @@ export async function GET(req: NextRequest) {
     const reason = searchParams.get('error_description') || 'Connexion Facebook annulee';
     logger.warn('FB OAuth denied', { error: errorParam, reason });
     return NextResponse.redirect(
-      new URL(`/channels?fb_error=${encodeURIComponent(reason)}`, req.url),
+      new URL(`/channels?fb_error=${encodeURIComponent(reason)}`, origin),
     );
   }
 
-  if (!state) {
-    return NextResponse.redirect(new URL('/channels?fb_error=Session+invalide', req.url));
+  if (!stateParam) {
+    return NextResponse.redirect(new URL('/channels?fb_error=Session+invalide', origin));
+  }
+
+  // Parse state — supports "businessId:nonce" (new) or plain "businessId" (legacy)
+  const separatorIdx = stateParam.indexOf(':');
+  let state: string;
+  if (separatorIdx > 0) {
+    state = stateParam.slice(0, separatorIdx);
+    const nonce = stateParam.slice(separatorIdx + 1);
+    const cookieNonce = req.cookies.get('fb_oauth_nonce')?.value;
+    if (!cookieNonce || cookieNonce !== nonce) {
+      logger.warn('CSRF nonce mismatch on legacy oauth-callback', { state });
+      return NextResponse.redirect(new URL('/channels?fb_error=csrf_failed', origin));
+    }
+  } else {
+    // Legacy path — no nonce in state (backwards compat)
+    state = stateParam;
   }
 
   if (!FB_APP_ID || !FB_APP_SECRET) {
     logger.error('FB_APP_ID or FB_APP_SECRET not configured');
-    return NextResponse.redirect(new URL('/channels?fb_error=Service+non+configure', req.url));
+    return NextResponse.redirect(new URL('/channels?fb_error=Service+non+configure', origin));
   }
 
-  const redirectUri = `${req.nextUrl.origin}/api/messenger/oauth-callback`;
+  const redirectUri = `${origin}/api/messenger/oauth-callback`;
 
   try {
     // 1. Exchange code for short-lived user token
@@ -50,7 +78,7 @@ export async function GET(req: NextRequest) {
     if (!tokenRes.ok || !tokenData.access_token) {
       logger.error('FB code exchange failed', { status: tokenRes.status, error: JSON.stringify(tokenData) });
       return NextResponse.redirect(
-        new URL('/channels?fb_error=Erreur+echange+token+Facebook', req.url),
+        new URL('/channels?fb_error=Erreur+echange+token+Facebook', origin),
       );
     }
 
@@ -66,7 +94,7 @@ export async function GET(req: NextRequest) {
     if (!llRes.ok || !llData.access_token) {
       logger.error('FB long-lived token exchange failed', { status: llRes.status, error: JSON.stringify(llData) });
       return NextResponse.redirect(
-        new URL('/channels?fb_error=Erreur+token+longue+duree', req.url),
+        new URL('/channels?fb_error=Erreur+token+longue+duree', origin),
       );
     }
 
@@ -82,7 +110,7 @@ export async function GET(req: NextRequest) {
     if (!pagesRes.ok || !pagesData.data) {
       logger.error('FB list pages failed', { status: pagesRes.status, error: JSON.stringify(pagesData) });
       return NextResponse.redirect(
-        new URL('/channels?fb_error=Impossible+de+recuperer+tes+Pages', req.url),
+        new URL('/channels?fb_error=Impossible+de+recuperer+tes+Pages', origin),
       );
     }
 
@@ -90,7 +118,7 @@ export async function GET(req: NextRequest) {
 
     if (pages.length === 0) {
       return NextResponse.redirect(
-        new URL('/channels?fb_error=Aucune+Page+Facebook+trouvee', req.url),
+        new URL('/channels?fb_error=Aucune+Page+Facebook+trouvee', origin),
       );
     }
 
@@ -122,7 +150,7 @@ export async function GET(req: NextRequest) {
         logger.info('Messenger page auto-connected via OAuth', { businessId: state, pageId: page.id, pageName: page.name });
 
         return NextResponse.redirect(
-          new URL('/channels?fb_success=Page+connectee+avec+succes', req.url),
+          new URL('/channels?fb_success=Page+connectee+avec+succes', origin),
         );
       }
     }
@@ -141,12 +169,12 @@ export async function GET(req: NextRequest) {
       });
 
     return NextResponse.redirect(
-      new URL('/channels?fb_pick_pages=true', req.url),
+      new URL('/channels?fb_pick_pages=true', origin),
     );
   } catch (err) {
     logger.error('FB OAuth callback error', { error: String(err) });
     return NextResponse.redirect(
-      new URL('/channels?fb_error=Erreur+interne', req.url),
+      new URL('/channels?fb_error=Erreur+interne', origin),
     );
   }
 }

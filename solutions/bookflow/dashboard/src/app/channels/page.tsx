@@ -1028,13 +1028,9 @@ function FacebookConnectedCard({
 
   async function handleConnect() {
     setError('');
-    // OAuth redirect flow — works in ALL browsers (no SDK dependency)
-    const appId = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || '854522137595486';
-    const redirectUri = `${window.location.origin}/api/messenger/oauth-callback`;
-    const scopes = 'pages_show_list,pages_manage_metadata,pages_messaging,instagram_manage_messages,public_profile';
-    const state = businessId; // pass businessId through OAuth state
-    const oauthUrl = `https://www.facebook.com/v22.0/dialog/oauth?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scopes}&state=${state}&response_type=code`;
-    window.location.href = oauthUrl;
+    // Use /api/auth/facebook which has CSRF protection, rate limiting,
+    // and hardcoded REDIRECT_URI matching Facebook's whitelist.
+    window.location.href = `/api/auth/facebook?business_id=${businessId}`;
   }
 
   async function handleSelectPage(page: FacebookPageOption, overrideUserToken?: string) {

@@ -1,7 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const DASHBOARD_HOST = 'dashboard.vea.pacifikai.com'
+// Single-host mode: no dashboard subdomain, everything on vea.pacifikai.com
+const DASHBOARD_HOST = 'vea.pacifikai.com'
 const LANDING_HOST = 'vea.pacifikai.com'
 const BIZ_CACHE_COOKIE = 'vea_biz'
 const BIZ_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
@@ -69,36 +70,17 @@ export async function middleware(request: NextRequest) {
     },
   )
 
-  const hostname = request.headers.get('host') ?? ''
   const { pathname } = request.nextUrl
-  const isDashboardHost = hostname.startsWith('dashboard.')
-  const isLandingHost = !isDashboardHost
 
-  // ─── Landing host (vea.pacifikai.com) ───────────────────────────────
-  // Only serve landing page, legal pages, and API routes.
-  // All auth/dashboard routes redirect to dashboard subdomain.
-  if (isLandingHost) {
-    const landingRoutes = ['/', '/landing', '/privacy', '/terms', '/data-deletion', '/status', '/pricing', '/faq', '/unsubscribe']
-    const isLandingRoute = landingRoutes.includes(pathname)
-    const isSecteurRoute = pathname.startsWith('/secteur/')
-    const isBookRoute = pathname.startsWith('/book/')
-    const isApi = pathname.startsWith('/api/')
-    const isAsset = pathname.startsWith('/_next/') || pathname.startsWith('/icons/') || pathname.startsWith('/logos/')
+  // ─── Static / public assets — skip all logic ──────────────────────
+  const isAsset = pathname.startsWith('/_next/') || pathname.startsWith('/icons/') || pathname.startsWith('/logos/')
+  if (isAsset) return supabaseResponse
 
-    if (isLandingRoute || isSecteurRoute || isBookRoute || isApi || isAsset) {
-      return supabaseResponse
-    }
-
-    // Any other route on landing host → redirect to dashboard host
-    const url = new URL(`https://${DASHBOARD_HOST}${pathname}${request.nextUrl.search}`)
-    return NextResponse.redirect(url)
-  }
-
-  // ─── Dashboard host (dashboard.vea.pacifikai.com) ───────────────────
+  // ─── Auth & dashboard logic ────────────────────────────────────────
   const { data: { user } } = await supabase.auth.getUser()
 
   // Public routes on dashboard — no auth required
-  const publicRoutes = ['/login', '/signup', '/auth/callback', '/privacy', '/terms', '/data-deletion', '/book', '/status', '/review', '/pricing', '/faq', '/offline', '/unsubscribe']
+  const publicRoutes = ['/login', '/signup', '/auth/callback', '/privacy', '/terms', '/data-deletion', '/book', '/status', '/review', '/pricing', '/faq', '/offline', '/unsubscribe', '/landing', '/portal', '/secteur']
   const isPublic = publicRoutes.some(r => pathname.startsWith(r))
   const isWebhook = pathname.startsWith('/api/')
 
