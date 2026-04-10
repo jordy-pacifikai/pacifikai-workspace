@@ -24,7 +24,7 @@ type SourceEntry = {
 const SOURCE_MAP: SourceEntry[] = [
   // ─── NAVIGATION / MENUS ───
   { match: "Pacific Blue", type: "catalogue", source: "Catalogue des Missions, page de couverture", quote: "Pacific Blue Consulting — Cabinet de conseil independant base en Polynesie francaise" },
-  { match: "Accueil", type: "editorial", source: "Structure editoriale du site", quote: "Page d'accueil synthetisant les chiffres cles (60+ missions, 8 expertises, 4 territoires) et les 18 partenaires issus du Catalogue des Missions" },
+  { match: "Accueil", type: "editorial", source: "Structure editoriale du site", quote: "Page d'accueil synthetisant les chiffres cles (45+ missions, 4 territoires) et les 18 partenaires issus du Catalogue des Missions" },
   { match: "Expertise", type: "catalogue", source: "Catalogue, chapitre 7 'Synthese par famille d'offre' (pp. 33-35)", quote: "Le catalogue documente 8 expertises distinctes : Etudes & Strategie, Audits & Conformite, Documentation & Certification, Formation & Concours, AMO & Projets, Creation / Structuration, Gestion de la Securite, Organisation & Management" },
   { match: "References", type: "catalogue", source: "Catalogue, chapitres 1 a 6 (pp. 8-32) — 61 fiches missions", quote: "61 missions detaillees avec client, annee, domaine, description et benefice client. Chaque fiche constitue une reference factuelle du cabinet" },
   { match: "A propos", type: "catalogue", source: "Catalogue, Introduction (pp. 5-7) + Conclusion (p. 36)", quote: "Introduction du catalogue : biographie de Pascal Bazer-Bachi, presentation du cabinet, identite visuelle (coquillage/spirale), mentions legales SAS" },

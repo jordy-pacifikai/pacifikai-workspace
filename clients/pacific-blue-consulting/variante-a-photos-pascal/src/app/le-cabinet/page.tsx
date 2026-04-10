@@ -182,10 +182,10 @@ function PacificMap() {
 
       {/* Mission count badges */}
       <rect x="592" y="325" width="96" height="22" rx="11" fill="oklch(0.72 0.12 85 / 0.2)" />
-      <text x="640" y="339" textAnchor="middle" fill="oklch(0.85 0.10 85)" fontSize="9" fontWeight="600">60+ missions</text>
+      <text x="640" y="339" textAnchor="middle" fill="oklch(0.85 0.10 85)" fontSize="9" fontWeight="600">45+ missions</text>
 
       <rect x="296" y="356" width="88" height="20" rx="10" fill="oklch(0.55 0.12 245 / 0.2)" />
-      <text x="340" y="369" textAnchor="middle" fill="oklch(0.65 0.10 245)" fontSize="8" fontWeight="600">15+ missions</text>
+      <text x="340" y="369" textAnchor="middle" fill="oklch(0.65 0.10 245)" fontSize="8" fontWeight="600">5+ missions</text>
     </svg>
   );
 }
