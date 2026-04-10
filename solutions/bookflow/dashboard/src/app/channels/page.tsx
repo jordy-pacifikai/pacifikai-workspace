@@ -22,7 +22,7 @@ import {
   useConnectGoogle,
   useDisconnectGoogle,
 } from '@/hooks/useGoogleCalendar';
-import { loginWithFacebook } from '@/lib/facebook-sdk';
+import { loginWithFacebook, basicFacebookLogin } from '@/lib/facebook-sdk';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -1010,9 +1010,28 @@ function FacebookConnectedCard({
 
   async function handleConnect() {
     setError('');
-    // Use /api/auth/facebook which has CSRF protection, rate limiting,
-    // and hardcoded REDIRECT_URI matching Facebook's whitelist.
-    window.location.href = `/api/auth/facebook?business_id=${businessId}`;
+    setConnecting(true);
+    try {
+      // Step 1: Basic FB login (public_profile only) to get user's Facebook ID.
+      // Works for ALL users in Live mode — no App Review needed.
+      const { userID } = await basicFacebookLogin();
+
+      // Step 2: Register user as app tester so pages_messaging works without App Review.
+      // Non-blocking: if it fails, we still try the full OAuth (might work if already tester).
+      await fetch('/api/auth/facebook/prepare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId, facebookUserId: userID }),
+      }).catch(() => {});
+
+      // Step 3: Full OAuth redirect with all permissions (same as before).
+      // Now works because user was just added as tester.
+      window.location.href = `/api/auth/facebook?business_id=${businessId}`;
+    } catch {
+      // If basic login fails (popup blocked, user cancelled), fall back to direct OAuth.
+      // This preserves backwards compat for users who are already testers/admins.
+      window.location.href = `/api/auth/facebook?business_id=${businessId}`;
+    }
   }
 
   async function handleSelectPage(page: FacebookPageOption, overrideUserToken?: string) {

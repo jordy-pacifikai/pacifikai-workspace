@@ -107,6 +107,62 @@ export function loadFacebookSDK(): Promise<void> {
  * Launch Facebook Login popup and return the short-lived user access token.
  * The server will exchange this for a permanent Page Access Token.
  */
+/**
+ * Basic Facebook Login — only public_profile, no special permissions.
+ * Used to get the user's Facebook ID before adding them as app tester.
+ * Works in Live mode for ALL users (no App Review needed).
+ */
+export async function basicFacebookLogin(): Promise<{
+  accessToken: string;
+  userID: string;
+}> {
+  await loadFacebookSDK();
+
+  if (!window.FB) {
+    throw new Error(
+      'Le SDK Facebook n\'a pas pu se charger. Désactive le bloqueur de pubs / Brave Shield pour ce site, puis réessaie.',
+    );
+  }
+
+  return new Promise((resolve, reject) => {
+    let settled = false;
+
+    const timer = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        reject(new Error(
+          'Le popup Facebook ne s\'est pas ouvert. Desactive Brave Shield (icone lion) pour ce site, puis reessaie.',
+        ));
+      }
+    }, 30_000);
+
+    window.FB!.login(
+      (response) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+
+        if (response.status === 'connected' && response.authResponse) {
+          resolve({
+            accessToken: response.authResponse.accessToken,
+            userID: response.authResponse.userID,
+          });
+        } else {
+          reject(new Error('Connexion Facebook annulee ou refusee. Reessaie.'));
+        }
+      },
+      {
+        scope: 'public_profile',
+        return_scopes: true,
+      },
+    );
+  });
+}
+
+/**
+ * Full Facebook Login with all permissions (pages_messaging etc.).
+ * Only works for users who have a role on the app (admin/dev/tester).
+ */
 export async function loginWithFacebook(): Promise<{
   accessToken: string;
   userID: string;
