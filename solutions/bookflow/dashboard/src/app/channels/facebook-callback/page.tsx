@@ -67,11 +67,12 @@ export default function FacebookCallbackPage() {
           return;
         }
 
-        // If multiple pages, store them and redirect to channels with picker
+        // If multiple pages, redirect to server-side OAuth flow
+        // (tokens are stored server-side in bookbot_fb_page_sessions, not sessionStorage)
         if (pages.length > 1) {
-          sessionStorage.setItem('fb_pages', JSON.stringify(pages));
-          sessionStorage.setItem('fb_user_token', userAccessToken);
-          router.push('/channels?pick_page=1');
+          setStatus('error');
+          setMessage('Plusieurs Pages detectees. Utilise le bouton "Connecter Facebook" sur la page Canaux.');
+          setTimeout(() => router.push('/channels'), 3000);
           return;
         }
 

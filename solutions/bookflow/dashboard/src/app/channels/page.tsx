@@ -115,15 +115,13 @@ function WhatsAppCard({
     setVerifying(true);
     setVerifyResult(null);
     try {
-      const res = await fetch(
-        `https://graph.facebook.com/v21.0/me?access_token=${encodeURIComponent(token)}`
-      );
+      const res = await fetch('/api/whatsapp/verify-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
       const data = await res.json();
-      if (data.error) {
-        setVerifyResult({ ok: false, msg: data.error.message || 'Token invalide' });
-      } else {
-        setVerifyResult({ ok: true, msg: `Token valide — ${data.name || 'System User'}` });
-      }
+      setVerifyResult({ ok: data.ok, msg: data.msg || (data.ok ? 'Token valide' : 'Token invalide') });
     } catch {
       setVerifyResult({ ok: false, msg: 'Erreur reseau — verifiez votre connexion' });
     } finally {
@@ -997,27 +995,11 @@ function FacebookConnectedCard({
         .catch(() => setError('Erreur lors du chargement des pages Facebook'));
     }
 
-    // Handle return from Facebook OAuth callback with multiple pages
-    const pickPage = params.get('pick_page');
-    if (pickPage) {
+    // Legacy pick_page param (removed — tokens no longer stored in sessionStorage)
+    // Multi-page flow now uses server-side fb_pick_pages + /api/auth/facebook/pages
+    if (params.get('pick_page')) {
       window.history.replaceState({}, '', '/channels');
-      try {
-        const storedPages = sessionStorage.getItem('fb_pages');
-        const storedToken = sessionStorage.getItem('fb_user_token');
-        if (storedPages) {
-          const parsed = JSON.parse(storedPages);
-          setPages(parsed.map((p: { id: string; name: string; access_token: string }) => ({
-            id: p.id,
-            name: p.name,
-            access_token: p.access_token,
-            instagram_business_account_id: null,
-          })));
-          setUserAccessToken(storedToken || '');
-          setShowPagePicker(true);
-          sessionStorage.removeItem('fb_pages');
-          sessionStorage.removeItem('fb_user_token');
-        }
-      } catch {}
+      setError('Session expiree. Reconnecte-toi via le bouton Facebook.');
     }
   }, []);
 

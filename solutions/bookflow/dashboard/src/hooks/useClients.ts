@@ -36,11 +36,12 @@ async function fetchClients(businessId: string): Promise<Client[]> {
   return (data ?? []) as Client[];
 }
 
-async function fetchClientHistory(clientPhone: string): Promise<Appointment[]> {
+async function fetchClientHistory(clientPhone: string, businessId: string): Promise<Appointment[]> {
   const { data, error } = await supabase
     .from('bookbot_appointments')
     .select('*')
     .eq('client_phone', clientPhone)
+    .eq('business_id', businessId)
     .order('appointment_date', { ascending: false })
     .limit(5);
 
@@ -69,11 +70,11 @@ export function useClients(businessId: string | null) {
   });
 }
 
-export function useClientHistory(clientPhone: string | null) {
+export function useClientHistory(clientPhone: string | null, businessId: string | null) {
   return useQuery({
     queryKey: clientKeys.history(clientPhone ?? ''),
-    queryFn: () => fetchClientHistory(clientPhone!),
-    enabled: Boolean(clientPhone),
+    queryFn: () => fetchClientHistory(clientPhone!, businessId!),
+    enabled: Boolean(clientPhone) && Boolean(businessId),
   });
 }
 

@@ -22,15 +22,6 @@ export function verifyMetaSignature(
     return false;
   }
 
-  // Debug: log secret hash + signature comparison (remove after fixing)
-  logger.info("Meta signature check", {
-    action: "meta_signature_debug",
-    secretLen: appSecret.length,
-    secretPrefix: appSecret.substring(0, 4),
-    headerPrefix: signatureHeader.substring(0, 20),
-    envSource: process.env.META_APP_SECRET ? "META_APP_SECRET" : "FACEBOOK_APP_SECRET",
-  });
-
   const [algo, signature] = signatureHeader.split("=");
   if (algo !== "sha256" || !signature) return false;
 

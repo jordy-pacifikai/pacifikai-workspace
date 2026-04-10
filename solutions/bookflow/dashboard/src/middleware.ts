@@ -12,7 +12,9 @@ const _encoder = new TextEncoder()
 let _cryptoKey: CryptoKey | null = null
 async function getCryptoKey(): Promise<CryptoKey> {
   if (_cryptoKey) return _cryptoKey
-  const secret = _encoder.encode(process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'dev-secret')
+  const rawSecret = process.env.COOKIE_SIGNING_SECRET ?? process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!rawSecret) throw new Error('COOKIE_SIGNING_SECRET or SUPABASE_SERVICE_ROLE_KEY required for cookie signing')
+  const secret = _encoder.encode(rawSecret)
   _cryptoKey = await crypto.subtle.importKey('raw', secret, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify'])
   return _cryptoKey
 }
@@ -82,7 +84,22 @@ export async function middleware(request: NextRequest) {
   // Public routes on dashboard — no auth required
   const publicRoutes = ['/login', '/signup', '/auth/callback', '/privacy', '/terms', '/data-deletion', '/book', '/status', '/review', '/pricing', '/faq', '/offline', '/unsubscribe', '/landing', '/portal', '/secteur']
   const isPublic = publicRoutes.some(r => pathname.startsWith(r))
-  const isWebhook = pathname.startsWith('/api/')
+  // Only skip auth for actual external webhook/callback endpoints
+  // Dashboard API routes (/api/clients, /api/appointments, etc.) go through normal auth flow
+  const webhookPrefixes = [
+    '/api/webhook',        // WhatsApp/Meta webhooks
+    '/api/webhooks',       // Generic webhook receivers
+    '/api/cron',           // Cron jobs (authenticated by secret header)
+    '/api/book',           // Public booking widget API
+    '/api/portal',         // Public client portal
+    '/api/health',         // Health check
+    '/api/waitlist',       // Public waitlist signup
+    '/api/unsubscribe',    // Email unsubscribe
+    '/api/messenger/oauth-callback', // Facebook OAuth redirect
+    '/api/auth/callback',  // Supabase auth callback
+    '/api/auth/facebook',  // Facebook OAuth initiation (has own CSRF)
+  ]
+  const isWebhook = webhookPrefixes.some(p => pathname.startsWith(p))
 
   // Dashboard root "/" → redirect to stats or login
   if (pathname === '/') {
@@ -133,8 +150,12 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse
   }
 
-  // Not authenticated → redirect to login
+  // Not authenticated
   if (!user) {
+    // API routes: return JSON 401 (not a redirect)
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+    }
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     url.searchParams.set('redirect', pathname)

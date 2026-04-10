@@ -42,8 +42,8 @@ function TagBadge({ tag }: { tag: string }) {
 
 // ─── Client row expanded panel ────────────────────────────────────────────────
 
-function ClientExpandedPanel({ clientPhone }: { clientPhone: string | null }) {
-  const { data: history, isLoading } = useClientHistory(clientPhone);
+function ClientExpandedPanel({ clientPhone, businessId }: { clientPhone: string | null; businessId: string | null }) {
+  const { data: history, isLoading } = useClientHistory(clientPhone, businessId);
 
   if (isLoading) {
     return (
@@ -454,7 +454,7 @@ export default function ClientsPage() {
                       </div>
                     )}
                   </div>
-                  <ClientExpandedPanel clientPhone={client.phone ?? null} />
+                  <ClientExpandedPanel clientPhone={client.phone ?? null} businessId={businessId} />
                 </div>
               )}
             </div>
@@ -631,7 +631,7 @@ export default function ClientsPage() {
                       </div>
                     )}
                   </div>
-                  <ClientExpandedPanel clientPhone={client.phone ?? null} />
+                  <ClientExpandedPanel clientPhone={client.phone ?? null} businessId={businessId} />
                 </div>
               )}
             </div>

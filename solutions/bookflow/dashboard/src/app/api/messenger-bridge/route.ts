@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireBusinessAccess } from '@/lib/auth';
 
 /**
  * Proxy API for Messenger Bridge login flow.
@@ -52,6 +53,15 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { action, session_id, business_id, ...rest } = body;
+
+    // R4: Require auth + business ownership for all bridge actions
+    if (business_id) {
+      await requireBusinessAccess(business_id);
+    } else {
+      // Actions without business_id (e.g. bridge-resolve-page-url) still need auth
+      const { requireAuth } = await import('@/lib/auth');
+      await requireAuth();
+    }
 
     switch (action) {
       // ─── New: Email+Password login (messenger-lite) ───

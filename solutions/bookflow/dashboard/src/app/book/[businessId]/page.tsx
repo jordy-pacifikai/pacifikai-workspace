@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/components/ui/Toast';
 import { useBookingI18n, type BookingLocale, type BookingTranslations } from '@/lib/i18n-booking';
@@ -832,9 +832,9 @@ function stepToProgressIndex(step: Step): number {
 export default function BookingPage({
   params,
 }: {
-  params: { businessId: string };
+  params: Promise<{ businessId: string }>;
 }) {
-  const { businessId } = params;
+  const { businessId } = React.use(params);
 
   const [locale, setLocale] = useState<BookingLocale>('fr');
   const t = useBookingI18n(locale);

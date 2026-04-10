@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { requireAuth } from '@/lib/auth';
 import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 
 /**
@@ -9,6 +10,9 @@ import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
  * Tokens never appear in URLs — only the ephemeral session ID does.
  */
 export async function GET(req: NextRequest) {
+  // R7: Require authentication before exposing page tokens
+  await requireAuth();
+
   const ip = getClientIp(req);
   const { success } = await rateLimitAsync(`fb-pages-get:${ip}`, { interval: 60_000, limit: 10 });
   if (!success) {

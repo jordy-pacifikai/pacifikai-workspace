@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -106,11 +106,12 @@ export default function ReschedulePage({
   params,
   searchParams,
 }: {
-  params: { businessId: string };
-  searchParams: { appointment_id?: string };
+  params: Promise<{ businessId: string }>;
+  searchParams: Promise<{ appointment_id?: string }>;
 }) {
-  const { businessId } = params;
-  const appointmentId = searchParams.appointment_id ?? '';
+  const { businessId } = React.use(params);
+  const { appointment_id } = React.use(searchParams);
+  const appointmentId = appointment_id ?? '';
 
   // ── Data states ──
   const [appointment, setAppointment] = useState<AppointmentData | null>(null);

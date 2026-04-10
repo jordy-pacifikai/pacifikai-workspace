@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { requireBusinessAccess } from "@/lib/auth";
 import { logger } from "@/lib/logger";
 
 /**
@@ -17,6 +18,9 @@ export async function POST(req: NextRequest) {
       logger.error("Unipile callback missing business_id", { action: "unipile_callback" });
       return NextResponse.json({ error: "Missing business_id" }, { status: 400 });
     }
+
+    // R5: Verify caller owns this business
+    await requireBusinessAccess(businessId);
 
     const accountId = body.account_id ?? body.id;
     const provider = body.provider ?? "MESSENGER";

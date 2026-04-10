@@ -44,20 +44,18 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/channels?fb_error=Session+invalide', origin));
   }
 
-  // Parse state — supports "businessId:nonce" (new) or plain "businessId" (legacy)
+  // Parse state — requires "businessId:nonce" format with CSRF validation
   const separatorIdx = stateParam.indexOf(':');
-  let state: string;
-  if (separatorIdx > 0) {
-    state = stateParam.slice(0, separatorIdx);
-    const nonce = stateParam.slice(separatorIdx + 1);
-    const cookieNonce = req.cookies.get('fb_oauth_nonce')?.value;
-    if (!cookieNonce || cookieNonce !== nonce) {
-      logger.warn('CSRF nonce mismatch on legacy oauth-callback', { state });
-      return NextResponse.redirect(new URL('/channels?fb_error=csrf_failed', origin));
-    }
-  } else {
-    // Legacy path — no nonce in state (backwards compat)
-    state = stateParam;
+  if (separatorIdx <= 0) {
+    logger.warn('OAuth callback rejected: legacy state format without nonce', { state: stateParam });
+    return NextResponse.redirect(new URL('/channels?fb_error=Session+invalide+(format+obsolete)', origin));
+  }
+  const state = stateParam.slice(0, separatorIdx);
+  const nonce = stateParam.slice(separatorIdx + 1);
+  const cookieNonce = req.cookies.get('fb_oauth_nonce')?.value;
+  if (!cookieNonce || cookieNonce !== nonce) {
+    logger.warn('CSRF nonce mismatch on oauth-callback', { state });
+    return NextResponse.redirect(new URL('/channels?fb_error=csrf_failed', origin));
   }
 
   if (!FB_APP_ID || !FB_APP_SECRET) {
