@@ -6,8 +6,31 @@ import { requireBusinessAccess } from '@/lib/auth';
  * Routes requests to the self-hosted messenger-bridge service.
  */
 
+// Login steps can take up to 45s (Matrix + Facebook auth). Ensure Next.js
+// route handler doesn't cut us off earlier.
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
 const BRIDGE_URL = process.env.MESSENGER_BRIDGE_URL ?? 'http://localhost:3847';
 const BRIDGE_SECRET = process.env.MESSENGER_BRIDGE_SECRET ?? '';
+
+// Per-action timeouts (ms). Login flows involve Matrix handshake + Facebook auth
+// which routinely take 15-25s. Fast reads (status, pages) stay short.
+const FAST_TIMEOUT_MS = 10_000;
+const SLOW_TIMEOUT_MS = 45_000;
+
+function pickTimeout(path: string): number {
+  if (
+    path.startsWith('/bridge/login/') ||
+    path.startsWith('/auth/login/') ||
+    path.startsWith('/bridge/connect') ||
+    path.startsWith('/bridge/select-page') ||
+    path.startsWith('/bridge/add-page')
+  ) {
+    return SLOW_TIMEOUT_MS;
+  }
+  return FAST_TIMEOUT_MS;
+}
 
 async function proxyToBridge(
   method: string,
@@ -28,7 +51,7 @@ async function proxyToBridge(
         Authorization: `Bearer ${BRIDGE_SECRET}`,
       },
       body: body ? JSON.stringify(body) : undefined,
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(pickTimeout(path)),
     });
 
     const text = await res.text();
