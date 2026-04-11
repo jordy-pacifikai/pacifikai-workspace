@@ -233,16 +233,19 @@ function SignupContent() {
             <p className="text-sm text-red-400">{error}</p>
           )}
 
-          <label className="flex items-start gap-3 cursor-pointer group">
+          <label htmlFor="cgu-accept" className="flex items-start gap-3 cursor-pointer group">
             <div className="relative mt-0.5 shrink-0">
               <input
+                id="cgu-accept"
                 type="checkbox"
                 checked={cguAccepted}
                 onChange={(e) => setCguAccepted(e.target.checked)}
+                aria-label="J'accepte les Conditions Générales et la Politique de Confidentialité"
                 className="sr-only"
               />
               <div
-                className="w-4 h-4 rounded border transition-all"
+                aria-hidden="true"
+                className="w-4 h-4 rounded border transition-all pointer-events-none"
                 style={{
                   backgroundColor: cguAccepted ? TEAL : 'transparent',
                   borderColor: cguAccepted ? TEAL : '#374151',

@@ -83,7 +83,8 @@ export async function middleware(request: NextRequest) {
 
   // Public routes on dashboard — no auth required
   const publicRoutes = ['/login', '/signup', '/auth/callback', '/privacy', '/terms', '/data-deletion', '/book', '/status', '/review', '/pricing', '/faq', '/offline', '/unsubscribe', '/landing', '/portal', '/secteur']
-  const isPublic = publicRoutes.some(r => pathname.startsWith(r))
+  // Exact match or sub-path under a trailing slash — prevents '/review' from catching '/reviews'
+  const isPublic = publicRoutes.some(r => pathname === r || pathname.startsWith(r + '/'))
   // Only skip auth for actual external webhook/callback endpoints
   // Dashboard API routes (/api/clients, /api/appointments, etc.) go through normal auth flow
   const webhookPrefixes = [
