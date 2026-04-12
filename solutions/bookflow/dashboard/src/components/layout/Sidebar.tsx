@@ -37,6 +37,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useAppStore } from '@/lib/store';
+import type { BusinessSummary } from '@/lib/store';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 interface NavItem {
@@ -148,6 +149,9 @@ export function Sidebar({ businessName = 'Mon Business', open, onClose }: Sideba
   const pathname = usePathname();
   const { user, signOut } = useAuth();
   const businessId = useAppStore((s) => s.businessId);
+  const businesses = useAppStore((s) => s.businesses);
+  const switchBusiness = useAppStore((s) => s.switchBusiness);
+  const [bizDropdownOpen, setBizDropdownOpen] = useState(false);
 
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() =>
     getInitialCollapsed(NAV_GROUPS, pathname),
@@ -237,7 +241,50 @@ export function Sidebar({ businessName = 'Mon Business', open, onClose }: Sideba
                 </span>
               </div>
             </div>
-            <p className="mt-2 text-xs text-gray-500 truncate">{businessName}</p>
+            {/* Business switcher — only show dropdown if >1 business */}
+            {businesses.length > 1 ? (
+              <div className="relative mt-2">
+                <button
+                  onClick={() => setBizDropdownOpen((p) => !p)}
+                  className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors group max-w-full"
+                >
+                  <span className="truncate">{businessName}</span>
+                  <ChevronDown size={12} className={cn('shrink-0 transition-transform', bizDropdownOpen && 'rotate-180')} />
+                </button>
+                {bizDropdownOpen && (
+                  <>
+                    <div className="fixed inset-0 z-50" onClick={() => setBizDropdownOpen(false)} />
+                    <div className="absolute left-0 top-full mt-1 z-50 w-56 bg-gray-900 border border-gray-700 rounded-lg shadow-xl py-1">
+                      {businesses.map((biz) => (
+                        <button
+                          key={biz.id}
+                          onClick={() => { setBizDropdownOpen(false); if (biz.id !== businessId) switchBusiness(biz.id); }}
+                          className={cn(
+                            'w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-gray-800 transition-colors',
+                            biz.id === businessId ? 'text-white' : 'text-gray-400',
+                          )}
+                        >
+                          <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', biz.id === businessId ? 'bg-emerald-400' : 'bg-gray-600')} />
+                          <span className="truncate">{biz.name}</span>
+                          <span className="ml-auto text-[10px] text-gray-600">{biz.plan}</span>
+                        </button>
+                      ))}
+                      <div className="border-t border-gray-800 mt-1 pt-1">
+                        <a
+                          href="/onboarding?mode=add"
+                          className="w-full text-left px-3 py-2 text-xs text-gray-500 hover:text-white hover:bg-gray-800 transition-colors flex items-center gap-2"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-gray-700 shrink-0" />
+                          Ajouter un business
+                        </a>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <p className="mt-2 text-xs text-gray-500 truncate">{businessName}</p>
+            )}
           </div>
 
           {/* Close button — mobile only */}

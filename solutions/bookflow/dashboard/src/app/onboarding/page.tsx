@@ -139,6 +139,10 @@ function OnboardingContent() {
   const { user, businessId: existingBizId } = useAuth()
   const supabase = getSupabaseBrowser()
 
+  // mode=add: force creation of a NEW business even if user already has one
+  const isAddMode = searchParams.get('mode') === 'add'
+  const effectiveBizId = isAddMode ? null : existingBizId
+
   const urlPlan = searchParams.get('plan') ?? 'starter'
   const urlBusinessName = searchParams.get('businessName') ?? ''
 
@@ -204,11 +208,11 @@ function OnboardingContent() {
       const nextStep = step + 1
       setStep(nextStep)
       // Track step completion — best-effort, non-blocking
-      if (existingBizId) {
+      if (effectiveBizId) {
         supabase
           .from('bookbot_businesses')
           .update({ onboarding_step: nextStep, updated_at: new Date().toISOString() })
-          .eq('id', existingBizId)
+          .eq('id', effectiveBizId)
           .then(() => {})
           .catch(() => {})
       }
@@ -242,7 +246,7 @@ function OnboardingContent() {
         .filter(s => s.name.trim())
         .map(s => ({ name: s.name.trim(), duration: s.duration, price: s.price }))
 
-      let bizId = existingBizId
+      let bizId = effectiveBizId
 
       if (bizId) {
         // Update existing
@@ -379,7 +383,15 @@ function OnboardingContent() {
 
       // Done — clear persisted onboarding state and redirect
       try { localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
-      router.push('/stats')
+
+      // When adding a new business, switch to it and go to channels
+      if (isAddMode && bizId) {
+        document.cookie = `vea_current_biz=${bizId};path=/;max-age=31536000;samesite=lax`
+        document.cookie = 'vea_biz=;path=/;max-age=0' // invalidate cache
+        router.push('/channels')
+      } else {
+        router.push('/stats')
+      }
     } catch (err: unknown) {
       console.error('Onboarding error:', err)
       let msg = ''

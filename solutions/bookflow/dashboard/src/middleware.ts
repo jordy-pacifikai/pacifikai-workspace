@@ -5,6 +5,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 const DASHBOARD_HOST = 'vea.pacifikai.com'
 const LANDING_HOST = 'vea.pacifikai.com'
 const BIZ_CACHE_COOKIE = 'vea_biz'
+const CURRENT_BIZ_COOKIE = 'vea_current_biz'
 const BIZ_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
 // Edge-compatible HMAC using Web Crypto API
@@ -111,15 +112,13 @@ export async function middleware(request: NextRequest) {
         url.pathname = '/stats'
         return NextResponse.redirect(url)
       }
-      const { data: link } = await supabase
+      const { data: links } = await supabase
         .from('bookbot_business_users')
         .select('business_id')
         .eq('user_id', user.id)
-        .limit(1)
-        .single()
 
       const url = request.nextUrl.clone()
-      url.pathname = link ? '/stats' : '/onboarding'
+      url.pathname = (links && links.length > 0) ? '/stats' : '/onboarding'
       return NextResponse.redirect(url)
     }
     const url = request.nextUrl.clone()
@@ -135,15 +134,13 @@ export async function middleware(request: NextRequest) {
       url.pathname = '/stats'
       return NextResponse.redirect(url)
     }
-    const { data: link } = await supabase
+    const { data: links } = await supabase
       .from('bookbot_business_users')
       .select('business_id')
       .eq('user_id', user.id)
-      .limit(1)
-      .single()
 
     const url = request.nextUrl.clone()
-    url.pathname = link ? '/stats' : '/onboarding'
+    url.pathname = (links && links.length > 0) ? '/stats' : '/onboarding'
     return NextResponse.redirect(url)
   }
 
@@ -168,29 +165,40 @@ export async function middleware(request: NextRequest) {
     // Try cached cookie first to avoid DB queries on every navigation
     let bizCache = await parseBizCache(request.cookies.get(BIZ_CACHE_COOKIE)?.value)
 
+    // If user switched business via CURRENT_BIZ_COOKIE, invalidate stale cache
+    const selectedBizId = request.cookies.get(CURRENT_BIZ_COOKIE)?.value
+    if (bizCache && selectedBizId && bizCache.businessId !== selectedBizId) {
+      bizCache = null // force re-query for the newly selected business
+    }
+
     if (!bizCache) {
-      // Cache miss — query DB (2 queries)
-      const { data: link } = await supabase
+      // Cache miss — query ALL linked businesses
+      const { data: links } = await supabase
         .from('bookbot_business_users')
         .select('business_id')
         .eq('user_id', user.id)
-        .limit(1)
-        .single()
 
-      if (!link) {
+      const bizIds = links?.map((l) => l.business_id) ?? []
+
+      if (bizIds.length === 0) {
         const url = request.nextUrl.clone()
         url.pathname = '/onboarding'
         return NextResponse.redirect(url)
       }
 
+      // Pick the active business: from cookie selection, or first
+      const activeBizId = (selectedBizId && bizIds.includes(selectedBizId))
+        ? selectedBizId
+        : bizIds[0]
+
       const { data: biz } = await supabase
         .from('bookbot_businesses')
         .select('subscription_status, trial_ends_at, plan')
-        .eq('id', link.business_id)
+        .eq('id', activeBizId)
         .single()
 
       bizCache = {
-        businessId: link.business_id,
+        businessId: activeBizId,
         status: biz?.subscription_status ?? '',
         plan: biz?.plan ?? 'decouverte',
         trialEndsAt: biz?.trial_ends_at ?? null,

@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+/** Cookie that stores the user's currently-selected business ID */
+export const CURRENT_BIZ_COOKIE = 'vea_current_biz'
+
 export async function createSupabaseServer() {
   const cookieStore = await cookies()
   return createServerClient(
@@ -57,6 +60,27 @@ export async function requireBusinessAccess(businessId: string) {
   return user
 }
 
+/**
+ * Get ALL business IDs linked to the current user.
+ */
+export async function getUserBusinessIds(): Promise<string[]> {
+  const user = await getUser()
+  if (!user) return []
+
+  const supabase = await createSupabaseServer()
+  const { data } = await supabase
+    .from('bookbot_business_users')
+    .select('business_id')
+    .eq('user_id', user.id)
+
+  return data?.map((d) => d.business_id) ?? []
+}
+
+/**
+ * Get the currently-selected business ID.
+ * Reads the `vea_current_biz` cookie, validates it belongs to the user,
+ * and falls back to the first linked business.
+ */
 export async function getUserBusinessId(): Promise<string | null> {
   const user = await getUser()
   if (!user) return null
@@ -66,8 +90,15 @@ export async function getUserBusinessId(): Promise<string | null> {
     .from('bookbot_business_users')
     .select('business_id')
     .eq('user_id', user.id)
-    .limit(1)
-    .single()
 
-  return data?.business_id ?? null
+  const ids = data?.map((d) => d.business_id) ?? []
+  if (ids.length === 0) return null
+
+  // Check cookie for active selection
+  const cookieStore = await cookies()
+  const selected = cookieStore.get(CURRENT_BIZ_COOKIE)?.value
+  if (selected && ids.includes(selected)) return selected
+
+  // Fallback to first
+  return ids[0]
 }

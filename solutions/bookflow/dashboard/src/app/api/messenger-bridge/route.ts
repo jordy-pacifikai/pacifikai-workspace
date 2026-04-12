@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireBusinessAccess } from '@/lib/auth';
+import { requireBusinessAccess, createSupabaseServer } from '@/lib/auth';
 
 /**
  * Proxy API for Messenger Bridge login flow.
@@ -86,41 +86,63 @@ export async function POST(req: NextRequest) {
       await requireAuth();
     }
 
+    // Get the authenticated user's ID for bridge operations that need veaUserId
+    const getVeaUserId = async () => {
+      const { requireAuth } = await import('@/lib/auth');
+      const user = await requireAuth();
+      return user.id;
+    };
+
     switch (action) {
       // ─── New: Email+Password login (messenger-lite) ───
-      case 'login-start':
-        return proxyToBridge('POST', '/bridge/login/start', { businessId: business_id });
+      // Login operations use veaUserId (matrix user = per Ve'a user, not per business)
+      case 'login-start': {
+        const veaUserId = await getVeaUserId();
+        return proxyToBridge('POST', '/bridge/login/start', { veaUserId });
+      }
 
-      case 'login-credentials':
+      case 'login-credentials': {
+        const veaUserId = await getVeaUserId();
         return proxyToBridge('POST', '/bridge/login/credentials', {
-          businessId: business_id,
+          veaUserId,
           email: body.email,
           password: body.password,
         });
+      }
 
-      case 'login-2fa':
+      case 'login-2fa': {
+        const veaUserId = await getVeaUserId();
         return proxyToBridge('POST', '/bridge/login/2fa', {
-          businessId: business_id,
+          veaUserId,
           stepId: body.step_id,
           code: body.code,
         });
+      }
 
-      case 'login-wait-approval':
+      case 'login-wait-approval': {
+        const veaUserId = await getVeaUserId();
         return proxyToBridge('POST', '/bridge/login/wait-approval', {
-          businessId: business_id,
+          veaUserId,
           stepId: body.step_id,
         });
+      }
 
       // ─── Status & disconnect ───
-      case 'bridge-status':
-        return proxyToBridge('GET', `/bridge/status/${business_id}`);
+      case 'bridge-status': {
+        const veaUserId = await getVeaUserId();
+        return proxyToBridge('GET', `/bridge/status/${veaUserId}`);
+      }
 
-      case 'bridge-disconnect':
-        return proxyToBridge('POST', '/bridge/disconnect', { businessId: business_id });
+      case 'bridge-disconnect': {
+        const veaUserId = await getVeaUserId();
+        return proxyToBridge('POST', '/bridge/disconnect', { veaUserId });
+      }
 
       // ─── Pages discovery & selection ───
-      case 'bridge-pages':
-        return proxyToBridge('GET', `/bridge/pages/${business_id}`);
+      case 'bridge-pages': {
+        const veaUserId = await getVeaUserId();
+        return proxyToBridge('GET', `/bridge/pages/${veaUserId}`);
+      }
 
       case 'bridge-select-page':
         return proxyToBridge('POST', '/bridge/select-page', {
@@ -139,6 +161,50 @@ export async function POST(req: NextRequest) {
         return proxyToBridge('POST', '/bridge/resolve-page-url', {
           url: body.url,
         });
+
+      // ─── Page→Business assignments (writes to Supabase, not bridge) ───
+      case 'bridge-assign-pages': {
+        const user = business_id
+          ? await requireBusinessAccess(business_id)
+          : await (async () => { const { requireAuth } = await import('@/lib/auth'); return requireAuth(); })();
+        const supabase = await createSupabaseServer();
+        const assignments = body.assignments as Array<{ page_id: string; page_name: string; business_id: string }>;
+        if (!Array.isArray(assignments) || assignments.length === 0) {
+          return NextResponse.json({ error: 'No assignments provided' }, { status: 400 });
+        }
+        // Upsert each assignment
+        for (const a of assignments) {
+          // Verify user owns the target business
+          const { data: link } = await supabase
+            .from('bookbot_business_users')
+            .select('business_id')
+            .eq('user_id', user.id)
+            .eq('business_id', a.business_id)
+            .limit(1)
+            .single();
+          if (!link) continue; // skip unauthorized assignments
+
+          await supabase
+            .from('bookbot_page_assignments')
+            .upsert(
+              {
+                user_id: user.id,
+                business_id: a.business_id,
+                fb_page_id: a.page_id,
+                fb_page_name: a.page_name,
+                active: true,
+              },
+              { onConflict: 'fb_page_id' },
+            );
+
+          // Also update the business's fb_page_id for quick reference
+          await supabase
+            .from('bookbot_businesses')
+            .update({ fb_page_id: a.page_id })
+            .eq('id', a.business_id);
+        }
+        return NextResponse.json({ ok: true, count: assignments.length });
+      }
 
       // ─── Legacy endpoints ───
       case 'start-login':
@@ -159,11 +225,13 @@ export async function POST(req: NextRequest) {
       case 'status':
         return proxyToBridge('GET', `/auth/status/${business_id}`);
 
-      case 'bridge-connect':
+      case 'bridge-connect': {
+        const veaUserId = await getVeaUserId();
         return proxyToBridge('POST', '/bridge/connect', {
-          businessId: business_id,
+          veaUserId,
           cookies: body.cookies,
         });
+      }
 
       default:
         return NextResponse.json({ error: 'Unknown action' }, { status: 400 });

@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SkeletonCard } from '@/components/ui/Skeleton';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, type BusinessSummary } from '@/lib/store';
 import { useBusiness, useUpdateBusiness } from '@/hooks/useBusiness';
 import {
   useConnectedChannels,
@@ -302,14 +302,17 @@ interface DiscoveredPage {
   category?: string;
   avatarUrl?: string;
   connected: boolean;
+  assignedBusinessId?: string;
 }
 
 function MessengerLoginModal({
   businessId,
+  businesses,
   onClose,
   onSuccess,
 }: {
   businessId: string;
+  businesses: BusinessSummary[];
   onClose: () => void;
   onSuccess: () => void;
 }) {
@@ -325,6 +328,8 @@ function MessengerLoginModal({
   // Page selection state
   const [discoveredPages, setDiscoveredPages] = useState<DiscoveredPage[]>([]);
   const [selectedPageIds, setSelectedPageIds] = useState<Set<string>>(new Set());
+  // Multi-business: per-page business assignment (page_id → business_id)
+  const [pageAssignments, setPageAssignments] = useState<Map<string, string>>(new Map());
   const [pageUrl, setPageUrl] = useState('');
   const [parsedSlug, setParsedSlug] = useState('');
   const [pageName, setPageName] = useState('');
@@ -417,12 +422,29 @@ function MessengerLoginModal({
           page_name: pageName.trim(),
         });
         selectedPageIds.add(parsedSlug);
+        // Default-assign manual page to current business
+        if (!pageAssignments.has(parsedSlug)) {
+          pageAssignments.set(parsedSlug, businessId);
+        }
       }
 
-      // Select all chosen pages
+      // Select all chosen pages on the bridge
       const pageIds = Array.from(selectedPageIds);
       if (pageIds.length > 0) {
         await bridgeAction('bridge-select-page', { page_ids: pageIds });
+      }
+
+      // Persist page→business assignments to Supabase
+      const assignments = Array.from(selectedPageIds).map((pid) => {
+        const pageDef = discoveredPages.find((p) => p.id === pid);
+        return {
+          page_id: pid,
+          page_name: pageDef?.name ?? pageName.trim() ?? pid,
+          business_id: pageAssignments.get(pid) ?? businessId,
+        };
+      });
+      if (assignments.length > 0) {
+        await bridgeAction('bridge-assign-pages', { assignments });
       }
 
       setStep('done');
@@ -662,29 +684,48 @@ function MessengerLoginModal({
                 {discoveredPages.length > 0 && (
                   <div className="space-y-2">
                     {discoveredPages.map((page) => (
-                      <button
-                        key={page.id}
-                        onClick={() => togglePage(page.id)}
-                        className={`w-full flex items-center gap-3 p-3 rounded-lg border transition text-left ${
-                          selectedPageIds.has(page.id)
-                            ? 'bg-[#1877F2]/10 border-[#1877F2]/40'
-                            : 'bg-gray-800/50 border-gray-700/50 hover:border-gray-600'
-                        }`}
-                      >
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                          selectedPageIds.has(page.id)
-                            ? 'bg-[#1877F2] border-[#1877F2]'
-                            : 'border-gray-600'
-                        }`}>
-                          {selectedPageIds.has(page.id) && <Check size={12} className="text-white" />}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-white truncate">{page.name}</p>
-                          {page.category && (
-                            <p className="text-xs text-gray-500">{page.category}</p>
-                          )}
-                        </div>
-                      </button>
+                      <div key={page.id} className={`w-full flex items-center gap-3 p-3 rounded-lg border transition ${
+                        selectedPageIds.has(page.id)
+                          ? 'bg-[#1877F2]/10 border-[#1877F2]/40'
+                          : 'bg-gray-800/50 border-gray-700/50 hover:border-gray-600'
+                      }`}>
+                        <button
+                          onClick={() => {
+                            togglePage(page.id);
+                            // Auto-assign to current business on select
+                            if (!selectedPageIds.has(page.id) && !pageAssignments.has(page.id)) {
+                              setPageAssignments((prev) => new Map(prev).set(page.id, businessId));
+                            }
+                          }}
+                          className="flex items-center gap-3 text-left flex-1 min-w-0"
+                        >
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                            selectedPageIds.has(page.id)
+                              ? 'bg-[#1877F2] border-[#1877F2]'
+                              : 'border-gray-600'
+                          }`}>
+                            {selectedPageIds.has(page.id) && <Check size={12} className="text-white" />}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{page.name}</p>
+                            {page.category && (
+                              <p className="text-xs text-gray-500">{page.category}</p>
+                            )}
+                          </div>
+                        </button>
+                        {/* Business assignment dropdown (multi-business only) */}
+                        {selectedPageIds.has(page.id) && businesses.length > 1 && (
+                          <select
+                            value={pageAssignments.get(page.id) ?? businessId}
+                            onChange={(e) => setPageAssignments((prev) => new Map(prev).set(page.id, e.target.value))}
+                            className="shrink-0 bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-gray-300 max-w-[140px]"
+                          >
+                            {businesses.map((biz) => (
+                              <option key={biz.id} value={biz.id}>{biz.name}</option>
+                            ))}
+                          </select>
+                        )}
+                      </div>
                     ))}
                   </div>
                 )}
@@ -771,7 +812,7 @@ function MessengerLoginModal({
 
 // ─── Messenger Bridge Card (self-hosted, no App Review) ─────────────────────
 
-function MessengerBridgeCard({ businessId }: { businessId: string }) {
+function MessengerBridgeCard({ businessId, businesses }: { businessId: string; businesses: BusinessSummary[] }) {
   const { data: session, isLoading, refetch } = useBridgeStatus(businessId);
   const [showLogin, setShowLogin] = useState(false);
 
@@ -877,6 +918,7 @@ function MessengerBridgeCard({ businessId }: { businessId: string }) {
       {showLogin && (
         <MessengerLoginModal
           businessId={businessId}
+          businesses={businesses}
           onClose={() => setShowLogin(false)}
           onSuccess={() => {
             setShowLogin(false);
@@ -1280,6 +1322,7 @@ function FacebookConnectedCard({
 
 export default function ChannelsPage() {
   const businessId = useAppStore((s) => s.businessId);
+  const businesses = useAppStore((s) => s.businesses);
   const { data: business, isLoading } = useBusiness(businessId);
   const updateBusiness = useUpdateBusiness(businessId);
 
@@ -1364,7 +1407,7 @@ export default function ChannelsPage() {
           <GoogleCalendarSection businessId={businessId} />
 
           {/* Facebook Messenger — Credential login direct (no App Review) */}
-          {businessId && <MessengerBridgeCard businessId={businessId} />}
+          {businessId && <MessengerBridgeCard businessId={businessId} businesses={businesses} />}
 
           {/* WhatsApp — manual config */}
           <WhatsAppCard
