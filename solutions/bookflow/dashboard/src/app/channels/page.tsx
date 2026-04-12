@@ -331,9 +331,11 @@ function MessengerLoginModal({
   // Multi-business: per-page business assignment (page_id → business_id)
   const [pageAssignments, setPageAssignments] = useState<Map<string, string>>(new Map());
   const [pageUrl, setPageUrl] = useState('');
-  const [parsedSlug, setParsedSlug] = useState('');
-  const [pageName, setPageName] = useState('');
+  const [resolvedPage, setResolvedPage] = useState<{ pageId: string; pageName: string } | null>(null);
+  const [resolvingUrl, setResolvingUrl] = useState(false);
   const [loadingPages, setLoadingPages] = useState(false);
+  const [discoveryAttempt, setDiscoveryAttempt] = useState(0);
+  const [discoveryMaxAttempts] = useState(5);
 
   async function bridgeAction(action: string, extra: Record<string, unknown> = {}) {
     const res = await fetch('/api/messenger-bridge', {
@@ -367,64 +369,67 @@ function MessengerLoginModal({
     }
   }
 
-  async function fetchPages() {
+  async function fetchPages(attempt = 0): Promise<void> {
     setLoadingPages(true);
+    setDiscoveryAttempt(attempt);
     try {
       const res = await bridgeAction('bridge-pages');
       const pages = (res.pages || []) as DiscoveredPage[];
       const selected = (res.selected || []) as string[];
-      setDiscoveredPages(pages);
-      setSelectedPageIds(new Set(selected));
-      setStep('pages');
+
+      if (pages.length > 0 || attempt >= discoveryMaxAttempts - 1) {
+        setDiscoveredPages(pages);
+        setSelectedPageIds(new Set(selected));
+        setLoadingPages(false);
+        setStep('pages');
+        return;
+      }
+
+      // No pages yet — mautrix-meta may still be syncing. Retry after 3s.
+      await new Promise((r) => setTimeout(r, 3000));
+      return fetchPages(attempt + 1);
     } catch {
-      setStep('pages');
-    } finally {
       setLoadingPages(false);
+      setStep('pages');
     }
   }
 
-  function parsePageUrl(input: string) {
+  async function resolveUrl(input: string) {
     const trimmed = input.trim();
-    if (!trimmed) { setParsedSlug(''); setPageName(''); return; }
-
-    let slug = trimmed;
-    // Extract from full URL
-    const urlMatch = trimmed.match(/(?:https?:\/\/)?(?:www\.)?(?:web\.)?(?:m\.)?facebook\.com\/(.+)/i);
-    if (urlMatch) {
-      let path = urlMatch[1].replace(/\/$/, '');
-      const profileMatch = path.match(/profile\.php\?id=(\d+)/);
-      if (profileMatch) { slug = profileMatch[1]; }
-      else { slug = path.split('?')[0].split('#')[0].split('/')[0]; }
+    if (!trimmed) { setResolvedPage(null); return; }
+    setResolvingUrl(true);
+    try {
+      const res = await bridgeAction('bridge-resolve-page-url', { url: trimmed });
+      if (res.pageId && res.pageName) {
+        setResolvedPage({ pageId: res.pageId, pageName: res.pageName });
+      } else if (res.error) {
+        setResolvedPage(null);
+      }
+    } catch {
+      setResolvedPage(null);
+    } finally {
+      setResolvingUrl(false);
     }
-
-    setParsedSlug(slug);
-    // Generate readable name from slug
-    const readable = slug
-      .replace(/[._-]/g, ' ')
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-    setPageName(readable);
   }
 
   async function handleSelectPages() {
     const hasAutoSelected = selectedPageIds.size > 0;
-    const hasManual = parsedSlug && pageName.trim();
+    const hasManual = resolvedPage !== null;
     if (!hasAutoSelected && !hasManual) return;
 
     setSubmitting(true);
     setError('');
 
     try {
-      // Add manually entered page
-      if (parsedSlug && pageName.trim()) {
+      // Add manually resolved page
+      if (resolvedPage) {
         await bridgeAction('bridge-add-page', {
-          page_id: parsedSlug,
-          page_name: pageName.trim(),
+          page_id: resolvedPage.pageId,
+          page_name: resolvedPage.pageName,
         });
-        selectedPageIds.add(parsedSlug);
-        // Default-assign manual page to current business
-        if (!pageAssignments.has(parsedSlug)) {
-          pageAssignments.set(parsedSlug, businessId);
+        selectedPageIds.add(resolvedPage.pageId);
+        if (!pageAssignments.has(resolvedPage.pageId)) {
+          pageAssignments.set(resolvedPage.pageId, businessId);
         }
       }
 
@@ -439,7 +444,7 @@ function MessengerLoginModal({
         const pageDef = discoveredPages.find((p) => p.id === pid);
         return {
           page_id: pid,
-          page_name: pageDef?.name ?? pageName.trim() ?? pid,
+          page_name: pageDef?.name ?? resolvedPage?.pageName ?? pid,
           business_id: pageAssignments.get(pid) ?? businessId,
         };
       });
@@ -674,34 +679,55 @@ function MessengerLoginModal({
             </div>
 
             {loadingPages ? (
-              <div className="flex items-center justify-center py-8 gap-3">
-                <Loader2 size={20} className="text-[#1877F2] animate-spin" />
-                <p className="text-xs text-gray-400">Recherche de vos Pages...</p>
+              <div className="flex flex-col items-center justify-center py-10 gap-4">
+                <div className="relative">
+                  <Loader2 size={28} className="text-[#1877F2] animate-spin" />
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-gray-900 rounded-full flex items-center justify-center">
+                    <span className="text-[8px] text-gray-400 font-mono">{discoveryAttempt + 1}</span>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-gray-300">Recherche de vos Pages Facebook...</p>
+                  <p className="text-[10px] text-gray-600 mt-1">
+                    Synchronisation avec votre compte ({discoveryAttempt + 1}/{discoveryMaxAttempts})
+                  </p>
+                </div>
+                {/* Progress dots */}
+                <div className="flex gap-1.5">
+                  {Array.from({ length: discoveryMaxAttempts }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                        i <= discoveryAttempt ? 'bg-[#1877F2]' : 'bg-gray-700'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
             ) : (
               <>
                 {/* Auto-detected Pages */}
                 {discoveredPages.length > 0 && (
                   <div className="space-y-2">
+                    <p className="text-[10px] uppercase tracking-wider text-gray-600 font-semibold">Pages detectees</p>
                     {discoveredPages.map((page) => (
-                      <div key={page.id} className={`w-full flex items-center gap-3 p-3 rounded-lg border transition ${
+                      <div key={page.id} className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 ${
                         selectedPageIds.has(page.id)
-                          ? 'bg-[#1877F2]/10 border-[#1877F2]/40'
+                          ? 'bg-[#1877F2]/10 border-[#1877F2]/40 shadow-sm shadow-[#1877F2]/10'
                           : 'bg-gray-800/50 border-gray-700/50 hover:border-gray-600'
                       }`}>
                         <button
                           onClick={() => {
                             togglePage(page.id);
-                            // Auto-assign to current business on select
                             if (!selectedPageIds.has(page.id) && !pageAssignments.has(page.id)) {
                               setPageAssignments((prev) => new Map(prev).set(page.id, businessId));
                             }
                           }}
                           className="flex items-center gap-3 text-left flex-1 min-w-0"
                         >
-                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
                             selectedPageIds.has(page.id)
-                              ? 'bg-[#1877F2] border-[#1877F2]'
+                              ? 'bg-[#1877F2] border-[#1877F2] scale-110'
                               : 'border-gray-600'
                           }`}>
                             {selectedPageIds.has(page.id) && <Check size={12} className="text-white" />}
@@ -713,17 +739,22 @@ function MessengerLoginModal({
                             )}
                           </div>
                         </button>
-                        {/* Business assignment dropdown (multi-business only) */}
                         {selectedPageIds.has(page.id) && businesses.length > 1 && (
-                          <select
-                            value={pageAssignments.get(page.id) ?? businessId}
-                            onChange={(e) => setPageAssignments((prev) => new Map(prev).set(page.id, e.target.value))}
-                            className="shrink-0 bg-gray-900 border border-gray-700 rounded px-2 py-1 text-xs text-gray-300 max-w-[140px]"
-                          >
+                          <div className="flex gap-1 shrink-0">
                             {businesses.map((biz) => (
-                              <option key={biz.id} value={biz.id}>{biz.name}</option>
+                              <button
+                                key={biz.id}
+                                onClick={() => setPageAssignments((prev) => new Map(prev).set(page.id, biz.id))}
+                                className={`px-2 py-1 rounded text-[10px] font-medium transition-all ${
+                                  (pageAssignments.get(page.id) ?? businessId) === biz.id
+                                    ? 'bg-[#1877F2] text-white'
+                                    : 'bg-gray-800 text-gray-500 hover:text-gray-300'
+                                }`}
+                              >
+                                {biz.name}
+                              </button>
                             ))}
-                          </select>
+                          </div>
                         )}
                       </div>
                     ))}
@@ -731,45 +762,79 @@ function MessengerLoginModal({
                 )}
 
                 {/* URL-based Page entry */}
-                <div className="space-y-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                  <p className="text-xs text-gray-400">
-                    {discoveredPages.length === 0
-                      ? 'Collez le lien de votre Page Facebook :'
-                      : 'Ou ajoutez une autre Page :'}
-                  </p>
-                  <input
-                    type="text"
-                    value={pageUrl}
-                    onChange={(e) => { setPageUrl(e.target.value); parsePageUrl(e.target.value); }}
-                    placeholder="facebook.com/MaPagePro"
-                    autoFocus={discoveredPages.length === 0}
-                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#1877F2]/60"
-                  />
-
-                  {/* Parsed result with editable name */}
-                  {parsedSlug && (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <CheckCircle2 size={13} className="text-[#1877F2] shrink-0" />
-                        <span className="font-mono">{parsedSlug}</span>
-                      </div>
-                      <input
-                        type="text"
-                        value={pageName}
-                        onChange={(e) => setPageName(e.target.value)}
-                        placeholder="Nom de votre Page"
-                        className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#1877F2]/60"
-                      />
-                      <p className="text-[10px] text-gray-600">
-                        Verifiez que le nom correspond a votre Page
-                      </p>
+                <div className="space-y-3">
+                  {discoveredPages.length > 0 && (
+                    <div className="flex items-center gap-2 py-1">
+                      <div className="flex-1 h-px bg-gray-800" />
+                      <span className="text-[10px] text-gray-600 uppercase tracking-wider">ou ajouter manuellement</span>
+                      <div className="flex-1 h-px bg-gray-800" />
                     </div>
                   )}
 
-                  {!parsedSlug && (
-                    <p className="text-[10px] text-gray-600">
-                      Ex: facebook.com/MonSalon ou https://www.facebook.com/MonSalon
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={pageUrl}
+                      onChange={(e) => { setPageUrl(e.target.value); setResolvedPage(null); }}
+                      onKeyDown={(e) => e.key === 'Enter' && pageUrl.trim() && resolveUrl(pageUrl)}
+                      placeholder={discoveredPages.length === 0
+                        ? 'Collez le lien de votre Page Facebook'
+                        : 'facebook.com/MaPagePro'}
+                      autoFocus={discoveredPages.length === 0}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 pr-24 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#1877F2]/60 transition"
+                    />
+                    <button
+                      onClick={() => resolveUrl(pageUrl)}
+                      disabled={!pageUrl.trim() || resolvingUrl}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs font-medium rounded-md transition disabled:opacity-30"
+                      style={{ backgroundColor: pageUrl.trim() ? '#1877F2' : undefined, color: pageUrl.trim() ? 'white' : '#6b7280' }}
+                    >
+                      {resolvingUrl ? <Loader2 size={12} className="animate-spin" /> : 'Trouver'}
+                    </button>
+                  </div>
+
+                  {!resolvedPage && !resolvingUrl && (
+                    <p className="text-[10px] text-gray-600 px-1">
+                      {discoveredPages.length === 0
+                        ? 'Collez l\'URL Facebook de votre Page pro (ex: facebook.com/MonSalon)'
+                        : 'Ex: facebook.com/MonSalon'}
                     </p>
+                  )}
+
+                  {/* Resolved page preview card */}
+                  {resolvedPage && (
+                    <div className="p-3 bg-[#1877F2]/5 border border-[#1877F2]/20 rounded-lg space-y-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-[#1877F2]/10 flex items-center justify-center shrink-0">
+                          <Send size={16} className="text-[#1877F2]" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-white truncate">{resolvedPage.pageName}</p>
+                          <p className="text-[10px] text-gray-500 font-mono">ID: {resolvedPage.pageId}</p>
+                        </div>
+                        <CheckCircle2 size={16} className="text-[#25D366] shrink-0" />
+                      </div>
+                      {businesses.length > 1 && (
+                        <div className="pt-2 border-t border-[#1877F2]/10">
+                          <p className="text-[10px] text-gray-500 mb-1.5">Assigner a :</p>
+                          <div className="flex gap-1.5 flex-wrap">
+                            {businesses.map((biz) => (
+                              <button
+                                key={biz.id}
+                                onClick={() => setPageAssignments((prev) => new Map(prev).set(resolvedPage.pageId, biz.id))}
+                                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
+                                  (pageAssignments.get(resolvedPage.pageId) ?? businessId) === biz.id
+                                    ? 'bg-[#1877F2] text-white shadow-sm'
+                                    : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+                                }`}
+                              >
+                                {biz.name}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               </>
@@ -777,12 +842,12 @@ function MessengerLoginModal({
 
             <button
               onClick={handleSelectPages}
-              disabled={submitting || (selectedPageIds.size === 0 && (!parsedSlug || !pageName.trim()))}
+              disabled={submitting || (selectedPageIds.size === 0 && !resolvedPage)}
               className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-medium text-white rounded-lg transition hover:opacity-90 disabled:opacity-40"
               style={{ backgroundColor: '#1877F2' }}
             >
               {submitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
-              Connecter la Page
+              Connecter {selectedPageIds.size + (resolvedPage ? 1 : 0) > 1 ? `${selectedPageIds.size + (resolvedPage ? 1 : 0)} Pages` : 'la Page'}
             </button>
           </div>
         )}
