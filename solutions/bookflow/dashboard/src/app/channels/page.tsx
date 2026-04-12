@@ -1471,8 +1471,8 @@ export default function ChannelsPage() {
           {/* Google Calendar — sync bidirectionnelle */}
           <GoogleCalendarSection businessId={businessId} />
 
-          {/* Facebook Messenger — Credential login direct (no App Review) */}
-          {businessId && <MessengerBridgeCard businessId={businessId} businesses={businesses} />}
+          {/* Facebook Messenger — OAuth flow (Page Token + Webhook) */}
+          {businessId && <FacebookConnectedCard businessId={businessId} dashboardUrl={dashboardUrl} />}
 
           {/* WhatsApp — manual config */}
           <WhatsAppCard
