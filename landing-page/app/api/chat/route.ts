@@ -506,6 +506,68 @@ async function checkDedup(sessionId: string, message: string): Promise<boolean> 
   }
 }
 
+// ─── NEXUS Inbox push (real-time) ─────────────────────────────────────────────
+
+const NEXUS_INBOX_URL = process.env.NEXUS_URL ?? 'https://nexus.pacifikai.com';
+
+async function pushToNexusInbox(senderId: string, userMsg: string, botMsg: string): Promise<void> {
+  try {
+    // Find or create conversation in NEXUS
+    const convRes = await fetch(`${NEXUS_INBOX_URL}/api/inbox/conversations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        channel: 'mana',
+        external_id: senderId,
+        contact_name: null,
+        nexus_project_id: 'pacifikai',
+      }),
+    });
+
+    let convId: string | null = null;
+    if (convRes.ok) {
+      const conv = await convRes.json();
+      convId = conv.id;
+    } else {
+      // Conversation may already exist — fetch it
+      const listRes = await fetch(
+        `${NEXUS_INBOX_URL}/api/inbox/conversations?channel=mana&search=${senderId}`
+      );
+      if (listRes.ok) {
+        const list = await listRes.json();
+        convId = list?.[0]?.id ?? null;
+      }
+    }
+
+    if (!convId) return;
+
+    // Push user message
+    await fetch(`${NEXUS_INBOX_URL}/api/inbox/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conversation_id: convId,
+        body: userMsg,
+        content_type: 'text',
+        direction: 'incoming',
+      }),
+    });
+
+    // Push bot response
+    await fetch(`${NEXUS_INBOX_URL}/api/inbox/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conversation_id: convId,
+        body: botMsg,
+        content_type: 'text',
+      }),
+    });
+  } catch (err) {
+    console.error('[NEXUS push] Error:', (err as Error)?.message);
+  }
+}
+
 // ─── CORS helper ──────────────────────────────────────────────────────────────
 
 function corsHeaders(origin: string | null): Record<string, string> {
@@ -592,6 +654,9 @@ export async function POST(request: Request): Promise<Response> {
 
     // 5. Save messages (non-blocking — don't crash if Supabase is slow)
     await saveMessages(session_id, message, responseText);
+
+    // 5b. Push to NEXUS Inbox (fire-and-forget, non-blocking)
+    pushToNexusInbox(session_id, message, responseText).catch(() => {});
 
     // 6. Execute CRM actions (with tool whitelist validation)
     if (toolUseBlocks.length > 0) {
