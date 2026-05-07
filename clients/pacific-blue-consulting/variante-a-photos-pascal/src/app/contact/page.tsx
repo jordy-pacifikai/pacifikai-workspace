@@ -12,7 +12,7 @@ const domainOptions = [
   { value: "mobilites", label: "Mobilités & Transport aérien" },
   { value: "infrastructures", label: "Infrastructures & Territoires" },
   { value: "environnement", label: "Environnement & Souveraineté" },
-  { value: "transformation", label: "Transformation & Compétences" },
+  { value: "transformation", label: "Transformation, Compétences & Création d'entreprise" },
   { value: "autre", label: "Autre" },
 ];
 
@@ -310,7 +310,7 @@ export default function ContactPage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Transformation &amp; Compétences
+                    Transformation, Compétences &amp; Création d&apos;entreprise
                   </li>
                 </ul>
               </div>

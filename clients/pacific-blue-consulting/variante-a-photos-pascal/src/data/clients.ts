@@ -59,6 +59,8 @@ export const clients: Client[] = [
   { name: "SAT", category: "autres", logo: "/images/logos/sat.png" },
   { name: "TGW", category: "autres", logo: "/images/logos/tgw.png" },
   { name: "MOZ ULM", category: "autres", logo: "/images/logos/moz-ulm.png" },
+  { name: "TBSA", category: "autres" },
+  { name: "Moeroa Tahitian Heritage", category: "autres" },
 ];
 
 export const partners: Partner[] = [

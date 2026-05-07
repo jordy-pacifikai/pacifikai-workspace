@@ -110,22 +110,54 @@ Pacific Blue Consulting accompagne cette transition avec la même rigueur que ce
   {
     id: "transformation",
     anchor: "transformation",
-    title: "Transformation & Compétences",
-    subtitle: "Structurer les organisations et développer les talents",
+    title: "Transformation, Compétences & Création d'entreprise",
+    subtitle: "Accompagner ceux qui transforment, qui apprennent et qui entreprennent",
     description:
-      "Formation de cadres, conduite du changement, coaching professionnel, création d'entreprise, structuration RH, centres de formation agréés. Faire monter en compétences ceux qui font.",
-    approach: `Les projets les plus ambitieux échouent quand les organisations qui doivent les porter ne sont pas prêtes. C'est pourquoi une part essentielle de notre travail consiste à renforcer les équipes, à clarifier les responsabilités, à outiller les managers et à former ceux qui, demain, prendront les décisions.
+      "Formation de cadres, conduite du changement, coaching professionnel, accompagnement à la création d'entreprise…",
+    approach: `Les projets les plus ambitieux échouent quand les organisations qui doivent les porter ne sont pas prêtes — et les territoires les plus dynamiques se figent quand les talents qui pourraient les transformer n'osent pas franchir le pas de l'entreprise. C'est pourquoi une part essentielle de notre travail consiste à renforcer les équipes, clarifier les responsabilités, outiller les managers, former ceux qui prendront les décisions de demain, et accompagner les porteurs de projet dans la création de leur entreprise.
 
-Pascal Bazer-Bachi est formateur agréé, coach professionnel accrédité et concepteur de programmes pédagogiques. Il intervient autant sur les contenus que sur les pratiques de travail - parce que changer une organisation, c'est d'abord changer la manière dont les gens travaillent ensemble.`,
+Que nous accompagnions un opérateur en pleine transformation, une équipe à former ou un porteur de projet qui crée sa première entreprise, notre conviction est la même : ce sont les femmes et les hommes qui font vivre les organisations. Et c'est en les outillant, en clarifiant ce qu'on attend d'eux et en sécurisant leurs choix que l'on construit des trajectoires durables.`,
+    coverage: [
+      "Formation et conduite du changement (gestion de projet, management, conformité)",
+      "Coaching professionnel et executive coaching de dirigeants et cadres",
+      "Conception et animation de programmes pédagogiques",
+      "Création et structuration de centres de formation agréés (Part-147, etc.)",
+      "Structuration RH, organisation et clarification des responsabilités",
+      "Accompagnement à la création d'entreprise : analyse de la situation, choix du statut, constitution des dossiers d'immatriculation",
+      "Élaboration de business plans et préparation des dossiers de financement (banques, SOFIDEP, ADIE, dispositifs publics)",
+      "Suivi des premières obligations fiscales et sociales pour les entreprises nouvellement créées",
+    ],
+    focus: {
+      title: "Accompagnement à la création d'entreprise",
+      text: `Créer son entreprise en Polynésie française, c'est franchir un seuil administratif souvent perçu comme infranchissable : CDFE, RCS, DICP, CPS, CAPL, banque, assurance. Pacific Blue Consulting accompagne les futurs entrepreneurs polynésiens sur l'ensemble du parcours, du choix du bon statut à l'immatriculation effective, du business plan à la recherche de financement.
+
+Notre service ne se substitue pas aux dispositifs publics — CCISM, ADIE, SOFIDEP, DGAE — il aide à les utiliser pleinement. Nous prenons en charge la partie la plus lourde des démarches : analyse de la situation, choix du parcours (patente, société, agricole ou non), préparation et dépôt des dossiers, suivi jusqu'à l'obtention des numéros nécessaires.
+
+Nos prestations :
+
+• Création d'une patente simple — pour exercer en nom propre.
+
+• Création d'une société — SARL, EURL, SAS pour les projets nécessitant une structure sociétaire.
+
+• Création d'un projet agricole — exploitation, élevage, pêche lagonaire, perliculture.
+
+• Business plan et accompagnement au financement — dossiers banques, SOFIDEP, ADIE et dispositifs publics.
+
+• Création complète accompagnée du financement — projet intégré associant la création de la structure et la mobilisation des financements.
+
+• Suivi du démarrage — sécurisation des premiers mois d'activité et des premières échéances fiscales et sociales.`,
+    },
     missions: [
       "Club des Managers du CNAM (2021-2022)",
       "Centre Part-147 Air Formation - création clés en main (2022)",
       "Organisation & RH d'Air Loyauté (2020-2023)",
       "Formation gestion de projet - HSF (2024-2025)",
-      "Accompagnement création d'entreprises",
+      "Accompagnement à la création d'entreprises individuelles et sociétaires",
+      "Constitution de dossiers de financement auprès des banques, de la SOFIDEP et de l'ADIE",
+      "Accompagnement au démarrage de jeunes entreprises polynésiennes",
     ],
     result:
-      "Des équipes plus compétentes, des organisations plus lisibles, des managers mieux outillés, et des trajectoires professionnelles ou entrepreneuriales sécurisées. Parce que le meilleur investissement d'un territoire, ce sont ses talents.",
+      "Des équipes plus compétentes, des organisations plus lisibles, des managers mieux outillés, des porteurs de projet qui passent de l'idée à l'entreprise immatriculée, et des trajectoires professionnelles ou entrepreneuriales sécurisées. Parce que le meilleur investissement d'un territoire, ce sont ses talents et ceux qui osent entreprendre.",
     image: "/images/transformation-workshop.jpg",
   },
 ];

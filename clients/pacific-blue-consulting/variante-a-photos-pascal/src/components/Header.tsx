@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
       { href: "/offres#mobilites", label: "Mobilités & Transport aérien", description: "Compagnies, certification, EISA, dessertes" },
       { href: "/offres#infrastructures", label: "Infrastructures & Territoires", description: "Aéroports, ports, schémas directeurs" },
       { href: "/offres#environnement", label: "Environnement & Souveraineté", description: "Bilan carbone, biodiversité, filières locales" },
-      { href: "/offres#transformation", label: "Transformation & Compétences", description: "Formation, coaching, création d'entreprise" },
+      { href: "/offres#transformation", label: "Transformation, Compétences & Création", description: "Formation, coaching, accompagnement à la création d'entreprise" },
     ],
   },
   { href: "/realisations", label: "Réalisations" },

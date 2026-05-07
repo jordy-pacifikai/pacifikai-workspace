@@ -6,7 +6,7 @@ const footerLinks = {
     { href: "/offres#mobilites", label: "Mobilités & Transport aérien" },
     { href: "/offres#infrastructures", label: "Infrastructures & Territoires" },
     { href: "/offres#environnement", label: "Environnement & Souveraineté" },
-    { href: "/offres#transformation", label: "Transformation & Compétences" },
+    { href: "/offres#transformation", label: "Transformation, Compétences & Création d'entreprise" },
   ],
   cabinet: [
     { href: "/le-cabinet", label: "Le Cabinet" },
