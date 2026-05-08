@@ -60,7 +60,7 @@ export const clients: Client[] = [
   { name: "TGW", category: "autres", logo: "/images/logos/tgw.png" },
   { name: "MOZ ULM", category: "autres", logo: "/images/logos/moz-ulm.png" },
   { name: "TBSA", category: "autres" },
-  { name: "Moeroa Tahitian Heritage", category: "autres" },
+  { name: "Moeroa Tahitian Heritage", category: "autres", logo: "/images/logos/moeroa-tahitian-heritage.jpg" },
 ];
 
 export const partners: Partner[] = [
