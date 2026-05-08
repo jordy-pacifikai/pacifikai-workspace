@@ -342,7 +342,7 @@ export default function Home() {
                     {categoryClients.map((client) => (
                       <div
                         key={client.name}
-                        className="relative flex flex-col items-center justify-center p-4 bg-white border border-navy-100/40 rounded-xl aspect-[3/2] overflow-hidden transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100"
+                        className="relative flex flex-col items-center justify-center p-3 bg-white border border-navy-100/40 rounded-xl aspect-[3/2] overflow-hidden transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100"
                       >
                         {client.logo ? (
                           <>
@@ -351,7 +351,7 @@ export default function Home() {
                               alt={client.name}
                               width={120}
                               height={48}
-                              className="h-10 w-auto object-contain"
+                              className="max-h-[44px] max-w-[80%] w-auto h-auto object-contain"
                               loading="lazy"
                             />
                             <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10">

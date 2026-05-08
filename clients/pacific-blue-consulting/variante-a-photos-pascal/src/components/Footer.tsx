@@ -139,7 +139,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Pacific Blue Consulting. Tous droits réservés.
           </p>
           <p className="text-white/30 text-xs">
-            Site conçu par{" "}
+            Propulsé par{" "}
             <a
               href="https://pacifikai.com"
               target="_blank"
