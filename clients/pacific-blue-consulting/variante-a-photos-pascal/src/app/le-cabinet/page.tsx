@@ -28,7 +28,7 @@ function PortraitCarousel() {
   const active = portraitVariants[activeIdx];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 group">
       {/* Frame conditionnel */}
       <div className="relative">
         {active.layout === "rond" ? (
@@ -73,13 +73,13 @@ function PortraitCarousel() {
       </div>
 
       {/* Label variante active */}
-      <div className="text-center">
+      <div className="text-center opacity-20 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-warm-500">Variante n° {active.num}</p>
         <p className="mt-1 text-sm text-navy font-medium">{active.photoLabel} · {active.layoutLabel}</p>
       </div>
 
       {/* Sélecteur numéroté 1-6 */}
-      <div className="flex flex-wrap items-center justify-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-2 opacity-20 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
         {portraitVariants.map((v, i) => (
           <button
             key={v.num}
