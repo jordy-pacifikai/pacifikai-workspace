@@ -217,7 +217,7 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
             className={`flex items-center justify-between transition-all duration-500 ${
-              isScrolled ? "h-16" : "h-20 lg:h-24"
+              isScrolled ? "h-20" : "h-24 lg:h-28"
             }`}
           >
             {/* Logo */}
@@ -225,10 +225,10 @@ export default function Header() {
               <Image
                 src="/images/logo-pbc-transparent.png"
                 alt="Pacific Blue Consulting"
-                width={56}
-                height={34}
+                width={88}
+                height={54}
                 className={`drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)] transition-all duration-300 ${
-                  isScrolled ? "w-12 h-auto" : "w-14 h-auto"
+                  isScrolled ? "w-16 h-auto" : "w-20 h-auto"
                 }`}
               />
               <span

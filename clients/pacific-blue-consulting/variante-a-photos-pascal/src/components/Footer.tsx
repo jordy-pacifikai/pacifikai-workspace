@@ -31,9 +31,9 @@ export default function Footer() {
               <Image
                 src="/images/logo-pbc-transparent.png"
                 alt="Pacific Blue Consulting"
-                width={48}
-                height={27}
-                className="w-12 h-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]"
+                width={80}
+                height={45}
+                className="w-20 h-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]"
               />
               <span className="font-display text-base font-bold tracking-wide text-white">
                 Pacific Blue Consulting

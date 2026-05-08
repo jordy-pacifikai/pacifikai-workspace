@@ -366,20 +366,31 @@ export default function LeCabinetPage() {
 
       {/* Coquillage (CONSERVÉ) */}
       <section className="py-24 lg:py-32 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="gsap-reveal text-center mb-12">
             <SectionTitle label="Notre identité" title="Le coquillage, symbole de Pacific Blue" />
           </div>
-          <div className="gsap-reveal space-y-6 text-warm leading-relaxed">
-            <p>
-              L&apos;identité visuelle de Pacific Blue Consulting naît d&apos;un coquillage stylisé dont la spirale s&apos;ouvre et s&apos;agrandit à mesure qu&apos;elle se déploie. Cette spirale suggère qu&apos;aucun projet ne repart jamais de zéro : l&apos;on repasse par des thèmes familiers — sûreté, continuité de service, modèles économiques, gouvernance — mais à chaque tour, le regard est plus ample, l&apos;expérience plus riche et la capacité à faire des choix structurants plus affirmée.
-            </p>
-            <p>
-              Ce coquillage est aussi un hommage à la Polynésie et au grand océan Pacifique, où il est à la fois objet du quotidien, symbole des lagons et trace sensible du lien entre terre et mer. Il fait écho au <em className="text-navy font-medium">pu</em>, la conque que l&apos;on souffle pour signaler sa présence, annoncer un événement ou souhaiter la bienvenue aux navigateurs qui approchent — comme un appel clair et bienveillant dans l&apos;immensité.
-            </p>
-            <p>
-              Cette image exprime la vocation de PBC : accueillir, guider et sécuriser les trajectoires de ses clients dans un environnement complexe, tout en respectant profondément les territoires et les populations.
-            </p>
+          <div className="gsap-reveal grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[360px_1fr] gap-10 lg:gap-16 items-center">
+            <div className="flex justify-center md:justify-start">
+              <Image
+                src="/images/logo-pbc-transparent.png"
+                alt="Coquillage Pacific Blue Consulting"
+                width={720}
+                height={720}
+                className="w-56 md:w-full h-auto drop-shadow-[0_10px_40px_rgba(15,40,77,0.25)]"
+              />
+            </div>
+            <div className="space-y-6 text-warm leading-relaxed">
+              <p>
+                L&apos;identité visuelle de Pacific Blue Consulting naît d&apos;un coquillage stylisé dont la spirale s&apos;ouvre et s&apos;agrandit à mesure qu&apos;elle se déploie. Cette spirale suggère qu&apos;aucun projet ne repart jamais de zéro : l&apos;on repasse par des thèmes familiers — sûreté, continuité de service, modèles économiques, gouvernance — mais à chaque tour, le regard est plus ample, l&apos;expérience plus riche et la capacité à faire des choix structurants plus affirmée.
+              </p>
+              <p>
+                Ce coquillage est aussi un hommage à la Polynésie et au grand océan Pacifique, où il est à la fois objet du quotidien, symbole des lagons et trace sensible du lien entre terre et mer. Il fait écho au <em className="text-navy font-medium">pu</em>, la conque que l&apos;on souffle pour signaler sa présence, annoncer un événement ou souhaiter la bienvenue aux navigateurs qui approchent — comme un appel clair et bienveillant dans l&apos;immensité.
+              </p>
+              <p>
+                Cette image exprime la vocation de PBC : accueillir, guider et sécuriser les trajectoires de ses clients dans un environnement complexe, tout en respectant profondément les territoires et les populations.
+              </p>
+            </div>
           </div>
         </div>
       </section>
