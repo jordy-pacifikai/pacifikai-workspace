@@ -569,7 +569,7 @@ export default function LeCabinetPage() {
                 Voir nos réalisations
               </Link>
             </div>
-            <p className="mt-16 text-[11px] text-warm/50">
+            <p className="mt-16 text-[11px] text-warm/50 text-center">
               Pacific Blue Consulting — SAS au capital de 200 000 FCFP — PK 17,900 Côte Mer, Punaauia, Polynésie française — N° Tahiti G28823
             </p>
           </div>

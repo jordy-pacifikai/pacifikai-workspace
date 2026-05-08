@@ -73,7 +73,7 @@ export default function RootLayout({
                 "Cabinet de conseil en Polynésie française. Structuration de projets complexes en transport aérien, sécurité aéroportuaire, environnement et développement territorial.",
               url: "https://pacificblueconsulting.com",
               telephone: "+689-87-747-284",
-              email: "pacificblueconsulting@zoho.com",
+              email: "contact@pacificblueconsulting.org",
               address: {
                 "@type": "PostalAddress",
                 addressLocality: "Punaauia",

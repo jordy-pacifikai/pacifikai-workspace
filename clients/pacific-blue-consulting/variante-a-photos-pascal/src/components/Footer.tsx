@@ -109,11 +109,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:pacificblueconsulting@zoho.com" className="flex items-center gap-3 hover:text-white transition-colors duration-300 break-all">
+                <a href="mailto:contact@pacificblueconsulting.org" className="flex items-center gap-3 hover:text-white transition-colors duration-300 break-all">
                   <svg className="w-4 h-4 text-gold/60 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                     <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  pacificblueconsulting@zoho.com
+                  contact@pacificblueconsulting.org
                 </a>
               </li>
             </ul>
@@ -138,8 +138,16 @@ export default function Footer() {
           <p className="text-white/25 text-xs">
             &copy; {new Date().getFullYear()} Pacific Blue Consulting. Tous droits réservés.
           </p>
-          <p className="text-white/20 text-xs">
-            Polynésie française
+          <p className="text-white/30 text-xs">
+            Site conçu par{" "}
+            <a
+              href="https://pacifikai.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gold/80 hover:text-gold transition-colors duration-300 font-medium"
+            >
+              PACIFIK&apos;AI
+            </a>
           </p>
         </div>
       </div>

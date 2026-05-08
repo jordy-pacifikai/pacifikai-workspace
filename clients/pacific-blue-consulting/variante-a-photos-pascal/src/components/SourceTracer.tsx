@@ -28,7 +28,7 @@ const SOURCE_MAP: SourceEntry[] = [
   { match: "Expertise", type: "catalogue", source: "Catalogue, chapitre 7 'Synthese par famille d'offre' (pp. 33-35)", quote: "Le catalogue documente 8 expertises distinctes : Etudes & Strategie, Audits & Conformite, Documentation & Certification, Formation & Concours, AMO & Projets, Creation / Structuration, Gestion de la Securite, Organisation & Management" },
   { match: "References", type: "catalogue", source: "Catalogue, chapitres 1 a 6 (pp. 8-32) — 61 fiches missions", quote: "61 missions detaillees avec client, annee, domaine, description et benefice client. Chaque fiche constitue une reference factuelle du cabinet" },
   { match: "A propos", type: "catalogue", source: "Catalogue, Introduction (pp. 5-7) + Conclusion (p. 36)", quote: "Introduction du catalogue : biographie de Pascal Bazer-Bachi, presentation du cabinet, identite visuelle (coquillage/spirale), mentions legales SAS" },
-  { match: "Contact", type: "catalogue", source: "Catalogue, mentions legales (p. 7)", quote: "Coordonnees du cabinet : pacificblueconsulting@zoho.com / +689-87-747-284 / PK 17,900 Cote Mer, Punaauia" },
+  { match: "Contact", type: "catalogue", source: "Catalogue, mentions legales (p. 7)", quote: "Coordonnees du cabinet : contact@pacificblueconsulting.org / +689-87-747-284 / PK 17,900 Cote Mer, Punaauia" },
   { match: "Nous contacter", type: "catalogue", source: "Catalogue, mentions legales (p. 7)", quote: "Adresse email, telephone et localisation extraits des mentions legales du catalogue" },
   // Dropdown submenu items
   { match: "Aviation civile", type: "catalogue", source: "Catalogue, chapitre 1 'Operations et Compagnies aeriennes' (pp. 8-18)", quote: "28 missions aviation documentees : structuration compagnies (TNH, Islands Airline, Air Bora Bora, Air Loyaute), etudes strategiques, audits conformite, documentation operationnelle, securite, drones" },
@@ -257,7 +257,7 @@ const SOURCE_MAP: SourceEntry[] = [
   { match: "Votre boussole", type: "flyer", source: "Flyer page 1, slogan", quote: "Votre boussole dans un monde complexe" },
 
   // ─── CONTACT ───
-  { match: "pacificblueconsulting@zoho.com", type: "catalogue", source: "Catalogue, coordonnees", quote: "pacificblueconsulting@zoho.com" },
+  { match: "contact@pacificblueconsulting.org", type: "catalogue", source: "Catalogue, coordonnees", quote: "contact@pacificblueconsulting.org" },
   { match: "+689 87 747 284", type: "catalogue", source: "Catalogue, coordonnees + Flyer (Mobile : 87-747-284, prefixe +689 ajoute)", quote: "Mobile : 87-747-284 (flyer) — prefixe international +689 ajoute pour le site" },
   { match: "Punaauia", type: "catalogue", source: "Catalogue, adresse siege", quote: "PK 17,900 Cote Mer, Punaauia" },
 

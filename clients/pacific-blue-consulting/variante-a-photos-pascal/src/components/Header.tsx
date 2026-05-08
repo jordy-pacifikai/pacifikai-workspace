@@ -232,8 +232,8 @@ export default function Header() {
                 }`}
               />
               <span
-                className={`hidden sm:block font-display text-base font-bold tracking-wide transition-colors duration-300 ${
-                  isScrolled ? "text-navy" : "text-white"
+                className={`hidden sm:block font-display font-bold tracking-wide transition-all duration-300 ${
+                  isScrolled ? "text-navy text-base" : "text-white text-lg lg:text-xl"
                 }`}
               >
                 Pacific Blue Consulting
@@ -410,8 +410,8 @@ export default function Header() {
                 <a href="tel:+68987747284" className="block text-sm text-warm-500 hover:text-navy transition-colors">
                   +689 87 747 284
                 </a>
-                <a href="mailto:pacificblueconsulting@zoho.com" className="block text-sm text-warm-500 hover:text-navy transition-colors">
-                  pacificblueconsulting@zoho.com
+                <a href="mailto:contact@pacificblueconsulting.org" className="block text-sm text-warm-500 hover:text-navy transition-colors">
+                  contact@pacificblueconsulting.org
                 </a>
               </div>
             </div>
