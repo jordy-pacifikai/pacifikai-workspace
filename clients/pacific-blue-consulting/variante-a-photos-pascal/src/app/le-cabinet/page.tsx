@@ -29,13 +29,8 @@ function PortraitCarousel() {
 
   return (
     <div className="space-y-5">
-      {/* Numéro géant en arrière-plan + frame */}
+      {/* Frame conditionnel */}
       <div className="relative">
-        <div className="absolute -top-6 -left-2 lg:-left-4 z-10 select-none pointer-events-none">
-          <span className="font-display text-7xl lg:text-8xl font-black text-gold/15 leading-none">{active.num}</span>
-        </div>
-
-        {/* Frame conditionnel */}
         {active.layout === "rond" ? (
           <div className="relative w-full aspect-square">
             <div className="absolute -inset-4 bg-gold/15 rounded-full blur-2xl" />
