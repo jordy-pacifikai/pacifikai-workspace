@@ -351,7 +351,7 @@ export default function Home() {
                               alt={client.name}
                               width={120}
                               height={48}
-                              className={`${client.name === "Moeroa Tahitian Heritage" ? "max-h-[96px] max-w-[95%]" : "max-h-[64px] max-w-[88%]"} w-auto h-auto object-contain`}
+                              className="max-h-[64px] max-w-[88%] w-auto h-auto object-contain"
                               loading="lazy"
                             />
                             <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10">
