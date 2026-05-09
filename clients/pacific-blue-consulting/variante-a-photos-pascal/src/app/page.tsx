@@ -339,10 +339,12 @@ export default function Home() {
                     <span className="text-warm-300 font-normal normal-case tracking-normal text-[10px]">{categoryClients.length}</span>
                   </h3>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
-                    {categoryClients.map((client) => (
+                    {categoryClients.map((client) => {
+                      const isMoeroa = client.name === "Moeroa Tahitian Heritage";
+                      return (
                       <div
                         key={client.name}
-                        className="relative flex flex-col items-center justify-center p-3 bg-white border border-navy-100/40 rounded-xl aspect-[3/2] overflow-hidden transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100"
+                        className={`relative flex flex-col items-center justify-center p-3 bg-white border border-navy-100/40 rounded-xl ${isMoeroa ? "row-span-2 aspect-square" : "aspect-[3/2]"} overflow-hidden transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100`}
                       >
                         {client.logo ? (
                           <>
@@ -351,7 +353,7 @@ export default function Home() {
                               alt={client.name}
                               width={120}
                               height={48}
-                              className="max-h-[64px] max-w-[88%] w-auto h-auto object-contain"
+                              className={`${isMoeroa ? "max-h-[140px] max-w-[92%]" : "max-h-[64px] max-w-[88%]"} w-auto h-auto object-contain`}
                               loading="lazy"
                             />
                             <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10">
@@ -366,7 +368,8 @@ export default function Home() {
                           </span>
                         )}
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               );
