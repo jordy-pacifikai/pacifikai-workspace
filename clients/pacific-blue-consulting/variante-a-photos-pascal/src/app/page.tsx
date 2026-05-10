@@ -70,6 +70,7 @@ const LARGER_LOGOS = new Set<string>([
   "Etik Polynésie",
   "PenUAS",
   "BIM Pearl",
+  "Birds Conseil",
 ]);
 
 /* ===== Components ===== */
@@ -421,7 +422,7 @@ export default function Home() {
                       alt={partner.name}
                       width={120}
                       height={48}
-                      className={`${LARGER_LOGOS.has(partner.name) ? "h-14" : "h-10"} w-auto object-contain`}
+                      className={`${LARGER_LOGOS.has(partner.name) ? "h-[88px]" : "h-10"} w-auto object-contain`}
                       loading="lazy"
                     />
                     <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10 px-2">
