@@ -2,101 +2,29 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import { useScrollAnimation, useCountUp } from "@/lib/useScrollAnimation";
 import SectionTitle from "@/components/SectionTitle";
 
-type PortraitVariant = {
-  num: number;
-  src: string;
-  photoLabel: string;
-  layoutLabel: string;
-  layout: "rond" | "portrait";
-};
-
-const portraitVariants: PortraitVariant[] = [
-  { num: 1, src: "/images/pascal-portraits/tropicale.png", photoLabel: "Chemise tropicale", layoutLabel: "Cadre rond", layout: "rond" },
-  { num: 2, src: "/images/pascal-portraits/tropicale.png", photoLabel: "Chemise tropicale", layoutLabel: "Rectangle portrait", layout: "portrait" },
-  { num: 3, src: "/images/pascal-portraits/blanche.png", photoLabel: "Chemise blanche couleur", layoutLabel: "Cadre rond", layout: "rond" },
-  { num: 4, src: "/images/pascal-portraits/blanche.png", photoLabel: "Chemise blanche couleur", layoutLabel: "Rectangle portrait", layout: "portrait" },
-  { num: 5, src: "/images/pascal-portraits/nb.png", photoLabel: "Chemise blanche N&B", layoutLabel: "Cadre rond", layout: "rond" },
-  { num: 6, src: "/images/pascal-portraits/nb.png", photoLabel: "Chemise blanche N&B", layoutLabel: "Rectangle portrait", layout: "portrait" },
-];
-
+// Photo finale Pascal — choix final mail 2026-05-09 : chemise blanche couleur, cadre rond
 function PortraitCarousel() {
-  // Variante 3 par defaut (chemise blanche, cadre rond) — choix final Pascal mail 2026-05-09
-  const [activeIdx, setActiveIdx] = useState(2);
-  const active = portraitVariants[activeIdx];
-
   return (
-    <div className="space-y-5 group">
-      {/* Frame conditionnel */}
-      <div className="relative">
-        {active.layout === "rond" ? (
-          <div className="relative w-full aspect-square">
-            <div className="absolute -inset-4 bg-gold/15 rounded-full blur-2xl" />
-            <div className="absolute -inset-2 bg-gold/30 rounded-full blur-md" />
-            <div className="relative w-full aspect-square rounded-full overflow-hidden border-4 border-gold/40 shadow-2xl shadow-navy/30">
-              <Image
-                key={active.src + active.layout}
-                src={active.src}
-                alt={`Pascal Bazer-Bachi — ${active.photoLabel}`}
-                fill
-                sizes="(max-width: 1024px) 80vw, 360px"
-                className="object-cover object-top"
-                priority
-              />
-            </div>
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-navy text-white px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide shadow-lg whitespace-nowrap">
-              Pascal Bazer-Bachi · <span className="text-gold">Fondateur</span>
-            </div>
-          </div>
-        ) : (
-          <div className="bg-gradient-to-br from-navy-50 to-navy-100/50 rounded-2xl overflow-hidden relative shadow-lg">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 rounded-full blur-[60px]" />
-            <div className="relative z-10 aspect-[3/4]">
-              <Image
-                key={active.src + active.layout}
-                src={active.src}
-                alt={`Pascal Bazer-Bachi — ${active.photoLabel}`}
-                fill
-                sizes="(max-width: 1024px) 80vw, 360px"
-                className="object-cover"
-                priority
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-navy/90 to-transparent">
-                <h3 className="font-display text-lg font-bold text-white">Pascal Bazer-Bachi</h3>
-                <p className="mt-0.5 text-xs text-gold font-medium">Fondateur</p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Label variante active */}
-      <div className="text-center opacity-20 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-warm-500">Variante n° {active.num}</p>
-        <p className="mt-1 text-sm text-navy font-medium">{active.photoLabel} · {active.layoutLabel}</p>
-      </div>
-
-      {/* Sélecteur numéroté 1-6 */}
-      <div className="flex flex-wrap items-center justify-center gap-2 opacity-20 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
-        {portraitVariants.map((v, i) => (
-          <button
-            key={v.num}
-            type="button"
-            onClick={() => setActiveIdx(i)}
-            aria-label={`Voir la variante ${v.num} : ${v.photoLabel} en ${v.layoutLabel}`}
-            aria-pressed={i === activeIdx}
-            className={`w-10 h-10 rounded-full font-display font-bold text-sm transition-all duration-200 ${
-              i === activeIdx
-                ? "bg-gold text-navy scale-110 shadow-lg shadow-gold/30"
-                : "bg-white border border-navy-100 text-navy hover:border-gold hover:text-gold hover:scale-105"
-            }`}
-          >
-            {v.num}
-          </button>
-        ))}
+    <div className="space-y-5">
+      <div className="relative w-full aspect-square">
+        <div className="absolute -inset-4 bg-gold/15 rounded-full blur-2xl" />
+        <div className="absolute -inset-2 bg-gold/30 rounded-full blur-md" />
+        <div className="relative w-full aspect-square rounded-full overflow-hidden border-4 border-gold/40 shadow-2xl shadow-navy/30">
+          <Image
+            src="/images/pascal-portraits/blanche.png"
+            alt="Pascal Bazer-Bachi — Fondateur Pacific Blue Consulting"
+            fill
+            sizes="(max-width: 1024px) 80vw, 360px"
+            className="object-cover object-top"
+            priority
+          />
+        </div>
+        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-navy text-white px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide shadow-lg whitespace-nowrap">
+          Pascal Bazer-Bachi · <span className="text-gold">Fondateur</span>
+        </div>
       </div>
     </div>
   );
