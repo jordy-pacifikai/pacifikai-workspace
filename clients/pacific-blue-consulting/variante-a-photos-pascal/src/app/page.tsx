@@ -51,6 +51,19 @@ const territoryColors: Record<string, string> = {
   transformation: "bg-gold-50 text-gold-600",
 };
 
+// Logos qui paraissent trop petits dans la grille standard et meritent une taille augmentee
+const LARGER_LOGOS = new Set<string>([
+  "Pacific Sud Survey (PSS)",
+  "Delta Polynesia",
+  "L2L Prévention",
+  "Milanamos",
+  "To70",
+  "Tamau Conseil",
+  "Etik Polynésie",
+  "PenUAS",
+  "BIM Pearl",
+]);
+
 /* ===== Components ===== */
 function StatCounter({ value, suffix, label }: { value: number; suffix: string; label: string }) {
   const ref = useCountUp(value, 2200, suffix);
@@ -351,7 +364,7 @@ export default function Home() {
                               alt={client.name}
                               width={120}
                               height={48}
-                              className="max-h-[64px] max-w-[88%] w-auto h-auto object-contain"
+                              className={`${LARGER_LOGOS.has(client.name) ? "max-h-[88px] max-w-[95%]" : "max-h-[64px] max-w-[88%]"} w-auto h-auto object-contain`}
                               loading="lazy"
                             />
                             <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10">
@@ -400,7 +413,7 @@ export default function Home() {
                       alt={partner.name}
                       width={120}
                       height={48}
-                      className="h-10 w-auto object-contain"
+                      className={`${LARGER_LOGOS.has(partner.name) ? "h-14" : "h-10"} w-auto object-contain`}
                       loading="lazy"
                     />
                     <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10 px-2">
