@@ -24,7 +24,8 @@ const portraitVariants: PortraitVariant[] = [
 ];
 
 function PortraitCarousel() {
-  const [activeIdx, setActiveIdx] = useState(0);
+  // Variante 3 par defaut (chemise blanche, cadre rond) — choix final Pascal mail 2026-05-09
+  const [activeIdx, setActiveIdx] = useState(2);
   const active = portraitVariants[activeIdx];
 
   return (
@@ -349,19 +350,16 @@ export default function LeCabinetPage() {
 
               <div className="gsap-reveal mt-6 space-y-4 text-warm leading-relaxed">
                 <p>
-                  Trente années dans l&apos;aviation civile, les systèmes satellitaires, la régulation aérienne et le pilotage de projets d&apos;infrastructure - en Europe et dans le Pacifique. Un parcours qui passe par le Centre National d&apos;Études Spatiales, la Direction Générale de l&apos;Aviation Civile, la tutelle du troisième aéroport parisien, la mise en service opérationnelle du système européen de navigation par satellite EGNOS, et la direction de l&apos;Aviation Civile de Polynésie française - où il a supervisé un réseau de 43 aéroports et assuré l&apos;interface avec la Transportation Security Administration américaine.
+                  Je travaille pour les territoires insulaires. C&apos;est devenu, au fil des années, mon centre de gravité.
                 </p>
                 <p>
-                  De ce parcours, Pascal a tiré une conviction : les projets les plus complexes aboutissent quand on combine la rigueur des systèmes avec l&apos;attention aux personnes qui les font vivre. C&apos;est pourquoi il est à la fois ingénieur de l&apos;aviation civile et coach professionnel accrédité, concepteur de business plans et animateur de codéveloppement, auditeur EASA et formateur en conduite du changement.
+                  J&apos;ai commencé l&apos;aviation civile sur le terrain en 1993. De là, j&apos;ai gravi les échelons sans en sauter aucun — exploitation, ingénierie, opérations satellitaires européennes comme Directeur des Opérations EGNOS, régulation territoriale en Picardie, supervision sécurité-sûreté en Polynésie française, puis direction de l&apos;Aviation Civile de Polynésie et son réseau de quarante-trois aéroports répartis sur cinq archipels. Direction enfin d&apos;une compagnie aérienne polynésienne, comme exploitant cette fois. Trente ans à voir le métier depuis tous ses étages, ce qui change la manière dont on accompagne ensuite les organisations qui le pratiquent.
                 </p>
                 <p>
-                  Titulaire d&apos;une qualification EASA Form-4 et formé à la gestion des risques industriels (Mastère MIDE), il est aujourd&apos;hui l&apos;un des rares experts du Pacifique à combiner une expérience de direction au sein de l&apos;autorité de surveillance et une pratique opérationnelle du conseil en sécurité et sûreté aéroportuaires. Il a réalisé 10 études d&apos;impact sur la sécurité aéroportuaire (EISA) depuis 2024.
+                  J&apos;ai fondé Pacific Blue Consulting en 2019 pour faire de cette expérience un instrument utile aux acteurs publics et privés du Pacifique. Quand on nous confie un projet, nous ne faisons pas que recommander : nous nous engageons, nous portons les arbitrages, nous restons jusqu&apos;au bout. Le cabinet intervient sur des transformations structurantes — aviation, environnement, infrastructures, filières territoriales — en équipe pluridisciplinaire, avec des partenaires choisis pour leur expertise et leur exigence.
                 </p>
                 <p>
-                  <strong className="text-navy">Chevalier de l&apos;Ordre National du Mérite</strong>, il a créé Pacific Blue Consulting en 2017. Depuis, il a également cofondé Terciel (aéroports marins flottants, prix Innovation « Or Bleu » 2023), Ironetik (laboratoire d&apos;essai et expertise technique) et Islands Services and Solutions (gestion de projets d&apos;infrastructures publiques).
-                </p>
-                <p>
-                  Télépilote qualifié, il réalise lui-même les missions d&apos;imagerie aérienne professionnelle pour ses clients - parce que comprendre un territoire, c&apos;est aussi le voir d&apos;en haut.
+                  <strong className="text-navy">Mon métier consiste à laisser les organisations plus solides après mon passage qu&apos;avant.</strong>
                 </p>
               </div>
 
