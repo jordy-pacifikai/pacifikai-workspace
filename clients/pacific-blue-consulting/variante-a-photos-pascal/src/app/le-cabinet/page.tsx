@@ -466,7 +466,7 @@ export default function LeCabinetPage() {
             />
           </div>
 
-          <div className="gsap-reveal space-y-6 text-warm leading-relaxed">
+          <div className="space-y-6 text-warm leading-relaxed text-center max-w-3xl mx-auto">
             <p>
               Pascal Bazer-Bachi conçoit le conseil comme un levier de montée en compétences des équipes : formateur agréé, concepteur et animateur de programmes en gestion de projet, conduite du changement, culture managériale et accompagnement entrepreneurial, il intervient autant sur les contenus que sur les pratiques de travail.
             </p>
