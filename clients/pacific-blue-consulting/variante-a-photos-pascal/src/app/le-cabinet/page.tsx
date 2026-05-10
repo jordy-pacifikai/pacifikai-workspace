@@ -467,10 +467,10 @@ export default function LeCabinetPage() {
           </div>
 
           <div className="space-y-6 text-warm leading-relaxed text-center">
-            <p>
+            <p className="mx-auto">
               Pascal Bazer-Bachi conçoit le conseil comme un levier de montée en compétences des équipes : formateur agréé, concepteur et animateur de programmes en gestion de projet, conduite du changement, culture managériale et accompagnement entrepreneurial, il intervient autant sur les contenus que sur les pratiques de travail.
             </p>
-            <p>
+            <p className="mx-auto">
               Coach professionnel et executive coach accrédité, il accompagne dirigeants, cadres et porteurs de projets pour les aider à clarifier leurs enjeux, structurer leurs décisions et incarner les transformations, qu&apos;il s&apos;agisse de politiques publiques, de projets territoriaux, d&apos;infrastructures ou d&apos;initiatives économiques locales.
             </p>
           </div>
