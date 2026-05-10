@@ -58,6 +58,7 @@ const LARGER_LOGOS = new Set<string>([
   "L2L Prévention",
   "Milanamos",
   "Moeroa Tahitian Heritage",
+  "TASC",
   "To70",
   "Tamau Conseil",
   "Etik Polynésie",
