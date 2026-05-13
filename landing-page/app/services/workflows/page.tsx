@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import ServicePage from "@/components/ui/ServicePage";
 import ServiceWorkflowVisual from "@/components/ui/service-visuals/ServiceWorkflowVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getOptimalLinks } from "@/lib/internal-links";
 
 export const metadata: Metadata = {
   title: "Automatisation IA à Tahiti | PACIFIK'AI — Workflows Polynésie",
@@ -11,7 +15,7 @@ export const metadata: Metadata = {
     description:
       "Automatisation des processus par IA à Tahiti : réservations, facturation, relances.",
     url: "https://pacifikai.com/services/workflows",
-    locale: "fr_FR",
+    locale: "fr_PF",
     type: "website",
   },
   alternates: {
@@ -91,8 +95,55 @@ const ICON_MAIL = (
   </svg>
 );
 
+const FAQ_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Quels outils pouvez-vous connecter pour l'automatisation ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "PACIFIK'AI connecte plus de 500 applications pour automatiser vos processus : CRM (HubSpot, Pipedrive), facturation (QuickBooks, Xero), email (Gmail, Outlook), calendrier, messagerie (WhatsApp, Messenger). Nous nous adaptons à votre stack technique existante sans changer vos outils.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Combien de temps pour automatiser les processus d'une entreprise à Tahiti ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Un workflow d'automatisation simple prend 1 à 3 jours chez PACIFIK'AI. Une infrastructure complète avec plusieurs workflows connectés entre eux prend 1 à 2 semaines. L'audit initial identifie les tâches répétitives et les quick wins pour un ROI immédiat.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Combien de temps gagne-t-on avec l'automatisation IA ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Les entreprises polynésiennes accompagnées par PACIFIK'AI gagnent en moyenne 85% de temps sur leurs tâches répétitives. Les workflows automatisés fonctionnent 24h/24, 7j/7 sans intervention humaine : facturation, relances clients, réservations, synchronisation de données.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Que se passe-t-il si un workflow automatisé échoue ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Chaque workflow créé par PACIFIK'AI dispose d'alertes automatiques et de mécanismes de fallback intégrés. Vous êtes notifié immédiatement en cas de problème et notre équipe intervient sous 24 heures pour résoudre toute anomalie.",
+      },
+    },
+  ],
+};
+
+const relatedLinks = getOptimalLinks("/services/workflows", "service", ["automatisation", "workflow", "processus", "facturation", "reservation"]);
+
 export default function WorkflowsPage() {
   return (
+    <>
+    <Script
+      id="faq-jsonld-workflows"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
+    />
     <ServicePage
       badge="85% de temps gagné en moyenne"
       title="Automatisation de"
@@ -180,5 +231,7 @@ export default function WorkflowsPage() {
       ctaFinalTitle="Prêt à automatiser vos processus ?"
       ctaFinalSubtitle="Écrivez-nous pour discuter de vos besoins en automatisation."
     />
+    <RelatedLinks links={relatedLinks} />
+    </>
   );
 }

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import ServicePage from "@/components/ui/ServicePage";
 import ServiceDocumentVisual from "@/components/ui/service-visuals/ServiceDocumentVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getOptimalLinks } from "@/lib/internal-links";
 
 export const metadata: Metadata = {
   title: "Extraction de Documents IA à Tahiti | PACIFIK'AI — OCR Polynésie",
@@ -11,7 +14,7 @@ export const metadata: Metadata = {
     description:
       "Extraction automatique de documents par IA à Tahiti : factures, bons de commande, relevés bancaires.",
     url: "https://pacifikai.com/services/documents",
-    locale: "fr_FR",
+    locale: "fr_PF",
     type: "website",
   },
   alternates: {
@@ -95,9 +98,14 @@ const ICON_BANK = (
   </svg>
 );
 
+const relatedLinks = getOptimalLinks("/services/documents", "service", ["document", "extraction", "facture", "ocr", "ia"]);
+
 export default function DocumentsPage() {
   return (
-    <ServicePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Extraction de Documents IA", "Extraction automatique de documents par IA à Tahiti : factures, bons de commande, relevés bancaires. Plus de saisie manuelle pour entreprises en Polynésie française.", "https://pacifikai.com/services/documents")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Services", url: "https://pacifikai.com/services" }, { name: "Extraction de Documents IA", url: "https://pacifikai.com/services/documents" }])) }} />
+      <ServicePage
       badge="Extraction en 5 secondes"
       title="Extraction de"
       titleHighlight="Documents IA"
@@ -183,5 +191,7 @@ export default function DocumentsPage() {
       ctaFinalTitle="Prêt à éliminer la saisie manuelle ?"
       ctaFinalSubtitle="Contactez-nous pour une démo avec vos propres documents."
     />
+    <RelatedLinks links={relatedLinks} />
+    </>
   );
 }

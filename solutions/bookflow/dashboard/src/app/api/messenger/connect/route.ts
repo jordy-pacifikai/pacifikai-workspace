@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { requireBusinessAccess } from '@/lib/auth';
 import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
+import { registerPageWithPoller } from '@/lib/page-poller';
 import { z } from 'zod';
 
 const FB_APP_ID = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || process.env.FB_APP_ID || '';
@@ -182,6 +183,14 @@ export async function POST(req: NextRequest) {
           logger.warn('Chatwoot registration failed (non-blocking)', { businessId });
         }
       }
+
+      // Register page with the inbox poller (non-blocking)
+      registerPageWithPoller({
+        pageId,
+        pageName,
+        pageToken: pageAccessToken,
+        businessId,
+      }).catch(() => {});
 
       logger.info('Messenger page connected', { action: 'messenger_connect', businessId, pageId, pageName });
 

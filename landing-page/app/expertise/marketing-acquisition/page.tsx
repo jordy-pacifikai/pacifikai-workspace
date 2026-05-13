@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 import ExpertisePage from "@/components/ui/ExpertisePage";
 import MarketingVisual from "@/components/ui/expertise-visuals/MarketingVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Growth & Acquisition IA | PACIFIK'AI",
   description:
     "Campagnes pilotees par l'IA : ciblage predictif, creatifs generes automatiquement, budgets optimises en temps reel. Chaque franc investi est tracke.",
+  alternates: {
+    canonical: "https://pacifikai.com/expertise/marketing-acquisition",
+  },
+  openGraph: {
+    title: "Growth & Acquisition IA | PACIFIK'AI",
+    description: "Marketing digital et acquisition pilotee par l'IA en Polynesie francaise.",
+    url: "https://pacifikai.com/expertise/marketing-acquisition",
+    locale: "fr_PF",
+    type: "website",
+  },
 };
 
 const competencies = [
@@ -151,7 +162,10 @@ const useCases = [
 
 export default function MarketingAcquisitionPage() {
   return (
-    <ExpertisePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Growth & Acquisition IA", "Campagnes pilotees par l IA : ciblage predictif, creatifs generes automatiquement, budgets optimises en temps reel.", "https://pacifikai.com/expertise/marketing-acquisition")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Expertise", url: "https://pacifikai.com/expertise" }, { name: "Growth & Acquisition IA", url: "https://pacifikai.com/expertise/marketing-acquisition" }])) }} />
+      <ExpertisePage
       accentColor="emerald"
       badge="L'IA qui accelere votre croissance"
       title="Growth &"
@@ -167,5 +181,6 @@ export default function MarketingAcquisitionPage() {
       ctaTitle="Arretez de deviner, commencez a scaler"
       ctaSubtitle="On analyse vos canaux existants et on vous montre ou l'IA peut multiplier vos resultats."
     />
+    </>
   );
 }

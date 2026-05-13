@@ -39,7 +39,6 @@ const navItems: NavItem[] = [
     ],
   },
   { href: "/a-propos", label: "A propos" },
-  { href: "/contact", label: "Contact" },
 ];
 
 /* ===== Dropdown Component ===== */
@@ -244,22 +243,13 @@ export default function Header() {
                   isScrolled ? "w-12 h-auto" : "w-14 h-auto"
                 }`}
               />
-              <div className="hidden sm:block">
-                <span
-                  className={`font-display text-lg font-bold transition-colors duration-300 ${
-                    isScrolled ? "text-navy" : "text-white"
-                  }`}
-                >
-                  Pacific Blue
-                </span>
-                <span
-                  className={`block text-[10px] tracking-[0.2em] uppercase transition-colors duration-300 ${
-                    isScrolled ? "text-steel" : "text-white/60"
-                  }`}
-                >
-                  Consulting
-                </span>
-              </div>
+              <span
+                className={`hidden sm:block font-display text-base font-bold tracking-wide transition-colors duration-300 ${
+                  isScrolled ? "text-navy" : "text-white"
+                }`}
+              >
+                Pacific Blue Consulting
+              </span>
             </Link>
 
             {/* Desktop Nav with Dropdowns */}

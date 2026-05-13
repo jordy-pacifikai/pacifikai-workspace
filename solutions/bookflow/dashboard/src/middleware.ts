@@ -83,7 +83,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Public routes on dashboard — no auth required
-  const publicRoutes = ['/login', '/signup', '/auth/callback', '/privacy', '/terms', '/data-deletion', '/book', '/status', '/review', '/pricing', '/faq', '/offline', '/unsubscribe', '/landing', '/portal', '/secteur']
+  const publicRoutes = ['/login', '/signup', '/auth/callback', '/privacy', '/terms', '/data-deletion', '/book', '/status', '/review', '/pricing', '/faq', '/offline', '/unsubscribe', '/landing', '/portal', '/secteur', '/help']
   // Exact match or sub-path under a trailing slash — prevents '/review' from catching '/reviews'
   const isPublic = publicRoutes.some(r => pathname === r || pathname.startsWith(r + '/'))
   // Only skip auth for actual external webhook/callback endpoints

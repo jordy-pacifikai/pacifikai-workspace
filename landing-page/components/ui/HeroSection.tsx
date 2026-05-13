@@ -5,11 +5,13 @@ import dynamic from "next/dynamic";
 import gsap from "gsap";
 import RotatingText from "@/components/effects/RotatingText";
 import MagneticButton from "@/components/effects/MagneticButton";
+import { useT } from "@/lib/i18n/useT";
 // import TrustBar from "@/components/ui/TrustBar";
 
 const HeroScene = dynamic(() => import("@/components/3d/HeroScene"), { ssr: false });
 
 export default function HeroSection() {
+  const t = useT("hero");
   const badgeRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -58,14 +60,14 @@ export default function HeroSection() {
           <div ref={badgeRef} className="mb-6">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-soft border border-accent/20 text-accent text-xs font-medium tracking-[0.15em] uppercase">
               <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse-dot" />
-              Agence IA — Tahiti
+              {t?.badge ?? "Agence IA — Tahiti"}
             </span>
           </div>
 
           {/* Headline — dynamic rotating */}
           <RotatingText
-            prefix="Transformez votre"
-            words={[
+            prefix={t?.prefix ?? "Transformez votre"}
+            words={t?.words ?? [
               "business.",
               "marketing.",
               "service client.",
@@ -82,18 +84,16 @@ export default function HeroSection() {
             ref={subtitleRef}
             className="text-text-secondary text-[clamp(1rem,2vw,1.25rem)] max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            Création de sites internet, applications mobiles, chatbots IA,
-            automatisation et marketing digital — votre agence digitale
-            en Polynésie française.
+            {t?.subtitle ?? "Création de sites internet, applications mobiles, chatbots IA, automatisation et marketing digital — votre agence digitale en Polynésie française."}
           </p>
 
           {/* CTAs */}
           <div ref={ctaRef} className="flex gap-4 justify-center flex-wrap">
             <MagneticButton href="#services" variant="primary">
-              Découvrir nos solutions
+              {t?.cta1 ?? "Découvrir nos solutions"}
             </MagneticButton>
             <MagneticButton href="#contact" variant="secondary">
-              Nous contacter
+              {t?.cta2 ?? "Nous contacter"}
             </MagneticButton>
           </div>
         </div>
@@ -104,17 +104,17 @@ export default function HeroSection() {
         <div className="flex items-center justify-center gap-6 md:gap-10 text-text-dim text-xs tracking-wide">
           <span className="flex items-center gap-1.5 opacity-50 hover:opacity-80 transition-opacity">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            +20 projets livrés
+            {t?.trust1 ?? "+20 projets livrés"}
           </span>
           <span className="w-px h-3 bg-white/10" />
           <span className="flex items-center gap-1.5 opacity-50 hover:opacity-80 transition-opacity">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            100% sur mesure
+            {t?.trust2 ?? "100% sur mesure"}
           </span>
           <span className="w-px h-3 bg-white/10" />
           <span className="flex items-center gap-1.5 opacity-50 hover:opacity-80 transition-opacity">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Basé à Tahiti
+            {t?.trust3 ?? "Basé à Tahiti"}
           </span>
         </div>
       </div>

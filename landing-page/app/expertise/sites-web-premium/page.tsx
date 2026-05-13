@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 import ExpertisePage from "@/components/ui/ExpertisePage";
 import WebPremiumVisual from "@/components/ui/expertise-visuals/WebPremiumVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Sites Haute Conversion | PACIFIK'AI",
   description:
     "Sites web haute conversion : design Awwwards-level et architecture UX data-driven pour transformer vos visiteurs en clients. Résultats mesurés, pas estimés.",
+  alternates: {
+    canonical: "https://pacifikai.com/expertise/sites-web-premium",
+  },
+  openGraph: {
+    title: "Sites Haute Conversion | PACIFIK'AI",
+    description: "Sites web haute conversion et design premium pour entreprises en Polynesie francaise.",
+    url: "https://pacifikai.com/expertise/sites-web-premium",
+    locale: "fr_PF",
+    type: "website",
+  },
 };
 
 /* ── Inline SVG icons ── */
@@ -78,7 +89,10 @@ const IconMegaphone = (
 
 export default function SitesWebPremiumPage() {
   return (
-    <ExpertisePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Sites Haute Conversion", "Sites web haute conversion : design Awwwards-level et architecture UX data-driven pour transformer vos visiteurs en clients.", "https://pacifikai.com/expertise/sites-web-premium")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Expertise", url: "https://pacifikai.com/expertise" }, { name: "Sites Haute Conversion", url: "https://pacifikai.com/expertise/sites-web-premium" }])) }} />
+      <ExpertisePage
       accentColor="purple"
       badge="Design qui convertit, pas qui decore"
       title="Sites"
@@ -177,5 +191,6 @@ export default function SitesWebPremiumPage() {
       ctaTitle="Un site qui travaille pour vous"
       ctaSubtitle="Pas un site vitrine. Un outil de conversion. Parlons de vos objectifs business."
     />
+    </>
   );
 }

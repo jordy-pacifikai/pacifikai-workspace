@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 import ExpertisePage from "@/components/ui/ExpertisePage";
 import AutomationVisual from "@/components/ui/expertise-visuals/AutomationVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Zero Tache Manuelle — Automatisation IA | PACIFIK'AI",
   description:
     "Chaque minute passee a copier-coller, relancer ou saisir des donnees est une minute volee a votre business. On identifie vos goulots et on les elimine definitivement.",
+  alternates: {
+    canonical: "https://pacifikai.com/expertise/automatisation",
+  },
+  openGraph: {
+    title: "Zero Tache Manuelle — Automatisation IA | PACIFIK'AI",
+    description: "Automatisation des processus par IA pour entreprises en Polynesie francaise.",
+    url: "https://pacifikai.com/expertise/automatisation",
+    locale: "fr_PF",
+    type: "website",
+  },
 };
 
 const competencies = [
@@ -157,7 +168,10 @@ const useCases = [
 
 export default function AutomatisationPage() {
   return (
-    <ExpertisePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Automatisation IA", "Chaque minute passee a copier-coller, relancer ou saisir des donnees est une minute volee a votre business. On identifie vos goulots et on les elimine definitivement.", "https://pacifikai.com/expertise/automatisation")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Expertise", url: "https://pacifikai.com/expertise" }, { name: "Automatisation IA", url: "https://pacifikai.com/expertise/automatisation" }])) }} />
+      <ExpertisePage
       accentColor="indigo"
       badge="Vos processus tournent sans vous"
       title="Zero"
@@ -173,5 +187,6 @@ export default function AutomatisationPage() {
       ctaTitle="Combien d'heures perdez-vous ?"
       ctaSubtitle="Audit gratuit de vos processus. On vous dit exactement combien de temps vous pouvez recuperer."
     />
+    </>
   );
 }

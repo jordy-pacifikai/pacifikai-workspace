@@ -7,6 +7,8 @@ import {
   cities,
   buildSeoPageData,
 } from "@/lib/seo-data";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getRelatedLinks } from "@/lib/internal-links";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -472,6 +474,15 @@ export default async function SeoPage({ params }: Props) {
             })}
           </div>
         </section>
+
+        {/* Cross-type links (expertise + blog) */}
+        <RelatedLinks
+          links={getRelatedLinks(
+            `/seo/${slug}`,
+            [service.name.toLowerCase(), city.name.toLowerCase(), "polynesie", "tahiti", ...service.name.toLowerCase().split(/\s+/)]
+          )}
+          title="Expertise et articles associés"
+        />
       </div>
     </div>
   );

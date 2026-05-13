@@ -20,4 +20,7 @@ export const ARTICLE_IMAGES: Record<string, string> = {
   "agences-digitales-tahiti-comparatif": "https://v3b.fal.media/files/b/0a940533/8E_s7Fc11HcMh58rUmCYo.jpg",
   "chatbot-ia-vs-standard-telephonique": "https://v3b.fal.media/files/b/0a940533/qiiNPJ0RUzLAoa5-Xd7wu.jpg",
   "automatisation-entreprise-tahiti": "https://v3b.fal.media/files/b/0a940533/IzhFgCiahZQobgCrGoyB_.jpg",
+  "agence-ia-tahiti": "https://v3b.fal.media/files/b/0a940533/hrJ1gI-WfBbddLP1FABSP.jpg",
+  "referencement-seo-tahiti": "https://v3b.fal.media/files/b/0a940533/zPFqJssVV0joBCPf_yw1R.jpg",
+  "developpeur-web-polynesie": "https://v3b.fal.media/files/b/0a940533/7C8x4bfmGzKB2iDmuS1PQ.jpg",
 };

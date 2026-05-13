@@ -133,14 +133,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, skipped: "no_business" });
     }
 
-    // Route to the same handler as all other channels
+    // Route to the same handler as all other channels.
+    // is_page_thread = true → from Graph API poller, reply via Graph API (messenger_*)
+    // is_page_thread = false/undefined → from mautrix-meta bridge, reply via bridge (bridge_*)
+    const fromPoller = data.is_page_thread === true;
     const taskPayload = {
-      from: `bridge_${data.thread_id}`,
+      from: fromPoller
+        ? `messenger_${data.sender_id}`
+        : `bridge_${data.thread_id}`,
       message: String(data.text),
       buttonPayload: null,
       messageType: "text" as const,
       businessId: event.business_id,
-      channel: "bridge_messenger" as string,
+      channel: fromPoller ? ("messenger" as string) : ("bridge_messenger" as string),
       senderName: data.sender_name,
       // Bridge-specific fields for reply routing
       bridgeThreadId: data.thread_id,

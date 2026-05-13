@@ -79,9 +79,9 @@ function Nav() {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-gray-950/90 backdrop-blur-lg border-b border-gray-800/50' : ''}`}>
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/logos/logo-transparent.png" alt="Ve'a" width={36} height={36} className="w-9 h-9 object-contain" />
-          <span className="text-xl font-bold text-white">Ve&apos;a</span>
+        <Link href="/" className="flex items-center gap-2.5">
+          <Image src="/logos/logo-transparent.png" alt="Ve'a" width={56} height={56} className="w-14 h-14 object-contain" />
+          <span className="text-2xl font-bold text-white">Ve&apos;a</span>
         </Link>
         <div className="hidden sm:flex items-center gap-6 text-sm text-gray-400">
           <a href="#features" className="hover:text-white transition-colors">Fonctionnalites</a>

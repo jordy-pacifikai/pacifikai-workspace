@@ -2,8 +2,10 @@
 
 import { useState, FormEvent } from "react";
 import SectionReveal from "@/components/effects/SectionReveal";
+import { useT } from "@/lib/i18n/useT";
 
 export default function CTASection() {
+  const t = useT("cta");
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -36,10 +38,14 @@ export default function CTASection() {
           <div className="glass rounded-3xl p-8 md:p-12 border border-accent/20 reveal-child">
             <div className="text-center mb-8">
               <h2 className="font-display text-[clamp(1.5rem,4vw,2.5rem)] leading-tight mb-4">
-                Parlons de votre <span className="gradient-text-coral">projet</span>
+                {t ? (
+                  <>{t.title} <span className="gradient-text-coral">{t.titleHighlight}</span></>
+                ) : (
+                  <>Parlons de votre <span className="gradient-text-coral">projet</span></>
+                )}
               </h2>
               <p className="text-text-secondary text-sm max-w-md mx-auto leading-relaxed">
-                Un premier échange simple et sans engagement pour comprendre vos besoins.
+                {t?.description ?? "Un premier échange simple et sans engagement pour comprendre vos besoins."}
               </p>
             </div>
 
@@ -50,9 +56,9 @@ export default function CTASection() {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <h3 className="font-display text-lg font-semibold mb-2">Message envoyé</h3>
+                <h3 className="font-display text-lg font-semibold mb-2">{t?.successTitle ?? "Message envoyé"}</h3>
                 <p className="text-text-secondary text-sm">
-                  Merci {form.name.split(" ")[0]} ! On vous répond très vite.
+                  {(t?.successMessage ?? "Merci {name} ! On vous répond très vite.").replace("{name}", form.name.split(" ")[0])}
                 </p>
               </div>
             ) : (
@@ -60,13 +66,13 @@ export default function CTASection() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="cta-name" className="block text-xs font-medium text-text-dim uppercase tracking-widest mb-2">
-                      Nom complet *
+                      {t?.nameLabel ?? "Nom complet *"}
                     </label>
-                    <input id="cta-name" type="text" value={form.name} onChange={update("name")} required placeholder="Votre nom" className={inputClass} />
+                    <input id="cta-name" type="text" value={form.name} onChange={update("name")} required placeholder={t?.namePlaceholder ?? "Votre nom"} className={inputClass} />
                   </div>
                   <div>
                     <label htmlFor="cta-email" className="block text-xs font-medium text-text-dim uppercase tracking-widest mb-2">
-                      Email *
+                      {t?.emailLabel ?? "Email *"}
                     </label>
                     <input id="cta-email" type="email" value={form.email} onChange={update("email")} required placeholder="votre@email.com" className={inputClass} />
                   </div>
@@ -74,16 +80,16 @@ export default function CTASection() {
 
                 <div>
                   <label htmlFor="cta-company" className="block text-xs font-medium text-text-dim uppercase tracking-widest mb-2">
-                    Entreprise
+                    {t?.companyLabel ?? "Entreprise"}
                   </label>
-                  <input id="cta-company" type="text" value={form.company} onChange={update("company")} placeholder="Nom de votre entreprise (optionnel)" className={inputClass} />
+                  <input id="cta-company" type="text" value={form.company} onChange={update("company")} placeholder={t?.companyPlaceholder ?? "Nom de votre entreprise (optionnel)"} className={inputClass} />
                 </div>
 
                 <div>
                   <label htmlFor="cta-message" className="block text-xs font-medium text-text-dim uppercase tracking-widest mb-2">
-                    Votre message *
+                    {t?.messageLabel ?? "Votre message *"}
                   </label>
-                  <textarea id="cta-message" value={form.message} onChange={update("message")} required rows={4} placeholder="Décrivez votre projet, vos besoins, vos questions..." className={`${inputClass} resize-none`} />
+                  <textarea id="cta-message" value={form.message} onChange={update("message")} required rows={4} placeholder={t?.messagePlaceholder ?? "Décrivez votre projet, vos besoins, vos questions..."} className={`${inputClass} resize-none`} />
                 </div>
 
                 <button
@@ -91,15 +97,15 @@ export default function CTASection() {
                   disabled={status === "loading"}
                   className="w-full py-3.5 rounded-xl bg-accent text-bg font-semibold text-sm hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {status === "loading" ? "Envoi en cours..." : "Envoyer mon message"}
+                  {status === "loading" ? (t?.sending ?? "Envoi en cours...") : (t?.submit ?? "Envoyer mon message")}
                 </button>
 
                 {status === "error" && (
-                  <p className="text-red-400 text-xs text-center">Une erreur est survenue. Réessayez ou écrivez à contact@pacifikai.com</p>
+                  <p className="text-red-400 text-xs text-center">{t?.error ?? "Une erreur est survenue. Réessayez ou écrivez à contact@pacifikai.com"}</p>
                 )}
 
                 <p className="text-text-dim text-[11px] text-center">
-                  100% gratuit · Sans engagement · Réponse sous 24h
+                  {t?.footer ?? "100% gratuit · Sans engagement · Réponse sous 24h"}
                 </p>
               </form>
             )}

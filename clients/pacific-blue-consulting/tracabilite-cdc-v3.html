@@ -1,0 +1,2676 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDC v3 — Traçabilité Pacific Blue Consulting</title>
+<style>
+/* ===== RESET & VARS ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #0f172a;
+  --navy-800: #162032;
+  --navy-700: #1e293b;
+  --navy-600: #334155;
+  --navy-50: #f0f4fa;
+  --gold: #d4af37;
+  --gold-light: #f5ecd0;
+  --gold-dark: #b8971f;
+  --cream: #faf9f6;
+  --warm: #64748b;
+  --warm-light: #94a3b8;
+  --green: #16a34a;
+  --green-bg: #dcfce7;
+  --orange: #ea580c;
+  --orange-bg: #ffedd5;
+  --red: #dc2626;
+  --red-bg: #fee2e2;
+  --white: #ffffff;
+  --sidebar-w: 280px;
+  --base-url: https://pbc.pacifikai.com;
+}
+
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--navy-50);
+  color: var(--navy);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== LAYOUT ===== */
+.wrapper {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 100vh;
+}
+
+@media (max-width: 1024px) {
+  .wrapper { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 1.5rem 1rem; }
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--navy);
+  padding: 1.5rem 1rem;
+  border-right: 2px solid var(--gold);
+  scrollbar-width: thin;
+  scrollbar-color: var(--navy-600) var(--navy);
+}
+.sidebar::-webkit-scrollbar { width: 5px; }
+.sidebar::-webkit-scrollbar-track { background: var(--navy); }
+.sidebar::-webkit-scrollbar-thumb { background: var(--navy-600); border-radius: 3px; }
+
+.sidebar-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.15rem;
+  line-height: 1.3;
+}
+.sidebar-sub {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.toc-chapter {
+  margin-bottom: 0.6rem;
+}
+.toc-chapter-title {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.2rem;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.toc-chapter-title:hover { color: var(--gold-light); }
+
+.toc-section {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--warm-light);
+  text-decoration: none;
+  padding: 0.15rem 0 0.15rem 0.8rem;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+.toc-section:hover {
+  color: var(--white);
+  border-left-color: var(--gold);
+}
+
+.toc-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 0.6rem 0;
+}
+
+/* ===== MAIN ===== */
+.main {
+  padding: 2.5rem 3rem 4rem;
+  max-width: 960px;
+}
+
+/* ===== COVER ===== */
+.cover {
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 3.5rem 3rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at center, rgba(212,175,55,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cover-pre {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.cover-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.25;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+.cover-subtitle {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.1rem;
+  color: var(--gold);
+  font-style: italic;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.cover-line {
+  width: 80px;
+  height: 2px;
+  background: var(--gold);
+  margin: 0 auto 1.5rem;
+  position: relative;
+}
+.cover-meta {
+  font-size: 0.75rem;
+  color: var(--warm-light);
+  position: relative;
+}
+
+/* ===== STATS BAR ===== */
+.stats-bar {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: var(--navy);
+  border-radius: 8px;
+  align-items: center;
+}
+.stat-item {
+  text-align: center;
+  flex: 1;
+  min-width: 80px;
+}
+.stat-num {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+.stat-num.green { color: #4ade80; }
+.stat-num.orange { color: #fb923c; }
+.stat-num.red { color: #f87171; }
+.stat-label {
+  font-size: 0.6rem;
+  color: var(--warm-light);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.stat-divider {
+  width: 1px;
+  height: 2rem;
+  background: rgba(255,255,255,0.08);
+}
+
+/* ===== CHAPTER HEADERS ===== */
+.chapter-header {
+  margin: 3rem 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid var(--gold);
+}
+.chapter-number {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold-dark);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.chapter-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.3;
+}
+
+/* ===== SECTION HEADERS ===== */
+.section-header {
+  margin: 2rem 0 1rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--gold);
+}
+.section-number {
+  font-size: 0.65rem;
+  color: var(--warm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.section-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+/* ===== REQ TABLE ===== */
+.req-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
+}
+.req-table thead th {
+  background: var(--navy);
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.req-table tbody tr {
+  border-bottom: 1px solid #e8e5de;
+}
+.req-table tbody tr:last-child {
+  border-bottom: none;
+}
+.req-table tbody tr:nth-child(odd) {
+  background: var(--cream);
+}
+.req-table tbody tr:nth-child(even) {
+  background: #ffffff;
+}
+.req-table tbody tr:hover {
+  background: var(--gold-light);
+}
+.req-table td {
+  padding: 0.55rem 0.75rem;
+  vertical-align: top;
+  line-height: 1.5;
+  color: #2d2d2d;
+}
+.req-table td.num {
+  font-weight: 700;
+  color: var(--gold-dark);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  width: 60px;
+}
+.req-table td.exigence {
+  font-weight: 600;
+  color: var(--navy);
+  max-width: 200px;
+}
+.req-table td.spec {
+  color: var(--warm);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+.req-table td.src {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: #475569;
+}
+.req-table td.status {
+  white-space: nowrap;
+}
+
+/* ===== STATUS TAGS ===== */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.tag-conforme {
+  background: var(--green-bg);
+  color: var(--green);
+}
+.tag-attente {
+  background: var(--orange-bg);
+  color: var(--orange);
+}
+.tag-nonconforme {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+/* ===== ANNEXE CARDS ===== */
+.annexe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 700px) { .annexe-grid { grid-template-columns: 1fr; } }
+.annexe-card {
+  background: var(--cream);
+  border: 1px solid #e8e5de;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+.annexe-card-file {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.2rem;
+}
+.annexe-card-usage {
+  font-size: 0.78rem;
+  color: var(--warm);
+  margin-bottom: 0.35rem;
+}
+.annexe-card-placeholder {
+  font-size: 0.7rem;
+  color: var(--orange);
+  font-style: italic;
+}
+.annexe-b-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin-bottom: 1.5rem;
+}
+.annexe-b-table th {
+  background: var(--navy-700);
+  color: var(--warm-light);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.annexe-b-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e8e5de;
+  vertical-align: top;
+}
+.annexe-b-table tr:nth-child(odd) td { background: var(--cream); }
+.annexe-b-table tr:nth-child(even) td { background: #fff; }
+.annexe-b-table td:first-child { font-weight: 600; color: var(--navy); }
+.annexe-b-table td:last-child { color: var(--warm); font-size: 0.78rem; }
+
+/* ===== LINK COLUMN ===== */
+.req-table .link { text-align: center; width: 50px; }
+.req-table .link a {
+  color: var(--gold-dark);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.15s;
+}
+.req-table .link a:hover { color: var(--gold); }
+
+/* ===== PRINT ===== */
+@media print {
+  .sidebar { display: none; }
+  .wrapper { grid-template-columns: 1fr; }
+  .main { padding: 1rem; max-width: 100%; }
+  .cover { background: #fff; border: 2px solid var(--navy); }
+  .cover-title, .cover-pre { color: var(--navy); }
+  .cover-subtitle { color: var(--navy-600); }
+  .stats-bar { background: #f5f5f5; }
+  .stat-num { color: var(--navy); }
+  body { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- ===== SIDEBAR ===== -->
+<nav class="sidebar">
+  <div class="sidebar-title">CDC v3 — PBC</div>
+  <div class="sidebar-sub">Traçabilité Exigences</div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#cover">Couverture & Scores</a>
+  </div>
+
+  <div class="toc-divider"></div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch0">0. Décisions Globales</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch1">1. Page Accueil</a>
+    <a class="toc-section" href="#s1-1">1.1 Hero</a>
+    <a class="toc-section" href="#s1-2">1.2 Territoires</a>
+    <a class="toc-section" href="#s1-3">1.3 Missions Emblématiques</a>
+    <a class="toc-section" href="#s1-4">1.4 Chiffres Clés</a>
+    <a class="toc-section" href="#s1-5">1.5 Pourquoi Nous</a>
+    <a class="toc-section" href="#s1-6">1.6 Clients</a>
+    <a class="toc-section" href="#s1-7">1.7 Partenaires</a>
+    <a class="toc-section" href="#s1-8">1.8 CTA</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch2">2. Page Offres</a>
+    <a class="toc-section" href="#s2-0">2.0 En-tête</a>
+    <a class="toc-section" href="#s2-1">2.1 Mobilités</a>
+    <a class="toc-section" href="#s2-2">2.2 Infrastructures</a>
+    <a class="toc-section" href="#s2-3">2.3 Environnement</a>
+    <a class="toc-section" href="#s2-4">2.4 Transformation</a>
+    <a class="toc-section" href="#s2-5">2.5 CTA</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch3">3. Page Réalisations</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch4">4. Page Le Cabinet</a>
+    <a class="toc-section" href="#s4-1">4.1 Manifeste</a>
+    <a class="toc-section" href="#s4-2">4.2 Portrait Pascal</a>
+    <a class="toc-section" href="#s4-3">4.3 Écosystème</a>
+    <a class="toc-section" href="#s4-4">4.4 Sections Conservées</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch5">5. Page Perspectives</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch6">6. Page Contact</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch7">7. Navigation</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch8">8. Data Layer</a>
+    <a class="toc-section" href="#s8-territories">territories.ts</a>
+    <a class="toc-section" href="#s8-clients">clients.ts</a>
+    <a class="toc-section" href="#s8-missions-embl">missions-emblematiques.ts</a>
+    <a class="toc-section" href="#s8-missions">missions.ts</a>
+  </div>
+
+  <div class="toc-divider"></div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#annexe-a">Annexe A — Photos</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#annexe-b">Annexe B — Contraintes</a>
+  </div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+  <!-- COVER -->
+  <div class="cover" id="cover">
+    <div class="cover-pre">Pacific Blue Consulting — Document interne</div>
+    <h1 class="cover-title">Cahier des Charges v3 — Traçabilité</h1>
+    <div class="cover-subtitle">Pacific Blue Consulting</div>
+    <div class="cover-line"></div>
+    <div class="cover-meta">
+      Avril 2026 &nbsp;·&nbsp; Source : CDC-TECHNIQUE-V3.md &nbsp;·&nbsp;
+      <a href="https://pbc.pacifikai.com" target="_blank" style="color: var(--gold); text-decoration: none;">pbc.pacifikai.com ↗</a>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" id="total-count">—</div>
+      <div class="stat-label">Exigences totales</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num green" id="conforme-count">—</div>
+      <div class="stat-label">Conformes ✅</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num orange" id="attente-count">—</div>
+      <div class="stat-label">En attente ⚠️</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num red" id="nonconforme-count">—</div>
+      <div class="stat-label">Non-conformes ❌</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num" id="score-pct">—</div>
+      <div class="stat-label">Score conformité</div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       0. DÉCISIONS GLOBALES
+  ========================================================= -->
+  <div id="ch0" class="chapter-header">
+    <div class="chapter-number">Chapitre 0</div>
+    <h2 class="chapter-title">Décisions Globales</h2>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Spécification technique</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">0.1</td>
+        <td class="exigence">Variante A (photos originales)</td>
+        <td class="spec">Projet = <code>variante-a-photos-pascal/</code></td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">0.2</td>
+        <td class="exigence">Arborescence : 6 pages</td>
+        <td class="spec">Routes : /, /offres, /realisations, /le-cabinet, /perspectives, /contact</td>
+        <td class="src">src/app/</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">0.3</td>
+        <td class="exigence">❌ Expertise → Offres</td>
+        <td class="spec">src/app/expertise/ supprimé</td>
+        <td class="src">src/app/</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">0.4</td>
+        <td class="exigence">❌ Références → Réalisations</td>
+        <td class="spec">src/app/references/ supprimé</td>
+        <td class="src">src/app/</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">0.5</td>
+        <td class="exigence">❌ À propos → Le Cabinet</td>
+        <td class="spec">src/app/a-propos/ supprimé</td>
+        <td class="src">src/app/</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">0.6</td>
+        <td class="exigence">Balise title</td>
+        <td class="spec">"Pacific Blue Consulting | Architecte de projets complexes dans le Pacifique"</td>
+        <td class="src">layout.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">0.7</td>
+        <td class="exigence">Méta-description</td>
+        <td class="spec">Texte exact CDC dans metadata.description</td>
+        <td class="src">layout.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">0.8</td>
+        <td class="exigence">Footer description</td>
+        <td class="spec">Texte exact CDC dans paragraphe description</td>
+        <td class="src">Footer.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">0.9</td>
+        <td class="exigence">Schema.org ConsultingBusiness</td>
+        <td class="spec">JSON-LD structuré</td>
+        <td class="src">layout.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================
+       1. PAGE ACCUEIL
+  ========================================================= -->
+  <div id="ch1" class="chapter-header">
+    <div class="chapter-number">Chapitre 1</div>
+    <h2 class="chapter-title">Page Accueil</h2>
+  </div>
+
+  <!-- 1.1 Hero -->
+  <div id="s1-1" class="section-header">
+    <div class="section-number">Section 1.1</div>
+    <div class="section-title">Hero</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Contenu exact attendu</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">1.1.1</td>
+        <td class="exigence">Sur-titre</td>
+        <td class="spec">"Cabinet de conseil indépendant - Polynésie française"</td>
+        <td class="src">page.tsx (Hero)</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.1.2</td>
+        <td class="exigence">Titre</td>
+        <td class="spec">"Architecte de projets complexes en milieu insulaire"</td>
+        <td class="src">page.tsx (Hero)</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.1.3</td>
+        <td class="exigence">Sous-titre</td>
+        <td class="spec">"Depuis 2017, Pacific Blue Consulting conçoit, structure et sécurise les projets qui transforment les territoires du Pacifique..."</td>
+        <td class="src">page.tsx (Hero)</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.1.4</td>
+        <td class="exigence">Bouton 1</td>
+        <td class="spec">"Découvrir nos réalisations" → /realisations</td>
+        <td class="src">page.tsx (Hero)</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.1.5</td>
+        <td class="exigence">Bouton 2</td>
+        <td class="spec">"Échanger sur votre projet" → /contact</td>
+        <td class="src">page.tsx (Hero)</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.1.6</td>
+        <td class="exigence">📷 Photo hero</td>
+        <td class="spec">FOTEA.png — vue aérienne atoll depuis avion</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En attente</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 1.2 Territoires -->
+  <div id="s1-2" class="section-header">
+    <div class="section-number">Section 1.2</div>
+    <div class="section-title">Section 4 Territoires</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Contenu exact attendu</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">1.2.1</td>
+        <td class="exigence">Titre section</td>
+        <td class="spec">"Quatre territoires d'intervention, une même exigence"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.2</td>
+        <td class="exigence">Sous-titre section</td>
+        <td class="spec">"Nous intervenons là où la complexité réglementaire, géographique et humaine exige une expertise qui va au-delà du conseil classique."</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.3</td>
+        <td class="exigence">Carte 1 titre</td>
+        <td class="spec">"Mobilités & Transport aérien"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.4</td>
+        <td class="exigence">Carte 1 sous-titre</td>
+        <td class="spec">"Créer, structurer et sécuriser les opérations aériennes"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.5</td>
+        <td class="exigence">Carte 1 description</td>
+        <td class="spec">Texte complet CDC (compagnies aériennes, certification, EASA...)</td>
+        <td class="src">page.tsx / territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.6</td>
+        <td class="exigence">📷 Carte 1</td>
+        <td class="spec">F-OTEA_Bora.JPG</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En attente</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.7</td>
+        <td class="exigence">Carte 2 titre</td>
+        <td class="spec">"Infrastructures & Territoires"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.8</td>
+        <td class="exigence">Carte 2 sous-titre</td>
+        <td class="spec">"Concevoir les plateformes qui connectent les populations"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.9</td>
+        <td class="exigence">Carte 2 description</td>
+        <td class="spec">Texte complet CDC (aéroports, aérodromes, ports...)</td>
+        <td class="src">page.tsx / territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.10</td>
+        <td class="exigence">📷 Carte 2</td>
+        <td class="spec">RGI1.PNG</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En attente</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.11</td>
+        <td class="exigence">Carte 3 titre</td>
+        <td class="spec">"Environnement & Souveraineté"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.12</td>
+        <td class="exigence">Carte 3 sous-titre</td>
+        <td class="spec">"Accompagner la transition écologique et la résilience des territoires"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.13</td>
+        <td class="exigence">Carte 3 description</td>
+        <td class="spec">Texte complet CDC (bilan carbone, biodiversité...)</td>
+        <td class="src">page.tsx / territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.14</td>
+        <td class="exigence">📷 Carte 3</td>
+        <td class="spec">Nuku_Hiva.jpg</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En attente</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.15</td>
+        <td class="exigence">Carte 4 titre</td>
+        <td class="spec">"Transformation & Compétences"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.16</td>
+        <td class="exigence">Carte 4 sous-titre</td>
+        <td class="spec">"Structurer les organisations et développer les talents"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.17</td>
+        <td class="exigence">Carte 4 description</td>
+        <td class="spec">Texte complet CDC (formation cadres, coaching...)</td>
+        <td class="src">page.tsx / territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.18</td>
+        <td class="exigence">📷 Carte 4</td>
+        <td class="spec">À sourcer Unsplash "workshop team whiteboard"</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En attente</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2.19</td>
+        <td class="exigence">Lien cartes</td>
+        <td class="spec">Chaque carte → /offres#{ancre}</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#territoires" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 1.3 Missions Emblématiques -->
+  <div id="s1-3" class="section-header">
+    <div class="section-number">Section 1.3</div>
+    <div class="section-title">Missions Emblématiques (nouvelle section)</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Contenu exact attendu</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">1.3.1</td>
+        <td class="exigence">Position</td>
+        <td class="spec">Entre 4 cartes et "Pourquoi nous"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#missions" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.3.2</td>
+        <td class="exigence">Titre</td>
+        <td class="spec">"Des projets qui ont changé la donne"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#missions" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.3.3</td>
+        <td class="exigence">Sous-titre</td>
+        <td class="spec">"Plus de 60 missions réalisées depuis 2017. En voici quelques-unes qui illustrent notre manière de travailler."</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#missions" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.3.4</td>
+        <td class="exigence">Mission 1 — TNH</td>
+        <td class="spec">[Mobilités] TNH (2017-2018) "Créer un opérateur hélicoptère de A à Z" 📷 TNH.png</td>
+        <td class="src">missions-emblematiques.ts</td>
+        <td class="status"><span class="tag tag-attente">⚠️ Texte ✅ / Photo ⚠️</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#missions" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.3.5</td>
+        <td class="exigence">Mission 2 — Loyauté</td>
+        <td class="spec">[Infrastructures] Province Loyauté (2024-2029) "Accompagnement intégré ports et aéroports" 📷 Aratika.jpg</td>
+        <td class="src">missions-emblematiques.ts</td>
+        <td class="status"><span class="tag tag-attente">⚠️ Texte ✅ / Photo ⚠️</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#missions" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.3.6</td>
+        <td class="exigence">Mission 3 — EISA</td>
+        <td class="spec">[Mobilités] 10 EISA (2024-2025) "Sécuriser les travaux aéroportuaires du Pacifique" 📷 RGI1.PNG</td>
+        <td class="src">missions-emblematiques.ts</td>
+        <td class="status"><span class="tag tag-attente">⚠️ Texte ✅ / Photo ⚠️</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#missions" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.3.7</td>
+        <td class="exigence">Mission 4 — TAVIVAT</td>
+        <td class="spec">[Environnement] TAVIVAT (2025-2030) "Souveraineté alimentaire - piloter la transition" 📷 Taro.jpg</td>
+        <td class="src">missions-emblematiques.ts</td>
+        <td class="status"><span class="tag tag-attente">⚠️ Texte ✅ / Photo ⚠️</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#missions" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.3.8</td>
+        <td class="exigence">Mission 5 — DIREN</td>
+        <td class="spec">[Environnement] DIREN (2021-2023) "Inventer un dispositif de certification" 📷 Nuku_Hiva.jpg</td>
+        <td class="src">missions-emblematiques.ts</td>
+        <td class="status"><span class="tag tag-attente">⚠️ Texte ✅ / Photo ⚠️</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#missions" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.3.9</td>
+        <td class="exigence">Mission 6 — Pacifique Sud</td>
+        <td class="spec">[Mobilités] Pacifique Sud (2025) "Connecter les États insulaires du Pacifique" 📷 RGI3.JPG</td>
+        <td class="src">missions-emblematiques.ts</td>
+        <td class="status"><span class="tag tag-attente">⚠️ Texte ✅ / Photo ⚠️</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#missions" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 1.4 Chiffres Clés -->
+  <div id="s1-4" class="section-header">
+    <div class="section-number">Section 1.4</div>
+    <div class="section-title">Chiffres Clés</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Valeur attendue</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">1.4.1</td>
+        <td class="exigence">❌ "8 Domaines" → "8 Années"</td>
+        <td class="spec">"8 Années d'activité"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#stats" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.4.2</td>
+        <td class="exigence">❌ "3 Territoires" → "4 Territoires"</td>
+        <td class="spec">"4 Territoires du Pacifique"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#stats" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.4.3</td>
+        <td class="exigence">60+ Missions</td>
+        <td class="spec">"60+ Missions"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#stats" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.4.4</td>
+        <td class="exigence">100% Indépendant</td>
+        <td class="spec">"100% Indépendant"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#stats" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 1.5 Pourquoi Nous -->
+  <div id="s1-5" class="section-header">
+    <div class="section-number">Section 1.5</div>
+    <div class="section-title">Section "Pourquoi Nous"</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Spécification</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">1.5.1</td>
+        <td class="exigence">Structure générale conservée</td>
+        <td class="spec">—</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#why-us" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.5.2</td>
+        <td class="exigence">Lien "Découvrir le cabinet"</td>
+        <td class="spec">"Découvrir le cabinet" → /le-cabinet (pas /a-propos)</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#why-us" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 1.6 Clients -->
+  <div id="s1-6" class="section-header">
+    <div class="section-number">Section 1.6</div>
+    <div class="section-title">Bloc Clients</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Spécification technique</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">1.6.1</td>
+        <td class="exigence">Titre</td>
+        <td class="spec">"Ils nous font confiance"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#clients" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.6.2</td>
+        <td class="exigence">Format logos</td>
+        <td class="spec">Logos en grille, PNG fond transparent. Noms en texte si logo indisponible</td>
+        <td class="src">page.tsx / clients.ts</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En cours — logos en téléchargement</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#clients" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.6.3</td>
+        <td class="exigence">INSTITUTIONNELS (10)</td>
+        <td class="spec">DAC-Pf, DGAC/SEAC-Pf, Ministère des Transports, DIREN, DAG, Province des Îles Loyauté, Commune de Moorea, Commune de Hiva Oa, DGEE, Gouvernement PF</td>
+        <td class="src">clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#clients" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.6.4</td>
+        <td class="exigence">COMPAGNIES AÉRIENNES (7)</td>
+        <td class="spec">Air Loyauté, ATN/TNH, Air Bora Bora (City Pf), Islands Airline, IAS, TAC, TASC</td>
+        <td class="src">clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#clients" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.6.5</td>
+        <td class="exigence">GRANDS GROUPES (5)</td>
+        <td class="spec">Vinci Airports, Pacific Beachcomber/Air Tetiaroa, Terciel, Dexios, Etik Pf/AdT</td>
+        <td class="src">clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#clients" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.6.6</td>
+        <td class="exigence">FORMATION (2)</td>
+        <td class="spec">CNAM, HSF</td>
+        <td class="src">clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#clients" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.6.7</td>
+        <td class="exigence">AUTRES (4)</td>
+        <td class="spec">Kroma Prod, SAT (Service Artisanat Traditionnel), TGW, MOZ ULM</td>
+        <td class="src">clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#clients" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 1.7 Partenaires -->
+  <div id="s1-7" class="section-header">
+    <div class="section-number">Section 1.7</div>
+    <div class="section-title">Bloc Partenaires (nouveau)</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Spécification technique</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">1.7.1</td>
+        <td class="exigence">Bloc distinct, visuellement différencié</td>
+        <td class="spec">Section séparée avec bg différent</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#partenaires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.7.2</td>
+        <td class="exigence">Titre</td>
+        <td class="spec">"Nos partenaires"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#partenaires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.7.3</td>
+        <td class="exigence">Sous-titre</td>
+        <td class="spec">"Un réseau d'expertise pour des interventions intégrées"</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#partenaires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.7.4</td>
+        <td class="exigence">12 partenaires</td>
+        <td class="spec">To70, Tamau Conseil, Etik Polynésie, CGX Aero, PenUAS, BIM Pearl, Magis, Birds Conseil, Pacific Sud Survey (PSS), Delta Polynesia, L2L Prévention, Milanamos</td>
+        <td class="src">clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#partenaires" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.7.5</td>
+        <td class="exigence">NB exclusion partenaires</td>
+        <td class="spec">Ironetik, Terciel, TPB, ISS = PAS dans partenaires (sociétés Pascal → Le Cabinet)</td>
+        <td class="src">clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#partenaires" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 1.8 CTA -->
+  <div id="s1-8" class="section-header">
+    <div class="section-number">Section 1.8</div>
+    <div class="section-title">CTA Bas de Page</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Contenu exact attendu</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">1.8.1</td>
+        <td class="exigence">Titre CTA</td>
+        <td class="spec">"Votre prochain projet mérite une conversation."</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#cta" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.8.2</td>
+        <td class="exigence">Sous-titre CTA</td>
+        <td class="spec">"Collectivités, opérateurs aériens, entreprises, porteurs de projets - nous sommes à votre écoute."</td>
+        <td class="src">page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#cta" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.8.3</td>
+        <td class="exigence">📷 Photo CTA</td>
+        <td class="spec">IMG_E8221.JPG — ponton bois vers lagon</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En attente</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/#cta" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================
+       2. PAGE OFFRES
+  ========================================================= -->
+  <div id="ch2" class="chapter-header">
+    <div class="chapter-number">Chapitre 2</div>
+    <h2 class="chapter-title">Page Offres</h2>
+  </div>
+
+  <!-- 2.0 En-tête -->
+  <div id="s2-0" class="section-header">
+    <div class="section-number">Section 2.0</div>
+    <div class="section-title">En-tête</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Contenu exact attendu</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">2.0.1</td>
+        <td class="exigence">URL</td>
+        <td class="spec">/offres</td>
+        <td class="src">src/app/offres/</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.0.2</td>
+        <td class="exigence">Titre</td>
+        <td class="spec">"Nos offres"</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.0.3</td>
+        <td class="exigence">Sous-titre</td>
+        <td class="spec">"Quatre territoires d'intervention, une même promesse : comprendre votre contexte, structurer votre projet, et vous accompagner jusqu'à la mise en œuvre."</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.0.4</td>
+        <td class="exigence">📷 Bandeau</td>
+        <td class="spec">aratika-nouveau-village-vue-avion.jpg</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En attente (bg navy)</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.0.5</td>
+        <td class="exigence">Navigation sticky 4 ancres</td>
+        <td class="spec">#mobilites, #infrastructures, #environnement, #transformation</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.1 Mobilités -->
+  <div id="s2-1" class="section-header">
+    <div class="section-number">Section 2.1</div>
+    <div class="section-title">Mobilités & Transport aérien</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">2.1.1</td>
+        <td class="exigence">Ancre #mobilites</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#mobilites" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.1.2</td>
+        <td class="exigence">Titre "Mobilités & Transport aérien"</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#mobilites" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.1.3</td>
+        <td class="exigence">Sous-titre "Créer, structurer et sécuriser les opérations aériennes"</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#mobilites" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.1.4</td>
+        <td class="exigence">Notre approche — 3 paragraphes EXACTS</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#mobilites" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.1.5</td>
+        <td class="exigence">Ce que cela couvre — 11 items EXACTS</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#mobilites" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.1.6</td>
+        <td class="exigence">Focus EISA et Sûreté — 3 paragraphes EXACTS</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#mobilites" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.1.7</td>
+        <td class="exigence">Missions clés — 10 missions EXACTES</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#mobilites" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.1.8</td>
+        <td class="exigence">Résultat pour vous — texte EXACT CDC</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#mobilites" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.2 Infrastructures -->
+  <div id="s2-2" class="section-header">
+    <div class="section-number">Section 2.2</div>
+    <div class="section-title">Infrastructures & Territoires</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">2.2.1</td>
+        <td class="exigence">Ancre #infrastructures</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#infrastructures" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.2.2</td>
+        <td class="exigence">Titre "Infrastructures & Territoires"</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#infrastructures" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.2.3</td>
+        <td class="exigence">Sous-titre "Concevoir les plateformes qui connectent les populations"</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#infrastructures" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.2.4</td>
+        <td class="exigence">Notre approche — 2 paragraphes EXACTS</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#infrastructures" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.2.5</td>
+        <td class="exigence">❌ PAS de "Ce que cela couvre"</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#infrastructures" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.2.6</td>
+        <td class="exigence">❌ PAS de "Focus"</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#infrastructures" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.2.7</td>
+        <td class="exigence">Missions clés — 7 missions EXACTES</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#infrastructures" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.2.8</td>
+        <td class="exigence">❌ PAS de "Résultat pour vous"</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#infrastructures" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.3 Environnement -->
+  <div id="s2-3" class="section-header">
+    <div class="section-number">Section 2.3</div>
+    <div class="section-title">Environnement & Souveraineté</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">2.3.1</td>
+        <td class="exigence">Ancre #environnement</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#environnement" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.3.2</td>
+        <td class="exigence">Titre "Environnement & Souveraineté"</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#environnement" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.3.3</td>
+        <td class="exigence">Sous-titre "Accompagner la transition écologique et la résilience des territoires"</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#environnement" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.3.4</td>
+        <td class="exigence">Notre approche — 2 paragraphes EXACTS</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#environnement" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.3.5</td>
+        <td class="exigence">❌ PAS de "Ce que cela couvre"</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#environnement" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.3.6</td>
+        <td class="exigence">❌ PAS de "Focus"</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#environnement" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.3.7</td>
+        <td class="exigence">Missions clés — 6 missions EXACTES</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#environnement" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.3.8</td>
+        <td class="exigence">❌ PAS de "Résultat pour vous"</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#environnement" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.4 Transformation -->
+  <div id="s2-4" class="section-header">
+    <div class="section-number">Section 2.4</div>
+    <div class="section-title">Transformation & Compétences</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">2.4.1</td>
+        <td class="exigence">Ancre #transformation</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#transformation" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.4.2</td>
+        <td class="exigence">Titre "Transformation & Compétences"</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#transformation" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.4.3</td>
+        <td class="exigence">Sous-titre "Structurer les organisations et développer les talents"</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#transformation" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.4.4</td>
+        <td class="exigence">Notre approche — 2 paragraphes EXACTS</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#transformation" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.4.5</td>
+        <td class="exigence">❌ PAS de "Ce que cela couvre"</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#transformation" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.4.6</td>
+        <td class="exigence">❌ PAS de "Focus"</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#transformation" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.4.7</td>
+        <td class="exigence">Missions clés — 5 missions EXACTES</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#transformation" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.4.8</td>
+        <td class="exigence">Résultat pour vous — texte EXACT CDC</td>
+        <td class="src">territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres#transformation" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.5 CTA -->
+  <div id="s2-5" class="section-header">
+    <div class="section-number">Section 2.5</div>
+    <div class="section-title">CTA Fin de Page Offres</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Contenu exact attendu</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">2.5.1</td>
+        <td class="exigence">Phrase 1</td>
+        <td class="spec">"Vous avez un projet dans ce domaine ? Parlons-en."</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.5.2</td>
+        <td class="exigence">Phrase 2</td>
+        <td class="spec">"Chaque contexte est unique - notre première contribution est de vous aider à le clarifier."</td>
+        <td class="src">offres/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/offres" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================
+       3. PAGE RÉALISATIONS
+  ========================================================= -->
+  <div id="ch3" class="chapter-header">
+    <div class="chapter-number">Chapitre 3</div>
+    <h2 class="chapter-title">Page Réalisations</h2>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Spécification technique</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">3.1</td>
+        <td class="exigence">URL</td>
+        <td class="spec">/realisations</td>
+        <td class="src">src/app/realisations/</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.2</td>
+        <td class="exigence">Titre</td>
+        <td class="spec">"Nos réalisations"</td>
+        <td class="src">realisations/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.3</td>
+        <td class="exigence">Sous-titre</td>
+        <td class="spec">"Plus de 60 missions réalisées en Polynésie française, Nouvelle-Calédonie et dans le Pacifique. Des projets concrets, des résultats mesurables."</td>
+        <td class="src">realisations/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.4</td>
+        <td class="exigence">📷 Bandeau</td>
+        <td class="spec">RGI3.JPG — passe d'atoll</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En attente (bg navy)</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.5</td>
+        <td class="exigence">NIVEAU 1 : Success Stories</td>
+        <td class="spec">5-6 success stories (textes à venir) → placeholder "À venir"</td>
+        <td class="src">realisations/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.6</td>
+        <td class="exigence">NIVEAU 2 : Liste complète 61+ missions</td>
+        <td class="spec">Format existant conservé — 67 missions</td>
+        <td class="src">missions.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.7</td>
+        <td class="exigence">Filtres par catégorie</td>
+        <td class="spec">Filtre par domaine conservé</td>
+        <td class="src">realisations/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.8</td>
+        <td class="exigence">Filtre par territoire géographique</td>
+        <td class="spec">PF, NC, Pacifique Sud, Wallis-Futuna</td>
+        <td class="src">realisations/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.9</td>
+        <td class="exigence">Nouveaux clients/missions</td>
+        <td class="spec">Commune Moorea, Etik/AdT, HSF, IAS, Kroma Prod, Commune Hiva Oa</td>
+        <td class="src">missions.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.10</td>
+        <td class="exigence">CTA</td>
+        <td class="spec">"Votre projet pourrait être le prochain. Discutons de vos enjeux et construisons ensemble."</td>
+        <td class="src">realisations/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/realisations" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================
+       4. PAGE LE CABINET
+  ========================================================= -->
+  <div id="ch4" class="chapter-header">
+    <div class="chapter-number">Chapitre 4</div>
+    <h2 class="chapter-title">Page Le Cabinet</h2>
+  </div>
+
+  <!-- 4.1 Manifeste -->
+  <div id="s4-1" class="section-header">
+    <div class="section-number">Section 4.1</div>
+    <div class="section-title">Manifeste PBC (nouveau)</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Spécification technique</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">4.1.1</td>
+        <td class="exigence">Position</td>
+        <td class="spec">Avant le portrait, premier contenu</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.1.2</td>
+        <td class="exigence">Style</td>
+        <td class="spec">Pleine largeur, Georgia, espacement généreux (line-height: 1.85)</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.1.3</td>
+        <td class="exigence">Paragraphe 1</td>
+        <td class="spec">"Dans un territoire où chaque île est un monde..."</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.1.4</td>
+        <td class="exigence">Paragraphe 2</td>
+        <td class="spec">"Pacific Blue Consulting est né de cette conviction..."</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.1.5</td>
+        <td class="exigence">Paragraphe 3</td>
+        <td class="spec">"Depuis 2017, nous créons des compagnies aériennes..."</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.1.6</td>
+        <td class="exigence">Paragraphe 4</td>
+        <td class="spec">"Notre méthode n'a rien de mystérieux..."</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.1.7</td>
+        <td class="exigence">Paragraphe 5</td>
+        <td class="spec">"Aucun de nos projets ne repart jamais de zéro..."</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 4.2 Portrait Pascal -->
+  <div id="s4-2" class="section-header">
+    <div class="section-number">Section 4.2</div>
+    <div class="section-title">Portrait Pascal (remplacé)</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Spécification technique</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">4.2.1</td>
+        <td class="exigence">❌ Ancien texte supprimé</td>
+        <td class="spec">Supprimé</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.2.2</td>
+        <td class="exigence">Paragraphe 1</td>
+        <td class="spec">"Trente années dans l'aviation civile..." (CNES, DGAC, EGNOS, DAC-Pf, 43 aéroports, TSA)</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.2.3</td>
+        <td class="exigence">Paragraphe 2</td>
+        <td class="spec">"De ce parcours, Pascal a tiré une conviction..."</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.2.4</td>
+        <td class="exigence">Paragraphe 3</td>
+        <td class="spec">"Titulaire d'une qualification EASA Form-4..." (10 EISA)</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.2.5</td>
+        <td class="exigence">Paragraphe 4</td>
+        <td class="spec">"Chevalier de l'Ordre National du Mérite..." (Terciel, Ironetik, ISS)</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.2.6</td>
+        <td class="exigence">Paragraphe 5</td>
+        <td class="spec">"Télépilote qualifié..."</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.2.7</td>
+        <td class="exigence">Citation</td>
+        <td class="spec">"« Je conçois le conseil comme un levier de montée en compétences... »"</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.2.8</td>
+        <td class="exigence">Style citation</td>
+        <td class="spec">Encadré, border-left gold</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.2.9</td>
+        <td class="exigence">📷 Portrait Pascal</td>
+        <td class="spec">Nouvelle photo pro (à organiser). En attendant : photo actuelle pascal-fondateur.jpg</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 4.3 Écosystème -->
+  <div id="s4-3" class="section-header">
+    <div class="section-number">Section 4.3</div>
+    <div class="section-title">Écosystème (remplacé)</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Spécification technique</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">4.3.1</td>
+        <td class="exigence">Titre</td>
+        <td class="spec">"Un interlocuteur unique, un réseau d'experts mobilisables"</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.3.2</td>
+        <td class="exigence">Texte intro</td>
+        <td class="spec">"Pacific Blue Consulting est votre interlocuteur unique..."</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.3.3</td>
+        <td class="exigence">Ironetik</td>
+        <td class="spec">"Laboratoire d'essai et expertise technique"</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.3.4</td>
+        <td class="exigence">Terciel</td>
+        <td class="spec">"Aéroports bleus entièrement flottants - Prix « Or Bleu » 2023"</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.3.5</td>
+        <td class="exigence">ISS</td>
+        <td class="spec">"Gestion de projets d'infrastructures publiques"</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 4.4 Sections Conservées -->
+  <div id="s4-4" class="section-header">
+    <div class="section-number">Section 4.4</div>
+    <div class="section-title">Sections Conservées</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">4.4.1</td>
+        <td class="exigence">Timeline conservée</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.4.2</td>
+        <td class="exigence">Coquillage conservé</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.4.3</td>
+        <td class="exigence">Zones d'intervention (SVG map + 4 zones)</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.4.4</td>
+        <td class="exigence">Impact territorial (4 cartes)</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.4.5</td>
+        <td class="exigence">Ce que PBC apporte (restauré — 2 paragraphes)</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.4.6</td>
+        <td class="exigence">Mentions légales (SAS, capital, PK, N° Tahiti)</td>
+        <td class="src">le-cabinet/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/le-cabinet" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================
+       5. PAGE PERSPECTIVES
+  ========================================================= -->
+  <div id="ch5" class="chapter-header">
+    <div class="chapter-number">Chapitre 5</div>
+    <h2 class="chapter-title">Page Perspectives</h2>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Contenu exact attendu</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">5.1</td>
+        <td class="exigence">URL</td>
+        <td class="spec">/perspectives</td>
+        <td class="src">src/app/perspectives/</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/perspectives" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.2</td>
+        <td class="exigence">Titre</td>
+        <td class="spec">"Perspectives"</td>
+        <td class="src">perspectives/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/perspectives" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.3</td>
+        <td class="exigence">Sous-titre</td>
+        <td class="spec">"Analyses, notes de position et réflexions sur les sujets que nous connaissons - pour alimenter le débat et éclairer les décisions."</td>
+        <td class="src">perspectives/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/perspectives" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.4</td>
+        <td class="exigence">Sujet 1</td>
+        <td class="spec">"L'avenir de la desserte inter-îles : scénarios 2030"</td>
+        <td class="src">perspectives/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/perspectives" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.5</td>
+        <td class="exigence">Sujet 2</td>
+        <td class="spec">"Drones civils dans le Pacifique"</td>
+        <td class="src">perspectives/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/perspectives" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.6</td>
+        <td class="exigence">Sujet 3</td>
+        <td class="spec">"EISA : retour d'expérience sur la sécurisation des travaux aéroportuaires"</td>
+        <td class="src">perspectives/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/perspectives" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.7</td>
+        <td class="exigence">Sujet 4</td>
+        <td class="spec">"Sécurité et sûreté : vers une approche intégrée des risques"</td>
+        <td class="src">perspectives/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/perspectives" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.8</td>
+        <td class="exigence">Sujet 5</td>
+        <td class="spec">"Vivriers locaux et souveraineté alimentaire"</td>
+        <td class="src">perspectives/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/perspectives" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.9</td>
+        <td class="exigence">Format</td>
+        <td class="spec">Page statique, badge "À venir" sur chaque sujet</td>
+        <td class="src">perspectives/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/perspectives" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================
+       6. PAGE CONTACT
+  ========================================================= -->
+  <div id="ch6" class="chapter-header">
+    <div class="chapter-number">Chapitre 6</div>
+    <h2 class="chapter-title">Page Contact</h2>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Contenu exact attendu</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">6.1</td>
+        <td class="exigence">Structure générale conservée</td>
+        <td class="spec">Formulaire + sidebar coordonnées</td>
+        <td class="src">contact/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/contact" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">6.2</td>
+        <td class="exigence">Titre</td>
+        <td class="spec">"Parlons de votre projet"</td>
+        <td class="src">contact/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/contact" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">6.3</td>
+        <td class="exigence">Sous-titre</td>
+        <td class="spec">"Une question, un appel d'offres, une idée à explorer - nous sommes à votre écoute. Premier échange sans engagement."</td>
+        <td class="src">contact/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/contact" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">6.4</td>
+        <td class="exigence">Menu déroulant domaines</td>
+        <td class="spec">Mobilités & Transport aérien, Infrastructures & Territoires, Environnement & Souveraineté, Transformation & Compétences, Autre</td>
+        <td class="src">contact/page.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/contact" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">6.5</td>
+        <td class="exigence">📷 Bandeau</td>
+        <td class="spec">BN2T_TOA-2.jpg — avion Tetiaroa avec cocotiers</td>
+        <td class="src">public/images/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En attente (air-tetiaroa.jpg)</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/contact" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================
+       7. NAVIGATION
+  ========================================================= -->
+  <div id="ch7" class="chapter-header">
+    <div class="chapter-number">Chapitre 7</div>
+    <h2 class="chapter-title">Navigation</h2>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Exigence CDC</th>
+        <th>Spécification technique</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+        <th>Voir</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">7.1</td>
+        <td class="exigence">❌ Mega-menu 8 sous-items supprimé</td>
+        <td class="spec">Supprimé</td>
+        <td class="src">Header.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">7.2</td>
+        <td class="exigence">Menu Offres — 4 items</td>
+        <td class="spec">Mobilités, Infrastructures, Environnement, Transformation</td>
+        <td class="src">Header.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">7.3</td>
+        <td class="exigence">❌ "A propos" → "Le Cabinet"</td>
+        <td class="spec">Renommé dans le menu</td>
+        <td class="src">Header.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">7.4</td>
+        <td class="exigence">"Perspectives" ajouté au menu</td>
+        <td class="spec">Nouvel item de navigation</td>
+        <td class="src">Header.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">7.5</td>
+        <td class="exigence">"Nous contacter" CTA conservé</td>
+        <td class="spec">Bouton CTA → /contact</td>
+        <td class="src">Header.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">7.6</td>
+        <td class="exigence">Mega-menu left panel</td>
+        <td class="spec">"4 territoires au service du Pacifique"</td>
+        <td class="src">Header.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">7.7</td>
+        <td class="exigence">Menu mobile</td>
+        <td class="spec">Même structure simplifiée avec accordéons</td>
+        <td class="src">Header.tsx</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+        <td class="link"><a href="https://pbc.pacifikai.com/" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================
+       8. DATA LAYER
+  ========================================================= -->
+  <div id="ch8" class="chapter-header">
+    <div class="chapter-number">Chapitre 8</div>
+    <h2 class="chapter-title">Data Layer</h2>
+  </div>
+
+  <!-- territories.ts -->
+  <div id="s8-territories" class="section-header">
+    <div class="section-number">Section 8 — territories.ts</div>
+    <div class="section-title">Vérifications territories.ts</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Vérification</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">8.1</td>
+        <td class="exigence">4 territoires (mobilites, infrastructures, environnement, transformation)</td>
+        <td class="src">src/data/territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.2</td>
+        <td class="exigence">Mobilités : approach (3 para) + coverage (11 items) + focus (3 para) + missions (10) + result</td>
+        <td class="src">src/data/territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.3</td>
+        <td class="exigence">Infrastructures : approach (2 para) + missions (7). PAS de coverage, PAS de focus, PAS de result</td>
+        <td class="src">src/data/territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.4</td>
+        <td class="exigence">Environnement : approach (2 para) + missions (6). PAS de coverage, PAS de focus, PAS de result</td>
+        <td class="src">src/data/territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.5</td>
+        <td class="exigence">Transformation : approach (2 para) + missions (5) + result. PAS de coverage, PAS de focus</td>
+        <td class="src">src/data/territories.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- clients.ts -->
+  <div id="s8-clients" class="section-header">
+    <div class="section-number">Section 8 — clients.ts</div>
+    <div class="section-title">Vérifications clients.ts</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Vérification</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">8.6</td>
+        <td class="exigence">5 catégories : institutionnels, compagnies, grands-groupes, formation, autres</td>
+        <td class="src">src/data/clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.7</td>
+        <td class="exigence">28 clients total (10+7+5+2+4)</td>
+        <td class="src">src/data/clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.8</td>
+        <td class="exigence">12 partenaires</td>
+        <td class="src">src/data/clients.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.9</td>
+        <td class="exigence">Logos PNG fond transparent pour clients</td>
+        <td class="src">public/images/logos/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En cours</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.10</td>
+        <td class="exigence">Logos PNG fond transparent pour partenaires</td>
+        <td class="src">public/images/logos/</td>
+        <td class="status"><span class="tag tag-attente">⚠️ En cours</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.11</td>
+        <td class="exigence">Fallback texte si logo indisponible</td>
+        <td class="src">src/data/clients.ts + composants</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- missions-emblematiques.ts -->
+  <div id="s8-missions-embl" class="section-header">
+    <div class="section-number">Section 8 — missions-emblematiques.ts</div>
+    <div class="section-title">Vérifications missions-emblematiques.ts</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Vérification</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">8.12</td>
+        <td class="exigence">6 missions avec territory tag</td>
+        <td class="src">src/data/missions-emblematiques.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.13</td>
+        <td class="exigence">Titres EXACTS du CDC</td>
+        <td class="src">src/data/missions-emblematiques.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- missions.ts -->
+  <div id="s8-missions" class="section-header">
+    <div class="section-number">Section 8 — missions.ts</div>
+    <div class="section-title">Vérifications missions.ts</div>
+  </div>
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Vérification</th>
+        <th>Fichier source</th>
+        <th>Statut</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="num">8.14</td>
+        <td class="exigence">67+ missions totales</td>
+        <td class="src">src/data/missions.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.15</td>
+        <td class="exigence">Filtre par domaine</td>
+        <td class="src">src/data/missions.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.16</td>
+        <td class="exigence">Filtre par territoire géographique</td>
+        <td class="src">src/data/missions.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+      <tr>
+        <td class="num">8.17</td>
+        <td class="exigence">Nouveaux clients ajoutés</td>
+        <td class="src">src/data/missions.ts</td>
+        <td class="status"><span class="tag tag-conforme">✅ Conforme</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- =========================================================
+       ANNEXE A — PHOTOS
+  ========================================================= -->
+  <div id="annexe-a" class="chapter-header">
+    <div class="chapter-number">Annexe A</div>
+    <h2 class="chapter-title">Photos Attendues (non reçues)</h2>
+  </div>
+
+  <div class="annexe-grid">
+    <div class="annexe-card">
+      <div class="annexe-card-file">FOTEA.png</div>
+      <div class="annexe-card-usage">Hero accueil</div>
+      <div class="annexe-card-placeholder">Placeholder : istock-531907847.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">F-OTEA_Bora.JPG</div>
+      <div class="annexe-card-usage">Carte Mobilités (accueil)</div>
+      <div class="annexe-card-placeholder">Placeholder : pbc-cockpit.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">RGI1.PNG</div>
+      <div class="annexe-card-usage">Carte Infrastructures + Mission EISA</div>
+      <div class="annexe-card-placeholder">Placeholder : pbc-aeroport.jpg / drone-pf-1.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">Nuku_Hiva.jpg</div>
+      <div class="annexe-card-usage">Carte Environnement + Mission DIREN</div>
+      <div class="annexe-card-placeholder">Placeholder : pbc-foret.jpg / pbc-corail.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">TNH.png</div>
+      <div class="annexe-card-usage">Mission emblématique TNH</div>
+      <div class="annexe-card-placeholder">Placeholder : istock-1141905690.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">Aratika.jpg</div>
+      <div class="annexe-card-usage">Mission emblématique Loyauté</div>
+      <div class="annexe-card-placeholder">Placeholder : istock-1321897221.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">Taro.jpg</div>
+      <div class="annexe-card-usage">Mission emblématique TAVIVAT</div>
+      <div class="annexe-card-placeholder">Placeholder : drone-pf-3.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">RGI3.JPG</div>
+      <div class="annexe-card-usage">Mission Pacifique Sud + Bandeau Réalisations</div>
+      <div class="annexe-card-placeholder">Placeholder : pbc-hero.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">IMG_E8221.JPG</div>
+      <div class="annexe-card-usage">CTA bas de page accueil</div>
+      <div class="annexe-card-placeholder">Placeholder : istock-975717824.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">BN2T_TOA-2.jpg</div>
+      <div class="annexe-card-usage">Bandeau page Contact</div>
+      <div class="annexe-card-placeholder">Placeholder : air-tetiaroa.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">aratika-nouveau-village-vue-avion.jpg</div>
+      <div class="annexe-card-usage">Bandeau page Offres</div>
+      <div class="annexe-card-placeholder">Placeholder : bg navy (pas d'image)</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">Unsplash workshop team whiteboard</div>
+      <div class="annexe-card-usage">Carte Transformation (accueil)</div>
+      <div class="annexe-card-placeholder">Placeholder : pbc-consulting.jpg</div>
+    </div>
+    <div class="annexe-card">
+      <div class="annexe-card-file">Portrait pro Pascal (nouvelle photo)</div>
+      <div class="annexe-card-usage">Page Le Cabinet</div>
+      <div class="annexe-card-placeholder">En place : pascal-fondateur.jpg (photo actuelle)</div>
+    </div>
+  </div>
+
+  <p style="font-size:0.8rem; color: var(--orange); padding: 0.75rem 1rem; background: var(--orange-bg); border-radius: 6px; margin-bottom: 2rem;">
+    <strong>Action requise :</strong> quand Pascal envoie les photos, remplacer chaque placeholder par le bon fichier dans <code>/public/images/</code>. Puis re-valider les exigences ⚠️ correspondantes.
+  </p>
+
+  <!-- =========================================================
+       ANNEXE B — CONTRAINTES TECHNIQUES
+  ========================================================= -->
+  <div id="annexe-b" class="chapter-header">
+    <div class="chapter-number">Annexe B</div>
+    <h2 class="chapter-title">Contraintes Techniques</h2>
+  </div>
+
+  <table class="annexe-b-table">
+    <thead>
+      <tr>
+        <th>Règle</th>
+        <th>Détail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Aucune photo dupliquée</td>
+        <td>Chaque image unique sur le site (vérifié)</td>
+      </tr>
+      <tr>
+        <td>Textes fond beige = copier-coller</td>
+        <td>Tous les textes marqués "fond beige" dans le CDC sont reproduits EXACTEMENT</td>
+      </tr>
+      <tr>
+        <td>Logos PNG fond transparent</td>
+        <td>Grille clients + grille partenaires</td>
+      </tr>
+      <tr>
+        <td>Noms en texte si logo indisponible</td>
+        <td>Fallback dans le composant Image/texte</td>
+      </tr>
+      <tr>
+        <td>Build TypeScript clean</td>
+        <td><code>npm run build</code> → 0 erreur</td>
+      </tr>
+      <tr>
+        <td>Toutes routes 200</td>
+        <td>Smoke test 6/6 routes</td>
+      </tr>
+      <tr>
+        <td>Pas de deploy prod</td>
+        <td>Preview Vercel uniquement en attendant validation client</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pied de page -->
+  <div style="margin-top: 3rem; padding: 1.5rem; background: var(--navy); border-radius: 8px; text-align: center;">
+    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 0.5rem;">Pacific Blue Consulting</div>
+    <div style="font-size: 0.75rem; color: var(--warm-light);">
+      CDC v3 — Traçabilité technique &nbsp;·&nbsp; Dernière vérification : 2026-04-06 &nbsp;·&nbsp; Branch : pbc-cdc-v3 &nbsp;·&nbsp;
+      <a href="https://pbc.pacifikai.com" target="_blank" style="color: var(--gold); text-decoration: none;">pbc.pacifikai.com ↗</a>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+// Comptage automatique des statuts
+document.addEventListener('DOMContentLoaded', () => {
+  const tags = document.querySelectorAll('.tag');
+  let conforme = 0, attente = 0, nonconforme = 0;
+
+  tags.forEach(tag => {
+    const txt = tag.textContent.trim();
+    if (tag.classList.contains('tag-conforme')) conforme++;
+    else if (tag.classList.contains('tag-attente')) attente++;
+    else if (tag.classList.contains('tag-nonconforme')) nonconforme++;
+  });
+
+  const total = conforme + attente + nonconforme;
+  const pct = total > 0 ? Math.round((conforme / total) * 100) : 0;
+
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('conforme-count').textContent = conforme;
+  document.getElementById('attente-count').textContent = attente;
+  document.getElementById('nonconforme-count').textContent = nonconforme;
+  document.getElementById('score-pct').textContent = pct + '%';
+});
+</script>
+</body>
+</html>

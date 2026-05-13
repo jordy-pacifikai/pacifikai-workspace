@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 import ExpertisePage from "@/components/ui/ExpertisePage";
 import ChatbotVisual from "@/components/ui/expertise-visuals/ChatbotVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "IA Conversationnelle 24/7 | PACIFIK'AI",
   description:
     "Nous concevons des assistants IA qui comprennent le contexte, parlent plusieurs langues et s'integrent nativement a WhatsApp, Messenger et votre site. Une intelligence qui convertit, pas un simple chatbot.",
+  alternates: {
+    canonical: "https://pacifikai.com/expertise/chatbots-ia",
+  },
+  openGraph: {
+    title: "IA Conversationnelle 24/7 | PACIFIK'AI",
+    description: "Assistants IA multi-canal pour entreprises en Polynesie francaise.",
+    url: "https://pacifikai.com/expertise/chatbots-ia",
+    locale: "fr_PF",
+    type: "website",
+  },
 };
 
 const competencies = [
@@ -150,7 +161,10 @@ const useCases = [
 
 export default function ChatbotsIAPage() {
   return (
-    <ExpertisePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("IA Conversationnelle 24/7", "Nous concevons des assistants IA qui comprennent le contexte, parlent plusieurs langues et s integrent nativement a WhatsApp, Messenger et votre site.", "https://pacifikai.com/expertise/chatbots-ia")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Expertise", url: "https://pacifikai.com/expertise" }, { name: "IA Conversationnelle 24/7", url: "https://pacifikai.com/expertise/chatbots-ia" }])) }} />
+      <ExpertisePage
       accentColor="accent"
       badge="IA conversationnelle multi-canal"
       title="IA Conversationnelle"
@@ -166,5 +180,6 @@ export default function ChatbotsIAPage() {
       ctaTitle="Votre assistant IA, pret en 7 jours"
       ctaSubtitle="De la conception au deploiement, on s'occupe de tout. Vous n'avez qu'a valider."
     />
+    </>
   );
 }

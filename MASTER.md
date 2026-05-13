@@ -267,7 +267,7 @@ PACIFIK'AI/
 ├── .claude-plugin/
 │   └── plugin.json
 │
-├── n8n-framework/
+├── content-production/
 │   ├── docs/
 │   └── skills/
 │
@@ -343,8 +343,8 @@ PACIFIK'AI/
 | Stratégie Facebook | [marketing/FACEBOOK_STRATEGY.md](marketing/FACEBOOK_STRATEGY.md) |
 | **Facebook Graph API** | [marketing/FACEBOOK_API.md](marketing/FACEBOOK_API.md) |
 | Posts Facebook Semaine 1 | [marketing/content/semaine-1-posts.md](marketing/content/semaine-1-posts.md) |
-| Créer workflow n8n | [n8n-framework/CLAUDE.md](n8n-framework/CLAUDE.md) |
-| Patterns n8n | [n8n-framework/docs/WORKFLOW_PATTERNS.md](n8n-framework/docs/WORKFLOW_PATTERNS.md) |
+| Créer workflow n8n | [content-production/CLAUDE.md](content-production/CLAUDE.md) |
+| Patterns n8n | [content-production/docs/WORKFLOW_PATTERNS.md](content-production/docs/WORKFLOW_PATTERNS.md) |
 
 ---
 

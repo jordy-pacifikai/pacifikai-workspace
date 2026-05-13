@@ -3,6 +3,7 @@
 import { useRef, useCallback } from "react";
 import SectionReveal from "@/components/effects/SectionReveal";
 import CardStack from "@/components/ui/CardStack";
+import { useT } from "@/lib/i18n/useT";
 import {
   FKDashboard, FKLandingPage, FKEcommerce, FKBookingApp, FKMapApp,
   FKWhatsApp, FKWorkflow, FKEmailAuto, FKAnalytics,
@@ -178,24 +179,45 @@ function BentoTile({ service }: { service: typeof SERVICES[number] }) {
 }
 
 export default function ServicesSection() {
+  const t = useT("services");
+
+  // Overlay TY translations on top of FR services data
+  const services = t
+    ? SERVICES.map((s, i) => {
+        const tc = t.cards[i];
+        if (!tc) return s;
+        return {
+          ...s,
+          title: tc.title,
+          description: tc.description,
+          why: tc.why,
+          whyPoints: tc.whyPoints,
+          links: s.links.map((l, j) => ({ ...l, label: tc.links[j] ?? l.label })),
+        };
+      })
+    : SERVICES;
+
   return (
     <section id="services" className="section-padding">
       <div className="max-w-7xl mx-auto">
         <SectionReveal>
           <div className="text-center mb-16 reveal-child">
             <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-4">
-              Nos expertises
+              {t?.label ?? "Nos expertises"}
             </p>
             <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-tight">
-              Tout ce qu&apos;il faut pour{" "}
-              <span className="gradient-text-coral">digitaliser</span> votre entreprise
+              {t ? (
+                <>{t.title}{" "}<span className="gradient-text-coral">{t.titleHighlight}</span> {t.titleEnd}</>
+              ) : (
+                <>Tout ce qu&apos;il faut pour{" "}<span className="gradient-text-coral">digitaliser</span> votre entreprise</>
+              )}
             </h2>
           </div>
         </SectionReveal>
 
         <SectionReveal stagger={0.15}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
-            {SERVICES.map((service, i) => (
+            {services.map((service, i) => (
               <div key={i} className={`reveal-child flex ${i === 2 ? "md:col-span-2 lg:col-span-1" : ""}`}>
                 <BentoTile service={service} />
               </div>

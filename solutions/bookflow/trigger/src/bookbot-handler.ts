@@ -3,6 +3,7 @@ import { z } from "zod";
 import { loadOrCreateSession, loadBusinessConfig } from "./lib/supabase.js";
 import { runBookingAgent } from "./lib/agent.js";
 import { sendWhatsApp, sendWhatsAppButtons, sendWhatsAppList, markAsRead, sendTypingIndicator, supportsInteractive } from "./lib/whatsapp.js";
+import { checkBusinessReadiness, notReadyMessage } from "./lib/readiness.js";
 import type { BusinessConfig } from "./lib/config.js";
 
 import { supaHeaders } from "./lib/supabase-headers.js";
@@ -184,6 +185,18 @@ export const bookbotHandler = schemaTask({
       return { error: "business_not_found" };
     }
 
+    // Check business readiness (blocks AI if missing essential data)
+    const readiness = await checkBusinessReadiness(config);
+    if (!readiness.ready) {
+      logger.warn("Business not ready for AI", {
+        businessId: payload.businessId,
+        missing: readiness.missing,
+      });
+      const msg = notReadyMessage(config.businessName, readiness.missing);
+      await sendWhatsApp(payload.from, msg, config, payload.pageAccessToken);
+      return { error: "not_ready", missing: readiness.missing };
+    }
+
     // Mark incoming message as read (blue checks) + show typing indicator
     if (payload.messageId && payload.channel === "whatsapp") {
       await markAsRead(payload.messageId, config);
@@ -272,15 +285,24 @@ export const bookbotHandler = schemaTask({
       return { reply: fallback, previousState: session.state, quota, error: "empty_reply" };
     }
 
+    // Determine reply address:
+    // For bridge_messenger with a sender PSID, use Graph API (messenger_PSID) instead of bridge cookie route
+    let replyTo = payload.from;
+    let replyPageToken = payload.pageAccessToken;
+    if (payload.channel === "bridge_messenger" && payload.bridgeSenderId) {
+      replyTo = `messenger_${payload.bridgeSenderId}`;
+      // pageAccessToken not in payload for bridge — sendViaMessenger fetches from DB
+    }
+
     // Send reply with interactive elements when possible (WhatsApp only)
-    const channel = supportsInteractive(payload.from);
+    const channel = supportsInteractive(replyTo);
     if (channel === "whatsapp") {
-      const sent = await trySendInteractive(payload.from, reply, config);
+      const sent = await trySendInteractive(replyTo, reply, config);
       if (!sent) {
-        await sendWhatsApp(payload.from, reply, config, payload.pageAccessToken);
+        await sendWhatsApp(replyTo, reply, config, replyPageToken);
       }
     } else {
-      await sendWhatsApp(payload.from, reply, config, payload.pageAccessToken);
+      await sendWhatsApp(replyTo, reply, config, replyPageToken);
     }
 
     return { reply, previousState: session.state, quota };

@@ -8,7 +8,7 @@ PACIFIKAI_DIR="/Users/jordybanks/Documents/PACIFIKAI/Argentic Workflows/PACIFIK'
 OUTPUT_FILE="$PACIFIKAI_DIR/dashboard/assets-manifest.json"
 
 # Dossiers à ignorer (pas des prospects)
-IGNORE_DIRS="_templates _archive scripts dashboard clients solutions marketing n8n-builder n8n-framework landing-page business"
+IGNORE_DIRS="_templates _archive scripts dashboard clients solutions marketing n8n-builder content-production landing-page business"
 
 echo "Scanning PACIFIK'AI directory for prospect assets..."
 

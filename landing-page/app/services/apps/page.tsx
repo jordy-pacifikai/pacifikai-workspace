@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import ServicePage from "@/components/ui/ServicePage";
 import ServiceAppVisual from "@/components/ui/service-visuals/ServiceAppVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getOptimalLinks } from "@/lib/internal-links";
 
 export const metadata: Metadata = {
   title: "Applications Web & Mobile à Tahiti | PACIFIK'AI — Développement Polynésie",
@@ -11,7 +14,7 @@ export const metadata: Metadata = {
     description:
       "Développement d'applications web et mobiles à Tahiti : dashboards, portails clients, apps métier sur-mesure.",
     url: "https://pacifikai.com/services/apps",
-    locale: "fr_FR",
+    locale: "fr_PF",
     type: "website",
   },
   alternates: {
@@ -94,9 +97,14 @@ const ICON_BOOKING = (
   </svg>
 );
 
+const relatedLinks = getOptimalLinks("/services/apps", "service", ["application", "mobile", "dashboard", "portail", "pwa"]);
+
 export default function AppsPage() {
   return (
-    <ServicePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Applications Web & Mobile", "Développement d'applications web et mobiles à Tahiti : dashboards, portails clients, apps métier sur-mesure alimentés par l'IA. Polynésie française.", "https://pacifikai.com/services/apps")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Services", url: "https://pacifikai.com/services" }, { name: "Applications Web & Mobile", url: "https://pacifikai.com/services/apps" }])) }} />
+      <ServicePage
       badge="Sur-mesure 100%"
       title="Applications"
       titleHighlight="Web & Mobile"
@@ -182,5 +190,7 @@ export default function AppsPage() {
       ctaFinalTitle="Prêt à créer votre application sur-mesure ?"
       ctaFinalSubtitle="Contactez-nous pour discuter de votre projet."
     />
+    <RelatedLinks links={relatedLinks} />
+    </>
   );
 }

@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionReveal from "@/components/effects/SectionReveal";
+import { useT } from "@/lib/i18n/useT";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -97,20 +98,27 @@ function AnimatedCounter({ target }: { target: number }) {
 }
 
 export default function CompareSection() {
+  const t = useT("compare");
+  const beforeItems = t?.before ?? BEFORE;
+  const afterItems = t?.after ?? AFTER;
+
   return (
     <section id="compare" className="section-padding">
       <div className="max-w-5xl mx-auto">
         <SectionReveal>
           <div className="text-center mb-16 reveal-child">
             <p className="text-lagoon text-sm font-medium tracking-[0.2em] uppercase mb-4">
-              L&apos;impact
+              {t?.label ?? "L\u2019impact"}
             </p>
             <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-tight">
-              Avant vs Après{" "}
-              <span className="gradient-text-coral">PACIFIK&apos;AI</span>
+              {t ? (
+                <>{t.title}{" "}<span className="gradient-text-coral">{t.titleHighlight}</span></>
+              ) : (
+                <>Avant vs Après{" "}<span className="gradient-text-coral">PACIFIK&apos;AI</span></>
+              )}
             </h2>
             <p className="text-text-secondary mt-4 max-w-xl mx-auto">
-              Ce que nos solutions changent concrètement pour votre entreprise, dès les premières semaines.
+              {t?.intro ?? "Ce que nos solutions changent concrètement pour votre entreprise, dès les premières semaines."}
             </p>
           </div>
         </SectionReveal>
@@ -128,12 +136,12 @@ export default function CompareSection() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-display text-lg text-accent">Sans automatisation IA</h3>
-                  <p className="text-text-dim text-xs">La réalité de la plupart des entreprises</p>
+                  <h3 className="font-display text-lg text-accent">{t?.beforeTitle ?? "Sans automatisation IA"}</h3>
+                  <p className="text-text-dim text-xs">{t?.beforeSubtitle ?? "La réalité de la plupart des entreprises"}</p>
                 </div>
               </div>
               <ul className="space-y-5">
-                {BEFORE.map((item, i) => (
+                {beforeItems.map((item, i) => (
                   <li key={i} className="flex items-start gap-3 group">
                     <span className="flex-shrink-0 w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center mt-0.5">
                       <span className="text-accent text-xs">✕</span>
@@ -161,13 +169,13 @@ export default function CompareSection() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-display text-lg text-lagoon">Avec PACIFIK&apos;AI</h3>
-                    <p className="text-text-dim text-xs">Votre entreprise, augmentée par l&apos;IA</p>
+                    <h3 className="font-display text-lg text-lagoon">{t?.afterTitle ?? "Avec PACIFIK\u2019AI"}</h3>
+                    <p className="text-text-dim text-xs">{t?.afterSubtitle ?? "Votre entreprise, augmentée par l\u2019IA"}</p>
                   </div>
                 </div>
 
                 <ul className="space-y-5">
-                  {AFTER.map((item, i) => (
+                  {afterItems.map((item, i) => (
                     <li key={i} className="flex items-start gap-3 group">
                       <span className="flex-shrink-0 w-5 h-5 rounded-full bg-lagoon/10 flex items-center justify-center mt-0.5">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-lagoon">
@@ -194,25 +202,25 @@ export default function CompareSection() {
                 <div className="font-display text-3xl md:text-4xl gradient-text-coral mb-1">
                   <AnimatedCounter target={80} />%
                 </div>
-                <p className="text-text-dim text-xs">de temps gagné sur les tâches admin</p>
+                <p className="text-text-dim text-xs">{t?.metrics[0]?.label ?? "de temps gagné sur les tâches admin"}</p>
               </div>
               <div>
                 <div className="font-display text-3xl md:text-4xl text-lagoon mb-1">
                   24<span className="text-xl">/7</span>
                 </div>
-                <p className="text-text-dim text-xs">disponibilité de votre service client</p>
+                <p className="text-text-dim text-xs">{t?.metrics[1]?.label ?? "disponibilité de votre service client"}</p>
               </div>
               <div>
                 <div className="font-display text-3xl md:text-4xl gradient-text-coral mb-1">
                   x<AnimatedCounter target={3} />
                 </div>
-                <p className="text-text-dim text-xs">plus de leads capturés en moyenne</p>
+                <p className="text-text-dim text-xs">{t?.metrics[2]?.label ?? "plus de leads capturés en moyenne"}</p>
               </div>
               <div>
                 <div className="font-display text-3xl md:text-4xl text-lagoon mb-1">
                   <AnimatedCounter target={48} />h
                 </div>
-                <p className="text-text-dim text-xs">pour voir les premiers résultats</p>
+                <p className="text-text-dim text-xs">{t?.metrics[3]?.label ?? "pour voir les premiers résultats"}</p>
               </div>
             </div>
           </div>

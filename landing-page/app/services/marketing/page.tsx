@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import ServicePage from "@/components/ui/ServicePage";
 import ServiceMarketingVisual from "@/components/ui/service-visuals/ServiceMarketingVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getOptimalLinks } from "@/lib/internal-links";
 
 export const metadata: Metadata = {
   title: "Marketing Digital Automatisé à Tahiti | PACIFIK'AI — IA Polynésie",
@@ -11,7 +14,7 @@ export const metadata: Metadata = {
     description:
       "Marketing digital automatisé par IA à Tahiti : newsletters, réseaux sociaux, emails de relance.",
     url: "https://pacifikai.com/services/marketing",
-    locale: "fr_FR",
+    locale: "fr_PF",
     type: "website",
   },
   alternates: {
@@ -95,9 +98,14 @@ const ICON_SEQ = (
   </svg>
 );
 
+const relatedLinks = getOptimalLinks("/services/marketing", "service", ["marketing", "automatisation", "newsletter", "reseaux sociaux", "email"]);
+
 export default function MarketingPage() {
   return (
-    <ServicePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Marketing Digital Automatisé", "Marketing digital automatisé par IA à Tahiti : newsletters, réseaux sociaux, emails de relance. Votre marketing en pilote automatique en Polynésie française.", "https://pacifikai.com/services/marketing")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Services", url: "https://pacifikai.com/services" }, { name: "Marketing Digital Automatisé", url: "https://pacifikai.com/services/marketing" }])) }} />
+      <ServicePage
       badge="Auto-pilot actif"
       title="Marketing"
       titleHighlight="Automatisé"
@@ -184,5 +192,7 @@ export default function MarketingPage() {
       ctaFinalTitle="Prêt à automatiser votre marketing ?"
       ctaFinalSubtitle="Contactez-nous pour une démo de votre marketing en pilote automatique."
     />
+    <RelatedLinks links={relatedLinks} />
+    </>
   );
 }

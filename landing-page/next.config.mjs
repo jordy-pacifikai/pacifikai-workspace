@@ -1,10 +1,31 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   transpilePackages: ['three'],
   async rewrites() {
     return [
       // Portfolio clean URLs → static HTML files
       { source: '/portfolio/new/:slug', destination: '/portfolio/new/:slug.html' },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: '/api/(.*)',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'Content-Type' },
+        ],
+      },
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
     ];
   },
   async redirects() {

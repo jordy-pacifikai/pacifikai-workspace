@@ -3,6 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { articles, getArticleBySlug } from "@/lib/blog-data";
 import { ARTICLE_IMAGES } from "@/lib/blog-images";
+import { generateBreadcrumbSchema } from "@/lib/schema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getRelatedLinks } from "@/lib/internal-links";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -25,11 +28,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${article.title} | PACIFIK'AI`,
     description: article.description,
+    alternates: {
+      canonical: `https://pacifikai.com/blog/${slug}`,
+    },
     openGraph: {
       title: `${article.title} | PACIFIK'AI`,
       description: article.description,
       type: "article",
       locale: "fr_PF",
+      url: `https://pacifikai.com/blog/${slug}`,
       publishedTime: article.date,
       authors: ["PACIFIK'AI"],
       images: [
@@ -111,6 +118,12 @@ export default async function ArticlePage({ params }: Props) {
     image: ARTICLE_IMAGES[slug] ?? "https://pacifikai.com/assets/og-image.png",
   };
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Accueil", url: "https://pacifikai.com" },
+    { name: "Blog", url: "https://pacifikai.com/blog" },
+    { name: article.title, url: `https://pacifikai.com/blog/${slug}` },
+  ]);
+
   return (
     <div className="min-h-screen bg-bg">
       {/* Ambient */}
@@ -122,6 +135,10 @@ export default async function ArticlePage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <div className="relative z-10 pt-28 pb-24 px-4">
@@ -246,6 +263,12 @@ export default async function ArticlePage({ params }: Props) {
         </div>
 
         {/* Related articles */}
+        {/* Cross-type internal links (SEO) */}
+        <RelatedLinks
+          links={getRelatedLinks(`/blog/${slug}`, article.title.toLowerCase().split(/\s+/))}
+          title="Services et ressources associés"
+        />
+
         {related.length > 0 && (
           <div className="max-w-5xl mx-auto mt-20">
             <h2 className="font-display text-2xl font-bold mb-8 text-center">

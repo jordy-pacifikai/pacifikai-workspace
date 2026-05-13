@@ -422,7 +422,7 @@ ANTHROPIC_API_KEY=[RÉVOQUÉE - Créer nouvelle clé sur console.anthropic.com]
 
 **Fichiers clés**:
 - `/PACIFIKAI/Argentic Workflows/High Value Capital/dashboard/index.html` - Dashboard principal
-- `/PACIFIKAI/Argentic Workflows/High Value Capital/n8n-framework/content-planner/` - Système de planification
+- `/PACIFIKAI/Argentic Workflows/High Value Capital/content-production/content-planner/` - Système de planification
 
 **Airtable HVC**:
 - Base ID: `appW1YCDJVOMmLicc`

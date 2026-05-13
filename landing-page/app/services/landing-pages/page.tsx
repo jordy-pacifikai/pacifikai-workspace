@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import ServicePage from "@/components/ui/ServicePage";
 import ServiceWebVisual from "@/components/ui/service-visuals/ServiceWebVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getOptimalLinks } from "@/lib/internal-links";
 
 export const metadata: Metadata = {
   title: "Création de Sites Internet à Tahiti | PACIFIK'AI — Sites Web Polynésie",
@@ -11,7 +15,7 @@ export const metadata: Metadata = {
     description:
       "Création de sites internet à Tahiti : sites vitrines, pages de vente, e-commerce et blogs.",
     url: "https://pacifikai.com/services/landing-pages",
-    locale: "fr_FR",
+    locale: "fr_PF",
     type: "website",
   },
   alternates: {
@@ -93,8 +97,55 @@ const ICON_BLOG = (
   </svg>
 );
 
+const FAQ_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Combien coûte un site web à Tahiti ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Chez PACIFIK'AI, la création d'un site web professionnel à Tahiti démarre à 100 000 XPF. Ce tarif inclut un design sur mesure responsive, l'hébergement pour un an, le certificat SSL, l'optimisation SEO et un formulaire de contact. Le prix varie selon la complexité et le nombre de pages.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Combien de temps pour créer un site internet en Polynésie française ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Un site vitrine standard est livré en 5 à 10 jours ouvrés par PACIFIK'AI. Un site plus complexe avec des fonctionnalités avancées comme le e-commerce ou un portail de réservation prend 2 à 4 semaines. Le contenu est généré par l'IA et validé avec vous.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Le contenu du site est-il inclus dans le prix ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Oui, l'intelligence artificielle génère les textes de votre site en fonction de votre activité et de vos objectifs commerciaux. Vous validez le contenu et PACIFIK'AI affine les textes ensemble. Le SEO est optimisé pour le référencement Google en Polynésie française.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Que se passe-t-il après la livraison du site ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "PACIFIK'AI assure la maintenance technique et les mises à jour de sécurité de votre site web. Vous pouvez modifier votre contenu en toute autonomie via un CMS simple. L'hébergement performant et le support sont inclus dans la première année.",
+      },
+    },
+  ],
+};
+
+const relatedLinks = getOptimalLinks("/services/landing-pages", "service", ["site web", "creation site", "landing page", "vitrine", "e-commerce"]);
+
 export default function LandingPagesPage() {
   return (
+    <>
+    <Script
+      id="faq-jsonld-sites-web"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
+    />
     <ServicePage
       badge="Conversion x3"
       title="Landing Pages &"
@@ -181,5 +232,7 @@ export default function LandingPagesPage() {
       ctaFinalTitle="Prêt à avoir un site qui convertit ?"
       ctaFinalSubtitle="Contactez-nous pour discuter de votre projet."
     />
+    <RelatedLinks links={relatedLinks} />
+    </>
   );
 }

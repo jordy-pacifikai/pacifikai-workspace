@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traçabilité CDC — GWAKA Tahiti</title>
+<link rel="icon" type="image/x-icon" href="/portfolio/new/images/gwaka/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/portfolio/new/images/gwaka/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/portfolio/new/images/gwaka/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/portfolio/new/images/gwaka/apple-touch-icon.png">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green-dark: #2D5016;
+  --green: #4A7C3F;
+  --green-accent: #7CB342;
+  --green-light: #E8F0E2;
+  --cream: #FAFAF7;
+  --sand: #C4A882;
+  --sand-light: #f5ecd0;
+  --text: #1a1a1a;
+  --text-muted: #64748b;
+  --ok: #16a34a;
+  --ok-bg: #dcfce7;
+  --wait: #ea580c;
+  --wait-bg: #ffedd5;
+  --na: #6366f1;
+  --na-bg: #e0e7ff;
+  --sidebar-w: 280px;
+}
+html { scroll-behavior: smooth; font-size: 15px; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* LAYOUT */
+.wrapper { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+@media (max-width: 1024px) {
+  .wrapper { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 1.5rem 1rem; }
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  background: var(--green-dark); padding: 1.5rem 1rem;
+  border-right: 2px solid var(--sand);
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.15) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 5px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 3px; }
+.sidebar-title { font-size: 0.85rem; font-weight: 800; color: #fff; letter-spacing: 0.02em; margin-bottom: 0.15rem; line-height: 1.3; }
+.sidebar-sub { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--sand); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,.08); }
+.toc-chapter { margin-bottom: 0.6rem; }
+.toc-chapter-title { display: block; font-size: 0.72rem; font-weight: 700; color: var(--sand); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem; text-decoration: none; }
+.toc-chapter-title:hover { color: #fff; }
+.toc-section { display: block; font-size: 0.7rem; color: rgba(255,255,255,.55); text-decoration: none; padding: 0.1rem 0 0.1rem 0.75rem; border-left: 1px solid rgba(255,255,255,.08); }
+.toc-section:hover { color: #fff; border-left-color: var(--sand); }
+.toc-divider { height: 1px; background: rgba(255,255,255,.06); margin: 0.75rem 0; }
+
+/* MAIN */
+.main { padding: 2rem 2.5rem; max-width: 960px; }
+
+/* COVER */
+.cover {
+  background: linear-gradient(135deg, var(--green-dark), var(--green));
+  border-radius: 12px; padding: 2.5rem 2rem; margin-bottom: 1.5rem; color: #fff;
+}
+.cover-pre { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--sand); margin-bottom: 0.75rem; }
+.cover-title { font-family: Georgia, serif; font-size: 1.8rem; font-weight: 700; line-height: 1.25; margin-bottom: 0.5rem; }
+.cover-subtitle { font-size: 1rem; color: rgba(255,255,255,.7); margin-bottom: 1rem; }
+.cover-line { width: 60px; height: 3px; background: var(--sand); border-radius: 2px; margin-bottom: 1rem; }
+.cover-meta { font-size: 0.72rem; color: rgba(255,255,255,.5); }
+.cover-meta a { color: var(--sand); text-decoration: none; }
+
+/* STATS BAR */
+.stats-bar {
+  background: var(--green-dark); border-radius: 10px; padding: 1rem 1.5rem;
+  margin-bottom: 2rem; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: .5rem;
+}
+.stat-item { text-align: center; flex: 1; min-width: 70px; }
+.stat-num { font-size: 1.4rem; font-weight: 800; color: var(--sand); line-height: 1; }
+.stat-num.green { color: #4ade80; }
+.stat-num.orange { color: #fb923c; }
+.stat-num.purple { color: #a78bfa; }
+.stat-label { font-size: 0.58rem; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: 0.1em; }
+.stat-divider { width: 1px; height: 2rem; background: rgba(255,255,255,.08); }
+
+/* CHAPTERS & SECTIONS */
+.chapter-header { margin: 2.5rem 0 1.25rem; padding-bottom: 0.6rem; border-bottom: 3px solid var(--green); }
+.chapter-number { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--green); font-weight: 700; margin-bottom: 0.2rem; }
+.chapter-title { font-family: Georgia, serif; font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+
+.section-header { margin: 1.5rem 0 0.75rem; padding-left: 0.75rem; border-left: 3px solid var(--sand); }
+.section-number { font-size: 0.62rem; color: var(--text-muted); font-weight: 600; }
+.section-title-h { font-family: Georgia, serif; font-size: 1.05rem; font-weight: 700; color: var(--text); }
+
+/* REQ TABLE */
+.req-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.82rem; }
+.req-table thead th {
+  background: var(--green-dark); color: var(--sand);
+  text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.62rem; font-weight: 700;
+  padding: 0.5rem 0.65rem; text-align: left;
+}
+.req-table tbody tr { border-bottom: 1px solid #e0ddd5; }
+.req-table tbody tr:nth-child(odd) { background: var(--cream); }
+.req-table tbody tr:nth-child(even) { background: #fff; }
+.req-table tbody tr:hover { background: var(--sand-light); }
+.req-table td { padding: 0.5rem 0.65rem; vertical-align: top; line-height: 1.5; }
+.req-table td.num { font-weight: 700; color: var(--green); font-size: 0.72rem; white-space: nowrap; width: 50px; }
+.req-table td.exigence { font-weight: 600; color: var(--text); max-width: 200px; }
+.req-table td.spec { color: var(--text-muted); font-size: 0.76rem; font-style: italic; }
+.req-table td.src { font-family: Consolas, 'Courier New', monospace; font-size: 0.68rem; color: #475569; }
+.req-table td.status { white-space: nowrap; }
+.req-table td.link { text-align: center; width: 45px; }
+.req-table td.link a { color: var(--green); text-decoration: none; font-size: 1rem; }
+.req-table td.link a:hover { color: var(--sand); }
+
+/* STATUS TAGS */
+.tag { display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.18rem 0.45rem; border-radius: 4px; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+.tag-ok { background: var(--ok-bg); color: var(--ok); }
+.tag-wait { background: var(--wait-bg); color: var(--wait); }
+.tag-na { background: var(--na-bg); color: var(--na); }
+
+/* TIMELINE */
+.timeline { margin: 1.5rem 0; padding-left: 1.5rem; border-left: 2px solid var(--green-light); }
+.tl-event { position: relative; padding: 0.6rem 0 0.6rem 1rem; }
+.tl-event::before { content: ''; position: absolute; left: -1.6rem; top: 0.85rem; width: 10px; height: 10px; border-radius: 50%; background: var(--green); border: 2px solid #fff; }
+.tl-date { font-size: 0.65rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; }
+.tl-title { font-weight: 600; font-size: 0.85rem; color: var(--text); }
+.tl-detail { font-size: 0.76rem; color: var(--text-muted); }
+
+/* SOURCE QUOTE */
+.source-quote {
+  background: var(--green-light); border-left: 3px solid var(--green);
+  padding: 0.6rem 0.85rem; margin: 0.5rem 0 1rem; border-radius: 0 6px 6px 0;
+  font-size: 0.76rem; color: var(--text-muted); font-style: italic;
+}
+.source-quote .src-label { font-style: normal; font-weight: 700; color: var(--green); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* PRINT */
+@media print {
+  .sidebar { display: none; }
+  .wrapper { grid-template-columns: 1fr; }
+  .cover { background: #fff; border: 2px solid var(--green-dark); }
+  .cover-title, .cover-pre { color: var(--green-dark); }
+  body { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-title">Traçabilité CDC</div>
+  <div class="sidebar-sub">GWAKA — gwakatahiti.com</div>
+
+  <div class="toc-chapter"><a class="toc-chapter-title" href="#cover">Couverture & Scores</a></div>
+  <div class="toc-chapter"><a class="toc-chapter-title" href="#timeline">Chronologie Projet</a></div>
+  <div class="toc-divider"></div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch1">1. Hero & Accueil</a>
+    <a class="toc-section" href="#s1-1">1.1 Hero (photo + texte)</a>
+    <a class="toc-section" href="#s1-2">1.2 Navbar tagline</a>
+    <a class="toc-section" href="#s1-3">1.3 Stat bar</a>
+    <a class="toc-section" href="#s1-4">1.4 CTA</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch2">2. Prestations</a>
+    <a class="toc-section" href="#s2-1">2.1 Titre & format</a>
+    <a class="toc-section" href="#s2-2">2.2 Interdit numeros</a>
+    <a class="toc-section" href="#s2-3">2.3 Les 6 prestations</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch3">3. Qui sommes-nous</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch4">4. Citation</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch5">5. Menu Notre Carte</a>
+    <a class="toc-section" href="#s5-1">5.1 Titre</a>
+    <a class="toc-section" href="#s5-2">5.2 Filtres categories</a>
+    <a class="toc-section" href="#s5-3">5.3 Produits visuels</a>
+    <a class="toc-section" href="#s5-4">5.4 Catalogue PDF</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch6">6. Confiance (logos)</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch7">7. Galerie</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch8">8. Reseaux sociaux</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch9">9. Formulaire devis</a>
+    <a class="toc-section" href="#s9-1">9.1 Titre & accroche</a>
+    <a class="toc-section" href="#s9-2">9.2 Coordonnees</a>
+    <a class="toc-section" href="#s9-3">9.3 Champs formulaire</a>
+    <a class="toc-section" href="#s9-4">9.4 Types prestation</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch10">10. Design & Technique</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch11">11. Navigation & Interactions</a>
+    <a class="toc-section" href="#s11-1">11.1 Navbar sticky</a>
+    <a class="toc-section" href="#s11-2">11.2 Burger mobile</a>
+    <a class="toc-section" href="#s11-3">11.3 Animations scroll</a>
+    <a class="toc-section" href="#s11-4">11.4 Form JS</a>
+  </div>
+
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch12">12. Footer</a>
+  </div>
+
+  <div class="toc-divider"></div>
+  <div class="toc-chapter">
+    <a class="toc-chapter-title" href="#ch13">13. Iteration post-livraison (retours 1er mai)</a>
+    <a class="toc-section" href="#s13-1">13.1 Structure &amp; Navigation</a>
+    <a class="toc-section" href="#s13-2">13.2 Hero — GWAKA en grand</a>
+    <a class="toc-section" href="#s13-3">13.3 Menu — page dediee</a>
+    <a class="toc-section" href="#s13-4">13.4 Contact — fond vert charte</a>
+    <a class="toc-section" href="#s13-5">13.5 Adresse — Fa'a</a>
+    <a class="toc-section" href="#s13-7">13.7 Stat bar — refonte 4 stats</a>
+    <a class="toc-section" href="#s13-8">13.8 Trust — carrousel 12-15 logos</a>
+    <a class="toc-section" href="#s13-6">13.6 Validations Temehani</a>
+  </div>
+  <div class="toc-chapter"><a class="toc-chapter-title" href="#annexe-a">Annexe A — Sources audio</a></div>
+  <div class="toc-chapter"><a class="toc-chapter-title" href="#annexe-b">Annexe B — Elements en attente</a></div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- COVER -->
+  <div class="cover" id="cover">
+    <div class="cover-pre">GWAKA Tahiti — Document interne PACIFIK'AI</div>
+    <h1 class="cover-title">Cahier des Charges — Traçabilité</h1>
+    <div class="cover-subtitle">Site vitrine gwakatahiti.com</div>
+    <div class="cover-line"></div>
+    <div class="cover-meta">
+      Avril 2026 &nbsp;·&nbsp; Source : 12 messages vocaux Temehani (14/04/2026) &nbsp;·&nbsp;
+      <a href="https://gwakatahiti.com" target="_blank">gwaka-final.html ↗</a>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num">102</div><div class="stat-label">Exigences totales</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num green">83</div><div class="stat-label">Conformes</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num orange">19</div><div class="stat-label">En cours iteration v2</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num green">81%</div><div class="stat-label">Score conformite</div></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CHRONOLOGIE PROJET
+  ═══════════════════════════════════════ -->
+  <div id="timeline" class="chapter-header">
+    <div class="chapter-number">Chronologie</div>
+    <h2 class="chapter-title">Historique du projet GWAKA</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-event">
+      <div class="tl-date">29 Mars 2026</div>
+      <div class="tl-title">Creation des 10 prototypes HTML (V1-V10)</div>
+      <div class="tl-detail">49 produits reels, images AI, 10 directions creatives differentes. Deploy sur pacifikai.com/portfolio/new/gwaka-v{1-10}.html</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">31 Mars 2026</div>
+      <div class="tl-title">Envoi des prototypes a Temehani via Instagram DM</div>
+      <div class="tl-detail">Liens vers les 10 versions. Premiere prise de contact prospect.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">1 Avril 2026</div>
+      <div class="tl-title">Proposition commerciale envoyee</div>
+      <div class="tl-detail">proposition-gwaka.html — iframes, tarifs, FAQ, domaine multi-annees, CTA.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">5 Avril 2026</div>
+      <div class="tl-title">Temehani valide les prototypes retenus</div>
+      <div class="tl-detail">Mix V2 (Fresh & Moderne) + V4 (Carte Interactive) + V5 (Tropical Chic). Tarif 100K XPF accepte. Domaine gwakatahiti.com valide.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">9 Avril 2026</div>
+      <div class="tl-title">Grille tarifaire validee + devis GWK-001 cree</div>
+      <div class="tl-detail">100K XPF (50K+50K), 5 pages, domaine offert 1 an, hebergement a vie. Devis N°2026-002.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">13 Avril 2026</div>
+      <div class="tl-title">Relance Temehani (4 jours sans reponse)</div>
+      <div class="tl-detail">Message envoye par Jordy avec angle urgence domaine gwakatahiti.com.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">14 Avril 2026 — 10h</div>
+      <div class="tl-title">Brief detaille recu : 12 vocaux + 7 screenshots</div>
+      <div class="tl-detail">Temehani envoie un brief complet sur Instagram DM. 12 messages audio transcrits (Whisper base). 7 screenshots annotes. Toutes les decisions documentees.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">14 Avril 2026 — 11h</div>
+      <div class="tl-title">Cahier des charges redige</div>
+      <div class="tl-detail">11 sections, toutes decisions de Temehani documentees. gwaka-build-plan.html cree (timeline visuel). gwaka-devis.html MAJ (section Suivi Projet).</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">14 Avril 2026 — 12h</div>
+      <div class="tl-title">gwaka-final.html CONSTRUIT</div>
+      <div class="tl-detail">1825 lignes, 11 sections, 54 produits, 7 categories. Mix V2+V4+V5. Deploy production.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">14 Avril 2026 — 12h15</div>
+      <div class="tl-title">Audit exhaustif + 4 corrections</div>
+      <div class="tl-detail">19/20 points conformes. Fixes : navbar tagline, suppression tab "Tout", "Menu Notre Carte", "Produits Frais", "Ils nous ont fait confiance" (passe compose).</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">14 Avril 2026 — 15h</div>
+      <div class="tl-title">Images upscalees 4K</div>
+      <div class="tl-detail">53 images upscalees via Aura SR (FAL.ai) x4. Hero optimise 1920px (542KB). Thumbnails 800px. Total 109MB → 38MB.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">24 Avril 2026</div>
+      <div class="tl-title">Acompte 50K XPF recu</div>
+      <div class="tl-detail">Virement Temehani arrive sur le compte Banque de Tahiti PRO (PACIFIKAI). Lancement de la phase de production : reservation domaine + finalisation site.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">29 Avril 2026</div>
+      <div class="tl-title">Domaine gwakatahiti.com LIVE</div>
+      <div class="tl-detail">Domaine achete sur Hostinger. DNS A record vers VPS Hetzner (178.104.131.42). Caddy reverse proxy + rewrites pour /devis, /suivi, /cdc. SSL Let's Encrypt automatique. 5 routes verifiees HTTP 200.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">29 Avril 2026</div>
+      <div class="tl-title">Coordonnees reelles deployees</div>
+      <div class="tl-detail">Tel +689 89 53 75 70, email gwakatahiti@gmail.com, IG https://instagram.com/gwaka.tahiti, FB https://facebook.com/gwaka.tahiti — tous liens clickables actifs (source CONTEXT.md GWAKA).</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">29 Avril 2026</div>
+      <div class="tl-title">Catalogue PDF Google Drive restaure</div>
+      <div class="tl-detail">Bouton "Telecharger notre catalogue produits" pointe vers le PDF officiel GWAKA sur Google Drive (regression vs prototypes corrige).</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">29 Avril 2026</div>
+      <div class="tl-title">Form contact fonctionnel</div>
+      <div class="tl-detail">Endpoint /api/gwaka-contact (Next.js + Brevo SMTP). Envoie les demandes de devis vers gwakatahiti@gmail.com (cc contact@pacifikai.com). Loading state + error fallback. Replaced fake submit qui ne sendait rien.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">29 Avril 2026</div>
+      <div class="tl-title">Optimisation WebP + Galerie hi-res</div>
+      <div class="tl-detail">103 images converties JPG → WebP (q80-92), -44% bandwidth (13MB → 7.3MB). Galerie 8 images uniques + grid-auto-flow:dense (fix layout). About section : smoothie-bowl-tropical hi-res 1600x872 q92.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">29 Avril 2026</div>
+      <div class="tl-title">Trust grid : 6 vrais clients</div>
+      <div class="tl-detail">TotalEnergies, Banque Socredo, ICPF, Gaz de Tahiti, Direction Jeunesse et Sports, Royal Automobile — sources CONTEXT.md (mentionnes dans posts IG @gwaka.tahiti). Etait : placeholders Client 3-6.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">29 Avril 2026</div>
+      <div class="tl-title">Gender Reveal ajoute au select</div>
+      <div class="tl-detail">Option ajoutee au select "Type de prestation" (vocal Audio 10 explicite). Liste finale : Brunch, Buffet Corporate, Evenement Prive, Mariage, Baby Shower, Gender Reveal, Anniversaire, Autre.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">1er Mai 2026</div>
+      <div class="tl-title">Retour Temehani v1 — 11 vocaux + 6 images</div>
+      <div class="tl-detail">Premier retour apres visite du site. 13 nouvelles exigences (Chapitre 13) : Menu sur page separee, GWAKA en gros au milieu du hero, retirer "Traiteur Brunch &amp; Healthy" sous logo, fond vert charte sur Contact, adresse "Fa'a" (laboratoire a domicile, pas adresse exacte). Sections Galerie/Trust/Contact validees. Photos pro a venir via WeTransfer.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">1er Mai 2026 (soir)</div>
+      <div class="tl-title">Implementation 8/13 demandes Temehani</div>
+      <div class="tl-detail">Menu sur page separee (gwaka-menu.html), Hero "GWAKA" en gros wordmark, retire "Traiteur Brunch &amp; Healthy" sous logo, Menu/Notre Carte stack vertical, filter "Sales" par defaut, adresse "Fa'a'ā, Tahiti, Polynesie francaise". Bloque par charte verte : D1-D4 fond vert. Bloque par assets : F1-F3 photos + logos.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-date">2 Mai 2026</div>
+      <div class="tl-title">Retour Temehani v2 — 2 vocaux supplementaires</div>
+      <div class="tl-detail">Stat bar : retirer "99%", 4 stats (Fait Maison + Sur Mesure + Circuit Court + Produit Frais). Trust : carrousel scrollable 12-15 logos avec fleches navigation, ajouter UPF (un de ses meilleurs clients). 3 nouvelles exigences (#13.14-13.16) implementees, 1 en attente logos PNG (#13.17).</div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       1. HERO & ACCUEIL
+  ═══════════════════════════════════════ -->
+  <div id="ch1" class="chapter-header">
+    <div class="chapter-number">Chapitre 1</div>
+    <h2 class="chapter-title">Hero & Page d'Accueil</h2>
+  </div>
+
+  <div id="s1-1" class="section-header">
+    <div class="section-number">Section 1.1</div>
+    <div class="section-title-h">Hero — Grosse photo + texte minimaliste</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 01</div>
+    « ...j'aime bien le cote avec la grosse photo et le petit texte c'est tres minimaliste. »
+  </div>
+  <div class="source-quote">
+    <div class="src-label">Audio 12</div>
+    « La V4 en tout cas j'aime bien la... j'aime bien le cote avec la grosse photo et le petit texte c'est tres minimaliste. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">1.1</td>
+        <td class="exigence">Style V4 — grosse photo + texte minimaliste</td>
+        <td class="spec">Section .hero avec background-image full-width, texte 4 lignes, overlay gradient</td>
+        <td class="src">L.1210</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.2</td>
+        <td class="exigence">Texte ~4 lignes resumant l'activite (style V5)</td>
+        <td class="spec">"Des brunchs faits maison avec passion..." — paragraphe hero-text</td>
+        <td class="src">L.1215</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.3</td>
+        <td class="exigence">Phrase d'accroche : "Des brunchs avec un coeur pour vous"</td>
+        <td class="spec">Titre h1.hero-title dans la section hero</td>
+        <td class="src">L.1214</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s1-2" class="section-header">
+    <div class="section-number">Section 1.2</div>
+    <div class="section-title-h">Navbar — Logo + tagline</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 01 (Whisper garbled)</div>
+    « ...il va y ecrire Meduille Blothoryou... » — Interpretation : petit texte descriptif a cote du logo dans la navbar.
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">1.4</td>
+        <td class="exigence">Petit texte a cote du logo navbar</td>
+        <td class="spec">&lt;small&gt;Traiteur Brunch & Healthy&lt;/small&gt; sous le nom GWAKA</td>
+        <td class="src">L.1194</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s1-3" class="section-header">
+    <div class="section-number">Section 1.3</div>
+    <div class="section-title-h">Stat Bar — Chiffres cles</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 12</div>
+    « Cette petite phrase la, a le 99 % fait mes ans sur mesure sur chaque evenement local produit frais. Ca c'est tres bien aussi integre un moment donne. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">1.5</td>
+        <td class="exigence">99% Fait Maison</td>
+        <td class="spec">Premier item stat-bar</td>
+        <td class="src">L.1232</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.6</td>
+        <td class="exigence">Sur Mesure</td>
+        <td class="spec">Deuxieme item stat-bar</td>
+        <td class="src">L.1236</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.7</td>
+        <td class="exigence">Local &amp; Frais</td>
+        <td class="spec">Troisieme item stat-bar</td>
+        <td class="src">L.1240</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.8</td>
+        <td class="exigence">Produits Frais</td>
+        <td class="spec">Quatrieme item stat-bar (corrige de "Produits de Saison")</td>
+        <td class="src">L.1244</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s1-4" class="section-header">
+    <div class="section-number">Section 1.4</div>
+    <div class="section-title-h">CTA — Boutons d'action</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 01</div>
+    « Avec le demande de devis et voir le menu ca aussi c'est tres bien comme ca ca permet de les gens y veulent voir le menu click aussi, veulent devis direct, click aussi. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">1.9</td>
+        <td class="exigence">CTA "Demande de devis" → scroll formulaire</td>
+        <td class="spec">Bouton btn-primary href="#contact"</td>
+        <td class="src">L.1221</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">1.10</td>
+        <td class="exigence">CTA "Voir le menu" → scroll menu</td>
+        <td class="spec">Bouton btn-outline href="#menu"</td>
+        <td class="src">L.1222</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       2. PRESTATIONS
+  ═══════════════════════════════════════ -->
+  <div id="ch2" class="chapter-header">
+    <div class="chapter-number">Chapitre 2</div>
+    <h2 class="chapter-title">Nos Prestations</h2>
+  </div>
+
+  <div id="s2-1" class="section-header">
+    <div class="section-number">Section 2.1</div>
+    <div class="section-title-h">Titre & format</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 01</div>
+    « J'adore le cote de nos prestations donc nos services en soi avec les six facons de vous regaler ca j'aime beaucoup. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">2.1</td>
+        <td class="exigence">Titre "Six facons de vous regaler"</td>
+        <td class="spec">h2.section-title dans .prestations</td>
+        <td class="src">L.1254</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.2</td>
+        <td class="exigence">6 cartes avec PHOTO + nom + description</td>
+        <td class="spec">6x .presta-card avec .presta-card-img et texte</td>
+        <td class="src">L.1256-L.1296</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s2-2" class="section-header">
+    <div class="section-number">Section 2.2</div>
+    <div class="section-title-h">INTERDIT : numeros sans photos</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 01</div>
+    « Je suis ok mais pas dans cette facon la ce que j'aime pas le cote avec les numeros et il n'y a pas d'image. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">2.3</td>
+        <td class="exigence">PAS de numeros (1, 2, 3...)</td>
+        <td class="spec">Aucun numero sur les cartes prestations — photo seulement</td>
+        <td class="src">L.1256-L.1296</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">2.4</td>
+        <td class="exigence">Format VISUEL comme V1 (photos)</td>
+        <td class="spec">Chaque carte a une grande image (hero-brunch, buffet-corporate, etc.)</td>
+        <td class="src">L.1257-L.1294</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s2-3" class="section-header">
+    <div class="section-number">Section 2.3</div>
+    <div class="section-title-h">Les 6 prestations</div>
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="num">2.5</td><td class="exigence">Brunch Gourmand</td><td class="spec">Carte 1 — hero-brunch.jpg</td><td class="src">L.1257</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td></tr>
+      <tr><td class="num">2.6</td><td class="exigence">Buffet Corporate</td><td class="spec">Carte 2 — buffet-corporate.jpg</td><td class="src">L.1264</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td></tr>
+      <tr><td class="num">2.7</td><td class="exigence">Cocktail Dinatoire</td><td class="spec">Carte 3 — verrines-appetizers.jpg</td><td class="src">L.1271</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td></tr>
+      <tr><td class="num">2.8</td><td class="exigence">Plateau Aperitif</td><td class="spec">Carte 4 — charcuterie-board.jpg</td><td class="src">L.1278</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td></tr>
+      <tr><td class="num">2.9</td><td class="exigence">Evenementiel Prive</td><td class="spec">Carte 5 — scene-deco.jpg</td><td class="src">L.1285</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td></tr>
+      <tr><td class="num">2.10</td><td class="exigence">Seminaire</td><td class="spec">Carte 6 — scene-tropical.jpg</td><td class="src">L.1292</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#prestations" target="_blank">↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       3. QUI SOMMES-NOUS
+  ═══════════════════════════════════════ -->
+  <div id="ch3" class="chapter-header">
+    <div class="chapter-number">Chapitre 3</div>
+    <h2 class="chapter-title">Qui sommes-nous</h2>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 07</div>
+    « J'aimerais juste une petite partie, un petit texte avec... juste pour dire qui on est en fait. Parce que nous, c'est vraiment le cote qu'on met en avance et le cote aussi fennil, le cote un peu convivial, familial. [...] je ne vais pas faire une rubrique ou une page juste qui se mot. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">3.1</td>
+        <td class="exigence">Sur la page d'accueil, PAS une page separee</td>
+        <td class="spec">Section .about integree dans la single-page</td>
+        <td class="src">L.1304</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#about" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.2</td>
+        <td class="exigence">Texte court : familial, convivial, healthy, proximite</td>
+        <td class="spec">Texte provisoire en attendant le brief de Temehani</td>
+        <td class="src">L.1309-L.1320</td>
+        <td class="status"><span class="tag tag-wait">En attente texte</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#about" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">3.3</td>
+        <td class="exigence">Photo pas obligatoire (Temehani hesite)</td>
+        <td class="spec">Image chef-cuisine.jpg en placeholder</td>
+        <td class="src">L.1316</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#about" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       4. CITATION
+  ═══════════════════════════════════════ -->
+  <div id="ch4" class="chapter-header">
+    <div class="chapter-number">Chapitre 4</div>
+    <h2 class="chapter-title">Citation</h2>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 04</div>
+    « On peut rajouter cette petite phrase qui est vraiment cool que tu as integre dans une des propositions. Ca c'est top. Enfin, t'y faire genre une petite citation by GoaKa. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">4.1</td>
+        <td class="exigence">Citation encadree avec "by GWAKA"</td>
+        <td class="spec">Section .citation avec blockquote + "— GWAKA, Tahiti"</td>
+        <td class="src">L.1326-L.1333</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">4.2</td>
+        <td class="exigence">Texte exact : "Du frais, du local, du fait maison..."</td>
+        <td class="spec">Texte valide dans le blockquote</td>
+        <td class="src">L.1329</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       5. MENU NOTRE CARTE
+  ═══════════════════════════════════════ -->
+  <div id="ch5" class="chapter-header">
+    <div class="chapter-number">Chapitre 5</div>
+    <h2 class="chapter-title">Menu Notre Carte</h2>
+  </div>
+
+  <div id="s5-1" class="section-header">
+    <div class="section-number">Section 5.1</div>
+    <div class="section-title-h">Titre</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 02</div>
+    « J'avais bien aime sur un des exemples ou il avait ecrit menu notre carte. Tu vois ce combo la, j'aimerais bien. J'avais pas envie de mettre notre carte bohaka ou le menu bohaka, tu vois, juste menu notre carte. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">5.1</td>
+        <td class="exigence">Titre exact : "Menu Notre Carte"</td>
+        <td class="spec">h2.section-title (corrige de "Menu")</td>
+        <td class="src">L.1340</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#menu" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.2</td>
+        <td class="exigence">Sous-titre : "Tout est fait maison, avec amour"</td>
+        <td class="spec">p.section-subtitle dans .menu</td>
+        <td class="src">L.1341</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#menu" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s5-2" class="section-header">
+    <div class="section-number">Section 5.2</div>
+    <div class="section-title-h">Filtres par categorie</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 05</div>
+    « J'aimerais bien qu'il n'y ait pas le cote, si sur la barre de rochesse, tout. C'est a dire que j'aimerais juste que les gens appuient [...] faut pas qu'il y ait trop d'infos. »
+  </div>
+  <div class="source-quote">
+    <div class="src-label">Audio 12</div>
+    « Pas l'icone tout mais juste les produits sales, les vrais, comme ca des gens ils appuient et ils voient. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">5.3</td>
+        <td class="exigence">PAS de tab "Tout"</td>
+        <td class="spec">Tab "Tout" supprime. Default = headers categories visibles, produits caches</td>
+        <td class="src">L.1344-L.1351</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#menu" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.4</td>
+        <td class="exigence">Clic = affiche UNE famille uniquement</td>
+        <td class="spec">JS setFilter() : toggle categorie, re-clic deselectionne</td>
+        <td class="src">L.1741-L.1782</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#menu" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.5</td>
+        <td class="exigence">7 categories : Sales, Toasts, Wraps, Salades, Plateaux, Sushis, Mini Sales</td>
+        <td class="spec">7 boutons .menu-tab avec data-filter</td>
+        <td class="src">L.1345-L.1351</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#menu" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.6</td>
+        <td class="exigence">INTERDIT afficher tous les produits d'un coup</td>
+        <td class="spec">Par defaut : categories visibles mais produits caches via setFilter(null)</td>
+        <td class="src">L.1782</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#menu" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s5-3" class="section-header">
+    <div class="section-number">Section 5.3</div>
+    <div class="section-title-h">Produits visuels</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 03</div>
+    « Je ne veux pas un listing, tu vois [...] Je prefere du visual direct parce que c'est ce qui va donner beaucoup plus en vie aux gens, avec le nom du produit et les quelques ingredients. »
+  </div>
+  <div class="source-quote">
+    <div class="src-label">Audio 06</div>
+    « La presentation plus la V5 en termes de photo, le petit nom etc. Preche-te donner les photos par la suite. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">5.7</td>
+        <td class="exigence">PHOTO + nom + ingredients (pas listing texte)</td>
+        <td class="spec">54 produits avec .menu-product-img, .menu-product-name, .menu-product-desc</td>
+        <td class="src">L.1354-L.1471</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#menu" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.8</td>
+        <td class="exigence">PAS de listing texte sans photo</td>
+        <td class="spec">Chaque produit a une image (AI en attendant les vraies photos)</td>
+        <td class="src">L.1354-L.1471</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#menu" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">5.9</td>
+        <td class="exigence">Photos reelles de Temehani</td>
+        <td class="spec">Images AI en placeholder — Temehani fournira les vraies</td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-wait">En attente photos</span></td>
+        <td class="link"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s5-4" class="section-header">
+    <div class="section-number">Section 5.4</div>
+    <div class="section-title-h">Catalogue PDF</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 02</div>
+    « Toujours avec le lien, la comme tu as mis a un moment donne telecharge notre cataleproduce, on le garde, ca c'est sur. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">5.10</td>
+        <td class="exigence">Bouton "Telecharger notre catalogue produits"</td>
+        <td class="spec">Lien direct vers le catalogue PDF officiel sur Google Drive</td>
+        <td class="src">L.1472</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#menu" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       6. CONFIANCE
+  ═══════════════════════════════════════ -->
+  <div id="ch6" class="chapter-header">
+    <div class="chapter-number">Chapitre 6</div>
+    <h2 class="chapter-title">Ils nous ont fait confiance</h2>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 08</div>
+    « Juste, on mettra, je pense pas le nom des entreprises mais plus les logos. Comme ca c'est beaucoup plus visuel que mettre total energie, banque socredo. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">6.1</td>
+        <td class="exigence">LOGOS (pas noms texte)</td>
+        <td class="spec">Placeholders texte en attendant les logos reels de Temehani</td>
+        <td class="src">L.1487-L.1493</td>
+        <td class="status"><span class="tag tag-wait">En attente logos</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#trust" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">6.2</td>
+        <td class="exigence">Conjugaison : "Ils nous ONT FAIT confiance" (passe compose)</td>
+        <td class="spec">Section-label L.1484 corrige (etait "Ils nous font confiance"). Note : aria-label L.1481 reste au present — a corriger</td>
+        <td class="src">L.1484</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#trust" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">6.3</td>
+        <td class="exigence">Total Energie + Banque Socredo + autres</td>
+        <td class="spec">Temehani fournira la liste complete + logos</td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-wait">En attente logos</span></td>
+        <td class="link"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       7. GALERIE
+  ═══════════════════════════════════════ -->
+  <div id="ch7" class="chapter-header">
+    <div class="chapter-number">Chapitre 7</div>
+    <h2 class="chapter-title">Galerie</h2>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 09</div>
+    « Pour la partie galerie, ca c'est cool, c'est meme la base. Mettre ca apres... ils nous ont fait confiance [...] avec l'experience goyca. [...] tout le cote un peu aussi prestation sur mesure, ca c'est important. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">7.1</td>
+        <td class="exigence">Titre "L'experience GWAKA"</td>
+        <td class="spec">h2.section-title dans .galerie</td>
+        <td class="src">L.1503</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#galerie" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">7.2</td>
+        <td class="exigence">Photos des plus beaux buffets</td>
+        <td class="spec">8 images galerie (AI en attendant les vraies photos Temehani)</td>
+        <td class="src">L.1506-L.1513</td>
+        <td class="status"><span class="tag tag-wait">En attente photos</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#galerie" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">7.3</td>
+        <td class="exigence">Position apres "Ils nous ont fait confiance"</td>
+        <td class="spec">Section .galerie apres section .trust</td>
+        <td class="src">L.1499</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#galerie" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       8. RESEAUX SOCIAUX
+  ═══════════════════════════════════════ -->
+  <div id="ch8" class="chapter-header">
+    <div class="chapter-number">Chapitre 8</div>
+    <h2 class="chapter-title">Reseaux Sociaux</h2>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 10</div>
+    « Pour le cote Fid Instagram, ca je suis pas super fan. [...] les gens nous suivent deja sur les reseaux, du coup je voulais que ca apportait vraiment un autre canal de communication. Mais du coup on mettra quand meme nos reseaux sociaux sur la partie de demande de devis. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">8.1</td>
+        <td class="exigence">PAS de feed Instagram integre</td>
+        <td class="spec">Aucun widget Instagram / LightWidget sur le site</td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">8.2</td>
+        <td class="exigence">Reseaux dans la section contact/devis uniquement</td>
+        <td class="spec">Icones Instagram + Facebook dans .contact-socials</td>
+        <td class="src">L.1559-L.1567</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       9. FORMULAIRE DEVIS
+  ═══════════════════════════════════════ -->
+  <div id="ch9" class="chapter-header">
+    <div class="chapter-number">Chapitre 9</div>
+    <h2 class="chapter-title">Formulaire de Devis</h2>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 10</div>
+    « La partie, c'est un celle que je prefere le plus la presentation de demande de devis. »
+  </div>
+
+  <div id="s9-1" class="section-header">
+    <div class="section-number">Section 9.1</div>
+    <div class="section-title-h">Titre & accroche</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 11</div>
+    « Parlons de votre evenement cette phrase d'accroche elle est tres bien aussi. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">9.1</td>
+        <td class="exigence">Titre exact : "Parlons de Votre Evenement"</td>
+        <td class="spec">h2.section-title dans .contact</td>
+        <td class="src">L.1523</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">9.2</td>
+        <td class="exigence">Sous-titre : "Decrivez-nous votre projet..."</td>
+        <td class="spec">p.section-subtitle dans .contact</td>
+        <td class="src">L.1524</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s9-2" class="section-header">
+    <div class="section-number">Section 9.2</div>
+    <div class="section-title-h">Coordonnees</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 11</div>
+    « Nous on est si tu as faim on n'est pas papillete pour info tu peux mettre Instagram et Facebook il etait les phones et mail ca c'est tres bien. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">9.3</td>
+        <td class="exigence">Adresse exacte (pas Papeete)</td>
+        <td class="spec">"Tahiti, Polynesie francaise" — Temehani fournira adresse precise du local</td>
+        <td class="src">L.1537</td>
+        <td class="status"><span class="tag tag-wait">Adresse exacte attendue</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">9.4</td>
+        <td class="exigence">Telephone</td>
+        <td class="spec">+689 89 53 75 70 (lien tel: clickable, source CONTEXT.md)</td>
+        <td class="src">L.1546</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">9.5</td>
+        <td class="exigence">Email</td>
+        <td class="spec">gwakatahiti@gmail.com (lien mailto: clickable, source CONTEXT.md)</td>
+        <td class="src">L.1555</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">9.6</td>
+        <td class="exigence">Instagram @gwaka.tahiti</td>
+        <td class="spec">Lien Instagram dans .contact-socials</td>
+        <td class="src">L.1560</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">9.7</td>
+        <td class="exigence">Facebook page GWAKA</td>
+        <td class="spec">Lien Facebook dans .contact-socials</td>
+        <td class="src">L.1564</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s9-3" class="section-header">
+    <div class="section-number">Section 9.3</div>
+    <div class="section-title-h">Champs formulaire</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 11</div>
+    « Moi apres quand je mets dans mon fichier client au moins ca a mets le nom le prenom l'imail c'est tres bien telephone la date souhaitee ca c'est tres bien [...] nombre de personnes c'est tres bien le message est tres bien. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="num">9.8</td><td class="exigence">Champ Prenom (obligatoire)</td><td class="spec">input text required</td><td class="src">L.1577</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.9</td><td class="exigence">Champ Nom (obligatoire)</td><td class="spec">input text required</td><td class="src">L.1581</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.10</td><td class="exigence">Champ Email (obligatoire)</td><td class="spec">input email required</td><td class="src">L.1587</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.11</td><td class="exigence">Champ Telephone (obligatoire)</td><td class="spec">input tel required</td><td class="src">L.1591</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.12</td><td class="exigence">Date souhaitee (obligatoire)</td><td class="spec">input date required</td><td class="src">L.1597</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.13</td><td class="exigence">Nombre de personnes (obligatoire)</td><td class="spec">input number required</td><td class="src">L.1615</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.14</td><td class="exigence">Message (optionnel)</td><td class="spec">textarea</td><td class="src">L.1619</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <div id="s9-4" class="section-header">
+    <div class="section-number">Section 9.4</div>
+    <div class="section-title-h">Types de prestation</div>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 11</div>
+    « Tu peux rajouter ce que t'avais mis dans une autre sorti baby shower j'ai une deux rivilles t'as mis d'autres. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="num">9.15</td><td class="exigence">Select : Brunch</td><td class="spec">option value="brunch"</td><td class="src">L.1603</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.16</td><td class="exigence">Select : Buffet Corporate</td><td class="spec">option value="buffet-corporate"</td><td class="src">L.1604</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.17</td><td class="exigence">Select : Evenement Prive</td><td class="spec">option value="evenement-prive"</td><td class="src">L.1605</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.18</td><td class="exigence">Select : Mariage</td><td class="spec">option value="mariage"</td><td class="src">L.1606</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.19</td><td class="exigence">Select : Baby Shower (AJOUTE)</td><td class="spec">option value="baby-shower"</td><td class="src">L.1607</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.20</td><td class="exigence">Select : Anniversaire (AJOUTE)</td><td class="spec">option value="anniversaire"</td><td class="src">L.1608</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+      <tr><td class="num">9.21</td><td class="exigence">Select : Autre</td><td class="spec">option value="autre"</td><td class="src">L.1609</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       10. DESIGN & TECHNIQUE
+  ═══════════════════════════════════════ -->
+  <div id="ch10" class="chapter-header">
+    <div class="chapter-number">Chapitre 10</div>
+    <h2 class="chapter-title">Design & Technique</h2>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio 12</div>
+    « La V4 en tout cas j'aime bien la... j'aime bien le cote avec la grosse photo et le petit texte c'est tres minimaliste. »
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="num">10.1</td><td class="exigence">Mix V2 + V4 + V5</td><td class="spec">V4 hero, V5 structure/typo, V2 filtres menu</td><td class="src">Global</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">10.2</td><td class="exigence">Palette vert fonce + blanc + touches dorees</td><td class="spec">#4A7C3F green, #7CB342 accent, #E8F0E2, #FAFAF7, #C4A882 sand</td><td class="src">L.14-20</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">10.3</td><td class="exigence">Typo serif elegante + sans-serif corps</td><td class="spec">Fraunces (display) + Work Sans (body)</td><td class="src">L.11</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">10.4</td><td class="exigence">Domaine gwakatahiti.com</td><td class="spec">Achete sur Hostinger, DNS pointe vers VPS Hetzner, SSL Let's Encrypt actif</td><td class="src">Caddy</td><td class="status"><span class="tag tag-ok">Live</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">10.5</td><td class="exigence">Mobile-first (trafic Instagram)</td><td class="spec">Media queries responsive 375px/768px/1024px</td><td class="src">L.900-L.1180</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">10.6</td><td class="exigence">Pas de prix sur le site</td><td class="spec">Aucun prix affiche — devis personnalise uniquement</td><td class="src">Global</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">10.7</td><td class="exigence">Structure 11 sections sur 1 page scrollable</td><td class="spec">Single-page HTML : Navbar, Hero, Stat, Presta, About, Citation, Menu, Trust, Galerie, Contact, Footer</td><td class="src">L.1188-L.1672</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">10.8</td><td class="exigence">Images haute qualite</td><td class="spec">53 images upscalees 4K (Aura SR x4), hero 1920px, thumbnails 800px, JPEG 80%</td><td class="src">images/gwaka/</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       11. NAVIGATION & INTERACTIONS
+  ═══════════════════════════════════════ -->
+  <div id="ch11" class="chapter-header">
+    <div class="chapter-number">Chapitre 11</div>
+    <h2 class="chapter-title">Navigation & Interactions</h2>
+  </div>
+
+  <div id="s11-1" class="section-header">
+    <div class="section-number">Section 11.1</div>
+    <div class="section-title-h">Navbar sticky avec effet scroll</div>
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="num">11.1</td><td class="exigence">Navbar fixe en haut au scroll</td><td class="spec">position: fixed + JS handleScroll() ajoute classe .scrolled</td><td class="src">L.1188, JS L.1680</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">11.2</td><td class="exigence">Smooth scroll sur liens internes</td><td class="spec">CSS html { scroll-behavior: smooth }</td><td class="src">L.27</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">11.3</td><td class="exigence">Preload hero image (performance)</td><td class="spec">&lt;link rel="preload" as="image" fetchpriority="high"&gt;</td><td class="src">L.10</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <div id="s11-2" class="section-header">
+    <div class="section-number">Section 11.2</div>
+    <div class="section-title-h">Menu burger mobile</div>
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="num">11.4</td><td class="exigence">Burger menu sur mobile/tablette</td><td class="spec">JS toggle .open sur navLinks, aria-expanded, body overflow lock</td><td class="src">JS L.1696-L.1714</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">11.5</td><td class="exigence">Fermeture auto au clic lien</td><td class="spec">querySelectorAll('a') → remove .open sur click</td><td class="src">JS L.1707-L.1714</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <div id="s11-3" class="section-header">
+    <div class="section-number">Section 11.3</div>
+    <div class="section-title-h">Animations au scroll</div>
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="num">11.6</td><td class="exigence">Animations d'apparition au scroll</td><td class="spec">IntersectionObserver sur .reveal → ajoute .visible (fade-in + translateY)</td><td class="src">JS L.1716-L.1730</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">11.7</td><td class="exigence">Respect prefers-reduced-motion</td><td class="spec">Si utilisateur prefere pas d'animation → skip observer</td><td class="src">JS L.1717</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <div id="s11-4" class="section-header">
+    <div class="section-number">Section 11.4</div>
+    <div class="section-title-h">Formulaire JS</div>
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="num">11.8</td><td class="exigence">Validation formulaire + feedback</td><td class="spec">JS contactForm submit handler avec validation et message confirmation</td><td class="src">JS L.1783+</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com#contact" target="_blank">↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       12. FOOTER
+  ═══════════════════════════════════════ -->
+  <div id="ch12" class="chapter-header">
+    <div class="chapter-number">Chapitre 12</div>
+    <h2 class="chapter-title">Footer</h2>
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="num">12.1</td><td class="exigence">Logo + brand tagline</td><td class="spec">gwaka-logo.jpg + "Traiteur Brunch & Healthy — Tahiti"</td><td class="src">L.1641-L.1646</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">12.2</td><td class="exigence">Liens navigation rapide</td><td class="spec">Nos Prestations, Menu, Galerie, Demande de devis</td><td class="src">L.1648-L.1655</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">12.3</td><td class="exigence">Contact repete dans footer</td><td class="spec">Tel +689 89 53 75 70, email gwakatahiti@gmail.com, IG @gwaka.tahiti, FB GWAKA — tous liens clickables actifs</td><td class="src">L.1657-L.1665</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">12.4</td><td class="exigence">Credit "Site cree par PACIFIK'AI"</td><td class="spec">Lien vers pacifikai.com dans .footer-credit</td><td class="src">L.1669</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+      <tr><td class="num">12.5</td><td class="exigence">Copyright 2026</td><td class="spec">&copy; 2026 GWAKA. Tous droits reserves.</td><td class="src">L.1668</td><td class="status"><span class="tag tag-ok">Conforme</span></td><td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       ANNEXE A — SOURCES AUDIO
+  ═══════════════════════════════════════ -->
+  <div id="annexe-a" class="chapter-header">
+    <div class="chapter-number">Annexe A</div>
+    <h2 class="chapter-title">Sources audio — 12 messages vocaux Temehani</h2>
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>Audio</th><th>Sujet principal</th><th>Exigences couvertes</th></tr></thead>
+    <tbody>
+      <tr><td class="num">01</td><td>Hero V4, 4 lignes texte, CTA, prestations visuelles, PAS numeros, navbar tagline</td><td class="src">1.1-1.4, 2.1-2.4</td></tr>
+      <tr><td class="num">02</td><td>Titre "Menu Notre Carte", catalogue PDF</td><td class="src">5.1, 5.10</td></tr>
+      <tr><td class="num">03</td><td>PAS de listing texte, photos + nom + ingredients</td><td class="src">5.7, 5.8</td></tr>
+      <tr><td class="num">04</td><td>Citation "by GWAKA" — authenticite</td><td class="src">4.1, 4.2</td></tr>
+      <tr><td class="num">05</td><td>PAS de tab "Tout", clic = 1 famille, pas trop d'infos</td><td class="src">5.3, 5.4, 5.6</td></tr>
+      <tr><td class="num">06</td><td>Photos V5, Temehani fournira les photos</td><td class="src">5.9</td></tr>
+      <tr><td class="num">07</td><td>Section "Qui sommes-nous" sur accueil, familial, proximite</td><td class="src">3.1-3.3</td></tr>
+      <tr><td class="num">08</td><td>LOGOS pas noms texte pour "confiance"</td><td class="src">6.1-6.3</td></tr>
+      <tr><td class="num">09</td><td>Galerie "L'experience GWAKA", prestation sur mesure</td><td class="src">7.1-7.3</td></tr>
+      <tr><td class="num">10</td><td>PAS de feed Instagram, reseaux dans contact seulement, section preferee</td><td class="src">8.1, 8.2</td></tr>
+      <tr><td class="num">11</td><td>Adresse, tel, email, formulaire complet, Baby Shower + Anniversaire</td><td class="src">9.1-9.21</td></tr>
+      <tr><td class="num">12</td><td>Stat bar "99% fait maison...", recap general, V4 minimaliste, PAS tab "Tout"</td><td class="src">1.5-1.8, 5.3, 10.1</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       13. ITERATION POST-LIVRAISON (retours Temehani 2026-05-01)
+  ═══════════════════════════════════════ -->
+  <div id="ch13" class="chapter-header">
+    <div class="chapter-number">Chapitre 13</div>
+    <h2 class="chapter-title">Iteration post-livraison — Retours Temehani 1er mai 2026</h2>
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio retour 116s</div>
+    « J'ai ouvert le site... je vais passer les photos pour mettre les 6 photos pour les 6 facons de vous regaler. Quand on arrive sur Menu Notre Carte, je prefere mettre Menu et apres tu mets en dessous Notre Carte, pas a la suite, enfin pas sur la meme ligne. »
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio retour 73s</div>
+    « Le menu Notre Carte sur une autre page pour ne pas que y est tout sur la meme page. Je trouvais que ca faisait trop lourd, sinon trop long la premiere page. »
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio retour 14s + 15s + 6s</div>
+    « Sur la page de garde, j'aurais bien enleve le cote Traiteur Brunch &amp; Healthy [sous-titre logo] et j'aurais rajoute en gros le GWAKA en blanc... ce mot GWAKA en gros au milieu vu que c'est visuel. »
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio retour 116s + 8s</div>
+    « Sur la partie contact Parlons de votre evenement... j'aurais aime qu'on mette en arriere-plan, puisque tout le fond est un peu pris blanc... un cadre en arriere-plan transparent vert pour que ca ressorte. Le bouton demande de devis en haut, c'est un vert mais c'est pas le bon vert. »
+  </div>
+
+  <div class="source-quote">
+    <div class="src-label">Audio retour 30s</div>
+    « C'est un laboratoire qui est a mon domicile, donc je ne veux pas donner d'adresse pour ne pas que les gens viennent chez moi. Mais tu peux mettre Fa'a [commune], Tahiti, Polynesie francaise. »
+  </div>
+
+  <div id="s13-1" class="section-header">
+    <div class="section-number">Section 13.1</div>
+    <div class="section-title-h">Structure & Navigation</div>
+  </div>
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">13.1</td>
+        <td class="exigence">Menu Notre Carte sur une PAGE SEPAREE (pas dans la home)</td>
+        <td class="spec">Nouvelle route /menu (ou /carte) avec gwaka-menu.html. Anchor nav modifie.</td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">13.2</td>
+        <td class="exigence">Home conserve : Hero + Stats + Prestations + About + Citation + Trust + Galerie + Contact</td>
+        <td class="spec">Retirer la section menu de la home, conserver les 8 autres sections</td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">13.3</td>
+        <td class="exigence">Anchor nav "Menu" → vers la page separee /menu (pas anchor home)</td>
+        <td class="spec">Modifier href="#menu" → href="/menu"</td>
+        <td class="src">L.1209</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s13-2" class="section-header">
+    <div class="section-number">Section 13.2</div>
+    <div class="section-title-h">Hero — GWAKA en grand</div>
+  </div>
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">13.4</td>
+        <td class="exigence">Retirer "Traiteur Brunch &amp; Healthy" sous le logo nav (haut gauche)</td>
+        <td class="spec">Supprimer la balise &lt;small&gt; dans .navbar-logo-text</td>
+        <td class="src">L.1244</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">13.5</td>
+        <td class="exigence">Ajouter "GWAKA" en gros au milieu du hero (titre central blanc)</td>
+        <td class="spec">Wordmark GWAKA en h1 ultra-large (5-7rem) blanc + remplacement actuel hero-title</td>
+        <td class="src">L.1265</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s13-3" class="section-header">
+    <div class="section-number">Section 13.3</div>
+    <div class="section-title-h">Menu — page dediee</div>
+  </div>
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">13.6</td>
+        <td class="exigence">Titre "Menu" en grand au-dessus, "Notre Carte" en sous-titre dessous (pas meme ligne)</td>
+        <td class="spec">h1 "Menu" + p subtitle "Notre Carte" stack vertical</td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">13.7</td>
+        <td class="exigence">Affichage par defaut : categorie "Sale" deja active (pas listing categories vides)</td>
+        <td class="spec">filter init = 'sale' au lieu de null. Premier arrivee = produits sales visibles direct.</td>
+        <td class="src">JS filter</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">13.8</td>
+        <td class="exigence">Alternative envisagee : grosses images produits (2x4x6x7) au lieu de cartes compactes</td>
+        <td class="spec">A clarifier avec Temehani apres test #13.7</td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-wait">A clarifier</span></td>
+        <td class="link"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s13-4" class="section-header">
+    <div class="section-number">Section 13.4</div>
+    <div class="section-title-h">Contact — fond vert charte graphique</div>
+  </div>
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">13.9</td>
+        <td class="exigence">Section Contact "Parlons de votre evenement" : fond vert en arriere-plan (pas tout blanc)</td>
+        <td class="spec">section.contact background: vert charte graphique Temehani (en attente reference exacte)</td>
+        <td class="src">L.1525</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">13.10</td>
+        <td class="exigence">Partie gauche du form (coordonnees) : espace vert en arriere-plan pour ressortir</td>
+        <td class="spec">.contact-info background: vert charte (cadre transparent vert)</td>
+        <td class="src">L.1535</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">13.11</td>
+        <td class="exigence">Bouton "Demande de devis" navbar : utiliser le bon vert (charte)</td>
+        <td class="spec">.btn-nav background: vert charte (etait #4A7C3F generique)</td>
+        <td class="src">L.262</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">13.12</td>
+        <td class="exigence">Reference vert exact = charte graphique GWAKA</td>
+        <td class="spec">Code couleur HEX/RGB a fournir par Temehani</td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-wait">En attente charte</span></td>
+        <td class="link"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s13-5" class="section-header">
+    <div class="section-number">Section 13.5</div>
+    <div class="section-title-h">Adresse — Fa'a (commune sans precision)</div>
+  </div>
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">13.13</td>
+        <td class="exigence">Adresse exacte : "Fa'a'ā, Tahiti, Polynesie francaise" (laboratoire a domicile, pas d'adresse precise)</td>
+        <td class="spec">Replace "Tahiti, Polynesie francaise" → "Fa'a'ā, Tahiti, Polynesie francaise"</td>
+        <td class="src">L.1537, L.1660</td>
+        <td class="status"><span class="tag tag-wait">A faire</span></td>
+        <td class="link"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s13-7" class="section-header">
+    <div class="section-number">Section 13.7</div>
+    <div class="section-title-h">Stat bar — refonte 4 stats (vocal 02/05 42s)</div>
+  </div>
+  <div class="source-quote">
+    <div class="src-label">Audio retour 02/05 42s</div>
+    « Sur la ligne il y a ecrit les 99% de fait maison etc. Est-ce que tu peux enlever jusqu'a 99%, tu laisses le fait maison, le sur mesure, et on peut mettre au lieu de local et frais on peut mettre circuit court et a cote on est produit frais. »
+  </div>
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">13.14</td>
+        <td class="exigence">Stat bar : retirer "99%", separer en 4 stats (Fait Maison / Sur Mesure / Circuit Court / Produit Frais)</td>
+        <td class="spec">.stat-bar 4 items au lieu de 3, "99% Fait Maison" → "Fait Maison", "Local &amp; Frais" splitte en "Circuit Court" + "Produit Frais"</td>
+        <td class="src">L.1302-1320</td>
+        <td class="status"><span class="tag tag-ok">Conforme</span></td>
+        <td class="link"><a href="https://gwakatahiti.com" target="_blank">↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s13-8" class="section-header">
+    <div class="section-number">Section 13.8</div>
+    <div class="section-title-h">Trust — carrousel 12-15 logos avec fleches (vocal 02/05 58s)</div>
+  </div>
+  <div class="source-quote">
+    <div class="src-label">Audio retour 02/05 58s</div>
+    « Pour nos references, vu qu'on n'en a pas que 6, par exemple l'UPF qui est un de nos meilleurs clients il n'y est pas. Quand je vais te donner les logos, est-ce qu'on en met 6 premiers comme tu as fait, et apres on fait un truc qui defile sur la droite avec une petite fleche ou les gens peuvent cliquer dessus pour voir les autres ? Est-ce que je peux en mettre 12-15 au lieu de 6 ? »
+  </div>
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Exigence CDC</th><th>Implementation</th><th>Ligne</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="num">13.15</td>
+        <td class="exigence">Trust : transformer grid 6 fixes en carrousel scrollable horizontal avec fleches navigation</td>
+        <td class="spec">.trust-carousel-wrap : flex-nowrap overflow-x-auto + .trust-arrow buttons prev/next + JS scrollBy + scroll-snap. 10 items au depart : 6 originaux + UPF + MSH Pacifique + Studio Te Hau + Millesime Lotus.</td>
+        <td class="src">L.1412-1430</td>
+        <td class="status"><span class="tag tag-ok">Conforme (structure)</span></td>
+        <td class="link"><a href="https://gwakatahiti.com#trust" target="_blank">↗</a></td>
+      </tr>
+      <tr>
+        <td class="num">13.16</td>
+        <td class="exigence">Ajouter UPF (Universite de la Polynesie francaise) — un des meilleurs clients GWAKA</td>
+        <td class="spec">3eme item du carrousel "UPF". Texte placeholder, logo PNG/SVG en attente Temehani.</td>
+        <td class="src">L.1416</td>
+        <td class="status"><span class="tag tag-ok">Conforme (texte)</span></td>
+        <td class="link"></td>
+      </tr>
+      <tr>
+        <td class="num">13.17</td>
+        <td class="exigence">Logos PNG/SVG des 10 clients (au lieu de noms texte)</td>
+        <td class="spec">Remplacer .trust-item innerHTML par &lt;img&gt; quand Temehani fournit les fichiers logos</td>
+        <td class="src">—</td>
+        <td class="status"><span class="tag tag-wait">En attente Temehani</span></td>
+        <td class="link"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="s13-6" class="section-header">
+    <div class="section-number">Section 13.6</div>
+    <div class="section-title-h">Validations explicites Temehani</div>
+  </div>
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Validation</th><th>Source vocal</th></tr></thead>
+    <tbody>
+      <tr><td class="num">V1</td><td>Galerie "L'experience GWAKA" : OK validee</td><td class="src">Audio 116s "ca c'est cool"</td></tr>
+      <tr><td class="num">V2</td><td>Section Trust "Ils nous ont fait confiance" : OK (envoie logos)</td><td class="src">Audio 116s "Les references ok je vais te donner les vrais logos"</td></tr>
+      <tr><td class="num">V3</td><td>Section Contact "Parlons de votre evenement" : OK structure (sauf fond vert #13.9)</td><td class="src">Audio 116s "ca c'est top, c'est tout ce qu'il faut"</td></tr>
+      <tr><td class="num">V4</td><td>Photos prestations : Temehani fournira via WeTransfer</td><td class="src">Audio 36s "via WeTransfer"</td></tr>
+      <tr><td class="num">V5</td><td>Hero photo impactante validee (le cote "grosse photo")</td><td class="src">Audio 73s "le cote ou il y a la grande photo quand on arrive ca c'est top"</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════
+       ANNEXE B — ELEMENTS EN ATTENTE
+  ═══════════════════════════════════════ -->
+  <div id="annexe-b" class="chapter-header">
+    <div class="chapter-number">Annexe B</div>
+    <h2 class="chapter-title">Elements en attente de Temehani</h2>
+  </div>
+
+  <table class="req-table">
+    <thead><tr><th>#</th><th>Element</th><th>Impact</th><th>Statut</th></tr></thead>
+    <tbody>
+      <tr><td class="num">B.1</td><td class="exigence">Photos produits (toutes familles)</td><td class="spec">Remplacera les 53 images AI dans le menu</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.2</td><td class="exigence">Photos buffets/evenements</td><td class="spec">Remplacera les 8 images galerie</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.3</td><td class="exigence">Logos clients (Total Energie, Socredo...)</td><td class="spec">Remplacera les placeholders texte dans "Confiance"</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.4</td><td class="exigence">Texte "Qui sommes-nous"</td><td class="spec">Remplacera le texte provisoire section About</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.5</td><td class="exigence">Adresse exacte</td><td class="spec">Remplacera "Papeete, Tahiti" dans le formulaire</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.6</td><td class="exigence">Telephone</td><td class="spec">Remplacera "+689 89 XX XX XX"</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.7</td><td class="exigence">Email</td><td class="spec">Remplacera le placeholder email</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.8</td><td class="exigence">Catalogue produits PDF</td><td class="spec">Lien bouton "Telecharger" dans la section menu</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.9</td><td class="exigence">Acompte 50K XPF</td><td class="spec">Declenche la reservation domaine gwakatahiti.com</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.10</td><td class="exigence">Nom complet Temehani</td><td class="spec">Pour facturation et domaine</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+      <tr><td class="num">B.11</td><td class="exigence">Infos contact footer</td><td class="spec">Adresse, tel, email repetes dans le footer (memes placeholders que section contact)</td><td class="status"><span class="tag tag-wait">En attente</span></td></tr>
+    </tbody>
+  </table>
+
+</main>
+</div>
+</body>
+</html>

@@ -2,8 +2,10 @@
 
 import { useRef, useEffect } from "react";
 import SectionReveal from "@/components/effects/SectionReveal";
+import { useT } from "@/lib/i18n/useT";
 
 export default function InfraSection() {
+  const t = useT("infra");
   const vizRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,11 +28,14 @@ export default function InfraSection() {
         <SectionReveal>
           <div className="text-center mb-16 reveal-child">
             <p className="text-gold text-sm font-medium tracking-[0.2em] uppercase mb-4">
-              Infrastructure
+              {t?.label ?? "Infrastructure"}
             </p>
             <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-tight">
-              Tout votre business{" "}
-              <span className="gradient-text-coral">connecté</span>. Enfin.
+              {t ? (
+                <>{t.title}{" "}<span className="gradient-text-coral">{t.titleHighlight}</span>{t.titleEnd}</>
+              ) : (
+                <>Tout votre business{" "}<span className="gradient-text-coral">connecté</span>. Enfin.</>
+              )}
             </h2>
           </div>
         </SectionReveal>
@@ -121,21 +126,25 @@ export default function InfraSection() {
               {/* Right — Text content */}
               <div className="p-8 lg:p-12 flex flex-col justify-center">
                 <h3 className="font-display text-2xl mb-4">
-                  Tout votre business connecté.{" "}
-                  <span className="gradient-text-coral">Enfin.</span>
+                  {t ? (
+                    <>{t.subtitle}{" "}<span className="gradient-text-coral">{t.subtitleHighlight}</span></>
+                  ) : (
+                    <>Tout votre business connecté.{" "}<span className="gradient-text-coral">Enfin.</span></>
+                  )}
                 </h3>
                 <p className="text-text-secondary leading-relaxed mb-6 text-sm">
-                  On ne livre pas un outil dans un coin. On crée un{" "}
-                  <strong className="text-accent">système complet</strong> où vos emails,
-                  vos réservations, votre facturation et votre service client fonctionnent
-                  ensemble, sans que vous ayez a y penser.
+                  {t ? (
+                    <>{t.description}{" "}<strong className="text-accent">{t.descriptionBold}</strong> {t.descriptionEnd}</>
+                  ) : (
+                    <>On ne livre pas un outil dans un coin. On crée un{" "}<strong className="text-accent">système complet</strong> où vos emails, vos réservations, votre facturation et votre service client fonctionnent ensemble, sans que vous ayez a y penser.</>
+                  )}
                 </p>
                 <ul className="space-y-3">
-                  {[
+                  {(t?.benefits ?? [
                     "Vos tâches répétitives tournent en automatique",
                     "Un tableau de bord pour tout suivre en un coup d'œil",
                     "Connecté à vos outils actuels — pas besoin de tout changer",
-                  ].map((item, i) => (
+                  ]).map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-text-secondary text-sm">
                       <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
                       {item}

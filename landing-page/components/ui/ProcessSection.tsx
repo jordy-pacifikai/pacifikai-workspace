@@ -3,21 +3,22 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useT } from "@/lib/i18n/useT";
 
 gsap.registerPlugin(ScrollTrigger);
 
 /* ---------- Process Card 1 — Chat ---------- */
-function ChatVisual() {
+function ChatVisual({ left, right }: { left?: string; right?: string }) {
   return (
     <div className="card-visual-wrap">
       <div className="chat-anim">
-        <div className="cb cb-left">On a besoin d&apos;automatiser...</div>
+        <div className="cb cb-left">{left ?? "On a besoin d\u2019automatiser..."}</div>
         <div className="cb cb-dots">
           <span />
           <span />
           <span />
         </div>
-        <div className="cb cb-right">On va auditer et trouver la solution !</div>
+        <div className="cb cb-right">{right ?? "On va auditer et trouver la solution !"}</div>
       </div>
     </div>
   );
@@ -118,7 +119,7 @@ const STEPS = [
     description:
       "Un appel de 30 minutes pour comprendre vos défis, vos objectifs et identifier les opportunités d'automatisation les plus impactantes.",
     color: "accent",
-    visual: <ChatVisual />,
+    visualType: "chat" as const,
     animClass: "pc-chat",
   },
   {
@@ -128,7 +129,7 @@ const STEPS = [
     description:
       "Workflows, chatbots, apps, sites — développement agile avec tests en conditions réelles. Vous suivez l'avancement en temps réel.",
     color: "lagoon",
-    visual: <CodeVisual />,
+    visualType: "code" as const,
     animClass: "pc-code",
   },
   {
@@ -138,7 +139,7 @@ const STEPS = [
     description:
       "Mise en production, formation de votre équipe et support continu pour garantir votre succès. Vous êtes autonomes.",
     color: "gold",
-    visual: <RadarVisual />,
+    visualType: "radar" as const,
     animClass: "pc-radar",
   },
 ];
@@ -163,6 +164,7 @@ const COLOR_CLASSES: Record<string, { border: string; text: string; badge: strin
 
 export default function ProcessSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const t = useT("process");
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -214,27 +216,33 @@ export default function ProcessSection() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-lagoon text-sm font-medium tracking-[0.2em] uppercase mb-4">
-            Notre méthode
+            {t?.label ?? "Notre méthode"}
           </p>
           <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-tight">
-            Comment ça{" "}
-            <span className="gradient-text-lagoon">marche</span>
+            {t ? (
+              <>{t.title}{" "}<span className="gradient-text-lagoon">{t.titleHighlight}</span></>
+            ) : (
+              <>Comment ça{" "}<span className="gradient-text-lagoon">marche</span></>
+            )}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {STEPS.map((step, i) => {
             const cls = COLOR_CLASSES[step.color];
+            const ts = t?.steps[i];
+            const visual = step.visualType === "chat"
+              ? <ChatVisual left={t?.chatLeft} right={t?.chatRight} />
+              : step.visualType === "code"
+              ? <CodeVisual />
+              : <RadarVisual />;
             return (
               <div
                 key={i}
                 data-tilt
                 className={`process-card ${step.animClass} glass rounded-3xl border overflow-hidden transition-colors duration-400 ${cls.border}`}
               >
-                {/* Animated visual */}
-                {step.visual}
-
-                {/* Content */}
+                {visual}
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <span
@@ -243,12 +251,12 @@ export default function ProcessSection() {
                       {step.step}
                     </span>
                     <span className={`text-[11px] tracking-[0.1em] uppercase ${cls.text} opacity-70`}>
-                      {step.subtitle}
+                      {ts?.subtitle ?? step.subtitle}
                     </span>
                   </div>
-                  <h3 className="font-display text-lg mb-2">{step.title}</h3>
+                  <h3 className="font-display text-lg mb-2">{ts?.title ?? step.title}</h3>
                   <p className="text-text-secondary text-sm leading-relaxed">
-                    {step.description}
+                    {ts?.description ?? step.description}
                   </p>
                 </div>
               </div>

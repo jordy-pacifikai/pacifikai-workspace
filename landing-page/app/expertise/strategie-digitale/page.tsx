@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 import ExpertisePage from "@/components/ui/ExpertisePage";
 import StrategieVisual from "@/components/ui/expertise-visuals/StrategieVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Transformation Digitale | PACIFIK'AI",
   description:
     "Pas un PowerPoint de 80 pages. Une transformation concrete : audit, priorisation, execution et mesure. Votre entreprise sort transformee, pas juste conseillee. PACIFIK'AI en Polynesie francaise.",
+  alternates: {
+    canonical: "https://pacifikai.com/expertise/strategie-digitale",
+  },
+  openGraph: {
+    title: "Transformation Digitale | PACIFIK'AI",
+    description: "Strategie de transformation digitale pour entreprises en Polynesie francaise.",
+    url: "https://pacifikai.com/expertise/strategie-digitale",
+    locale: "fr_PF",
+    type: "website",
+  },
 };
 
 const competencies = [
@@ -143,7 +154,10 @@ const useCases = [
 
 export default function StrategieDigitalePage() {
   return (
-    <ExpertisePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Transformation Digitale", "Pas un PowerPoint de 80 pages. Une transformation concrete : audit, priorisation, execution et mesure. Votre entreprise sort transformee.", "https://pacifikai.com/expertise/strategie-digitale")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Expertise", url: "https://pacifikai.com/expertise" }, { name: "Transformation Digitale", url: "https://pacifikai.com/expertise/strategie-digitale" }])) }} />
+      <ExpertisePage
       accentColor="orange"
       badge="De la vision aux resultats concrets"
       title="Transformation"
@@ -159,5 +173,6 @@ export default function StrategieDigitalePage() {
       ctaTitle="Pret a transformer votre entreprise ?"
       ctaSubtitle="Premier diagnostic gratuit. On vous dit exactement par ou commencer et quel ROI attendre."
     />
+    </>
   );
 }

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GWAKA — Plan de Build</title>
+<link rel="icon" type="image/x-icon" href="/portfolio/new/images/gwaka/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/portfolio/new/images/gwaka/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/portfolio/new/images/gwaka/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/portfolio/new/images/gwaka/apple-touch-icon.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-2: #1e1e1e;
+    --border: #2a2a2a;
+    --text: #e8e8e8;
+    --text-dim: #888;
+    --green: #2D5016;
+    --green-light: #4a8c28;
+    --gold: #C9A030;
+    --gold-dim: rgba(201,160,48,0.15);
+    --accent: #5b8c3e;
+    --done: #22c55e;
+    --progress: #f59e0b;
+    --todo: #6b7280;
+    --blocked: #ef4444;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-badge {
+    display: inline-block;
+    background: var(--gold-dim);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: var(--green-light); }
+  .header p { color: var(--text-dim); font-size: 15px; }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .stat-card .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-card .label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-section { margin-bottom: 40px; }
+  .progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--green-light));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* TIMELINE */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .phase {
+    position: relative;
+    margin-bottom: 32px;
+    padding-left: 60px;
+  }
+  .phase-dot {
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    background: var(--bg);
+    z-index: 1;
+  }
+  .phase-dot.done { border-color: var(--done); background: var(--done); }
+  .phase-dot.progress { border-color: var(--progress); background: var(--progress); }
+  .phase-dot.todo { border-color: var(--todo); }
+  .phase-dot.blocked { border-color: var(--blocked); }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .phase-number {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .phase-status {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .phase-status.done { background: rgba(34,197,94,0.15); color: var(--done); }
+  .phase-status.progress { background: rgba(245,158,11,0.15); color: var(--progress); }
+  .phase-status.todo { background: rgba(107,114,128,0.15); color: var(--todo); }
+  .phase-status.blocked { background: rgba(239,68,68,0.15); color: var(--blocked); }
+
+  .phase h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+  }
+  .phase-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .task-list { list-style: none; }
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .task-item:last-child { border-bottom: none; }
+  .task-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+  .task-check.done { border-color: var(--done); background: var(--done); color: #000; }
+  .task-check.blocked { border-color: var(--blocked); }
+  .task-label { flex: 1; }
+  .task-label .detail { color: var(--text-dim); font-size: 12px; }
+  .task-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+  .task-tag.design { background: rgba(139,92,246,0.15); color: #a78bfa; }
+  .task-tag.dev { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .task-tag.content { background: rgba(236,72,153,0.15); color: #f472b6; }
+  .task-tag.client { background: rgba(245,158,11,0.15); color: #fbbf24; }
+
+  /* DECISIONS */
+  .decisions-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+  .decisions-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+  .decision {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 14px;
+  }
+  .decision:last-child { border-bottom: none; }
+  .decision-icon { font-size: 16px; flex-shrink: 0; }
+  .decision-text .strike { text-decoration: line-through; color: var(--text-dim); }
+
+  /* WAITING */
+  .waiting-section {
+    background: linear-gradient(135deg, rgba(201,160,48,0.08), rgba(201,160,48,0.02));
+    border: 1px solid rgba(201,160,48,0.2);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+  .waiting-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .waiting-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 14px;
+  }
+  .waiting-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* STRUCTURE PREVIEW */
+  .structure-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+  .structure-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+  .structure-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .structure-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface-2);
+    border-radius: 8px;
+    border-left: 3px solid var(--green);
+    font-size: 14px;
+  }
+  .structure-block .num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green-light);
+    width: 24px;
+  }
+  .structure-block .name { font-weight: 500; flex: 1; }
+  .structure-block .source {
+    font-size: 11px;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .footer strong { color: var(--text); }
+
+  @media (max-width: 640px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .header h1 { font-size: 1.8rem; }
+    .phase { padding-left: 48px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">Plan de Build</div>
+    <h1>Site <span>GWAKA</span> — gwakatahiti.com</h1>
+    <p>Brief reçu le 14 avril 2026 · 12 vocaux + 7 screenshots · Mix V2+V4+V5</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="value">10</div>
+      <div class="label">Sections</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">49</div>
+      <div class="label">Produits</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">100K</div>
+      <div class="label">XPF Budget</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">~7j</div>
+      <div class="label">Délai</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-section">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" style="width: 71%"></div>
+    </div>
+    <div class="progress-text">
+      <span>Phase actuelle : Itération v2 (8 sur 16 demandes Temehani implémentées, 5 bloqué client, 3 en attente charte)</span>
+      <span>71% complété (40/56 tâches)</span>
+    </div>
+  </div>
+
+  <!-- STRUCTURE PREVIEW -->
+  <div class="structure-section">
+    <h2>Structure validée par Temehani</h2>
+    <div class="structure-flow">
+      <div class="structure-block"><span class="num">01</span><span class="name">Hero — Photo + texte + 2 CTA</span><span class="source">V4+V5</span></div>
+      <div class="structure-block"><span class="num">02</span><span class="name">Stats — 99% Fait Maison · Sur Mesure · Local</span><span class="source">img_07</span></div>
+      <div class="structure-block"><span class="num">03</span><span class="name">Prestations — "Six façons de vous régaler"</span><span class="source">img_02</span></div>
+      <div class="structure-block"><span class="num">04</span><span class="name">Qui sommes-nous — Texte proximité</span><span class="source">audio_07</span></div>
+      <div class="structure-block"><span class="num">05</span><span class="name">Citation — "Du frais, du local..." by GWAKA</span><span class="source">img_04</span></div>
+      <div class="structure-block"><span class="num">06</span><span class="name">Menu Notre Carte — Filtres + produits visuels</span><span class="source">img_03+05</span></div>
+      <div class="structure-block"><span class="num">07</span><span class="name">Ils nous ont fait confiance — Logos</span><span class="source">audio_08</span></div>
+      <div class="structure-block"><span class="num">08</span><span class="name">Galerie — L'expérience GWAKA</span><span class="source">audio_09</span></div>
+      <div class="structure-block"><span class="num">09</span><span class="name">Parlons de Votre Événement — Formulaire</span><span class="source">img_06</span></div>
+      <div class="structure-block"><span class="num">10</span><span class="name">Footer — Mentions + liens + réseaux</span><span class="source">—</span></div>
+    </div>
+  </div>
+
+  <!-- DECISIONS -->
+  <div class="decisions-section">
+    <h2>Décisions clés de Temehani</h2>
+    <div class="decision"><span class="decision-icon">✅</span><div class="decision-text">Prestations : photos visuelles pour chaque service (style V1), <span class="strike">pas de numéros 1-2-3 sans image</span></div></div>
+    <div class="decision"><span class="decision-icon">✅</span><div class="decision-text">Menu : filtres par catégorie, 1 famille à la fois, <span class="strike">pas tout affiché d'un coup</span></div></div>
+    <div class="decision"><span class="decision-icon">✅</span><div class="decision-text">Produits : photo + nom + ingrédients, <span class="strike">pas de listing texte</span></div></div>
+    <div class="decision"><span class="decision-icon">✅</span><div class="decision-text">Confiance : logos entreprises, <span class="strike">pas noms en texte</span></div></div>
+    <div class="decision"><span class="decision-icon">❌</span><div class="decision-text"><span class="strike">Feed Instagram intégré</span> — "les gens suivent déjà sur les réseaux"</div></div>
+    <div class="decision"><span class="decision-icon">✅</span><div class="decision-text">Qui sommes-nous : sur la page d'accueil, <span class="strike">pas une page séparée</span></div></div>
+    <div class="decision"><span class="decision-icon">✅</span><div class="decision-text">Formulaire : ajouter Baby Shower + Gender Reveal + Anniversaire aux types de prestation</div></div>
+    <div class="decision"><span class="decision-icon">✅</span><div class="decision-text">Réseaux sociaux : dans la section devis uniquement (FB + IG)</div></div>
+    <div class="decision"><span class="decision-icon">✅</span><div class="decision-text">Citation "by GWAKA" pour l'authenticité (style V4)</div></div>
+    <div class="decision"><span class="decision-icon">✅</span><div class="decision-text">Style V4 minimaliste : grosse photo + petit texte pour le hero</div></div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="timeline">
+
+    <!-- Phase 1 -->
+    <div class="phase">
+      <div class="phase-dot done"></div>
+      <div class="phase-header">
+        <span class="phase-number">Phase 1</span>
+        <span class="phase-status done">Terminé</span>
+      </div>
+      <h3>Prototypage & Proposition</h3>
+      <p class="phase-desc">10 prototypes HTML, grille tarifaire, devis, proposition envoyée</p>
+      <ul class="task-list">
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">10 prototypes HTML (v1-v10) <span class="detail">— 49 produits, images AI</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Proposition gwaka-devis.html <span class="detail">— tarifs + FAQ + iframes</span></span><span class="task-tag content">content</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Devis GWK-001 (N°2026-002) <span class="detail">— 100K XPF, PDF 1 page A4</span></span><span class="task-tag content">content</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">RIB corrigé partout <span class="detail">— Banque de Tahiti PRO</span></span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Deploy prod + gwaka-devis.html mis à jour</span><span class="task-tag dev">dev</span></li>
+      </ul>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase">
+      <div class="phase-dot done"></div>
+      <div class="phase-header">
+        <span class="phase-number">Phase 2</span>
+        <span class="phase-status done">Terminé</span>
+      </div>
+      <h3>Brief Détaillé</h3>
+      <p class="phase-desc">12 messages vocaux + 7 screenshots de Temehani, transcrits et analysés</p>
+      <ul class="task-list">
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Check DMs Instagram (Camoufox) <span class="detail">— 12 vocaux + 7 images</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Transcription Whisper (12 audios) <span class="detail">— ~8 min total</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Analyse images (7 screenshots prototypes) <span class="detail">— sections préférées identifiées</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Cahier des charges rédigé <span class="detail">— 11 sections, structure validée</span></span><span class="task-tag content">content</span></li>
+      </ul>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase">
+      <div class="phase-dot progress"></div>
+      <div class="phase-header">
+        <span class="phase-number">Phase 3</span>
+        <span class="phase-status progress">En cours</span>
+      </div>
+      <h3>Réception Assets</h3>
+      <p class="phase-desc">Acompte reçu et coordonnées trouvées. Reste les vraies photos/logos/texte de Temehani.</p>
+      <ul class="task-list">
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Acompte 50K XPF <span class="detail">— virement reçu Banque de Tahiti PRO</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Coordonnées contact <span class="detail">— tel, email, IG, FB depuis CONTEXT.md (posts IG officiels)</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Photos produits réelles <span class="detail">— toutes familles, remplacera images AI</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Photos buffets/événements <span class="detail">— pour la galerie L'expérience GWAKA</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Logos clients confiance (PNG/SVG) <span class="detail">— remplacera les noms texte (vocal Audio 09)</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Texte "Qui sommes-nous" final <span class="detail">— bio IG temporaire en place, attend version Temehani</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Adresse exacte du local <span class="detail">— "Tahiti, Polynésie française" temporaire</span></span><span class="task-tag client">client</span></li>
+      </ul>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase">
+      <div class="phase-dot done"></div>
+      <div class="phase-header">
+        <span class="phase-number">Phase 4</span>
+        <span class="phase-status done">Terminé</span>
+      </div>
+      <h3>Production Site</h3>
+      <p class="phase-desc">Construction du site final — gwaka-final.html (1825 lignes, 11 sections, 54 produits)</p>
+      <ul class="task-list">
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Domaine gwakatahiti.com réservé <span class="detail">— Hostinger, DNS vers Hetzner, SSL Let's Encrypt</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Hero section <span class="detail">— "Des brunchs avec un cœur pour vous", 1920x1046px</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Stats bar <span class="detail">— 99% Fait Maison / Sur Mesure / Local & Frais</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Prestations <span class="detail">— 6 cartes "Six façons de vous régaler"</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Qui sommes-nous <span class="detail">— "Brunch & Pleasure" + image hi-res 1600x872</span></span><span class="task-tag content">content</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Citation GWAKA <span class="detail">— "Du frais, du local, du fait maison..."</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Menu filtré <span class="detail">— 6 tabs catégories, 54 produits, click = 1 famille</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Section confiance <span class="detail">— 6 vrais clients (TotalEnergies, Socredo, ICPF...)</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Galerie photos <span class="detail">— 8 images uniques + grid-auto-flow:dense</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Formulaire devis <span class="detail">— 8 champs (avec Gender Reveal) + coordonnées + IG/FB</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Catalogue PDF Google Drive <span class="detail">— bouton "Télécharger" lien direct</span></span><span class="task-tag content">content</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Footer <span class="detail">— tel, email, IG, FB, mentions, copyright</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Responsive mobile <span class="detail">— burger menu, breakpoints 375/768/1024px</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Optimisation WebP <span class="detail">— 103 images converties, -44% bandwidth</span></span><span class="task-tag dev">dev</span></li>
+      </ul>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="phase">
+      <div class="phase-dot done"></div>
+      <div class="phase-header">
+        <span class="phase-number">Phase 5</span>
+        <span class="phase-status done">Terminé</span>
+      </div>
+      <h3>QA & Deploy</h3>
+      <p class="phase-desc">Tests, déploiement Hetzner + Caddy SSL, formulaire branché</p>
+      <ul class="task-list">
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Smoke test <span class="detail">— 5/5 routes HTTP 200, 54/54 images chargent</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">DevEye QA visuel <span class="detail">— 0 erreur console, 0 404 image</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">DNS gwakatahiti.com <span class="detail">— A record → 178.104.131.42 propagé</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Deploy production <span class="detail">— Hetzner VPS + Caddy + SSL Let's Encrypt</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Backend formulaire <span class="detail">— /api/gwaka-contact (Brevo SMTP) → gwakatahiti@gmail.com</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Validation Temehani <span class="detail">— lien envoyé, attend retour final + photos</span></span><span class="task-tag client">client</span></li>
+      </ul>
+    </div>
+
+    <!-- Phase 6 -->
+    <div class="phase">
+      <div class="phase-dot progress"></div>
+      <div class="phase-header">
+        <span class="phase-number">Phase 6</span>
+        <span class="phase-status progress">En cours</span>
+      </div>
+      <h3>Livraison & Suivi</h3>
+      <p class="phase-desc">Mise en ligne effective, intégration des assets finaux Temehani, facturation solde</p>
+      <ul class="task-list">
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Annonce Temehani <span class="detail">— "Ton site internet est quasi prêt" envoyé 28/04</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Intégration assets Temehani <span class="detail">— photos réelles, logos clients, texte about, adresse</span></span><span class="task-tag content">content</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Validation finale Temehani <span class="detail">— relecture, ajustements éventuels</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Facture solde 50K XPF <span class="detail">— émise après validation finale</span></span><span class="task-tag content">content</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Support 3 mois <span class="detail">— modifications incluses, démarrage à la livraison finale</span></span><span class="task-tag client">client</span></li>
+      </ul>
+    </div>
+
+    <!-- Phase 7 -->
+    <div class="phase">
+      <div class="phase-dot progress"></div>
+      <div class="phase-header">
+        <span class="phase-number">Phase 7</span>
+        <span class="phase-status progress">En cours</span>
+      </div>
+      <h3>Itération v2 — Retours Temehani 1-2 mai 2026</h3>
+      <p class="phase-desc">16 exigences suite à 13 vocaux + 6 images Temehani après visite du site live</p>
+      <ul class="task-list">
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Menu Notre Carte sur page séparée <span class="detail">— /menu, retirer de la home</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Anchor nav "Menu" pointe vers /menu <span class="detail">— pas anchor home</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Hero : retirer "Traiteur Brunch &amp; Healthy" sous logo <span class="detail">— navbar haut gauche</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Hero : ajouter "GWAKA" en gros au milieu <span class="detail">— wordmark blanc 5-7rem</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Menu : titre "Menu" / sous-titre "Notre Carte" stack vertical <span class="detail">— pas même ligne</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Menu : afficher "Salé" par défaut à l'arrivée <span class="detail">— filter init = salé, pas listing vide</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Adresse : "Fa'a'ā, Tahiti, Polynésie française" <span class="detail">— laboratoire à domicile, pas adresse exacte</span></span><span class="task-tag content">content</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Stat bar : 4 stats (Fait Maison / Sur Mesure / Circuit Court / Produit Frais) <span class="detail">— retirer "99%", split "Local &amp; Frais" en 2 (vocal 02/05)</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check done">✓</span><span class="task-label">Trust : carrousel scrollable 10 logos + flèches navigation <span class="detail">— UPF ajouté, structure 12-15 ready (vocal 02/05)</span></span><span class="task-tag dev">dev</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Contact : fond VERT en arrière-plan <span class="detail">— pas tout blanc, charte graphique Temehani</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Contact gauche (coordonnées) : espace VERT en arrière-plan <span class="detail">— cadre vert pour ressortir</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check"></span><span class="task-label">Bouton "Demande de devis" navbar : bon vert charte <span class="detail">— remplacer #4A7C3F par charte Temehani</span></span><span class="task-tag design">design</span></li>
+        <li class="task-item"><span class="task-check blocked"></span><span class="task-label">Référence vert exact charte graphique <span class="detail">— HEX/RGB à fournir par Temehani</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check blocked"></span><span class="task-label">Photos prestations + galerie + plats <span class="detail">— Temehani via WeTransfer</span></span><span class="task-tag client">client</span></li>
+        <li class="task-item"><span class="task-check blocked"></span><span class="task-label">Logos clients PNG/SVG (10 entreprises) <span class="detail">— TotalEnergies, Socredo, UPF, ICPF, Gaz Tahiti, DJS, Royal Auto, MSH Pacifique, Studio Te Hau, Millesime Lotus</span></span><span class="task-tag client">client</span></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- WAITING -->
+  <div class="waiting-section">
+    <h2>En attente de Temehani (post-livraison v1)</h2>
+    <div class="waiting-item"><span class="waiting-dot"></span>Référence vert charte graphique (HEX/RGB exact)</div>
+    <div class="waiting-item"><span class="waiting-dot"></span>Photos pro pour les 6 cartes Prestations</div>
+    <div class="waiting-item"><span class="waiting-dot"></span>Photos pour la Galerie "L'expérience GWAKA" (6-8 photos)</div>
+    <div class="waiting-item"><span class="waiting-dot"></span>Photos plats stars du menu</div>
+    <div class="waiting-item"><span class="waiting-dot"></span>Logos clients PNG/SVG (6 entreprises)</div>
+    <div class="waiting-item"><span class="waiting-dot"></span>Texte "Qui sommes-nous" personnel (optionnel — bio Insta temporaire en place)</div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p><strong>PACIFIK'AI</strong> · Projet GWAKA · Devis N°2026-002</p>
+    <p style="margin-top:4px">Dernière mise à jour : 14 avril 2026</p>
+  </div>
+
+</div>
+</body>
+</html>

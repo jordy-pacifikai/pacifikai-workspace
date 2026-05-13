@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import ServicePage from "@/components/ui/ServicePage";
 import ServiceAPIVisual from "@/components/ui/service-visuals/ServiceAPIVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getOptimalLinks } from "@/lib/internal-links";
 
 export const metadata: Metadata = {
   title: "Intégrations API à Tahiti | PACIFIK'AI — Connectez vos Outils Polynésie",
@@ -11,7 +14,7 @@ export const metadata: Metadata = {
     description:
       "Intégrations API sur-mesure à Tahiti : CRM, facturation, calendrier, messaging.",
     url: "https://pacifikai.com/services/api",
-    locale: "fr_FR",
+    locale: "fr_PF",
     type: "website",
   },
   alternates: {
@@ -96,12 +99,17 @@ const ICON_PMS = (
   </svg>
 );
 
+const relatedLinks = getOptimalLinks("/services/api", "service", ["api", "integration", "crm", "synchronisation", "automatisation"]);
+
 export default function ApiPage() {
   return (
-    <ServicePage
-      badge="0 saisie manuelle"
-      title="Intégrations"
-      titleHighlight="API"
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Intégrations API", "Intégrations API sur-mesure à Tahiti : CRM, facturation, calendrier, messaging. Un écosystème unifié pour entreprises en Polynésie française.", "https://pacifikai.com/services/api")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Services", url: "https://pacifikai.com/services" }, { name: "Intégrations API", url: "https://pacifikai.com/services/api" }])) }} />
+      <ServicePage
+        badge="0 saisie manuelle"
+        title="Intégrations"
+        titleHighlight="API"
       description="Connexion de tous vos outils : CRM, facturation, calendrier, messaging — un écosystème unifié où tout communique automatiquement."
       heroVisual={<ServiceAPIVisual />}
       heroStat="0 saisie manuelle"
@@ -184,6 +192,8 @@ export default function ApiPage() {
       ]}
       ctaFinalTitle="Prêt à unifier vos outils ?"
       ctaFinalSubtitle="Contactez-nous pour une cartographie gratuite de votre écosystème."
-    />
+      />
+    <RelatedLinks links={relatedLinks} />
+    </>
   );
 }

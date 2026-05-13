@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import SectionReveal from "@/components/effects/SectionReveal";
+import { useT } from "@/lib/i18n/useT";
 
 /* ─────────────────────────────────────────────
    ANIMATED VISUALS — one per service card
@@ -353,7 +354,7 @@ const SOLUTIONS = [
 /* ─────────────────────────────────────────────
    SOLUTION CARD
 ───────────────────────────────────────────── */
-function SolutionCard({ sol }: { sol: typeof SOLUTIONS[number] }) {
+function SolutionCard({ sol, learnMore }: { sol: typeof SOLUTIONS[number]; learnMore?: string }) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -381,7 +382,7 @@ function SolutionCard({ sol }: { sol: typeof SOLUTIONS[number] }) {
         <h3>{sol.title}</h3>
         <p>{sol.description}</p>
         <a href={sol.href} className="card-cta">
-          En savoir plus
+          {learnMore ?? "En savoir plus"}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
@@ -395,26 +396,39 @@ function SolutionCard({ sol }: { sol: typeof SOLUTIONS[number] }) {
    SECTION
 ───────────────────────────────────────────── */
 export default function SolutionsSection() {
+  const t = useT("solutions");
+
+  const solutions = t
+    ? SOLUTIONS.map((s, i) => {
+        const tc = t.cards[i];
+        if (!tc) return s;
+        return { ...s, title: tc.title, description: tc.description };
+      })
+    : SOLUTIONS;
+
   return (
     <section id="solutions" className="section-padding">
       <div className="max-w-7xl mx-auto">
         <SectionReveal>
           <div className="text-center mb-16 reveal-child">
             <p className="text-accent text-sm font-medium tracking-[0.2em] uppercase mb-4">
-              Solutions complètes
+              {t?.label ?? "Solutions complètes"}
             </p>
             <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-tight">
-              Nos solutions en{" "}
-              <span className="gradient-text-coral">détail</span>
+              {t ? (
+                <>{t.title}{" "}<span className="gradient-text-coral">{t.titleHighlight}</span></>
+              ) : (
+                <>Nos solutions en{" "}<span className="gradient-text-coral">détail</span></>
+              )}
             </h2>
           </div>
         </SectionReveal>
 
         <SectionReveal stagger={0.07}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {SOLUTIONS.map((sol, i) => (
+            {solutions.map((sol, i) => (
               <div key={i} className="reveal-child">
-                <SolutionCard sol={sol} />
+                <SolutionCard sol={sol} learnMore={t?.learnMore} />
               </div>
             ))}
           </div>

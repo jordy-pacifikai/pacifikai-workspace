@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useT } from "@/lib/i18n/useT";
 
 const FOOTER_SECTIONS = [
   {
@@ -53,7 +54,7 @@ const FOOTER_SECTIONS = [
   },
 ];
 
-function NewsletterForm() {
+function NewsletterForm({ t }: { t?: ReturnType<typeof useT<"footer">> }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -78,11 +79,11 @@ function NewsletterForm() {
   return (
     <div className="md:col-span-2">
       <h4 className="text-xs font-semibold uppercase tracking-widest text-text-dim mb-4">
-        Restez informé
+        {t?.stayInformed ?? "Restez informé"}
       </h4>
       {status === "success" ? (
         <p className="text-sm text-[#14b8a6] font-medium">
-          Merci ! Vous êtes bien inscrit.
+          {t?.subscribeSuccess ?? "Merci ! Vous êtes bien inscrit."}
         </p>
       ) : (
         <>
@@ -104,14 +105,14 @@ function NewsletterForm() {
               disabled={status === "loading"}
               className="whitespace-nowrap rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-[#14b8a6] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
             >
-              {status === "loading" ? "…" : "S'inscrire"}
+              {status === "loading" ? "…" : (t?.subscribe ?? "S'inscrire")}
             </button>
           </form>
           {status === "error" && (
-            <p className="mt-1.5 text-xs text-red-400">Erreur, réessayez.</p>
+            <p className="mt-1.5 text-xs text-red-400">{t?.error ?? "Erreur, réessayez."}</p>
           )}
           <p className="mt-2 text-[11px] text-text-dim">
-            Pas de spam. Désabonnement en 1 clic.
+            {t?.noSpam ?? "Pas de spam. Désabonnement en 1 clic."}
           </p>
         </>
       )}
@@ -120,6 +121,8 @@ function NewsletterForm() {
 }
 
 export default function Footer() {
+  const t = useT("footer");
+
   return (
     <footer className="border-t border-border pt-16 pb-8 px-6">
       <div className="max-w-6xl mx-auto">
@@ -127,13 +130,13 @@ export default function Footer() {
         <div className="mb-12 rounded-2xl border border-white/10 bg-white/[0.03] px-8 py-8 flex flex-col md:flex-row md:items-center gap-6">
           <div className="flex-1">
             <h3 className="font-display text-lg font-semibold text-text mb-1">
-              Restez à la pointe de l&rsquo;IA en Polynésie
+              {t?.newsletterTitle ?? "Restez à la pointe de l\u2019IA en Polynésie"}
             </h3>
             <p className="text-sm text-text-secondary">
-              Conseils pratiques, outils IA, offres exclusives — chaque mois dans votre boîte.
+              {t?.newsletterDescription ?? "Conseils pratiques, outils IA, offres exclusives — chaque mois dans votre boîte."}
             </p>
           </div>
-          <NewsletterForm />
+          <NewsletterForm t={t} />
         </div>
 
         {/* Top grid */}
@@ -145,19 +148,22 @@ export default function Footer() {
               <span className="font-semibold text-lg tracking-wide">PACIFIK&apos;AI</span>
             </div>
             <p className="text-text-secondary text-sm leading-relaxed mb-4 max-w-[220px]">
-              Agence digitale &amp; IA à Papeete, Tahiti. Sites web, chatbots,
-              automatisation et conseil pour entreprises en Polynésie française.
+              {t?.brand ?? "Agence digitale & IA à Papeete, Tahiti. Sites web, chatbots, automatisation et conseil pour entreprises en Polynésie française."}
             </p>
             <p className="text-text-dim text-xs">
-              Tahiti &middot; Moorea &middot; Bora Bora
+              {t?.locations ?? "Tahiti \u00b7 Moorea \u00b7 Bora Bora"}
             </p>
           </div>
 
           {/* Link sections */}
-          {FOOTER_SECTIONS.map((section) => (
+          {FOOTER_SECTIONS.map((section) => {
+            const sectionTitleMap: Record<string, string> = t?.sections ?? {};
+            const titleKey = section.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const translatedTitle = sectionTitleMap[titleKey] ?? section.title;
+            return (
             <div key={section.title}>
               <h4 className="text-xs font-semibold uppercase tracking-widest text-text-dim mb-4">
-                {section.title}
+                {translatedTitle}
               </h4>
               <ul className="space-y-2.5">
                 {section.links.map((link) => (
@@ -182,17 +188,17 @@ export default function Footer() {
                 )}
               </ul>
             </div>
-          ))}
+          );
+          })}
         </div>
 
         {/* Bottom bar */}
         <div className="pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-text-dim text-xs">
-            &copy; {new Date().getFullYear()} PACIFIK&apos;AI. Tous droits
-            réservés.
+            {(t?.copyright ?? "\u00a9 {year} PACIFIK\u2019AI. Tous droits réservés.").replace("{year}", String(new Date().getFullYear()))}
           </p>
           <p className="text-text-dim text-xs">
-            Polynésie française
+            {t?.polynesie ?? "Polynésie française"}
           </p>
         </div>
       </div>

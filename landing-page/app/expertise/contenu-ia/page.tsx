@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 import ExpertisePage from "@/components/ui/ExpertisePage";
 import ContenuVisual from "@/components/ui/expertise-visuals/ContenuVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Production Contenu x10 | PACIFIK'AI",
   description:
     "Images, videos, voix off, avatars — produits en serie avec une qualite studio. Ce qui prenait une semaine prend maintenant une journee. Volume studio, delai startup.",
+  alternates: {
+    canonical: "https://pacifikai.com/expertise/contenu-ia",
+  },
+  openGraph: {
+    title: "Production Contenu x10 | PACIFIK'AI",
+    description: "Production de contenu IA a volume studio pour entreprises en Polynesie francaise.",
+    url: "https://pacifikai.com/expertise/contenu-ia",
+    locale: "fr_PF",
+    type: "website",
+  },
 };
 
 const competencies = [
@@ -148,7 +159,10 @@ const useCases = [
 
 export default function ContenuIAPage() {
   return (
-    <ExpertisePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Production Contenu IA", "Images, videos, voix off, avatars produits en serie avec une qualite studio. Volume studio, delai startup.", "https://pacifikai.com/expertise/contenu-ia")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Expertise", url: "https://pacifikai.com/expertise" }, { name: "Production Contenu IA", url: "https://pacifikai.com/expertise/contenu-ia" }])) }} />
+      <ExpertisePage
       accentColor="gold"
       badge="Volume studio, delai startup"
       title="Production Contenu"
@@ -164,5 +178,6 @@ export default function ContenuIAPage() {
       ctaTitle="Passez en mode production"
       ctaSubtitle="Dites-nous vos besoins en contenu. On vous montre ce qu'on peut produire en 48h."
     />
+    </>
   );
 }

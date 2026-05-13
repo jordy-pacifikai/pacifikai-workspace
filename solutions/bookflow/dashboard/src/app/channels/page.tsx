@@ -1383,6 +1383,220 @@ function FacebookConnectedCard({
   );
 }
 
+// ─── BYO Token Card (Token permanent System User Meta — recommande) ───────────
+
+interface BYOTokenResult {
+  ok: boolean;
+  page?: { id: string; name: string; instagram: boolean };
+  token?: { permanent: boolean; expiresAt: number; scopes: string[] };
+  error?: string;
+  detail?: string;
+  missingScopes?: string[];
+}
+
+const BYO_STEPS = [
+  {
+    title: 'Ouvrir Meta Business Settings',
+    detail: 'Va sur business.facebook.com → Parametres business → Utilisateurs systeme.',
+    link: 'https://business.facebook.com/settings/system-users',
+    linkLabel: 'Ouvrir Meta Business Settings',
+  },
+  {
+    title: 'Creer un Utilisateur Systeme',
+    detail: 'Clique "Ajouter" → nom : "Vea Bot" → role : "Admin" (ou "Employee" si Admin indispo). Valide.',
+  },
+  {
+    title: 'Assigner ta Page',
+    detail: 'Sur l\'utilisateur cree, clique "Ajouter des assets" → "Pages" → choisis ta Page → coche "Gerer la Page" (controle complet). Sauvegarde.',
+  },
+  {
+    title: 'Generer un token permanent',
+    detail: 'Clique "Generer un nouveau token". App : ta Page Facebook (n\'importe laquelle, tu peux creer une app temporaire si besoin). Expiration : "Jamais". Permissions : pages_messaging + pages_manage_metadata + pages_read_engagement.',
+  },
+  {
+    title: 'Copier-coller le token',
+    detail: 'Le token apparait une seule fois. Copie-le et colle-le ci-dessous.',
+  },
+] as const;
+
+function BYOTokenCard({
+  businessId,
+  onConnected,
+  alreadyConnected,
+}: {
+  businessId: string;
+  onConnected: () => void;
+  alreadyConnected: boolean;
+}) {
+  const [token, setToken] = useState('');
+  const [showToken, setShowToken] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<BYOTokenResult | null>(null);
+  const [expandedStep, setExpandedStep] = useState(0);
+
+  async function handleConnect() {
+    if (!token.trim()) return;
+    setSubmitting(true);
+    setResult(null);
+    try {
+      const res = await fetch('/api/auth/facebook/byo-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId, pageToken: token.trim() }),
+      });
+      const data = (await res.json()) as BYOTokenResult;
+      if (res.ok && data.ok) {
+        setResult(data);
+        setToken('');
+        setTimeout(onConnected, 1200);
+      } else {
+        setResult({ ok: false, error: data.error, detail: data.detail, missingScopes: data.missingScopes });
+      }
+    } catch {
+      setResult({ ok: false, error: 'Erreur reseau', detail: 'Verifie ta connexion et reessaye.' });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#10B98115' }}>
+            <Shield size={20} style={{ color: '#10B981' }} />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+              Connecter ma Page Facebook
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/15 text-emerald-400 uppercase tracking-wide">Recommande</span>
+            </h3>
+            <p className="text-xs text-gray-500">Token permanent via Meta Business Suite — aucune validation Meta requise</p>
+          </div>
+        </div>
+        {alreadyConnected && (
+          <span className="flex items-center gap-2 text-sm text-[#10B981]">
+            <CheckCircle2 size={18} />
+            Connectee
+          </span>
+        )}
+      </div>
+
+      {/* Success state */}
+      {result?.ok && result.page && (
+        <div className="mb-4 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg flex items-start gap-3">
+          <CheckCircle2 size={20} className="text-emerald-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-emerald-400">{result.page.name} connectee</p>
+            <p className="text-xs text-emerald-400/70 mt-1">
+              {result.token?.permanent ? 'Token permanent (n\'expire jamais)' : `Token long-lived (expire dans ${Math.round(((result.token?.expiresAt ?? 0) * 1000 - Date.now()) / 86400000)} jours)`}
+              {result.page.instagram && ' · Instagram lie'}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Error state */}
+      {result && !result.ok && (
+        <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
+          <AlertCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-red-400">{result.error}</p>
+            {result.detail && <p className="text-xs text-red-400/80 mt-1">{result.detail}</p>}
+            {result.missingScopes && result.missingScopes.length > 0 && (
+              <p className="text-xs text-red-400/70 mt-1.5 font-mono">
+                Manquant : {result.missingScopes.join(', ')}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Steps */}
+      <div className="space-y-2 mb-5">
+        {BYO_STEPS.map((step, i) => {
+          const isOpen = expandedStep === i;
+          return (
+            <div
+              key={i}
+              className={`rounded-lg border transition-all ${
+                isOpen ? 'bg-gray-800/60 border-gray-700' : 'bg-gray-800/30 border-gray-800 hover:border-gray-700'
+              }`}
+            >
+              <button
+                onClick={() => setExpandedStep(isOpen ? -1 : i)}
+                className="w-full flex items-center gap-3 p-3 text-left"
+              >
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-bold text-gray-950 shrink-0" style={{ backgroundColor: '#10B981' }}>
+                  {i + 1}
+                </span>
+                <span className="text-sm text-white flex-1">{step.title}</span>
+                <ChevronRight
+                  size={14}
+                  className={`text-gray-500 transition-transform ${isOpen ? 'rotate-90' : ''}`}
+                />
+              </button>
+              {isOpen && (
+                <div className="px-3 pb-3 pl-12 space-y-2">
+                  <p className="text-xs text-gray-400 leading-relaxed">{step.detail}</p>
+                  {'link' in step && step.link && (
+                    <a
+                      href={step.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition"
+                    >
+                      <ExternalLink size={12} />
+                      {step.linkLabel}
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Token input */}
+      <div className="space-y-3">
+        <label className="block text-xs text-gray-400">Page Access Token (permanent)</label>
+        <div className="relative">
+          <input
+            type={showToken ? 'text' : 'password'}
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            placeholder="EAA..."
+            autoComplete="off"
+            spellCheck={false}
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 pr-10 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-emerald-500/50 font-mono"
+          />
+          <button
+            type="button"
+            onClick={() => setShowToken(!showToken)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition"
+            aria-label={showToken ? 'Masquer' : 'Afficher'}
+          >
+            {showToken ? <EyeOff size={14} /> : <Eye size={14} />}
+          </button>
+        </div>
+        <button
+          onClick={handleConnect}
+          disabled={submitting || !token.trim()}
+          className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-medium text-white rounded-lg transition hover:opacity-90 disabled:opacity-40"
+          style={{ backgroundColor: '#10B981' }}
+        >
+          {submitting ? <Loader2 size={16} className="animate-spin" /> : <Shield size={16} />}
+          {submitting ? 'Validation...' : 'Connecter ma Page'}
+        </button>
+        <p className="text-[11px] text-gray-600 text-center">
+          Le token est valide cote serveur (type, scopes, expiration) avant la sauvegarde. Jamais visible dans les URLs.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function ChannelsPage() {
@@ -1471,7 +1685,16 @@ export default function ChannelsPage() {
           {/* Google Calendar — sync bidirectionnelle */}
           <GoogleCalendarSection businessId={businessId} />
 
-          {/* Facebook Messenger — OAuth flow (Page Token + Webhook) */}
+          {/* Facebook Page — BYO Token (System User Meta, recommande) */}
+          {businessId && (
+            <BYOTokenCard
+              businessId={businessId}
+              alreadyConnected={Boolean(business && (business as unknown as { meta_page_id?: string }).meta_page_id)}
+              onConnected={() => window.location.reload()}
+            />
+          )}
+
+          {/* Facebook Messenger — OAuth flow (mode dev, alternative pour testeurs/admins) */}
           {businessId && <FacebookConnectedCard businessId={businessId} dashboardUrl={dashboardUrl} />}
 
           {/* WhatsApp — manual config */}

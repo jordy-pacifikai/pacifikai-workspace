@@ -18,6 +18,7 @@ import {
   searchKnowledgeBase,
   refreshGCalBlockedSlots,
   getClientHints,
+  getUpcomingClosures,
 } from "./supabase.js";
 import { createGCalEvent, deleteGCalEvent, listGCalEvents } from "./gcal.js";
 import { generateAvailableDates, generateTimeSlots } from "../utils/dates.js";
@@ -353,27 +354,37 @@ function channelLabel(channel: string): string {
   }
 }
 
-function buildSystemPrompt(config: BusinessConfig, today: string, channel = "whatsapp"): string {
-  const services = parseAllServices(config.services)
-    .map(
-      (s) =>
-        `- ${s.name} (${s.duration} min, ${s.price.toLocaleString("fr-FR")} XPF)`
-    )
+async function buildSystemPrompt(config: BusinessConfig, today: string, channel = "whatsapp"): Promise<string> {
+  const parsedServices = parseAllServices(config.services);
+  const servicesText = parsedServices
+    .map((s) => `- ${s.name} (${s.duration} min, ${s.price.toLocaleString("fr-FR")} XPF)`)
     .join("\n");
 
   const dayLabels: Record<string, string> = {
-    mon: "Lundi",
-    tue: "Mardi",
-    wed: "Mercredi",
-    thu: "Jeudi",
-    fri: "Vendredi",
-    sat: "Samedi",
-    sun: "Dimanche",
+    mon: "Lundi", tue: "Mardi", wed: "Mercredi", thu: "Jeudi",
+    fri: "Vendredi", sat: "Samedi", sun: "Dimanche",
   };
 
-  const hours = Object.entries(config.openingHours)
-    .map(([day, h]) => `${dayLabels[day] ?? day}: ${h}`)
-    .join("\n");
+  const hoursMap: Record<string, string> = {};
+  for (const [day, h] of Object.entries(config.openingHours)) {
+    hoursMap[dayLabels[day] ?? day] = h as string;
+  }
+  const hoursText = Object.entries(hoursMap).map(([d, h]) => `${d}: ${h}`).join("\n");
+
+  // Fetch upcoming closures (next 30 days)
+  let closures: { date: string; label?: string }[] = [];
+  try {
+    closures = await getUpcomingClosures(config.businessId, 30);
+  } catch { /* non-blocking */ }
+
+  // ── Structured business data block (source of truth) ──
+  const businessData = {
+    nom: config.businessName,
+    services: parsedServices.map((s) => ({ nom: s.name, duree_min: s.duration, prix_xpf: s.price })),
+    horaires: hoursMap,
+    fermetures_prochaines: closures.map((c) => c.label ? `${c.date} (${c.label})` : c.date),
+    timezone: config.timezone,
+  };
 
   // Tone from chatbot config
   const cfg = config.chatbotConfig ?? {};
@@ -384,34 +395,22 @@ function buildSystemPrompt(config: BusinessConfig, today: string, channel = "wha
         ? "décontracté et amical"
         : 'chaleureux et accueillant, utilise "Ia ora na" pour saluer';
 
-  // Language preference
-  const langMap: Record<string, string> = {
-    fr: "français",
-    en: "anglais",
-    tah: "tahitien (reo Māʼohi)",
-  };
+  const langMap: Record<string, string> = { fr: "français", en: "anglais", tah: "tahitien (reo Māʼohi)" };
   const language = langMap[(cfg.language as string) ?? "fr"] ?? "français";
 
-  // Custom greeting
   const greeting = (cfg.greeting as string) ?? "";
   const greetingInstruction = greeting
     ? `\n- Quand un client te salue, utilise cette formule de bienvenue : "${greeting}"`
     : "";
 
-  // Custom instructions from the business owner (sanitized against prompt injection)
   const rawCustomInstructions = (cfg.custom_instructions as string) ?? '';
   const customInstructions = sanitizeInstruction(rawCustomInstructions, config.businessId);
   const customSection = customInstructions
     ? `\n\n## Instructions spéciales du professionnel\n${customInstructions}`
     : '';
 
-  // Required fields before booking
   const requiredFields = (cfg.required_fields as string[]) ?? [];
-  const fieldLabels: Record<string, string> = {
-    phone: "numéro de téléphone",
-    email: "adresse email",
-    notes: "remarques ou notes",
-  };
+  const fieldLabels: Record<string, string> = { phone: "numéro de téléphone", email: "adresse email", notes: "remarques ou notes" };
   const requiredFieldsSection = requiredFields.length > 0
     ? `\n\n## Informations à collecter AVANT de réserver\nAvant d'appeler \`book_appointment\`, tu DOIS avoir collecté ces informations :\n${requiredFields.map((f) => `- ${fieldLabels[f] ?? f}`).join("\n")}\nSi le client ne les a pas fournies, demande-les poliment.`
     : '';
@@ -419,19 +418,40 @@ function buildSystemPrompt(config: BusinessConfig, today: string, channel = "wha
   const chan = channelLabel(channel);
   const hasBooking = config.services.length > 0;
 
-  // ── Règle anti-improvisation (commune aux 2 modes) ──
+  // ── Données entreprise structurées (SOURCE DE VERITE) ──
+  const dataBlock = `
+## DONNEES_ENTREPRISE (SOURCE DE VERITE — NE JAMAIS CONTREDIRE)
+\`\`\`json
+${JSON.stringify(businessData, null, 2)}
+\`\`\``;
+
+  // ── Règle anti-improvisation renforcée ──
   const antiImprovisation = `
-## RÈGLE FONDAMENTALE — NE JAMAIS INVENTER
-- NE JAMAIS promettre, mentionner ou suggérer quoi que ce soit qui n'est pas explicitement dans ce prompt ou dans les résultats des outils
-- NE JAMAIS mentionner : appel téléphonique, rappel par téléphone, confirmation par email, SMS de confirmation, délai de traitement, validation manuelle, devis, ou tout autre processus non décrit ici
-- NE JAMAIS improviser des formules de politesse qui impliquent une action future (ex: "on vous recontactera", "vous recevrez un appel", "nous vous enverrons une confirmation")
-- Si tu ne sais pas → utilise \`search_knowledge_base\`. Si toujours sans réponse → \`transfer_to_human\`. JAMAIS inventer.
-- Tes seules sources d'information autorisées : ce prompt + les résultats des outils`;
+## REGLE ABSOLUE — PERIMETRE DE REPONSE
+Tu ne possèdes AUCUNE connaissance propre sur cette entreprise.
+Tes SEULES sources autorisées sont :
+1. Le bloc DONNEES_ENTREPRISE ci-dessus (horaires, services, prix, fermetures)
+2. Les résultats des outils (\`search_knowledge_base\`, \`check_availability\`, etc.)
+3. Les informations fournies par le client dans la conversation
+
+Si une information n'est dans AUCUNE de ces sources :
+→ Utilise \`search_knowledge_base\` pour chercher
+→ Si toujours sans réponse → "Je n'ai pas cette information" + \`transfer_to_human\`
+
+NE JAMAIS :
+- Inventer un prix, un horaire, un service, un délai, une politique
+- Mentionner : appel téléphonique, rappel, confirmation par email/SMS, devis, validation manuelle
+- Improviser des formules qui impliquent une action future ("on vous recontactera", "vous recevrez...")`;
+
+  // ── Fermetures si existantes ──
+  const closuresSection = closures.length > 0
+    ? `\n\n## Fermetures exceptionnelles à venir\n${closures.map((c) => `- ${c.date}${c.label ? ` (${c.label})` : ''}`).join("\n")}\nSi un client demande un RDV sur une de ces dates → informer de la fermeture et proposer une autre date.`
+    : '';
 
   if (!hasBooking) {
-    // ── Mode assistant conversationnel (sans réservation) ──
     return `Tu es l'assistant ${chan} de ${config.businessName}. Langue : ${language}. Ton : ${tone}.${greetingInstruction}
-${antiImprovisation}
+${dataBlock}
+${antiImprovisation}${closuresSection}
 
 ## Langue
 - Langue par défaut : ${language}
@@ -448,19 +468,19 @@ ${today} (timezone: ${config.timezone})
 5. Accueil : présente-toi comme l'assistant de ${config.businessName} et demande comment aider${customSection}`;
   }
 
-  // ── Mode complet avec réservation ──
   return `Tu es l'assistant ${chan} de ${config.businessName}. Langue : ${language}. Ton : ${tone}.${greetingInstruction}
-${antiImprovisation}
+${dataBlock}
+${antiImprovisation}${closuresSection}
 
 ## Langue
 - Langue par défaut : ${language}
 - Si le client écrit en anglais → réponds en anglais. En tahitien → réponds en tahitien.
 
 ## Services proposés
-${services}
+${servicesText}
 
 ## Horaires d'ouverture
-${hours}
+${hoursText}
 
 ## Aujourd'hui
 ${today} (timezone: ${config.timezone})
@@ -477,6 +497,7 @@ ${today} (timezone: ${config.timezone})
 9. Réponses COURTES (2-4 phrases max) — c'est ${chan}, pas un email
 10. NE JAMAIS proposer de dates dans le passé. Date minimale : demain.
 11. Date en texte ("lundi prochain", "demain") → convertis en YYYY-MM-DD avant d'appeler les outils
+12. Si un client demande un RDV sur une date de fermeture exceptionnelle → informer et proposer une autre date
 
 ## PROCESSUS DE RÉSERVATION (ordre strict)
 1. Client demande RDV → demande quel service. Si le client ne précise PAS de date, utilise \`get_next_available\` pour proposer le prochain créneau directement.
@@ -509,11 +530,16 @@ async function executeTool(
       const query = input.query as string;
       const results = await searchKnowledgeBase(config.businessId, query);
       if (results.length === 0) {
-        return "Aucune information trouvée dans la base de connaissances pour cette question.";
+        return "Aucune information trouvée dans la base de connaissances pour cette question. Utilise transfer_to_human si le client insiste.";
       }
       return results
-        .map((r) => `[${r.title}] ${r.chunk_text}`)
-        .join("\n\n");
+        .map((r) => {
+          const source = r.title
+            ? `[Source: ${r.title}${r.category ? ` — ${r.category}` : ""}]`
+            : "[Source: base de connaissances]";
+          return `${source}\n${r.chunk_text}`;
+        })
+        .join("\n\n---\n\n");
     }
 
     case "list_services": {
@@ -845,6 +871,7 @@ export async function runBookingAgent(
   },
   config: BusinessConfig
 ): Promise<string> {
+  const agentStartMs = Date.now();
   const client = new OpenAI({
     apiKey: DEEPSEEK_API_KEY,
     baseURL: "https://api.deepseek.com",
@@ -874,18 +901,33 @@ export async function runBookingAgent(
       );
 
   // Build messages for DeepSeek
-  const systemPrompt = buildSystemPrompt(config, getTahitiDate(), payload.channel);
+  const systemPrompt = await buildSystemPrompt(config, getTahitiDate(), payload.channel);
 
   // Inject known client context so LLM doesn't re-ask and can suggest their usual service
   let clientContext = "";
   if (session.client_name) {
     clientContext += `\n\n## Client actuel\nLe client s'appelle **${session.client_name}**. Ne lui redemande PAS son nom.`;
   }
-  // Fetch returning client hints (last_service, visit count)
+
+  // Inject previous conversation summary (from stale session reset)
+  const prevSummary = (session.context as Record<string, unknown>)?.previous_summary;
+  if (prevSummary && typeof prevSummary === "string") {
+    clientContext += `\n\n## Contexte précédent\n${prevSummary}\nTiens-en compte pour la continuité, mais ne le cite pas explicitement.`;
+  }
+
+  // Fetch returning client hints (last_service, visit count, last appointment, owner notes)
   try {
     const hints = await getClientHints(payload.from, config.businessId);
-    if (hints?.lastService) {
-      clientContext += `\nC'est un client fidèle (${hints.totalVisits || 1} visite${(hints.totalVisits || 1) > 1 ? "s" : ""}). Son dernier service : **${hints.lastService}**. Propose-lui ce service par défaut ("Comme d'habitude, ${hints.lastService} ?") tout en offrant de choisir autre chose.`;
+    if (hints) {
+      if (hints.lastService) {
+        clientContext += `\nC'est un client fidèle (${hints.totalVisits || 1} visite${(hints.totalVisits || 1) > 1 ? "s" : ""}). Son dernier service : **${hints.lastService}**. Propose-lui ce service par défaut ("Comme d'habitude, ${hints.lastService} ?") tout en offrant de choisir autre chose.`;
+      }
+      if (hints.lastAppointmentDate) {
+        clientContext += `\nDernier RDV : ${hints.lastAppointmentDate}.`;
+      }
+      if (hints.ownerNotes) {
+        clientContext += `\nNotes du propriétaire sur ce client : ${hints.ownerNotes}`;
+      }
     }
   } catch {
     // Non-blocking — hints are optional
@@ -902,6 +944,7 @@ export async function runBookingAgent(
   let finalReply = "";
   let toolWasCalled = false;
   let bookAppointmentCalled = false;
+  const toolsUsed: string[] = [];
   const maxIterations = 5;
 
   for (let i = 0; i < maxIterations; i++) {
@@ -954,6 +997,7 @@ export async function runBookingAgent(
           continue;
         }
         logger.info(`[Agent] Tool call: ${toolCall.function.name}`, { args });
+        if (!toolsUsed.includes(toolCall.function.name)) toolsUsed.push(toolCall.function.name);
         if (toolCall.function.name === "book_appointment") bookAppointmentCalled = true;
         const result = await executeTool(
           toolCall.function.name,
@@ -1010,8 +1054,83 @@ export async function runBookingAgent(
     context: { messages: trimmedMessages },
   });
 
-  return (
-    finalReply ||
-    "Désolé, je n'ai pas pu traiter ta demande. Réessaie ou écris 'humain' pour parler à quelqu'un."
-  );
+  const effectiveReply = finalReply ||
+    "Désolé, je n'ai pas pu traiter ta demande. Réessaie ou écris 'humain' pour parler à quelqu'un.";
+
+  // Log AI interaction for hallucination monitoring
+  try {
+    const confidence = classifyConfidence(effectiveReply, toolsUsed, toolWasCalled);
+    await logAiInteraction({
+      businessId: config.businessId,
+      phone: payload.from,
+      channel: payload.channel,
+      userMessage: userText,
+      assistantReply: effectiveReply,
+      confidence,
+      toolsUsed,
+      latencyMs: Date.now() - agentStartMs,
+    });
+  } catch {
+    // Non-blocking — logging must never break the reply
+  }
+
+  return effectiveReply;
+}
+
+// ── Hallucination Monitoring ──────────────────────────────
+
+type Confidence = "grounded" | "no_kb_match" | "fallback" | "transfer";
+
+function classifyConfidence(
+  reply: string,
+  toolsUsed: string[],
+  anyToolCalled: boolean,
+): Confidence {
+  // Transfer to human
+  if (toolsUsed.includes("transfer_to_human")) return "transfer";
+
+  // "Je n'ai pas cette info" pattern = no KB match
+  const noInfoPattern = /je n'ai pas (cette|l'|cette info|d'info)|pas d'information|aucune information|pas trouvé dans/i;
+  if (noInfoPattern.test(reply)) return "no_kb_match";
+
+  // Fallback messages (LLM failure or empty)
+  if (reply.includes("Réessaie") && reply.includes("humain")) return "fallback";
+  if (reply.includes("erreur technique")) return "fallback";
+
+  // KB was searched = grounded (tools provided data)
+  if (toolsUsed.includes("search_knowledge_base")) return "grounded";
+
+  // Other tools used (booking, availability) = grounded
+  if (anyToolCalled) return "grounded";
+
+  // Pure text response without tools — could be grounded from system prompt data
+  return "grounded";
+}
+
+const SUPABASE_URL_AGENT = process.env.SUPABASE_URL!;
+
+async function logAiInteraction(params: {
+  businessId: string;
+  phone: string;
+  channel?: string;
+  userMessage: string;
+  assistantReply: string;
+  confidence: Confidence;
+  toolsUsed: string[];
+  latencyMs: number;
+}): Promise<void> {
+  await fetch(`${SUPABASE_URL_AGENT}/rest/v1/bookbot_ai_logs`, {
+    method: "POST",
+    headers: supaHeaders(),
+    body: JSON.stringify({
+      business_id: params.businessId,
+      phone: params.phone,
+      channel: params.channel ?? null,
+      user_message: params.userMessage.slice(0, 2000),
+      assistant_reply: params.assistantReply.slice(0, 5000),
+      confidence: params.confidence,
+      tools_used: params.toolsUsed,
+      latency_ms: params.latencyMs,
+    }),
+  });
 }

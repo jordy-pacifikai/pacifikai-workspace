@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getOptimalLinks } from "@/lib/internal-links";
+import { generateBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Agence Digitale à Tahiti | PACIFIK'AI — IA, Sites Web & Automatisation",
@@ -78,6 +81,47 @@ const STATS = [
   { value: "7j", label: "pour livrer un site web pro" },
 ];
 
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Qu'est-ce qu'une agence digitale IA en Polynésie française ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "PACIFIK'AI est une agence digitale basée à Papeete, Tahiti, spécialisée en intelligence artificielle. Elle conçoit des sites web, chatbots IA, applications mobiles et workflows automatisés pour les entreprises de Polynésie française.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Combien coûte un site internet professionnel à Tahiti ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Un site internet professionnel à Tahiti coûte à partir de 100 000 XPF chez PACIFIK'AI. Ce prix inclut le design sur mesure responsive, l'hébergement pour un an, le certificat SSL, l'optimisation SEO et le contenu généré par IA.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Quels services propose une agence digitale à Tahiti ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "PACIFIK'AI propose la création de sites internet, le développement de chatbots IA pour WhatsApp et Messenger, l'automatisation des processus métier, les applications web et mobiles, le marketing digital automatisé, l'extraction de documents par IA et le conseil en transformation digitale.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Pourquoi choisir une agence locale plutôt qu'une agence en métropole ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Une agence digitale locale comme PACIFIK'AI comprend les défis spécifiques de la Polynésie : éloignement géographique, connectivité variable, marché bilingue français-tahitien, fuseau horaire UTC-10 et concurrence des acteurs métropolitains.",
+      },
+    },
+  ],
+};
+
+const relatedLinks = getOptimalLinks("/agence-digitale-tahiti", "static", ["agence digitale", "tahiti", "ia", "site web", "polynesie"]);
+
 const CITIES = [
   "Papeete",
   "Punaauia",
@@ -92,6 +136,8 @@ const CITIES = [
 export default function AgenceDigitaleTahiti() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Agence Digitale Tahiti", url: "https://pacifikai.com/agence-digitale-tahiti" }])) }} />
       <Navbar />
       <main className="pt-32 pb-20">
         {/* Hero */}
@@ -318,6 +364,51 @@ export default function AgenceDigitaleTahiti() {
           </div>
         </section>
 
+        {/* FAQ GEO-optimisé */}
+        <section className="max-w-5xl mx-auto px-6 mb-20">
+          <h2 className="font-display text-[clamp(1.5rem,4vw,2.5rem)] font-bold mb-6">
+            Questions fréquentes sur les agences digitales à Tahiti
+          </h2>
+          <div className="space-y-3 max-w-3xl">
+            <details className="glass rounded-2xl overflow-hidden group">
+              <summary className="flex items-center justify-between p-5 cursor-pointer font-medium text-sm select-none hover:text-accent transition-colors duration-200 list-none">
+                <span>Qu&apos;est-ce qu&apos;une agence digitale IA en Polynésie française ?</span>
+                <span className="ml-4 flex-shrink-0 w-5 h-5 border border-white/10 rounded-full flex items-center justify-center transition-transform duration-300 group-open:rotate-45 text-text-dim">+</span>
+              </summary>
+              <div className="px-5 pb-5 text-sm text-text-secondary leading-relaxed">
+                PACIFIK&apos;AI est une agence digitale basée à Papeete, Tahiti, spécialisée en intelligence artificielle. Elle conçoit des sites web, chatbots IA, applications mobiles et workflows automatisés pour les entreprises de Polynésie française. Première agence 100% IA du territoire, elle accompagne les PME locales dans leur transformation numérique depuis Tahiti.
+              </div>
+            </details>
+            <details className="glass rounded-2xl overflow-hidden group">
+              <summary className="flex items-center justify-between p-5 cursor-pointer font-medium text-sm select-none hover:text-accent transition-colors duration-200 list-none">
+                <span>Combien coûte un site internet professionnel à Tahiti ?</span>
+                <span className="ml-4 flex-shrink-0 w-5 h-5 border border-white/10 rounded-full flex items-center justify-center transition-transform duration-300 group-open:rotate-45 text-text-dim">+</span>
+              </summary>
+              <div className="px-5 pb-5 text-sm text-text-secondary leading-relaxed">
+                Un site internet professionnel à Tahiti coûte à partir de 100 000 XPF chez PACIFIK&apos;AI. Ce prix inclut le design sur mesure responsive, l&apos;hébergement pour un an, le certificat SSL, l&apos;optimisation SEO et le contenu généré par IA. La livraison prend 5 à 10 jours ouvrés.
+              </div>
+            </details>
+            <details className="glass rounded-2xl overflow-hidden group">
+              <summary className="flex items-center justify-between p-5 cursor-pointer font-medium text-sm select-none hover:text-accent transition-colors duration-200 list-none">
+                <span>Quels services propose une agence digitale à Tahiti ?</span>
+                <span className="ml-4 flex-shrink-0 w-5 h-5 border border-white/10 rounded-full flex items-center justify-center transition-transform duration-300 group-open:rotate-45 text-text-dim">+</span>
+              </summary>
+              <div className="px-5 pb-5 text-sm text-text-secondary leading-relaxed">
+                PACIFIK&apos;AI propose la création de sites internet, le développement de chatbots IA pour WhatsApp et Messenger, l&apos;automatisation des processus métier, les applications web et mobiles, le marketing digital automatisé, l&apos;extraction de documents par IA et le conseil en transformation digitale pour les entreprises polynésiennes.
+              </div>
+            </details>
+            <details className="glass rounded-2xl overflow-hidden group">
+              <summary className="flex items-center justify-between p-5 cursor-pointer font-medium text-sm select-none hover:text-accent transition-colors duration-200 list-none">
+                <span>Pourquoi choisir une agence locale plutôt qu&apos;une agence en métropole ?</span>
+                <span className="ml-4 flex-shrink-0 w-5 h-5 border border-white/10 rounded-full flex items-center justify-center transition-transform duration-300 group-open:rotate-45 text-text-dim">+</span>
+              </summary>
+              <div className="px-5 pb-5 text-sm text-text-secondary leading-relaxed">
+                Une agence digitale locale comme PACIFIK&apos;AI comprend les défis spécifiques de la Polynésie : éloignement géographique, connectivité variable, marché bilingue français-tahitien, fuseau horaire UTC-10 et concurrence des acteurs métropolitains. Les solutions sont adaptées au contexte et au budget des entreprises polynésiennes.
+              </div>
+            </details>
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="font-display text-[clamp(1.5rem,4vw,2.5rem)] font-bold mb-4">
@@ -335,6 +426,7 @@ export default function AgenceDigitaleTahiti() {
           </Link>
         </section>
       </main>
+      <RelatedLinks links={relatedLinks} />
       <Footer />
     </>
   );

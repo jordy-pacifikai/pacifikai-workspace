@@ -39,10 +39,20 @@ export async function loadOrCreateSession(
     const isStale = Date.now() - updatedAt > STALE_MS;
 
     if (isStale && context.messages && (context.messages as unknown[]).length > 0) {
-      logger.info("[Session] Stale session detected, resetting conversation", {
+      logger.info("[Session] Stale session detected, generating summary + resetting", {
         phone, lastActivity: s.updated_at,
       });
-      // Reset context + booking state, keep client_name
+
+      // Generate a 2-sentence summary of the previous conversation for continuity
+      const messages = context.messages as Array<{ role: string; content: string }>;
+      const previousSummary = summarizeConversation(messages);
+
+      // Reset context + booking state, keep client_name + inject summary
+      const newContext: Record<string, unknown> = {};
+      if (previousSummary) {
+        newContext.previous_summary = previousSummary;
+      }
+
       await fetch(
         `${SUPABASE_URL}/rest/v1/bookbot_sessions?id=eq.${s.id}`,
         {
@@ -53,7 +63,7 @@ export async function loadOrCreateSession(
             selected_service: null,
             selected_date: null,
             selected_time: null,
-            context: {},
+            context: newContext,
             updated_at: new Date().toISOString(),
           }),
         },
@@ -67,7 +77,7 @@ export async function loadOrCreateSession(
         selected_date: null,
         selected_time: null,
         client_name: s.client_name,
-        context: {},
+        context: newContext,
       };
     }
 
@@ -312,12 +322,38 @@ export async function searchKnowledgeBase(
         });
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-          return data.map((r: { id: string; content: string; similarity: number }) => ({
+          // Enrich with title/category from bookbot_embeddings → bookbot_knowledge join
+          const enriched = data.map((r: { id: string; content: string; similarity: number; title?: string; category?: string; knowledge_id?: string }) => ({
             chunk_text: r.content,
-            title: "",
-            category: "",
+            title: r.title ?? "",
+            category: r.category ?? "",
             score: r.similarity,
           }));
+
+          // If RPC doesn't return title/category, try to fetch from knowledge docs
+          const needsEnrich = enriched.some((r) => !r.title);
+          if (needsEnrich) {
+            try {
+              const kRes = await fetch(
+                `${SUPABASE_URL}/rest/v1/bookbot_knowledge?business_id=eq.${businessId}&select=title,content,category&limit=50`,
+                { headers: headers() }
+              );
+              const kDocs = await kRes.json();
+              if (Array.isArray(kDocs)) {
+                for (const r of enriched) {
+                  if (!r.title) {
+                    const match = kDocs.find((k: { content: string }) => r.chunk_text.startsWith(k.content.slice(0, 80)));
+                    if (match) {
+                      r.title = match.title;
+                      r.category = match.category;
+                    }
+                  }
+                }
+              }
+            } catch { /* non-blocking enrichment */ }
+          }
+
+          return enriched;
         }
       }
     } catch (err) {
@@ -328,18 +364,35 @@ export async function searchKnowledgeBase(
   // Fallback: full-text search on bookbot_embeddings.fts
   const sanitizeToken = (w: string) => w.replace(/[!&|():*%_'"\\]/g, "");
   const ftsQuery = query.split(/\s+/).map(sanitizeToken).filter(Boolean).join(" & ");
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/bookbot_embeddings?business_id=eq.${businessId}&fts=fts.${encodeURIComponent(ftsQuery)}&select=chunk_text&limit=5`,
-    { headers: headers() }
-  );
-  const data = await res.json();
-  if (Array.isArray(data) && data.length > 0) {
-    return data.map((r: { chunk_text: string }) => ({
-      chunk_text: r.chunk_text,
-      title: "",
-      category: "",
-      score: 0.5,
-    }));
+  if (ftsQuery) {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/bookbot_embeddings?business_id=eq.${businessId}&fts=fts.${encodeURIComponent(ftsQuery)}&select=chunk_text,knowledge_id&limit=5`,
+      { headers: headers() }
+    );
+    const data = await res.json();
+    if (Array.isArray(data) && data.length > 0) {
+      // Enrich with title/category from bookbot_knowledge
+      const knowledgeIds = [...new Set(data.map((r: { knowledge_id?: string }) => r.knowledge_id).filter(Boolean))];
+      let titleMap: Record<string, { title: string; category: string }> = {};
+      if (knowledgeIds.length > 0) {
+        try {
+          const kRes = await fetch(
+            `${SUPABASE_URL}/rest/v1/bookbot_knowledge?id=in.(${knowledgeIds.join(",")})&select=id,title,category`,
+            { headers: headers() }
+          );
+          const kData = await kRes.json();
+          if (Array.isArray(kData)) {
+            for (const k of kData) titleMap[k.id] = { title: k.title, category: k.category };
+          }
+        } catch { /* non-blocking */ }
+      }
+      return data.map((r: { chunk_text: string; knowledge_id?: string }) => ({
+        chunk_text: r.chunk_text,
+        title: titleMap[r.knowledge_id ?? ""]?.title ?? "",
+        category: titleMap[r.knowledge_id ?? ""]?.category ?? "",
+        score: 0.5,
+      }));
+    }
   }
 
   // Last fallback: direct text search on bookbot_knowledge
@@ -387,6 +440,21 @@ export async function getAllDayBlockedDates(
     }
   }
   return dates;
+}
+
+/** Get upcoming closures (all-day blocked slots) for the next N days — for system prompt injection */
+export async function getUpcomingClosures(
+  businessId: string,
+  days = 30
+): Promise<{ date: string; label?: string }[]> {
+  const today = new Date().toISOString().slice(0, 10);
+  const end = new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/bookbot_blocked_slots?business_id=eq.${businessId}&all_day=eq.true&date=gte.${today}&date=lte.${end}&select=date,label&order=date`,
+    { headers: headers() }
+  );
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
 }
 
 /** Convert a Date to HH:MM in a given timezone */
@@ -609,17 +677,71 @@ export async function setMarketingOptOut(
 export async function getClientHints(
   phone: string,
   businessId: string,
-): Promise<{ lastService: string | null; lastVisit: string | null; totalVisits: number } | null> {
+): Promise<{
+  lastService: string | null;
+  lastVisit: string | null;
+  totalVisits: number;
+  lastAppointmentDate: string | null;
+  ownerNotes: string | null;
+} | null> {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/bookbot_clients?phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&select=last_service,last_visit,total_visits`,
+    `${SUPABASE_URL}/rest/v1/bookbot_clients?phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&select=last_service,last_visit,total_visits,notes`,
     { headers: headers() },
   );
   const rows = await res.json();
   if (!Array.isArray(rows) || rows.length === 0) return null;
   const r = rows[0];
+
+  // Fetch last confirmed appointment date
+  let lastAppointmentDate: string | null = null;
+  try {
+    const apptRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/bookbot_appointments?client_phone=eq.${encodeURIComponent(phone)}&business_id=eq.${businessId}&status=eq.confirmed&select=date&order=date.desc&limit=1`,
+      { headers: headers() },
+    );
+    const appts = await apptRes.json();
+    if (Array.isArray(appts) && appts.length > 0) {
+      lastAppointmentDate = appts[0].date ?? null;
+    }
+  } catch {
+    // Non-blocking
+  }
+
   return {
     lastService: r.last_service ?? null,
     lastVisit: r.last_visit ?? null,
     totalVisits: r.total_visits ?? 0,
+    lastAppointmentDate,
+    ownerNotes: r.notes ?? null,
   };
+}
+
+/**
+ * Generate a brief summary of conversation history for cross-session continuity.
+ * Extracts key topics from the last few messages (no LLM call, pure heuristic).
+ */
+function summarizeConversation(
+  messages: Array<{ role: string; content: string }>,
+): string | null {
+  if (!messages || messages.length < 2) return null;
+
+  // Take last 6 messages max for summary
+  const recent = messages.slice(-6);
+  const userMsgs = recent
+    .filter((m) => m.role === "user" && m.content)
+    .map((m) => m.content.slice(0, 100));
+  const assistantMsgs = recent
+    .filter((m) => m.role === "assistant" && m.content)
+    .map((m) => m.content.slice(0, 100));
+
+  if (userMsgs.length === 0) return null;
+
+  const lastUser = userMsgs[userMsgs.length - 1];
+  const lastAssistant = assistantMsgs.length > 0 ? assistantMsgs[assistantMsgs.length - 1] : null;
+
+  let summary = `Conversation précédente : le client a demandé "${lastUser}"`;
+  if (lastAssistant) {
+    summary += `. L'assistant a répondu "${lastAssistant}"`;
+  }
+  return summary;
 }

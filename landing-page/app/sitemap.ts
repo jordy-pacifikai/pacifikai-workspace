@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 
 const BASE_URL = "https://pacifikai.com";
-const NOW = new Date("2026-03-27");
+const NOW = new Date();
 
 const BLOG_SLUGS = [
   "agence-digitale-tahiti-guide",
+  "agence-ia-tahiti",
   "agence-web-tahiti-2026",
   "agences-digitales-tahiti-comparatif",
   "application-mobile-polynesie",
@@ -14,6 +15,7 @@ const BLOG_SLUGS = [
   "chatbot-ia-polynesie",
   "chatbot-ia-vs-standard-telephonique",
   "creation-site-internet-tahiti",
+  "developpeur-web-polynesie",
   "digitalisation-entreprise-tahiti",
   "hsbc-extraction-documents",
   "intelligence-artificielle-polynesie",
@@ -21,6 +23,7 @@ const BLOG_SLUGS = [
   "marketing-digital-tahiti",
   "marriott-chatbot-reservation",
   "prix-site-web-polynesie",
+  "referencement-seo-tahiti",
   "site-web-sur-mesure-vs-template-tahiti",
   "starbucks-deep-brew-ia",
   "transformation-digitale-polynesie-francaise",
@@ -28,13 +31,13 @@ const BLOG_SLUGS = [
 
 const SERVICES_SLUGS = [
   "chatbots",
-  "sites-web",
-  "applications",
-  "automatisation",
-  "extraction-documents",
-  "intelligence-artificielle",
-  "marketing-digital",
-  "conseil-digital",
+  "landing-pages",
+  "apps",
+  "workflows",
+  "documents",
+  "api",
+  "marketing",
+  "conseil",
 ];
 
 const SEO_SERVICES = [
@@ -100,10 +103,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${BASE_URL}/creation-site-web-tahiti`,
+      lastModified: NOW,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/application-mobile-tahiti`,
+      lastModified: NOW,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/marketing-automatise-tahiti`,
+      lastModified: NOW,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       url: `${BASE_URL}/blog`,
       lastModified: NOW,
       changeFrequency: "weekly",
       priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/contact`,
+      lastModified: NOW,
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: `${BASE_URL}/cgu`,

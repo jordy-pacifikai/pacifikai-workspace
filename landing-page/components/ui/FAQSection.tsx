@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import SectionReveal from "@/components/effects/SectionReveal";
+import { useT } from "@/lib/i18n/useT";
 
-const FAQS = [
+const FAQS_FR = [
   {
     q: "Qu'est-ce qu'une agence digitale à Tahiti ?",
     a: "Une agence digitale à Tahiti comme PACIFIK'AI accompagne les entreprises de Polynésie française dans leur transformation numérique : création de sites web, chatbots IA, automatisation des process, marketing digital et formation.",
@@ -66,24 +67,30 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 }
 
 export default function FAQSection() {
+  const t = useT("faq");
+  const faqs = t?.items ?? FAQS_FR;
+
   return (
     <section id="faq" className="section-padding">
       <div className="max-w-3xl mx-auto">
         <SectionReveal>
           <div className="text-center mb-12 reveal-child">
             <p className="text-lagoon text-sm font-medium tracking-[0.2em] uppercase mb-4">
-              FAQ
+              {t?.label ?? "FAQ"}
             </p>
             <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-tight">
-              Questions{" "}
-              <span className="gradient-text-lagoon">fréquentes</span>
+              {t ? (
+                <>{t.title}{" "}<span className="gradient-text-lagoon">{t.titleHighlight}</span></>
+              ) : (
+                <>Questions{" "}<span className="gradient-text-lagoon">fréquentes</span></>
+              )}
             </h2>
           </div>
         </SectionReveal>
 
         <SectionReveal>
           <div className="glass rounded-3xl p-6 md:p-8 border border-border reveal-child">
-            {FAQS.map((faq, i) => (
+            {faqs.map((faq, i) => (
               <FAQItem key={i} q={faq.q} a={faq.a} />
             ))}
           </div>

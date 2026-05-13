@@ -121,11 +121,12 @@ export default function NavFullscreen({ isOpen, onClose }: NavFullscreenProps) {
 
       if (linksRef.current) {
         const links = linksRef.current.querySelectorAll(".fs-link");
-        tl.from(
+        tl.fromTo(
           links,
+          { opacity: 0, y: 50 },
           {
-            opacity: 0,
-            y: 50,
+            opacity: 1,
+            y: 0,
             stagger: 0.08,
             duration: 0.6,
             ease: "cubic-bezier(0.76, 0, 0.24, 1)",
@@ -135,9 +136,10 @@ export default function NavFullscreen({ isOpen, onClose }: NavFullscreenProps) {
       }
 
       if (bottomRef.current) {
-        tl.from(
+        tl.fromTo(
           bottomRef.current,
-          { y: 30, opacity: 0, duration: 0.5, ease: "power3.out" },
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
           "-=0.3"
         );
       }

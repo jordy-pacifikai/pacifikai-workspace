@@ -42,7 +42,7 @@ export async function GET(req: Request) {
   const now = new Date();
   const timeMin = now.toISOString();
   const timeMax = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
-  const webhookBaseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dashboard.vea.pacifikai.com';
+  const webhookBaseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vea.pacifikai.com';
 
   let totalSynced = 0;
 

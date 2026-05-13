@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Ve'a Connect</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#10B981" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M2 17L12 22L22 17" stroke="#10B981" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="#10B981" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        <span>Ve'a Connect</span>
+      </div>
+      <span class="version">v1.0</span>
+    </header>
+
+    <main id="main">
+      <!-- State: loading -->
+      <section id="state-loading" class="state">
+        <div class="spinner"></div>
+        <p class="muted">Verification de ta session Ve'a...</p>
+      </section>
+
+      <!-- State: not authenticated -->
+      <section id="state-unauth" class="state hidden">
+        <div class="icon-circle warn">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><path d="M12 9v4M12 17h.01" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="10" stroke="#fbbf24" stroke-width="2"/></svg>
+        </div>
+        <h2>Connecte-toi a Ve'a</h2>
+        <p class="muted">Tu n'es pas connecte sur vea.pacifikai.com. Connecte-toi puis reviens ici.</p>
+        <button class="btn btn-primary" id="btn-open-vea">Ouvrir Ve'a</button>
+      </section>
+
+      <!-- State: select business -->
+      <section id="state-businesses" class="state hidden">
+        <h2>Quelle business connecter ?</h2>
+        <p class="muted">Choisis le business Ve'a auquel tu veux lier ta Page Facebook.</p>
+        <div class="business-list" id="business-list"></div>
+        <button class="btn btn-primary" id="btn-start" disabled>Continuer</button>
+      </section>
+
+      <!-- State: waiting for token -->
+      <section id="state-waiting" class="state hidden">
+        <div class="connected-business">
+          <span class="dot"></span>
+          <span id="active-business-name"></span>
+        </div>
+        <h2>En attente du token Facebook</h2>
+        <ol class="steps">
+          <li>Sur l'onglet Meta Business Settings qui s'ouvre, cree un <b>System User</b> (ex: "Vea Bot", role Admin)</li>
+          <li>Clique <b>Ajouter des assets</b> → choisis ta Page → coche <b>Gerer la Page</b></li>
+          <li>Clique <b>Generer un nouveau token</b> avec expiration <b>Jamais</b> et permissions <code>pages_messaging</code> + <code>pages_manage_metadata</code> + <code>pages_read_engagement</code></li>
+          <li>Le token sera detecte automatiquement par cette extension <span class="pulse"></span></li>
+        </ol>
+        <div class="status-row">
+          <span class="indicator"></span>
+          <span id="status-text">Surveillance active...</span>
+        </div>
+        <button class="btn btn-secondary" id="btn-back">Retour</button>
+      </section>
+
+      <!-- State: connecting (token detected, sending to Vea) -->
+      <section id="state-connecting" class="state hidden">
+        <div class="spinner"></div>
+        <h2>Validation en cours</h2>
+        <p class="muted">Verification du token cote Ve'a...</p>
+      </section>
+
+      <!-- State: success -->
+      <section id="state-success" class="state hidden">
+        <div class="icon-circle success">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><path d="M5 13l4 4L19 7" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 id="success-title">Page connectee !</h2>
+        <p class="muted" id="success-detail">Ton agent IA Ve'a peut maintenant repondre aux messages de cette Page.</p>
+        <button class="btn btn-primary" id="btn-open-channels">Voir dans Ve'a</button>
+        <button class="btn btn-secondary" id="btn-connect-another">Connecter une autre Page</button>
+      </section>
+
+      <!-- State: error -->
+      <section id="state-error" class="state hidden">
+        <div class="icon-circle error">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><path d="M12 9v4M12 17h.01" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="10" stroke="#ef4444" stroke-width="2"/></svg>
+        </div>
+        <h2>Erreur</h2>
+        <p class="muted" id="error-message">Une erreur est survenue.</p>
+        <p class="error-detail" id="error-detail"></p>
+        <button class="btn btn-secondary" id="btn-retry">Reessayer</button>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a href="https://vea.pacifikai.com" target="_blank" rel="noopener">vea.pacifikai.com</a>
+      <span class="dot-separator">·</span>
+      <a href="https://vea.pacifikai.com/help/extension" target="_blank" rel="noopener">Aide</a>
+    </footer>
+
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>

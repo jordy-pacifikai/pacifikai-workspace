@@ -109,9 +109,23 @@ export default function ContactPage() {
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                     <circle cx="12" cy="10" r="3" />
                   </svg>
-                  Papeete, Tahiti — Polynésie française
+                  Papeete 98714, Tahiti — Polynésie française
                 </div>
               </div>
+            </div>
+
+            {/* Google Maps */}
+            <div className="glass rounded-2xl overflow-hidden border border-white/[0.06]">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15271.9!2d-149.5696!3d-17.5351!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x76bdbe4b73286f1d%3A0xb44c0790ab92b96!2sPapeete%2C%20Polyn%C3%A9sie%20fran%C3%A7aise!5e0!3m2!1sfr!2spf!4v1"
+                width="100%"
+                height="200"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="PACIFIK'AI — Papeete, Tahiti"
+              />
             </div>
           </div>
 

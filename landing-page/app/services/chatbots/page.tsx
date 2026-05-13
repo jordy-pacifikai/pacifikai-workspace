@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import ServicePage from "@/components/ui/ServicePage";
 import ServiceChatbotVisual from "@/components/ui/service-visuals/ServiceChatbotVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getOptimalLinks } from "@/lib/internal-links";
 
 export const metadata: Metadata = {
   title: "Chatbots & Agents IA à Tahiti | PACIFIK'AI — Polynésie française",
@@ -11,7 +15,7 @@ export const metadata: Metadata = {
     description:
       "Chatbots et agents IA à Tahiti, disponibles 24/7 sur WhatsApp, Messenger et votre site web.",
     url: "https://pacifikai.com/services/chatbots",
-    locale: "fr_FR",
+    locale: "fr_PF",
     type: "website",
   },
   alternates: {
@@ -91,8 +95,55 @@ const ICON_FAQ = (
   </svg>
 );
 
+const FAQ_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Sur quelles plateformes fonctionne le chatbot ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Les chatbots IA de PACIFIK'AI fonctionnent sur WhatsApp Business, Facebook Messenger, Instagram DM, Telegram et en widget intégré sur votre site web. Ils peuvent aussi être connectés aux SMS pour couvrir tous les canaux de communication de votre entreprise en Polynésie française.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Combien coûte un chatbot IA à Tahiti ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Un chatbot IA chez PACIFIK'AI coûte 5 000 XPF par mois. Ce tarif inclut le chatbot entraîné sur vos données, l'intégration WhatsApp ou Messenger, la prise de rendez-vous automatique et un dashboard de suivi des conversations.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Le chatbot peut-il parler plusieurs langues ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Oui, les agents IA de PACIFIK'AI sont multilingues. Ils répondent en français, anglais, et peuvent être configurés en reo tahiti ou toute autre langue nécessaire pour votre activité en Polynésie française.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Comment le chatbot connaît mon entreprise ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Le chatbot est alimenté avec vos documents, FAQ, catalogues et procédures internes. Il répond uniquement avec vos informations vérifiées, sans hallucination. L'IA s'améliore avec chaque conversation pour devenir de plus en plus précise.",
+      },
+    },
+  ],
+};
+
+const relatedLinks = getOptimalLinks("/services/chatbots", "service", ["chatbot", "ia", "whatsapp", "messenger", "agent"]);
+
 export default function ChatbotsPage() {
   return (
+    <>
+    <Script
+      id="faq-jsonld-chatbots"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
+    />
     <ServicePage
       badge="24/7 disponible, 0 attente"
       title="Chatbots &"
@@ -179,5 +230,7 @@ export default function ChatbotsPage() {
       ctaFinalTitle="Prêt à avoir un assistant IA 24/7 ?"
       ctaFinalSubtitle="Contactez-nous pour une démo personnalisée."
     />
+    <RelatedLinks links={relatedLinks} />
+    </>
   );
 }

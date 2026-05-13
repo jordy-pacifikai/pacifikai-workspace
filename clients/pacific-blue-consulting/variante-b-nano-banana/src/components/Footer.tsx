@@ -36,14 +36,9 @@ export default function Footer() {
                 height={27}
                 className="w-12 h-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]"
               />
-              <div>
-                <span className="font-display text-lg font-bold">
-                  Pacific Blue
-                </span>
-                <span className="block text-[10px] tracking-[0.2em] uppercase text-white/40">
-                  Consulting
-                </span>
-              </div>
+              <span className="font-display text-base font-bold tracking-wide text-white">
+                Pacific Blue Consulting
+              </span>
             </Link>
             <p className="text-white/40 text-sm leading-relaxed mt-6 max-w-xs">
               Cabinet de conseil independant specialise dans l&apos;aviation

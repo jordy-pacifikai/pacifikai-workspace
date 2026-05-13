@@ -3,10 +3,11 @@
 import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useT } from "@/lib/i18n/useT";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const STATS = [
+const STATS_FR = [
   { value: 100, suffix: "%", label: "Code sur mesure" },
   { value: 24, suffix: "/7", label: "IA disponible non-stop" },
   { value: 8, suffix: "+", label: "Solutions digitales" },
@@ -56,6 +57,11 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
 }
 
 export default function StatsSection() {
+  const t = useT("stats");
+  const STATS = t
+    ? STATS_FR.map((s, i) => ({ ...s, label: t[i]?.label ?? s.label }))
+    : STATS_FR;
+
   return (
     <section className="section-padding border-t border-border">
       <div className="max-w-6xl mx-auto">

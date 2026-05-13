@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ExpertisePage from "@/components/ui/ExpertisePage";
 import SEOVisual from "@/components/ui/expertise-visuals/SEOVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "SEO & Referencement IA Tahiti | PACIFIK'AI",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
     description:
       "Expertise SEO technique, GEO et referencement local en Polynesie francaise.",
     url: "https://pacifikai.com/expertise/seo-referencement-ia",
-    locale: "fr_FR",
+    locale: "fr_PF",
     type: "website",
   },
   alternates: {
@@ -87,7 +88,10 @@ const IconFork = (
 /* ── Page (Server Component — metadata export requires this) ── */
 export default function SEOPage() {
   return (
-    <ExpertisePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("SEO & Referencement IA", "Expertise SEO technique, GEO et referencement local en Polynesie francaise. Audit, optimisation et strategie pour etre visible sur Google et les moteurs IA.", "https://pacifikai.com/expertise/seo-referencement-ia")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Expertise", url: "https://pacifikai.com/expertise" }, { name: "SEO & Referencement IA", url: "https://pacifikai.com/expertise/seo-referencement-ia" }])) }} />
+      <ExpertisePage
       accentColor="lagoon"
       badge="Visibilite maximale sur Google et IA"
       title="SEO &"
@@ -196,5 +200,6 @@ export default function SEOPage() {
       ctaTitle="Pret a dominer les resultats de recherche ?"
       ctaSubtitle="Parlons de votre strategie SEO et de comment rendre votre entreprise visible la ou vos clients cherchent — Google, Maps et les moteurs IA."
     />
+    </>
   );
 }

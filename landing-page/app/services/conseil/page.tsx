@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import ServicePage from "@/components/ui/ServicePage";
 import ServiceConseilVisual from "@/components/ui/service-visuals/ServiceConseilVisual";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
+import RelatedLinks from "@/components/seo/RelatedLinks";
+import { getOptimalLinks } from "@/lib/internal-links";
 
 export const metadata: Metadata = {
   title: "Conseil & Formation IA à Tahiti | PACIFIK'AI — Stratégie Digitale Polynésie",
@@ -11,7 +14,7 @@ export const metadata: Metadata = {
     description:
       "Conseil en intelligence artificielle et formation IA à Tahiti. Audit et stratégie digitale.",
     url: "https://pacifikai.com/services/conseil",
-    locale: "fr_FR",
+    locale: "fr_PF",
     type: "website",
   },
   alternates: {
@@ -96,9 +99,14 @@ const ICON_WORKSHOP = (
   </svg>
 );
 
+const relatedLinks = getOptimalLinks("/services/conseil", "service", ["conseil", "audit", "strategie", "formation", "ia"]);
+
 export default function ConseilPage() {
   return (
-    <ServicePage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateServiceSchema("Conseil & Formation IA", "Conseil en intelligence artificielle et formation IA à Tahiti. Audit de processus, stratégie digitale et accompagnement pour entreprises en Polynésie française.", "https://pacifikai.com/services/conseil")) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([{ name: "Accueil", url: "https://pacifikai.com" }, { name: "Services", url: "https://pacifikai.com/services" }, { name: "Conseil & Formation IA", url: "https://pacifikai.com/services/conseil" }])) }} />
+      <ServicePage
       badge="ROI en 30 jours"
       title="Conseil &"
       titleHighlight="Formation IA"
@@ -184,5 +192,7 @@ export default function ConseilPage() {
       ctaFinalTitle="Prêt à accélérer avec l'IA ?"
       ctaFinalSubtitle="Écrivez-nous pour discuter de vos besoins et voir comment on peut vous aider."
     />
+    <RelatedLinks links={relatedLinks} />
+    </>
   );
 }

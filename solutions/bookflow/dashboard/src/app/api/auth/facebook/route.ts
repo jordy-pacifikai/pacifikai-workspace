@@ -5,6 +5,7 @@ import { requireBusinessAccess } from '@/lib/auth';
 import { rateLimitAsync, getClientIp } from '@/lib/rate-limit';
 import { logAuthEvent, extractRequestMeta } from '@/lib/audit';
 import { logger } from '@/lib/logger';
+import { registerPageWithPoller, removePageFromPoller } from '@/lib/page-poller';
 
 const FB_APP_ID = (process.env.NEXT_PUBLIC_FACEBOOK_APP_ID ?? '').trim();
 const FB_APP_SECRET = (process.env.FACEBOOK_APP_SECRET ?? '').trim();
@@ -13,10 +14,32 @@ const CHATWOOT_TOKEN = process.env.CHATWOOT_API_TOKEN || '';
 // config_id removed — was causing "ID d'app non valide" error. Using scope param instead.
 const FB_API = 'https://graph.facebook.com/v22.0';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vea.pacifikai.com';
+const BRIDGE_URL = process.env.MESSENGER_BRIDGE_URL ?? '';
+const BRIDGE_SECRET = process.env.MESSENGER_BRIDGE_SECRET ?? '';
 // OAuth redirect URI must match what's registered in the Facebook Login for Business config.
 // Both vea.pacifikai.com and dashboard.vea.pacifikai.com serve the same Vercel project,
 // so we always use vea.pacifikai.com which is whitelisted in the Meta config.
 const REDIRECT_URI = 'https://vea.pacifikai.com/api/auth/facebook';
+
+/**
+ * Fire-and-forget: queue the OAuth user as a tester on the Facebook dev dashboard.
+ * This allows non-admin users to use pages_messaging before App Review is approved.
+ * Non-blocking — failure here does NOT affect the OAuth flow.
+ */
+function queueTesterAddition(businessId: string, facebookUserId: string, facebookName: string) {
+  if (!BRIDGE_URL || !BRIDGE_SECRET) return;
+  fetch(`${BRIDGE_URL}/bridge/add-tester`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${BRIDGE_SECRET}` },
+    body: JSON.stringify({ businessId, facebookUserId, facebookName }),
+    signal: AbortSignal.timeout(10000),
+  }).then(r => {
+    if (r.ok) logger.info('Tester queued', { action: 'tester_auto_add', facebookUserId, facebookName });
+    else logger.warn('Tester queue failed', { action: 'tester_auto_add', status: r.status });
+  }).catch(() => {
+    // Non-blocking — silently ignore
+  });
+}
 
 /** Redirect and clear the OAuth nonce cookie */
 function oauthRedirect(url: string): NextResponse {
@@ -88,6 +111,14 @@ async function autoConnectPage(page: FacebookPage, businessId: string, userAcces
       ...(chatwootInboxId ? { chatwoot_inbox_id: chatwootInboxId, chatwoot_connected_at: new Date().toISOString() } : {}),
     })
     .eq('id', businessId);
+
+  // Register page with inbox poller (non-blocking)
+  registerPageWithPoller({
+    pageId: page.id,
+    pageName: page.name ?? 'Facebook Page',
+    pageToken: page.access_token,
+    businessId,
+  }).catch(() => {});
 }
 
 /**
@@ -165,6 +196,14 @@ export async function GET(req: NextRequest) {
       );
       const exchangeData = await exchangeRes.json();
       const longLivedToken = (exchangeData.access_token ?? userToken) as string;
+
+      // Auto-queue user as app tester (fire-and-forget, non-blocking)
+      fetch(`${FB_API}/me?fields=id,name&access_token=${longLivedToken}`, { signal: AbortSignal.timeout(5000) })
+        .then(r => r.json())
+        .then(user => {
+          if (user.id && user.name) queueTesterAddition(businessId, user.id, user.name);
+        })
+        .catch(() => {});
 
       // Get user pages (Page Access Tokens are PERMANENT with long-lived user token)
       const pagesRes = await fetch(
@@ -392,6 +431,14 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    // Register page with inbox poller (non-blocking)
+    registerPageWithPoller({
+      pageId,
+      pageName: pageName ?? 'Facebook Page',
+      pageToken,
+      businessId,
+    }).catch(() => {});
+
     return NextResponse.json({
       success: true,
       page: {
@@ -456,6 +503,9 @@ export async function DELETE(req: NextRequest) {
       ).catch(() => {
         // Best effort — token might already be invalid
       });
+
+      // Remove page from inbox poller (non-blocking)
+      removePageFromPoller(business.meta_page_id).catch(() => {});
     }
 
     // Clear all meta fields
