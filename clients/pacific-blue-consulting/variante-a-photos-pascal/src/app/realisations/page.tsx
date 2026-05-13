@@ -106,7 +106,7 @@ export default function RealisationsPage() {
           <h1 className="font-display text-fluid-4xl font-bold leading-tight">
             Nos réalisations
           </h1>
-          <p className="mt-6 text-white/50 text-lg max-w-3xl mx-auto leading-relaxed">
+          <p className="mt-6 text-white/90 text-lg max-w-3xl mx-auto leading-relaxed [text-shadow:_0_1px_2px_rgb(0_0_0_/_40%)]">
             Plus de 60 missions réalisées en Polynésie française, Nouvelle-Calédonie et dans le Pacifique. Des projets concrets, des résultats mesurables.
           </p>
           {/* Quick stats */}
@@ -118,8 +118,8 @@ export default function RealisationsPage() {
               { value: "8 ans", label: "D'activité" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
-                <div className="text-2xl font-display font-bold text-gold">{stat.value}</div>
-                <div className="text-xs text-white/40 mt-1">{stat.label}</div>
+                <div className="text-2xl font-display font-bold text-gold [text-shadow:_0_1px_2px_rgb(0_0_0_/_40%)]">{stat.value}</div>
+                <div className="text-xs text-white/80 mt-1 [text-shadow:_0_1px_2px_rgb(0_0_0_/_40%)]">{stat.label}</div>
               </div>
             ))}
           </div>
