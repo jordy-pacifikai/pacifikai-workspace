@@ -97,7 +97,7 @@ export default function RealisationsPage() {
       {/* Hero */}
       <section className="relative pt-32 pb-20 text-white overflow-hidden">
         <Image src="/images/hero-realisations.jpg" alt="Moorea — montagnes et lagon" fill className="object-cover" sizes="100vw" priority />
-        <div className="absolute inset-0 bg-navy/80" />
+        <div className="absolute inset-0 bg-navy/85" />
         <div className="absolute inset-0 grain-overlay" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block text-gold/70 text-fluid-xs font-semibold uppercase tracking-[0.3em] mb-4">
