@@ -444,7 +444,7 @@ export default function Home() {
                     />
                     <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10 px-2">
                       <span className="text-[11px] font-semibold text-white text-center leading-tight">
-                        {partner.name}{partner.specialty ? ` — ${partner.specialty}` : ""}
+                        {partner.hoverLabel || `${partner.name}${partner.specialty ? ` — ${partner.specialty}` : ""}`}
                       </span>
                     </div>
                   </>

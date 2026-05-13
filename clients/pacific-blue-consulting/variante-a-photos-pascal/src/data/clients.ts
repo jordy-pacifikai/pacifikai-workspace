@@ -17,6 +17,8 @@ export type Partner = {
   name: string;
   specialty?: string;
   logo?: string;
+  // Si renseigne, REMPLACE 'name — specialty' au hover (utile quand specialty = expansion de l'acronyme)
+  hoverLabel?: string;
 };
 
 export const clientCategories: Record<ClientCategory, string> = {
@@ -69,8 +71,8 @@ export const partners: Partner[] = [
   { name: "Etik Polynésie", specialty: "ingénierie infrastructure", logo: "/images/logos/etik-polynesie.png" },
   { name: "CGX Aero", logo: "/images/logos/cgx-aero.png" },
   { name: "Ironetik", logo: "/images/logos/ironetik.png" },
-  { name: "ISS", specialty: "Islands Services and Solutions", logo: "/images/logos/iss.png" },
-  { name: "TPB", specialty: "The Power of Blocks", logo: "/images/logos/tpb.png" },
+  { name: "ISS", logo: "/images/logos/iss.png", hoverLabel: "Islands Services and Solutions" },
+  { name: "TPB", logo: "/images/logos/tpb.png", hoverLabel: "The Power of Blocks" },
   { name: "PenUAS", specialty: "drones", logo: "/images/logos/penuas.png" },
   { name: "BIM Pearl", specialty: "maquettes 3D/4D/5D", logo: "/images/logos/bim-pearl.png" },
   { name: "Magis", logo: "/images/logos/magis.png" },
@@ -79,7 +81,7 @@ export const partners: Partner[] = [
   { name: "Delta Polynesia", logo: "/images/logos/delta-polynesia.png" },
   { name: "L2L Prévention", specialty: "ICPE / EIE", logo: "/images/logos/l2l-prevention.png" },
   { name: "Milanamos", logo: "/images/logos/milanamos.png" },
-  { name: "FHC", specialty: "Fare Home Concept", logo: "/images/logos/fhc.png" },
+  { name: "FHC", logo: "/images/logos/fhc.png", hoverLabel: "Fare Home Concept" },
   { name: "Auna Conseil", logo: "/images/logos/auna-conseil.png" },
   { name: "PACIFIK'AI", logo: "/images/logos/pacifikai.png" },
 ];
