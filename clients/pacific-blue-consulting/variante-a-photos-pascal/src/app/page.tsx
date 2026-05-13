@@ -423,7 +423,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="mt-16 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 auto-rows-fr" data-stagger-parent>
+          <div className="mt-16 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3" data-stagger-parent>
             {partners.map((partner) => {
               const isPacifikai = partner.name === "PACIFIK'AI";
               return (
