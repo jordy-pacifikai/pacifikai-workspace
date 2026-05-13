@@ -53,24 +53,39 @@ const territoryColors: Record<string, string> = {
 
 // Logos qui paraissent trop petits dans la grille standard et meritent une taille augmentee
 const LARGER_LOGOS = new Set<string>([
-  "Pacific Sud Survey (PSS)",
-  "Delta Polynesia",
-  "L2L Prévention",
-  "Milanamos",
+  // Clients existants
   "Moeroa Tahitian Heritage",
   "TASC",
   "TAC",
   "Province des Îles Loyauté",
   "Commune de Hiva Oa",
-  "Commune de Moorea",
   "DAC-Pf",
   "Gouvernement PF",
+  "IAS",
+  // Clients nouveaux Pascal mail UID 9
+  "Air Bora Bora",
+  "Aéroport de Tahiti",
+  "Service de l'Artisanat Traditionnel",
+  // Partenaires existants
+  "Pacific Sud Survey (PSS)",
+  "Delta Polynesia",
+  "L2L Prévention",
+  "Milanamos",
   "To70",
   "Tamau Conseil",
   "Etik Polynésie",
   "PenUAS",
   "BIM Pearl",
   "Birds Conseil",
+  "Magis",
+  "CGX Aero",
+  // Partenaires nouveaux Pascal mail UID 9
+  "Ironetik",
+  "ISS",
+  "TPB",
+  "FHC",
+  "Auna Conseil",
+  "PACIFIK'AI",
 ]);
 
 /* ===== Components ===== */
