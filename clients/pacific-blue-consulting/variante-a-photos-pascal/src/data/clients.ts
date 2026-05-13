@@ -38,6 +38,7 @@ export const clients: Client[] = [
   { name: "Commune de Hiva Oa", category: "institutionnels", logo: "/images/logos/commune-hiva-oa.png" },
   { name: "DGEE", category: "institutionnels", logo: "/images/logos/dgee.png", hoverLabel: "Direction Générale de l'Éducation et des Enseignements" },
   { name: "Gouvernement PF", category: "institutionnels", logo: "/images/logos/gouvernement-pf.png" },
+  { name: "Service de l'Artisanat Traditionnel", category: "institutionnels", logo: "/images/logos/artisanat-traditionnel.png" },
   // Compagnies aériennes & Opérateurs
   { name: "Air Loyauté", category: "compagnies", logo: "/images/logos/air-loyaute.png" },
   { name: "ATN/TNH", category: "compagnies", logo: "/images/logos/atn-tnh.png" },
@@ -56,7 +57,6 @@ export const clients: Client[] = [
   { name: "CNAM", category: "formation", logo: "/images/logos/cnam.png" },
   { name: "HSF", category: "formation", logo: "/images/logos/hsf.png" },
   // Autres
-  { name: "Service de l'Artisanat Traditionnel", category: "autres", logo: "/images/logos/artisanat-traditionnel.png" },
   { name: "Kroma Prod", category: "autres", logo: "/images/logos/kroma-prod.png" },
   { name: "TGW", category: "autres", logo: "/images/logos/tgw.png", hoverLabel: "Tahiti Green Works" },
   { name: "MOZ ULM", category: "autres", logo: "/images/logos/moz-ulm.png" },
