@@ -439,7 +439,7 @@ export default function Home() {
                       alt={partner.name}
                       width={120}
                       height={48}
-                      className={`${isPacifikai ? "h-[120px] max-w-none relative z-10" : LARGER_LOGOS.has(partner.name) ? "h-[88px]" : "h-10"} w-auto object-contain`}
+                      className={`${isPacifikai ? "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[120px] max-w-none z-10" : LARGER_LOGOS.has(partner.name) ? "h-[88px] w-auto" : "h-10 w-auto"} object-contain`}
                       loading="lazy"
                     />
                     <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10 px-2">
