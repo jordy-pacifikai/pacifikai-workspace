@@ -423,11 +423,13 @@ export default function Home() {
             />
           </div>
 
-          <div className="mt-16 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3" data-stagger-parent>
-            {partners.map((partner) => (
+          <div className="mt-16 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 auto-rows-fr" data-stagger-parent>
+            {partners.map((partner) => {
+              const isPacifikai = partner.name === "PACIFIK'AI";
+              return (
               <div
                 key={partner.name}
-                className="relative flex flex-col items-center justify-center p-4 bg-navy-50/40 border border-navy-100/40 rounded-xl aspect-[3/2] overflow-hidden transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100"
+                className={`relative flex flex-col items-center justify-center p-4 bg-navy-50/40 border border-navy-100/40 rounded-xl ${isPacifikai ? "col-span-2 row-span-2 aspect-square" : "aspect-[3/2]"} overflow-hidden transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100`}
                 data-stagger-child
               >
                 {partner.logo ? (
@@ -437,7 +439,7 @@ export default function Home() {
                       alt={partner.name}
                       width={120}
                       height={48}
-                      className={`${LARGER_LOGOS.has(partner.name) ? "h-[88px]" : "h-10"} w-auto object-contain`}
+                      className={`${isPacifikai ? "h-[200px]" : LARGER_LOGOS.has(partner.name) ? "h-[88px]" : "h-10"} w-auto object-contain`}
                       loading="lazy"
                     />
                     <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10 px-2">
@@ -452,7 +454,8 @@ export default function Home() {
                   </span>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
