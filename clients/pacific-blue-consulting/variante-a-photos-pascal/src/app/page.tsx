@@ -429,7 +429,7 @@ export default function Home() {
               return (
               <div
                 key={partner.name}
-                className={`relative flex flex-col items-center justify-center ${isPacifikai ? "p-2 aspect-square" : "p-4 aspect-[3/2]"} bg-navy-50/40 border border-navy-100/40 rounded-xl overflow-hidden transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100`}
+                className={`relative flex flex-col items-center justify-center p-4 bg-navy-50/40 border border-navy-100/40 rounded-xl aspect-[3/2] ${isPacifikai ? "overflow-visible" : "overflow-hidden"} transition-all duration-300 cursor-default [&:hover_.logo-overlay]:opacity-100`}
                 data-stagger-child
               >
                 {partner.logo ? (
@@ -439,7 +439,7 @@ export default function Home() {
                       alt={partner.name}
                       width={120}
                       height={48}
-                      className={`${isPacifikai ? "h-[130px] max-w-[95%]" : LARGER_LOGOS.has(partner.name) ? "h-[88px]" : "h-10"} w-auto object-contain`}
+                      className={`${isPacifikai ? "h-[120px] max-w-none relative z-10" : LARGER_LOGOS.has(partner.name) ? "h-[88px]" : "h-10"} w-auto object-contain`}
                       loading="lazy"
                     />
                     <div className="logo-overlay absolute inset-0 bg-[rgba(30,35,50,0.85)] flex items-center justify-center opacity-0 transition-opacity duration-300 rounded-xl z-10 px-2">
