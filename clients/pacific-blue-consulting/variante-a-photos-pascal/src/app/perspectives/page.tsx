@@ -55,12 +55,12 @@ export default function PerspectivesPage() {
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-navy/75" />
+        <div className="absolute inset-0 bg-navy/92" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
             Perspectives
           </h1>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto">
+          <p className="text-white/90 text-lg max-w-2xl mx-auto [text-shadow:_0_1px_2px_rgb(0_0_0_/_40%)]">
             Analyses, notes de position et réflexions sur les sujets que nous
             connaissons - pour alimenter le débat et éclairer les décisions.
           </p>

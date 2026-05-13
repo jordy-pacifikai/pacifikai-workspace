@@ -20,7 +20,7 @@ export default function OffresPage() {
       {/* Hero */}
       <section className="relative pt-32 pb-20 text-white overflow-hidden">
         <Image src="/images/hero-offres.jpg" alt="Bora Bora — lagon turquoise" fill className="object-cover" sizes="100vw" priority />
-        <div className="absolute inset-0 bg-navy/80" />
+        <div className="absolute inset-0 bg-navy/92" />
         <div className="absolute inset-0 grain-overlay" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-block text-gold/70 text-fluid-xs font-semibold uppercase tracking-[0.3em] mb-4">
@@ -29,7 +29,7 @@ export default function OffresPage() {
           <h1 className="font-display text-fluid-4xl font-bold leading-tight">
             Nos offres
           </h1>
-          <p className="mt-6 text-white/50 text-lg max-w-3xl mx-auto leading-relaxed">
+          <p className="mt-6 text-white/90 text-lg max-w-3xl mx-auto leading-relaxed [text-shadow:_0_1px_2px_rgb(0_0_0_/_40%)]">
             Quatre territoires d&apos;intervention, une même promesse : comprendre votre contexte, structurer votre projet, et vous accompagner jusqu&apos;à la mise en œuvre.
           </p>
         </div>
@@ -181,7 +181,7 @@ export default function OffresPage() {
             <br />
             <span className="text-gold">Parlons-en.</span>
           </h2>
-          <p className="mt-6 text-white/50 text-lg leading-relaxed">
+          <p className="mt-6 text-white/80 text-lg leading-relaxed">
             Chaque contexte est unique - notre première contribution est de vous aider à le clarifier.
           </p>
           <div className="mt-10">
