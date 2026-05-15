@@ -56,7 +56,7 @@ export default function LocaleSwitcher({ variant = "dark" }: LocaleSwitcherProps
         type="button"
         onClick={() => setOpen((o) => !o)}
         disabled={isPending}
-        className={`inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider transition-colors ${triggerColor}`}
+        className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium uppercase transition-colors ${triggerColor}`}
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Language selector"
