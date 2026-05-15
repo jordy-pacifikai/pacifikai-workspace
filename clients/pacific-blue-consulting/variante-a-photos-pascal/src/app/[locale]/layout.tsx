@@ -65,6 +65,20 @@ export async function generateMetadata({
       title: t("defaultTitle"),
       description: t("ogDescription"),
       url: isFr ? SITE_URL : `${SITE_URL}/en`,
+      images: [
+        {
+          url: `${SITE_URL}/images/hero-accueil.jpg`,
+          width: 1920,
+          height: 1280,
+          alt: t("defaultTitle"),
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("defaultTitle"),
+      description: t("ogDescription"),
+      images: [`${SITE_URL}/images/hero-accueil.jpg`],
     },
   };
 }
