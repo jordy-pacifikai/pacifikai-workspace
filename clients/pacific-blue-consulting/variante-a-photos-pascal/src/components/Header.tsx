@@ -1,32 +1,33 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/routing";
+import LocaleSwitcher from "./LocaleSwitcher";
 
 /* ===== Navigation data with dropdown submenus ===== */
 type NavItem = {
   href: string;
-  label: string;
-  children?: { href: string; label: string; description?: string }[];
+  labelKey: string;
+  children?: { href: string; labelKey: string; descKey?: string }[];
 };
 
 const navItems: NavItem[] = [
-  { href: "/", label: "Accueil" },
+  { href: "/", labelKey: "home" },
   {
     href: "/offres",
-    label: "Offres",
+    labelKey: "offres",
     children: [
-      { href: "/offres#mobilites", label: "Mobilités & Transport aérien", description: "Compagnies, certification, EISA, dessertes" },
-      { href: "/offres#infrastructures", label: "Infrastructures & Territoires", description: "Aéroports, ports, schémas directeurs" },
-      { href: "/offres#environnement", label: "Environnement & Souveraineté", description: "Bilan carbone, biodiversité, filières locales" },
-      { href: "/offres#transformation", label: "Transformation, Compétences & Création", description: "Formation, coaching, accompagnement à la création d'entreprise" },
+      { href: "/offres#mobilites", labelKey: "mobilites", descKey: "mobilitesDesc" },
+      { href: "/offres#infrastructures", labelKey: "infrastructures", descKey: "infrastructuresDesc" },
+      { href: "/offres#environnement", labelKey: "environnement", descKey: "environnementDesc" },
+      { href: "/offres#transformation", labelKey: "transformation", descKey: "transformationDesc" },
     ],
   },
-  { href: "/realisations", label: "Réalisations" },
-  { href: "/le-cabinet", label: "Le Cabinet" },
-  { href: "/perspectives", label: "Perspectives" },
+  { href: "/realisations", labelKey: "realisations" },
+  { href: "/le-cabinet", labelKey: "cabinet" },
+  { href: "/perspectives", labelKey: "perspectives" },
 ];
 
 /* ===== Dropdown Component ===== */
@@ -40,6 +41,9 @@ function DropdownMenu({
   const [isOpen, setIsOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
+  const t = useTranslations("header.nav");
+  const tSub = useTranslations("header.offresSubmenu");
+  const tPanel = useTranslations("header.megaPanel");
   const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
 
   const handleEnter = () => {
@@ -63,7 +67,7 @@ function DropdownMenu({
             : "text-white/70 hover:text-white"
         }`}
       >
-        {item.label}
+        {t(item.labelKey)}
         {isActive && (
           <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-gold" />
         )}
@@ -87,7 +91,7 @@ function DropdownMenu({
             : "text-white/70 hover:text-white"
         }`}
       >
-        {item.label}
+        {t(item.labelKey)}
         <svg
           className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
           fill="none"
@@ -114,17 +118,13 @@ function DropdownMenu({
             <div className="w-64 shrink-0 bg-navy p-6 flex flex-col justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
-                  {item.label}
+                  {t(item.labelKey)}
                 </span>
                 <h3 className="mt-2 font-display text-lg font-bold text-white leading-snug">
-                  {item.label === "Offres"
-                    ? "4 territoires au service du Pacifique"
-                    : "Nos missions depuis 2017"}
+                  {tPanel("offresHeadline")}
                 </h3>
                 <p className="mt-3 text-xs text-white/50 leading-relaxed">
-                  {item.label === "Offres"
-                    ? "Transport aérien, infrastructures, environnement et transformation."
-                    : "Polynésie française, Nouvelle-Calédonie et Pacifique Sud."}
+                  {tPanel("offresIntro")}
                 </p>
               </div>
               <Link
@@ -132,7 +132,7 @@ function DropdownMenu({
                 className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-gold hover:text-gold-300 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
-                Voir tout
+                {tPanel("seeAll")}
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
@@ -152,11 +152,11 @@ function DropdownMenu({
                     <span className="mt-0.5 w-1.5 h-1.5 rounded-full bg-gold/40 group-hover:bg-gold shrink-0 transition-colors" />
                     <div>
                       <span className="text-sm font-medium text-navy group-hover:text-gold transition-colors">
-                        {child.label}
+                        {tSub(child.labelKey)}
                       </span>
-                      {child.description && (
+                      {child.descKey && (
                         <span className="block text-[11px] text-warm/70 mt-0.5 leading-relaxed">
-                          {child.description}
+                          {tSub(child.descKey)}
                         </span>
                       )}
                     </div>
@@ -178,6 +178,9 @@ export default function Header() {
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
+  const t = useTranslations("header");
+  const tNav = useTranslations("header.nav");
+  const tSub = useTranslations("header.offresSubmenu");
 
   useEffect(() => {
     let ticking = false;
@@ -241,55 +244,63 @@ export default function Header() {
             </Link>
 
             {/* Desktop Nav with Dropdowns */}
-            <nav className="hidden lg:flex items-center gap-1" aria-label="Navigation principale">
+            <nav className="hidden lg:flex items-center gap-1" aria-label={t("ariaNav")}>
               {navItems.map((item) => (
                 <DropdownMenu key={item.href} item={item} isScrolled={isScrolled} />
               ))}
 
+              {/* Locale Switcher */}
+              <div className="ml-2">
+                <LocaleSwitcher variant={isScrolled ? "light" : "dark"} />
+              </div>
+
               {/* CTA Button */}
               <Link
                 href="/contact"
-                className={`ml-4 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                className={`ml-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
                   isScrolled
                     ? "bg-navy text-white hover:bg-navy-600"
                     : "bg-gold text-navy hover:bg-gold-400"
                 }`}
               >
-                Nous contacter
+                {t("ctaContact")}
               </Link>
             </nav>
 
-            {/* Mobile Toggle */}
-            <button
-              onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="lg:hidden relative z-10 p-2 rounded-lg focus-visible:ring-2 focus-visible:ring-gold"
-              aria-label={isMobileOpen ? "Fermer le menu" : "Ouvrir le menu"}
-              aria-expanded={isMobileOpen}
-            >
-              <div className="w-6 h-5 flex flex-col justify-between">
-                <span
-                  className={`block h-0.5 rounded-full transition-all duration-300 origin-center ${
-                    isMobileOpen
-                      ? "rotate-45 translate-y-[9px] bg-navy"
-                      : isScrolled ? "bg-navy" : "bg-white"
-                  }`}
-                />
-                <span
-                  className={`block h-0.5 rounded-full transition-all duration-300 ${
-                    isMobileOpen
-                      ? "opacity-0 scale-x-0"
-                      : isScrolled ? "bg-navy" : "bg-white"
-                  }`}
-                />
-                <span
-                  className={`block h-0.5 rounded-full transition-all duration-300 origin-center ${
-                    isMobileOpen
-                      ? "-rotate-45 -translate-y-[9px] bg-navy"
-                      : isScrolled ? "bg-navy" : "bg-white"
-                  }`}
-                />
-              </div>
-            </button>
+            {/* Mobile area: locale + toggle */}
+            <div className="lg:hidden flex items-center gap-2 relative z-10">
+              <LocaleSwitcher variant={isScrolled || isMobileOpen ? "light" : "dark"} />
+              <button
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                className="p-2 rounded-lg focus-visible:ring-2 focus-visible:ring-gold"
+                aria-label={isMobileOpen ? t("closeMenu") : t("openMenu")}
+                aria-expanded={isMobileOpen}
+              >
+                <div className="w-6 h-5 flex flex-col justify-between">
+                  <span
+                    className={`block h-0.5 rounded-full transition-all duration-300 origin-center ${
+                      isMobileOpen
+                        ? "rotate-45 translate-y-[9px] bg-navy"
+                        : isScrolled ? "bg-navy" : "bg-white"
+                    }`}
+                  />
+                  <span
+                    className={`block h-0.5 rounded-full transition-all duration-300 ${
+                      isMobileOpen
+                        ? "opacity-0 scale-x-0"
+                        : isScrolled ? "bg-navy" : "bg-white"
+                    }`}
+                  />
+                  <span
+                    className={`block h-0.5 rounded-full transition-all duration-300 origin-center ${
+                      isMobileOpen
+                        ? "-rotate-45 -translate-y-[9px] bg-navy"
+                        : isScrolled ? "bg-navy" : "bg-white"
+                    }`}
+                  />
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -341,7 +352,7 @@ export default function Header() {
                         {isActive && (
                           <span className="inline-block w-1.5 h-1.5 bg-gold rounded-full mr-3" />
                         )}
-                        {item.label}
+                        {tNav(item.labelKey)}
                       </Link>
                       {hasChildren && (
                         <button
@@ -375,7 +386,7 @@ export default function Header() {
                             className="block px-4 py-2.5 text-sm text-warm-500 hover:text-navy hover:bg-navy-50/50 rounded-lg transition-colors"
                             onClick={() => setIsMobileOpen(false)}
                           >
-                            {child.label}
+                            {tSub(child.labelKey)}
                           </Link>
                         ))}
                       </div>
@@ -400,7 +411,7 @@ export default function Header() {
                 className="flex items-center justify-center w-full py-4 bg-gold text-navy font-semibold rounded-xl text-sm hover:bg-gold-400 transition-colors"
                 onClick={() => setIsMobileOpen(false)}
               >
-                Nous contacter
+                {t("ctaContact")}
                 <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>

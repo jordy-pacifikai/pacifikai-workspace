@@ -1,22 +1,25 @@
-import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 
-const footerLinks = {
-  offres: [
-    { href: "/offres#mobilites", label: "Mobilités & Transport aérien" },
-    { href: "/offres#infrastructures", label: "Infrastructures & Territoires" },
-    { href: "/offres#environnement", label: "Environnement & Souveraineté" },
-    { href: "/offres#transformation", label: "Transformation, Compétences & Création d'entreprise" },
-  ],
-  cabinet: [
-    { href: "/le-cabinet", label: "Le Cabinet" },
-    { href: "/realisations", label: "Réalisations" },
-    { href: "/perspectives", label: "Perspectives" },
-    { href: "/contact", label: "Contact" },
-  ],
-};
+const offresLinks = [
+  { href: "/offres#mobilites", key: "offresMobilites" as const },
+  { href: "/offres#infrastructures", key: "offresInfrastructures" as const },
+  { href: "/offres#environnement", key: "offresEnvironnement" as const },
+  { href: "/offres#transformation", key: "offresTransformation" as const },
+];
+
+const cabinetLinks = [
+  { href: "/le-cabinet", key: "cabinet" as const },
+  { href: "/realisations", key: "realisations" as const },
+  { href: "/perspectives", key: "perspectives" as const },
+  { href: "/contact", key: "contact" as const },
+];
 
 export default function Footer() {
+  const t = useTranslations("footer");
+  const tLinks = useTranslations("footer.links");
+
   return (
     <footer className="relative bg-navy text-white overflow-hidden">
       {/* Top gradient line */}
@@ -40,26 +43,23 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-white/40 text-sm leading-relaxed mt-6 max-w-xs">
-              Cabinet de conseil indépendant en Polynésie française.
-              Structuration de projets complexes en transport aérien, sécurité
-              aéroportuaire, infrastructures, environnement et développement
-              territorial dans le Pacifique.
+              {t("tagline")}
             </p>
           </div>
 
           {/* Expertise */}
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold mb-5">
-              Offres
+              {t("offresTitle")}
             </h4>
             <ul className="space-y-3">
-              {footerLinks.offres.map((link) => (
+              {offresLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
                     className="text-white/40 text-sm hover:text-white transition-colors duration-300"
                   >
-                    {link.label}
+                    {tLinks(link.key)}
                   </Link>
                 </li>
               ))}
@@ -69,16 +69,16 @@ export default function Footer() {
           {/* Cabinet */}
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold mb-5">
-              Le Cabinet
+              {t("cabinetTitle")}
             </h4>
             <ul className="space-y-3">
-              {footerLinks.cabinet.map((link) => (
+              {cabinetLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
                     className="text-white/40 text-sm hover:text-white transition-colors duration-300"
                   >
-                    {link.label}
+                    {tLinks(link.key)}
                   </Link>
                 </li>
               ))}
@@ -88,7 +88,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold mb-5">
-              Contact
+              {t("contactTitle")}
             </h4>
             <ul className="space-y-4 text-sm text-white/40">
               <li className="flex items-start gap-3">
@@ -96,9 +96,7 @@ export default function Footer() {
                   <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span>
-                  Polynésie française
-                </span>
+                <span>{t("locationLabel")}</span>
               </li>
               <li>
                 <a href="tel:+68987747284" className="flex items-center gap-3 hover:text-white transition-colors duration-300">
@@ -136,10 +134,10 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-white/[0.06] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-white/25 text-xs">
-            &copy; {new Date().getFullYear()} Pacific Blue Consulting. Tous droits réservés.
+            &copy; {new Date().getFullYear()} {t("copyright")}
           </p>
           <p className="text-white/30 text-xs">
-            Propulsé par{" "}
+            {t("poweredBy")}{" "}
             <a
               href="https://pacifikai.com"
               target="_blank"

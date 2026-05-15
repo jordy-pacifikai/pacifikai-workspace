@@ -2,19 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import SectionTitle from "@/components/SectionTitle";
 
 const CONTACT_EMAIL = "contact@pacificblueconsulting.org";
-
-const domainOptions = [
-  { value: "", label: "Sélectionnez un domaine" },
-  { value: "mobilites", label: "Mobilités & Transport aérien" },
-  { value: "infrastructures", label: "Infrastructures & Territoires" },
-  { value: "environnement", label: "Environnement & Souveraineté" },
-  { value: "transformation", label: "Transformation, Compétences & Création d'entreprise" },
-  { value: "autre", label: "Autre" },
-];
 
 type ContactForm = {
   name: string;
@@ -25,8 +17,20 @@ type ContactForm = {
   message: string;
 };
 
+const DOMAIN_VALUES = [
+  { value: "", key: "domainPlaceholder" as const },
+  { value: "mobilites", key: "domainMobilites" as const },
+  { value: "infrastructures", key: "domainInfrastructures" as const },
+  { value: "environnement", key: "domainEnvironnement" as const },
+  { value: "transformation", key: "domainTransformation" as const },
+  { value: "autre", key: "domainOther" as const },
+];
+
 export default function ContactPage() {
   const sectionRef = useScrollAnimation<HTMLDivElement>();
+  const t = useTranslations("contact");
+  const tForm = useTranslations("contact.form");
+  const tSidebar = useTranslations("contact.sidebar");
   const [form, setForm] = useState<ContactForm>({
     name: "",
     company: "",
@@ -46,27 +50,28 @@ export default function ContactPage() {
     e.preventDefault();
 
     const newErrors: Partial<Record<keyof ContactForm, string>> = {};
-    if (!form.name.trim()) newErrors.name = "Champ obligatoire";
-    if (!form.email.trim()) newErrors.email = "Champ obligatoire";
+    if (!form.name.trim()) newErrors.name = tForm("required");
+    if (!form.email.trim()) newErrors.email = tForm("required");
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      newErrors.email = "Email invalide";
-    if (!form.message.trim()) newErrors.message = "Champ obligatoire";
+      newErrors.email = tForm("invalidEmail");
+    if (!form.message.trim()) newErrors.message = tForm("required");
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    const domainLabel = domainOptions.find(d => d.value === form.domain)?.label || "";
-    const subject = `[Contact PBC] ${form.name}${domainLabel ? ` — ${domainLabel}` : ""}`;
+    const domainOption = DOMAIN_VALUES.find((d) => d.value === form.domain);
+    const domainLabel = domainOption && domainOption.value ? tForm(domainOption.key) : "";
+    const subject = `${tForm("subjectPrefix")} ${form.name}${domainLabel ? ` — ${domainLabel}` : ""}`;
     const body = [
-      `Nom : ${form.name}`,
-      form.company ? `Entreprise : ${form.company}` : "",
-      `Email : ${form.email}`,
-      form.phone ? `Téléphone : ${form.phone}` : "",
-      domainLabel ? `Domaine : ${domainLabel}` : "",
+      `${tForm("labelName")} : ${form.name}`,
+      form.company ? `${tForm("labelCompany")} : ${form.company}` : "",
+      `${tForm("labelEmail")} : ${form.email}`,
+      form.phone ? `${tForm("labelPhone")} : ${form.phone}` : "",
+      domainLabel ? `${tForm("labelDomain")} : ${domainLabel}` : "",
       "",
-      "Message :",
+      tForm("labelMessage"),
       form.message,
     ].filter(Boolean).join("\n");
 
@@ -94,9 +99,9 @@ export default function ContactPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 lg:pt-40 pb-20">
           <div className="gsap-reveal">
             <SectionTitle
-              label="Contact"
-              title="Parlons de votre projet"
-              description="Une question, un appel d'offres, une idée à explorer - nous sommes à votre écoute. Premier échange sans engagement."
+              label={t("hero.label")}
+              title={t("hero.title")}
+              description={t("hero.intro")}
               light
             />
           </div>
@@ -107,111 +112,110 @@ export default function ContactPage() {
       <section className="py-24 lg:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-16">
-            {/* Form / Booking */}
+            {/* Form */}
             <div className="lg:col-span-2">
-              {/* Contact Form */}
               <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <div>
-                          <label className="block text-sm font-medium text-navy mb-2">
-                            Nom complet <span className="text-gold">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            autoComplete="name"
-                            value={form.name}
-                            onChange={(e) => updateField("name", e.target.value)}
-                            className={inputClasses}
-                            placeholder="Jean Dupont"
-                          />
-                          {errors.name && <p className="mt-1.5 text-xs text-red-500">{errors.name}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-navy mb-2">
-                            Entreprise / Organisation
-                          </label>
-                          <input
-                            type="text"
-                            autoComplete="organization"
-                            value={form.company}
-                            onChange={(e) => updateField("company", e.target.value)}
-                            className={inputClasses}
-                            placeholder="Votre entreprise"
-                          />
-                        </div>
-                      </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-navy mb-2">
+                      {tForm("name")} <span className="text-gold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      autoComplete="name"
+                      value={form.name}
+                      onChange={(e) => updateField("name", e.target.value)}
+                      className={inputClasses}
+                      placeholder={tForm("namePlaceholder")}
+                    />
+                    {errors.name && <p className="mt-1.5 text-xs text-red-500">{errors.name}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-navy mb-2">
+                      {tForm("company")}
+                    </label>
+                    <input
+                      type="text"
+                      autoComplete="organization"
+                      value={form.company}
+                      onChange={(e) => updateField("company", e.target.value)}
+                      className={inputClasses}
+                      placeholder={tForm("companyPlaceholder")}
+                    />
+                  </div>
+                </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <div>
-                          <label className="block text-sm font-medium text-navy mb-2">
-                            Email <span className="text-gold">*</span>
-                          </label>
-                          <input
-                            type="email"
-                            autoComplete="email"
-                            value={form.email}
-                            onChange={(e) => updateField("email", e.target.value)}
-                            className={inputClasses}
-                            placeholder="jean@exemple.com"
-                          />
-                          {errors.email && <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-navy mb-2">
-                            Téléphone
-                          </label>
-                          <input
-                            type="tel"
-                            autoComplete="tel"
-                            value={form.phone}
-                            onChange={(e) => updateField("phone", e.target.value)}
-                            className={inputClasses}
-                            placeholder="+689 87 000 000"
-                          />
-                        </div>
-                      </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-medium text-navy mb-2">
+                      {tForm("email")} <span className="text-gold">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      autoComplete="email"
+                      value={form.email}
+                      onChange={(e) => updateField("email", e.target.value)}
+                      className={inputClasses}
+                      placeholder={tForm("emailPlaceholder")}
+                    />
+                    {errors.email && <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-navy mb-2">
+                      {tForm("phone")}
+                    </label>
+                    <input
+                      type="tel"
+                      autoComplete="tel"
+                      value={form.phone}
+                      onChange={(e) => updateField("phone", e.target.value)}
+                      className={inputClasses}
+                      placeholder={tForm("phonePlaceholder")}
+                    />
+                  </div>
+                </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-navy mb-2">
-                          Domaine concerné
-                        </label>
-                        <select
-                          value={form.domain}
-                          onChange={(e) => updateField("domain", e.target.value)}
-                          className={`${inputClasses} bg-white`}
-                        >
-                          {domainOptions.map((opt) => (
-                            <option key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                <div>
+                  <label className="block text-sm font-medium text-navy mb-2">
+                    {tForm("domain")}
+                  </label>
+                  <select
+                    value={form.domain}
+                    onChange={(e) => updateField("domain", e.target.value)}
+                    className={`${inputClasses} bg-white`}
+                  >
+                    {DOMAIN_VALUES.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {tForm(opt.key)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-navy mb-2">
-                          Votre message <span className="text-gold">*</span>
-                        </label>
-                        <textarea
-                          value={form.message}
-                          onChange={(e) => updateField("message", e.target.value)}
-                          rows={5}
-                          className={`${inputClasses} resize-none`}
-                          placeholder="Décrivez votre projet, vos enjeux, vos questions..."
-                        />
-                        {errors.message && <p className="mt-1.5 text-xs text-red-500">{errors.message}</p>}
-                      </div>
+                <div>
+                  <label className="block text-sm font-medium text-navy mb-2">
+                    {tForm("message")} <span className="text-gold">*</span>
+                  </label>
+                  <textarea
+                    value={form.message}
+                    onChange={(e) => updateField("message", e.target.value)}
+                    rows={5}
+                    className={`${inputClasses} resize-none`}
+                    placeholder={tForm("messagePlaceholder")}
+                  />
+                  {errors.message && <p className="mt-1.5 text-xs text-red-500">{errors.message}</p>}
+                </div>
 
-                      <button
-                        type="submit"
-                        className="w-full sm:w-auto px-10 py-4 bg-gold text-navy font-semibold rounded-xl hover:bg-gold-400 transition-all duration-300 text-sm shadow-glow-gold/0 hover:shadow-glow-gold"
-                      >
-                        Envoyer le message
-                      </button>
-                      <p className="text-xs text-warm-300 mt-2">
-                        Ce bouton ouvre votre application mail avec le message pré-rempli.
-                      </p>
-                    </form>
+                <button
+                  type="submit"
+                  className="w-full sm:w-auto px-10 py-4 bg-gold text-navy font-semibold rounded-xl hover:bg-gold-400 transition-all duration-300 text-sm shadow-glow-gold/0 hover:shadow-glow-gold"
+                >
+                  {tForm("submit")}
+                </button>
+                <p className="text-xs text-warm-300 mt-2">
+                  {tForm("submitHint")}
+                </p>
+              </form>
             </div>
 
             {/* Sidebar */}
@@ -220,7 +224,7 @@ export default function ContactPage() {
               <div className="gsap-reveal rounded-3xl overflow-hidden">
                 <Image
                   src="/images/pbc-in-airport.jpg"
-                  alt="PBC à l'aéroport"
+                  alt={tSidebar("sidebarImageAlt")}
                   width={600}
                   height={400}
                   className="w-full h-48 object-cover"
@@ -230,24 +234,24 @@ export default function ContactPage() {
               {/* Contact Info */}
               <div className="gsap-reveal p-8 bg-navy-50/40 border border-navy-100/30 rounded-3xl">
                 <h3 className="font-display text-lg font-bold text-navy mb-6">
-                  Coordonnées
+                  {tSidebar("coordinates")}
                 </h3>
                 <div className="space-y-5">
                   {[
                     {
-                      label: "Localisation",
-                      value: "Polynésie française",
+                      label: tSidebar("location"),
+                      value: tSidebar("locationValue"),
                       icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z",
                       icon2: "M15 11a3 3 0 11-6 0 3 3 0 016 0z",
                     },
                     {
-                      label: "Téléphone",
+                      label: tSidebar("phone"),
                       value: "+689 87 747 284",
                       href: "tel:+68987747284",
                       icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",
                     },
                     {
-                      label: "Email",
+                      label: tSidebar("email"),
                       value: "contact@pacificblueconsulting.org",
                       href: "mailto:contact@pacificblueconsulting.org",
                       icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
@@ -293,24 +297,24 @@ export default function ContactPage() {
               {/* Expertise */}
               <div className="gsap-reveal p-8 bg-navy-50/40 border border-navy-100/30 rounded-3xl">
                 <h3 className="font-display text-lg font-bold text-navy mb-5">
-                  Nos territoires
+                  {tSidebar("territoriesTitle")}
                 </h3>
                 <ul className="space-y-3 text-sm text-warm">
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Mobilités &amp; Transport aérien
+                    {tSidebar("territory1")}
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Infrastructures &amp; Territoires
+                    {tSidebar("territory2")}
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Environnement &amp; Souveraineté
+                    {tSidebar("territory3")}
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-gold rounded-full shrink-0" />
-                    Transformation, Compétences &amp; Création d&apos;entreprise
+                    {tSidebar("territory4")}
                   </li>
                 </ul>
               </div>
