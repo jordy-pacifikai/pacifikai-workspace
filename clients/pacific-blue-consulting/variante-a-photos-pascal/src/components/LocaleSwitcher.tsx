@@ -21,17 +21,17 @@ export default function LocaleSwitcher({ variant = "dark" }: LocaleSwitcherProps
     });
   };
 
-  // variant=light => header is scrolled OR mobile menu open (dark text)
-  // variant=dark  => header transparent over hero (light text)
-  const baseClasses =
+  // Subtile: inactive = faible opacité, active = pleine. Pas de padding/background.
+  const inactiveClasses =
     variant === "light"
-      ? "text-warm-500 hover:text-navy"
-      : "text-white/70 hover:text-white";
-  const activeClasses = variant === "light" ? "text-navy" : "text-white";
+      ? "text-warm-400/60 hover:text-navy"
+      : "text-white/40 hover:text-white";
+  const activeClasses =
+    variant === "light" ? "text-navy" : "text-white";
 
   return (
     <div
-      className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.15em]"
+      className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider"
       role="group"
       aria-label="Language"
     >
@@ -39,23 +39,23 @@ export default function LocaleSwitcher({ variant = "dark" }: LocaleSwitcherProps
         type="button"
         onClick={() => switchTo("fr")}
         disabled={isPending}
-        className={`px-2 py-1 rounded transition-colors ${
-          locale === "fr" ? activeClasses : baseClasses
+        className={`transition-colors ${
+          locale === "fr" ? activeClasses : inactiveClasses
         }`}
         aria-current={locale === "fr" ? "true" : undefined}
         aria-label="Français"
       >
         FR
       </button>
-      <span className={variant === "light" ? "text-warm-300" : "text-white/30"}>
+      <span className={variant === "light" ? "text-warm-300/50" : "text-white/20"}>
         /
       </span>
       <button
         type="button"
         onClick={() => switchTo("en")}
         disabled={isPending}
-        className={`px-2 py-1 rounded transition-colors ${
-          locale === "en" ? activeClasses : baseClasses
+        className={`transition-colors ${
+          locale === "en" ? activeClasses : inactiveClasses
         }`}
         aria-current={locale === "en" ? "true" : undefined}
         aria-label="English"
