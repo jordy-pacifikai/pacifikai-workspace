@@ -2,66 +2,100 @@
 
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/routing";
-import { useTransition } from "react";
+import { useTransition, useState, useEffect, useRef } from "react";
 
 type LocaleSwitcherProps = {
   variant?: "light" | "dark";
 };
+
+const LANGS = [
+  { code: "fr" as const, label: "Français" },
+  { code: "en" as const, label: "English" },
+];
 
 export default function LocaleSwitcher({ variant = "dark" }: LocaleSwitcherProps) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [open]);
 
   const switchTo = (nextLocale: "fr" | "en") => {
+    setOpen(false);
     if (nextLocale === locale) return;
     startTransition(() => {
       router.replace(pathname, { locale: nextLocale });
     });
   };
 
-  // Subtile: inactive = faible opacité, active = pleine. Pas de padding/background.
-  const inactiveClasses =
+  const triggerColor =
     variant === "light"
-      ? "text-warm-400/60 hover:text-navy"
-      : "text-white/40 hover:text-white";
-  const activeClasses =
-    variant === "light" ? "text-navy" : "text-white";
+      ? "text-warm-500 hover:text-navy"
+      : "text-white/60 hover:text-white";
 
   return (
-    <div
-      className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider"
-      role="group"
-      aria-label="Language"
-    >
+    <div ref={ref} className="relative inline-block">
       <button
         type="button"
-        onClick={() => switchTo("fr")}
+        onClick={() => setOpen((o) => !o)}
         disabled={isPending}
-        className={`transition-colors ${
-          locale === "fr" ? activeClasses : inactiveClasses
-        }`}
-        aria-current={locale === "fr" ? "true" : undefined}
-        aria-label="Français"
+        className={`inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider transition-colors ${triggerColor}`}
+        aria-haspopup="true"
+        aria-expanded={open}
+        aria-label="Language selector"
       >
-        FR
+        {/* Globe icon (Heroicons outline globe-alt minimal) */}
+        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18" />
+        </svg>
+        <span>{locale}</span>
+        <svg className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+          <path d="M3 4.5l3 3 3-3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
-      <span className={variant === "light" ? "text-warm-300/50" : "text-white/20"}>
-        /
-      </span>
-      <button
-        type="button"
-        onClick={() => switchTo("en")}
-        disabled={isPending}
-        className={`transition-colors ${
-          locale === "en" ? activeClasses : inactiveClasses
-        }`}
-        aria-current={locale === "en" ? "true" : undefined}
-        aria-label="English"
-      >
-        EN
-      </button>
+
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 mt-2 min-w-[120px] rounded-md bg-white border border-navy-100/40 shadow-lg shadow-navy/10 py-1 z-50 overflow-hidden"
+        >
+          {LANGS.map((l) => (
+            <button
+              key={l.code}
+              type="button"
+              role="menuitem"
+              onClick={() => switchTo(l.code)}
+              disabled={isPending}
+              className={`block w-full text-left px-3 py-1.5 text-xs transition-colors ${
+                locale === l.code
+                  ? "text-navy font-semibold bg-navy-50/60"
+                  : "text-warm-500 hover:text-navy hover:bg-navy-50/30"
+              }`}
+              aria-current={locale === l.code ? "true" : undefined}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
