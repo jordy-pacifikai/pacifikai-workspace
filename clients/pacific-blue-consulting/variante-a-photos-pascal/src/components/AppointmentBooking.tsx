@@ -5,13 +5,13 @@ import { useState, useCallback } from "react";
 type Step = 1 | 2 | 3 | 4;
 
 const domains = [
-  { value: "aviation", label: "Aviation civile & Compagnies aeriennes" },
-  { value: "aeroports", label: "Aeroports & Infrastructures" },
+  { value: "aviation", label: "Aviation civile & Compagnies aériennes" },
+  { value: "aeroports", label: "Aéroports & Infrastructures" },
   { value: "environnement", label: "Environnement & Bilan carbone" },
-  { value: "etudes", label: "Etudes strategiques & Modelisation" },
+  { value: "etudes", label: "Études stratégiques & Modélisation" },
   { value: "amo", label: "AMO & Pilotage de projets" },
   { value: "formation", label: "Formation & Management" },
-  { value: "autre", label: "Autre / Je ne suis pas sur" },
+  { value: "autre", label: "Autre / Je ne suis pas sûr" },
 ];
 
 const timeSlots = [
