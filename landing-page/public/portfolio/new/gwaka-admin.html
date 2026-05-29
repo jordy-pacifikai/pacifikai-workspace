@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>GWAKA — Gestion du catalogue</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/png" sizes="32x32" href="/portfolio/new/images/gwaka/favicon-32.png">
+  <link href="https://fonts.googleapis.com/css2?family=KoHo:wght@300;400;500;600;700&family=Yusei+Magic&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --green:#62A546;--green-d:#4F8838;--green-l:#eef5e9;--cream:#FAFAF7;
+      --text:#1A1A1A;--muted:#5e6b57;--red:#d9534f;--red-l:#fde8e7;
+      --border:#e4e7e2;--shadow:0 2px 12px rgba(0,0,0,.07);--shadow-lg:0 12px 48px rgba(0,0,0,.22);
+      --radius:14px;--radius-sm:9px
+    }
+    body{font-family:'KoHo',-apple-system,sans-serif;background:#f2f4ef;color:var(--text);min-height:100vh}
+    .brand-font{font-family:'Yusei Magic',serif}
+    button{font-family:inherit}
+    /* focus visible global (a11y #11) */
+    :focus-visible{outline:3px solid var(--green);outline-offset:2px;border-radius:6px}
+
+    /* ── LOGIN ── */
+    #login{position:fixed;inset:0;background:linear-gradient(135deg,#62A546,#34571f);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
+    #login .box{background:#fff;border-radius:20px;padding:42px 30px;max-width:380px;width:100%;box-shadow:var(--shadow-lg);text-align:center}
+    #login h1{font-size:26px;margin-bottom:4px}
+    #login p{color:var(--muted);font-size:14px;margin-bottom:24px}
+    #login label.lbl{display:block;text-align:left;font-size:13px;font-weight:600;margin-bottom:6px;color:#333}
+    #login input{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:11px;font-size:16px;margin-bottom:14px;font-family:inherit}
+    #login input:focus{outline:none;border-color:var(--green)}
+    #login button{width:100%;padding:15px;background:var(--green);color:#fff;border:none;border-radius:11px;font-size:16px;font-weight:600;cursor:pointer;min-height:48px}
+    #login button:hover{background:var(--green-d)}
+    #login .err{color:var(--red);font-size:13.5px;margin-top:10px;min-height:18px;font-weight:500}
+
+    /* ── HEADER ── */
+    header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);z-index:50;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+    .head-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;max-width:1500px;margin:0 auto;padding:13px 20px}
+    .head-top h1{font-size:19px;display:flex;align-items:center;gap:9px}
+    .head-top .sub{font-size:12.5px;color:var(--muted);font-weight:400;margin-left:4px}
+    .head-actions{display:flex;gap:9px;align-items:center}
+    .btn{padding:12px 18px;border-radius:10px;border:none;font-size:14.5px;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px}
+    .btn-green{background:var(--green);color:#fff}.btn-green:hover{background:var(--green-d)}
+    .btn-ghost{background:#eef1ec;color:#3a3a3a}.btn-ghost:hover{background:#e2e6df}
+    .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#bd3d39}
+
+    /* ── TOOLBAR ── */
+    .toolbar{max-width:1500px;margin:0 auto;padding:0 20px 13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .search{position:relative;flex:1;min-width:180px;max-width:360px}
+    .search input{width:100%;padding:12px 14px 12px 38px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;min-height:44px}
+    .search input:focus{outline:none;border-color:var(--green)}
+    .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
+    .seg{display:flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+    .seg button{padding:11px 14px;background:#fff;border:none;font-size:13.5px;cursor:pointer;color:#5e6b57;font-weight:500;min-height:44px}
+    .seg button.on{background:var(--green);color:#fff}
+    .seg button+button{border-left:1.5px solid var(--border)}
+    .viewtoggle{display:flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+    .viewtoggle button{width:46px;height:44px;background:#fff;border:none;cursor:pointer;color:#5e6b57;display:flex;align-items:center;justify-content:center}
+    .viewtoggle button.on{background:var(--green);color:#fff}
+    .viewtoggle button+button{border-left:1.5px solid var(--border)}
+    .filters{max-width:1500px;margin:0 auto;padding:0 20px 13px;display:flex;gap:7px;flex-wrap:wrap}
+    .filters button{background:#eef1ec;border:1px solid transparent;color:#46504080;color:#3a4636;padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;min-height:38px}
+    .filters button.active{background:var(--green);color:#fff}
+
+    /* ── CONTENT ── */
+    main{max-width:1500px;margin:0 auto;padding:18px 20px 90px}
+    .cat-head{font-size:16px;font-weight:700;color:var(--green-d);padding:10px 2px 6px;border-bottom:2px solid var(--green);margin:14px 0}
+    .cat-head:first-child{margin-top:0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+    .card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:.15s;border:2px solid transparent}
+    .card:hover{box-shadow:0 6px 24px rgba(0,0,0,.12)}
+    .card.inactive{opacity:.55}
+    .card-img{position:relative;aspect-ratio:4/3;background:#eef1ec;overflow:hidden;cursor:pointer}
+    .card-img img{width:100%;height:100%;object-fit:cover}
+    .card-img .ph{display:flex;align-items:center;justify-content:center;height:100%;color:#97a18f;font-size:13px}
+    .card-badges{position:absolute;top:8px;left:8px;display:flex;gap:5px;z-index:2}
+    .badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;color:#fff}
+    .badge.veg{background:#2e9e4f}.badge.hidden{background:#717171}
+    .card-edit-ovl{position:absolute;inset:0;background:rgba(79,136,56,0);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;opacity:0;transition:.15s}
+    .card-img:hover .card-edit-ovl{opacity:1;background:rgba(79,136,56,.72)}
+    .card-body{padding:11px 13px;flex:1}
+    .card-name{font-size:15px;font-weight:700;line-height:1.25}
+    .card-desc{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card-foot{display:flex;gap:6px;border-top:1px solid var(--border);padding:8px 10px;align-items:center}
+    .icon-btn{background:#eef1ec;border:none;width:44px;height:44px;border-radius:8px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:#3a4636}
+    .icon-btn:hover{background:#e2e6df}
+    .icon-btn.del:hover{background:var(--red-l);color:var(--red)}
+    .icon-btn:disabled{opacity:.4;cursor:default}
+    .toggle-vis{flex:1;border:none;border-radius:8px;padding:11px 7px;font-size:13px;font-weight:600;cursor:pointer;min-height:44px}
+    .toggle-vis.on{background:var(--green-l);color:#3c6b29}
+    .toggle-vis.off{background:#e9e9e9;color:#5a5a5a}
+
+    .list{display:flex;flex-direction:column;gap:8px}
+    .lrow{display:flex;align-items:center;gap:13px;background:#fff;border-radius:11px;padding:10px 13px;box-shadow:var(--shadow)}
+    .lrow.inactive{opacity:.55}
+    .lrow img,.lrow .ph{width:54px;height:54px;border-radius:9px;object-fit:cover;background:#eef1ec;flex-shrink:0}
+    .lrow .ph{display:flex;align-items:center;justify-content:center;color:#97a18f;font-size:18px}
+    .lrow .l-main{flex:1;min-width:0;cursor:pointer}
+    .lrow .l-name{font-size:14.5px;font-weight:700}
+    .lrow .l-desc{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .lrow .l-cat{font-size:11px;color:var(--green-d);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+    .lrow .l-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
+
+    .empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:15px}
+    .skel{background:#fff;border-radius:var(--radius);height:280px;box-shadow:var(--shadow);animation:pulse 1.2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+    /* ── MODALE ── */
+    body.modal-open{overflow:hidden}
+    .modal-ovl{position:fixed;inset:0;background:rgba(20,30,15,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:150;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+    .modal-ovl.open{opacity:1;pointer-events:auto}
+    .modal{background:#fff;border-radius:18px;max-width:540px;width:100%;max-height:92vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);transform:scale(.96) translateY(8px);transition:transform .2s}
+    .modal-ovl.open .modal{transform:none}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);flex-shrink:0}
+    .modal-head h2{font-size:19px}
+    .modal-close{background:#eef1ec;border:none;width:44px;height:44px;border-radius:9px;font-size:20px;cursor:pointer;color:#3a3a3a;flex-shrink:0}
+    .modal-close:hover{background:#e2e6df}
+    .modal-body{padding:20px 22px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .field{margin-bottom:16px}
+    .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#333}
+    .field input[type=text],.field textarea,.field select{width:100%;padding:12px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;font-family:inherit;background:#fff;min-height:46px}
+    .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--green)}
+    .field textarea{resize:vertical;min-height:70px}
+    .field .hint{font-size:11.5px;color:var(--muted);margin-top:4px}
+    .row2{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end}
+    .dropzone{border:2px dashed var(--border);border-radius:12px;aspect-ratio:16/9;max-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;background:#f7f9f5;transition:.15s;text-align:center;padding:14px}
+    .dropzone:hover,.dropzone.drag{border-color:var(--green);background:var(--green-l)}
+    .dropzone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .dropzone .dz-text{color:var(--muted);font-size:13.5px;z-index:1}
+    .dropzone .dz-text b{color:var(--green-d)}
+    .dropzone .dz-change{position:absolute;inset:0;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;opacity:0;transition:.15s}
+    .dropzone:hover .dz-change{opacity:1}
+    .dropzone.uploading{pointer-events:none}
+    .dropzone.uploading .dz-change{opacity:1;background:rgba(0,0,0,.75)}
+    .toggle-pill{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;padding:11px 14px;border-radius:10px;border:1.5px solid var(--border);font-size:14.5px;font-weight:600;min-height:46px;background:#fff}
+    .toggle-pill .dot{width:38px;height:22px;border-radius:20px;background:#bbb;position:relative;transition:.2s;flex-shrink:0}
+    .toggle-pill .dot::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+    .toggle-pill.on{border-color:var(--green);color:var(--green-d);background:var(--green-l)}
+    .toggle-pill.on .dot{background:var(--green)}
+    .toggle-pill.on .dot::after{left:18px}
+    .modal-foot{display:flex;gap:11px;padding:16px 22px;border-top:1px solid var(--border);flex-shrink:0;background:#fff;border-radius:0 0 18px 18px}
+    .modal-foot .btn{flex:1}
+
+    .confirm-box{max-width:400px;text-align:center}
+    .confirm-box .modal-body{padding:30px 26px}
+    .confirm-box .ico{font-size:42px;margin-bottom:10px}
+    .confirm-box h3{font-size:19px;margin-bottom:8px}
+    .confirm-box p{color:var(--muted);font-size:14px;margin-bottom:0;line-height:1.5}
+
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:#fff;padding:13px 22px;border-radius:26px;font-size:14.5px;font-weight:500;opacity:0;transition:.28s;pointer-events:none;z-index:300;box-shadow:0 8px 30px rgba(0,0,0,.3);max-width:90vw;text-align:center}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .toast.err{background:var(--red)}
+
+    /* ── MOBILE (#7-14) ── */
+    @media(max-width:640px){
+      .head-top{padding:11px 14px}
+      .head-top h1 .sub{display:none}
+      .head-top h1{font-size:17px}
+      .head-actions .btn{padding:11px 13px;font-size:13.5px}
+      .toolbar,.filters{padding-left:14px;padding-right:14px}
+      .search{max-width:none;flex-basis:100%;order:-1}
+      main{padding:14px 14px 90px}
+      .grid{grid-template-columns:1fr 1fr;gap:11px}
+      .card-name{font-size:14px}
+      .card-foot{flex-wrap:wrap}
+      .lrow{flex-wrap:wrap}
+      .lrow .l-actions{flex-basis:100%;justify-content:flex-end;border-top:1px solid var(--border);padding-top:8px;margin-top:4px}
+      .modal-ovl{padding:0;align-items:flex-end}
+      .modal{max-width:none;max-height:96vh;border-radius:18px 18px 0 0;height:auto}
+      .modal-foot{position:sticky;bottom:0;padding-bottom:max(16px,env(safe-area-inset-bottom))}
+      .dropzone{aspect-ratio:auto;height:140px}
+      .row2{grid-template-columns:1fr}
+    }
+    @media(max-width:380px){ .grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <style>
+    .free-banner{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;
+      background:linear-gradient(90deg,#eaf7ec,#f3fbf4);color:#2f6b39;border-bottom:1px solid #cfe9d4;
+      font-size:13px;font-weight:600;padding:8px 16px;text-align:center}
+    .free-banner .fb-sub{color:#7aa982;font-weight:500;font-size:12px}
+    #lockOverlay{position:fixed;inset:0;z-index:9999;background:rgba(24,40,28,.88);
+      display:none;align-items:center;justify-content:center;padding:22px}
+    #lockOverlay .lock-box{background:#fff;border-radius:20px;max-width:440px;width:100%;padding:30px 26px;
+      text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+    #lockOverlay .lock-ic{font-size:42px;margin-bottom:6px}
+    #lockOverlay h2{font-size:21px;margin:0 0 12px;color:#1c2b20;line-height:1.25}
+    #lockOverlay p{font-size:14px;line-height:1.55;color:#41514a;margin:0 0 12px}
+    #lockOverlay .lock-opts{list-style:none;padding:0;margin:0 0 18px;text-align:left;display:grid;gap:8px}
+    #lockOverlay .lock-opts li{background:#f4f8f5;border:1px solid #e0ece3;border-radius:12px;padding:11px 13px;font-size:13.5px;color:#2f4036}
+    #lockOverlay .lock-cta{display:inline-block;background:#3a8049;color:#fff;text-decoration:none;font-weight:700;
+      padding:13px 26px;border-radius:12px;font-size:15px}
+    #lockOverlay .lock-foot{font-size:12px;color:#8aa394;margin:14px 0 0}
+    body.locked main{filter:blur(3px);pointer-events:none;user-select:none}
+  </style>
+  <!-- LOGIN -->
+  <div id="login">
+    <div class="box">
+      <h1 class="brand-font">GWAKA</h1>
+      <p>Espace de gestion du catalogue</p>
+      <label class="lbl" for="pwd">Mot de passe</label>
+      <input type="password" id="pwd" placeholder="Mot de passe" autocomplete="current-password" aria-describedby="loginErr">
+      <button id="loginBtn">Se connecter</button>
+      <div class="err" id="loginErr" role="alert"></div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" style="display:none">
+    <div id="freeBanner" class="free-banner" style="display:none"></div>
+    <header>
+      <div class="head-top">
+        <h1>🍽️ Mon catalogue <span class="sub" id="sub"></span></h1>
+        <div class="head-actions">
+          <button class="btn btn-green" id="addBtn">+ Ajouter</button>
+          <button class="btn btn-ghost" id="logoutBtn">Déconnexion</button>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="searchInput" placeholder="Rechercher un produit..." aria-label="Rechercher un produit">
+        </div>
+        <div class="seg" id="statusSeg" role="group" aria-label="Filtrer par statut">
+          <button data-s="all" class="on">Tous</button>
+          <button data-s="visible">Visibles</button>
+          <button data-s="hidden">Masqués</button>
+        </div>
+        <div class="viewtoggle" id="viewToggle" role="group" aria-label="Changer de vue">
+          <button data-v="grid" class="on" aria-label="Vue grille" title="Vue grille"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+          <button data-v="list" aria-label="Vue liste" title="Vue liste"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="filters" id="filters" role="group" aria-label="Filtrer par catégorie"></div>
+    </header>
+    <main><div id="content"></div></main>
+  </div>
+
+  <!-- VERROU PÉRIODE GRATUITE EXPIRÉE -->
+  <div id="lockOverlay">
+    <div class="lock-box">
+      <div class="lock-ic">🔒</div>
+      <h2>Ta période d'accès gratuit est terminée</h2>
+      <p>Pas d'inquiétude — <b>ton site et ton catalogue restent en ligne</b>. Seule la modification depuis cet espace est suspendue.</p>
+      <p>Pour continuer à gérer ton catalogue toi-même :</p>
+      <ul class="lock-opts">
+        <li>🍽️ <b>Catalogue seul</b> (produits + photos) — <b>50 000 F</b> une fois</li>
+        <li>🌐 <b>Site complet</b> (textes, prestations, photos) — <b>100 000 F</b> une fois</li>
+      </ul>
+      <a class="lock-cta" href="mailto:contact@pacifikai.com?subject=R%C3%A9activation%20de%20mon%20espace%20GWAKA">Réactiver mon espace</a>
+      <p class="lock-foot">contact@pacifikai.com</p>
+    </div>
+  </div>
+
+  <!-- MODALE PRODUIT -->
+  <div class="modal-ovl" id="prodModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="modalTitle">Ajouter un produit</h2>
+        <button class="modal-close" data-close aria-label="Fermer">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Photo du produit</label>
+          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Ajouter une photo">
+            <img id="dzPreview" style="display:none" alt="">
+            <div class="dz-text" id="dzText">📷 <b>Clique</b> ou glisse une photo ici<br><span style="font-size:11.5px">Elle sera automatiquement remise droite et optimisée</span></div>
+            <div class="dz-change">Changer la photo</div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="fNom">Nom du produit *</label>
+          <input type="text" id="fNom" placeholder="Ex : Bagel Saumon Fumé" maxlength="120">
+        </div>
+        <div class="field">
+          <label for="fDesc">Description</label>
+          <textarea id="fDesc" placeholder="Ex : Saumon fumé, cream cheese, roquette" maxlength="300"></textarea>
+        </div>
+        <div class="row2">
+          <div class="field" style="margin-bottom:0">
+            <label for="fCat">Catégorie</label>
+            <select id="fCat"></select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label id="fVegLbl">Type</label>
+            <div class="toggle-pill" id="fVeg" role="switch" tabindex="0" aria-checked="false" aria-labelledby="fVegLbl"><span class="dot"></span> Végétarien</div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px;margin-bottom:0">
+          <div class="toggle-pill on" id="fActif" role="switch" tabindex="0" aria-checked="true" style="width:100%"><span class="dot"></span> <span id="fActifLabel">Visible sur le site</span></div>
+          <div class="hint">Si masqué, le produit n'apparaît pas sur la carte publique.</div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close>Annuler</button>
+        <button class="btn btn-green" id="saveBtn">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE CONFIRMATION -->
+  <div class="modal-ovl" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal confirm-box">
+      <div class="modal-body">
+        <div class="ico" aria-hidden="true">🗑️</div>
+        <h3 id="confirmTitle">Supprimer ce produit ?</h3>
+        <p id="confirmText" role="alert">Cette action est définitive.</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close>Annuler</button>
+        <button class="btn btn-red" id="confirmDelBtn">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+  <script>
+  (function(){
+    var CATS=[{slug:'sales',label:'Salés'},{slug:'toasts',label:'Toasts'},{slug:'wraps',label:'Wraps'},{slug:'salades',label:'Salades'},{slug:'plateaux',label:'Plateaux'},{slug:'sushis',label:'Sushis'},{slug:'mini',label:'Mini Salés'},{slug:'brunch',label:'Brunch & Box'},{slug:'sucres',label:'Sucrés'},{slug:'boissons',label:'Boissons'}];
+    var CAT_ORDER=CATS.map(function(c){return c.slug});
+    var catLabel=function(s){var c=CATS.find(function(x){return x.slug===s});return c?c.label:s};
+    var MAX_UPLOAD=12*1024*1024;
+    var products=[], filterCat='all', filterStatus='all', search='', view='grid';
+    var editing=null, draftImage='', pendingDelete=null, reordering=false;
+    var $=function(id){return document.getElementById(id)};
+
+    function toast(msg,isErr){var t=$('toast');t.textContent=msg;t.className='toast show'+(isErr?' err':'');clearTimeout(t._t);t._t=setTimeout(function(){t.className='toast'+(isErr?' err':'')},2200)}
+    // URL originale (locale ou Supabase absolue)
+    function origUrl(img){if(!img)return '';return img.indexOf('http')===0?img:'https://gwakatahiti.com/portfolio/new/images/gwaka/'+img}
+    // Vignette optimisée via proxy wsrv.nl (~20Ko au lieu de ~270Ko) — crucial sur mobile/data
+    function thumbUrl(img,w){if(!img)return '';return 'https://wsrv.nl/?url='+encodeURIComponent(origUrl(img))+'&w='+(w||500)+'&h='+(w||500)+'&fit=cover&output=webp&q=72'}
+    // <img> vignette + fallback sur l'original si le proxy échoue + lazy
+    function imgTag(img,alt){if(!img)return '<div class="ph">Pas de photo</div>';var o=escAttr(origUrl(img));return '<img src="'+escAttr(thumbUrl(img))+'" alt="'+escAttr(alt)+'" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\''+o+'\'">'}
+    function escAttr(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}
+    function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+    /* ── LOGIN ── */
+    function doLogin(){
+      $('loginErr').textContent='';var btn=$('loginBtn');btn.disabled=true;
+      fetch('/api/gwaka-admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('pwd').value})})
+        .then(function(r){return r.json().then(function(j){return{ok:r.ok,status:r.status,j:j}})})
+        .then(function(res){btn.disabled=false;if(res.ok&&res.j.ok){enterApp()}else{$('loginErr').textContent=res.status===429?'Trop de tentatives. Patiente une minute.':(res.j.error||'Erreur')}})
+        .catch(function(){btn.disabled=false;$('loginErr').textContent='Erreur réseau'});
+    }
+    $('loginBtn').onclick=doLogin;
+    $('pwd').onkeydown=function(e){if(e.key==='Enter')doLogin()};
+    $('logoutBtn').onclick=function(){fetch('/api/gwaka-admin/logout',{method:'POST'}).then(function(){location.reload()})};
+    function enterApp(){$('login').style.display='none';$('app').style.display='block';load();checkAccess()}
+
+    /* ── ACCÈS / PÉRIODE GRATUITE (timer) ── */
+    function checkAccess(){
+      fetch('/api/gwaka-admin/status',{headers:{'Accept':'application/json'}})
+        .then(function(r){return r.ok?r.json():null})
+        .then(function(s){if(s&&s.authed)applyAccess(s)})
+        .catch(function(){});
+    }
+    function applyAccess(s){
+      var b=$('freeBanner'),lk=$('lockOverlay'),ab=$('addBtn');
+      if(s.expired){
+        if(lk)lk.style.display='flex';
+        if(b)b.style.display='none';
+        if(ab){ab.disabled=true;ab.style.opacity='.5';ab.style.cursor='not-allowed'}
+        document.body.classList.add('locked');
+      }else{
+        if(lk)lk.style.display='none';
+        document.body.classList.remove('locked');
+        if(ab){ab.disabled=false;ab.style.opacity='';ab.style.cursor=''}
+        if(b){
+          if(s.daysLeft!=null){
+            var d=s.daysLeft,plur=d>1?'s':'';
+            b.innerHTML='<span>✨ Accès gratuit — <b>'+d+' jour'+plur+'</b> restant'+plur+'</span><span class="fb-sub">offert par PACIFIK’AI</span>';
+            b.style.display='flex';
+          }else{b.style.display='none'}
+        }
+      }
+    }
+    function showLock(){applyAccess({authed:true,expired:true,daysLeft:null})}
+
+    /* ── LOAD ── */
+    function load(){
+      $('content').innerHTML='<div class="grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';
+      fetch('/api/gwaka-admin/products',{headers:{'Accept':'application/json'}})
+        .then(function(r){if(r.status===401)throw new Error('401');return r.json()})
+        .then(function(j){products=j.products||[];renderFilters();render()})
+        .catch(function(e){if(String(e).indexOf('401')>=0){$('app').style.display='none';$('login').style.display='flex'}else $('content').innerHTML='<div class="empty">Erreur de chargement. <button class="btn btn-ghost" onclick="location.reload()">Réessayer</button></div>'});
+    }
+
+    function renderFilters(){
+      var h='<button data-f="all" class="'+(filterCat==='all'?'active':'')+'">Toutes ('+products.length+')</button>';
+      CATS.forEach(function(c){var n=products.filter(function(p){return p.categorie_slug===c.slug}).length;h+='<button data-f="'+c.slug+'" class="'+(filterCat===c.slug?'active':'')+'">'+c.label+' ('+n+')</button>'});
+      $('filters').innerHTML=h;
+      Array.prototype.forEach.call($('filters').children,function(b){b.onclick=function(){filterCat=b.dataset.f;renderFilters();render()}});
+    }
+    Array.prototype.forEach.call($('statusSeg').children,function(b){b.onclick=function(){filterStatus=b.dataset.s;Array.prototype.forEach.call($('statusSeg').children,function(x){x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',x===b)});render()}});
+    Array.prototype.forEach.call($('viewToggle').children,function(b){b.onclick=function(){view=b.dataset.v;Array.prototype.forEach.call($('viewToggle').children,function(x){x.classList.toggle('on',x===b)});render()}});
+    $('searchInput').oninput=function(){search=this.value.toLowerCase().trim();render()};
+
+    function filtered(){
+      return products.slice().sort(function(a,b){var ca=CAT_ORDER.indexOf(a.categorie_slug),cb=CAT_ORDER.indexOf(b.categorie_slug);if(ca!==cb)return ca-cb;return (a.ordre||0)-(b.ordre||0)})
+        .filter(function(p){
+          if(filterCat!=='all'&&p.categorie_slug!==filterCat)return false;
+          if(filterStatus==='visible'&&!p.actif)return false;
+          if(filterStatus==='hidden'&&p.actif)return false;
+          if(search&&(p.nom||'').toLowerCase().indexOf(search)<0&&(p.description||'').toLowerCase().indexOf(search)<0)return false;
+          return true;
+        });
+    }
+    function render(){
+      var actifs=products.filter(function(p){return p.actif}).length;
+      $('sub').textContent='· '+products.length+' produits · '+actifs+' visibles';
+      var list=filtered(),c=$('content');
+      if(!list.length){c.innerHTML='<div class="empty">Aucun produit ne correspond.<br><br><button class="btn btn-green" id="emptyAdd">+ Ajouter un produit</button></div>';var ea=$('emptyAdd');if(ea)ea.onclick=openAdd;return}
+      view==='grid'?renderGrid(c,list):renderList(c,list);
+    }
+    function renderGrid(c,list){
+      var group=(filterCat==='all'),html=group?'':'<div class="grid">',lastCat=null,open=false;
+      list.forEach(function(p){
+        if(group&&p.categorie_slug!==lastCat){if(open)html+='</div>';lastCat=p.categorie_slug;html+='<div class="cat-head">'+escHtml(catLabel(lastCat))+'</div><div class="grid">';open=true}
+        html+=cardHtml(p);
+      });
+      html+=group?(open?'</div>':''):'</div>';c.innerHTML=html;bindCards();
+    }
+    function cardHtml(p){
+      var img=imgTag(p.image,p.nom);
+      return '<div class="card'+(p.actif?'':' inactive')+'" data-id="'+p.id+'">'+
+        '<div class="card-img" data-edit role="button" tabindex="0" aria-label="Modifier '+escAttr(p.nom)+'"><div class="card-badges">'+
+          (p.vegetarien?'<span class="badge veg">V</span>':'')+(p.actif?'':'<span class="badge hidden">Masqué</span>')+
+        '</div>'+img+'<div class="card-edit-ovl">✎ Modifier</div></div>'+
+        '<div class="card-body" data-edit><div class="card-name">'+escHtml(p.nom)+'</div><div class="card-desc">'+escHtml(p.description||'')+'</div></div>'+
+        '<div class="card-foot">'+
+          '<button class="toggle-vis '+(p.actif?'on':'off')+'" data-vis aria-label="'+(p.actif?'Rendre invisible':'Rendre visible')+'">'+(p.actif?'● Visible':'○ Masqué')+'</button>'+
+          '<button class="icon-btn" data-up aria-label="Monter ce produit" title="Monter">▲</button>'+
+          '<button class="icon-btn" data-down aria-label="Descendre ce produit" title="Descendre">▼</button>'+
+          '<button class="icon-btn del" data-del aria-label="Supprimer ce produit" title="Supprimer">🗑</button>'+
+        '</div></div>';
+    }
+    function renderList(c,list){
+      var rows=list.map(function(p){
+        var img=p.image?'<img src="'+escAttr(thumbUrl(p.image,120))+'" alt="'+escAttr(p.nom)+'" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\''+escAttr(origUrl(p.image))+'\'">':'<div class="ph">🍽️</div>';
+        return '<div class="lrow'+(p.actif?'':' inactive')+'" data-id="'+p.id+'">'+img+
+          '<div class="l-main" data-edit role="button" tabindex="0" aria-label="Modifier '+escAttr(p.nom)+'"><div class="l-cat">'+escHtml(catLabel(p.categorie_slug))+(p.vegetarien?' · V':'')+'</div>'+
+          '<div class="l-name">'+escHtml(p.nom)+'</div><div class="l-desc">'+escHtml(p.description||'')+'</div></div>'+
+          '<div class="l-actions">'+
+            '<button class="toggle-vis '+(p.actif?'on':'off')+'" data-vis style="flex:0;padding:11px 13px" aria-label="'+(p.actif?'Rendre invisible':'Rendre visible')+'">'+(p.actif?'● Visible':'○ Masqué')+'</button>'+
+            '<button class="icon-btn" data-up aria-label="Monter" title="Monter">▲</button><button class="icon-btn" data-down aria-label="Descendre" title="Descendre">▼</button>'+
+            '<button class="icon-btn" data-edit-btn aria-label="Modifier" title="Modifier">✎</button>'+
+            '<button class="icon-btn del" data-del aria-label="Supprimer" title="Supprimer">🗑</button>'+
+          '</div></div>';
+      }).join('');
+      c.innerHTML='<div class="list">'+rows+'</div>';bindCards();
+    }
+    function bindCards(){
+      Array.prototype.forEach.call($('content').querySelectorAll('[data-id]'),function(el){
+        var p=products.find(function(x){return x.id===el.dataset.id});if(!p)return;
+        el.querySelectorAll('[data-edit],[data-edit-btn]').forEach(function(t){
+          t.onclick=function(){openEdit(p)};
+          t.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openEdit(p)}};
+        });
+        var vis=el.querySelector('[data-vis]');if(vis)vis.onclick=function(e){e.stopPropagation();quickToggle(p,vis)};
+        var up=el.querySelector('[data-up]');if(up)up.onclick=function(e){e.stopPropagation();reorder(p,-1)};
+        var dn=el.querySelector('[data-down]');if(dn)dn.onclick=function(e){e.stopPropagation();reorder(p,1)};
+        var del=el.querySelector('[data-del]');if(del)del.onclick=function(e){e.stopPropagation();askDelete(p)};
+      });
+    }
+
+    /* ── QUICK ACTIONS (avec rollback si échec — #25) ── */
+    function quickToggle(p,btn){
+      var prev=p.actif;p.actif=!p.actif;render();
+      patchRaw(p.id,{actif:p.actif}).then(function(ok){
+        if(ok)toast(p.actif?'Produit visible':'Produit masqué');
+        else{p.actif=prev;render();toast('Échec — changement annulé',true)}
+      });
+    }
+    function reorder(p,dir){
+      if(reordering)return;reordering=true;
+      var same=products.filter(function(x){return x.categorie_slug===p.categorie_slug}).sort(function(a,b){return (a.ordre||0)-(b.ordre||0)});
+      var i=same.findIndex(function(x){return x.id===p.id}),j=i+dir;
+      if(j<0||j>=same.length){reordering=false;return}
+      var o=same[j],a=p.ordre||0,b=o.ordre||0;p.ordre=b;o.ordre=a;render();
+      Promise.all([patchRaw(p.id,{ordre:p.ordre}),patchRaw(o.id,{ordre:o.ordre})]).then(function(res){
+        reordering=false;if(res[0]&&res[1])toast('Ordre mis à jour');else{p.ordre=a;o.ordre=b;render();toast('Échec — ordre annulé',true)}
+      });
+    }
+    function patchRaw(id,body){return fetch('/api/gwaka-admin/products/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){if(r.status===402)showLock();return r.ok}).catch(function(){return false})}
+
+    /* ── MODALE PRODUIT ── */
+    function hasUnsaved(){if(editing){return $('fNom').value.trim()!==(editing.nom||'')||$('fDesc').value.trim()!==(editing.description||'')||draftImage!==(editing.image||'')||$('fCat').value!==editing.categorie_slug||$('fVeg').classList.contains('on')!==!!editing.vegetarien||$('fActif').classList.contains('on')!==!!editing.actif}return $('fNom').value.trim()||$('fDesc').value.trim()||draftImage}
+    function openModal(){$('prodModal').classList.add('open');document.body.classList.add('modal-open')}
+    function closeModal(force){if(!force&&hasUnsaved()&&!confirm('Tu as des changements non enregistrés. Fermer sans enregistrer ?'))return;$('prodModal').classList.remove('open');document.body.classList.remove('modal-open')}
+    function setVeg(on){$('fVeg').classList.toggle('on',on);$('fVeg').setAttribute('aria-checked',on)}
+    function setActif(on){$('fActif').classList.toggle('on',on);$('fActif').setAttribute('aria-checked',on);$('fActifLabel').textContent=on?'Visible sur le site':'Masqué (caché du site)'}
+    function setPreview(url){var img=$('dzPreview'),tx=$('dzText');if(url){img.src=thumbUrl(url,700);img.style.display='block';tx.style.display='none'}else{img.style.display='none';tx.style.display='block'}}
+    function fillCats(){$('fCat').innerHTML=CATS.map(function(c){return '<option value="'+c.slug+'">'+c.label+'</option>'}).join('')}
+
+    function openAdd(){
+      editing=null;draftImage='';fillCats();
+      $('modalTitle').textContent='Ajouter un produit';$('saveBtn').textContent='Créer le produit';
+      $('fNom').value='';$('fDesc').value='';$('fCat').value=(filterCat!=='all'?filterCat:'sales');
+      setVeg(false);setActif(true);setPreview('');openModal();setTimeout(function(){$('fNom').focus()},220);
+    }
+    function openEdit(p){
+      editing=p;draftImage=p.image||'';fillCats();
+      $('modalTitle').textContent='Modifier le produit';$('saveBtn').textContent='Enregistrer les modifications';
+      $('fNom').value=p.nom||'';$('fDesc').value=p.description||'';$('fCat').value=p.categorie_slug;
+      setVeg(!!p.vegetarien);setActif(!!p.actif);setPreview(p.image||'');openModal();
+    }
+    $('addBtn').onclick=openAdd;
+    $('fVeg').onclick=function(){setVeg(!this.classList.contains('on'))};
+    $('fVeg').onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();setVeg(!this.classList.contains('on'))}};
+    $('fActif').onclick=function(){setActif(!this.classList.contains('on'))};
+    $('fActif').onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();setActif(!this.classList.contains('on'))}};
+    Array.prototype.forEach.call(document.querySelectorAll('[data-close]'),function(b){b.onclick=function(){var inProd=b.closest('#prodModal');if(inProd)closeModal();else{$('confirmModal').classList.remove('open');document.body.classList.remove('modal-open')}}});
+    $('prodModal').onclick=function(e){if(e.target===this)closeModal()};
+    $('confirmModal').onclick=function(e){if(e.target===this){this.classList.remove('open');document.body.classList.remove('modal-open')}};
+
+    $('saveBtn').onclick=function(){
+      var nom=$('fNom').value.trim();
+      if(!nom){toast('Le nom est obligatoire',true);$('fNom').focus();return}
+      var data={nom:nom,description:$('fDesc').value.trim(),categorie_slug:$('fCat').value,vegetarien:$('fVeg').classList.contains('on'),actif:$('fActif').classList.contains('on'),image:draftImage};
+      var btn=$('saveBtn'),txt=btn.textContent;btn.disabled=true;btn.textContent='Enregistrement...';
+      var done=function(ok){btn.disabled=false;if(ok){closeModal(true);load();toast(editing?'Modifications enregistrées ✓':'Produit créé ✓')}else{btn.textContent=txt;toast('Erreur, réessaie',true)}};
+      if(editing){
+        fetch('/api/gwaka-admin/products/'+editing.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){if(r.status===402){showLock();done(false);return}done(r.ok)}).catch(function(){done(false)});
+      }else{
+        var maxO=products.filter(function(p){return p.categorie_slug===data.categorie_slug}).reduce(function(m,p){return Math.max(m,p.ordre||0)},0);data.ordre=maxO+1;
+        fetch('/api/gwaka-admin/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){if(r.status===402){showLock();done(false);return}done(r.ok)}).catch(function(){done(false)});
+      }
+    };
+
+    /* ── UPLOAD (validation + feedback — #2 #22) ── */
+    var dz=$('dropzone');
+    dz.onclick=function(){if(!dz.classList.contains('uploading'))$('fileInput').click()};
+    dz.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();$('fileInput').click()}};
+    dz.ondragover=function(e){e.preventDefault();dz.classList.add('drag')};
+    dz.ondragleave=function(){dz.classList.remove('drag')};
+    dz.ondrop=function(e){e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])upload(e.dataTransfer.files[0])};
+    $('fileInput').onchange=function(){if(this.files[0])upload(this.files[0]);this.value=''};
+    // Traite l'image dans le navigateur : applique l'orientation EXIF (photo droite),
+    // redimensionne (max 1400px) et convertit en WebP. Retourne un Blob, ou null si échec (ex HEIC).
+    function processImage(file){
+      return new Promise(function(resolve){
+        if(typeof createImageBitmap!=='function'){resolve(null);return}
+        var done=false;var timer=setTimeout(function(){if(!done){done=true;resolve(null)}},15000);
+        createImageBitmap(file,{imageOrientation:'from-image'}).then(function(bmp){
+          try{
+            var max=1400,w=bmp.width,h=bmp.height;
+            if(w>max||h>max){var r=Math.min(max/w,max/h);w=Math.round(w*r);h=Math.round(h*r)}
+            var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+            cv.getContext('2d').drawImage(bmp,0,0,w,h);if(bmp.close)bmp.close();
+            cv.toBlob(function(b){if(!done){done=true;clearTimeout(timer);resolve(b)}},'image/webp',0.82);
+          }catch(e){if(!done){done=true;clearTimeout(timer);resolve(null)}}
+        }).catch(function(){if(!done){done=true;clearTimeout(timer);resolve(null)}});
+      });
+    }
+    function upload(file){
+      if(!/^image\//.test(file.type)&&!/\.(jpe?g|png|webp|heic|heif)$/i.test(file.name||'')){toast('Choisis une image (jpg, png, heic...)',true);return}
+      if(file.size>MAX_UPLOAD){toast('Photo trop lourde (max 12 Mo)',true);return}
+      dz.classList.add('uploading');var tx=$('dzText'),prev=tx.innerHTML;tx.style.display='block';
+      tx.innerHTML='<div style="font-size:16px;font-weight:700">📤 Préparation de la photo...</div><span style="font-size:12px">Patiente un instant</span>';$('dzPreview').style.display='none';
+      processImage(file).then(function(blob){
+        var fd=new FormData();
+        if(blob){fd.append('file',blob,'photo.webp')}      // traitée client (droite + webp)
+        else{fd.append('file',file)}                        // fallback : original brut (serveur stocke tel quel)
+        return fetch('/api/gwaka-admin/upload',{method:'POST',body:fd});
+      }).then(function(r){return r.json().then(function(j){return{ok:r.ok,status:r.status,j:j}})}).then(function(res){
+        dz.classList.remove('uploading');
+        if(res.status===402){tx.innerHTML=prev;showLock();return}
+        if(res.ok&&res.j.url){draftImage=res.j.url;setPreview(res.j.url);toast('Photo prête ✓ (remise droite)')}
+        else{tx.innerHTML=prev;toast('Erreur lors de l\'envoi de la photo',true)}
+      }).catch(function(){dz.classList.remove('uploading');tx.innerHTML=prev;toast('Erreur réseau (photo)',true)});
+    }
+
+    /* ── DELETE ── */
+    function askDelete(p){pendingDelete=p;$('confirmText').textContent='« '+p.nom+' » sera retiré définitivement de ton catalogue.';$('confirmModal').classList.add('open');document.body.classList.add('modal-open')}
+    $('confirmDelBtn').onclick=function(){
+      if(!pendingDelete)return;var id=pendingDelete.id,btn=this;btn.disabled=true;
+      fetch('/api/gwaka-admin/products/'+id,{method:'DELETE'}).then(function(r){
+        btn.disabled=false;$('confirmModal').classList.remove('open');document.body.classList.remove('modal-open');
+        if(r.status===402){showLock();return}
+        if(r.ok){products=products.filter(function(x){return x.id!==id});renderFilters();render();toast('Produit supprimé')}else toast('Erreur',true);
+      }).catch(function(){btn.disabled=false;toast('Erreur réseau',true)});
+    };
+
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'){if($('prodModal').classList.contains('open'))closeModal();else if($('confirmModal').classList.contains('open')){$('confirmModal').classList.remove('open');document.body.classList.remove('modal-open')}}});
+
+    /* ── AUTO-LOGIN ── */
+    fetch('/api/gwaka-admin/products',{headers:{'Accept':'application/json'}})
+      .then(function(r){if(r.ok)return r.json();throw new Error('login')})
+      .then(function(j){$('login').style.display='none';$('app').style.display='block';products=j.products||[];renderFilters();render();checkAccess()})
+      .catch(function(){});
+  })();
+  </script>
+</body>
+</html>
