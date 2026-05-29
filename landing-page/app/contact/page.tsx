@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useRef, FormEvent } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", company: "", message: "", website: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const renderedAt = useRef<number>(Date.now());
 
   const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -19,7 +20,7 @@ export default function ContactPage() {
       const resp = await fetch("/api/contact-form", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, rendered_at: renderedAt.current }),
       });
       const data = await resp.json();
       setStatus(data.success ? "success" : "error");
@@ -145,6 +146,18 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Honeypot — invisible to humans, bots fill it and get silently rejected */}
+                <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", top: "auto", width: 1, height: 1, overflow: "hidden" }}>
+                  <label htmlFor="website">Site web</label>
+                  <input
+                    id="website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={form.website}
+                    onChange={update("website")}
+                  />
+                </div>
                 <div>
                   <label htmlFor="name" className="block text-xs font-medium text-text-dim uppercase tracking-widest mb-2">
                     Nom complet *

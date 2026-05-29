@@ -46,6 +46,13 @@ const nextConfig = {
       // Blog
       { source: '/blog/index.html', destination: '/blog', permanent: true },
       { source: '/blog/articles/:slug.html', destination: '/blog/:slug', permanent: true },
+      // Retro-compat: legacy /blog?article=slug (old FB posts) → /blog/slug
+      {
+        source: '/blog',
+        has: [{ type: 'query', key: 'article', value: '(?<slug>.+)' }],
+        destination: '/blog/:slug',
+        permanent: false,
+      },
       // Other
       { source: '/offre-site-web.html', destination: '/offre-site-web', permanent: true },
       { source: '/calculateur-roi.html', destination: '/calculateur-roi', permanent: true },

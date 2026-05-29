@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { articles, getArticleBySlug } from "@/lib/blog-data";
+import { articles, getArticleBySlug, type Article } from "@/lib/blog-data";
 import { ARTICLE_IMAGES } from "@/lib/blog-images";
+import { fetchSupabaseArticles, getSupabaseArticleBySlug } from "@/lib/blog-supabase";
 import { generateBreadcrumbSchema } from "@/lib/schema";
 import RelatedLinks from "@/components/seo/RelatedLinks";
 import { getRelatedLinks } from "@/lib/internal-links";
@@ -11,19 +12,48 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+// Revalidate every minute so newly-published Supabase articles appear fast
+export const revalidate = 60;
+// Allow on-demand generation for slugs not in generateStaticParams output
+export const dynamicParams = true;
+
+async function resolveArticle(slug: string): Promise<Article | undefined> {
+  const hardcoded = getArticleBySlug(slug);
+  if (hardcoded) return hardcoded;
+  return await getSupabaseArticleBySlug(slug);
+}
+
+function resolveImage(slug: string, article: Article): string | undefined {
+  return article.image || ARTICLE_IMAGES[slug] || undefined;
+}
+
 export async function generateStaticParams() {
-  return articles.map((article) => ({
-    slug: article.slug,
-  }));
+  const fromSupabase = await fetchSupabaseArticles();
+  const seen = new Set<string>();
+  const out: { slug: string }[] = [];
+  for (const a of articles) {
+    if (!seen.has(a.slug)) {
+      seen.add(a.slug);
+      out.push({ slug: a.slug });
+    }
+  }
+  for (const a of fromSupabase) {
+    if (!seen.has(a.slug)) {
+      seen.add(a.slug);
+      out.push({ slug: a.slug });
+    }
+  }
+  return out;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await resolveArticle(slug);
 
   if (!article) {
     return { title: "Article introuvable | PACIFIK'AI" };
   }
+  const heroImage = resolveImage(slug, article);
 
   return {
     title: `${article.title} | PACIFIK'AI`,
@@ -41,7 +71,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       authors: ["PACIFIK'AI"],
       images: [
         {
-          url: ARTICLE_IMAGES[slug] ?? "/assets/og-image.png",
+          url: heroImage ?? "/assets/og-image.png",
           width: 1200,
           height: 630,
           alt: article.title,
@@ -79,11 +109,12 @@ function formatDate(dateStr: string): string {
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await resolveArticle(slug);
 
   if (!article) {
     notFound();
   }
+  const heroImage = resolveImage(slug, article);
 
   const related = articles
     .filter((a) => a.slug !== slug && a.category === article.category)
@@ -115,7 +146,7 @@ export default async function ArticlePage({ params }: Props) {
     dateModified: article.date,
     mainEntityOfPage: `https://pacifikai.com/blog/${slug}`,
     inLanguage: "fr",
-    image: ARTICLE_IMAGES[slug] ?? "https://pacifikai.com/assets/og-image.png",
+    image: heroImage ?? "https://pacifikai.com/assets/og-image.png",
   };
 
   const breadcrumbSchema = generateBreadcrumbSchema([
@@ -161,12 +192,12 @@ export default async function ArticlePage({ params }: Props) {
 
         {/* Hero card — image + title fused */}
         <header className="max-w-3xl mx-auto mb-12">
-          {ARTICLE_IMAGES[slug] ? (
+          {heroImage ? (
             <div className="relative rounded-2xl overflow-hidden border border-white/[0.06] mb-8">
               {/* Image */}
               <div className="relative aspect-[2/1]">
                 <img
-                  src={`https://wsrv.nl/?url=${encodeURIComponent(ARTICLE_IMAGES[slug])}&w=960&q=80&output=webp`}
+                  src={`https://wsrv.nl/?url=${encodeURIComponent(heroImage)}&w=960&q=80&output=webp`}
                   alt={article.title}
                   width={960}
                   height={480}

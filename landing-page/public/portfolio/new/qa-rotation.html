@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA Rotation Photos — GWAKA</title>
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #1a1a1a; color: #fff; padding: 20px; }
+    .qa-header { position: sticky; top: 0; background: #1a1a1a; padding: 15px 0; z-index: 10; border-bottom: 2px solid #62A546; margin-bottom: 20px; }
+    h1 { font-size: 22px; margin-bottom: 10px; }
+    .qa-counter { font-size: 16px; color: #62A546; font-weight: 600; }
+    .qa-actions { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .qa-btn { background: #62A546; color: #fff; border: none; padding: 10px 20px; font-size: 14px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .qa-btn:hover { background: #4F8838; }
+    .qa-btn-warn { background: #d9534f; }
+    .qa-btn-warn:hover { background: #b9302d; }
+    .qa-btn-sec { background: #555; }
+    .qa-output { background: #000; color: #62A546; padding: 12px; margin-top: 12px; border-radius: 6px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; display: none; }
+    .qa-output.visible { display: block; }
+    .qa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .qa-card { position: relative; background: #2a2a2a; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform .2s, box-shadow .2s; border: 3px solid transparent; }
+    .qa-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.5); }
+    .qa-card.selected { border-color: #d9534f; }
+    .qa-card.selected .qa-overlay { display: flex; }
+    .qa-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .qa-info { padding: 8px 10px; }
+    .qa-cat { font-size: 10px; text-transform: uppercase; color: #62A546; font-weight: 700; letter-spacing: 1px; }
+    .qa-name { font-size: 13px; margin-top: 3px; font-weight: 600; line-height: 1.3; }
+    .qa-slug { font-size: 10px; color: #888; margin-top: 3px; font-family: monospace; word-break: break-all; }
+    .qa-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(217, 83, 79, .85); color: #fff; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; letter-spacing: 1px; pointer-events: none; }
+    .qa-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .qa-filter button { background: #333; color: #ccc; border: 1px solid #555; padding: 4px 12px; border-radius: 12px; font-size: 12px; cursor: pointer; }
+    .qa-filter button.active { background: #62A546; color: #fff; border-color: #62A546; }
+    .qa-card.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="qa-header">
+    <h1>🔄 QA Rotation Photos GWAKA</h1>
+    <p style="color: #aaa; font-size: 13px; margin-top: 4px;">Click sur les photos qui sont mal orientées. En bas: bouton pour copier la liste.</p>
+    <div class="qa-counter"><span id="qa-count">0</span> / 96 photos sélectionnées</div>
+    <div class="qa-actions">
+      <button class="qa-btn" onclick="copyList()">📋 Copier liste sélectionnée</button>
+      <button class="qa-btn qa-btn-warn" onclick="clearAll()">🗑 Tout désélectionner</button>
+      <button class="qa-btn qa-btn-sec" onclick="invertAll()">↔ Inverser sélection</button>
+    </div>
+    <div class="qa-filter">
+      <button onclick="filterCat('all')" class="active">Tout</button>
+      <button onclick="filterCat('sales')">Salés</button>
+      <button onclick="filterCat('toasts')">Toasts</button>
+      <button onclick="filterCat('wraps')">Wraps</button>
+      <button onclick="filterCat('salades')">Salades</button>
+      <button onclick="filterCat('plateaux')">Plateaux</button>
+      <button onclick="filterCat('sushis')">Sushis</button>
+      <button onclick="filterCat('mini')">Mini Salés</button>
+      <button onclick="filterCat('sucres')">Sucrés</button>
+      <button onclick="filterCat('boissons')">Boissons</button>
+      <button onclick="filterCat('bowls')">Bowls</button>
+      <button onclick="filterCat('box')">Box</button>
+      <button onclick="filterCat('brunch')">Brunch</button>
+      <button onclick="filterCat('apero')">Apéro</button>
+    </div>
+    <pre class="qa-output" id="qa-output"></pre>
+  </div>
+  <div class="qa-grid" id="qa-grid">
+    <div class="qa-card" data-slug="temehani-agua-fresca" data-cat="boissons" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-agua-fresca.webp?v=1779784837" alt="Agua Fresca" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">boissons</div>
+        <div class="qa-name">Agua Fresca</div>
+        <div class="qa-slug">temehani-agua-fresca</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-avo-grilled-cheese" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-avo-grilled-cheese.webp?v=1779823734" alt="Avo Grilled Cheese" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Avo Grilled Cheese</div>
+        <div class="qa-slug">temehani-avo-grilled-cheese</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-bagel-veggie-houmous-chevre-epinards" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-bagel-veggie-houmous-chevre-epinards.webp?v=1779784837" alt="Bagel Veggie Houmous ChèVre ÉPinards" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Bagel Veggie Houmous ChèVre ÉPinards</div>
+        <div class="qa-slug">temehani-bagel-veggie-houmous-chevre-epinards</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-bagels-saumon-fume" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-bagels-saumon-fume.webp?v=1779784837" alt="Bagels Saumon Fumé" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Bagels Saumon Fumé</div>
+        <div class="qa-slug">temehani-bagels-saumon-fume</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-bagels" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-bagels.webp?v=1779784837" alt="Bagels" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Bagels</div>
+        <div class="qa-slug">temehani-bagels</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-banana-bread" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-banana-bread.webp?v=1779784837" alt="Banana Bread" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Banana Bread</div>
+        <div class="qa-slug">temehani-banana-bread</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-black-bun-au-caviar-daubergines-serrano" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-black-bun-au-caviar-daubergines-serrano.webp?v=1779784837" alt="Black Bun Au Caviar D'Aubergines Serrano" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Black Bun Au Caviar D'Aubergines Serrano</div>
+        <div class="qa-slug">temehani-black-bun-au-caviar-daubergines-serrano</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-black-bun-au-saumon-fume" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-black-bun-au-saumon-fume.webp?v=1779823736" alt="Black Bun Au Saumon Fumé" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Black Bun Au Saumon Fumé</div>
+        <div class="qa-slug">temehani-black-bun-au-saumon-fume</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-black-bun-au-thon-fume-local" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-black-bun-au-thon-fume-local.webp?v=1779784837" alt="Black Bun Au Thon Fumé Local" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Black Bun Au Thon Fumé Local</div>
+        <div class="qa-slug">temehani-black-bun-au-thon-fume-local</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-black-bun-oeufs-bacon" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-black-bun-oeufs-bacon.webp?v=1779784837" alt="Black Bun Oeufs Bacon" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Black Bun Oeufs Bacon</div>
+        <div class="qa-slug">temehani-black-bun-oeufs-bacon</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-bouchee-saumon" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-bouchee-saumon.webp?v=1779823737" alt="BouchéE Saumon" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">BouchéE Saumon</div>
+        <div class="qa-slug">temehani-bouchee-saumon</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-box-gouter" data-cat="box" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-box-gouter.webp?v=1779784837" alt="Box GoûTer" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">box</div>
+        <div class="qa-name">Box GoûTer</div>
+        <div class="qa-slug">temehani-box-gouter</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-brioches-perdues" data-cat="brunch" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-brioches-perdues.webp?v=1779784837" alt="Brioches Perdues" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">brunch</div>
+        <div class="qa-name">Brioches Perdues</div>
+        <div class="qa-slug">temehani-brioches-perdues</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-brochettes-de-fruits-frais" data-cat="brunch" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-brochettes-de-fruits-frais.webp?v=1779784837" alt="Brochettes De Fruits Frais" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">brunch</div>
+        <div class="qa-name">Brochettes De Fruits Frais</div>
+        <div class="qa-slug">temehani-brochettes-de-fruits-frais</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-brochettes-minis-pancakes" data-cat="brunch" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-brochettes-minis-pancakes.webp?v=1779823738" alt="Brochettes Minis Pancakes" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">brunch</div>
+        <div class="qa-name">Brochettes Minis Pancakes</div>
+        <div class="qa-slug">temehani-brochettes-minis-pancakes</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-brownie-amande" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-brownie-amande.webp?v=1779784837" alt="Brownie Amande" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Brownie Amande</div>
+        <div class="qa-slug">temehani-brownie-amande</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-cake-au-thon" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-cake-au-thon.webp?v=1779784837" alt="Cake Au Thon" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Cake Au Thon</div>
+        <div class="qa-slug">temehani-cake-au-thon</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-cake-chevre-patates-douces-epinards" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-cake-chevre-patates-douces-epinards.webp?v=1779784837" alt="Cake ChèVre Patates Douces ÉPinards" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Cake ChèVre Patates Douces ÉPinards</div>
+        <div class="qa-slug">temehani-cake-chevre-patates-douces-epinards</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-cake-feta-tomates-sechees-epinards" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-cake-feta-tomates-sechees-epinards.webp?v=1779784837" alt="Cake FéTa Tomates SéChéEs ÉPinards" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Cake FéTa Tomates SéChéEs ÉPinards</div>
+        <div class="qa-slug">temehani-cake-feta-tomates-sechees-epinards</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-cakes" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-cakes.webp?v=1779823738" alt="Cakes" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Cakes</div>
+        <div class="qa-slug">temehani-cakes</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-carpaccio-aubergines-vapeur-feta-tomates-sechees" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-carpaccio-aubergines-vapeur-feta-tomates-sechees.webp?v=1779823739" alt="Carpaccio Aubergines Vapeur FéTa Tomates SéChéEs" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Carpaccio Aubergines Vapeur FéTa Tomates SéChéEs</div>
+        <div class="qa-slug">temehani-carpaccio-aubergines-vapeur-feta-tomates-sechees</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-carpaccio-tofu-curry-lait-de-coco" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-carpaccio-tofu-curry-lait-de-coco.webp?v=1779784837" alt="Carpaccio Tofu Curry Lait De Coco" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Carpaccio Tofu Curry Lait De Coco</div>
+        <div class="qa-slug">temehani-carpaccio-tofu-curry-lait-de-coco</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-carrot-cake" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-carrot-cake.webp?v=1779784837" alt="Carrot Cake" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Carrot Cake</div>
+        <div class="qa-slug">temehani-carrot-cake</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-chia-bowl" data-cat="bowls" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-chia-bowl.webp?v=1779784837" alt="Chia Bowl" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">bowls</div>
+        <div class="qa-name">Chia Bowl</div>
+        <div class="qa-slug">temehani-chia-bowl</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-choco-banana-bread" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-choco-banana-bread.webp?v=1779784837" alt="Choco Banana Bread" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Choco Banana Bread</div>
+        <div class="qa-slug">temehani-choco-banana-bread</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-club-au-oeufs" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-club-au-oeufs.webp?v=1779784837" alt="Club Au Oeufs" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Club Au Oeufs</div>
+        <div class="qa-slug">temehani-club-au-oeufs</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-club-au-saumon-fume" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-club-au-saumon-fume.webp?v=1779784837" alt="Club Au Saumon Fumé" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Club Au Saumon Fumé</div>
+        <div class="qa-slug">temehani-club-au-saumon-fume</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-club-jambon-cheddar" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-club-jambon-cheddar.webp?v=1779784837" alt="Club Jambon Cheddar" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Club Jambon Cheddar</div>
+        <div class="qa-slug">temehani-club-jambon-cheddar</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-crepes" data-cat="brunch" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-crepes.webp?v=1779784837" alt="CrêPes" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">brunch</div>
+        <div class="qa-name">CrêPes</div>
+        <div class="qa-slug">temehani-crepes</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-croque-a-la-creme-de-truffe" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-croque-a-la-creme-de-truffe.webp?v=1779784837" alt="Croque À La CrêMe De Truffe" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Croque À La CrêMe De Truffe</div>
+        <div class="qa-slug">temehani-croque-a-la-creme-de-truffe</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-double-cheese-egg" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-double-cheese-egg.webp?v=1779784837" alt="Double Cheese Egg" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Double Cheese Egg</div>
+        <div class="qa-slug">temehani-double-cheese-egg</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-eaux-infusees" data-cat="boissons" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-eaux-infusees.webp?v=1779784837" alt="Eaux InfuséEs" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">boissons</div>
+        <div class="qa-name">Eaux InfuséEs</div>
+        <div class="qa-slug">temehani-eaux-infusees</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-egg-muffin" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-egg-muffin.webp?v=1779784837" alt="Egg Muffin" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Egg Muffin</div>
+        <div class="qa-slug">temehani-egg-muffin</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-fruits-cake" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-fruits-cake.webp?v=1779784837" alt="Fruits Cake" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Fruits Cake</div>
+        <div class="qa-slug">temehani-fruits-cake</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-gaspacho-mangue-tomate-basilic" data-cat="apero" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-gaspacho-mangue-tomate-basilic.webp?v=1779823740" alt="Gaspacho Mangue Tomate Basilic" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">apero</div>
+        <div class="qa-name">Gaspacho Mangue Tomate Basilic</div>
+        <div class="qa-slug">temehani-gaspacho-mangue-tomate-basilic</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-gateau-coco" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-gateau-coco.webp?v=1779784837" alt="GâTeau Coco" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">GâTeau Coco</div>
+        <div class="qa-slug">temehani-gateau-coco</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-gaufre-salee-epinards-feta" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-gaufre-salee-epinards-feta.webp?v=1779784837" alt="Gaufre SaléE ÉPinards FéTa" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Gaufre SaléE ÉPinards FéTa</div>
+        <div class="qa-slug">temehani-gaufre-salee-epinards-feta</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-gaufre-salee-patates-douces-feta" data-cat="sales" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-gaufre-salee-patates-douces-feta.webp?v=1779784837" alt="Gaufre SaléE Patates Douces FéTa " loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sales</div>
+        <div class="qa-name">Gaufre SaléE Patates Douces FéTa </div>
+        <div class="qa-slug">temehani-gaufre-salee-patates-douces-feta</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-gaufres" data-cat="brunch" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-gaufres.webp?v=1779784837" alt="Gaufres" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">brunch</div>
+        <div class="qa-name">Gaufres</div>
+        <div class="qa-slug">temehani-gaufres</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-granola-cups" data-cat="bowls" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-granola-cups.webp?v=1779784837" alt="Granola Cups" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">bowls</div>
+        <div class="qa-name">Granola Cups</div>
+        <div class="qa-slug">temehani-granola-cups</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-green-box" data-cat="box" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-green-box.webp?v=1779784837" alt="Green Box" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">box</div>
+        <div class="qa-name">Green Box</div>
+        <div class="qa-slug">temehani-green-box</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-gwaka-box" data-cat="box" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-gwaka-box.webp?v=1779784837" alt="Gwaka Box" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">box</div>
+        <div class="qa-name">Gwaka Box</div>
+        <div class="qa-slug">temehani-gwaka-box</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-gwaka-salmon-toast" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-gwaka-salmon-toast.webp?v=1779823741" alt="Gwaka Salmon Toast" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Gwaka Salmon Toast</div>
+        <div class="qa-slug">temehani-gwaka-salmon-toast</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-gwaka-toast-and-tartare-de-thon-fume" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-gwaka-toast-and-tartare-de-thon-fume.webp?v=1779823742" alt="Gwaka Toast & Tartare De Thon Fumé" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Gwaka Toast & Tartare De Thon Fumé</div>
+        <div class="qa-slug">temehani-gwaka-toast-and-tartare-de-thon-fume</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-gwaka-toast" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-gwaka-toast.webp?v=1779823743" alt="Gwaka Toast" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Gwaka Toast</div>
+        <div class="qa-slug">temehani-gwaka-toast</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-lemon-cake" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-lemon-cake.webp?v=1779823744" alt="Lemon Cake" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Lemon Cake</div>
+        <div class="qa-slug">temehani-lemon-cake</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-lunch-box" data-cat="box" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-lunch-box.webp?v=1779784837" alt="Lunch Box" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">box</div>
+        <div class="qa-name">Lunch Box</div>
+        <div class="qa-slug">temehani-lunch-box</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-marbre-choco-vanille" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-marbre-choco-vanille.webp?v=1779784837" alt="Marbré Choco Vanille" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Marbré Choco Vanille</div>
+        <div class="qa-slug">temehani-marbre-choco-vanille</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-mini-bagel" data-cat="mini" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-mini-bagel.webp?v=1779823744" alt="Mini Bagel" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">mini</div>
+        <div class="qa-name">Mini Bagel</div>
+        <div class="qa-slug">temehani-mini-bagel</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-mini-black-bun-caviar-daubergines-serrano-cranberry" data-cat="mini" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-mini-black-bun-caviar-daubergines-serrano-cranberry.webp?v=1779784837" alt="Mini Black Bun Caviar D'Aubergines Serrano Cranberry" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">mini</div>
+        <div class="qa-name">Mini Black Bun Caviar D'Aubergines Serrano Cranberry</div>
+        <div class="qa-slug">temehani-mini-black-bun-caviar-daubergines-serrano-cranberry</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-mini-cake-sale" data-cat="mini" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-mini-cake-sale.webp?v=1779823745" alt="Mini Cake Salé" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">mini</div>
+        <div class="qa-name">Mini Cake Salé</div>
+        <div class="qa-slug">temehani-mini-cake-sale</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-mini-fondant-chocolat" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-mini-fondant-chocolat.webp?v=1779784837" alt="Mini Fondant Chocolat" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Mini Fondant Chocolat</div>
+        <div class="qa-slug">temehani-mini-fondant-chocolat</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-mini-pain-au-lait" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-mini-pain-au-lait.webp?v=1779784837" alt="Mini Pain Au Lait" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Mini Pain Au Lait</div>
+        <div class="qa-slug">temehani-mini-pain-au-lait</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-mini-shakshuka" data-cat="mini" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-mini-shakshuka.webp?v=1779784837" alt="Mini Shakshuka" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">mini</div>
+        <div class="qa-name">Mini Shakshuka</div>
+        <div class="qa-slug">temehani-mini-shakshuka</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-minis-cakes-sales" data-cat="mini" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-minis-cakes-sales.webp?v=1779784837" alt="Minis Cakes SaléS" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">mini</div>
+        <div class="qa-name">Minis Cakes SaléS</div>
+        <div class="qa-slug">temehani-minis-cakes-sales</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-minis-salades-de-fruits" data-cat="mini" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-minis-salades-de-fruits.webp?v=1779784837" alt="Minis Salades De Fruits" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">mini</div>
+        <div class="qa-name">Minis Salades De Fruits</div>
+        <div class="qa-slug">temehani-minis-salades-de-fruits</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-minis-salades-de-pates" data-cat="mini" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-minis-salades-de-pates.webp?v=1779784837" alt="Minis Salades De PâTes" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">mini</div>
+        <div class="qa-name">Minis Salades De PâTes</div>
+        <div class="qa-slug">temehani-minis-salades-de-pates</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-mousses-choco" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-mousses-choco.webp?v=1779784837" alt="Mousses Choco" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Mousses Choco</div>
+        <div class="qa-slug">temehani-mousses-choco</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-mozzarella-di-buffala" data-cat="plateaux" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-mozzarella-di-buffala.webp?v=1779784837" alt="Mozzarella Di Buffala" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">plateaux</div>
+        <div class="qa-name">Mozzarella Di Buffala</div>
+        <div class="qa-slug">temehani-mozzarella-di-buffala</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-onigiri" data-cat="sushis" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-onigiri.webp?v=1779823746" alt="Onigiri" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sushis</div>
+        <div class="qa-name">Onigiri</div>
+        <div class="qa-slug">temehani-onigiri</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-pancakes" data-cat="brunch" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-pancakes.webp?v=1779784837" alt="Pancakes" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">brunch</div>
+        <div class="qa-name">Pancakes</div>
+        <div class="qa-slug">temehani-pancakes</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-panna-cotta-fraises" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-panna-cotta-fraises.webp?v=1779823746" alt="Panna Cotta Fraises" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Panna Cotta Fraises</div>
+        <div class="qa-slug">temehani-panna-cotta-fraises</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-panna-cotta-framboises-et-mangues" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-panna-cotta-framboises-et-mangues.webp?v=1779784837" alt="Panna Cotta Framboises Et Mangues" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Panna Cotta Framboises Et Mangues</div>
+        <div class="qa-slug">temehani-panna-cotta-framboises-et-mangues</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-pasta-salad" data-cat="salades" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-pasta-salad.webp?v=1779784837" alt="Pasta Salad" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">salades</div>
+        <div class="qa-name">Pasta Salad</div>
+        <div class="qa-slug">temehani-pasta-salad</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-pause-cafe" data-cat="boissons" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-pause-cafe.webp?v=1779784837" alt="Pause-Café" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">boissons</div>
+        <div class="qa-name">Pause-Café</div>
+        <div class="qa-slug">temehani-pause-cafe</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-planche-de-fromages" data-cat="plateaux" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-planche-de-fromages.webp?v=1779784837" alt="Planche De Fromages" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">plateaux</div>
+        <div class="qa-name">Planche De Fromages</div>
+        <div class="qa-slug">temehani-planche-de-fromages</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-planche-de-fruits" data-cat="plateaux" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-planche-de-fruits.webp?v=1779784837" alt="Planche De Fruits" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">plateaux</div>
+        <div class="qa-name">Planche De Fruits</div>
+        <div class="qa-slug">temehani-planche-de-fruits</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-planche-de-legumes" data-cat="plateaux" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-planche-de-legumes.webp?v=1779784837" alt="Planche De LéGumes" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">plateaux</div>
+        <div class="qa-name">Planche De LéGumes</div>
+        <div class="qa-slug">temehani-planche-de-legumes</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-planche-sucree" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-planche-sucree.webp?v=1779784837" alt="Planche SucréE" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Planche SucréE</div>
+        <div class="qa-slug">temehani-planche-sucree</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-plateau-de-charcuterie" data-cat="plateaux" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-plateau-de-charcuterie.webp?v=1779823747" alt="Plateau De Charcuterie" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">plateaux</div>
+        <div class="qa-name">Plateau De Charcuterie</div>
+        <div class="qa-slug">temehani-plateau-de-charcuterie</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-plateau-de-fruits-frais" data-cat="plateaux" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-plateau-de-fruits-frais.webp?v=1779784837" alt="Plateau De Fruits Frais" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">plateaux</div>
+        <div class="qa-name">Plateau De Fruits Frais</div>
+        <div class="qa-slug">temehani-plateau-de-fruits-frais</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-plateau-mixte" data-cat="plateaux" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-plateau-mixte.webp?v=1779823747" alt="Plateau Mixte" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">plateaux</div>
+        <div class="qa-name">Plateau Mixte</div>
+        <div class="qa-slug">temehani-plateau-mixte</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-plateau-sucre" data-cat="sucres" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-plateau-sucre.webp?v=1779784837" alt="Plateau Sucré" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sucres</div>
+        <div class="qa-name">Plateau Sucré</div>
+        <div class="qa-slug">temehani-plateau-sucre</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-quinoa-energy" data-cat="bowls" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-quinoa-energy.webp?v=1779823748" alt="Quinoa Energy" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">bowls</div>
+        <div class="qa-name">Quinoa Energy</div>
+        <div class="qa-slug">temehani-quinoa-energy</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-salade-coleslaw" data-cat="salades" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-salade-coleslaw.webp?v=1779784837" alt="Salade Coleslaw" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">salades</div>
+        <div class="qa-name">Salade Coleslaw</div>
+        <div class="qa-slug">temehani-salade-coleslaw</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-salade-de-ble-a-la-mediterraneenne" data-cat="salades" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-salade-de-ble-a-la-mediterraneenne.webp?v=1779784837" alt="Salade De Blé À La MéDiterranéEnne" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">salades</div>
+        <div class="qa-name">Salade De Blé À La MéDiterranéEnne</div>
+        <div class="qa-slug">temehani-salade-de-ble-a-la-mediterraneenne</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-sushis-2" data-cat="sushis" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-sushis-2.webp?v=1779784837" alt="Sushis 2" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sushis</div>
+        <div class="qa-name">Sushis 2</div>
+        <div class="qa-slug">temehani-sushis-2</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-sushis-party" data-cat="sushis" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-sushis-party.webp?v=1779784837" alt="Sushis Party" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sushis</div>
+        <div class="qa-name">Sushis Party</div>
+        <div class="qa-slug">temehani-sushis-party</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-sushis" data-cat="sushis" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-sushis.webp?v=1779784837" alt="Sushis" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sushis</div>
+        <div class="qa-name">Sushis</div>
+        <div class="qa-slug">temehani-sushis</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-taboule" data-cat="salades" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-taboule.webp?v=1779784837" alt="Taboulé" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">salades</div>
+        <div class="qa-name">Taboulé</div>
+        <div class="qa-slug">temehani-taboule</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-tacos-bar" data-cat="sushis" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-tacos-bar.webp?v=1779784837" alt="Tacos Bar" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sushis</div>
+        <div class="qa-name">Tacos Bar</div>
+        <div class="qa-slug">temehani-tacos-bar</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-toast-bruschetta" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-toast-bruschetta.webp?v=1779784837" alt="Toast Bruschetta" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Toast Bruschetta</div>
+        <div class="qa-slug">temehani-toast-bruschetta</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-toast-caviar-daubergines-serrano-and-chevre" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-toast-caviar-daubergines-serrano-and-chevre.webp?v=1779823749" alt="Toast Caviar D'Aubergines Serrano & ChèVre" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Toast Caviar D'Aubergines Serrano & ChèVre</div>
+        <div class="qa-slug">temehani-toast-caviar-daubergines-serrano-and-chevre</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-toast-caviardaubergines" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-toast-caviardaubergines.webp?v=1779784837" alt="Toast Caviard'Aubergines" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Toast Caviard'Aubergines</div>
+        <div class="qa-slug">temehani-toast-caviardaubergines</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-toast-gwaka-salmon-feta" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-toast-gwaka-salmon-feta.webp?v=1779823750" alt="Toast Gwaka Salmon FéTa" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Toast Gwaka Salmon FéTa</div>
+        <div class="qa-slug">temehani-toast-gwaka-salmon-feta</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-toast-houmous-betterave" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-toast-houmous-betterave.webp?v=1779784837" alt="Toast Houmous Betterave" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Toast Houmous Betterave</div>
+        <div class="qa-slug">temehani-toast-houmous-betterave</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-toast-houmous-poivrons-grilles" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-toast-houmous-poivrons-grilles.webp?v=1779784837" alt="Toast Houmous Poivrons GrilléS" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Toast Houmous Poivrons GrilléS</div>
+        <div class="qa-slug">temehani-toast-houmous-poivrons-grilles</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-toast-houous-curry-curcuma" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-toast-houous-curry-curcuma.webp?v=1779823750" alt="Toast Houmous Curry Curcuma" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Toast Houmous Curry Curcuma</div>
+        <div class="qa-slug">temehani-toast-houous-curry-curcuma</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-toast-magret-chutney-chevre" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-toast-magret-chutney-chevre.webp?v=1779784837" alt="Toast Magret Chutney ChèVre" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Toast Magret Chutney ChèVre</div>
+        <div class="qa-slug">temehani-toast-magret-chutney-chevre</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-toasts-tapenade" data-cat="toasts" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-toasts-tapenade.webp?v=1779784837" alt="Toasts Tapenade" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">toasts</div>
+        <div class="qa-name">Toasts Tapenade</div>
+        <div class="qa-slug">temehani-toasts-tapenade</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-tuna-rolls" data-cat="sushis" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-tuna-rolls.webp?v=1779823751" alt="Tuna Rolls" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">sushis</div>
+        <div class="qa-name">Tuna Rolls</div>
+        <div class="qa-slug">temehani-tuna-rolls</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-verrines-houmous-crudites" data-cat="plateaux" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-verrines-houmous-crudites.webp?v=1779784837" alt="Verrines Houmous CruditéS" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">plateaux</div>
+        <div class="qa-name">Verrines Houmous CruditéS</div>
+        <div class="qa-slug">temehani-verrines-houmous-crudites</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-wraps-au-saumon-fume" data-cat="wraps" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-wraps-au-saumon-fume.webp?v=1779784837" alt="Wraps Au Saumon Fumé" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">wraps</div>
+        <div class="qa-name">Wraps Au Saumon Fumé</div>
+        <div class="qa-slug">temehani-wraps-au-saumon-fume</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-wraps-au-tofu-grille-curcuma" data-cat="wraps" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-wraps-au-tofu-grille-curcuma.webp?v=1779784837" alt="Wraps Au Tofu Grillé Curcuma" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">wraps</div>
+        <div class="qa-name">Wraps Au Tofu Grillé Curcuma</div>
+        <div class="qa-slug">temehani-wraps-au-tofu-grille-curcuma</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-wraps-aux-oeufs" data-cat="wraps" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-wraps-aux-oeufs.webp?v=1779784837" alt="Wraps Aux Oeufs" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">wraps</div>
+        <div class="qa-name">Wraps Aux Oeufs</div>
+        <div class="qa-slug">temehani-wraps-aux-oeufs</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+    <div class="qa-card" data-slug="temehani-wraps-bites-tofu" data-cat="wraps" onclick="toggleCard(this)">
+      <img src="/portfolio/new/images/gwaka/catalogue-temehani/temehani-wraps-bites-tofu.webp?v=1779784837" alt="Wraps Bites Tofu" loading="lazy">
+      <div class="qa-info">
+        <div class="qa-cat">wraps</div>
+        <div class="qa-name">Wraps Bites Tofu</div>
+        <div class="qa-slug">temehani-wraps-bites-tofu</div>
+      </div>
+      <div class="qa-overlay">✗ MAL ORIENTÉE</div>
+    </div>
+  </div>
+  <script>
+    function updateCount() {
+      document.getElementById('qa-count').textContent = document.querySelectorAll('.qa-card.selected').length;
+    }
+    function toggleCard(el) {
+      el.classList.toggle('selected');
+      updateCount();
+    }
+    function clearAll() {
+      document.querySelectorAll('.qa-card.selected').forEach(c => c.classList.remove('selected'));
+      updateCount();
+    }
+    function invertAll() {
+      document.querySelectorAll('.qa-card:not(.hidden)').forEach(c => c.classList.toggle('selected'));
+      updateCount();
+    }
+    function copyList() {
+      const slugs = Array.from(document.querySelectorAll('.qa-card.selected')).map(c => c.dataset.slug);
+      const text = slugs.join('\n');
+      const out = document.getElementById('qa-output');
+      out.textContent = slugs.length ? text : '(aucune photo sélectionnée)';
+      out.classList.add('visible');
+      if (slugs.length) {
+        navigator.clipboard.writeText(text).then(
+          () => { alert(slugs.length + ' slugs copiés dans le presse-papier!'); },
+          () => { alert('Copie auto échouée. Sélectionne le texte manuellement dans la boîte noire ci-dessous.'); }
+        );
+      }
+    }
+    function filterCat(cat) {
+      document.querySelectorAll('.qa-filter button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      document.querySelectorAll('.qa-card').forEach(c => {
+        if (cat === 'all' || c.dataset.cat === cat) c.classList.remove('hidden');
+        else c.classList.add('hidden');
+      });
+    }
+  </script>
+</body>
+</html>
