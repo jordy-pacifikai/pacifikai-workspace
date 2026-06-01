@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useTranslations, useMessages } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import {
@@ -84,8 +84,19 @@ export default function RealisationsPage() {
   const [view, setView] = useState<ViewMode>("grid");
   const [sort, setSort] = useState<SortMode>("year-desc");
 
+  const messages = useMessages() as { realisations?: { missionsData?: Record<string, { title?: string; description?: string; benefit?: string; client?: string }> } };
+  const md = messages.realisations?.missionsData;
+
+  const localizedMissions = useMemo(() => missions.map((m) => ({
+    ...m,
+    title: md?.[m.id]?.title ?? m.title,
+    description: md?.[m.id]?.description ?? m.description,
+    benefit: md?.[m.id]?.benefit ?? m.benefit,
+    client: md?.[m.id]?.client ?? m.client,
+  })), [md]);
+
   const filteredMissions = useMemo(() => {
-    const filtered = missions.filter((m) => {
+    const filtered = localizedMissions.filter((m) => {
       if (domainFilter !== "all" && m.domain !== domainFilter) return false;
       if (geoFilter !== "all" && m.location !== geoFilter) return false;
       return true;
@@ -100,7 +111,7 @@ export default function RealisationsPage() {
       }
     });
     return sorted;
-  }, [domainFilter, geoFilter, sort]);
+  }, [localizedMissions, domainFilter, geoFilter, sort]);
 
   const missionsByYear = useMemo(() => {
     const groups: Record<string, typeof filteredMissions> = {};

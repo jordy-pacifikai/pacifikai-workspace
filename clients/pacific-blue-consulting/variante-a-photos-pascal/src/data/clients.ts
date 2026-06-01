@@ -31,14 +31,14 @@ export const clientCategories: Record<ClientCategory, string> = {
 
 export const clients: Client[] = [
   // Institutionnels
-  { name: "DAC-Pf", category: "institutionnels", logo: "/images/logos/dac-pf.png", hoverLabel: "Direction de l'Aviation Civile" },
+  { name: "DAC-Pf", category: "institutionnels", logo: "/images/logos/dac-pf.png" },
   { name: "DGAC/SEAC-Pf", category: "institutionnels", logo: "/images/logos/dgac.png" },
   { name: "Ministère des Transports", category: "institutionnels", logo: "/images/logos/ministere-transports.png" },
   { name: "DIREN", category: "institutionnels", logo: "/images/logos/diren.png" },
-  { name: "DAG", category: "institutionnels", logo: "/images/logos/dag.png", hoverLabel: "Direction de l'Agriculture" },
+  { name: "DAG", category: "institutionnels", logo: "/images/logos/dag.png" },
   { name: "Province des Îles Loyauté", category: "institutionnels", logo: "/images/logos/province-iles-loyaute.png" },
   { name: "Commune de Hiva Oa", category: "institutionnels", logo: "/images/logos/commune-hiva-oa.png" },
-  { name: "DGEE", category: "institutionnels", logo: "/images/logos/dgee.png", hoverLabel: "Direction Générale de l'Éducation et des Enseignements" },
+  { name: "DGEE", category: "institutionnels", logo: "/images/logos/dgee.png" },
   { name: "Gouvernement PF", category: "institutionnels", logo: "/images/logos/gouvernement-pf.png" },
   { name: "Service de l'Artisanat Traditionnel", category: "institutionnels", logo: "/images/logos/artisanat-traditionnel.png" },
   // Compagnies aériennes & Opérateurs
@@ -66,20 +66,20 @@ export const clients: Client[] = [
 ];
 
 export const partners: Partner[] = [
-  { name: "To70", specialty: "aviation - Pays-Bas", logo: "/images/logos/to70.png" },
+  { name: "To70", logo: "/images/logos/to70.png" },
   { name: "Tamau Conseil", logo: "/images/logos/tamau-conseil.png" },
-  { name: "Etik Polynésie", specialty: "ingénierie infrastructure", logo: "/images/logos/etik-polynesie.png" },
+  { name: "Etik Polynésie", logo: "/images/logos/etik-polynesie.png" },
   { name: "CGX Aero", logo: "/images/logos/cgx-aero.png" },
   { name: "Ironetik", logo: "/images/logos/ironetik.png" },
   { name: "ISS", logo: "/images/logos/iss.png", hoverLabel: "Islands Services and Solutions" },
   { name: "TPB", logo: "/images/logos/tpb.png", hoverLabel: "The Power of Blocks" },
   { name: "PenUAS", specialty: "drones", logo: "/images/logos/penuas.png" },
-  { name: "BIM Pearl", specialty: "maquettes 3D/4D/5D", logo: "/images/logos/bim-pearl.png" },
+  { name: "BIM Pearl", logo: "/images/logos/bim-pearl.png" },
   { name: "Magis", logo: "/images/logos/magis.png" },
   { name: "Birds Conseil", logo: "/images/logos/birds-conseil.png" },
   { name: "Pacific Sud Survey (PSS)", logo: "/images/logos/pss.png" },
   { name: "Delta Polynesia", logo: "/images/logos/delta-polynesia.png" },
-  { name: "L2L Prévention", specialty: "ICPE / EIE", logo: "/images/logos/l2l-prevention.png" },
+  { name: "L2L Prévention", logo: "/images/logos/l2l-prevention.png" },
   { name: "Milanamos", logo: "/images/logos/milanamos.png" },
   { name: "FHC", logo: "/images/logos/fhc.png", hoverLabel: "Fare Home Concept" },
   { name: "Auna Conseil", logo: "/images/logos/auna-conseil.png" },

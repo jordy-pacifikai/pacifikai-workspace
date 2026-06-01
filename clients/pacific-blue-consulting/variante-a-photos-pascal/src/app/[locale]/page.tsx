@@ -394,7 +394,7 @@ export default function Home() {
                   </h3>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
                     {categoryClients.map((client) => {
-                      const hoverLabel = client.hoverLabel || getClientHover(client.name) || client.name;
+                      const hoverLabel = getClientHover(client.name) || client.hoverLabel || client.name;
                       return (
                         <div
                           key={client.name}

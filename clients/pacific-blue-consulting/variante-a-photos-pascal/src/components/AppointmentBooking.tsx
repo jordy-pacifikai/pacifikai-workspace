@@ -1,18 +1,19 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 
 type Step = 1 | 2 | 3 | 4;
 
-const domains = [
-  { value: "aviation", label: "Aviation civile & Compagnies aériennes" },
-  { value: "aeroports", label: "Aéroports & Infrastructures" },
-  { value: "environnement", label: "Environnement & Bilan carbone" },
-  { value: "etudes", label: "Études stratégiques & Modélisation" },
-  { value: "amo", label: "AMO & Pilotage de projets" },
-  { value: "formation", label: "Formation & Management" },
-  { value: "autre", label: "Autre / Je ne suis pas sûr" },
-];
+const domainValues = [
+  "aviation",
+  "aeroports",
+  "environnement",
+  "etudes",
+  "amo",
+  "formation",
+  "autre",
+] as const;
 
 const timeSlots = [
   "09:00",
@@ -56,8 +57,8 @@ function getNextBusinessDays(count: number): Date[] {
   return dates;
 }
 
-function formatDate(date: Date): string {
-  return date.toLocaleDateString("fr-FR", {
+function formatDate(date: Date, locale: string): string {
+  return date.toLocaleDateString(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -69,6 +70,12 @@ function formatDateValue(date: Date): string {
 }
 
 export default function AppointmentBooking() {
+  const t = useTranslations("appointment");
+  const dateLocale = t("dateLocale");
+  const domains = domainValues.map((value) => ({
+    value,
+    label: t(`domains.${value}`),
+  }));
   const [step, setStep] = useState<Step>(1);
   const [data, setData] = useState<BookingData>({
     domain: "",
@@ -97,17 +104,17 @@ export default function AppointmentBooking() {
     const newErrors: Partial<Record<keyof BookingData, string>> = {};
 
     if (step === 1 && !data.domain) {
-      newErrors.domain = "Veuillez selectionner un domaine";
+      newErrors.domain = t("errors.selectDomain");
     }
     if (step === 2) {
-      if (!data.date) newErrors.date = "Veuillez choisir une date";
-      if (!data.time) newErrors.time = "Veuillez choisir un horaire";
+      if (!data.date) newErrors.date = t("errors.chooseDate");
+      if (!data.time) newErrors.time = t("errors.chooseTime");
     }
     if (step === 3) {
-      if (!data.name.trim()) newErrors.name = "Veuillez indiquer votre nom";
-      if (!data.email.trim()) newErrors.email = "Veuillez indiquer votre email";
+      if (!data.name.trim()) newErrors.name = t("errors.enterName");
+      if (!data.email.trim()) newErrors.email = t("errors.enterEmail");
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
-        newErrors.email = "Email invalide";
+        newErrors.email = t("errors.invalidEmail");
     }
 
     setErrors(newErrors);
@@ -157,35 +164,35 @@ export default function AppointmentBooking() {
           </svg>
         </div>
         <h3 className="mt-4 font-display text-2xl font-bold text-navy">
-          Rendez-vous confirme
+          {t("success.title")}
         </h3>
         <p className="mt-2 text-warm">
-          Votre demande de rendez-vous a bien ete enregistree.
+          {t("success.message")}
         </p>
         <div className="mt-6 p-6 bg-navy-50 rounded-xl inline-block text-left">
           <div className="space-y-2 text-sm">
             <p>
-              <span className="font-semibold text-navy">Domaine :</span>{" "}
+              <span className="font-semibold text-navy">{t("success.labelDomain")}</span>{" "}
               <span className="text-warm">{selectedDomain?.label}</span>
             </p>
             <p>
-              <span className="font-semibold text-navy">Date :</span>{" "}
+              <span className="font-semibold text-navy">{t("success.labelDate")}</span>{" "}
               <span className="text-warm">
-                {formatDate(new Date(data.date + "T12:00:00"))}
+                {formatDate(new Date(data.date + "T12:00:00"), dateLocale)}
               </span>
             </p>
             <p>
-              <span className="font-semibold text-navy">Heure :</span>{" "}
-              <span className="text-warm">{data.time} (heure de Tahiti)</span>
+              <span className="font-semibold text-navy">{t("success.labelTime")}</span>{" "}
+              <span className="text-warm">{data.time} {t("tahitiTime")}</span>
             </p>
             <p>
-              <span className="font-semibold text-navy">Contact :</span>{" "}
+              <span className="font-semibold text-navy">{t("success.labelContact")}</span>{" "}
               <span className="text-warm">{data.name}</span>
             </p>
           </div>
         </div>
         <p className="mt-6 text-sm text-warm">
-          Nous vous contacterons sous 24h pour confirmer le rendez-vous.
+          {t("success.followup")}
         </p>
       </div>
     );
@@ -231,16 +238,16 @@ export default function AppointmentBooking() {
 
       <div className="flex gap-4 mb-6 text-xs text-warm">
         <span className={step >= 1 ? "text-navy font-medium" : ""}>
-          Domaine
+          {t("steps.domain")}
         </span>
         <span className={step >= 2 ? "text-navy font-medium" : ""}>
-          Date & Heure
+          {t("steps.dateTime")}
         </span>
         <span className={step >= 3 ? "text-navy font-medium" : ""}>
-          Vos coordonnees
+          {t("steps.contact")}
         </span>
         <span className={step >= 4 ? "text-navy font-medium" : ""}>
-          Confirmation
+          {t("steps.confirmation")}
         </span>
       </div>
 
@@ -248,7 +255,7 @@ export default function AppointmentBooking() {
       {step === 1 && (
         <div>
           <h3 className="font-display text-xl font-bold text-navy mb-4">
-            Quel domaine concerne votre demande ?
+            {t("step1.heading")}
           </h3>
           <div className="grid grid-cols-1 gap-3">
             {domains.map((domain) => (
@@ -275,13 +282,13 @@ export default function AppointmentBooking() {
       {step === 2 && (
         <div>
           <h3 className="font-display text-xl font-bold text-navy mb-4">
-            Choisissez une date et un horaire
+            {t("step2.heading")}
           </h3>
 
           {/* Dates */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-navy mb-3">
-              Date
+              {t("step2.dateLabel")}
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {businessDays.map((date) => {
@@ -296,7 +303,7 @@ export default function AppointmentBooking() {
                         : "border-navy-100 text-warm hover:border-steel/30"
                     }`}
                   >
-                    {formatDate(date)}
+                    {formatDate(date, dateLocale)}
                   </button>
                 );
               })}
@@ -309,7 +316,7 @@ export default function AppointmentBooking() {
           {/* Time slots */}
           <div>
             <label className="block text-sm font-medium text-navy mb-3">
-              Horaire (heure de Tahiti, UTC-10)
+              {t("step2.timeLabel")}
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {timeSlots.map((time) => (
@@ -337,12 +344,12 @@ export default function AppointmentBooking() {
       {step === 3 && (
         <div>
           <h3 className="font-display text-xl font-bold text-navy mb-4">
-            Vos coordonnees
+            {t("steps.contact")}
           </h3>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-navy mb-1">
-                Nom complet *
+                {t("step3.nameLabel")}
               </label>
               <input
                 type="text"
@@ -357,7 +364,7 @@ export default function AppointmentBooking() {
             </div>
             <div>
               <label className="block text-sm font-medium text-navy mb-1">
-                Entreprise / Organisation
+                {t("step3.companyLabel")}
               </label>
               <input
                 type="text"
@@ -385,7 +392,7 @@ export default function AppointmentBooking() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-navy mb-1">
-                  Telephone
+                  {t("step3.phoneLabel")}
                 </label>
                 <input
                   type="tel"
@@ -398,14 +405,14 @@ export default function AppointmentBooking() {
             </div>
             <div>
               <label className="block text-sm font-medium text-navy mb-1">
-                Message (optionnel)
+                {t("step3.messageLabel")}
               </label>
               <textarea
                 value={data.message}
                 onChange={(e) => updateField("message", e.target.value)}
                 rows={3}
                 className="w-full px-4 py-3 border border-navy-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold resize-none"
-                placeholder="Decrivez brievement votre projet ou votre besoin..."
+                placeholder={t("step3.messagePlaceholder")}
               />
             </div>
           </div>
@@ -416,53 +423,53 @@ export default function AppointmentBooking() {
       {step === 4 && (
         <div>
           <h3 className="font-display text-xl font-bold text-navy mb-4">
-            Recapitulatif de votre rendez-vous
+            {t("step4.heading")}
           </h3>
           <div className="space-y-3 p-6 bg-navy-50 rounded-xl">
             <div className="flex justify-between text-sm">
-              <span className="text-warm">Domaine</span>
+              <span className="text-warm">{t("steps.domain")}</span>
               <span className="font-medium text-navy">
                 {domains.find((d) => d.value === data.domain)?.label}
               </span>
             </div>
             <div className="border-t border-navy-100" />
             <div className="flex justify-between text-sm">
-              <span className="text-warm">Date</span>
+              <span className="text-warm">{t("step2.dateLabel")}</span>
               <span className="font-medium text-navy">
-                {data.date && formatDate(new Date(data.date + "T12:00:00"))}
+                {data.date && formatDate(new Date(data.date + "T12:00:00"), dateLocale)}
               </span>
             </div>
             <div className="border-t border-navy-100" />
             <div className="flex justify-between text-sm">
-              <span className="text-warm">Heure</span>
+              <span className="text-warm">{t("recap.time")}</span>
               <span className="font-medium text-navy">
-                {data.time} (heure de Tahiti)
+                {data.time} {t("tahitiTime")}
               </span>
             </div>
             <div className="border-t border-navy-100" />
             <div className="flex justify-between text-sm">
-              <span className="text-warm">Nom</span>
+              <span className="text-warm">{t("recap.name")}</span>
               <span className="font-medium text-navy">{data.name}</span>
             </div>
             {data.company && (
               <>
                 <div className="border-t border-navy-100" />
                 <div className="flex justify-between text-sm">
-                  <span className="text-warm">Entreprise</span>
+                  <span className="text-warm">{t("recap.company")}</span>
                   <span className="font-medium text-navy">{data.company}</span>
                 </div>
               </>
             )}
             <div className="border-t border-navy-100" />
             <div className="flex justify-between text-sm">
-              <span className="text-warm">Email</span>
+              <span className="text-warm">{t("recap.email")}</span>
               <span className="font-medium text-navy">{data.email}</span>
             </div>
             {data.phone && (
               <>
                 <div className="border-t border-navy-100" />
                 <div className="flex justify-between text-sm">
-                  <span className="text-warm">Telephone</span>
+                  <span className="text-warm">{t("step3.phoneLabel")}</span>
                   <span className="font-medium text-navy">{data.phone}</span>
                 </div>
               </>
@@ -478,7 +485,7 @@ export default function AppointmentBooking() {
             onClick={prevStep}
             className="px-6 py-3 text-sm font-medium text-warm hover:text-navy transition-colors"
           >
-            Retour
+            {t("nav.back")}
           </button>
         ) : (
           <div />
@@ -489,14 +496,14 @@ export default function AppointmentBooking() {
             onClick={nextStep}
             className="px-8 py-3 bg-gold text-navy text-sm font-semibold rounded-lg hover:bg-gold-400 transition-colors"
           >
-            Continuer
+            {t("nav.next")}
           </button>
         ) : (
           <button
             onClick={handleSubmit}
             className="px-8 py-3 bg-gold text-navy text-sm font-semibold rounded-lg hover:bg-gold-400 transition-colors"
           >
-            Confirmer le rendez-vous
+            {t("nav.submit")}
           </button>
         )}
       </div>

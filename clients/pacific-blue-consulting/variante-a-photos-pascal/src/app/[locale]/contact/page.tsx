@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useScrollAnimation } from "@/lib/useScrollAnimation";
 import SectionTitle from "@/components/SectionTitle";
-
-const CONTACT_EMAIL = "contact@pacificblueconsulting.org";
 
 type ContactForm = {
   name: string;
@@ -15,7 +13,14 @@ type ContactForm = {
   phone: string;
   domain: string;
   message: string;
+  website: string; // honeypot
 };
+
+type SubmitStatus =
+  | { state: "idle" }
+  | { state: "sending" }
+  | { state: "success" }
+  | { state: "error"; message: string };
 
 const DOMAIN_VALUES = [
   { value: "", key: "domainPlaceholder" as const },
@@ -28,6 +33,7 @@ const DOMAIN_VALUES = [
 
 export default function ContactPage() {
   const sectionRef = useScrollAnimation<HTMLDivElement>();
+  const locale = useLocale();
   const t = useTranslations("contact");
   const tForm = useTranslations("contact.form");
   const tSidebar = useTranslations("contact.sidebar");
@@ -38,15 +44,20 @@ export default function ContactPage() {
     phone: "",
     domain: "",
     message: "",
+    website: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ContactForm, string>>>({});
+  const [status, setStatus] = useState<SubmitStatus>({ state: "idle" });
 
   const updateField = (field: keyof ContactForm, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
+    if (status.state === "error" || status.state === "success") {
+      setStatus({ state: "idle" });
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors: Partial<Record<keyof ContactForm, string>> = {};
@@ -61,21 +72,43 @@ export default function ContactPage() {
       return;
     }
 
-    const domainOption = DOMAIN_VALUES.find((d) => d.value === form.domain);
-    const domainLabel = domainOption && domainOption.value ? tForm(domainOption.key) : "";
-    const subject = `${tForm("subjectPrefix")} ${form.name}${domainLabel ? ` — ${domainLabel}` : ""}`;
-    const body = [
-      `${tForm("labelName")} : ${form.name}`,
-      form.company ? `${tForm("labelCompany")} : ${form.company}` : "",
-      `${tForm("labelEmail")} : ${form.email}`,
-      form.phone ? `${tForm("labelPhone")} : ${form.phone}` : "",
-      domainLabel ? `${tForm("labelDomain")} : ${domainLabel}` : "",
-      "",
-      tForm("labelMessage"),
-      form.message,
-    ].filter(Boolean).join("\n");
+    setStatus({ state: "sending" });
 
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          company: form.company,
+          email: form.email,
+          phone: form.phone,
+          domain: form.domain,
+          message: form.message,
+          locale,
+          website: form.website,
+        }),
+      });
+
+      if (res.ok) {
+        setStatus({ state: "success" });
+        setForm({ name: "", company: "", email: "", phone: "", domain: "", message: "", website: "" });
+        return;
+      }
+
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      const errKey =
+        res.status === 429
+          ? "errorRateLimit"
+          : res.status === 400 && data.error?.toLowerCase().includes("long")
+            ? "errorTooLong"
+            : res.status === 400
+              ? "errorRequired"
+              : "errorGeneric";
+      setStatus({ state: "error", message: tForm(errKey) });
+    } catch {
+      setStatus({ state: "error", message: tForm("errorGeneric") });
+    }
   };
 
   const inputClasses =
@@ -114,75 +147,112 @@ export default function ContactPage() {
           <div className="grid lg:grid-cols-3 gap-16">
             {/* Form */}
             <div className="lg:col-span-2">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                {/* Honeypot — hidden from humans, bots fill it */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    left: "-9999px",
+                    width: "1px",
+                    height: "1px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <label htmlFor="pbc-website-hp">Website (do not fill)</label>
+                  <input
+                    id="pbc-website-hp"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={form.website}
+                    onChange={(e) => updateField("website", e.target.value)}
+                  />
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-navy mb-2">
+                    <label className="block text-sm font-medium text-navy mb-2" htmlFor="pbc-name">
                       {tForm("name")} <span className="text-gold">*</span>
                     </label>
                     <input
+                      id="pbc-name"
                       type="text"
                       autoComplete="name"
+                      required
+                      maxLength={120}
                       value={form.name}
                       onChange={(e) => updateField("name", e.target.value)}
                       className={inputClasses}
                       placeholder={tForm("namePlaceholder")}
+                      disabled={status.state === "sending"}
                     />
-                    {errors.name && <p className="mt-1.5 text-xs text-red-500">{errors.name}</p>}
+                    {errors.name && <p className="mt-1.5 text-xs text-red-500" role="alert">{errors.name}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-navy mb-2">
+                    <label className="block text-sm font-medium text-navy mb-2" htmlFor="pbc-company">
                       {tForm("company")}
                     </label>
                     <input
+                      id="pbc-company"
                       type="text"
                       autoComplete="organization"
+                      maxLength={160}
                       value={form.company}
                       onChange={(e) => updateField("company", e.target.value)}
                       className={inputClasses}
                       placeholder={tForm("companyPlaceholder")}
+                      disabled={status.state === "sending"}
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-navy mb-2">
+                    <label className="block text-sm font-medium text-navy mb-2" htmlFor="pbc-email">
                       {tForm("email")} <span className="text-gold">*</span>
                     </label>
                     <input
+                      id="pbc-email"
                       type="email"
                       autoComplete="email"
+                      required
+                      maxLength={254}
                       value={form.email}
                       onChange={(e) => updateField("email", e.target.value)}
                       className={inputClasses}
                       placeholder={tForm("emailPlaceholder")}
+                      disabled={status.state === "sending"}
                     />
-                    {errors.email && <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>}
+                    {errors.email && <p className="mt-1.5 text-xs text-red-500" role="alert">{errors.email}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-navy mb-2">
+                    <label className="block text-sm font-medium text-navy mb-2" htmlFor="pbc-phone">
                       {tForm("phone")}
                     </label>
                     <input
+                      id="pbc-phone"
                       type="tel"
                       autoComplete="tel"
+                      maxLength={40}
                       value={form.phone}
                       onChange={(e) => updateField("phone", e.target.value)}
                       className={inputClasses}
                       placeholder={tForm("phonePlaceholder")}
+                      disabled={status.state === "sending"}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-navy mb-2">
+                  <label className="block text-sm font-medium text-navy mb-2" htmlFor="pbc-domain">
                     {tForm("domain")}
                   </label>
                   <select
+                    id="pbc-domain"
                     value={form.domain}
                     onChange={(e) => updateField("domain", e.target.value)}
                     className={`${inputClasses} bg-white`}
+                    disabled={status.state === "sending"}
                   >
                     {DOMAIN_VALUES.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -193,25 +263,67 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-navy mb-2">
+                  <label className="block text-sm font-medium text-navy mb-2" htmlFor="pbc-message">
                     {tForm("message")} <span className="text-gold">*</span>
                   </label>
                   <textarea
+                    id="pbc-message"
                     value={form.message}
                     onChange={(e) => updateField("message", e.target.value)}
                     rows={5}
+                    required
+                    maxLength={6000}
                     className={`${inputClasses} resize-none`}
                     placeholder={tForm("messagePlaceholder")}
+                    disabled={status.state === "sending"}
                   />
-                  {errors.message && <p className="mt-1.5 text-xs text-red-500">{errors.message}</p>}
+                  {errors.message && <p className="mt-1.5 text-xs text-red-500" role="alert">{errors.message}</p>}
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-10 py-4 bg-gold text-navy font-semibold rounded-xl hover:bg-gold-400 transition-all duration-300 text-sm shadow-glow-gold/0 hover:shadow-glow-gold"
+                  disabled={status.state === "sending"}
+                  className="w-full sm:w-auto min-h-[44px] px-10 py-4 bg-gold text-navy font-semibold rounded-xl hover:bg-gold-400 disabled:bg-gold/60 disabled:cursor-not-allowed transition-all duration-300 text-sm shadow-glow-gold/0 hover:shadow-glow-gold inline-flex items-center justify-center gap-3"
                 >
-                  {tForm("submit")}
+                  {status.state === "sending" ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+                        <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                      </svg>
+                      {tForm("submitting")}
+                    </>
+                  ) : (
+                    tForm("submit")
+                  )}
                 </button>
+
+                {status.state === "success" && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    className="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-800 flex items-start gap-3"
+                  >
+                    <svg className="w-5 h-5 mt-0.5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.707-9.293a1 1 0 0 0-1.414-1.414L9 10.586 7.707 9.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4Z" clipRule="evenodd" />
+                    </svg>
+                    <span>{tForm("success")}</span>
+                  </div>
+                )}
+
+                {status.state === "error" && (
+                  <div
+                    role="alert"
+                    aria-live="assertive"
+                    className="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-800 flex items-start gap-3"
+                  >
+                    <svg className="w-5 h-5 mt-0.5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1-9a1 1 0 0 0-1 1v4a1 1 0 1 0 2 0V6a1 1 0 0 0-1-1Z" clipRule="evenodd" />
+                    </svg>
+                    <span>{status.message}</span>
+                  </div>
+                )}
+
                 <p className="text-xs text-warm-300 mt-2">
                   {tForm("submitHint")}
                 </p>
