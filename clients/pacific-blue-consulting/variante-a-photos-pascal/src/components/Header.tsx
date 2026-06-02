@@ -420,10 +420,10 @@ export default function Header() {
               </Link>
 
               <div className="mt-6 text-center space-y-2">
-                <a href="tel:+68987747284" className="block text-sm text-warm-500 hover:text-navy transition-colors">
+                <a href="tel:+68987747284" className="flex items-center justify-center min-h-11 text-sm text-warm-500 hover:text-navy transition-colors">
                   +689 87 747 284
                 </a>
-                <a href="mailto:contact@pacificblueconsulting.org" className="block text-sm text-warm-500 hover:text-navy transition-colors">
+                <a href="mailto:contact@pacificblueconsulting.org" className="flex items-center justify-center min-h-11 text-sm text-warm-500 hover:text-navy transition-colors">
                   contact@pacificblueconsulting.org
                 </a>
               </div>
