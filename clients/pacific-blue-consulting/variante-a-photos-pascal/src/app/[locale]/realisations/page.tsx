@@ -309,7 +309,7 @@ export default function RealisationsPage() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortMode)}
-                className="text-sm bg-white border border-navy-100/40 rounded-lg px-3 py-1.5 text-navy font-medium focus:outline-none focus:ring-2 focus:ring-gold/30"
+                className="text-sm bg-white border border-navy-100/40 rounded-lg px-3 py-1.5 min-h-11 text-navy font-medium focus:outline-none focus:ring-2 focus:ring-gold/30"
                 aria-label={tFilters("sortBy")}
               >
                 <option value="year-desc">{tFilters("sortRecent")}</option>

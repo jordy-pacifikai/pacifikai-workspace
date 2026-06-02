@@ -379,7 +379,7 @@ export default function ContactPage() {
                       <div>
                         <p className="text-sm font-medium text-navy">{item.label}</p>
                         {item.href ? (
-                          <a href={item.href} className="text-sm text-steel hover:text-gold transition-colors duration-300 break-all">
+                          <a href={item.href} className="inline-flex items-center min-h-[40px] py-1.5 text-sm text-steel hover:text-gold transition-colors duration-300 break-all">
                             {item.value}
                           </a>
                         ) : (
@@ -394,7 +394,7 @@ export default function ContactPage() {
                     href="https://www.linkedin.com/company/pacificblueconsulting/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex items-center gap-3 text-sm text-steel hover:text-gold transition-colors duration-300"
+                    className="mt-2 inline-flex items-center gap-3 min-h-[44px] py-2 text-sm text-steel hover:text-gold transition-colors duration-300"
                   >
                     <div className="w-10 h-10 bg-gold/8 rounded-xl flex items-center justify-center shrink-0">
                       <svg className="w-5 h-5 text-gold" fill="currentColor" viewBox="0 0 24 24">
