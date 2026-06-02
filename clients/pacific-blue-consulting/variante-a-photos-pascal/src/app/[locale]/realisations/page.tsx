@@ -207,7 +207,7 @@ export default function RealisationsPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setDomainFilter("all")}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-4 py-2 min-h-11 rounded-lg text-sm font-medium transition-all ${
                     domainFilter === "all"
                       ? "bg-navy text-white"
                       : "bg-navy-50 text-warm-500 hover:text-navy"
@@ -224,7 +224,7 @@ export default function RealisationsPage() {
                     <button
                       key={domain}
                       onClick={() => setDomainFilter(domain)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      className={`px-4 py-2 min-h-11 rounded-lg text-sm font-medium transition-all ${
                         domainFilter === domain
                           ? "bg-navy text-white"
                           : "bg-navy-50 text-warm-500 hover:text-navy"
@@ -244,7 +244,7 @@ export default function RealisationsPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setGeoFilter("all")}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-4 py-2 min-h-11 rounded-lg text-sm font-medium transition-all ${
                     geoFilter === "all"
                       ? "bg-gold text-navy"
                       : "bg-gold/10 text-warm-500 hover:text-navy"
@@ -261,7 +261,7 @@ export default function RealisationsPage() {
                     <button
                       key={geo}
                       onClick={() => setGeoFilter(geo)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      className={`px-4 py-2 min-h-11 rounded-lg text-sm font-medium transition-all ${
                         geoFilter === geo
                           ? "bg-gold text-navy"
                           : "bg-gold/10 text-warm-500 hover:text-navy"
@@ -280,7 +280,7 @@ export default function RealisationsPage() {
             <div className="flex items-center gap-1 bg-navy-50/60 p-1 rounded-lg">
               <button
                 onClick={() => setView("grid")}
-                className={`p-2 rounded-md transition-all ${view === "grid" ? "bg-white shadow-sm" : "hover:bg-white/50"}`}
+                className={`p-2.5 min-w-11 min-h-11 flex items-center justify-center rounded-md transition-all ${view === "grid" ? "bg-white shadow-sm" : "hover:bg-white/50"}`}
                 title={tFilters("viewGrid")}
                 aria-label={tFilters("viewGrid")}
               >
@@ -288,7 +288,7 @@ export default function RealisationsPage() {
               </button>
               <button
                 onClick={() => setView("list")}
-                className={`p-2 rounded-md transition-all ${view === "list" ? "bg-white shadow-sm" : "hover:bg-white/50"}`}
+                className={`p-2.5 min-w-11 min-h-11 flex items-center justify-center rounded-md transition-all ${view === "list" ? "bg-white shadow-sm" : "hover:bg-white/50"}`}
                 title={tFilters("viewList")}
                 aria-label={tFilters("viewList")}
               >
@@ -296,7 +296,7 @@ export default function RealisationsPage() {
               </button>
               <button
                 onClick={() => setView("timeline")}
-                className={`p-2 rounded-md transition-all ${view === "timeline" ? "bg-white shadow-sm" : "hover:bg-white/50"}`}
+                className={`p-2.5 min-w-11 min-h-11 flex items-center justify-center rounded-md transition-all ${view === "timeline" ? "bg-white shadow-sm" : "hover:bg-white/50"}`}
                 title={tFilters("viewTimeline")}
                 aria-label={tFilters("viewTimeline")}
               >

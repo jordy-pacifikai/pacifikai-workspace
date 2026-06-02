@@ -56,7 +56,7 @@ export default function LocaleSwitcher({ variant = "dark" }: LocaleSwitcherProps
         type="button"
         onClick={() => setOpen((o) => !o)}
         disabled={isPending}
-        className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium uppercase transition-colors ${triggerColor}`}
+        className={`inline-flex items-center gap-1.5 min-h-11 px-3 py-2 rounded-lg text-sm font-medium uppercase transition-colors ${triggerColor}`}
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Language selector"
@@ -84,7 +84,7 @@ export default function LocaleSwitcher({ variant = "dark" }: LocaleSwitcherProps
               role="menuitem"
               onClick={() => switchTo(l.code)}
               disabled={isPending}
-              className={`block w-full text-left px-3 py-1.5 text-xs transition-colors ${
+              className={`block w-full text-left px-3 py-2.5 text-xs transition-colors ${
                 locale === l.code
                   ? "text-navy font-semibold bg-navy-50/60"
                   : "text-warm-500 hover:text-navy hover:bg-navy-50/30"

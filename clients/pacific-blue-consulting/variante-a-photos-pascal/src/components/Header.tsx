@@ -272,7 +272,7 @@ export default function Header() {
               <LocaleSwitcher variant={isScrolled || isMobileOpen ? "light" : "dark"} />
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="p-2 rounded-lg focus-visible:ring-2 focus-visible:ring-gold"
+                className="p-2 min-w-11 min-h-11 flex items-center justify-center rounded-lg focus-visible:ring-2 focus-visible:ring-gold"
                 aria-label={isMobileOpen ? t("closeMenu") : t("openMenu")}
                 aria-expanded={isMobileOpen}
               >
@@ -357,7 +357,9 @@ export default function Header() {
                       {hasChildren && (
                         <button
                           onClick={() => setMobileExpanded(isExpanded ? null : item.href)}
-                          className="p-3 text-warm-500"
+                          aria-label={t("toggleSubmenu")}
+                          aria-expanded={isExpanded}
+                          className="p-3 min-w-11 min-h-11 flex items-center justify-center text-warm-500"
                           style={{
                             transitionDelay: isMobileOpen ? `${100 + i * 50}ms` : "0ms",
                             opacity: isMobileOpen ? 1 : 0,

@@ -14,6 +14,9 @@
   --gold-hover: oklch(0.65 0.13 60);
   --surface: oklch(0.96 0.003 250);
 
+  /* Accessible focus ring (a11y) — gold accent */
+  --ring: var(--gold, #b8860b);
+
   /* Dark aviation gradient */
   --gradient-navy-start: oklch(0.25 0.01 250);
   --gradient-navy-mid: oklch(0.30 0.08 245);
@@ -288,11 +291,14 @@ p {
   background: oklch(0.65 0.04 250);
 }
 
-/* ===== Focus Visible ===== */
+/* ===== Focus Visible (WCAG 2.4.7) ===== */
+/* Keyboard-only focus ring. :focus-visible never matches mouse clicks,
+   so mouse users are unaffected. !important guarantees the ring wins over
+   Tailwind `focus:outline-none` utilities used on some interactive elements. */
 :focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--ring, #b8860b) !important;
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 /* ===== Reduced Motion ===== */
