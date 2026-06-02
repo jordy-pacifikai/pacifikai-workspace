@@ -45,7 +45,7 @@ export default function OffresPage() {
       </section>
 
       {/* Quick nav */}
-      <div className="sticky top-16 z-30 bg-white/90 backdrop-blur-xl border-b border-navy-100/50">
+      <div className="sticky top-24 z-30 bg-white/90 backdrop-blur-xl border-b border-navy-100/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex gap-1 overflow-x-auto py-3 scrollbar-hide">
             {TERRITORY_IDS.map((id) => (
@@ -81,7 +81,7 @@ export default function OffresPage() {
           <section
             key={id}
             id={id}
-            className={`py-24 lg:py-32 ${isEven ? "bg-white" : "bg-navy-50/50"} scroll-mt-32`}
+            className={`py-24 lg:py-32 ${isEven ? "bg-white" : "bg-navy-50/50"} scroll-mt-40`}
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="gsap-reveal">
