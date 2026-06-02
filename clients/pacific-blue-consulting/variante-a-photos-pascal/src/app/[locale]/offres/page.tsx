@@ -81,7 +81,7 @@ export default function OffresPage() {
           <section
             key={id}
             id={id}
-            className={`py-24 lg:py-32 ${isEven ? "bg-white" : "bg-navy-50/50"} scroll-mt-40`}
+            className={`py-24 lg:py-32 ${isEven ? "bg-white" : "bg-navy-50/50"} scroll-mt-16 lg:scroll-mt-10`}
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="gsap-reveal">
